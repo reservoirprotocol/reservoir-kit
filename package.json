@@ -1,7 +1,7 @@
 {
-  "name": "@ramosdiego/reservoir-sdk-test",
-  "version": "0.0.2",
-  "description": "Reservoir SDK.",
+  "name": "@reservoir0x/client-sdk",
+  "version": "0.0.1",
+  "description": "Reservoir client SDK.",
   "main": "dist/index.js",
   "scripts": {
     "lint": "prettier --write .",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/reservoirprotocol/reservoir-sdk-test"
+    "url": "https://github.com/reservoirprotocol/client-sdk"
   },
   "prettier": {
     "semi": false,
