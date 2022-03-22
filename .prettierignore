@@ -1,0 +1,4 @@
+/dist
+/coverage
+.next/
+node_modules/
