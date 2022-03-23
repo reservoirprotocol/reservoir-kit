@@ -7,7 +7,7 @@ import { URL } from 'url'
  * @param index The index of the step to be polled for
  * @returns The updated JSON response
  */
-async function pollUntilHasData(url: URL, index: number) {
+export async function pollUntilHasData(url: URL, index: number) {
   const res = await fetch(url.href)
 
   const json = await res.json()
@@ -25,7 +25,7 @@ async function pollUntilHasData(url: URL, index: number) {
  * @param url An URL object
  * @returns When it has finished polling
  */
-async function pollUntilOk(url: URL) {
+export async function pollUntilOk(url: URL) {
   const res = await fetch(url.href)
 
   // Check that the response from an endpoint updated
@@ -37,5 +37,3 @@ async function pollUntilOk(url: URL) {
     await pollUntilOk(url)
   }
 }
-
-export { pollUntilHasData, pollUntilOk }
