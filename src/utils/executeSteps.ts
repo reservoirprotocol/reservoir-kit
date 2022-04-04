@@ -27,14 +27,13 @@ export async function executeSteps(
 
   if (!json) {
     const res = await fetch(url.href)
+    if (!res.ok) throw new Error('Failed to fetch steps.')
     json = (await res.json()) as Execute
   }
 
   // Handle errors
   if (json.error) throw new Error(json.error)
   if (!json.steps) throw new ReferenceError('There are no steps.')
-
-  console.log(json)
 
   // Update state on first call or recursion
   setState([...json?.steps])
@@ -110,13 +109,15 @@ export async function executeSteps(
       setState([...json?.steps])
 
       try {
-        await fetch(postOrderUrl.href, {
+        const res = await fetch(postOrderUrl.href, {
           method: data.method,
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(data.body),
         })
+
+        if (!res.ok) throw new Error('Failed to post order.')
       } catch (err) {
         json.steps[incompleteIndex].error = 'Your order could not be posted.'
         setState([...json?.steps])
