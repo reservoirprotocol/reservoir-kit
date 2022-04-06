@@ -27,12 +27,12 @@ export async function executeSteps(
 
   if (!json) {
     const res = await fetch(url.href)
-    if (!res.ok) throw new Error('Failed to fetch steps.')
     json = (await res.json()) as Execute
+    if (!res.ok) throw json
   }
 
   // Handle errors
-  if (json.error) throw new Error(json.error)
+  if (json.error) throw json
   if (!json.steps) throw new ReferenceError('There are no steps.')
 
   // Update state on first call or recursion
