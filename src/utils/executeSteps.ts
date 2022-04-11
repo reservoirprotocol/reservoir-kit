@@ -23,127 +23,132 @@ export async function executeSteps(
   setState: (steps: Execute['steps']) => any,
   newJson?: Execute
 ) {
-  let json = newJson
+  try {
+    let json = newJson
 
-  if (!json) {
-    const res = await fetch(url.href)
-    json = (await res.json()) as Execute
-    if (!res.ok) throw json
-  }
-
-  // Handle errors
-  if (json.error) throw json
-  if (!json.steps) throw new ReferenceError('There are no steps.')
-
-  // Update state on first call or recursion
-  setState([...json?.steps])
-
-  const incompleteIndex = json.steps.findIndex(
-    ({ status }) => status === 'incomplete'
-  )
-
-  // There are no more incomplete steps
-  if (incompleteIndex === -1) return
-
-  let { kind, data } = json.steps[incompleteIndex]
-
-  // Append any extra params provided by API
-  if (json.query) setParams(url, json.query)
-
-  // If step is missing data, poll until it is ready
-  if (!data) {
-    json = (await pollUntilHasData(url, incompleteIndex)) as Execute
-    if (!json.steps) throw new ReferenceError('There are no steps.')
-    data = json.steps[incompleteIndex].data
-  }
-
-  // Handle each step based on it's kind
-  switch (kind) {
-    // Make an on-chain transaction
-    case 'transaction': {
-      json.steps[incompleteIndex].message = 'Waiting for user to confirm'
-      setState([...json?.steps])
-
-      const tx = await signer.sendTransaction(data)
-
-      json.steps[incompleteIndex].message = 'Finalizing on blockchain'
-      setState([...json?.steps])
-
-      await tx.wait()
-      break
+    if (!json) {
+      const res = await fetch(url.href)
+      json = (await res.json()) as Execute
+      if (!res.ok) throw json
     }
 
-    // Sign a message
-    case 'signature': {
-      let signature: string | undefined
+    // Handle errors
+    if (json.error || !json.steps) throw json
 
-      json.steps[incompleteIndex].message = 'Waiting for user to sign'
-      setState([...json?.steps])
+    // Update state on first call or recursion
+    setState([...json?.steps])
 
-      // Request user signature
-      if (data.signatureKind === 'eip191') {
-        signature = await signer.signMessage(arrayify(data.message))
-      } else if (data.signatureKind === 'eip712') {
-        signature = await (signer as unknown as TypedDataSigner)._signTypedData(
-          data.domain,
-          data.types,
-          data.value
-        )
-      }
+    const incompleteIndex = json.steps.findIndex(
+      ({ status }) => status === 'incomplete'
+    )
 
-      if (signature) {
-        // Split signature into r,s,v components
-        const { r, s, v } = splitSignature(signature)
-        // Include signature params in any future requests
-        setParams(url, { r, s, v })
-      }
+    // There are no more incomplete steps
+    if (incompleteIndex === -1) return
 
-      break
+    let { kind, data } = json.steps[incompleteIndex]
+
+    // Append any extra params provided by API
+    if (json.query) setParams(url, json.query)
+
+    // If step is missing data, poll until it is ready
+    if (!data) {
+      json = (await pollUntilHasData(url, incompleteIndex)) as Execute
+      if (!json.steps) throw json
+      data = json.steps[incompleteIndex].data
     }
 
-    // Post a signed order object to order book
-    case 'request': {
-      const postOrderUrl = new URL(data.endpoint, url.origin)
-
-      json.steps[incompleteIndex].message = 'Verifying'
-      setState([...json?.steps])
-
-      try {
-        const res = await fetch(postOrderUrl.href, {
-          method: data.method,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data.body),
-        })
-
-        if (!res.ok) throw new Error('Failed to post order.')
-      } catch (err) {
-        json.steps[incompleteIndex].error = 'Your order could not be posted.'
+    // Handle each step based on it's kind
+    switch (kind) {
+      // Make an on-chain transaction
+      case 'transaction': {
+        json.steps[incompleteIndex].message = 'Waiting for user to confirm'
         setState([...json?.steps])
-        throw err
+
+        const tx = await signer.sendTransaction(data)
+
+        json.steps[incompleteIndex].message = 'Finalizing on blockchain'
+        setState([...json?.steps])
+
+        await tx.wait()
+        break
       }
 
-      break
+      // Sign a message
+      case 'signature': {
+        let signature: string | undefined
+
+        json.steps[incompleteIndex].message = 'Waiting for user to sign'
+        setState([...json?.steps])
+
+        // Request user signature
+        if (data.signatureKind === 'eip191') {
+          signature = await signer.signMessage(arrayify(data.message))
+        } else if (data.signatureKind === 'eip712') {
+          signature = await (
+            signer as unknown as TypedDataSigner
+          )._signTypedData(data.domain, data.types, data.value)
+        }
+
+        if (signature) {
+          // Split signature into r,s,v components
+          const { r, s, v } = splitSignature(signature)
+          // Include signature params in any future requests
+          setParams(url, { r, s, v })
+        }
+
+        break
+      }
+
+      // Post a signed order object to order book
+      case 'request': {
+        const postOrderUrl = new URL(data.endpoint, url.origin)
+
+        json.steps[incompleteIndex].message = 'Verifying'
+        setState([...json?.steps])
+
+        try {
+          const res = await fetch(postOrderUrl.href, {
+            method: data.method,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data.body),
+          })
+
+          const resToJson = (await res.json()) as Execute
+
+          if (!res.ok) throw resToJson
+        } catch (err) {
+          json.steps[incompleteIndex].error = 'Your order could not be posted.'
+          setState([...json?.steps])
+          throw err
+        }
+        break
+      }
+
+      // Confirm that an on-chain tx has been picked up by indexer
+      case 'confirmation': {
+        const confirmationUrl = new URL(data.endpoint, url.origin)
+
+        json.steps[incompleteIndex].message = 'Verifying'
+        setState([...json?.steps])
+
+        await pollUntilOk(confirmationUrl)
+        break
+      }
+
+      default:
+        break
     }
 
-    // Confirm that an on-chain tx has been picked up by indexer
-    case 'confirmation': {
-      const confirmationUrl = new URL(data.endpoint, url.origin)
+    delete json.steps[incompleteIndex].message
+    json.steps[incompleteIndex].status = 'complete'
 
-      json.steps[incompleteIndex].message = 'Verifying'
-      setState([...json?.steps])
-
-      await pollUntilOk(confirmationUrl)
-      break
-    }
-
-    default:
-      break
+    // Recursively call executeSteps()
+    await executeSteps(url, signer, setState, json)
+  } catch (err: any) {
+    const error = new Error(err?.message)
+    console.error(error)
+    throw err
   }
-
-  delete json.steps[incompleteIndex].message
-  json.steps[incompleteIndex].status = 'complete'
-
-  await executeSteps(url, signer, setState, json)
 }

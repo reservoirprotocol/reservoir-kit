@@ -11,7 +11,8 @@ export type Execute = {
         kind: 'transaction' | 'signature' | 'request' | 'confirmation'
         data?: any
       }[]
-    | undefined
-  query?: { [x: string]: any }
-  error?: string | undefined
+  query?: { [key: string]: any }
+  statusCode?: number
+  error?: string
+  message?: string
 }
