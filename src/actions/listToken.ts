@@ -3,14 +3,7 @@ import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
 
 type Data = {
-  query:
-    | {
-        maker: string | undefined
-        weiPrice: string | undefined
-        token: string | undefined
-        expirationTime: string | undefined
-      }
-    | paths['/execute/list/v1']['get']['parameters']['query']
+  query: paths['/execute/list/v1']['get']['parameters']['query']
   signer: Signer | undefined
   apiBase: string | undefined
   setState: (steps: Execute['steps']) => any
