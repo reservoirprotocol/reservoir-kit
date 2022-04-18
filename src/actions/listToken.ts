@@ -31,8 +31,8 @@ export async function listToken(data: Data) {
   }
 
   try {
-    // Construct an URL object for the `/execute/list/v1` endpoint
-    const url = new URL('/execute/list/v1', apiBase)
+    // Construct an URL object for the `/execute/list/v2` endpoint
+    const url = new URL('/execute/list/v2', apiBase)
 
     setParams(url, query)
 

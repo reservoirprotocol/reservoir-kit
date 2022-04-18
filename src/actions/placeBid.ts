@@ -24,8 +24,8 @@ export async function placeBid(data: Data) {
   }
 
   try {
-    // Construct an URL object for the `/execute/bid/v1` endpoint
-    const url = new URL('/execute/bid/v1', apiBase)
+    // Construct an URL object for the `/execute/bid/v2` endpoint
+    const url = new URL('/execute/bid/v2', apiBase)
 
     setParams(url, query)
 
