@@ -12,8 +12,13 @@ type Data = {
 }
 
 /**
- * Place an offer to buy a token
- * @param data
+ * Place a bid on a token
+ * @param data.query Query object to pass to `/execute/bid/v2`
+ * @param data.signer Ethereum signer object provided by the browser
+ * @param data.apiBase The Reservoir API base URL
+ * @param data.setState Callback to update UI state has execution progresses
+ * @param data.handleError Callback to handle any errors during the execution
+ * @param data.handleSuccess Callback to handle a successful execution
  */
 export async function placeBid(data: Data) {
   const { query, signer, apiBase, setState, handleSuccess, handleError } = data
