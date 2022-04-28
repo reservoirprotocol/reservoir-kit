@@ -15,13 +15,15 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer'
  * @param url URL object with the endpoint to be called. Example: `/execute/buy`
  * @param signer Ethereum signer object provided by the browser
  * @param setState Callback to update UI state has execution progresses
+ * @param expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
  * @returns The data field of the last element in the steps array
  */
 export async function executeSteps(
   url: URL,
   signer: Signer,
   setState: (steps: Execute['steps']) => any,
-  newJson?: Execute
+  newJson?: Execute,
+  expectedPrice?: number
 ) {
   try {
     let json = newJson
@@ -34,6 +36,11 @@ export async function executeSteps(
 
     // Handle errors
     if (json.error || !json.steps) throw json
+
+    if (json.quote && expectedPrice && json.quote !== expectedPrice)
+      throw new Error(
+        `Expected price of ${expectedPrice} ETH is not equal to the quote of ${json.quote} ETH`
+      )
 
     // Update state on first call or recursion
     setState([...json?.steps])

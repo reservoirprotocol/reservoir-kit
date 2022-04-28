@@ -1,6 +1,7 @@
 export * from './api'
 
 export type Execute = {
+  quote?: number
   steps?:
     | {
         action: string
