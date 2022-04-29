@@ -95,6 +95,9 @@ export interface paths {
   '/execute/buy/v1': {
     get: operations['getExecuteBuyV1']
   }
+  '/execute/buy/v2': {
+    get: operations['getExecuteBuyV2']
+  }
   '/execute/cancel/v1': {
     get: operations['getExecuteCancelV1']
   }
@@ -106,6 +109,9 @@ export interface paths {
   }
   '/execute/sell/v1': {
     get: operations['getExecuteSellV1']
+  }
+  '/execute/sell/v2': {
+    get: operations['getExecuteSellV2']
   }
   '/liquidity/users/v1': {
     /** This API calculates the total liquidity created by users, based on the number of tokens they are top bidder for. */
@@ -160,12 +166,12 @@ export interface paths {
     /** This API will return the best price of every token in a collection that is currently on sale */
     get: operations['getTokensFloorV1']
   }
-  '/collections/{collection}/attributes/v1': {
-    get: operations['getCollectionsCollectionAttributesV1']
-  }
   '/collections/{collection}/top-bids/v1': {
     /** When users are placing collection or trait bids, this API can be used to show them where the bid is in the context of other bids, and how many tokens it will be the top bid for. */
     get: operations['getCollectionsCollectionTopbidsV1']
+  }
+  '/collections/{collection}/attributes/v1': {
+    get: operations['getCollectionsCollectionAttributesV1']
   }
   '/events/collections/floor-ask/v1': {
     /**
@@ -273,17 +279,20 @@ export interface paths {
     /** Get tokens held by a user, along with ownership information such as associated orders and date acquired. */
     get: operations['getUsersUserTokensV1']
   }
-  '/collections/{collection}/attributes/explore/v1': {
-    get: operations['getCollectionsCollectionAttributesExploreV1']
-  }
-  '/collections/{collection}/attributes/static/v1': {
-    get: operations['getCollectionsCollectionAttributesStaticV1']
+  '/collections/{collection}/attributes/explore/v2': {
+    get: operations['getCollectionsCollectionAttributesExploreV2']
   }
   '/collections/{collection}/attributes/all/v1': {
     get: operations['getCollectionsCollectionAttributesAllV1']
   }
-  '/collections/{collection}/attributes/explore/v2': {
-    get: operations['getCollectionsCollectionAttributesExploreV2']
+  '/collections/{collection}/attributes/static/v1': {
+    get: operations['getCollectionsCollectionAttributesStaticV1']
+  }
+  '/collections/{collection}/attributes/explore/v1': {
+    get: operations['getCollectionsCollectionAttributesExploreV1']
+  }
+  '/oracle/collections/{collection}/floor-ask/v1': {
+    get: operations['getOracleCollectionsCollectionFlooraskV1']
   }
   '/api-keys': {
     /**
@@ -1039,12 +1048,20 @@ export interface definitions {
     }
   }
   Model64: {
+    value?: number
+    quantity?: number
+  }
+  topBids: definitions['Model64'][]
+  getCollectionTopBidsV1Response: {
+    topBids?: definitions['topBids']
+  }
+  Model65: {
     value: number
     timestamp: number
   }
-  lastBuys: definitions['Model64'][]
+  lastBuys: definitions['Model65'][]
   floorAskPrices: number[]
-  Model65: {
+  Model66: {
     key: string
     value: string
     tokenCount: number
@@ -1054,17 +1071,9 @@ export interface definitions {
     floorAskPrices?: definitions['floorAskPrices']
     topBid?: definitions['topBid']
   }
-  Model66: definitions['Model65'][]
+  Model67: definitions['Model66'][]
   getCollectionAttributesV1Response: {
-    attributes?: definitions['Model66']
-  }
-  Model67: {
-    value?: number
-    quantity?: number
-  }
-  topBids: definitions['Model67'][]
-  getCollectionTopBidsV1Response: {
-    topBids?: definitions['topBids']
+    attributes?: definitions['Model67']
   }
   Model68: {
     id?: string
@@ -1260,21 +1269,6 @@ export interface definitions {
     tokens?: definitions['Model95']
   }
   Model96: {
-    value: string
-    count?: number
-    tokens?: definitions['sampleImages']
-  }
-  Model97: definitions['Model96'][]
-  Model98: {
-    key: string
-    kind: 'string' | 'number' | 'date' | 'range'
-    values?: definitions['Model97']
-  }
-  Model99: definitions['Model98'][]
-  getAttributesStaticV1Response: {
-    attributes?: definitions['Model99']
-  }
-  Model100: {
     key: string
     value: string
     tokenCount: number
@@ -1282,9 +1276,36 @@ export interface definitions {
     floorAskPrices?: definitions['floorAskPrices']
     topBid?: definitions['topBid']
   }
-  Model101: definitions['Model100'][]
+  Model97: definitions['Model96'][]
   getAttributesExploreV2Response: {
+    attributes?: definitions['Model97']
+  }
+  Model98: {
+    value: string
+    count?: number
+    tokens?: definitions['sampleImages']
+  }
+  Model99: definitions['Model98'][]
+  Model100: {
+    key: string
+    kind: 'string' | 'number' | 'date' | 'range'
+    values?: definitions['Model99']
+  }
+  Model101: definitions['Model100'][]
+  getAttributesStaticV1Response: {
     attributes?: definitions['Model101']
+  }
+  packet: {
+    request: string
+    deadline: number
+    payload: string
+    v?: number
+    r?: string
+    s?: string
+  }
+  getCollectionFloorAskOracleV1Response: {
+    price: number
+    packet?: definitions['packet']
   }
   getNewApiKeyResponse: {
     key: string
@@ -1934,6 +1955,26 @@ export interface operations {
       }
     }
   }
+  getExecuteBuyV2: {
+    parameters: {
+      query: {
+        token: string
+        taker: string
+        quantity?: number
+        onlyQuote?: boolean
+        referrer?: string
+        referrerFeeBps?: number
+        maxFeePerGas?: string
+        maxPriorityFeePerGas?: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getExecuteBuyV1Response']
+      }
+    }
+  }
   getExecuteCancelV1: {
     parameters: {
       query: {
@@ -2008,6 +2049,23 @@ export interface operations {
     }
   }
   getExecuteSellV1: {
+    parameters: {
+      query: {
+        token: string
+        taker: string
+        referrer?: string
+        maxFeePerGas?: string
+        maxPriorityFeePerGas?: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getExecuteCancelV1Response']
+      }
+    }
+  }
+  getExecuteSellV2: {
     parameters: {
       query: {
         token: string
@@ -2330,6 +2388,21 @@ export interface operations {
       }
     }
   }
+  /** When users are placing collection or trait bids, this API can be used to show them where the bid is in the context of other bids, and how many tokens it will be the top bid for. */
+  getCollectionsCollectionTopbidsV1: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getCollectionTopBidsV1Response']
+      }
+    }
+  }
   getCollectionsCollectionAttributesV1: {
     parameters: {
       path: {
@@ -2347,21 +2420,6 @@ export interface operations {
       /** Successful */
       200: {
         schema: definitions['getCollectionAttributesV1Response']
-      }
-    }
-  }
-  /** When users are placing collection or trait bids, this API can be used to show them where the bid is in the context of other bids, and how many tokens it will be the top bid for. */
-  getCollectionsCollectionTopbidsV1: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string
-      }
-    }
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions['getCollectionTopBidsV1Response']
       }
     }
   }
@@ -2606,6 +2664,57 @@ export interface operations {
       }
     }
   }
+  getCollectionsCollectionAttributesExploreV2: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string
+      }
+      query: {
+        /** Filter to a particular attribute key, e.g. `Composition` */
+        attributeKey?: string
+        /** Max floor prices to return */
+        maxFloorAskPrices?: number
+        sortBy?: 'floorAskPrice' | 'topBidValue'
+        offset?: number
+        limit?: number
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getAttributesExploreV2Response']
+      }
+    }
+  }
+  getCollectionsCollectionAttributesAllV1: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getAttributesV1Response']
+      }
+    }
+  }
+  getCollectionsCollectionAttributesStaticV1: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getAttributesStaticV1Response']
+      }
+    }
+  }
   getCollectionsCollectionAttributesExploreV1: {
     parameters: {
       path: {
@@ -2627,52 +2736,22 @@ export interface operations {
       }
     }
   }
-  getCollectionsCollectionAttributesStaticV1: {
+  getOracleCollectionsCollectionFlooraskV1: {
     parameters: {
       path: {
-        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string
-      }
-    }
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions['getAttributesStaticV1Response']
-      }
-    }
-  }
-  getCollectionsCollectionAttributesAllV1: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string
-      }
-    }
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions['getAttributesV1Response']
-      }
-    }
-  }
-  getCollectionsCollectionAttributesExploreV2: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         collection: string
       }
       query: {
-        /** Filter to a particular attribute key, e.g. `Composition` */
-        attributeKey?: string
-        sortBy?: 'floorAskPrice' | 'topBidValue'
-        offset?: number
-        limit?: number
+        contractName: string
+        contractVersion: number
+        verifyingContract: string
+        kind?: 'spot' | 'twap' | 'lower' | 'upper'
       }
     }
     responses: {
       /** Successful */
       200: {
-        schema: definitions['getAttributesExploreV2Response']
+        schema: definitions['getCollectionFloorAskOracleV1Response']
       }
     }
   }

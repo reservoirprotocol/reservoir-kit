@@ -37,10 +37,30 @@ export async function executeSteps(
     // Handle errors
     if (json.error || !json.steps) throw json
 
-    if (json.quote && expectedPrice && json.quote !== expectedPrice)
-      throw new Error(
-        `Expected price of ${expectedPrice} ETH is not equal to the quote of ${json.quote} ETH`
-      )
+    // Handle price changes to protect users from paying more
+    // than expected when buying and selling for less than expected
+    // when selling
+    if (json.quote && expectedPrice) {
+      // Check if the user is selling
+      if (
+        url.pathname.includes('/execute/sell') &&
+        json.quote - expectedPrice < -0.00001
+      ) {
+        throw new Error(
+          `The quote price of ${json.quote} ETH is less than the expected price of ${expectedPrice} ETH`
+        )
+      }
+
+      // Check if the user is buying
+      if (
+        url.pathname.includes('/execute/buy') &&
+        json.quote - expectedPrice > 0.00001
+      ) {
+        throw new Error(
+          `The quote price of ${json.quote} ETH is greater than the expected price of ${expectedPrice} ETH`
+        )
+      }
+    }
 
     // Update state on first call or recursion
     setState([...json?.steps])
