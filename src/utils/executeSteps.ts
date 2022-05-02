@@ -46,9 +46,10 @@ export async function executeSteps(
         url.pathname.includes('/execute/sell') &&
         json.quote - expectedPrice < -0.00001
       ) {
-        throw new Error(
-          `The quote price of ${json.quote} ETH is less than the expected price of ${expectedPrice} ETH`
-        )
+        throw {
+          type: 'price mismatch',
+          message: `The quote price of ${json.quote} ETH is less than the expected price of ${expectedPrice} ETH`,
+        }
       }
 
       // Check if the user is buying
@@ -56,9 +57,10 @@ export async function executeSteps(
         url.pathname.includes('/execute/buy') &&
         json.quote - expectedPrice > 0.00001
       ) {
-        throw new Error(
-          `The quote price of ${json.quote} ETH is greater than the expected price of ${expectedPrice} ETH`
-        )
+        throw {
+          type: 'price mismatch',
+          message: `The quote price of ${json.quote} ETH is greater than the expected price of ${expectedPrice} ETH`,
+        }
       }
     }
 
