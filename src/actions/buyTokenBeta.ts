@@ -3,7 +3,7 @@ import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
 
 type Data = {
-  query: paths['/execute/buy/v1']['get']['parameters']['query']
+  query: paths['/execute/buy/v2']['get']['parameters']['query']
   expectedPrice?: number
   signer: Signer | undefined
   apiBase: string | undefined
@@ -14,7 +14,7 @@ type Data = {
 
 /**
  * Instantly buy a token
- * @param data.query Query object to pass to `/execute/buy/v1`
+ * @param data.query Query object to pass to `/execute/buy/v2`
  * @param data.expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.apiBase The Reservoir API base URL
@@ -22,7 +22,7 @@ type Data = {
  * @param data.handleError Callback to handle any errors during the execution
  * @param data.handleSuccess Callback to handle a successful execution
  */
-export async function buyToken(data: Data) {
+export async function buyTokenBeta(data: Data) {
   const {
     query,
     expectedPrice,
@@ -40,7 +40,7 @@ export async function buyToken(data: Data) {
 
   try {
     // Construct an URL object for the `/execute/buy` endpoint
-    const url = new URL('/execute/buy/v1', apiBase)
+    const url = new URL('/execute/buy/v2', apiBase)
 
     setParams(url, query)
 

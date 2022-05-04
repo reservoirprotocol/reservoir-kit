@@ -1,5 +1,6 @@
 export * from './acceptOffer'
 export * from './buyToken'
+export * from './buyTokenBeta'
 export * from './cancelOrder'
 export * from './listToken'
 export * from './placeBid'
