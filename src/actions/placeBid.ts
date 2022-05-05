@@ -4,7 +4,7 @@ import { executeSteps, setParams } from '../utils'
 
 type Data = {
   query: paths['/execute/bid/v2']['get']['parameters']['query']
-  signer: Signer | undefined
+  signer: Signer | null | undefined
   apiBase: string | undefined
   setState: (steps: Execute['steps']) => any
   handleError?: (err: any) => any
