@@ -660,6 +660,7 @@ export interface definitions {
     sales?: definitions['Model18']
   }
   Model19: {
+    id?: string
     token?: definitions['Model15']
     orderSource?: string
     orderSide?: 'ask' | 'bid'
@@ -1416,6 +1417,8 @@ export interface definitions {
   Model111: {
     key: string
     kind: 'string' | 'number' | 'date' | 'range'
+    minRange?: number
+    maxRange?: number
     values?: definitions['values']
   }
   Model112: definitions['Model111'][]
@@ -2443,6 +2446,8 @@ export interface operations {
       query: {
         /** Lightweight search for collections that match a string, e.g. `bored` */
         name?: string
+        /** Filter to a particular community, e.g. `artblocks` */
+        community?: string
         limit?: number
       }
     }
