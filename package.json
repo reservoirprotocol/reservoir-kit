@@ -12,7 +12,8 @@
   "scripts": {
     "lint": "prettier --write .",
     "build": "rimraf dist/ && tsc",
-    "prepare": "yarn build"
+    "prepare": "yarn build",
+    "push:tag": "git tag -a $npm_package_version -m '$npm_package_version'; git push --tags"
   },
   "repository": {
     "type": "git",
