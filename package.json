@@ -13,7 +13,10 @@
     "lint": "prettier --write .",
     "build": "rimraf dist/ && tsc",
     "prepare": "yarn build",
-    "push:tag": "git tag -a $npm_package_version -m '$npm_package_version'; git push --tags"
+    "push:tag": "git tag -a $npm_package_version -m '$npm_package_version'; git push --tags",
+    "major:tag": "npm version major; npm run push:tag",
+    "minor:tag": "npm version minor; npm run push:tag",
+    "patch:tag": "npm version patch; npm run push:tag"
   },
   "repository": {
     "type": "git",
