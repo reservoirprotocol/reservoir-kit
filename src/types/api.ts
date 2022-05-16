@@ -133,9 +133,17 @@ export interface paths {
     /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
     get: operations['getOrdersAsksV1']
   }
+  '/orders/asks/v2': {
+    /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
+    get: operations['getOrdersAsksV2']
+  }
   '/orders/bids/v1': {
     /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
     get: operations['getOrdersBidsV1']
+  }
+  '/orders/bids/v2': {
+    /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
+    get: operations['getOrdersBidsV2']
   }
   '/orders/executed/v1': {
     get: operations['getOrdersExecutedV1']
@@ -2389,6 +2397,34 @@ export interface operations {
     }
   }
   /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
+  getOrdersAsksV2: {
+    parameters: {
+      query: {
+        /** Filter to a token, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
+        token?: string
+        /** Filter to a particular user, e.g. `0x4d04eb67a2d1e01c71fad0366e0c200207a75487` */
+        maker?: string
+        /** Filter to one or more contracts, e.g. `0x4d04eb67a2d1e01c71fad0366e0c200207a75487` */
+        contracts?: string[]
+        /**
+         * `active` = currently valid, `inactive` = temporarily invalid, `expired` = permanently invalid
+         *
+         * Available when filtering by maker, otherwise only valid orders will be returned
+         */
+        status?: 'active' | 'inactive' | 'expired'
+        sortBy?: 'price' | 'createdAt'
+        continuation?: string
+        limit?: number
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getOrdersAsksV1Response']
+      }
+    }
+  }
+  /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
   getOrdersBidsV1: {
     parameters: {
       query: {
@@ -2398,6 +2434,36 @@ export interface operations {
         tokenSetId?: string
         /** Filter to a particular user, e.g. `0x4d04eb67a2d1e01c71fad0366e0c200207a75487` */
         maker?: string
+        /**
+         * `active` = currently valid, `inactive` = temporarily invalid, `expired` = permanently invalid
+         *
+         * Available when filtering by maker, otherwise only valid orders will be returned
+         */
+        status?: 'active' | 'inactive' | 'expired'
+        sortBy?: 'price' | 'createdAt'
+        continuation?: string
+        limit?: number
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getOrdersBidsV1Response']
+      }
+    }
+  }
+  /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
+  getOrdersBidsV2: {
+    parameters: {
+      query: {
+        /** Filter to a token, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
+        token?: string
+        /** Filter to a particular set, e.g. `contract:0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        tokenSetId?: string
+        /** Filter to a particular user, e.g. `0x4d04eb67a2d1e01c71fad0366e0c200207a75487` */
+        maker?: string
+        /** Filter to one or more contracts, e.g. `0x4d04eb67a2d1e01c71fad0366e0c200207a75487` */
+        contracts?: string[]
         /**
          * `active` = currently valid, `inactive` = temporarily invalid, `expired` = permanently invalid
          *
