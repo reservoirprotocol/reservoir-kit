@@ -365,6 +365,9 @@ export interface paths {
   '/admin/set-community': {
     post: operations['postAdminSetcommunity']
   }
+  '/admin/simulate-floor': {
+    post: operations['postAdminSimulatefloor']
+  }
   '/admin/sync-arweave': {
     post: operations['postAdminSyncarweave']
   }
@@ -379,6 +382,9 @@ export interface paths {
   }
   '/order/v2': {
     post: operations['postOrderV2']
+  }
+  '/token-sets/v1': {
+    post: operations['postTokensetsV1']
   }
   '/collections/refresh/v1': {
     post: operations['postCollectionsRefreshV1']
@@ -777,6 +783,7 @@ export interface definitions {
     source?: string
     topBidValue?: number
     floorAskPrice?: number
+    owner?: string
   }
   Model30: definitions['Model29'][]
   getTokensV4Response: {
@@ -1533,21 +1540,24 @@ export interface definitions {
     community: string
   }
   Model127: {
+    token?: string
+  }
+  Model128: {
     fromBlock: number
     toBlock: number
   }
-  Model128: {
+  Model129: {
     /** @description If no days are passed, will automatically resync from beginning of time. */
     days?: number
   }
-  Model129: {
+  Model130: {
     eventDataKinds?: definitions['sampleImages']
     fromBlock: number
     toBlock: number
     /** @default true */
     backfill?: boolean
   }
-  Model130: {
+  Model131: {
     kind: 'opensea' | 'wyvern-v2.3' | '721ex' | 'zeroex-v4'
     data: definitions['metadata']
   }
@@ -1556,40 +1566,45 @@ export interface definitions {
     key: string
     value: string
   }
-  Model131: {
-    order?: definitions['Model130']
+  Model132: {
+    order?: definitions['Model131']
     /** @default reservoir */
     orderbook?: 'reservoir' | 'opensea'
     source?: string
     attribute?: definitions['attribute']
   }
-  Model132: {
+  Model133: {
     kind: 'opensea' | 'wyvern-v2.3' | 'looks-rare' | '721ex' | 'zeroex-v4'
     data: definitions['metadata']
   }
-  Model133: {
-    order?: definitions['Model132']
+  Model134: {
+    order?: definitions['Model133']
     /** @default reservoir */
     orderbook?: 'reservoir' | 'opensea' | 'looks-rare'
     source?: string
     attribute?: definitions['attribute']
   }
-  Model134: {
+  Model135: {
     kind: 'looks-rare' | '721ex' | 'wyvern-v2.3' | 'zeroex-v4'
     data: definitions['metadata']
   }
-  Model135: definitions['Model134'][]
-  Model136: {
-    orders?: definitions['Model135']
-  }
+  Model136: definitions['Model135'][]
   Model137: {
+    orders?: definitions['Model136']
+  }
+  tokenIds: string[]
+  Model138: {
+    contract: string
+    tokenIds: definitions['tokenIds']
+  }
+  Model139: {
     /** @description Refresh the given collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:1:2222` */
     collection: string
   }
   postCollectionsRefreshV1Response: {
     message?: string
   }
-  Model138: {
+  Model140: {
     /** @description Refresh the given token, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string
   }
@@ -1764,7 +1779,7 @@ export interface operations {
   postOrdersV1: {
     parameters: {
       body: {
-        body?: definitions['Model136']
+        body?: definitions['Model137']
       }
     }
     responses: {
@@ -1999,7 +2014,7 @@ export interface operations {
         attributes?: string
         source?: string
         native?: boolean
-        sortBy?: 'floorAskPrice' | 'topBidValue'
+        sortBy?: 'floorAskPrice' | 'topBidValue' | 'tokenId'
         limit?: number
         continuation?: string
       }
@@ -3321,7 +3336,7 @@ export interface operations {
       }
     }
   }
-  postAdminSyncarweave: {
+  postAdminSimulatefloor: {
     parameters: {
       header: {
         'x-admin-api-key': string
@@ -3337,7 +3352,7 @@ export interface operations {
       }
     }
   }
-  postAdminSyncdailyvolumes: {
+  postAdminSyncarweave: {
     parameters: {
       header: {
         'x-admin-api-key': string
@@ -3353,7 +3368,7 @@ export interface operations {
       }
     }
   }
-  postAdminSyncevents: {
+  postAdminSyncdailyvolumes: {
     parameters: {
       header: {
         'x-admin-api-key': string
@@ -3369,10 +3384,26 @@ export interface operations {
       }
     }
   }
+  postAdminSyncevents: {
+    parameters: {
+      header: {
+        'x-admin-api-key': string
+      }
+      body: {
+        body?: definitions['Model130']
+      }
+    }
+    responses: {
+      /** Successful */
+      default: {
+        schema: string
+      }
+    }
+  }
   postOrderV1: {
     parameters: {
       body: {
-        body?: definitions['Model131']
+        body?: definitions['Model132']
       }
     }
     responses: {
@@ -3385,7 +3416,7 @@ export interface operations {
   postOrderV2: {
     parameters: {
       body: {
-        body?: definitions['Model133']
+        body?: definitions['Model134']
       }
     }
     responses: {
@@ -3395,10 +3426,23 @@ export interface operations {
       }
     }
   }
+  postTokensetsV1: {
+    parameters: {
+      body: {
+        body?: definitions['Model138']
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['Model82']
+      }
+    }
+  }
   postCollectionsRefreshV1: {
     parameters: {
       body: {
-        body?: definitions['Model137']
+        body?: definitions['Model139']
       }
     }
     responses: {
@@ -3411,7 +3455,7 @@ export interface operations {
   postTokensRefreshV1: {
     parameters: {
       body: {
-        body?: definitions['Model138']
+        body?: definitions['Model140']
       }
     }
     responses: {
