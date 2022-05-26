@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 /**
  * Check if a token is banned on OpenSea
  * @param contract Contract address of the NFT collection
@@ -8,9 +10,13 @@ export async function isOpenSeaBanned(contract: string, tokenId: number) {
   const base = 'https://api.opensea.io'
   const url = new URL(`/api/v1/asset/${contract}/${tokenId}`, base)
 
-  const response = await fetch(url.href)
+  async function getData() {
+    let res = await axios.get(url.href)
 
-  const json = await response.json()
+    return res.data
+  }
+
+  const json = await getData()
 
   return !json?.supports_wyvern
 }

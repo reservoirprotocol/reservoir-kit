@@ -4,6 +4,7 @@ import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { setParams } from './params'
 import { Signer } from 'ethers'
 import { TypedDataSigner } from '@ethersproject/abstract-signer'
+import axios from 'axios'
 
 /**
  * When attempting to perform actions, such as, selling a token or
@@ -136,17 +137,26 @@ export async function executeSteps(
         setState([...json?.steps])
 
         try {
-          const res = await fetch(postOrderUrl.href, {
-            method: data.method,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data.body),
-          })
+          async function getData() {
+            let response = await axios.post(
+              postOrderUrl.href,
+              JSON.stringify(data.body),
+              {
+                method: data.method,
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            )
 
-          const resToJson = (await res.json()) as Execute
+            return response
+          }
 
-          if (!res.ok) throw resToJson
+          const res = await getData()
+
+          const resToJson = res.data as Execute
+
+          if (res.statusText !== 'OK') throw resToJson
         } catch (err) {
           json.steps[incompleteIndex].error = 'Your order could not be posted.'
           setState([...json?.steps])

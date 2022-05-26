@@ -1,4 +1,5 @@
 import { URL } from 'url'
+import axios from 'axios'
 
 /**
  * Poll the URL with a 5 second interval until the step has data
@@ -8,9 +9,13 @@ import { URL } from 'url'
  * @returns The updated JSON response
  */
 export async function pollUntilHasData(url: URL, index: number) {
-  const res = await fetch(url.href)
+  async function getData() {
+    let res = await axios.get(url.href)
 
-  const json = await res.json()
+    return res.data
+  }
+
+  const json = await getData()
 
   // Check if the data exists
   if (json?.steps?.[index]?.data) return json
