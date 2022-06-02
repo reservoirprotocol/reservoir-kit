@@ -490,9 +490,6 @@ export interface definitions {
     '7day'?: number
     '30day'?: number
   }
-  floorSaleChange: {
-    '1day'?: number
-  }
   collection: {
     id?: string
     slug?: string
@@ -512,7 +509,7 @@ export interface definitions {
     volume?: definitions['rank']
     volumeChange?: definitions['volumeChange']
     floorSale?: definitions['volumeChange']
-    floorSaleChange?: definitions['floorSaleChange']
+    floorSaleChange?: definitions['volumeChange']
   }
   getCollectionV1Response: {
     collection?: definitions['collection']
@@ -541,7 +538,7 @@ export interface definitions {
     volume?: definitions['rank']
     volumeChange?: definitions['volumeChange']
     floorSale?: definitions['volumeChange']
-    floorSaleChange?: definitions['floorSaleChange']
+    floorSaleChange?: definitions['volumeChange']
     collectionBidSupported?: boolean
     ownerCount?: number
     attributes?: definitions['Model5']
@@ -638,7 +635,7 @@ export interface definitions {
     volume?: definitions['rank']
     volumeChange?: definitions['volumeChange']
     floorSale?: definitions['volumeChange']
-    floorSaleChange?: definitions['floorSaleChange']
+    floorSaleChange?: definitions['volumeChange']
   }
   Model13: definitions['Model12'][]
   getCollectionsV4Response: {
