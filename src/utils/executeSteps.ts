@@ -156,7 +156,7 @@ export async function executeSteps(
 
           const resToJson = res.data as Execute
 
-          if (res.statusText !== 'OK') throw resToJson
+          if (res.status > 299 || res.status < 200) throw resToJson
         } catch (err) {
           json.steps[incompleteIndex].error = 'Your order could not be posted.'
           setState([...json?.steps])
