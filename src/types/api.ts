@@ -57,10 +57,11 @@ export interface paths {
     get: operations['getSalesV2']
   }
   '/sales/v3': {
-    /** Note: this API is returns rich metadata, and has advanced filters, so is only designed for small amounts of recent sales. If you want access to sales in bulk, use the `Aggregator > Bulk Sales` API. */
+    /** Get recent sales for a contract or token. Note: this API is returns rich metadata, and has advanced filters, so is only designed for small amounts of recent sales. If you want access to sales in bulk, use the `Aggregator > Bulk Sales` API. */
     get: operations['getSalesV3']
   }
   '/stats/v1': {
+    /** Get aggregate stats for a particular set (collection, attribute or single token) */
     get: operations['getStatsV1']
   }
   '/tokens/v1': {
@@ -96,6 +97,7 @@ export interface paths {
     get: operations['getCollectionsCollectionorslugV1']
   }
   '/events/orders/v1': {
+    /** Get updates any time an order status changes */
     get: operations['getEventsOrdersV1']
   }
   '/execute/bid/v1': {
@@ -138,7 +140,7 @@ export interface paths {
     get: operations['getOrdersAsksV1']
   }
   '/orders/asks/v2': {
-    /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
+    /** Get a list of asks (listings), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing */
     get: operations['getOrdersAsksV2']
   }
   '/orders/bids/v1': {
@@ -146,7 +148,7 @@ export interface paths {
     get: operations['getOrdersBidsV1']
   }
   '/orders/bids/v2': {
-    /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
+    /** Get a list of bids (offers), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing */
     get: operations['getOrdersBidsV2']
   }
   '/orders/executed/v1': {
@@ -335,6 +337,7 @@ export interface paths {
     get: operations['getCollectionsCollectionAttributesAllV2']
   }
   '/collections/{collection}/attributes/explore/v2': {
+    /** Get detailed aggregate about attributes in a collection, e.g. trait floors */
     get: operations['getCollectionsCollectionAttributesExploreV2']
   }
   '/oracle/collections/{collection}/floor-ask/v1': {
@@ -522,6 +525,7 @@ export interface definitions {
   Model5: definitions['Model4'][]
   Model6: {
     id?: string
+    /** @description Open Sea slug */
     slug?: string
     name?: string
     metadata?: definitions['metadata']
@@ -761,6 +765,7 @@ export interface definitions {
     from?: string
     to?: string
     amount?: string
+    fillSource?: string
     txHash?: string
     logIndex?: number
     batchIndex?: number
@@ -975,6 +980,7 @@ export interface definitions {
   Model44: {
     contract?: string
     tokenId?: string
+    quantity?: number
     source?: string
     quote?: number
   }
@@ -983,20 +989,6 @@ export interface definitions {
     steps?: definitions['Model43']
     quote?: number
     path?: definitions['path']
-    query?: definitions['metadata']
-  }
-  Model45: {
-    contract?: string
-    tokenId?: string
-    quantity?: number
-    source?: string
-    quote?: number
-  }
-  Model46: definitions['Model45'][]
-  getExecuteBuyV2Response: {
-    steps?: definitions['Model43']
-    quote?: number
-    path?: definitions['Model46']
     query?: definitions['metadata']
   }
   getExecuteCancelV1Response: {
@@ -1008,7 +1000,7 @@ export interface definitions {
     quote?: number
     query?: definitions['metadata']
   }
-  Model47: {
+  Model45: {
     user?: string
     rank: number
     tokenCount: string
@@ -1016,10 +1008,16 @@ export interface definitions {
     maxTopBuyValue: number
     wethBalance: number
   }
-  liquidity: definitions['Model47'][]
+  liquidity: definitions['Model45'][]
   getUsersLiquidityV1Response: {
     liquidity?: definitions['liquidity']
   }
+  Model46: {
+    kind?: string
+    recipient?: string
+    bps?: string
+  }
+  Model47: definitions['Model46'][]
   Model48: {
     id: string
     kind: string
@@ -1035,7 +1033,7 @@ export interface definitions {
     validUntil: number
     source?: string
     feeBps?: number
-    feeBreakdown?: definitions['feeBreakdown']
+    feeBreakdown?: definitions['Model47']
     status?: string
     expiration: number
     createdAt: string
@@ -1125,6 +1123,7 @@ export interface definitions {
     from?: string
     to?: string
     amount?: string
+    fillSource?: string
     txHash?: string
     logIndex?: number
     batchIndex?: number
@@ -1577,6 +1576,7 @@ export interface definitions {
     key: string
     value: string
     tokenCount: number
+    onSaleCount: number
     sampleImages?: definitions['sampleImages']
     floorAskPrices?: definitions['floorAskPrices']
     topBid?: definitions['topBid']
@@ -1585,17 +1585,16 @@ export interface definitions {
   getAttributesExploreV2Response: {
     attributes?: definitions['Model126']
   }
-  packet: {
-    request: string
-    deadline: number
+  message: {
+    id: string
     payload: string
-    v?: number
-    r?: string
-    s?: string
+    timestamp: number
+    signature: string
   }
   getCollectionFloorAskOracleV1Response: {
     price: number
-    packet?: definitions['packet']
+    message?: definitions['message']
+    data?: string
   }
   getNewApiKeyResponse: {
     key: string
@@ -1679,7 +1678,13 @@ export interface definitions {
     attribute?: definitions['attribute']
   }
   Model143: {
-    kind: 'opensea' | 'wyvern-v2.3' | 'looks-rare' | '721ex' | 'zeroex-v4'
+    kind:
+      | 'opensea'
+      | 'wyvern-v2.3'
+      | 'looks-rare'
+      | '721ex'
+      | 'zeroex-v4'
+      | 'seaport'
     data: definitions['metadata']
   }
   Model144: {
@@ -1690,7 +1695,13 @@ export interface definitions {
     attribute?: definitions['attribute']
   }
   Model145: {
-    kind: 'looks-rare' | '721ex' | 'wyvern-v2.3' | 'zeroex-v4' | 'x2y2'
+    kind:
+      | 'looks-rare'
+      | '721ex'
+      | 'wyvern-v2.3'
+      | 'zeroex-v4'
+      | 'x2y2'
+      | 'seaport'
     data: definitions['metadata']
   }
   Model146: definitions['Model145'][]
@@ -1999,7 +2010,7 @@ export interface operations {
       }
     }
   }
-  /** Note: this API is returns rich metadata, and has advanced filters, so is only designed for small amounts of recent sales. If you want access to sales in bulk, use the `Aggregator > Bulk Sales` API. */
+  /** Get recent sales for a contract or token. Note: this API is returns rich metadata, and has advanced filters, so is only designed for small amounts of recent sales. If you want access to sales in bulk, use the `Aggregator > Bulk Sales` API. */
   getSalesV3: {
     parameters: {
       query: {
@@ -2026,6 +2037,7 @@ export interface operations {
       }
     }
   }
+  /** Get aggregate stats for a particular set (collection, attribute or single token) */
   getStatsV1: {
     parameters: {
       query: {
@@ -2230,6 +2242,7 @@ export interface operations {
       }
     }
   }
+  /** Get updates any time an order status changes */
   getEventsOrdersV1: {
     parameters: {
       query: {
@@ -2321,11 +2334,13 @@ export interface operations {
     parameters: {
       query: {
         token?: string
-        taker: string
         quantity?: number
+        tokens?: string[]
+        taker: string
         onlyQuote?: boolean
         referrer?: string
         referrerFeeBps?: number
+        partial?: boolean
         maxFeePerGas?: string
         maxPriorityFeePerGas?: string
         skipBalanceCheck?: boolean
@@ -2357,7 +2372,7 @@ export interface operations {
     responses: {
       /** Successful */
       200: {
-        schema: definitions['getExecuteBuyV2Response']
+        schema: definitions['getExecuteBuyV1Response']
       }
     }
   }
@@ -2537,7 +2552,7 @@ export interface operations {
       }
     }
   }
-  /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
+  /** Get a list of asks (listings), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing */
   getOrdersAsksV2: {
     parameters: {
       query: {
@@ -2593,7 +2608,7 @@ export interface operations {
       }
     }
   }
-  /** This API is designed for efficiently ingesting large volumes of orders, for external processing */
+  /** Get a list of bids (offers), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing */
   getOrdersBidsV2: {
     parameters: {
       query: {
@@ -3321,6 +3336,7 @@ export interface operations {
       }
     }
   }
+  /** Get detailed aggregate about attributes in a collection, e.g. trait floors */
   getCollectionsCollectionAttributesExploreV2: {
     parameters: {
       path: {
@@ -3350,10 +3366,9 @@ export interface operations {
         collection: string
       }
       query: {
-        contractName: string
-        contractVersion: number
-        verifyingContract: string
         kind?: 'spot' | 'twap' | 'lower' | 'upper'
+        currency?: string
+        eip3668Calldata?: string
       }
     }
     responses: {
