@@ -1573,17 +1573,24 @@ export interface definitions {
     attributes?: definitions['Model124']
   }
   Model125: {
+    tokenId: string
+    value: number
+    timestamp: number
+  }
+  lastSells: definitions['Model125'][]
+  Model126: {
     key: string
     value: string
     tokenCount: number
     onSaleCount: number
     sampleImages?: definitions['sampleImages']
     floorAskPrices?: definitions['floorAskPrices']
+    lastSells?: definitions['lastSells']
     topBid?: definitions['topBid']
   }
-  Model126: definitions['Model125'][]
+  Model127: definitions['Model126'][]
   getAttributesExploreV2Response: {
-    attributes?: definitions['Model126']
+    attributes?: definitions['Model127']
   }
   message: {
     id: string
@@ -1599,69 +1606,69 @@ export interface definitions {
   getNewApiKeyResponse: {
     key: string
   }
-  Model127: {
+  Model128: {
     fromBlock: number
     toBlock: number
   }
   contracts: string[]
-  Model128: {
+  Model129: {
     kind: 'tokens-floor-sell' | 'tokens-top-buy'
     contracts?: definitions['contracts']
   }
-  Model129: {
+  Model130: {
     by: 'id' | 'maker' | 'token' | 'contract'
     id: string
     token: string
     maker: string
     contract: string
   }
-  Model130: {
+  Model131: {
     kind: 'tokens-floor-sell' | 'tokens-top-buy'
     token: string
   }
-  Model131: {
+  Model132: {
     /** @default rarible */
     method?: 'opensea' | 'rarible'
     collections?: definitions['sampleImages']
   }
-  Model132: {
+  Model133: {
     id: string
   }
-  Model133: {
+  Model134: {
     collection?: string
     token?: string
   }
-  Model134: {
+  Model135: {
     /** @description Update community for a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
     collection: string
     community: string
   }
-  Model135: {
+  Model136: {
     token?: string
   }
-  Model136: {
+  Model137: {
     fromBlock: number
     toBlock: number
   }
-  Model137: {
+  Model138: {
     /** @description If no days are passed, will automatically resync from beginning of time. */
     days?: number
   }
-  Model138: {
+  Model139: {
     eventDataKinds?: definitions['sampleImages']
     fromBlock: number
     toBlock: number
     /** @default true */
     backfill?: boolean
   }
-  Model139: string[]
-  Model140: {
-    collections: definitions['Model139']
+  Model140: string[]
+  Model141: {
+    collections: definitions['Model140']
   }
   postCreateCollectionsSetV1Response: {
     collectionsSetId?: string
   }
-  Model141: {
+  Model142: {
     kind: 'opensea' | 'wyvern-v2.3' | '721ex' | 'zeroex-v4'
     data: definitions['metadata']
   }
@@ -1670,14 +1677,14 @@ export interface definitions {
     key: string
     value: string
   }
-  Model142: {
-    order?: definitions['Model141']
+  Model143: {
+    order?: definitions['Model142']
     /** @default reservoir */
     orderbook?: 'reservoir' | 'opensea'
     source?: string
     attribute?: definitions['attribute']
   }
-  Model143: {
+  Model144: {
     kind:
       | 'opensea'
       | 'wyvern-v2.3'
@@ -1687,14 +1694,14 @@ export interface definitions {
       | 'seaport'
     data: definitions['metadata']
   }
-  Model144: {
-    order?: definitions['Model143']
+  Model145: {
+    order?: definitions['Model144']
     /** @default reservoir */
     orderbook?: 'reservoir' | 'opensea' | 'looks-rare'
     source?: string
     attribute?: definitions['attribute']
   }
-  Model145: {
+  Model146: {
     kind:
       | 'looks-rare'
       | '721ex'
@@ -1704,23 +1711,23 @@ export interface definitions {
       | 'seaport'
     data: definitions['metadata']
   }
-  Model146: definitions['Model145'][]
-  Model147: {
-    orders?: definitions['Model146']
+  Model147: definitions['Model146'][]
+  Model148: {
+    orders?: definitions['Model147']
   }
   tokenIds: string[]
-  Model148: {
+  Model149: {
     contract: string
     tokenIds: definitions['tokenIds']
   }
-  Model149: {
+  Model150: {
     /** @description Refresh the given collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:1:2222` */
     collection: string
   }
   postCollectionsRefreshV1Response: {
     message?: string
   }
-  Model150: {
+  Model151: {
     /** @description Refresh the given token, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string
   }
@@ -1915,7 +1922,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model147']
+        body?: definitions['Model148']
       }
     }
     responses: {
@@ -2308,7 +2315,7 @@ export interface operations {
         quantity?: number
         maker: string
         weiPrice: string
-        orderKind?: 'wyvern-v2.3' | '721ex' | 'zeroex-v4'
+        orderKind?: 'wyvern-v2.3' | '721ex' | 'zeroex-v4' | 'seaport'
         orderbook?: 'reservoir' | 'opensea'
         source?: string
         automatedRoyalties?: boolean
@@ -2427,7 +2434,12 @@ export interface operations {
         quantity?: number
         maker: string
         weiPrice: string
-        orderKind?: '721ex' | 'looks-rare' | 'wyvern-v2.3' | 'zeroex-v4'
+        orderKind?:
+          | '721ex'
+          | 'looks-rare'
+          | 'wyvern-v2.3'
+          | 'zeroex-v4'
+          | 'seaport'
         orderbook?: 'opensea' | 'looks-rare' | 'reservoir'
         source?: string
         automatedRoyalties?: boolean
@@ -3348,6 +3360,8 @@ export interface operations {
         attributeKey?: string
         /** Max floor prices to return */
         maxFloorAskPrices?: number
+        /** Max last sells to return */
+        maxLastSells?: number
         sortBy?: 'floorAskPrice' | 'topBidValue'
         offset?: number
         limit?: number
@@ -3463,7 +3477,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model127']
+        body?: definitions['Model128']
       }
     }
     responses: {
@@ -3479,7 +3493,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model128']
+        body?: definitions['Model129']
       }
     }
     responses: {
@@ -3495,7 +3509,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model129']
+        body?: definitions['Model130']
       }
     }
     responses: {
@@ -3511,7 +3525,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model130']
+        body?: definitions['Model131']
       }
     }
     responses: {
@@ -3527,7 +3541,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model131']
+        body?: definitions['Model132']
       }
     }
     responses: {
@@ -3543,7 +3557,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model132']
+        body?: definitions['Model133']
       }
     }
     responses: {
@@ -3559,7 +3573,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model133']
+        body?: definitions['Model134']
       }
     }
     responses: {
@@ -3575,7 +3589,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model134']
+        body?: definitions['Model135']
       }
     }
     responses: {
@@ -3591,7 +3605,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model135']
+        body?: definitions['Model136']
       }
     }
     responses: {
@@ -3607,7 +3621,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model136']
+        body?: definitions['Model137']
       }
     }
     responses: {
@@ -3623,7 +3637,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model137']
+        body?: definitions['Model138']
       }
     }
     responses: {
@@ -3639,7 +3653,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model138']
+        body?: definitions['Model139']
       }
     }
     responses: {
@@ -3652,7 +3666,7 @@ export interface operations {
   postCollectionssetsV1: {
     parameters: {
       body: {
-        body?: definitions['Model140']
+        body?: definitions['Model141']
       }
     }
     responses: {
@@ -3665,7 +3679,7 @@ export interface operations {
   postOrderV1: {
     parameters: {
       body: {
-        body?: definitions['Model142']
+        body?: definitions['Model143']
       }
     }
     responses: {
@@ -3678,7 +3692,7 @@ export interface operations {
   postOrderV2: {
     parameters: {
       body: {
-        body?: definitions['Model144']
+        body?: definitions['Model145']
       }
     }
     responses: {
@@ -3691,7 +3705,7 @@ export interface operations {
   postTokensetsV1: {
     parameters: {
       body: {
-        body?: definitions['Model148']
+        body?: definitions['Model149']
       }
     }
     responses: {
@@ -3704,7 +3718,7 @@ export interface operations {
   postCollectionsRefreshV1: {
     parameters: {
       body: {
-        body?: definitions['Model149']
+        body?: definitions['Model150']
       }
     }
     responses: {
@@ -3717,7 +3731,7 @@ export interface operations {
   postTokensRefreshV1: {
     parameters: {
       body: {
-        body?: definitions['Model150']
+        body?: definitions['Model151']
       }
     }
     responses: {

@@ -1,6 +1,6 @@
 {
   "name": "@reservoir0x/client-sdk",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "description": "Reservoir client SDK.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
