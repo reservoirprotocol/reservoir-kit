@@ -1,51 +1,62 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
+import { ReservoirSDK } from '../client'
+
+type ListTokenPathParameters =
+  paths['/execute/list/v2']['get']['parameters']['query']
+
+export type ListTokenOptions = Omit<
+  paths['/execute/list/v2']['get']['parameters']['query'],
+  'token' | 'maker' | 'weiPrice' | 'expirationTime'
+>
 
 type Data = {
-  query: paths['/execute/list/v2']['get']['parameters']['query']
-  signer: Signer | null | undefined
-  apiBase: string | undefined
-  setState: (steps: Execute['steps']) => any
-  handleError?: (err: any) => any
-  handleSuccess?: () => any
+  token: ListTokenPathParameters['token']
+  weiPrice: ListTokenPathParameters['weiPrice']
+  expirationTime: ListTokenPathParameters['expirationTime']
+  signer: Signer
+  options?: ListTokenOptions
+  onProgress: (steps: Execute['steps']) => any
 }
 
 /**
  * List a token for sale
- * @param data.query Query object to pass to `/execute/list/v2`
+ * @param data.token Token to list
+ * @param data.weiPrice Price in wei to list the token as
+ * @param data.expirationTime Unix time to expire the listing
  * @param data.signer Ethereum signer object provided by the browser
- * @param data.apiBase The Reservoir API base URL
- * @param data.setState Callback to update UI state has execution progresses
- * @param data.handleError Callback to handle any errors during the execution
- * @param data.handleSuccess Callback to handle a successful execution
+ * @param data.options Additional options to pass into the list request
+ * @param data.onProgress Callback to update UI state has execution progresses
  */
-export async function listToken(data: Data) {
-  const { query, signer, apiBase, setState, handleSuccess, handleError } = data
 
-  if (
-    !query.maker ||
-    !query.expirationTime ||
-    !query.weiPrice ||
-    !query.token ||
-    !signer ||
-    !apiBase
-  ) {
-    console.debug(data)
-    throw new ReferenceError('Some data is missing')
+export async function listToken(data: Data) {
+  const { token, weiPrice, expirationTime, signer, onProgress } = data
+  const client = ReservoirSDK.client()
+  const options = data.options || {}
+  const maker = await signer.getAddress()
+
+  if (!client.apiBase) {
+    throw new ReferenceError('ReservoirSDK missing configuration')
   }
 
   try {
-    // Construct an URL object for the `/execute/list/v2` endpoint
-    const url = new URL('/execute/list/v2', apiBase)
+    // Construct a URL object for the `/execute/list/v2` endpoint
+    const url = new URL('/execute/list/v2', client.apiBase)
+    const query: ListTokenPathParameters = {
+      token,
+      weiPrice,
+      expirationTime,
+      maker,
+      ...options,
+    }
 
     setParams(url, query)
 
-    await executeSteps(url, signer, setState)
-
-    if (handleSuccess) handleSuccess()
+    await executeSteps(url, signer, onProgress)
+    return true
   } catch (err: any) {
-    if (handleError) handleError(err)
     console.error(err)
+    throw err
   }
 }

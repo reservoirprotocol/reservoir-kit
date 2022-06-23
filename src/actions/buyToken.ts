@@ -9,10 +9,11 @@ export type Token = Pick<
   >[0],
   'tokenId' | 'contract'
 >
-export type BuyTokenOptions = Omit<
-  paths['/execute/buy/v2']['get']['parameters']['query'],
-  'taker'
->
+
+type BuyTokenPathParameters =
+  paths['/execute/buy/v2']['get']['parameters']['query']
+
+export type BuyTokenOptions = Omit<BuyTokenPathParameters, 'taker'>
 
 type Data = {
   tokens: Token[]
@@ -46,10 +47,10 @@ export async function buyToken(data: Data) {
   }
 
   try {
-    // Construct an URL object for the `/execute/buy` endpoint
+    // Construct a URL object for the `/execute/buy` endpoint
     const url = new URL('/execute/buy/v2', client.apiBase)
 
-    const query: paths['/execute/buy/v2']['get']['parameters']['query'] = {
+    const query: BuyTokenPathParameters = {
       taker: taker,
       ...options,
     }

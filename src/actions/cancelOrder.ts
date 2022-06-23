@@ -1,44 +1,47 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
+import { ReservoirSDK } from '../client'
+
+type CancelOrderPathParameters =
+  paths['/execute/cancel/v1']['get']['parameters']['query']
+
+export type CancelOrderOptions = Omit<CancelOrderPathParameters, 'maker' | 'id'>
 
 type Data = {
-  query: paths['/execute/cancel/v1']['get']['parameters']['query']
-  signer: Signer | null | undefined
-  apiBase: string | undefined
-  setState: (steps: Execute['steps']) => any
-  handleError?: (err: any) => any
-  handleSuccess?: () => any
+  id: CancelOrderPathParameters['id']
+  signer: Signer
+  options?: CancelOrderOptions
+  onProgress: (steps: Execute['steps']) => any
 }
 
 /**
  * Cancel an offer or listing
- * @param data.query Query object to pass to `/execute/cancel/v1`
+ * @param data.id Id of the order to cancel
  * @param data.signer Ethereum signer object provided by the browser
- * @param data.apiBase The Reservoir API base URL
- * @param data.setState Callback to update UI state has execution progresses
- * @param data.handleError Callback to handle any errors during the execution
- * @param data.handleSuccess Callback to handle a successful execution
+ * @param data.options Additional options to pass into the cancel request
+ * @param data.onProgress Callback to update UI state has execution progresses
  */
 export async function cancelOrder(data: Data) {
-  const { query, signer, apiBase, setState, handleSuccess, handleError } = data
+  const { id, signer, onProgress } = data
+  const client = ReservoirSDK.client()
+  const maker = await signer.getAddress()
+  const options = data.options || {}
 
-  if (!signer || !apiBase) {
-    console.debug(data)
-    throw new ReferenceError('Some data is missing')
+  if (!client.apiBase) {
+    throw new ReferenceError('ReservoirSDK missing configuration')
   }
 
   try {
-    // Construct an URL object for the `/execute/cancel/v1` endpoint
-    const url = new URL('/execute/cancel/v1', apiBase)
-
+    // Construct a URL object for the `/execute/cancel/v1` endpoint
+    const url = new URL('/execute/cancel/v1', client.apiBase)
+    const query: CancelOrderPathParameters = { id, maker, ...options }
     setParams(url, query)
 
-    await executeSteps(url, signer, setState)
-
-    if (handleSuccess) handleSuccess()
+    await executeSteps(url, signer, onProgress)
+    return true
   } catch (err: any) {
-    if (handleError) handleError(err)
     console.error(err)
+    throw err
   }
 }
