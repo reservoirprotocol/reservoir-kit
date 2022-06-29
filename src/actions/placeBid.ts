@@ -54,7 +54,7 @@ export async function placeBid(data: Data) {
     throw new ReferenceError('ReservoirSDK missing configuration')
   }
 
-  if (!token && collection && (!attributeKey || !attributeValue)) {
+  if (!token && !collection && (!attributeKey || !attributeValue)) {
     throw new ReferenceError('Some data is missing')
   }
 
