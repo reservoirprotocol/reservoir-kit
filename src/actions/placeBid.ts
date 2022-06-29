@@ -65,11 +65,12 @@ export async function placeBid(data: Data) {
       ...options,
       maker,
       weiPrice,
-      token,
-      collection,
-      attributeKey,
-      attributeValue,
     }
+
+    if (token) query.token = token
+    if (collection) query.collection = collection
+    if (attributeKey) query.attributeKey = attributeKey
+    if (attributeValue) query.attributeValue = attributeValue
 
     setParams(url, query)
 
