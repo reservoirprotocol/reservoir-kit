@@ -1,54 +1,72 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
+import { ReservoirSDK } from '../client'
+
+export type Token = Pick<
+  NonNullable<
+    paths['/tokens/v4']['get']['responses']['200']['schema']['tokens']
+  >[0],
+  'tokenId' | 'contract'
+>
+
+type BuyTokenPathParameters =
+  paths['/execute/buy/v2']['get']['parameters']['query']
+
+export type BuyTokenOptions = Omit<BuyTokenPathParameters, 'taker'>
 
 type Data = {
-  query: paths['/execute/buy/v2']['get']['parameters']['query']
+  tokens: Token[]
   expectedPrice?: number
-  signer: Signer | null | undefined
-  apiBase: string | undefined
-  setState: (steps: Execute['steps']) => any
-  handleError?: (err: any) => any
-  handleSuccess?: () => any
+  options?: BuyTokenOptions
+  signer: Signer
+  onProgress: (steps: Execute['steps']) => any
 }
 
 /**
  * Instantly buy a token
- * @param data.query Query object to pass to `/execute/buy/v2`
+ * @param data.tokens Tokens to be purchased
  * @param data.expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
+ * @param data.options Additional options to pass into the buy request
  * @param data.signer Ethereum signer object provided by the browser
- * @param data.apiBase The Reservoir API base URL
- * @param data.setState Callback to update UI state has execution progresses
- * @param data.handleError Callback to handle any errors during the execution
- * @param data.handleSuccess Callback to handle a successful execution
+ * @param data.onProgress Callback to update UI state has execution progresses
  */
 export async function buyToken(data: Data) {
-  const {
-    query,
-    expectedPrice,
-    signer,
-    apiBase,
-    setState,
-    handleSuccess,
-    handleError,
-  } = data
+  const { tokens, expectedPrice, signer, onProgress } = data
+  const taker = await signer.getAddress()
+  const client = ReservoirSDK.client()
+  const options = data.options || {}
 
-  if (!signer || !apiBase) {
+  if (!client.apiBase) {
+    throw new ReferenceError('ReservoirSDK missing configuration')
+  }
+
+  if (!tokens || !tokens.length) {
     console.debug(data)
-    throw new ReferenceError('Some data is missing')
+    throw new ReferenceError('ReservoirSDK missing data')
   }
 
   try {
-    // Construct an URL object for the `/execute/buy` endpoint
-    const url = new URL('/execute/buy/v2', apiBase)
+    // Construct a URL object for the `/execute/buy` endpoint
+    const url = new URL('/execute/buy/v2', client.apiBase)
+
+    const query: BuyTokenPathParameters = {
+      taker: taker,
+      ...options,
+    }
+
+    tokens?.forEach(
+      (token, index) =>
+        //@ts-ignore
+        (query[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
+    )
 
     setParams(url, query)
 
-    await executeSteps(url, signer, setState, undefined, expectedPrice)
-
-    if (handleSuccess) handleSuccess()
+    await executeSteps(url, signer, onProgress, undefined, expectedPrice)
+    return true
   } catch (err: any) {
-    if (handleError) handleError(err)
     console.error(err)
+    throw err
   }
 }

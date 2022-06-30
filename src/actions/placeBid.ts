@@ -1,44 +1,83 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
+import { ReservoirSDK } from '../client'
+
+type PlaceBidPathParameters =
+  paths['/execute/bid/v2']['get']['parameters']['query']
+type PlaceBidPathData = Pick<
+  PlaceBidPathParameters,
+  'token' | 'collection' | 'attributeKey' | 'attributeValue' | 'weiPrice'
+>
+type PlaceBidOptions = Omit<
+  PlaceBidPathParameters,
+  | 'token'
+  | 'collection'
+  | 'attributeKey'
+  | 'attributeValue'
+  | 'maker'
+  | 'weiPrice'
+>
 
 type Data = {
-  query: paths['/execute/bid/v2']['get']['parameters']['query']
-  signer: Signer | null | undefined
-  apiBase: string | undefined
-  setState: (steps: Execute['steps']) => any
-  handleError?: (err: any) => any
-  handleSuccess?: () => any
-}
+  signer: Signer
+  options?: PlaceBidOptions
+  onProgress: (steps: Execute['steps']) => any
+} & PlaceBidPathData
 
 /**
  * Place a bid on a token
- * @param data.query Query object to pass to `/execute/bid/v2`
+ * @param data.token Token to bid on
+ * @param data.collection Collection to bid on
+ * @param data.attributeKey Token to bid on
+ * @param data.attributeValue Token to bid on
+ * @param data.weiPrice Price in wei to bid on the token/collection/attribute
  * @param data.signer Ethereum signer object provided by the browser
- * @param data.apiBase The Reservoir API base URL
- * @param data.setState Callback to update UI state has execution progresses
- * @param data.handleError Callback to handle any errors during the execution
- * @param data.handleSuccess Callback to handle a successful execution
+ * @param data.options Additional options to pass into the bid request
+ * @param data.onProgress Callback to update UI state has execution progresses
  */
 export async function placeBid(data: Data) {
-  const { query, signer, apiBase, setState, handleSuccess, handleError } = data
+  const {
+    token,
+    collection,
+    attributeKey,
+    attributeValue,
+    signer,
+    weiPrice,
+    onProgress,
+  } = data
+  const client = ReservoirSDK.client()
+  const options = data.options || {}
+  const maker = await signer.getAddress()
 
-  if (!signer || !apiBase) {
-    console.debug(data)
+  if (!client.apiBase) {
+    throw new ReferenceError('ReservoirSDK missing configuration')
+  }
+
+  if (!token && !collection && (!attributeKey || !attributeValue)) {
     throw new ReferenceError('Some data is missing')
   }
 
   try {
-    // Construct an URL object for the `/execute/bid/v2` endpoint
-    const url = new URL('/execute/bid/v2', apiBase)
+    // Construct a URL object for the `/execute/bid/v2` endpoint
+    const url = new URL('/execute/bid/v2', client.apiBase)
+    const query: PlaceBidPathParameters = {
+      ...options,
+      maker,
+      weiPrice,
+    }
+
+    if (token) query.token = token
+    if (collection) query.collection = collection
+    if (attributeKey) query.attributeKey = attributeKey
+    if (attributeValue) query.attributeValue = attributeValue
 
     setParams(url, query)
 
-    await executeSteps(url, signer, setState)
-
-    if (handleSuccess) handleSuccess()
+    await executeSteps(url, signer, onProgress)
+    return true
   } catch (err: any) {
-    if (handleError) handleError(err)
     console.error(err)
+    throw err
   }
 }
