@@ -1,6 +1,6 @@
-# @reservoir0x/client-sdk
+# @reservoir0x/reservoir-kit
 
-Client SDK for interacting with the Reservoir Router API
+ReservoirKit is the official Reservoir Protocol UI Kit. You can choose to use the prebuilt UI or create your own UI while utilizing the logic layer.
 
 Check out the [client sdk sandbox](https://github.com/reservoirprotocol/sandbox) and the [docs](https://docs.reservoir.tools) to learn more.
 
@@ -9,11 +9,13 @@ Check out the [client sdk sandbox](https://github.com/reservoirprotocol/sandbox)
 ### Installing the SDK
 
 ```
-yarn add @reservoir0x/client-sdk
+yarn add @reservoir0x/reservoir-kit
 ```
+
 or
+
 ```
-npm install @reservoir0x/client-sdk --save
+npm install @reservoir0x/reservoir-kit --save
 ```
 
 ### Configuring the SDK
@@ -33,12 +35,12 @@ ReservoirSDK.client()
 ```
 
 Then you can access actions or utils accordingly:
+
 ```
 ReservoirSDK.client().actions.buyToken(...)
 ```
 
 Head over to our [docs](https://docs.reservoir.tools) to learn more.
-
 
 ## Updating the types
 
