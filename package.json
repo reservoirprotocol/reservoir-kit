@@ -2,7 +2,8 @@
   "name": "@reservoir0x/reservoir-kit",
   "version": "0.1.0",
   "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
-  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "main": "dist/main.js",
   "types": "dist/index.d.ts",
   "author": "Reservoir Protocol",
   "license": "MIT",
@@ -11,7 +12,8 @@
   ],
   "scripts": {
     "lint": "prettier --write .",
-    "build": "rimraf dist/ && tsc",
+    "dev": "parcel watch",
+    "build": "parcel build",
     "prepare": "yarn build",
     "push:tag": "git tag -a $npm_package_version -m '$npm_package_version'; git push --tags",
     "major:tag": "npm version major; npm run push:tag",
@@ -29,17 +31,21 @@
   "keywords": [
     "nft",
     "reservoir",
+    "reservoirkit",
     "protocol",
     "sdk"
   ],
   "devDependencies": {
+    "@parcel/packager-ts": "2.6.2",
+    "@parcel/transformer-typescript-types": "^2.6.2",
     "@types/node": "^17.0.10",
-    "axios": "^0.27.2",
+    "parcel": "^2.6.2",
     "prettier": "^2.5.1",
     "rimraf": "^3.0.2",
     "typescript": "^4.5.5"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "ethers": "^5.6.1"
   },
   "publishConfig": {
