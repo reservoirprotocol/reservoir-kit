@@ -1,10 +1,10 @@
 {
-  "name": "@reservoir0x/client-sdk",
+  "name": "@reservoir0x/reservoir-kit",
   "version": "0.1.0",
-  "description": "Reservoir client SDK.",
+  "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "Diego Ramos",
+  "author": "Reservoir Protocol",
   "license": "MIT",
   "files": [
     "dist/**/*"
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/reservoirprotocol/client-sdk"
+    "url": "https://github.com/reservoirprotocol/reservoir-kit"
   },
   "prettier": {
     "semi": false,
