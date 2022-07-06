@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 
-const index: NextPage = () => {
+const Index: NextPage = () => {
   return <div>index</div>
 }
 
-export default index
+export default Index
