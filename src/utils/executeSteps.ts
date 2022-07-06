@@ -137,7 +137,7 @@ export async function executeSteps(
         setState([...json?.steps])
 
         try {
-          async function getData() {
+          const getData = async function () {
             let response = await axios.post(
               postOrderUrl.href,
               JSON.stringify(data.body),
