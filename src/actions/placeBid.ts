@@ -62,6 +62,8 @@ export async function placeBid(data: Data) {
     // Construct a URL object for the `/execute/bid/v2` endpoint
     const url = new URL('/execute/bid/v2', client.apiBase)
     const query: PlaceBidPathParameters = {
+      fee: client.fee,
+      feeRecipient: client.feeRecipient,
       ...options,
       maker,
       weiPrice,

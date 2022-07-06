@@ -1,1 +1,1 @@
-export { TestComponent } from '~/src/components/TestComponent'
+export { ReservoirKitProvider } from '~/src/components/ReservoirKitProvider'
