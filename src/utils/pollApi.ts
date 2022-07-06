@@ -1,4 +1,3 @@
-import * as URL from 'url'
 import axios from 'axios'
 
 /**
