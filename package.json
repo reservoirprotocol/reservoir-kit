@@ -38,10 +38,14 @@
     "sdk"
   ],
   "peerDependencies": {
-    "axios": "^0.27.2",
     "ethers": "^5.6.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "@radix-ui/colors": "^0.1.8",
+    "@stitches/react": "^1.2.8",
+    "axios": "^0.27.2"
   },
   "devDependencies": {
     "@parcel/packager-ts": "2.6.2",
@@ -61,9 +65,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "@radix-ui/colors": "^0.1.8",
-    "@stitches/react": "^1.2.8"
   }
 }

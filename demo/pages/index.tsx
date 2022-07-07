@@ -1,8 +1,14 @@
 import { NextPage } from 'next'
-import { Box } from '@reservoir0x/client-sdk'
+import { ReservoirKitProvider } from '@reservoir0x/reservoir-kit'
 
 const Index: NextPage = () => {
-  return <Box>THIS IS A BOX COMPONENT</Box>
+  return (
+    <ReservoirKitProvider
+      options={{ apiBase: 'https://api-rinkeby.reservoir.tools' }}
+    >
+      ReservoirKit
+    </ReservoirKitProvider>
+  )
 }
 
 export default Index

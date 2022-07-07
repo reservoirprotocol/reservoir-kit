@@ -4,7 +4,8 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "postinstall": "cd ../ npm link; cd demo; npm link @reservoir0x/reservoir-kit"
   },
   "prettier": {
     "semi": false,
@@ -12,19 +13,19 @@
   },
   "dependencies": {
     "next": "latest",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
+    "ethers": "^5.6.9",
     "@radix-ui/colors": "^0.1.8",
     "@rainbow-me/rainbowkit": "^0.4.1",
-    "@reservoir0x/client-sdk": "^0.1.0",
+    "@reservoir0x/reservoir-kit": "file:..",
+    "react": "file:../node_modules/react",
+    "react-dom": "file:../node_modules/react-dom",
     "@stitches/react": "^1.2.8",
+    "wagmi": "^0.5.8"
+  },
+  "devDependencies": {
     "@types/node": "^12.12.21",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
-    "ethers": "^5.6.9",
-    "typescript": "^4.7.4",
-    "wagmi": "^0.5.8"
+    "typescript": "^4.7.4"
   }
 }
