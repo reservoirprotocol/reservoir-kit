@@ -1,5 +1,5 @@
 import actions from './actions'
-import * as utils from './utils'
+import * as utils from '../utils'
 
 type NonUndefined<T> = T extends undefined ? never : T
 
