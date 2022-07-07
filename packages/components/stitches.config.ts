@@ -1,8 +1,4 @@
 import {
-  crimson,
-  indigo,
-  slate,
-  indigoA,
   crimsonDark,
   indigoDark,
   slateDark,
@@ -12,16 +8,15 @@ import {
 } from '@radix-ui/colors'
 import { createStitches } from '@stitches/react'
 import type * as Stitches from '@stitches/react'
-// import { reset } from 'utils/css/reset'
 
 export const { createTheme, keyframes, styled, globalCss, getCssText } =
   createStitches({
     theme: {
       colors: {
-        ...crimson,
-        ...indigo,
-        ...indigoA,
-        ...slate,
+        ...crimsonDark,
+        ...indigoDark,
+        ...indigoDarkA,
+        ...slateDark,
         ...whiteA,
         ...blackA,
 
@@ -189,74 +184,3 @@ export const { createTheme, keyframes, styled, globalCss, getCssText } =
       light: '(prefers-color-scheme: light)',
     },
   })
-
-// export const globalReset = globalCss(reset)
-
-export const darkTheme = createTheme({
-  colors: {
-    ...crimsonDark,
-    ...indigoDark,
-    ...indigoDarkA,
-    ...slateDark,
-    ...whiteA,
-    ...blackA,
-
-    //Aliases
-
-    //Primary
-    primary1: '$indigo1',
-    primary2: '$indigo2',
-    primary3: '$indigo3',
-    primary4: '$indigo4',
-    primary5: '$indigo5',
-    primary6: '$indigo6',
-    primary7: '$indigo7',
-    primary8: '$indigo8',
-    primary9: '$indigo9',
-    primary10: '$indigo10',
-    primary11: '$indigo11',
-    primary12: '$indigo12',
-
-    //Secondary
-    secondary1: '$indigoA1',
-    secondary2: '$indigoA2',
-    secondary3: '$indigoA3',
-    secondary4: '$indigoA4',
-    secondary5: '$indigoA5',
-    secondary6: '$indigoA6',
-    secondary7: '$indigoA7',
-    secondary8: '$indigoA8',
-    secondary9: '$indigoA9',
-    secondary10: '$indigoA10',
-    secondary11: '$indigoA11',
-    secondary12: '$indigoA12',
-
-    //Gray
-    gray1: '$slate1',
-    gray2: '$slate2',
-    gray3: '$slate3',
-    gray4: '$slate4',
-    gray5: '$slate5',
-    gray6: '$slate6',
-    gray7: '$slate7',
-    gray8: '$slate8',
-    gray9: '$slate9',
-    gray10: '$slate10',
-    gray11: '$slate11',
-    gray12: '$slate12',
-
-    //Red
-    red1: '$crimson1',
-    red2: '$crimson2',
-    red3: '$crimson3',
-    red4: '$crimson4',
-    red5: '$crimson5',
-    red6: '$crimson6',
-    red7: '$crimson7',
-    red8: '$crimson8',
-    red9: '$crimson9',
-    red10: '$crimson10',
-    red11: '$crimson11',
-    red12: '$crimson12',
-  },
-})
