@@ -1,41 +1,9 @@
 {
-    "include": ["src/**/*"],
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-      "allowJs": false,
-      "allowSyntheticDefaultImports": true,
-      "alwaysStrict": true,
-      "baseUrl": ".",
       "paths": {
-        "~/*": ["./*"]
-      },
-      "declaration": true,
-      "emitDecoratorMetadata": false,
-      "esModuleInterop": true,
-      "experimentalDecorators": false,
-      "importHelpers": true,
-      "jsx": "react",
-      "lib": ["dom", "esnext"],
-      "moduleResolution": "node",
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-      "noEmit": true,
-      "noFallthroughCasesInSwitch": false,
-      "noImplicitAny": true,
-      "noImplicitReturns": false,
-      "noImplicitThis": true,
-      "noUnusedLocals": true,
-      "noUnusedParameters": false,
-      "pretty": true,
-      "resolveJsonModule": true,
-      "sourceMap": true,
-      "isolatedModules": true,
-      "strict": true,
-      "strictFunctionTypes": true,
-      "strictNullChecks": true,
-      "strictPropertyInitialization": true,
-      "stripInternal": true,
-      "target": "es2018",
-      "types": ["node"],
-      "typeRoots": ["./node_modules/@types", "./types"]
+        "@reservoir0x/client-sdk": ["./packages/sdk/src"],
+        "@reservoir0x/reservoir-kit": ["./packages/components/src"]
+      }
     }
-  }
+}

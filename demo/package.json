@@ -1,25 +1,26 @@
 {
   "private": true,
+  "name": "reservoir-kit-demo",
+  "version": "0.0.0",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc",
-    "postinstall": "cd ../ npm link; cd demo; npm link @reservoir0x/reservoir-kit"
+    "type-check": "tsc"
   },
   "prettier": {
     "semi": false,
     "singleQuote": true
   },
   "dependencies": {
-    "next": "latest",
-    "ethers": "^5.6.9",
     "@radix-ui/colors": "^0.1.8",
     "@rainbow-me/rainbowkit": "^0.4.1",
-    "@reservoir0x/reservoir-kit": "file:..",
-    "react": "file:../node_modules/react",
-    "react-dom": "file:../node_modules/react-dom",
+    "@reservoir0x/reservoir-kit": "workspace:*",
     "@stitches/react": "^1.2.8",
+    "ethers": "^5.6.9",
+    "next": "latest",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.1",
     "wagmi": "^0.5.8"
   },
   "devDependencies": {
