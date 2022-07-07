@@ -1,42 +1,47 @@
 {
-    "name": "@reservoir0x/reservoir-kit",
-    "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
-    "version": "0.0.1",
-    "author": "Reservoir Protocol",
-    "license": "MIT",
-    "source": "src/index.ts",
-    "main": "dist/index.js",
-    "module": "dist/index.module.js",
-    "types": "dist/index.d.ts",
-    "files": [
-        "dist",
-        "src"
-    ],
-    "keywords": [
-        "nft",
-        "reservoir",
-        "reservoirkit",
-        "protocol",
-        "sdk"
-    ],
-    "sideEffects": false,
-    "scripts": {
-        "clean": "rm -rf dist",
-        "version": "yarn version"
-    },
-    "dependencies": {
-        "@radix-ui/colors": "^0.1.8",
-        "@rainbow-me/rainbowkit": "^0.4.1",
-        "@reservoir0x/client-sdk": "workspace:*",
-        "@stitches/react": "^1.2.8"
-    },
-    "peerDependencies": {
-        "ethers": "^5.6.1",
-        "react": "^16.8 || ^17.0 || ^18.0",
-        "react-dom": "^16.8 || ^17.0 || ^18.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/@reservoir0x/reservoir-kit.git"
-    }
+  "name": "@reservoir0x/reservoir-kit",
+  "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
+  "version": "0.0.1",
+  "author": "Reservoir Protocol",
+  "license": "MIT",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "nft",
+    "reservoir",
+    "reservoirkit",
+    "protocol",
+    "sdk"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rm -rf dist",
+    "version": "yarn version"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@radix-ui/colors": "^0.1.8",
+    "@radix-ui/react-dialog": "^0.1.7",
+    "@rainbow-me/rainbowkit": "^0.4.1",
+    "@reservoir0x/client-sdk": "workspace:*",
+    "@stitches/react": "^1.2.8",
+    "framer-motion": "^6.4.2"
+  },
+  "peerDependencies": {
+    "ethers": "^5.6.1",
+    "react": "^18.0",
+    "react-dom": "^18.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/@reservoir0x/reservoir-kit.git"
+  }
 }

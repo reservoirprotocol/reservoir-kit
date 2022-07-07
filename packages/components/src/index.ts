@@ -1,2 +1,2 @@
 export { ReservoirKitProvider } from './ReservoirKitProvider'
-export { Box } from './Box'
+export { Modal } from './Modal'
