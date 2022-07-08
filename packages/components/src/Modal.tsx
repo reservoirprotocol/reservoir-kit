@@ -8,7 +8,7 @@ import Button from './primitives/Button'
 import { styled } from '../stitches.config'
 import { Dialog } from './primitives/Dialog'
 import { Text } from './primitives/Text'
-import DarkLogo from './img/darkLogo'
+import DarkLogo from './img/DarkLogo'
 
 const Title = styled(DialogPrimitive.Title, {})
 

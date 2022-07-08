@@ -43,6 +43,11 @@ export const Text = styled('span', {
         fontWeight: 400,
         fontSize: 12,
       },
+      tiny: {
+        fontWeight: 500,
+        fontSize: 10,
+        color: '$slate10',
+      },
     },
     italic: {
       true: {
