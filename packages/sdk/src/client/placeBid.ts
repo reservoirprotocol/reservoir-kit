@@ -64,6 +64,7 @@ export async function placeBid(data: Data) {
     const query: PlaceBidPathParameters = {
       fee: client.fee,
       feeRecipient: client.feeRecipient,
+      automatedRoyalties: client.automatedRoyalties,
       ...options,
       maker,
       weiPrice,
