@@ -63,7 +63,7 @@ export const TokenPrimitive: FC<Props> = ({
             />
           )}
           <FormatEth amount={price} />
-          <Text style="tiny">{formatDollar(usdPrice)}</Text>
+          {usdPrice && <Text style="tiny">{formatDollar(usdPrice)}</Text>}
         </Grid>
       </Flex>
     </Box>
