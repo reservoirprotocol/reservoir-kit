@@ -2,13 +2,13 @@ import React, { FC, ReactNode } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose } from '@fortawesome/free-solid-svg-icons'
-import { Flex } from './primitives/Flex'
-import { Anchor } from './primitives/Anchor'
-import Button from './primitives/Button'
-import { styled } from '../stitches.config'
-import { Dialog } from './primitives/Dialog'
-import { Text } from './primitives/Text'
-import ReservoirLogoWhiteText from './img/ReservoirLogoWhiteText'
+import { Flex } from '../primitives/Flex'
+import { Anchor } from '../primitives/Anchor'
+import Button from '../primitives/Button'
+import { styled } from '../../stitches.config'
+import { Dialog } from '../primitives/Dialog'
+import { Text } from '../primitives/Text'
+import ReservoirLogoWhiteText from '../img/ReservoirLogoWhiteText'
 
 const Title = styled(DialogPrimitive.Title, {})
 
@@ -16,11 +16,17 @@ type Props = {
   title: string
   children: ReactNode
   trigger: ReactNode
+  onOpenChange?: (open: boolean) => void
 }
 
-export const Modal: FC<Props> = ({ title, children, trigger }) => {
+export const Modal: FC<Props> = ({
+  title,
+  children,
+  trigger,
+  onOpenChange,
+}) => {
   return (
-    <Dialog trigger={trigger}>
+    <Dialog trigger={trigger} onOpenChange={onOpenChange}>
       <Flex
         css={{
           p: 16,

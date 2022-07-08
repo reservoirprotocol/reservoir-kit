@@ -78,6 +78,7 @@ const AnimatedContent = forwardRef<
 type Props = {
   trigger: ReactNode
   portalProps?: DialogPrimitive.PortalProps
+  onOpenChange?: (open: boolean) => void
 }
 
 const Dialog = forwardRef<
@@ -87,7 +88,15 @@ const Dialog = forwardRef<
   const [open, setOpen] = useState(false)
 
   return (
-    <DialogPrimitive.Root onOpenChange={setOpen} open={open}>
+    <DialogPrimitive.Root
+      onOpenChange={(open) => {
+        setOpen(open)
+        if (props.onOpenChange) {
+          props.onOpenChange(open)
+        }
+      }}
+      open={open}
+    >
       <DialogPrimitive.DialogTrigger asChild>
         {trigger}
       </DialogPrimitive.DialogTrigger>
