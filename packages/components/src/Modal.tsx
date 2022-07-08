@@ -8,6 +8,7 @@ import Button from './primitives/Button'
 import { styled } from '../stitches.config'
 import { Dialog } from './primitives/Dialog'
 import { Text } from './primitives/Text'
+import DarkLogo from './img/darkLogo'
 
 const Title = styled(DialogPrimitive.Title, {})
 
@@ -33,7 +34,7 @@ export const Modal: FC<Props> = ({ title, children, trigger }) => {
           <Text style="h6">{title}</Text>
         </Title>
         <DialogPrimitive.Close asChild>
-          <Button color="gray3">
+          <Button color="ghost" size="none">
             <FontAwesomeIcon icon={faClose} width={16} height={16} />
           </Button>
         </DialogPrimitive.Close>
@@ -49,8 +50,11 @@ export const Modal: FC<Props> = ({ title, children, trigger }) => {
         }}
       >
         <Anchor href="https://reservoirprotocol.github.io/" target="_blank">
-          <Text style="body2" css={{ display: 'inline-flex', gap: 4 }}>
-            Powered by <img src="/reservoir_watermark_dark.svg" />
+          <Text
+            style="body2"
+            css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+          >
+            Powered by <DarkLogo />
           </Text>
         </Anchor>
       </Flex>
