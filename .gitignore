@@ -2,4 +2,13 @@
 node_modules
 dist
 .parcel-cache
-.yarn/cache
+
+#yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
