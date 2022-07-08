@@ -3,6 +3,11 @@ export interface ReservoirKitTheme {
   font?: string
 }
 
-export const DefaultTheme: ReservoirKitTheme = () => {
-  return {}
+export const defaultTheme = (
+  overrides?: ReservoirKitTheme
+): ReservoirKitTheme => {
+  return {
+    borderRadius: overrides?.borderRadius || 4,
+    font: overrides?.font || 'Inter',
+  }
 }

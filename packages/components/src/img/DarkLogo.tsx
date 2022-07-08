@@ -89,8 +89,8 @@ const DarkLogo = () => {
           y2="5.58346"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C132CE" />
-          <stop offset="1" stop-color="#425AFA" />
+          <stop stopColor="#C132CE" />
+          <stop offset="1" stopColor="#425AFA" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_1880_58511"
@@ -100,11 +100,11 @@ const DarkLogo = () => {
           y2="13.1499"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#425AFA" />
-          <stop offset="0.16" stop-color="#5A52F2" />
-          <stop offset="0.55" stop-color="#9241DE" />
-          <stop offset="0.84" stop-color="#B436D3" />
-          <stop offset="1" stop-color="#C132CE" />
+          <stop stopColor="#425AFA" />
+          <stop offset="0.16" stopColor="#5A52F2" />
+          <stop offset="0.55" stopColor="#9241DE" />
+          <stop offset="0.84" stopColor="#B436D3" />
+          <stop offset="1" stopColor="#C132CE" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_1880_58511"
@@ -114,13 +114,13 @@ const DarkLogo = () => {
           y2="7.85695"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#C132CE" />
-          <stop offset="0.1" stop-color="#AB39D6" />
-          <stop offset="0.28" stop-color="#8545E3" />
-          <stop offset="0.47" stop-color="#684EED" />
-          <stop offset="0.65" stop-color="#5355F4" />
-          <stop offset="0.83" stop-color="#4659F9" />
-          <stop offset="1" stop-color="#425AFA" />
+          <stop stopColor="#C132CE" />
+          <stop offset="0.1" stopColor="#AB39D6" />
+          <stop offset="0.28" stopColor="#8545E3" />
+          <stop offset="0.47" stopColor="#684EED" />
+          <stop offset="0.65" stopColor="#5355F4" />
+          <stop offset="0.83" stopColor="#4659F9" />
+          <stop offset="1" stopColor="#425AFA" />
         </linearGradient>
       </defs>
     </svg>
