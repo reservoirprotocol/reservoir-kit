@@ -5,6 +5,7 @@ import { ThemeProvider } from 'next-themes'
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { WagmiConfig, createClient, configureChains, chain } from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'
+import { ReservoirKitProvider } from '@reservoir0x/reservoir-kit'
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.rinkeby],
@@ -26,21 +27,25 @@ function MyApp({ Component, pageProps }: AppProps) {
   globalReset()
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="dark"
-      value={{
-        dark: darkTheme.className,
-        light: 'light',
-      }}
+    <ReservoirKitProvider
+      options={{ apiBase: 'https://api-rinkeby.reservoir.tools' }}
     >
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
-          {/* @ts-ignore */}
-          <Component {...pageProps} />
-        </RainbowKitProvider>
-      </WagmiConfig>
-    </ThemeProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="dark"
+        value={{
+          dark: darkTheme.className,
+          light: 'light',
+        }}
+      >
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider chains={chains}>
+            {/* @ts-ignore */}
+            <Component {...pageProps} />
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </ThemeProvider>
+    </ReservoirKitProvider>
   )
 }
 
