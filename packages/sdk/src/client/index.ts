@@ -16,6 +16,7 @@ type FeeRecipient = NonUndefined<
 
 export type ReservoirClientOptions = {
   apiBase: string
+  automatedRoyalties?: boolean
 } & (
   | {
       fee: Fee
@@ -35,11 +36,13 @@ export class ReservoirSDK {
   apiBase: string
   fee?: Fee
   feeRecipient?: FeeRecipient
+  automatedRoyalties?: boolean
   actions = actions
   utils = utils
 
   private constructor(options: ReservoirClientOptions) {
     this.apiBase = options.apiBase
+    this.automatedRoyalties = options.automatedRoyalties
     this.fee = options.fee
     this.feeRecipient = options.feeRecipient
   }
@@ -60,6 +63,7 @@ export class ReservoirSDK {
       client.apiBase = options.apiBase ? options.apiBase : client.apiBase
       client.fee = options.fee
       client.feeRecipient = options.feeRecipient
+      client.automatedRoyalties = options.automatedRoyalties
     }
 
     return client

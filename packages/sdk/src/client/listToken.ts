@@ -46,6 +46,7 @@ export async function listToken(data: Data) {
     const query: ListTokenPathParameters = {
       fee: client.fee,
       feeRecipient: client.feeRecipient,
+      automatedRoyalties: client.automatedRoyalties,
       ...options,
       token,
       weiPrice,
