@@ -8,7 +8,7 @@ import Button from './primitives/Button'
 import { styled } from '../stitches.config'
 import { Dialog } from './primitives/Dialog'
 import { Text } from './primitives/Text'
-import DarkLogo from './img/darkLogo'
+import ReservoirLogoWhiteText from './img/ReservoirLogoWhiteText'
 
 const Title = styled(DialogPrimitive.Title, {})
 
@@ -54,7 +54,7 @@ export const Modal: FC<Props> = ({ title, children, trigger }) => {
             style="body2"
             css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
           >
-            Powered by <DarkLogo />
+            Powered by <ReservoirLogoWhiteText />
           </Text>
         </Anchor>
       </Flex>

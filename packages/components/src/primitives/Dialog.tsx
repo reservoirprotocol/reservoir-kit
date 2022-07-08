@@ -1,4 +1,4 @@
-import { styled } from '@stitches/react'
+import { styled } from '../../stitches.config'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import React, {
   ComponentPropsWithoutRef,
