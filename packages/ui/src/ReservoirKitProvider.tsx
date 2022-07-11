@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react'
+import React, { createContext, FC, ReactNode, useEffect, useState } from 'react'
 import {
   ReservoirClientOptions,
   ReservoirSDK,
@@ -13,7 +13,7 @@ export interface ReservoirKitProviderProps {
 
 export const ThemeContext = createContext<ReservoirKitTheme>(defaultTheme())
 
-export const ReservoirKitProvider = function ({
+export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   children,
   options,
   theme,

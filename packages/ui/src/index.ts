@@ -1,3 +1,3 @@
 export { ReservoirKitProvider } from './ReservoirKitProvider'
-export { BuyModal } from './Modal/BuyModal'
-export { TokenPrimitive } from './Modal/TokenPrimitive'
+export { BuyModal } from './modal/BuyModal'
+export { TokenPrimitive } from './modal/TokenPrimitive'
