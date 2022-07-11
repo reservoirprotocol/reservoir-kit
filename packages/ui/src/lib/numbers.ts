@@ -1,11 +1,6 @@
 import { utils } from 'ethers'
 import { BigNumberish } from '@ethersproject/bignumber'
 
-const { format: formatDollar } = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-})
-
 function formatNumber(
   amount: number | null | undefined,
   maximumFractionDigits: number = 2
@@ -50,4 +45,4 @@ function formatBN(
   return value
 }
 
-export { formatDollar, formatBN, formatNumber }
+export { formatBN, formatNumber }

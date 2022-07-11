@@ -5,15 +5,14 @@ import { Flex } from '../primitives/Flex'
 import FormatEth from '../primitives/FormatEth'
 import { Text } from '../primitives/Text'
 import { Grid } from '../primitives/Grid'
-import { formatDollar } from '../lib/numbers'
 
 type Props = {
-  img: string
+  img?: string
   name: string
   collection: string
   source?: string
   price?: number
-  usdPrice?: number
+  usdPrice?: number | string
   royalty?: number
 }
 
@@ -38,7 +37,10 @@ export const TokenPrimitive: FC<Props> = ({
         backgroundColor: '$slate3',
       }}
     >
-      <Text style="subtitle2" css={{ mb: 10, color: '$slate11' }}>
+      <Text
+        style="subtitle2"
+        css={{ mb: 5, color: '$slate11', display: 'block' }}
+      >
         Item
       </Text>
       <Flex css={{ justifyContent: 'space-between' }}>
@@ -58,12 +60,12 @@ export const TokenPrimitive: FC<Props> = ({
           {source && (
             <Img
               src={source}
-              alt="source"
+              alt="Source Icon"
               css={{ w: 17, h: 17, borderRadius: 99999, overflow: 'hidden' }}
             />
           )}
           <FormatEth amount={price} />
-          {usdPrice && <Text style="tiny">{formatDollar(usdPrice)}</Text>}
+          {usdPrice && <Text style="tiny">{usdPrice}</Text>}
         </Grid>
       </Flex>
     </Box>

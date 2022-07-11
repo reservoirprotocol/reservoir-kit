@@ -30,7 +30,6 @@ export const Modal: FC<Props> = ({
       <Flex
         css={{
           p: 16,
-          mb: 16,
           backgroundColor: '$slate4',
           alignItems: 'center',
           justifyContent: 'space-between',

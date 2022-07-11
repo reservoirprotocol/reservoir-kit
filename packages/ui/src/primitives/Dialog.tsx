@@ -84,34 +84,39 @@ type Props = {
 const Dialog = forwardRef<
   ElementRef<typeof DialogPrimitive.Content>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & Props
->(({ children, trigger, portalProps, ...props }, forwardedRef) => {
-  const [open, setOpen] = useState(false)
+>(
+  (
+    { children, trigger, portalProps, onOpenChange, ...props },
+    forwardedRef
+  ) => {
+    const [open, setOpen] = useState(false)
 
-  return (
-    <DialogPrimitive.Root
-      onOpenChange={(open) => {
-        setOpen(open)
-        if (props.onOpenChange) {
-          props.onOpenChange(open)
-        }
-      }}
-      open={open}
-    >
-      <DialogPrimitive.DialogTrigger asChild>
-        {trigger}
-      </DialogPrimitive.DialogTrigger>
-      <AnimatePresence>
-        {open && (
-          <DialogPrimitive.DialogPortal forceMount {...portalProps}>
-            <AnimatedOverlay />
-            <AnimatedContent ref={forwardedRef} {...props} forceMount>
-              {children}
-            </AnimatedContent>
-          </DialogPrimitive.DialogPortal>
-        )}
-      </AnimatePresence>
-    </DialogPrimitive.Root>
-  )
-})
+    return (
+      <DialogPrimitive.Root
+        onOpenChange={(open) => {
+          setOpen(open)
+          if (onOpenChange) {
+            onOpenChange(open)
+          }
+        }}
+        open={open}
+      >
+        <DialogPrimitive.DialogTrigger asChild>
+          {trigger}
+        </DialogPrimitive.DialogTrigger>
+        <AnimatePresence>
+          {open && (
+            <DialogPrimitive.DialogPortal forceMount {...portalProps}>
+              <AnimatedOverlay />
+              <AnimatedContent ref={forwardedRef} {...props} forceMount>
+                {children}
+              </AnimatedContent>
+            </DialogPrimitive.DialogPortal>
+          )}
+        </AnimatePresence>
+      </DialogPrimitive.Root>
+    )
+  }
+)
 
 export { Dialog, Content, AnimatedContent, Overlay, AnimatedOverlay }

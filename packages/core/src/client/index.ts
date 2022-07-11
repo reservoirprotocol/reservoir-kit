@@ -32,6 +32,7 @@ export type ReservoirSDKActions = typeof actions
 
 export class ReservoirSDK {
   private static _client: ReservoirSDK
+  static initialized = false
 
   apiBase: string
   fee?: Fee
@@ -50,6 +51,7 @@ export class ReservoirSDK {
   public static init(options: ReservoirClientOptions): ReservoirSDK {
     if (!ReservoirSDK._client) {
       ReservoirSDK._client = new ReservoirSDK(options)
+      ReservoirSDK.initialized = true
     }
 
     return ReservoirSDK._client
