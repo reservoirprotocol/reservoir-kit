@@ -5,7 +5,7 @@ import { ThemeProvider } from 'next-themes'
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { WagmiConfig, createClient, configureChains, chain } from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'
-import { ReservoirKitProvider } from '@reservoir0x/reservoir-kit'
+import { ReservoirKitProvider } from '@reservoir0x/reservoir-kit-ui'
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.rinkeby],
