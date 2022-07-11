@@ -1,4 +1,4 @@
-import { paths, ReservoirSDK, setParams } from '@reservoir0x/client-sdk'
+import { paths, ReservoirSDK, setParams } from '@reservoir0x/reservoir-kit-core'
 import { useEffect, useState } from 'react'
 // import fetcher from 'lib/fetcher'
 // import setParams from 'lib/params'

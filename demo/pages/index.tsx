@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { BuyModal } from '@reservoir0x/reservoir-kit'
+import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
 
 const Trigger = <button>Trigger</button>
 

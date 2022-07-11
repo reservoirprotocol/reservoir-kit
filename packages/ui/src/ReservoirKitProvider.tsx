@@ -1,5 +1,8 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
-import { ReservoirClientOptions, ReservoirSDK } from '@reservoir0x/client-sdk'
+import {
+  ReservoirClientOptions,
+  ReservoirSDK,
+} from '@reservoir0x/reservoir-kit-core'
 import { defaultTheme, ReservoirKitTheme } from './themes/ReservoirKitTheme'
 
 export interface ReservoirKitProviderProps {

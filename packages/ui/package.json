@@ -1,5 +1,5 @@
 {
-  "name": "@reservoir0x/reservoir-kit",
+  "name": "@reservoir0x/reservoir-kit-ui",
   "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
   "version": "0.0.1",
   "author": "Reservoir Protocol",
@@ -31,7 +31,7 @@
     "@radix-ui/colors": "^0.1.8",
     "@radix-ui/react-dialog": "^0.1.7",
     "@rainbow-me/rainbowkit": "^0.4.1",
-    "@reservoir0x/client-sdk": "workspace:*",
+    "@reservoir0x/reservoir-kit-core": "workspace:*",
     "@stitches/react": "^1.2.8",
     "framer-motion": "^6.4.2"
   },

@@ -2183,9 +2183,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reservoir0x/client-sdk@workspace:*, @reservoir0x/client-sdk@workspace:packages/sdk":
+"@reservoir0x/reservoir-kit-core@workspace:*, @reservoir0x/reservoir-kit-core@workspace:packages/core":
   version: 0.0.0-use.local
-  resolution: "@reservoir0x/client-sdk@workspace:packages/sdk"
+  resolution: "@reservoir0x/reservoir-kit-core@workspace:packages/core"
   dependencies:
     axios: ^0.27.2
   peerDependencies:
@@ -2193,9 +2193,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@reservoir0x/reservoir-kit@workspace:*, @reservoir0x/reservoir-kit@workspace:packages/components":
+"@reservoir0x/reservoir-kit-ui@workspace:*, @reservoir0x/reservoir-kit-ui@workspace:packages/ui":
   version: 0.0.0-use.local
-  resolution: "@reservoir0x/reservoir-kit@workspace:packages/components"
+  resolution: "@reservoir0x/reservoir-kit-ui@workspace:packages/ui"
   dependencies:
     "@fortawesome/fontawesome-svg-core": ^6.1.1
     "@fortawesome/free-solid-svg-icons": ^6.1.1
@@ -2203,7 +2203,7 @@ __metadata:
     "@radix-ui/colors": ^0.1.8
     "@radix-ui/react-dialog": ^0.1.7
     "@rainbow-me/rainbowkit": ^0.4.1
-    "@reservoir0x/client-sdk": "workspace:*"
+    "@reservoir0x/reservoir-kit-core": "workspace:*"
     "@stitches/react": ^1.2.8
     framer-motion: ^6.4.2
   peerDependencies:
@@ -6196,7 +6196,7 @@ __metadata:
   dependencies:
     "@radix-ui/colors": ^0.1.8
     "@rainbow-me/rainbowkit": ^0.4.1
-    "@reservoir0x/reservoir-kit": "workspace:*"
+    "@reservoir0x/reservoir-kit-ui": "workspace:*"
     "@stitches/react": ^1.2.8
     "@types/node": ^12.12.21
     "@types/react": ^18.0.0
