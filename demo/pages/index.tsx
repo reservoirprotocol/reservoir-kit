@@ -6,7 +6,6 @@ const Trigger = <button>Trigger</button>
 const Index: NextPage = () => {
   return (
     <Modal trigger={Trigger} title="title">
-      <Progress></Progress>
       <TokenPrimitive
         img="https://lh3.googleusercontent.com/PzJGhIVImcDq79IJZmgAYgGXTX78jIM1dTdXqLmyD-FWDFrg-CIjzWbiPiAZHEdssS_XiwOj9silSxnvuYtX9GKNxMP28coj7v_Q=w533"
         name="#9854"
@@ -16,6 +15,7 @@ const Index: NextPage = () => {
         royalty={10}
         source="https://lh3.googleusercontent.com/PzJGhIVImcDq79IJZmgAYgGXTX78jIM1dTdXqLmyD-FWDFrg-CIjzWbiPiAZHEdssS_XiwOj9silSxnvuYtX9GKNxMP28coj7v_Q=w533"
       />
+      <Progress></Progress>
     </Modal>
   )
 }
