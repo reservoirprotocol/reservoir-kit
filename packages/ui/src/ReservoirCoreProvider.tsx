@@ -1,4 +1,4 @@
-import React, { createContext, FC, ReactNode, useEffect, useState } from 'react'
+import React, { createContext, FC, ReactNode, useState } from 'react'
 import {
   ReservoirClientOptions,
   ReservoirSDK,
@@ -15,11 +15,9 @@ export const ReservoirCoreProvider: FC<ReservoirCoreProviderProps> = function ({
   children,
   options,
 }: ReservoirCoreProviderProps) {
-  const [sdkContext, setSdkContext] = useState<ReservoirSDK | null>(null)
-
-  useEffect(() => {
-    setSdkContext(ReservoirSDK.init(options))
-  }, [])
+  const [sdkContext, _] = useState<ReservoirSDK | null>(
+    ReservoirSDK.init(options)
+  )
 
   return (
     <ReservoirCoreContext.Provider value={sdkContext}>

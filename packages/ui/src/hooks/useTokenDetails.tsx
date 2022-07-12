@@ -1,4 +1,4 @@
-import { paths, ReservoirSDK, setParams } from '@reservoir0x/reservoir-kit-core'
+import { paths, setParams } from '@reservoir0x/reservoir-kit-core'
 import useCoreSdk from './useCoreSdk'
 import { useEffect, useState } from 'react'
 
@@ -12,8 +12,8 @@ export default function (
   const sdk = useCoreSdk()
 
   useEffect(() => {
-    if (query && sdk) {
-      const path = new URL(`${ReservoirSDK.client().apiBase}/tokens/details/v4`)
+    if (query) {
+      const path = new URL(`${sdk?.apiBase}/tokens/details/v4`)
       setParams(path, query)
       fetch(path)
         .then((response) => response.json())
@@ -22,7 +22,7 @@ export default function (
           console.error(err.message)
         })
     }
-  }, [query, sdk])
+  }, [query])
 
   return resp
 }

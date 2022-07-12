@@ -12,8 +12,8 @@ export default function (
   const sdk = useCoreSdk()
 
   useEffect(() => {
-    if (query && sdk) {
-      const path = new URL(`${sdk.apiBase}/collection/v2`)
+    if (query) {
+      const path = new URL(`${sdk?.apiBase}/collection/v2`)
       setParams(path, query)
       fetch(path)
         .then((response) => response.json())
@@ -24,7 +24,7 @@ export default function (
           console.error(err.message)
         })
     }
-  }, [query, sdk])
+  }, [query])
 
   return resp
 }
