@@ -2,11 +2,23 @@ import React, { FC, useEffect, useState } from 'react'
 import { Modal } from './Modal'
 import { TokenPrimitive } from './TokenPrimitive'
 import { useCollection, useTokenDetails, useEthConverter } from '../hooks'
-import { Flex } from '../primitives/Flex'
-import { Text } from '../primitives/Text'
-import FormatEth from '../primitives/FormatEth'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import {
+  Flex,
+  Box,
+  Text,
+  Input,
+  Anchor,
+  Button,
+  FormatEth,
+} from '../primitives'
+
+import Popover from '../primitives/Popover'
 import { constants, utils } from 'ethers'
-import Button from '../primitives/Button'
+
+import addFundsImage from 'data-url:../../assets/transferFunds.png'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -93,6 +105,7 @@ export const BuyModal: FC<Props> = ({
   referrerFee,
 }) => {
   const [open, setOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
   const [totalPrice, setTotalPrice] = useState(constants.Zero)
   const [currentStep, setCurrentStep] = useState<BuyStep>(BuyStep.Initial)
   const title = titleForStep(currentStep)
@@ -104,6 +117,7 @@ export const BuyModal: FC<Props> = ({
   const tokenDetails = useTokenDetails(tokenQuery)
   const collection = useCollection(collectionQuery)
   const feeUsd = referrerFee ? useEthConverter(referrerFee, 'USD') : 0
+  const address: string = '0x9E9EF0B615d4aF21C01121273498Ad5DEB5A3785'
 
   const totalUsd = useEthConverter(
     +utils.formatEther(totalPrice.toString()),
@@ -111,13 +125,13 @@ export const BuyModal: FC<Props> = ({
   )
 
   useEffect(() => {
-    if (open && currentStep === BuyStep.Initial && tokenId && collectionId) {
+    if (open && tokenId && collectionId) {
       setTokenQuery({
         tokens: [`${collectionId}:${tokenId}`],
       })
       setCollectionQuery({ id: collectionId })
     }
-  }, [currentStep, collectionId, tokenId, open])
+  }, [open, collectionId, tokenId])
 
   useEffect(() => {
     if (
@@ -135,10 +149,27 @@ export const BuyModal: FC<Props> = ({
     }
   }, [tokenDetails, referrerFee])
 
+  const copyToClipboard = (content: string) => {
+    navigator.clipboard.writeText(content)
+    if (!copied) {
+      setCopied(true)
+      setTimeout(() => {
+        setCopied(false)
+      }, 1000)
+    }
+  }
+
   return (
     <Modal
       trigger={trigger}
       title={title}
+      onBack={
+        currentStep == BuyStep.AddFunds
+          ? () => {
+              setCurrentStep(BuyStep.Initial)
+            }
+          : null
+      }
       onOpenChange={(open) => {
         if (!open) {
           setCurrentStep(BuyStep.Initial)
@@ -154,28 +185,130 @@ export const BuyModal: FC<Props> = ({
           />
           {referrerFee && (
             <>
-              <Flex align="center" justify="between" css={{ pt: 16, px: 16 }}>
+              <Flex
+                align="center"
+                justify="between"
+                css={{ pt: '$4', px: '$4' }}
+              >
                 <Text style="subtitle2">Referral Fee</Text>
                 <FormatEth amount={referrerFee} />
               </Flex>
               <Flex justify="end">
-                <Text style="subtitle2" css={{ color: '$slate11', pr: 16 }}>
+                <Text style="subtitle2" css={{ color: '$slate11', pr: '$4' }}>
                   {feeUsd}
                 </Text>
               </Flex>
             </>
           )}
-          <Flex align="center" justify="between" css={{ pt: 16, px: 16 }}>
+          <Flex align="center" justify="between" css={{ pt: '$4', px: '$4' }}>
             <Text style="h6">Total</Text>
             <FormatEth textStyle="h6" amount={totalPrice} />
           </Flex>
           <Flex justify="end">
-            <Text style="subtitle2" css={{ color: '$slate11', pr: 16 }}>
+            <Text style="subtitle2" css={{ color: '$slate11', mr: '$4' }}>
               {totalUsd}
             </Text>
           </Flex>
-          <Button css={{ m: 16 }} color="primary" corners="rounded">
+          <Button css={{ m: '$4' }} color="primary" corners="rounded">
             Checkout
+          </Button>
+        </Flex>
+      )}
+
+      {currentStep === BuyStep.AddFunds && tokenDetails?.tokens && (
+        <Flex css={{ backgroundColor: '$slate3' }} direction="column">
+          <Flex
+            css={{
+              p: '$4',
+              py: '$5',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+            }}
+          >
+            <img src={addFundsImage} style={{ height: 100, width: 100 }} />
+            <Text style="subtitle1" css={{ my: 24 }}>
+              Transfer funds from an{' '}
+              <Popover
+                content={
+                  <Text style={'body2'}>
+                    An exchange allows users to buy, sell and trade
+                    cryptocurrencies. Popular exchanges include{' '}
+                    <Anchor
+                      href="https://coinbase.com"
+                      target="_blank"
+                      color="primary"
+                    >
+                      Coinbase
+                    </Anchor>
+                    ,{' '}
+                    <Anchor
+                      href="https://crypto.com"
+                      target="_blank"
+                      color="primary"
+                    >
+                      Crypto.com
+                    </Anchor>{' '}
+                    and many others.
+                  </Text>
+                }
+              >
+                <Text as="span" css={{ color: '$indigo11' }}>
+                  exchange{' '}
+                </Text>
+              </Popover>{' '}
+              or another wallet to your wallet address below:
+            </Text>
+            <Box css={{ width: '100%', position: 'relative' }}>
+              <Flex
+                css={{
+                  pointerEvents: 'none',
+                  opacity: copied ? 1 : 0,
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: 8,
+                  transition: 'all 200ms ease-in-out',
+                  pl: '$4',
+                  alignItems: 'center',
+                  zIndex: 3,
+                  textAlign: 'left',
+
+                  background: '$slate6',
+                }}
+              >
+                <Text style={'body1'}>Copied Address!</Text>
+              </Flex>
+              <Input
+                readOnly
+                onClick={() => copyToClipboard(address)}
+                value={address}
+                css={{
+                  color: '$slate11',
+                  background: '$slate5',
+                  textAlign: 'left',
+                }}
+              />
+              <Box
+                css={{
+                  position: 'absolute',
+                  right: '$3',
+                  top: '50%',
+                  touchEvents: 'none',
+                  transform: 'translateY(-50%)',
+                  color: '$slate11',
+                }}
+              >
+                <FontAwesomeIcon icon={faCopy} width={16} height={16} />
+              </Box>
+            </Box>
+          </Flex>
+          <Button
+            css={{ m: '$4' }}
+            color="primary"
+            corners="rounded"
+            onClick={() => copyToClipboard(address)}
+          >
+            Copy Wallet Address
           </Button>
         </Flex>
       )}

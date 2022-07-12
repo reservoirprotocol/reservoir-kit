@@ -183,4 +183,5 @@ export const { createTheme, keyframes, styled, globalCss, getCssText } =
       dark: '(prefers-color-scheme: dark)',
       light: '(prefers-color-scheme: light)',
     },
+    prefix: 'rk',
   })

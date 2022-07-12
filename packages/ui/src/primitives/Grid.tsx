@@ -1,6 +1,6 @@
 import { styled } from '../../stitches.config'
 
-export const Grid = styled('div', {
+export default styled('div', {
   display: 'grid',
 
   variants: {

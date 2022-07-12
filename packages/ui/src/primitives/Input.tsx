@@ -1,5 +1,5 @@
 import { styled } from '../../stitches.config'
-import { Flex } from './Flex'
+import Flex from './Flex'
 import React, {
   ComponentPropsWithoutRef,
   ElementRef,
@@ -23,7 +23,7 @@ const StyledInput = styled('input', {
   '&:focus': { boxShadow: '0 0 0 2px $$focusColor' },
 })
 
-const Input = forwardRef<
+export const Input = forwardRef<
   ElementRef<typeof StyledInput>,
   ComponentPropsWithoutRef<typeof StyledInput> & {
     icon?: ReactNode
