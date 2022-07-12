@@ -1,1 +1,1 @@
-export { DefaultTheme } from './ReservoirKitTheme'
+export { defaultTheme } from './ReservoirKitTheme'

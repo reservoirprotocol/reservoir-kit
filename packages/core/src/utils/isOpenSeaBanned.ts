@@ -6,7 +6,10 @@ import axios from 'axios'
  * @param tokenId Token ID to be checked
  * @returns `true` If the token is banned on OpenSea. `false` otherwise.
  */
-export async function isOpenSeaBanned(contract: string, tokenId: number) {
+export async function isOpenSeaBanned(
+  contract: string,
+  tokenId: number | string
+) {
   const base = 'https://api.opensea.io'
   const url = new URL(`/api/v1/asset/${contract}/${tokenId}`, base)
 

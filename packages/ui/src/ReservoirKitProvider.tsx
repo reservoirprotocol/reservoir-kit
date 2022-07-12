@@ -1,26 +1,29 @@
 import React, { createContext, FC, ReactNode, useEffect, useState } from 'react'
 import { ReservoirClientOptions } from '@reservoir0x/reservoir-kit-core'
-import { defaultTheme, ReservoirKitTheme } from './themes/ReservoirKitTheme'
+import { ReservoirKitTheme } from './themes/ReservoirKitTheme'
 import { ReservoirCoreProvider } from './ReservoirCoreProvider'
-
 export interface ReservoirKitProviderProps {
   children: ReactNode
   options: ReservoirClientOptions
   theme?: ReservoirKitTheme
 }
 
-export const ThemeContext = createContext<ReservoirKitTheme>(defaultTheme())
+import { createTheme } from '../stitches.config'
+
+export const ThemeContext = createContext('default')
 
 export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   children,
   options,
   theme,
 }: ReservoirKitProviderProps) {
-  const [globalTheme, setGlobalTheme] = useState(defaultTheme())
+  const [globalTheme, setGlobalTheme] = useState('')
 
   useEffect(() => {
     if (theme) {
-      setGlobalTheme(theme)
+      let newTheme = createTheme('reservoirKit', theme as any)
+      document.body.classList.add(newTheme)
+      setGlobalTheme(newTheme)
     }
   }, [theme])
 

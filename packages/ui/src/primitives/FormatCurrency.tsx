@@ -1,8 +1,7 @@
 import { BigNumberish } from 'ethers'
 import { formatBN } from '../lib/numbers'
 import React, { FC } from 'react'
-import { Flex } from './Flex'
-import { Text } from './Text'
+import { Flex, Text } from './index'
 
 type Props = {
   amount: BigNumberish | null | undefined

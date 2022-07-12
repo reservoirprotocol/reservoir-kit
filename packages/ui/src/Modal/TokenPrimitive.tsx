@@ -1,10 +1,6 @@
 import { styled } from '../../stitches.config'
 import React, { FC } from 'react'
-import { Box } from '../primitives/Box'
-import { Flex } from '../primitives/Flex'
-import FormatEth from '../primitives/FormatEth'
-import { Text } from '../primitives/Text'
-import { Grid } from '../primitives/Grid'
+import { Box, Flex, FormatEth, Text, Grid } from '../primitives'
 
 type Props = {
   img?: string
