@@ -1,9 +1,7 @@
 import React, { createContext, FC, ReactNode, useEffect, useState } from 'react'
-import {
-  ReservoirClientOptions,
-  ReservoirSDK,
-} from '@reservoir0x/reservoir-kit-core'
+import { ReservoirClientOptions } from '@reservoir0x/reservoir-kit-core'
 import { defaultTheme, ReservoirKitTheme } from './themes/ReservoirKitTheme'
+import { ReservoirCoreProvider } from './ReservoirCoreProvider'
 
 export interface ReservoirKitProviderProps {
   children: ReactNode
@@ -21,10 +19,6 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   const [globalTheme, setGlobalTheme] = useState(defaultTheme())
 
   useEffect(() => {
-    ReservoirSDK.init(options)
-  }, [])
-
-  useEffect(() => {
     if (theme) {
       setGlobalTheme(theme)
     }
@@ -32,7 +26,9 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
 
   return (
     <ThemeContext.Provider value={globalTheme}>
-      {children}
+      <ReservoirCoreProvider options={options}>
+        {children}
+      </ReservoirCoreProvider>
     </ThemeContext.Provider>
   )
 }
