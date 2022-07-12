@@ -9,27 +9,16 @@ export interface ReservoirCoreProviderProps {
   options: ReservoirClientOptions
 }
 
-type ReservoirCoreContext = {
-  initialized: boolean
-}
-
-export const ReservoirCoreContext = createContext<ReservoirCoreContext>({
-  initialized: false,
-})
+export const ReservoirCoreContext = createContext<ReservoirSDK | null>(null)
 
 export const ReservoirCoreProvider: FC<ReservoirCoreProviderProps> = function ({
   children,
   options,
 }: ReservoirCoreProviderProps) {
-  const [sdkContext, setSdkContext] = useState<ReservoirCoreContext>({
-    initialized: false,
-  })
+  const [sdkContext, setSdkContext] = useState<ReservoirSDK | null>(null)
 
   useEffect(() => {
-    ReservoirSDK.init(options)
-    setSdkContext({
-      initialized: true,
-    })
+    setSdkContext(ReservoirSDK.init(options))
   }, [])
 
   return (

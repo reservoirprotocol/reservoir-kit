@@ -1,6 +1,6 @@
 import { paths, ReservoirSDK, setParams } from '@reservoir0x/reservoir-kit-core'
-import { useContext, useEffect, useState } from 'react'
-import { ReservoirCoreContext } from '../ReservoirCoreProvider'
+import useCoreSdk from './useCoreSdk'
+import { useEffect, useState } from 'react'
 
 type TokenDetailsResponse =
   paths['/tokens/details/v4']['get']['responses']['200']['schema']
@@ -9,10 +9,10 @@ export default function (
   query?: paths['/tokens/details/v4']['get']['parameters']['query']
 ) {
   const [resp, setResp] = useState<TokenDetailsResponse | null>(null)
-  const coreContext = useContext(ReservoirCoreContext)
+  const sdk = useCoreSdk()
 
   useEffect(() => {
-    if (query && coreContext.initialized) {
+    if (query && sdk) {
       const path = new URL(`${ReservoirSDK.client().apiBase}/tokens/details/v4`)
       setParams(path, query)
       fetch(path)
@@ -22,7 +22,7 @@ export default function (
           console.error(err.message)
         })
     }
-  }, [query, coreContext.initialized])
+  }, [query, sdk])
 
   return resp
 }

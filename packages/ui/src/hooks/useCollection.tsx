@@ -1,6 +1,6 @@
-import { paths, ReservoirSDK, setParams } from '@reservoir0x/reservoir-kit-core'
-import { ReservoirCoreContext } from '../ReservoirCoreProvider'
-import { useContext, useEffect, useState } from 'react'
+import { paths, setParams } from '@reservoir0x/reservoir-kit-core'
+import { useEffect, useState } from 'react'
+import useCoreSdk from './useCoreSdk'
 
 type CollectionResponse =
   paths['/collection/v2']['get']['responses']['200']['schema']['collection']
@@ -9,11 +9,11 @@ export default function (
   query?: paths['/collection/v2']['get']['parameters']['query']
 ) {
   const [resp, setResp] = useState<CollectionResponse | null>(null)
-  const coreContext = useContext(ReservoirCoreContext)
+  const sdk = useCoreSdk()
 
   useEffect(() => {
-    if (query && coreContext.initialized) {
-      const path = new URL(`${ReservoirSDK.client().apiBase}/collection/v2`)
+    if (query && sdk) {
+      const path = new URL(`${sdk.apiBase}/collection/v2`)
       setParams(path, query)
       fetch(path)
         .then((response) => response.json())
@@ -24,7 +24,7 @@ export default function (
           console.error(err.message)
         })
     }
-  }, [query, coreContext.initialized])
+  }, [query, sdk])
 
   return resp
 }
