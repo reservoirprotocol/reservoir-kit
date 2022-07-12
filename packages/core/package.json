@@ -9,8 +9,7 @@
     "author": "Reservoir Protocol",
     "license": "MIT",
     "files": [
-        "dist",
-        "src"
+        "dist"
     ],
     "scripts": {
         "clean": "rm -rf dist",
