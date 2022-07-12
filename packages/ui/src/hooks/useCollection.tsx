@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 type CollectionResponse =
   paths['/collection/v2']['get']['responses']['200']['schema']['collection']
 
-export const useCollection = function (
+export default function (
   query?: paths['/collection/v2']['get']['parameters']['query']
 ) {
   const [resp, setResp] = useState<CollectionResponse | null>(null)

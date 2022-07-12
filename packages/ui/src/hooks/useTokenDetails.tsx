@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 type TokenDetailsResponse =
   paths['/tokens/details/v4']['get']['responses']['200']['schema']
 
-export const useTokenDetails = function (
+export default function (
   query?: paths['/tokens/details/v4']['get']['parameters']['query']
 ) {
   const [resp, setResp] = useState<TokenDetailsResponse | null>(null)

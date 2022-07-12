@@ -1,9 +1,7 @@
-import { useTokenDetails } from '../hooks/useTokenDetails'
 import React, { FC, useEffect, useState } from 'react'
 import { Modal } from './Modal'
 import { TokenPrimitive } from './TokenPrimitive'
-import { useEthConverter } from '../hooks/useETHConverter'
-import { useCollection } from '../hooks/useCollection'
+import { useCollection, useTokenDetails, useEthConverter } from '../hooks'
 import { Flex } from '../primitives/Flex'
 import { Text } from '../primitives/Text'
 import FormatEth from '../primitives/FormatEth'
@@ -70,7 +68,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({ token, collection }) => {
     : ''
   let royalty: number | undefined = collection?.royalties?.bps || 0
 
-  if (royalty <= 0) {
+  if (royalty && royalty <= 0) {
     royalty = undefined
   }
 

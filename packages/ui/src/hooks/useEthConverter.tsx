@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export const useEthConverter = function (price: number, symbol: string) {
+export default function (price: number, symbol: string) {
   const [convertedPrice, setConvertedPrice] = useState<string | null>()
 
   useEffect(() => {
