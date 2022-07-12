@@ -1,7 +1,12 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Modal } from './Modal'
 import { TokenPrimitive } from './TokenPrimitive'
-import { useCollection, useTokenDetails, useEthConverter } from '../hooks'
+import {
+  useCollection,
+  useTokenDetails,
+  useEthConverter,
+  useCoreSdk,
+} from '../hooks'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
@@ -16,13 +21,15 @@ import {
 } from '../primitives'
 
 import Popover from '../primitives/Popover'
-import { constants, utils } from 'ethers'
+import { constants, Signer, utils } from 'ethers'
 
 import addFundsImage from 'data-url:../../assets/transferFunds.png'
+import { formatEther } from 'ethers/lib/utils'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
+  signer: Signer
 } & (
     | {
         referrerFee: number
@@ -103,6 +110,7 @@ export const BuyModal: FC<Props> = ({
   collectionId,
   referrer,
   referrerFee,
+  signer,
 }) => {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -123,6 +131,7 @@ export const BuyModal: FC<Props> = ({
     +utils.formatEther(totalPrice.toString()),
     'USD'
   )
+  const sdk = useCoreSdk()
 
   useEffect(() => {
     if (open && tokenId && collectionId) {
@@ -209,10 +218,53 @@ export const BuyModal: FC<Props> = ({
               {totalUsd}
             </Text>
           </Flex>
-          <Button css={{ m: '$4' }} color="primary" corners="rounded">
+          <Button
+            onClick={() => {
+              if (!tokenId || !collectionId) {
+                throw 'Missing tokenId or collectionId'
+              }
+
+              if (!sdk) {
+                throw 'ReservoirSdk was not initialized'
+              }
+
+              sdk.actions
+                .buyToken({
+                  expectedPrice: Number(formatEther(totalPrice)),
+                  signer,
+                  tokens: [
+                    {
+                      tokenId: tokenId,
+                      contract: collectionId,
+                    },
+                  ],
+                  onProgress: (steps) => {
+                    console.log(steps)
+                  },
+                  options: {
+                    referrer: referrer,
+                    referrerFeeBps: referrerFee,
+                  },
+                })
+                .catch((error) => {
+                  if (error?.message.includes('ETH balance')) {
+                    setCurrentStep(BuyStep.InsufficientBalance)
+                    return
+                  }
+                  console.log(error)
+                })
+            }}
+            css={{ m: '$4' }}
+            color="primary"
+            corners="rounded"
+          >
             Checkout
           </Button>
         </Flex>
+      )}
+
+      {currentStep === BuyStep.InsufficientBalance && (
+        <div>Insufficient Balance</div>
       )}
 
       {currentStep === BuyStep.AddFunds && tokenDetails?.tokens && (
