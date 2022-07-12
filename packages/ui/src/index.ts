@@ -1,2 +1,3 @@
 export { ReservoirKitProvider } from './ReservoirKitProvider'
-export { BuyModal } from './modal/BuyModal'
+export { defaultTheme } from './themes/ReservoirKitTheme'
+export { BuyModal } from './Modal/BuyModal'

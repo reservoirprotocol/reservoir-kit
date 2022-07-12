@@ -3,7 +3,7 @@ import {
   ReservoirClientOptions,
   ReservoirSDK,
 } from '@reservoir0x/reservoir-kit-core'
-import { defaultTheme, ReservoirKitTheme } from './themes/ReservoirKitTheme'
+import { ReservoirKitTheme } from './themes/ReservoirKitTheme'
 
 export interface ReservoirKitProviderProps {
   children: ReactNode
@@ -11,14 +11,16 @@ export interface ReservoirKitProviderProps {
   theme?: ReservoirKitTheme
 }
 
-export const ThemeContext = createContext<ReservoirKitTheme>(defaultTheme())
+import { createTheme } from '../stitches.config'
+
+export const ThemeContext = createContext('default')
 
 export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   children,
   options,
   theme,
 }: ReservoirKitProviderProps) {
-  const [globalTheme, setGlobalTheme] = useState(defaultTheme())
+  const [globalTheme, setGlobalTheme] = useState('')
 
   useEffect(() => {
     ReservoirSDK.init(options)
@@ -26,7 +28,9 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
 
   useEffect(() => {
     if (theme) {
-      setGlobalTheme(theme)
+      let newTheme = createTheme('reservoirKit', theme as any)
+      document.body.classList.add(newTheme)
+      setGlobalTheme(newTheme)
     }
   }, [theme])
 
