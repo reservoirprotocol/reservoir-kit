@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app'
+import React, { useState, useContext } from 'react'
 import { darkTheme, globalReset } from 'stitches.config'
 import '@rainbow-me/rainbowkit/styles.css'
 import { ThemeProvider } from 'next-themes'
@@ -28,26 +29,25 @@ const wagmiClient = createClient({
   provider,
 })
 
-// decent
-// {
-//   font: 'ABC Monument Grotesk',
-//   primaryColor: 'black',
-//   primaryHoverColor: 'purple',
-//   headerBackground: 'rgb(246, 234, 229)',
-//   contentBackground: '#fbf3f0',
-//   footerBackground: 'rgb(246, 234, 229)',
-//   textColor: 'rgb(55, 65, 81)',
-//   borderColor: 'rgba(0,0,0, 0)',
-//   overlayBackground: 'rgba(31, 41, 55, 0.75)',
-// }
+export const ThemeSwitcherContext = React.createContext(defaultTheme())
 
-function MyApp({ Component, pageProps }: AppProps) {
-  globalReset()
+const ThemeSwitcher = ({ children }) => {
+  const [theme, setTheme] = useState(defaultTheme())
+
+  return (
+    <ThemeSwitcherContext.Provider value={{ theme, setTheme }}>
+      {children}
+    </ThemeSwitcherContext.Provider>
+  )
+}
+
+const AppWrapper = ({ children }) => {
+  const { theme } = useContext(ThemeSwitcherContext)
 
   return (
     <ReservoirKitProvider
       options={{ apiBase: 'https://api-rinkeby.reservoir.tools' }}
-      theme={defaultTheme()}
+      theme={theme}
     >
       <ThemeProvider
         attribute="class"
@@ -58,13 +58,24 @@ function MyApp({ Component, pageProps }: AppProps) {
         }}
       >
         <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider chains={chains}>
-            {/* @ts-ignore */}
-            <Component {...pageProps} />
-          </RainbowKitProvider>
+          <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
         </WagmiConfig>
       </ThemeProvider>
     </ReservoirKitProvider>
+  )
+}
+
+function MyApp({ Component, pageProps }: AppProps) {
+  const [theme, setTheme] = useState(defaultTheme())
+  globalReset()
+
+  return (
+    <ThemeSwitcher>
+      <AppWrapper>
+        {/* @ts-ignore */}
+        <Component {...pageProps} />
+      </AppWrapper>
+    </ThemeSwitcher>
   )
 }
 

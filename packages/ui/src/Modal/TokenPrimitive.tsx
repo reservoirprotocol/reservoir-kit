@@ -34,7 +34,7 @@ export const TokenPrimitive: FC<Props> = ({
     >
       <Text
         style="subtitle2"
-        css={{ mb: 5, color: '$gray11', display: 'block' }}
+        css={{ mb: 5, color: '$neutralText', display: 'block' }}
       >
         Item
       </Text>
