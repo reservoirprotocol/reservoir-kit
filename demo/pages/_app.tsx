@@ -5,9 +5,11 @@ import { ThemeProvider } from 'next-themes'
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { WagmiConfig, createClient, configureChains, chain } from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'
+import '../fonts.css'
 import {
   ReservoirKitProvider,
-  defaultTheme,
+  darkTheme as defaultTheme,
+  lightTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 
 const { chains, provider } = configureChains(
@@ -26,20 +28,30 @@ const wagmiClient = createClient({
   provider,
 })
 
+// decent
+// {
+//   font: 'ABC Monument Grotesk',
+//   primaryColor: 'black',
+//   primaryHoverColor: 'purple',
+//   headerBackground: 'rgb(246, 234, 229)',
+//   contentBackground: '#fbf3f0',
+//   footerBackground: 'rgb(246, 234, 229)',
+//   textColor: 'rgb(55, 65, 81)',
+//   borderColor: 'rgba(0,0,0, 0)',
+//   overlayBackground: 'rgba(31, 41, 55, 0.75)',
+// }
+
 function MyApp({ Component, pageProps }: AppProps) {
   globalReset()
 
   return (
     <ReservoirKitProvider
       options={{ apiBase: 'https://api-rinkeby.reservoir.tools' }}
-      theme={defaultTheme({
-        font: 'sans-serif',
-        primaryColor: '#0099cc',
-      })}
+      theme={defaultTheme()}
     >
       <ThemeProvider
         attribute="class"
-        defaultTheme="dark"
+        defaultTheme="light"
         value={{
           dark: darkTheme.className,
           light: 'light',

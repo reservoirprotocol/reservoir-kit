@@ -11,49 +11,32 @@ const Button = styled('button', {
   justifyContent: 'center',
   alignItems: 'center',
   lineHeight: '20px',
-  $$focusColor: '$colors$gray12',
+  $$focusColor: '$colors$focusColor',
   '&:focus-visible': {
     boxShadow: '0 0 0 2px $$focusColor',
   },
   '&:disabled': {
-    backgroundColor: '$gray8',
-    color: '$gray11',
+    backgroundColor: '$neutralBorder',
+    color: '$neutralText',
   },
   '&:disabled:hover': {
-    backgroundColor: '$gray8',
-    color: '$gray11',
+    backgroundColor: '$neutralBorderHover',
+    color: '$neutralText',
   },
   variants: {
     color: {
       primary: {
-        backgroundColor: '$primary9',
+        backgroundColor: '$accentSolid',
         color: 'white',
         '&:hover': {
-          backgroundColor: '$primary10',
+          backgroundColor: '$accentSolidHover',
         },
       },
       secondary: {
-        backgroundColor: '$secondary4',
-        color: '$primary12',
+        backgroundColor: '$secondaryBgHover',
+        color: '$accentTextContrast',
         '&:hover': {
-          backgroundColor: '$secondary5',
-        },
-      },
-      gradient: {
-        background: 'linear-gradient(270deg, #BD00FF 0%, #0091FF 109.23%)',
-      },
-      gray3: {
-        backgroundColor: '$gray3',
-        color: '$gray12',
-        '&:hover': {
-          backgroundColor: '$gray4',
-        },
-      },
-      gray4: {
-        backgroundColor: '$gray4',
-        color: '$gray12',
-        '&:hover': {
-          backgroundColor: '$gray5',
+          backgroundColor: '$secondaryBgActive',
         },
       },
       ghost: {

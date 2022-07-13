@@ -1,4 +1,5 @@
 export { ReservoirKitProvider } from './ReservoirKitProvider'
-export { defaultTheme } from './themes/ReservoirKitTheme'
-export { BuyModal } from './modal/BuyModal'
 export * from './hooks'
+export { default as darkTheme } from './themes/darkTheme'
+export { default as lightTheme } from './themes/lightTheme'
+export { BuyModal } from './Modal/BuyModal'

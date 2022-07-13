@@ -113,7 +113,7 @@ export const BuyModal: FC<Props> = ({
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [totalPrice, setTotalPrice] = useState(constants.Zero)
-  const [currentStep, setCurrentStep] = useState<BuyStep>(BuyStep.Initial)
+  const [currentStep, setCurrentStep] = useState<BuyStep>(BuyStep.AddFunds)
   const title = titleForStep(currentStep)
   const [tokenQuery, setTokenQuery] =
     useState<Parameters<typeof useTokenDetails>['0']>()
@@ -198,13 +198,13 @@ export const BuyModal: FC<Props> = ({
       }
       onOpenChange={(open) => {
         if (!open) {
-          setCurrentStep(BuyStep.Initial)
+          setCurrentStep(BuyStep.AddFunds)
         }
         setOpen(open)
       }}
     >
       {currentStep === BuyStep.Initial && tokenDetails?.tokens && (
-        <Flex css={{ backgroundColor: '$slate3' }} direction="column">
+        <Flex direction="column">
           <TokenLineItem
             token={tokenDetails.tokens['0']}
             collection={collection}
@@ -220,7 +220,7 @@ export const BuyModal: FC<Props> = ({
                 <FormatEth amount={referrerFeeBps} />
               </Flex>
               <Flex justify="end">
-                <Text style="subtitle2" css={{ color: '$slate11', pr: '$4' }}>
+                <Text style="subtitle2" css={{ color: '$gray11', pr: '$4' }}>
                   {feeUsd}
                 </Text>
               </Flex>
@@ -231,7 +231,7 @@ export const BuyModal: FC<Props> = ({
             <FormatEth textStyle="h6" amount={totalPrice} />
           </Flex>
           <Flex justify="end">
-            <Text style="subtitle2" css={{ color: '$slate11', mr: '$4' }}>
+            <Text style="subtitle2" css={{ color: '$gray11', mr: '$4' }}>
               {totalUsd}
             </Text>
           </Flex>
@@ -285,7 +285,7 @@ export const BuyModal: FC<Props> = ({
       )}
 
       {currentStep === BuyStep.AddFunds && tokenDetails?.tokens && (
-        <Flex css={{ backgroundColor: '$slate3' }} direction="column">
+        <Flex direction="column">
           <Flex
             css={{
               p: '$4',
@@ -322,7 +322,7 @@ export const BuyModal: FC<Props> = ({
                   </Text>
                 }
               >
-                <Text as="span" css={{ color: '$indigo11' }}>
+                <Text as="span" css={{ color: '$accentText' }}>
                   exchange{' '}
                 </Text>
               </Popover>{' '}
@@ -341,8 +341,7 @@ export const BuyModal: FC<Props> = ({
                   alignItems: 'center',
                   zIndex: 3,
                   textAlign: 'left',
-
-                  background: '$slate6',
+                  background: '$neutralBg',
                 }}
               >
                 <Text style={'body1'}>Copied Address!</Text>
@@ -352,8 +351,8 @@ export const BuyModal: FC<Props> = ({
                 onClick={() => copyToClipboard(signerDetails?.address)}
                 value={signerDetails?.address || ''}
                 css={{
-                  color: '$slate11',
-                  background: '$slate5',
+                  color: '$neutralText',
+                  //background: '$gray5',
                   textAlign: 'left',
                 }}
               />

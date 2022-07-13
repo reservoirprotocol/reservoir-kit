@@ -17,6 +17,12 @@ type Props = {
   onBack?: (() => void) | null
 }
 
+const Logo = styled(ReservoirLogoWhiteText, {
+  '& .letter': {
+    fill: '$reservoirLogoColor',
+  },
+})
+
 export const Modal: FC<Props> = ({
   title,
   children,
@@ -29,7 +35,7 @@ export const Modal: FC<Props> = ({
       <Flex
         css={{
           p: 16,
-          backgroundColor: '$slate4',
+          backgroundColor: '$headerBackground',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}
@@ -59,7 +65,7 @@ export const Modal: FC<Props> = ({
           mx: 'auto',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '$slate2',
+          backgroundColor: '$footerBackground',
           py: 10.5,
         }}
       >
@@ -68,7 +74,7 @@ export const Modal: FC<Props> = ({
             style="body2"
             css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
           >
-            Powered by <ReservoirLogoWhiteText />
+            Powered by <Logo />
           </Text>
         </Anchor>
       </Flex>
