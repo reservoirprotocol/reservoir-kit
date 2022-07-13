@@ -32,11 +32,11 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   signer: Signer
 } & (
     | {
-        referrerFee: number
+        referrerFeeBps: number
         referrer: string
       }
     | {
-        referrerFee?: undefined
+        referrerFeeBps?: undefined
         referrer?: undefined
       }
   )
@@ -79,9 +79,10 @@ const TokenLineItem: FC<TokenLineItemProps> = ({ token, collection }) => {
     return null
   }
   const name = tokenDetails?.name || `#${tokenDetails.tokenId}`
+  console.log(collection?.metadata?.imageUrl)
   const img = tokenDetails.image
     ? tokenDetails.image
-    : tokenDetails.collection?.image
+    : (collection?.metadata?.imageUrl as string)
   const srcImg = marketData?.floorAsk?.source
     ? (marketData?.floorAsk?.source['icon'] as string)
     : ''
@@ -109,7 +110,7 @@ export const BuyModal: FC<Props> = ({
   tokenId,
   collectionId,
   referrer,
-  referrerFee,
+  referrerFeeBps,
   signer,
 }) => {
   const [open, setOpen] = useState(false)
@@ -124,7 +125,7 @@ export const BuyModal: FC<Props> = ({
 
   const tokenDetails = useTokenDetails(tokenQuery)
   const collection = useCollection(collectionQuery)
-  const feeUsd = referrerFee ? useEthConverter(referrerFee, 'USD') : 0
+  const feeUsd = referrerFeeBps ? useEthConverter(referrerFeeBps, 'USD') : 0
   const address: string = '0x9E9EF0B615d4aF21C01121273498Ad5DEB5A3785'
 
   const totalUsd = useEthConverter(
@@ -151,12 +152,12 @@ export const BuyModal: FC<Props> = ({
         `${tokenDetails?.tokens[0].market.floorAsk.price}`
       )
 
-      if (referrerFee) {
-        price = price.add(utils.parseEther(`${referrerFee}`))
+      if (referrerFeeBps) {
+        price = price.add(utils.parseEther(`${referrerFeeBps}`))
       }
       setTotalPrice(price)
     }
-  }, [tokenDetails, referrerFee])
+  }, [tokenDetails, referrerFeeBps])
 
   const copyToClipboard = (content: string) => {
     navigator.clipboard.writeText(content)
@@ -192,7 +193,7 @@ export const BuyModal: FC<Props> = ({
             token={tokenDetails.tokens['0']}
             collection={collection}
           />
-          {referrerFee && (
+          {referrerFeeBps && (
             <>
               <Flex
                 align="center"
@@ -200,7 +201,7 @@ export const BuyModal: FC<Props> = ({
                 css={{ pt: '$4', px: '$4' }}
               >
                 <Text style="subtitle2">Referral Fee</Text>
-                <FormatEth amount={referrerFee} />
+                <FormatEth amount={referrerFeeBps} />
               </Flex>
               <Flex justify="end">
                 <Text style="subtitle2" css={{ color: '$slate11', pr: '$4' }}>
@@ -243,7 +244,7 @@ export const BuyModal: FC<Props> = ({
                   },
                   options: {
                     referrer: referrer,
-                    referrerFeeBps: referrerFee,
+                    referrerFeeBps: referrerFeeBps,
                   },
                 })
                 .catch((error) => {

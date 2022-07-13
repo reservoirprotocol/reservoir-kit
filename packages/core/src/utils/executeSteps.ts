@@ -87,6 +87,9 @@ export async function executeSteps(
       data = json.steps[incompleteIndex].data
     }
 
+    //Update tx data on current step from previous step if available
+    json.steps[incompleteIndex].txHash = json.txHash
+
     // Handle each step based on it's kind
     switch (kind) {
       // Make an on-chain transaction
@@ -97,6 +100,8 @@ export async function executeSteps(
         const tx = await signer.sendTransaction(data)
 
         json.steps[incompleteIndex].message = 'Finalizing on blockchain'
+        json.steps[incompleteIndex].txHash = tx.hash
+        json.txHash = tx.hash
         setState([...json?.steps])
 
         await tx.wait()
