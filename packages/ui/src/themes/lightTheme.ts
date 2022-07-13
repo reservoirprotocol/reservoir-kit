@@ -1,4 +1,11 @@
-import { crimson, indigo, indigoA, gray, whiteA } from '@radix-ui/colors'
+import {
+  crimson,
+  indigo,
+  indigoA,
+  gray,
+  whiteA,
+  blackA,
+} from '@radix-ui/colors'
 import { sharedThemeConfig, ReservoirKitTheme } from './ReservoirKitTheme'
 
 const lightTheme = (overrides?: ReservoirKitTheme): any => {
@@ -10,6 +17,7 @@ const lightTheme = (overrides?: ReservoirKitTheme): any => {
       ...indigoA,
       ...crimson,
       ...gray,
+      ...blackA,
       ...whiteA,
 
       // accent colors
@@ -65,7 +73,7 @@ const lightTheme = (overrides?: ReservoirKitTheme): any => {
       // component colors
       reservoirLogoColor: '#11181C',
       inputBackground: '$neutralBgHover',
-      overlayBackground: overrides?.overlayBackground || '$whiteA10',
+      overlayBackground: overrides?.overlayBackground || '$blackA10',
       headerBackground: overrides?.headerBackground || '$neutralBgHover',
       footerBackground: overrides?.footerBackground || '$neutralBgHover',
       contentBackground: overrides?.contentBackground || '$neutralBgSubtle',

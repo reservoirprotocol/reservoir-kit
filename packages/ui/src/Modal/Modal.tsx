@@ -45,7 +45,7 @@ export const Modal: FC<Props> = ({
             <Button
               color="ghost"
               size="none"
-              css={{ mr: '$2' }}
+              css={{ mr: '$2', color: '$neutralText' }}
               onClick={onBack}
             >
               <FontAwesomeIcon icon={faChevronLeft} width={16} height={16} />
@@ -54,7 +54,7 @@ export const Modal: FC<Props> = ({
           <Text style="h6">{title}</Text>
         </Title>
         <DialogPrimitive.Close asChild>
-          <Button color="ghost" size="none">
+          <Button color="ghost" size="none" css={{ color: '$neutralText' }}>
             <FontAwesomeIcon icon={faClose} width={16} height={16} />
           </Button>
         </DialogPrimitive.Close>

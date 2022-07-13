@@ -1,22 +1,22 @@
 import React from 'react'
-import * as RadixPopover from '@radix-ui/react-popover'
+import * as Popover from '@radix-ui/react-popover'
 import { styled } from '../../stitches.config'
 import Box from './Box'
 
-const Arrow = styled(RadixPopover.Arrow, {
+const Arrow = styled(Popover.Arrow, {
   width: 15,
   height: 7,
-  fill: '$slate5',
+  fill: '$neutralBgActive',
 })
 
-const Content = styled(RadixPopover.Content, {
+const Content = styled(Popover.Content, {
   filter: 'drop-shadow(0px 2px 16px rgba(0, 0, 0, 0.9))',
 })
 
-const Popover = ({ children, content }: any) => {
+const RKPopover = ({ children, content }: any) => {
   return (
-    <RadixPopover.Root>
-      <RadixPopover.Trigger>{children}</RadixPopover.Trigger>
+    <Popover.Root>
+      <Popover.Trigger>{children}</Popover.Trigger>
       <Content>
         <Arrow />
         <Box
@@ -24,14 +24,14 @@ const Popover = ({ children, content }: any) => {
             p: '$3',
             maxWidth: 320,
             borderRadius: 8,
-            backgroundColor: '$slate5',
+            backgroundColor: '$neutralBgActive',
           }}
         >
           {content}
         </Box>
       </Content>
-    </RadixPopover.Root>
+    </Popover.Root>
   )
 }
 
-export default Popover
+export default RKPopover
