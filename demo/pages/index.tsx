@@ -28,7 +28,7 @@ const Index: NextPage = () => {
         collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
         tokenId="699405"
         referrer="0xFd03726FD90ccc7386bf62b44Bb594f7cbFB3995"
-        referrerFee={1}
+        referrerFeeBps={1}
         signer={signer}
       />
     </div>
