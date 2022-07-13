@@ -25,10 +25,10 @@ const Index: NextPage = () => {
       <ConnectButton />
       <BuyModal
         trigger={Trigger}
-        collectionId="0x6f8efe989f51a8034cf4b700b6c17d8fd2c8f26b"
-        tokenId="181"
+        collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
+        tokenId="699405"
         referrer="0xFd03726FD90ccc7386bf62b44Bb594f7cbFB3995"
-        referrerFeeBps={100}
+        referrerFee={1}
         signer={signer}
       />
     </div>
