@@ -5,9 +5,9 @@ export const StyledAnchor = styled('a', {
   cursor: 'pointer',
   fontFamily: '$body',
   fontSize: 16,
-  $$focusColor: '$colors$gray12',
+  $$focusColor: '$colors$neutralTextContrast',
   '&:focus-visible': {
-    color: '$gray12',
+    color: '$neutralTextContrast',
     outline: 'none',
     borderRadius: 4,
     boxShadow: '0 0 0 2px $$focusColor',
@@ -15,15 +15,15 @@ export const StyledAnchor = styled('a', {
   variants: {
     color: {
       primary: {
-        color: '$primary11',
+        color: '$accentText',
         '&:hover': {
-          color: '$primary10',
+          color: '$accentTextHover',
         },
       },
       gray: {
-        color: '$gray11',
+        color: '$neutralText',
         '&:hover': {
-          color: '$primary11',
+          color: '$accentText',
         },
       },
     },

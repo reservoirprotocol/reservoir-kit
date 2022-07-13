@@ -1,19 +1,27 @@
 export interface ReservoirKitTheme {
   borderRadius?: number
   font?: string
+  buttonFont?: string
+  headlineFont: string
   primaryColor?: string
+  primaryHoverColor?: string
+  wellBackground?: string
+  textColor?: string
+  headerBackground?: string
+  contentBackground?: string
+  footerBackground?: string
+  overlayBackground?: string
+  borderColor?: string
 }
 
-export const defaultTheme = (overrides?: ReservoirKitTheme): any => {
+export const sharedThemeConfig = (overrides?: ReservoirKitTheme) => {
   return {
     borderRadius: overrides?.borderRadius || 4,
-    colors: {
-      primary9: overrides?.primaryColor,
-      primary10: overrides?.primaryColor,
-    },
+
     fonts: {
-      body: overrides?.font || 'san-serif',
-      button: overrides?.font || 'sans-serif',
+      body: overrides?.font || 'sans-serif',
+      button: overrides?.buttonFont || overrides?.font || 'sans-serif',
+      headline: overrides?.headlineFont || overrides?.font || 'sans-serif',
     },
   }
 }
