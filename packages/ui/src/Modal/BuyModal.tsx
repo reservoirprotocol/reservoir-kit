@@ -25,6 +25,7 @@ import { constants, Signer, utils } from 'ethers'
 
 import addFundsImage from 'data-url:../../assets/transferFunds.png'
 import { formatEther } from 'ethers/lib/utils'
+import { getSignerDetails, SignerDetails } from '../lib/signer'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -85,11 +86,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({ token, collection }) => {
   const srcImg = marketData?.floorAsk?.source
     ? (marketData?.floorAsk?.source['icon'] as string)
     : ''
-  let royalty: number | undefined = collection?.royalties?.bps || 0
-
-  if (royalty && royalty <= 0) {
-    royalty = undefined
-  }
+  const royalty: number | undefined = collection?.royalties?.bps || undefined
 
   return (
     <TokenPrimitive
@@ -122,10 +119,11 @@ export const BuyModal: FC<Props> = ({
   const [collectionQuery, setCollectionQuery] =
     useState<Parameters<typeof useCollection>['0']>()
 
+  const [signerDetails, setSignerDetails] = useState<SignerDetails>({})
+
   const tokenDetails = useTokenDetails(tokenQuery)
   const collection = useCollection(collectionQuery)
   const feeUsd = referrerFee ? useEthConverter(referrerFee, 'USD') : 0
-  const address: string = '0x9E9EF0B615d4aF21C01121273498Ad5DEB5A3785'
 
   const totalUsd = useEthConverter(
     +utils.formatEther(totalPrice.toString()),
@@ -143,23 +141,41 @@ export const BuyModal: FC<Props> = ({
   }, [open, collectionId, tokenId])
 
   useEffect(() => {
-    if (
-      tokenDetails?.tokens &&
-      tokenDetails?.tokens[0].market?.floorAsk?.price
-    ) {
-      let price = utils.parseEther(
-        `${tokenDetails?.tokens[0].market.floorAsk.price}`
-      )
+    if (tokenDetails?.tokens) {
+      if (tokenDetails?.tokens[0].market?.floorAsk?.price) {
+        let price = utils.parseEther(
+          `${tokenDetails?.tokens[0].market.floorAsk.price}`
+        )
 
-      if (referrerFee) {
-        price = price.add(utils.parseEther(`${referrerFee}`))
+        if (referrerFee) {
+          price = price.add(utils.parseEther(`${referrerFee}`))
+        }
+        setTotalPrice(price)
+      } else {
+        setCurrentStep(BuyStep.Unavailable)
+        setTotalPrice(constants.Zero) //todo fetch last sold price
       }
-      setTotalPrice(price)
     }
   }, [tokenDetails, referrerFee])
 
-  const copyToClipboard = (content: string) => {
-    navigator.clipboard.writeText(content)
+  useEffect(() => {
+    if (signer && open) {
+      getSignerDetails(signer, { address: true, balance: true }).then(
+        (details) => {
+          setSignerDetails(details)
+        }
+      )
+    }
+  }, [open, signer])
+
+  useEffect(() => {
+    if (signerDetails.balance && signerDetails.balance.lt(totalPrice)) {
+      setCurrentStep(BuyStep.InsufficientBalance)
+    }
+  }, [totalPrice, signerDetails])
+
+  const copyToClipboard = (content?: string | null) => {
+    navigator.clipboard.writeText(content ? content : '')
     if (!copied) {
       setCopied(true)
       setTimeout(() => {
@@ -332,8 +348,8 @@ export const BuyModal: FC<Props> = ({
               </Flex>
               <Input
                 readOnly
-                onClick={() => copyToClipboard(address)}
-                value={address}
+                onClick={() => copyToClipboard(signerDetails?.address)}
+                value={signerDetails?.address || ''}
                 css={{
                   color: '$slate11',
                   background: '$slate5',
@@ -358,7 +374,7 @@ export const BuyModal: FC<Props> = ({
             css={{ m: '$4' }}
             color="primary"
             corners="rounded"
-            onClick={() => copyToClipboard(address)}
+            onClick={() => copyToClipboard(signerDetails?.address)}
           >
             Copy Wallet Address
           </Button>
