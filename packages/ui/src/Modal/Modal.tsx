@@ -6,6 +6,7 @@ import { Anchor, Button, Flex, Text } from '../primitives'
 import { styled } from '../../stitches.config'
 import { Dialog } from '../primitives/Dialog'
 import ReservoirLogoWhiteText from '../img/ReservoirLogoWhiteText'
+import Loader from '../primitives/Loader'
 
 const Title = styled(DialogPrimitive.Title, {})
 
@@ -15,6 +16,7 @@ type Props = {
   trigger: ReactNode
   onOpenChange?: (open: boolean) => void
   onBack?: (() => void) | null
+  loading?: boolean
 }
 
 export const Modal: FC<Props> = ({
@@ -23,9 +25,21 @@ export const Modal: FC<Props> = ({
   trigger,
   onBack,
   onOpenChange,
+  loading,
 }) => {
   return (
     <Dialog trigger={trigger} onOpenChange={onOpenChange}>
+      {loading && (
+        <Loader
+          css={{
+            position: 'fixed',
+            inset: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        />
+      )}
       <Flex
         css={{
           p: 16,
