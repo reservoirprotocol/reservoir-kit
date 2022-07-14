@@ -1,5 +1,5 @@
 import {
-  crimsonDark,
+  redDark,
   indigoDark,
   slateDark,
   indigoDarkA,
@@ -13,7 +13,7 @@ const darkTheme = (overrides?: ReservoirKitTheme): any => {
 
   return {
     colors: {
-      ...crimsonDark,
+      ...redDark,
       ...indigoDark,
       ...indigoDarkA,
       ...slateDark,
@@ -66,8 +66,8 @@ const darkTheme = (overrides?: ReservoirKitTheme): any => {
       borderColor: overrides?.borderColor || '$neutralBorder',
       textColor: overrides?.textColor || '$neutralTextContrast',
       focusColor: '$neutralTextContrast',
-      errorText: '$crimson12',
-      errorAccent: '$crimson10',
+      errorText: '$red12',
+      errorAccent: '$red10',
 
       // component colors
       inputBackground: '$neutralBgHover',
