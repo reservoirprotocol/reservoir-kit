@@ -9,7 +9,7 @@ import {
 } from '../hooks'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { faCopy, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import {
   Flex,
   Box,
@@ -33,11 +33,11 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   signer: Signer
 } & (
     | {
-        referrerFee: number
+        referrerFeeBps: number
         referrer: string
       }
     | {
-        referrerFee?: undefined
+        referrerFeeBps?: undefined
         referrer?: undefined
       }
   )
@@ -46,7 +46,6 @@ enum BuyStep {
   Initial,
   Confirmation,
   Finalizing,
-  InsufficientBalance,
   AddFunds,
   Error,
   Unavailable,
@@ -82,7 +81,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({ token, collection }) => {
   const name = tokenDetails?.name || `#${tokenDetails.tokenId}`
   const img = tokenDetails.image
     ? tokenDetails.image
-    : tokenDetails.collection?.image
+    : (collection?.metadata?.imageUrl as string)
   const srcImg = marketData?.floorAsk?.source
     ? (marketData?.floorAsk?.source['icon'] as string)
     : ''
@@ -106,13 +105,14 @@ export const BuyModal: FC<Props> = ({
   tokenId,
   collectionId,
   referrer,
-  referrerFee,
+  referrerFeeBps,
   signer,
 }) => {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [totalPrice, setTotalPrice] = useState(constants.Zero)
   const [currentStep, setCurrentStep] = useState<BuyStep>(BuyStep.Initial)
+  const [hasEnoughEth, setHasEnoughEth] = useState(true)
   const title = titleForStep(currentStep)
   const [tokenQuery, setTokenQuery] =
     useState<Parameters<typeof useTokenDetails>['0']>()
@@ -123,7 +123,7 @@ export const BuyModal: FC<Props> = ({
 
   const tokenDetails = useTokenDetails(tokenQuery)
   const collection = useCollection(collectionQuery)
-  const feeUsd = referrerFee ? useEthConverter(referrerFee, 'USD') : 0
+  const feeUsd = referrerFeeBps ? useEthConverter(referrerFeeBps, 'USD') : 0
 
   const totalUsd = useEthConverter(
     +utils.formatEther(totalPrice.toString()),
@@ -147,8 +147,8 @@ export const BuyModal: FC<Props> = ({
           `${tokenDetails?.tokens[0].market.floorAsk.price}`
         )
 
-        if (referrerFee) {
-          price = price.add(utils.parseEther(`${referrerFee}`))
+        if (referrerFeeBps) {
+          price = price.add(utils.parseEther(`${referrerFeeBps}`))
         }
         setTotalPrice(price)
       } else {
@@ -156,7 +156,7 @@ export const BuyModal: FC<Props> = ({
         setTotalPrice(constants.Zero) //todo fetch last sold price
       }
     }
-  }, [tokenDetails, referrerFee])
+  }, [tokenDetails, referrerFeeBps])
 
   useEffect(() => {
     if (signer && open) {
@@ -170,7 +170,7 @@ export const BuyModal: FC<Props> = ({
 
   useEffect(() => {
     if (signerDetails.balance && signerDetails.balance.lt(totalPrice)) {
-      setCurrentStep(BuyStep.InsufficientBalance)
+      setHasEnoughEth(false)
     }
   }, [totalPrice, signerDetails])
 
@@ -202,13 +202,27 @@ export const BuyModal: FC<Props> = ({
         setOpen(open)
       }}
     >
+      {!tokenDetails?.tokens && (
+        <Flex css={{ height: 242 }} align="center" justify="center">
+          <Button
+            color="ghost"
+            size="none"
+            css={{
+              mr: '$2',
+              color: '$neutralText',
+            }}
+          >
+            <FontAwesomeIcon icon={faSpinner} size="lg" spin />
+          </Button>
+        </Flex>
+      )}
       {currentStep === BuyStep.Initial && tokenDetails?.tokens && (
-        <Flex css={{ backgroundColor: '$slate3' }} direction="column">
+        <Flex direction="column">
           <TokenLineItem
             token={tokenDetails.tokens['0']}
             collection={collection}
           />
-          {referrerFee && (
+          {referrerFeeBps && (
             <>
               <Flex
                 align="center"
@@ -216,10 +230,13 @@ export const BuyModal: FC<Props> = ({
                 css={{ pt: '$4', px: '$4' }}
               >
                 <Text style="subtitle2">Referral Fee</Text>
-                <FormatEth amount={referrerFee} />
+                <FormatEth amount={referrerFeeBps} />
               </Flex>
               <Flex justify="end">
-                <Text style="subtitle2" css={{ color: '$slate11', pr: '$4' }}>
+                <Text
+                  style="subtitle2"
+                  css={{ color: '$neutralText', pr: '$4' }}
+                >
                   {feeUsd}
                 </Text>
               </Flex>
@@ -230,61 +247,82 @@ export const BuyModal: FC<Props> = ({
             <FormatEth textStyle="h6" amount={totalPrice} />
           </Flex>
           <Flex justify="end">
-            <Text style="subtitle2" css={{ color: '$slate11', mr: '$4' }}>
+            <Text style="subtitle2" css={{ color: '$neutralText', mr: '$4' }}>
               {totalUsd}
             </Text>
           </Flex>
-          <Button
-            onClick={() => {
-              if (!tokenId || !collectionId) {
-                throw 'Missing tokenId or collectionId'
-              }
-
-              if (!sdk) {
-                throw 'ReservoirSdk was not initialized'
-              }
-
-              sdk.actions
-                .buyToken({
-                  expectedPrice: Number(formatEther(totalPrice)),
-                  signer,
-                  tokens: [
-                    {
-                      tokenId: tokenId,
-                      contract: collectionId,
-                    },
-                  ],
-                  onProgress: (steps) => {
-                    console.log(steps)
-                  },
-                  options: {
-                    referrer: referrer,
-                    referrerFeeBps: referrerFee,
-                  },
-                })
-                .catch((error) => {
-                  if (error?.message.includes('ETH balance')) {
-                    setCurrentStep(BuyStep.InsufficientBalance)
-                    return
+          <Box css={{ p: '$4', width: '100%' }}>
+            {hasEnoughEth ? (
+              <Button
+                onClick={() => {
+                  if (!tokenId || !collectionId) {
+                    throw 'Missing tokenId or collectionId'
                   }
-                  console.log(error)
-                })
-            }}
-            css={{ m: '$4' }}
-            color="primary"
-            corners="rounded"
-          >
-            Checkout
-          </Button>
+
+                  if (!sdk) {
+                    throw 'ReservoirSdk was not initialized'
+                  }
+
+                  sdk.actions
+                    .buyToken({
+                      expectedPrice: Number(formatEther(totalPrice)),
+                      signer,
+                      tokens: [
+                        {
+                          tokenId: tokenId,
+                          contract: collectionId,
+                        },
+                      ],
+                      onProgress: (steps) => {
+                        console.log(steps)
+                      },
+                      options: {
+                        referrer: referrer,
+                        referrerFeeBps: referrerFeeBps,
+                      },
+                    })
+                    .catch((error) => {
+                      if (error?.message.includes('ETH balance')) {
+                        return false
+                      }
+                      console.log(error)
+                    })
+                }}
+                css={{ width: '100%' }}
+                color="primary"
+                corners="rounded"
+              >
+                Checkout
+              </Button>
+            ) : (
+              <Flex direction="column" align="center">
+                <Flex align="center" css={{ mb: '$3' }}>
+                  <Text css={{ mr: '$3', color: '$errorAccent' }} style="body2">
+                    Insufficient Balance
+                  </Text>
+
+                  <FormatEth
+                    amount={signerDetails?.balance}
+                    textStyle="body2"
+                  />
+                </Flex>
+
+                <Button
+                  onClick={() => {
+                    setCurrentStep(BuyStep.AddFunds)
+                  }}
+                  css={{ width: '100%' }}
+                >
+                  Add Funds
+                </Button>
+              </Flex>
+            )}
+          </Box>
         </Flex>
       )}
 
-      {currentStep === BuyStep.InsufficientBalance && (
-        <div>Insufficient Balance</div>
-      )}
-
       {currentStep === BuyStep.AddFunds && tokenDetails?.tokens && (
-        <Flex css={{ backgroundColor: '$slate3' }} direction="column">
+        <Flex direction="column">
           <Flex
             css={{
               p: '$4',
@@ -303,6 +341,7 @@ export const BuyModal: FC<Props> = ({
                     An exchange allows users to buy, sell and trade
                     cryptocurrencies. Popular exchanges include{' '}
                     <Anchor
+                      css={{ fontSize: 12 }}
                       href="https://coinbase.com"
                       target="_blank"
                       color="primary"
@@ -311,6 +350,7 @@ export const BuyModal: FC<Props> = ({
                     </Anchor>
                     ,{' '}
                     <Anchor
+                      css={{ fontSize: 12 }}
                       href="https://crypto.com"
                       target="_blank"
                       color="primary"
@@ -321,7 +361,7 @@ export const BuyModal: FC<Props> = ({
                   </Text>
                 }
               >
-                <Text as="span" css={{ color: '$indigo11' }}>
+                <Text as="span" css={{ color: '$accentText' }}>
                   exchange{' '}
                 </Text>
               </Popover>{' '}
@@ -340,8 +380,7 @@ export const BuyModal: FC<Props> = ({
                   alignItems: 'center',
                   zIndex: 3,
                   textAlign: 'left',
-
-                  background: '$slate6',
+                  background: '$neutralBg',
                 }}
               >
                 <Text style={'body1'}>Copied Address!</Text>
@@ -351,8 +390,8 @@ export const BuyModal: FC<Props> = ({
                 onClick={() => copyToClipboard(signerDetails?.address)}
                 value={signerDetails?.address || ''}
                 css={{
-                  color: '$slate11',
-                  background: '$slate5',
+                  color: '$neutralText',
+                  //background: '$gray5',
                   textAlign: 'left',
                 }}
               />
@@ -363,7 +402,7 @@ export const BuyModal: FC<Props> = ({
                   top: '50%',
                   touchEvents: 'none',
                   transform: 'translateY(-50%)',
-                  color: '$slate11',
+                  color: '$neutralText',
                 }}
               >
                 <FontAwesomeIcon icon={faCopy} width={16} height={16} />

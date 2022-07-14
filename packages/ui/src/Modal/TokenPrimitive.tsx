@@ -30,12 +30,11 @@ export const TokenPrimitive: FC<Props> = ({
     <Box
       css={{
         p: 16,
-        backgroundColor: '$slate3',
       }}
     >
       <Text
         style="subtitle2"
-        css={{ mb: 5, color: '$slate11', display: 'block' }}
+        css={{ mb: 5, color: '$neutralText', display: 'block' }}
       >
         Item
       </Text>
@@ -49,7 +48,7 @@ export const TokenPrimitive: FC<Props> = ({
           <Grid css={{ rowGap: 2 }}>
             <Text style="h6">{name}</Text>
             <Text style="body2">{collection}</Text>
-            {royalty && <Text style="tiny">{royalty}% royalty</Text>}
+            {!!royalty && <Text style="tiny">{royalty}% royalty</Text>}
           </Grid>
         </Flex>
         <Grid css={{ justifyItems: 'end', rowGap: 4 }}>
@@ -61,7 +60,11 @@ export const TokenPrimitive: FC<Props> = ({
             />
           )}
           <FormatEth amount={price} />
-          {usdPrice && <Text style="tiny">{usdPrice}</Text>}
+          {usdPrice && (
+            <Text style="tiny" css={{ color: '$neutralText' }}>
+              {usdPrice}
+            </Text>
+          )}
         </Grid>
       </Flex>
     </Box>

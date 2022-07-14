@@ -19,6 +19,12 @@ type Props = {
   loading?: boolean
 }
 
+const Logo = styled(ReservoirLogoWhiteText, {
+  '& .letter': {
+    fill: '$reservoirLogoColor',
+  },
+})
+
 export const Modal: FC<Props> = ({
   title,
   children,
@@ -43,7 +49,7 @@ export const Modal: FC<Props> = ({
       <Flex
         css={{
           p: 16,
-          backgroundColor: '$slate4',
+          backgroundColor: '$headerBackground',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}
@@ -53,7 +59,7 @@ export const Modal: FC<Props> = ({
             <Button
               color="ghost"
               size="none"
-              css={{ mr: '$2' }}
+              css={{ mr: '$2', color: '$neutralText' }}
               onClick={onBack}
             >
               <FontAwesomeIcon icon={faChevronLeft} width={16} height={16} />
@@ -62,7 +68,7 @@ export const Modal: FC<Props> = ({
           <Text style="h6">{title}</Text>
         </Title>
         <DialogPrimitive.Close asChild>
-          <Button color="ghost" size="none">
+          <Button color="ghost" size="none" css={{ color: '$neutralText' }}>
             <FontAwesomeIcon icon={faClose} width={16} height={16} />
           </Button>
         </DialogPrimitive.Close>
@@ -73,7 +79,7 @@ export const Modal: FC<Props> = ({
           mx: 'auto',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '$slate2',
+          backgroundColor: '$footerBackground',
           py: 10.5,
         }}
       >
@@ -82,7 +88,7 @@ export const Modal: FC<Props> = ({
             style="body2"
             css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
           >
-            Powered by <ReservoirLogoWhiteText />
+            Powered by <Logo />
           </Text>
         </Anchor>
       </Flex>
