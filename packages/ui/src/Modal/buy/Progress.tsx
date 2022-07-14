@@ -1,6 +1,7 @@
 import { Anchor, Flex, Text } from '../../primitives'
 import React, { FC } from 'react'
 import { BuyStep } from './BuyModal'
+import confirmingProgress from 'data-url:../../../assets/confirmingProgress.gif'
 import finalizingProgress from 'data-url:../../../assets/finalizingProgress.gif'
 
 type Props = {
@@ -25,8 +26,7 @@ export const Progress: FC<Props> = ({ buyStep, txHash }) => {
       {buyStep == BuyStep.Confirming && (
         <>
           <Text style="h6">Confirm Transaction in your wallet</Text>
-          <img style={{ height: 100 }} src={finalizingProgress} />
-          {/* todo change to correct gif */}
+          <img style={{ height: 100 }} src={confirmingProgress} />
         </>
       )}
 
@@ -34,17 +34,20 @@ export const Progress: FC<Props> = ({ buyStep, txHash }) => {
         <>
           <Text style="h6">Finalizing on blockchain</Text>
           <img style={{ height: 100 }} src={finalizingProgress} />
-          <Anchor
-            color="primary"
-            weight="medium"
-            css={{ fontSize: 12 }}
-            href={`${etherscanBaseUrl}/${txHash}`}
-            target="_blank"
-          >
-            View on Etherscan
-          </Anchor>
         </>
       )}
+      <Anchor
+        color="primary"
+        weight="medium"
+        css={{
+          fontSize: 12,
+          visibility: buyStep == BuyStep.Finalizing ? 'visible' : 'hidden',
+        }}
+        href={`${etherscanBaseUrl}/${txHash}`}
+        target="_blank"
+      >
+        View on Etherscan
+      </Anchor>
     </Flex>
   )
 }
