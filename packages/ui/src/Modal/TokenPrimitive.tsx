@@ -30,6 +30,7 @@ export const TokenPrimitive: FC<Props> = ({
     <Box
       css={{
         p: 16,
+        border: '1px solid $neutralBorder',
       }}
     >
       <Text
