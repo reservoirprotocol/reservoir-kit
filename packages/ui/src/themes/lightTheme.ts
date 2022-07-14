@@ -74,6 +74,7 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       headerBackground: overrides?.headerBackground || '$neutralBgHover',
       footerBackground: overrides?.footerBackground || '$neutralBgHover',
       contentBackground: overrides?.contentBackground || '$neutralBgSubtle',
+      wellBackground: overrides?.wellBackground || '$neutralBgHover',
     },
     ...sharedTheme,
   }
