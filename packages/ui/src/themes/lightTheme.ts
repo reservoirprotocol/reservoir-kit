@@ -1,11 +1,4 @@
-import {
-  crimson,
-  indigo,
-  indigoA,
-  gray,
-  whiteA,
-  blackA,
-} from '@radix-ui/colors'
+import { red, indigo, indigoA, gray, whiteA, blackA } from '@radix-ui/colors'
 import {
   sharedThemeConfig,
   ReservoirKitTheme,
@@ -19,7 +12,7 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
     colors: {
       ...indigo,
       ...indigoA,
-      ...crimson,
+      ...red,
       ...gray,
       ...blackA,
       ...whiteA,
@@ -71,8 +64,8 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       borderColor: overrides?.borderColor || '$neutralBorder',
       textColor: overrides?.textColor || '$neutralTextContrast',
       focusColor: '$neutralTextContrast',
-      errorText: '$crimson12',
-      errorAccent: '$crimson10',
+      errorText: '$red12',
+      errorAccent: '$red10',
 
       // component colors
       reservoirLogoColor: '#11181C',

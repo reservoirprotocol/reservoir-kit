@@ -9,7 +9,7 @@ import {
 } from '../hooks'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { faCopy, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import {
   Flex,
   Box,
@@ -202,6 +202,20 @@ export const BuyModal: FC<Props> = ({
         setOpen(open)
       }}
     >
+      {!tokenDetails?.tokens && (
+        <Flex css={{ height: 242 }} align="center" justify="center">
+          <Button
+            color="ghost"
+            size="none"
+            css={{
+              mr: '$2',
+              color: '$neutralText',
+            }}
+          >
+            <FontAwesomeIcon icon={faSpinner} size="lg" spin />
+          </Button>
+        </Flex>
+      )}
       {currentStep === BuyStep.Initial && tokenDetails?.tokens && (
         <Flex direction="column">
           <TokenLineItem
@@ -219,7 +233,10 @@ export const BuyModal: FC<Props> = ({
                 <FormatEth amount={referrerFeeBps} />
               </Flex>
               <Flex justify="end">
-                <Text style="subtitle2" css={{ color: '$gray11', pr: '$4' }}>
+                <Text
+                  style="subtitle2"
+                  css={{ color: '$neutralText', pr: '$4' }}
+                >
                   {feeUsd}
                 </Text>
               </Flex>
@@ -230,7 +247,7 @@ export const BuyModal: FC<Props> = ({
             <FormatEth textStyle="h6" amount={totalPrice} />
           </Flex>
           <Flex justify="end">
-            <Text style="subtitle2" css={{ color: '$gray11', mr: '$4' }}>
+            <Text style="subtitle2" css={{ color: '$neutralText', mr: '$4' }}>
               {totalUsd}
             </Text>
           </Flex>
@@ -278,14 +295,27 @@ export const BuyModal: FC<Props> = ({
                 Checkout
               </Button>
             ) : (
-              <Button
-                onClick={() => {
-                  setCurrentStep(BuyStep.AddFunds)
-                }}
-                css={{ width: '100%' }}
-              >
-                Add Funds
-              </Button>
+              <Flex direction="column" align="center">
+                <Flex align="center" css={{ mb: '$3' }}>
+                  <Text css={{ mr: '$3', color: '$errorAccent' }} style="body2">
+                    Insufficient Balance
+                  </Text>
+
+                  <FormatEth
+                    amount={signerDetails?.balance}
+                    textStyle="body2"
+                  />
+                </Flex>
+
+                <Button
+                  onClick={() => {
+                    setCurrentStep(BuyStep.AddFunds)
+                  }}
+                  css={{ width: '100%' }}
+                >
+                  Add Funds
+                </Button>
+              </Flex>
             )}
           </Box>
         </Flex>

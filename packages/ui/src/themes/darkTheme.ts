@@ -1,5 +1,5 @@
 import {
-  crimsonDark,
+  redDark,
   indigoDark,
   slateDark,
   indigoDarkA,
@@ -17,7 +17,7 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
 
   return {
     colors: {
-      ...crimsonDark,
+      ...redDark,
       ...indigoDark,
       ...indigoDarkA,
       ...slateDark,
@@ -70,8 +70,8 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       borderColor: overrides?.borderColor || '$neutralBorder',
       textColor: overrides?.textColor || '$neutralTextContrast',
       focusColor: '$neutralTextContrast',
-      errorText: '$crimson12',
-      errorAccent: '$crimson10',
+      errorText: '$red12',
+      errorAccent: '$red10',
 
       // component colors
       reservoirLogoColor: '#ECEDEE',

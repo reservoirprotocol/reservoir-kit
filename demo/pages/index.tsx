@@ -46,6 +46,13 @@ const getThemeFromOption = (option: string) => {
       })
     }
 
+    case 'reservoir': {
+      return lightTheme({
+        font: 'Inter',
+        primaryColor: '#7000FF',
+      })
+    }
+
     default: {
       return darkTheme()
     }
@@ -101,6 +108,7 @@ const Index: NextPage = () => {
         <option value="dark">Dark Theme</option>
         <option value="light">Light Theme</option>
         <option value="decent">Decent</option>
+        <option value="reservoir">Reservoir</option>
       </select>
     </div>
   )
