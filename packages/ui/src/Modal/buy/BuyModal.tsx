@@ -10,8 +10,6 @@ import {
 } from '../../hooks'
 
 import { Signer, utils } from 'ethers'
-import { getSignerDetails, SignerDetails } from '../../lib/signer'
-
 import {
   Flex,
   Box,
@@ -28,7 +26,7 @@ import addFundsImage from 'data-url:../../../assets/transferFunds.png'
 import { Progress } from './Progress'
 import Popover from '../../primitives/Popover'
 import { Modal } from '../Modal'
-import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { faCopy, faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 
@@ -80,7 +78,7 @@ export const BuyModal: FC<Props> = ({
   const [totalPrice, setTotalPrice] = useState(0)
   const [referrerFee, setReferrerFee] = useState(0)
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
-  const [_transactionError, setTransactionError] = useState<Error | null>()
+  const [transactionError, setTransactionError] = useState<Error | null>()
   const [hasEnoughEth, setHasEnoughEth] = useState(true)
 
   const tokenDetails = useTokenDetails(
@@ -159,6 +157,21 @@ export const BuyModal: FC<Props> = ({
     >
       {buyStep === BuyStep.Checkout && tokenDetails?.tokens && (
         <Flex direction="column">
+          {transactionError && (
+            <Flex
+              css={{ color: '$errorAccent', p: '$4', gap: '$2' }}
+              align="center"
+            >
+              <FontAwesomeIcon
+                icon={faCircleExclamation}
+                width={16}
+                height={16}
+              />
+              <Text style="body2" color="$errorText">
+                Oops, something went wrong. Please try again.
+              </Text>
+            </Flex>
+          )}
           <TokenLineItem
             token={tokenDetails.tokens['0']}
             collection={collection}
