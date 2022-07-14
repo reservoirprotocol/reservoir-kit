@@ -18,15 +18,15 @@ import {
   Anchor,
   Button,
   FormatEth,
+  Loader,
 } from '../../primitives'
 
 import Popover from '../../primitives/Popover'
 import { Signer, utils } from 'ethers'
 
 import addFundsImage from 'data-url:../../../assets/transferFunds.png'
-import { formatEther } from 'ethers/lib/utils'
 import { getSignerDetails, SignerDetails } from '../../lib/signer'
-// import { Progress } from './Progress'
+import { Progress } from './Progress'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -133,9 +133,6 @@ export const BuyModal: FC<Props> = ({
     ? tokenDetails?.tokens[0].market?.floorAsk?.price != null
     : false
   const title = titleForStep(buyStep, isAvailable)
-  // const transactionButtonText = TransactionStep.Confirming
-  //   ? 'Waiting for Approval...'
-  //   : 'Waiting for Transaction to be Validated'
 
   useEffect(() => {
     if (open && tokenId && collectionId) {
@@ -249,12 +246,6 @@ export const BuyModal: FC<Props> = ({
             </Text>
           </Flex>
 
-          {/* <Progress transactionStep={currentTransactionStep} /> */}
-          {/* <Button disabled={true} css={{ width: '100%' }}>
-                <Loader />
-                {transactionButtonText}
-              </Button> */}
-
           <Box css={{ p: '$4', width: '100%' }}>
             {hasEnoughEth ? (
               <Button
@@ -356,6 +347,23 @@ export const BuyModal: FC<Props> = ({
           </Box>
         </Flex>
       )}
+
+      {(buyStep === BuyStep.Confirming || buyStep === BuyStep.Finalizing) &&
+        tokenDetails?.tokens && (
+          <Flex direction="column">
+            <TokenLineItem
+              token={tokenDetails.tokens['0']}
+              collection={collection}
+            />
+            <Progress buyStep={buyStep} />
+            <Button disabled={true} css={{ m: '$4' }}>
+              <Loader />
+              {buyStep === BuyStep.Confirming
+                ? 'Waiting for Approval...'
+                : 'Waiting for Transaction to be Validated'}
+            </Button>
+          </Flex>
+        )}
 
       {buyStep === BuyStep.AddFunds && tokenDetails?.tokens && (
         <Flex direction="column">

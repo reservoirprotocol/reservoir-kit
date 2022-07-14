@@ -17,7 +17,7 @@ export const StyledAnchor = styled('a', {
       primary: {
         color: '$accentText',
         '&:hover': {
-          color: '$accentTextHover',
+          color: '$accentSolidHover',
         },
       },
       gray: {

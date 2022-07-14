@@ -1,34 +1,50 @@
-import { Flex, Text } from '../../primitives'
+import { Anchor, Flex, Text } from '../../primitives'
 import React, { FC } from 'react'
-import { styled } from '../../../stitches.config'
 import { BuyStep } from './BuyModal'
-
-const Img = styled('img', {
-  height: 80,
-  width: 80,
-})
+import finalizingProgress from 'data-url:../../../assets/finalizingProgress.gif'
 
 type Props = {
   buyStep: BuyStep
+  txHash?: string
 }
 
-export const Progress: FC<Props> = () => {
+export const Progress: FC<Props> = ({ buyStep, txHash }) => {
+  //todo read currently connected to chain
+  const etherscanBaseUrl = 'https://etherscan.io/tx'
+
   return (
     <Flex
       direction="column"
       css={{
-        backgroundColor: '$slate3',
-        px: '$5',
-        py: '$4',
         alignItems: 'center',
         gap: '$4',
+        mt: '$5',
+        mb: '$3',
       }}
     >
-      <Text style="h6">Confirm Transaction with MetaMask</Text>
-      {/* <Img
-        src="https://cdn.dribbble.com/users/2574702/screenshots/6702374/metamask.gif"
-        css={{ borderRadius: 4, overflow: 'hidden' }}
-      /> */}
+      {buyStep == BuyStep.Confirming && (
+        <>
+          <Text style="h6">Confirm Transaction in your wallet</Text>
+          <img style={{ height: 100 }} src={finalizingProgress} />
+          {/* todo change to correct gif */}
+        </>
+      )}
+
+      {buyStep == BuyStep.Finalizing && (
+        <>
+          <Text style="h6">Finalizing on blockchain</Text>
+          <img style={{ height: 100 }} src={finalizingProgress} />
+          <Anchor
+            color="primary"
+            weight="medium"
+            css={{ fontSize: 12 }}
+            href={`${etherscanBaseUrl}/${txHash}`}
+            target="_blank"
+          >
+            View on Etherscan
+          </Anchor>
+        </>
+      )}
     </Flex>
   )
 }
