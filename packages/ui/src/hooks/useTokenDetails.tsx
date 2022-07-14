@@ -6,7 +6,7 @@ type TokenDetailsResponse =
   paths['/tokens/details/v4']['get']['responses']['200']['schema']
 
 export default function (
-  query?: paths['/tokens/details/v4']['get']['parameters']['query']
+  query?: paths['/tokens/details/v4']['get']['parameters']['query'] | false
 ) {
   const [resp, setResp] = useState<TokenDetailsResponse | null>(null)
   const sdk = useCoreSdk()

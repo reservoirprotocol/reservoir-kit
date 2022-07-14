@@ -65,6 +65,7 @@ export interface ReservoirKitThemeColors {
   headerBackground: string
   footerBackground: string
   contentBackground: string
+  wellBackground: string
 }
 
 export type ReservoirKitOverrides = {
