@@ -46,7 +46,6 @@ enum BuyStep {
   Initial,
   Confirmation,
   Finalizing,
-  InsufficientBalance,
   AddFunds,
   Error,
   Unavailable,
@@ -80,7 +79,6 @@ const TokenLineItem: FC<TokenLineItemProps> = ({ token, collection }) => {
     return null
   }
   const name = tokenDetails?.name || `#${tokenDetails.tokenId}`
-  console.log(collection?.metadata?.imageUrl)
   const img = tokenDetails.image
     ? tokenDetails.image
     : (collection?.metadata?.imageUrl as string)
@@ -113,7 +111,8 @@ export const BuyModal: FC<Props> = ({
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [totalPrice, setTotalPrice] = useState(constants.Zero)
-  const [currentStep, setCurrentStep] = useState<BuyStep>(BuyStep.AddFunds)
+  const [currentStep, setCurrentStep] = useState<BuyStep>(BuyStep.Initial)
+  const [hasEnoughEth, setHasEnoughEth] = useState(true)
   const title = titleForStep(currentStep)
   const [tokenQuery, setTokenQuery] =
     useState<Parameters<typeof useTokenDetails>['0']>()
@@ -171,7 +170,7 @@ export const BuyModal: FC<Props> = ({
 
   useEffect(() => {
     if (signerDetails.balance && signerDetails.balance.lt(totalPrice)) {
-      setCurrentStep(BuyStep.InsufficientBalance)
+      setHasEnoughEth(false)
     }
   }, [totalPrice, signerDetails])
 
@@ -198,7 +197,7 @@ export const BuyModal: FC<Props> = ({
       }
       onOpenChange={(open) => {
         if (!open) {
-          setCurrentStep(BuyStep.AddFunds)
+          setCurrentStep(BuyStep.Initial)
         }
         setOpen(open)
       }}
@@ -235,53 +234,61 @@ export const BuyModal: FC<Props> = ({
               {totalUsd}
             </Text>
           </Flex>
-          <Button
-            onClick={() => {
-              if (!tokenId || !collectionId) {
-                throw 'Missing tokenId or collectionId'
-              }
-
-              if (!sdk) {
-                throw 'ReservoirSdk was not initialized'
-              }
-
-              sdk.actions
-                .buyToken({
-                  expectedPrice: Number(formatEther(totalPrice)),
-                  signer,
-                  tokens: [
-                    {
-                      tokenId: tokenId,
-                      contract: collectionId,
-                    },
-                  ],
-                  onProgress: (steps) => {
-                    console.log(steps)
-                  },
-                  options: {
-                    referrer: referrer,
-                    referrerFeeBps: referrerFeeBps,
-                  },
-                })
-                .catch((error) => {
-                  if (error?.message.includes('ETH balance')) {
-                    setCurrentStep(BuyStep.InsufficientBalance)
-                    return
+          <Box css={{ p: '$4', width: '100%' }}>
+            {hasEnoughEth ? (
+              <Button
+                onClick={() => {
+                  if (!tokenId || !collectionId) {
+                    throw 'Missing tokenId or collectionId'
                   }
-                  console.log(error)
-                })
-            }}
-            css={{ m: '$4' }}
-            color="primary"
-            corners="rounded"
-          >
-            Checkout
-          </Button>
-        </Flex>
-      )}
 
-      {currentStep === BuyStep.InsufficientBalance && (
-        <div>Insufficient Balance</div>
+                  if (!sdk) {
+                    throw 'ReservoirSdk was not initialized'
+                  }
+
+                  sdk.actions
+                    .buyToken({
+                      expectedPrice: Number(formatEther(totalPrice)),
+                      signer,
+                      tokens: [
+                        {
+                          tokenId: tokenId,
+                          contract: collectionId,
+                        },
+                      ],
+                      onProgress: (steps) => {
+                        console.log(steps)
+                      },
+                      options: {
+                        referrer: referrer,
+                        referrerFeeBps: referrerFeeBps,
+                      },
+                    })
+                    .catch((error) => {
+                      if (error?.message.includes('ETH balance')) {
+                        return false
+                      }
+                      console.log(error)
+                    })
+                }}
+                css={{ width: '100%' }}
+                color="primary"
+                corners="rounded"
+              >
+                Checkout
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  setCurrentStep(BuyStep.AddFunds)
+                }}
+                css={{ width: '100%' }}
+              >
+                Add Funds
+              </Button>
+            )}
+          </Box>
+        </Flex>
       )}
 
       {currentStep === BuyStep.AddFunds && tokenDetails?.tokens && (
@@ -304,6 +311,7 @@ export const BuyModal: FC<Props> = ({
                     An exchange allows users to buy, sell and trade
                     cryptocurrencies. Popular exchanges include{' '}
                     <Anchor
+                      css={{ fontSize: 12 }}
                       href="https://coinbase.com"
                       target="_blank"
                       color="primary"
@@ -312,6 +320,7 @@ export const BuyModal: FC<Props> = ({
                     </Anchor>
                     ,{' '}
                     <Anchor
+                      css={{ fontSize: 12 }}
                       href="https://crypto.com"
                       target="_blank"
                       color="primary"
@@ -363,7 +372,7 @@ export const BuyModal: FC<Props> = ({
                   top: '50%',
                   touchEvents: 'none',
                   transform: 'translateY(-50%)',
-                  color: '$slate11',
+                  color: '$neutralText',
                 }}
               >
                 <FontAwesomeIcon icon={faCopy} width={16} height={16} />

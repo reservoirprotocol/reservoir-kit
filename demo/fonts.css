@@ -2,3 +2,10 @@
   font-family: 'ABC Monument Grotesk';
   src: url('/EduMonumentGroteskVariable.c98b4d2d.woff2');
 }
+
+html,
+body,
+#__next,
+#__next > div {
+  height: 100%;
+}
