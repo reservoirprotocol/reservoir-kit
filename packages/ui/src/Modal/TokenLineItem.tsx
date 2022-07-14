@@ -4,7 +4,7 @@ import TokenPrimitive from './TokenPrimitive'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import { useCollection, useTokenDetails, useEthConverter, u } from '../hooks'
+import { useCollection, useTokenDetails, useEthConverter } from '../hooks'
 
 type TokenLineItemProps = {
   token: NonNullable<

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useMemo } from 'react'
 import {
   useCollection,
   useTokenDetails,
@@ -81,17 +81,23 @@ export const BuyModal: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [hasEnoughEth, setHasEnoughEth] = useState(true)
 
-  const tokenDetails = useTokenDetails(
-    open && {
+  const tokenQuery = useMemo(
+    () => ({
       tokens: [`${collectionId}:${tokenId}`],
-    }
+    }),
+    [collectionId, tokenId]
   )
 
-  const collection = useCollection(
-    open && {
+  const collectionQuery = useMemo(
+    () => ({
       id: collectionId,
-    }
+    }),
+    [collectionId]
   )
+
+  const tokenDetails = useTokenDetails(open && tokenQuery)
+  const collection = useCollection(open && collectionQuery)
+
   const feeUsd = useEthConverter(referrerFee, 'USD')
   const totalUsd = useEthConverter(totalPrice, 'USD')
 
@@ -324,6 +330,22 @@ export const BuyModal: FC<Props> = ({
             </Button>
           </Flex>
         )}
+
+      {buyStep === BuyStep.Complete && tokenDetails?.tokens && (
+        <Flex direction="column">
+          <Flex
+            css={{
+              p: '$4',
+              py: '$5',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+            }}
+          >
+            <Text>hi</Text>
+          </Flex>
+        </Flex>
+      )}
 
       {buyStep === BuyStep.AddFunds && tokenDetails?.tokens && (
         <Flex direction="column">
