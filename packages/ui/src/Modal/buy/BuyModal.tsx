@@ -51,16 +51,15 @@ export enum BuyStep {
   Finalizing,
   AddFunds,
   Complete,
+  Unavailable,
 }
 
-function titleForStep(step: BuyStep, available: boolean) {
-  if (!available) {
-    return 'Selected item is no longer Available'
-  }
-
+function titleForStep(step: BuyStep) {
   switch (step) {
     case BuyStep.AddFunds:
       return 'Add Funds'
+    case BuyStep.Unavailable:
+      return 'Selected item is no longer Available'
     default:
       return 'Complete Checkout'
   }
@@ -105,11 +104,7 @@ export const BuyModal: FC<Props> = ({
 
   const sdk = useCoreSdk()
 
-  const isAvailable = tokenDetails?.tokens
-    ? tokenDetails?.tokens[0].market?.floorAsk?.price != null
-    : true
-
-  const title = titleForStep(buyStep, isAvailable)
+  const title = titleForStep(buyStep)
 
   useEffect(() => {
     if (tokenDetails?.tokens) {
@@ -124,6 +119,7 @@ export const BuyModal: FC<Props> = ({
         }
         setTotalPrice(floorPrice)
       } else {
+        setBuyStep(BuyStep.Unavailable)
         setTotalPrice(0) //todo fetch last sold price
       }
     }
@@ -161,11 +157,34 @@ export const BuyModal: FC<Props> = ({
       }}
       loading={!tokenDetails}
     >
+      {buyStep === BuyStep.Unavailable && tokenDetails?.tokens && (
+        <Flex direction="column">
+          <TokenLineItem
+            token={tokenDetails.tokens['0']}
+            collection={collection}
+            isSuspicious={isBanned}
+          />
+          <Button
+            onClick={() => {
+              setOpen(false)
+            }}
+            css={{ m: '$4' }}
+          >
+            Close
+          </Button>
+        </Flex>
+      )}
+
       {buyStep === BuyStep.Checkout && tokenDetails?.tokens && (
         <Flex direction="column">
           {transactionError && (
             <Flex
-              css={{ color: '$errorAccent', p: '$4', gap: '$2' }}
+              css={{
+                color: '$errorAccent',
+                p: '$4',
+                gap: '$2',
+                background: '$wellBackground',
+              }}
               align="center"
             >
               <FontAwesomeIcon
@@ -173,7 +192,7 @@ export const BuyModal: FC<Props> = ({
                 width={16}
                 height={16}
               />
-              <Text style="body2" color="$errorText">
+              <Text style="body2" color="errorLight">
                 Oops, something went wrong. Please try again.
               </Text>
             </Flex>
@@ -262,13 +281,13 @@ export const BuyModal: FC<Props> = ({
                     .catch((error) => {
                       if (error?.message.includes('ETH balance')) {
                         setHasEnoughEth(false)
-                        getSignerDetails(signer, {
-                          address: true,
-                          balance: true,
-                        }).then((details) => {
-                          // fix
-                          //setSignerDetails(details)
-                        })
+                        // getSignerDetails(signer, {
+                        //   address: true,
+                        //   balance: true,
+                        // }).then((details) => {
+                        // fix
+                        //setSignerDetails(details)
+                        // })
                       } else {
                         const transactionError = new Error(
                           error?.message || '',

@@ -12,6 +12,7 @@ export default function (
   const sdk = useCoreSdk()
 
   useEffect(() => {
+    console.log(query)
     if (query) {
       const path = new URL(`${sdk?.apiBase}/collection/v2`)
       setParams(path, query)
