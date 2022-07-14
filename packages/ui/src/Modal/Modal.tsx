@@ -2,11 +2,10 @@ import React, { FC, ReactNode } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
-import { Anchor, Button, Flex, Text } from '../primitives'
+import { Anchor, Button, Flex, Text, Loader } from '../primitives'
 import { styled } from '../../stitches.config'
 import { Dialog } from '../primitives/Dialog'
 import ReservoirLogoWhiteText from '../img/ReservoirLogoWhiteText'
-import Loader from '../primitives/Loader'
 
 const Title = styled(DialogPrimitive.Title, {})
 
@@ -35,17 +34,6 @@ export const Modal: FC<Props> = ({
 }) => {
   return (
     <Dialog trigger={trigger} onOpenChange={onOpenChange}>
-      {loading && (
-        <Loader
-          css={{
-            position: 'fixed',
-            inset: 0,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        />
-      )}
       <Flex
         css={{
           p: 16,
@@ -73,6 +61,14 @@ export const Modal: FC<Props> = ({
           </Button>
         </DialogPrimitive.Close>
       </Flex>
+      {loading && (
+        <Loader
+          css={{
+            minHeight: 242,
+            backgroundColor: '$blackA9',
+          }}
+        />
+      )}
       {children}
       <Flex
         css={{

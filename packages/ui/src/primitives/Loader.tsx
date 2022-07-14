@@ -8,7 +8,7 @@ const LoaderContainer = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: '$blackA9',
+  color: '$neutralText',
 })
 
 export default function Loader(
