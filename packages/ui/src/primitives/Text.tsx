@@ -13,15 +13,12 @@ export default styled('span', {
       subtle: {
         color: '$neutralText',
       },
-
       error: {
         color: '$errorAccent',
       },
-
       errorLight: {
         color: '$errorText',
       },
-
       accent: {
         color: '$accentText',
       },
