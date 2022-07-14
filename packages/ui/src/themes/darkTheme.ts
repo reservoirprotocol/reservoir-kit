@@ -6,9 +6,13 @@ import {
   blackA,
 } from '@radix-ui/colors'
 
-import { ReservoirKitTheme, sharedThemeConfig } from './ReservoirKitTheme'
+import {
+  ReservoirKitOverrides,
+  ReservoirKitTheme,
+  sharedThemeConfig,
+} from './ReservoirKitTheme'
 
-const darkTheme = (overrides?: ReservoirKitTheme): any => {
+export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
   let sharedTheme = sharedThemeConfig(overrides)
 
   return {
@@ -70,6 +74,7 @@ const darkTheme = (overrides?: ReservoirKitTheme): any => {
       errorAccent: '$crimson10',
 
       // component colors
+      reservoirLogoColor: '#ECEDEE',
       inputBackground: '$neutralBgHover',
       overlayBackground: overrides?.overlayBackground || '$blackA10',
       headerBackground: overrides?.headerBackground || '$neutralBgHover',
@@ -79,4 +84,3 @@ const darkTheme = (overrides?: ReservoirKitTheme): any => {
     ...sharedTheme,
   }
 }
-export default darkTheme

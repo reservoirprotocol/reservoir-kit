@@ -79,7 +79,6 @@ const TokenLineItem: FC<TokenLineItemProps> = ({ token, collection }) => {
     return null
   }
   const name = tokenDetails?.name || `#${tokenDetails.tokenId}`
-  console.log(collection?.metadata?.imageUrl)
   const img = tokenDetails.image
     ? tokenDetails.image
     : (collection?.metadata?.imageUrl as string)
