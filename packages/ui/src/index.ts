@@ -16,4 +16,4 @@ export { lightTheme, darkTheme } from './themes'
 export type { ReservoirKitTheme } from './themes/ReservoirKitTheme'
 
 //Components
-export { BuyModal } from './modal/buy/BuyModal'
+export { BuyModal } from './Modal/buy/BuyModal'

@@ -1,15 +1,17 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Modal } from '../Modal'
-import { TokenPrimitive } from '../TokenPrimitive'
 import {
   useCollection,
   useTokenDetails,
   useEthConverter,
   useCoreSdk,
+  useCopyToClipboard,
+  useTokenOpenseaBanned,
+  useSignerDetails,
 } from '../../hooks'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { Signer, utils } from 'ethers'
+import { getSignerDetails, SignerDetails } from '../../lib/signer'
+
 import {
   Flex,
   Box,
@@ -21,12 +23,14 @@ import {
   Loader,
 } from '../../primitives'
 
-import Popover from '../../primitives/Popover'
-import { Signer, utils } from 'ethers'
-
+// @ts-ignore
 import addFundsImage from 'data-url:../../../assets/transferFunds.png'
-import { getSignerDetails, SignerDetails } from '../../lib/signer'
 import { Progress } from './Progress'
+import Popover from '../../primitives/Popover'
+import { Modal } from '../Modal'
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import TokenLineItem from '../TokenLineItem'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -64,43 +68,6 @@ function titleForStep(step: BuyStep, available: boolean) {
   }
 }
 
-type TokenLineItemProps = {
-  token: NonNullable<
-    NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
-  >['0']
-  collection: ReturnType<typeof useCollection>
-}
-
-const TokenLineItem: FC<TokenLineItemProps> = ({ token, collection }) => {
-  const tokenDetails = token.token
-  const marketData = token.market
-  const usdPrice = useEthConverter(marketData?.floorAsk?.price || 0, 'USD') || 0
-
-  if (!tokenDetails || !marketData?.floorAsk?.price) {
-    return null
-  }
-  const name = tokenDetails?.name || `#${tokenDetails.tokenId}`
-  const img = tokenDetails.image
-    ? tokenDetails.image
-    : (collection?.metadata?.imageUrl as string)
-  const srcImg = marketData?.floorAsk?.source
-    ? (marketData?.floorAsk?.source['icon'] as string)
-    : ''
-  const royalty: number | undefined = collection?.royalties?.bps || undefined
-
-  return (
-    <TokenPrimitive
-      img={img}
-      name={name}
-      price={marketData.floorAsk.price}
-      usdPrice={usdPrice}
-      collection={collection?.name || ''}
-      royalty={royalty}
-      source={srcImg}
-    />
-  )
-}
-
 export const BuyModal: FC<Props> = ({
   trigger,
   tokenId,
@@ -110,38 +77,35 @@ export const BuyModal: FC<Props> = ({
   signer,
 }) => {
   const [open, setOpen] = useState(false)
-  const [copied, setCopied] = useState(false)
   const [totalPrice, setTotalPrice] = useState(0)
   const [referrerFee, setReferrerFee] = useState(0)
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
   const [_transactionError, setTransactionError] = useState<Error | null>()
   const [hasEnoughEth, setHasEnoughEth] = useState(true)
-  const [tokenQuery, setTokenQuery] =
-    useState<Parameters<typeof useTokenDetails>['0']>()
-  const [collectionQuery, setCollectionQuery] =
-    useState<Parameters<typeof useCollection>['0']>()
 
-  const [signerDetails, setSignerDetails] = useState<SignerDetails>({})
+  const tokenDetails = useTokenDetails(
+    open && {
+      tokens: [`${collectionId}:${tokenId}`],
+    }
+  )
 
-  const tokenDetails = useTokenDetails(tokenQuery)
-  const collection = useCollection(collectionQuery)
+  const collection = useCollection(
+    open && {
+      id: collectionId,
+    }
+  )
   const feeUsd = useEthConverter(referrerFee, 'USD')
   const totalUsd = useEthConverter(totalPrice, 'USD')
 
+  const { copy: copyToClipboard, copied } = useCopyToClipboard()
+
   const sdk = useCoreSdk()
+
   const isAvailable = tokenDetails?.tokens
     ? tokenDetails?.tokens[0].market?.floorAsk?.price != null
-    : false
-  const title = titleForStep(buyStep, isAvailable)
+    : true
 
-  useEffect(() => {
-    if (open && tokenId && collectionId) {
-      setTokenQuery({
-        tokens: [`${collectionId}:${tokenId}`],
-      })
-      setCollectionQuery({ id: collectionId })
-    }
-  }, [open, collectionId, tokenId])
+  const title = titleForStep(buyStep, isAvailable)
 
   useEffect(() => {
     if (tokenDetails?.tokens) {
@@ -161,34 +125,18 @@ export const BuyModal: FC<Props> = ({
     }
   }, [tokenDetails, referrerFeeBps])
 
-  useEffect(() => {
-    if (signer && open) {
-      getSignerDetails(signer, { address: true, balance: true }).then(
-        (details) => {
-          setSignerDetails(details)
-        }
-      )
-    }
-  }, [open, signer])
+  const signerDetails = useSignerDetails(open && signer)
 
   useEffect(() => {
     if (
-      signerDetails.balance &&
+      signerDetails?.balance &&
       signerDetails.balance.lt(utils.parseEther(`${totalPrice}`))
     ) {
       setHasEnoughEth(false)
     }
   }, [totalPrice, signerDetails])
 
-  const copyToClipboard = (content?: string | null) => {
-    navigator.clipboard.writeText(content ? content : '')
-    if (!copied) {
-      setCopied(true)
-      setTimeout(() => {
-        setCopied(false)
-      }, 1000)
-    }
-  }
+  const isBanned = useTokenOpenseaBanned(collectionId, tokenId)
 
   return (
     <Modal
@@ -214,6 +162,7 @@ export const BuyModal: FC<Props> = ({
           <TokenLineItem
             token={tokenDetails.tokens['0']}
             collection={collection}
+            isSuspicious={isBanned}
           />
           {referrerFeeBps && (
             <>
@@ -226,10 +175,7 @@ export const BuyModal: FC<Props> = ({
                 <FormatEth amount={referrerFee} />
               </Flex>
               <Flex justify="end">
-                <Text
-                  style="subtitle2"
-                  css={{ color: '$neutralText', pr: '$4' }}
-                >
+                <Text style="subtitle2" color="subtle" css={{ pr: '$4' }}>
                   {feeUsd}
                 </Text>
               </Flex>
@@ -241,7 +187,7 @@ export const BuyModal: FC<Props> = ({
             <FormatEth textStyle="h6" amount={totalPrice} />
           </Flex>
           <Flex justify="end">
-            <Text style="subtitle2" css={{ color: '$neutralText', mr: '$4' }}>
+            <Text style="subtitle2" color="subtle" css={{ mr: '$4' }}>
               {totalUsd}
             </Text>
           </Flex>
@@ -301,7 +247,8 @@ export const BuyModal: FC<Props> = ({
                           address: true,
                           balance: true,
                         }).then((details) => {
-                          setSignerDetails(details)
+                          // fix
+                          //setSignerDetails(details)
                         })
                       } else {
                         const transactionError = new Error(
@@ -324,7 +271,7 @@ export const BuyModal: FC<Props> = ({
             ) : (
               <Flex direction="column" align="center">
                 <Flex align="center" css={{ mb: '$3' }}>
-                  <Text css={{ mr: '$3', color: '$errorAccent' }} style="body2">
+                  <Text css={{ mr: '$3' }} color="error" style="body2">
                     Insufficient Balance
                   </Text>
 
@@ -405,7 +352,7 @@ export const BuyModal: FC<Props> = ({
                   </Text>
                 }
               >
-                <Text as="span" css={{ color: '$accentText' }}>
+                <Text as="span" color="accent">
                   exchange{' '}
                 </Text>
               </Popover>{' '}
@@ -431,7 +378,9 @@ export const BuyModal: FC<Props> = ({
               </Flex>
               <Input
                 readOnly
-                onClick={() => copyToClipboard(signerDetails?.address)}
+                onClick={() =>
+                  copyToClipboard(signerDetails?.address as string)
+                }
                 value={signerDetails?.address || ''}
                 css={{
                   color: '$neutralText',
@@ -456,7 +405,7 @@ export const BuyModal: FC<Props> = ({
           <Button
             css={{ m: '$4' }}
             color="primary"
-            onClick={() => copyToClipboard(signerDetails?.address)}
+            onClick={() => copyToClipboard(signerDetails?.address as string)}
           >
             Copy Wallet Address
           </Button>

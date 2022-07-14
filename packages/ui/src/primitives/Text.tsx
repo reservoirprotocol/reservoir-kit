@@ -6,6 +6,26 @@ export default styled('span', {
   letterSpacing: 0,
 
   variants: {
+    color: {
+      base: {
+        color: '$textColor',
+      },
+      subtle: {
+        color: '$neutralText',
+      },
+
+      error: {
+        color: '$errorAccent',
+      },
+
+      errorLight: {
+        color: '$errorText',
+      },
+
+      accent: {
+        color: '$accentText',
+      },
+    },
     style: {
       h2: {
         fontWeight: 700,
@@ -58,5 +78,6 @@ export default styled('span', {
 
   defaultVariants: {
     style: 'body1',
+    color: 'base',
   },
 })

@@ -6,7 +6,7 @@ type CollectionResponse =
   paths['/collection/v2']['get']['responses']['200']['schema']['collection']
 
 export default function (
-  query?: paths['/collection/v2']['get']['parameters']['query']
+  query?: paths['/collection/v2']['get']['parameters']['query'] | false
 ) {
   const [resp, setResp] = useState<CollectionResponse | null>(null)
   const sdk = useCoreSdk()

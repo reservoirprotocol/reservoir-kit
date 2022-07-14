@@ -17,7 +17,7 @@ const Img = styled('img', {
   width: 56,
 })
 
-export const TokenPrimitive: FC<Props> = ({
+const TokenPrimitive: FC<Props> = ({
   img,
   name,
   collection,
@@ -27,12 +27,7 @@ export const TokenPrimitive: FC<Props> = ({
   price,
 }) => {
   return (
-    <Box
-      css={{
-        p: 16,
-        border: '1px solid $neutralBorder',
-      }}
-    >
+    <Box>
       <Text
         style="subtitle2"
         css={{ mb: 5, color: '$neutralText', display: 'block' }}
@@ -71,3 +66,5 @@ export const TokenPrimitive: FC<Props> = ({
     </Box>
   )
 }
+
+export default TokenPrimitive
