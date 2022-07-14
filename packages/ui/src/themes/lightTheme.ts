@@ -1,7 +1,11 @@
 import { red, indigo, indigoA, gray, whiteA, blackA } from '@radix-ui/colors'
-import { sharedThemeConfig, ReservoirKitTheme } from './ReservoirKitTheme'
+import {
+  sharedThemeConfig,
+  ReservoirKitTheme,
+  ReservoirKitOverrides,
+} from './ReservoirKitTheme'
 
-const lightTheme = (overrides?: ReservoirKitTheme): any => {
+export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
   let sharedTheme = sharedThemeConfig(overrides)
 
   return {
@@ -74,4 +78,3 @@ const lightTheme = (overrides?: ReservoirKitTheme): any => {
     ...sharedTheme,
   }
 }
-export default lightTheme

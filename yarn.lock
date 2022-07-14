@@ -2194,32 +2194,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-tooltip@npm:^0.1.7":
-  version: 0.1.7
-  resolution: "@radix-ui/react-tooltip@npm:0.1.7"
-  dependencies:
-    "@babel/runtime": ^7.13.10
-    "@radix-ui/primitive": 0.1.0
-    "@radix-ui/react-compose-refs": 0.1.0
-    "@radix-ui/react-context": 0.1.1
-    "@radix-ui/react-id": 0.1.5
-    "@radix-ui/react-popper": 0.1.4
-    "@radix-ui/react-portal": 0.1.4
-    "@radix-ui/react-presence": 0.1.2
-    "@radix-ui/react-primitive": 0.1.4
-    "@radix-ui/react-slot": 0.1.2
-    "@radix-ui/react-use-controllable-state": 0.1.0
-    "@radix-ui/react-use-escape-keydown": 0.1.0
-    "@radix-ui/react-use-previous": 0.1.1
-    "@radix-ui/react-use-rect": 0.1.1
-    "@radix-ui/react-visually-hidden": 0.1.4
-  peerDependencies:
-    react: ^16.8 || ^17.0
-    react-dom: ^16.8 || ^17.0
-  checksum: 7cfd4dbc86ca6da92019628cf5b30544240b6d0ba81eb8f1422fa3d37559c4eaa8095bfee5a72fc3220ce1897f83e580b5eab5700260ba07d01386c43831ed43
-  languageName: node
-  linkType: hard
-
 "@radix-ui/react-use-body-pointer-events@npm:0.1.1":
   version: 0.1.1
   resolution: "@radix-ui/react-use-body-pointer-events@npm:0.1.1"
@@ -2278,17 +2252,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-use-previous@npm:0.1.1":
-  version: 0.1.1
-  resolution: "@radix-ui/react-use-previous@npm:0.1.1"
-  dependencies:
-    "@babel/runtime": ^7.13.10
-  peerDependencies:
-    react: ^16.8 || ^17.0
-  checksum: ca6d7fc397bb19a59fb06529c376fc0b4501fde29c390e9448dd381d05d25d7d2dbfde4c15a491851930cb62fec3cc15ecc413ff77e789a3139d8083db06bf21
-  languageName: node
-  linkType: hard
-
 "@radix-ui/react-use-rect@npm:0.1.1":
   version: 0.1.1
   resolution: "@radix-ui/react-use-rect@npm:0.1.1"
@@ -2309,18 +2272,6 @@ __metadata:
   peerDependencies:
     react: ^16.8 || ^17.0
   checksum: 205788806f108af75e1aba472e0801f3f735aec03e3fc1dbba5339a9f952a624df3ef82ffd833c71a89720ef5cc2bdc729bb234dd1b995f560206cb070863263
-  languageName: node
-  linkType: hard
-
-"@radix-ui/react-visually-hidden@npm:0.1.4":
-  version: 0.1.4
-  resolution: "@radix-ui/react-visually-hidden@npm:0.1.4"
-  dependencies:
-    "@babel/runtime": ^7.13.10
-    "@radix-ui/react-primitive": 0.1.4
-  peerDependencies:
-    react: ^16.8 || ^17.0
-  checksum: f551d27534c3c214fc2c085da6dabd8301c0e0d44268c0d6388ddcb194adfd3ef937366e390e931a03df3742eca83230f4718b807ad5565bbb75c03603e69c2c
   languageName: node
   linkType: hard
 
@@ -2372,7 +2323,6 @@ __metadata:
     "@radix-ui/colors": ^0.1.8
     "@radix-ui/react-dialog": ^0.1.7
     "@radix-ui/react-popover": ^0.1.6
-    "@radix-ui/react-tooltip": ^0.1.7
     "@rainbow-me/rainbowkit": ^0.4.1
     "@reservoir0x/reservoir-kit-core": "workspace:*"
     "@stitches/react": ^1.2.8
@@ -6830,7 +6780,6 @@ __metadata:
     "@parcel/transformer-inline-string": 2.6.2
     "@parcel/transformer-typescript-tsc": ^2.6.2
     "@parcel/transformer-typescript-types": ^2.6.2
-    "@radix-ui/react-tooltip": ^0.1.7
     "@types/node": ^17.0.10
     "@types/react": ^18.0.15
     "@types/react-dom": ^18.0.6
