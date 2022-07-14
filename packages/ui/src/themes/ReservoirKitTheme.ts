@@ -57,10 +57,12 @@ export interface ReservoirKitThemeColors {
   focusColor: string
   errorText: string
   errorAccent: string
+  successAccent: string
 
   // component colors
   reservoirLogoColor: string
   inputBackground: string
+  buttonTextColor: string
   overlayBackground: string
   headerBackground: string
   footerBackground: string
