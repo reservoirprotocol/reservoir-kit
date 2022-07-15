@@ -80,6 +80,7 @@ export const BuyModal: FC<Props> = ({
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [hasEnoughEth, setHasEnoughEth] = useState(true)
+  const [txHash, setTxHash] = useState<string | null>(null)
 
   const tokenQuery = useMemo(
     () => ({
@@ -281,6 +282,7 @@ export const BuyModal: FC<Props> = ({
 
                         if (currentStep) {
                           if (currentStep.txHash) {
+                            setTxHash(currentStep.txHash)
                             setBuyStep(BuyStep.Finalizing)
                           } else {
                             setBuyStep(BuyStep.Confirming)
@@ -358,7 +360,7 @@ export const BuyModal: FC<Props> = ({
               token={tokenDetails.tokens['0']}
               collection={collection}
             />
-            <Progress buyStep={buyStep} />
+            <Progress buyStep={buyStep} txHash={txHash} />
             <Button disabled={true} css={{ m: '$4' }}>
               <Loader />
               {buyStep === BuyStep.Confirming
@@ -456,7 +458,6 @@ export const BuyModal: FC<Props> = ({
                 value={signerDetails?.address || ''}
                 css={{
                   color: '$neutralText',
-                  //background: '$gray5',
                   textAlign: 'left',
                 }}
               />
