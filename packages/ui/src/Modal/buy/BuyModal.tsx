@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState, useMemo } from 'react'
 import {
   useCollection,
   useTokenDetails,
+  useHistoricalSales,
   useEthConverter,
   useCoreSdk,
   useCopyToClipboard,
@@ -94,8 +95,19 @@ export const BuyModal: FC<Props> = ({
     [collectionId]
   )
 
+  const salesQuery = useMemo(
+    (): Parameters<typeof useHistoricalSales>['0'] => ({
+      token: `${collectionId}:${tokenId}`,
+      limit: 1,
+    }),
+    [collectionId, tokenId]
+  )
+
   const tokenDetails = useTokenDetails(open && tokenQuery)
   const collection = useCollection(open && collectionQuery)
+  const lastSale = useHistoricalSales(
+    buyStep === BuyStep.Unavailable && salesQuery
+  )
 
   const feeUsd = useEthConverter(referrerFee, 'USD')
   const totalUsd = useEthConverter(totalPrice, 'USD')
@@ -120,7 +132,7 @@ export const BuyModal: FC<Props> = ({
         setTotalPrice(floorPrice)
       } else {
         setBuyStep(BuyStep.Unavailable)
-        setTotalPrice(0) //todo fetch last sold price
+        setTotalPrice(0)
       }
     }
   }, [tokenDetails, referrerFeeBps])
@@ -136,7 +148,10 @@ export const BuyModal: FC<Props> = ({
     }
   }, [totalPrice, signerDetails])
 
-  const isBanned = useTokenOpenseaBanned(collectionId, tokenId)
+  const isBanned = useTokenOpenseaBanned(
+    open ? collectionId : undefined,
+    tokenId
+  )
 
   return (
     <Modal
@@ -149,6 +164,7 @@ export const BuyModal: FC<Props> = ({
             }
           : null
       }
+      open={open}
       onOpenChange={(open) => {
         if (!open) {
           setBuyStep(BuyStep.Checkout)
@@ -161,8 +177,10 @@ export const BuyModal: FC<Props> = ({
         <Flex direction="column">
           <TokenLineItem
             token={tokenDetails.tokens['0']}
+            lastSale={lastSale}
             collection={collection}
             isSuspicious={isBanned}
+            isUnavailable={true}
           />
           <Button
             onClick={() => {

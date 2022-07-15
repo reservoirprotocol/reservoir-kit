@@ -12,10 +12,12 @@ const FormatEth: FC<Props> = ({
   maximumFractionDigits,
   logoWidth = 8,
   css,
+  textColor,
 }) => {
   return (
     <FormatCurrency
       css={css}
+      textColor={textColor}
       amount={amount}
       maximumFractionDigits={maximumFractionDigits}
     >

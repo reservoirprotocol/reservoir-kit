@@ -1,10 +1,15 @@
-import React, { FC } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { Box, Flex, Text } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import { useCollection, useTokenDetails, useEthConverter } from '../hooks'
+import {
+  useCollection,
+  useTokenDetails,
+  useEthConverter,
+  useHistoricalSales,
+} from '../hooks'
 
 type TokenLineItemProps = {
   token: NonNullable<
@@ -12,21 +17,36 @@ type TokenLineItemProps = {
   >['0']
   collection: ReturnType<typeof useCollection>
   isSuspicious?: Boolean
+  lastSale?: ReturnType<typeof useHistoricalSales>
+  isUnavailable?: boolean
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
   token,
   collection,
   isSuspicious,
+  lastSale,
+  isUnavailable,
 }) => {
+  const [price, setPrice] = useState(0)
   const tokenDetails = token.token
   const marketData = token.market
-  const usdPrice = useEthConverter(marketData?.floorAsk?.price || 0, 'USD') || 0
+  const usdPrice = useEthConverter(price, 'USD') || '0'
 
-  if (!tokenDetails || !marketData?.floorAsk?.price) {
+  useEffect(() => {
+    if (token.market?.floorAsk?.price) {
+      setPrice(token.market.floorAsk.price)
+    } else if (lastSale?.sales && lastSale?.sales?.length > 0) {
+      setPrice(lastSale.sales[0].price || 0)
+    }
+  }, [tokenDetails, lastSale])
+
+  if (!tokenDetails) {
     return null
   }
+
   const name = tokenDetails?.name || `#${tokenDetails.tokenId}`
+  const collectionName = tokenDetails.collection?.name || collection?.name || ''
 
   const img = tokenDetails.image
     ? tokenDetails.image
@@ -41,11 +61,12 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
       <TokenPrimitive
         img={img}
         name={name}
-        price={marketData.floorAsk.price}
-        usdPrice={usdPrice}
-        collection={collection?.name || ''}
+        price={price}
+        usdPrice={price ? usdPrice : '--'}
+        collection={collectionName}
         royalty={royalty}
         source={srcImg}
+        isUnavailable={isUnavailable}
       />
       {!!isSuspicious && (
         <Flex

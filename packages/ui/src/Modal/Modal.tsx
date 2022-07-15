@@ -13,6 +13,7 @@ type Props = {
   title: string
   children: ReactNode
   trigger: ReactNode
+  open?: boolean
   onOpenChange?: (open: boolean) => void
   onBack?: (() => void) | null
   loading?: boolean
@@ -29,11 +30,12 @@ export const Modal: FC<Props> = ({
   children,
   trigger,
   onBack,
+  open,
   onOpenChange,
   loading,
 }) => {
   return (
-    <Dialog trigger={trigger} onOpenChange={onOpenChange}>
+    <Dialog trigger={trigger} open={open} onOpenChange={onOpenChange}>
       <Flex
         css={{
           p: 16,

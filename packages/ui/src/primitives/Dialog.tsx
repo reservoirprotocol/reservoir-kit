@@ -6,6 +6,7 @@ import React, {
   forwardRef,
   ReactNode,
   useState,
+  useEffect,
 } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -79,6 +80,7 @@ type Props = {
   trigger: ReactNode
   portalProps?: DialogPrimitive.PortalProps
   onOpenChange?: (open: boolean) => void
+  open?: boolean
 }
 
 const Dialog = forwardRef<
@@ -86,26 +88,35 @@ const Dialog = forwardRef<
   ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & Props
 >(
   (
-    { children, trigger, portalProps, onOpenChange, ...props },
+    { children, trigger, portalProps, onOpenChange, open, ...props },
     forwardedRef
   ) => {
-    const [open, setOpen] = useState(false)
+    const [dialogOpen, setDialogOpen] = useState(false)
+
+    useEffect(() => {
+      if (open !== undefined) {
+        setDialogOpen(open)
+        if (onOpenChange) {
+          onOpenChange(open)
+        }
+      }
+    }, [open])
 
     return (
       <DialogPrimitive.Root
         onOpenChange={(open) => {
-          setOpen(open)
+          setDialogOpen(open)
           if (onOpenChange) {
             onOpenChange(open)
           }
         }}
-        open={open}
+        open={dialogOpen}
       >
         <DialogPrimitive.DialogTrigger asChild>
           {trigger}
         </DialogPrimitive.DialogTrigger>
         <AnimatePresence>
-          {open && (
+          {dialogOpen && (
             <DialogPrimitive.DialogPortal forceMount {...portalProps}>
               <AnimatedOverlay />
               <AnimatedContent ref={forwardedRef} {...props} forceMount>
