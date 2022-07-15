@@ -95,6 +95,7 @@ const Index: NextPage = () => {
         referrer="0xFd03726FD90ccc7386bf62b44Bb594f7cbFB3995"
         referrerFeeBps={1000}
         signer={signer}
+        onGoToToken={() => console.log('Awesome!')}
       />
       <select
         onClick={(e) => {

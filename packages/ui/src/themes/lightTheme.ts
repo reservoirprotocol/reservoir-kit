@@ -66,9 +66,11 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       focusColor: '$neutralTextContrast',
       errorText: '$red12',
       errorAccent: '$red10',
+      successAccent: '#4CC38A',
 
       // component colors
       reservoirLogoColor: '#11181C',
+      buttonTextColor: 'white',
       inputBackground: '$neutralBgHover',
       overlayBackground: overrides?.overlayBackground || '$blackA10',
       headerBackground: overrides?.headerBackground || '$neutralBgHover',
