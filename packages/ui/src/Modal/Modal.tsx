@@ -65,7 +65,7 @@ export const Modal: FC<Props> = ({
         <Loader
           css={{
             minHeight: 242,
-            backgroundColor: '$blackA9',
+            backgroundColor: '$contentBackground',
           }}
         />
       )}

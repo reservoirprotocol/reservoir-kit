@@ -9,6 +9,7 @@ const Button = styled('button', {
   gap: '$space$2',
   display: 'inline-flex',
   justifyContent: 'center',
+  color: '$buttonTextColor',
   alignItems: 'center',
   lineHeight: '20px',
   $$focusColor: '$colors$focusColor',
@@ -27,16 +28,16 @@ const Button = styled('button', {
     color: {
       primary: {
         backgroundColor: '$accentSolid',
-        color: 'white',
+        color: '$buttonTextColor',
         '&:hover': {
           backgroundColor: '$accentSolidHover',
         },
       },
       secondary: {
-        backgroundColor: '$secondaryBgHover',
-        color: '$accentTextContrast',
+        backgroundColor: 'rgba($colors$accentSolid, 0.2)',
+        color: '$buttonTextColor',
         '&:hover': {
-          backgroundColor: '$secondaryBgActive',
+          backgroundColor: 'rgba($colors$accentSolid, 0.3)',
         },
       },
       ghost: {
