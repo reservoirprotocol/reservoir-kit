@@ -1,7 +1,7 @@
 export { default as useCollection } from './useCollection'
 export { default as useTokenDetails } from './useTokenDetails'
 export { default as useHistoricalSales } from './useHistoricalSales'
-export { default as useEthConverter } from './useEthConverter'
+export { default as useEthConversion } from './useEthConversion'
 export { default as useCoreSdk } from './useCoreSdk'
 export { default as useTokenOpenseaBanned } from './useTokenOpenseaBanned'
 

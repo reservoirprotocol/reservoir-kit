@@ -4,18 +4,14 @@ import TokenPrimitive from './TokenPrimitive'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import {
-  useCollection,
-  useTokenDetails,
-  useEthConverter,
-  useHistoricalSales,
-} from '../hooks'
+import { useCollection, useTokenDetails, useHistoricalSales } from '../hooks'
 
 type TokenLineItemProps = {
   token: NonNullable<
     NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
   >['0']
   collection: ReturnType<typeof useCollection>
+  usdConversion?: number
   isSuspicious?: Boolean
   lastSale?: ReturnType<typeof useHistoricalSales>
   isUnavailable?: boolean
@@ -24,6 +20,7 @@ type TokenLineItemProps = {
 const TokenLineItem: FC<TokenLineItemProps> = ({
   token,
   collection,
+  usdConversion = 0,
   isSuspicious,
   lastSale,
   isUnavailable,
@@ -31,7 +28,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   const [price, setPrice] = useState(0)
   const tokenDetails = token.token
   const marketData = token.market
-  const usdPrice = useEthConverter(price, 'USD') || '0'
+  const usdPrice = price * usdConversion
 
   useEffect(() => {
     if (token.market?.floorAsk?.price) {
@@ -62,7 +59,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         img={img}
         name={name}
         price={price}
-        usdPrice={price ? usdPrice : '--'}
+        usdPrice={usdPrice}
         collection={collectionName}
         royalty={royalty}
         source={srcImg}

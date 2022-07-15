@@ -3,7 +3,7 @@ import {
   useCollection,
   useTokenDetails,
   useHistoricalSales,
-  useEthConverter,
+  useEthConversion,
   useCoreSdk,
   useCopyToClipboard,
   useTokenOpenseaBanned,
@@ -19,6 +19,7 @@ import {
   Anchor,
   Button,
   FormatEth,
+  FormatCurrency,
   Loader,
 } from '../../primitives'
 
@@ -110,8 +111,10 @@ export const BuyModal: FC<Props> = ({
     buyStep === BuyStep.Unavailable && salesQuery
   )
 
-  const feeUsd = useEthConverter(referrerFee, 'USD')
-  const totalUsd = useEthConverter(totalPrice, 'USD')
+  const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
+
+  const feeUsd = referrerFee * (ethUsdPrice || 0)
+  const totalUsd = totalPrice * (ethUsdPrice || 0)
 
   const { copy: copyToClipboard, copied } = useCopyToClipboard()
 
@@ -181,6 +184,7 @@ export const BuyModal: FC<Props> = ({
             lastSale={lastSale}
             collection={collection}
             isSuspicious={isBanned}
+            usdConversion={ethUsdPrice || 0}
             isUnavailable={true}
           />
           <Button
@@ -219,6 +223,7 @@ export const BuyModal: FC<Props> = ({
           <TokenLineItem
             token={tokenDetails.tokens['0']}
             collection={collection}
+            usdConversion={ethUsdPrice || 0}
             isSuspicious={isBanned}
           />
           {referrerFeeBps && (
@@ -232,9 +237,11 @@ export const BuyModal: FC<Props> = ({
                 <FormatEth amount={referrerFee} />
               </Flex>
               <Flex justify="end">
-                <Text style="subtitle2" color="subtle" css={{ pr: '$4' }}>
-                  {feeUsd}
-                </Text>
+                <FormatCurrency
+                  amount={feeUsd}
+                  color="subtle"
+                  css={{ pr: '$4' }}
+                />
               </Flex>
             </>
           )}
@@ -244,9 +251,11 @@ export const BuyModal: FC<Props> = ({
             <FormatEth textStyle="h6" amount={totalPrice} />
           </Flex>
           <Flex justify="end">
-            <Text style="subtitle2" color="subtle" css={{ mr: '$4' }}>
-              {totalUsd}
-            </Text>
+            <FormatCurrency
+              amount={totalUsd}
+              color="subtle"
+              css={{ mr: '$4' }}
+            />
           </Flex>
 
           <Box css={{ p: '$4', width: '100%' }}>
@@ -359,6 +368,8 @@ export const BuyModal: FC<Props> = ({
             <TokenLineItem
               token={tokenDetails.tokens['0']}
               collection={collection}
+              usdConversion={ethUsdPrice || 0}
+              isSuspicious={isBanned}
             />
             <Progress buyStep={buyStep} txHash={txHash} />
             <Button disabled={true} css={{ m: '$4' }}>

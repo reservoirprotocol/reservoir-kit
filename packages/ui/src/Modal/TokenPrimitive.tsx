@@ -1,6 +1,6 @@
 import { styled } from '../../stitches.config'
 import React, { FC } from 'react'
-import { Box, Flex, FormatEth, Text, Grid } from '../primitives'
+import { Box, Flex, FormatEth, Text, Grid, FormatCurrency } from '../primitives'
 
 type Props = {
   img?: string
@@ -69,9 +69,7 @@ const TokenPrimitive: FC<Props> = ({
             </Text>
           )}
           {usdPrice && (
-            <Text style="tiny" css={{ color: '$neutralText' }}>
-              {usdPrice}
-            </Text>
+            <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
           )}
         </Grid>
       </Flex>

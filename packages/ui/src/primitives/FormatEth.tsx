@@ -1,11 +1,11 @@
-import FormatCurrency from './FormatCurrency'
+import FormatCrypto from './FormatCrypto'
 import React, { FC, ComponentProps } from 'react'
 
 type FormatEthProps = {
   logoWidth?: number
 }
 
-type Props = ComponentProps<typeof FormatCurrency> & FormatEthProps
+type Props = ComponentProps<typeof FormatCrypto> & FormatEthProps
 
 const FormatEth: FC<Props> = ({
   amount,
@@ -15,7 +15,7 @@ const FormatEth: FC<Props> = ({
   textColor,
 }) => {
   return (
-    <FormatCurrency
+    <FormatCrypto
       css={css}
       textColor={textColor}
       amount={amount}
@@ -47,7 +47,7 @@ const FormatEth: FC<Props> = ({
           fill="#2F4EB2"
         />
       </svg>
-    </FormatCurrency>
+    </FormatCrypto>
   )
 }
 
