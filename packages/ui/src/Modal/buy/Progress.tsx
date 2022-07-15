@@ -1,6 +1,6 @@
 import { Anchor, Flex, Text } from '../../primitives'
 import React, { FC } from 'react'
-import { BuyStep } from './BuyModal'
+import { BuyStep } from './BuyModalRenderer'
 import confirmingProgress from 'data-url:../../../assets/confirmingProgress.gif'
 import finalizingProgress from 'data-url:../../../assets/finalizingProgress.gif'
 
@@ -12,7 +12,6 @@ type Props = {
 export const Progress: FC<Props> = ({ buyStep, txHash }) => {
   //todo read currently connected to chain
   const etherscanBaseUrl = 'https://etherscan.io/tx'
-  console.log(txHash)
   return (
     <Flex
       direction="column"

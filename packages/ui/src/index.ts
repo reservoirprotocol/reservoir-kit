@@ -17,3 +17,4 @@ export type { ReservoirKitTheme } from './themes/ReservoirKitTheme'
 
 //Components
 export { BuyModal } from './Modal/buy/BuyModal'
+export { BuyStep } from './Modal/buy/BuyModalRenderer'
