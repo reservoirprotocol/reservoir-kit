@@ -6,13 +6,13 @@ import finalizingProgress from 'data-url:../../../assets/finalizingProgress.gif'
 
 type Props = {
   buyStep: BuyStep
-  txHash?: string
+  txHash?: string | null
 }
 
 export const Progress: FC<Props> = ({ buyStep, txHash }) => {
   //todo read currently connected to chain
   const etherscanBaseUrl = 'https://etherscan.io/tx'
-
+  console.log(txHash)
   return (
     <Flex
       direction="column"

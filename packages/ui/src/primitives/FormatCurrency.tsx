@@ -1,32 +1,40 @@
-import { BigNumberish } from 'ethers'
-import { formatBN } from '../lib/numbers'
-import React, { FC } from 'react'
-import { Flex, Text } from './index'
+import React, { ComponentPropsWithoutRef, FC, useEffect, useState } from 'react'
+import { Text } from './index'
 
 type Props = {
-  amount: BigNumberish | null | undefined
+  amount: string | number | null | undefined
+  currency?: Intl.NumberFormatOptions['currency']
   maximumFractionDigits?: number
-  css?: Parameters<typeof Text>['0']['css']
-  textStyle?: Parameters<typeof Text>['0']['style']
-  children?: React.ReactNode
 }
 
-const FormatCurrency: FC<Props> = ({
+const FormatCurrency: FC<ComponentPropsWithoutRef<typeof Text> & Props> = ({
   amount,
-  maximumFractionDigits = 4,
-  css,
-  textStyle = 'subtitle2',
-  children,
+  maximumFractionDigits = 2,
+  currency = 'USD',
+  ...props
 }) => {
-  const value = formatBN(amount, maximumFractionDigits)
+  const [formattedValue, setFormattedValue] = useState('')
+
+  useEffect(() => {
+    if (amount) {
+      const formatted = new Intl.NumberFormat(undefined, {
+        style: 'currency',
+        currency: currency,
+      }).format(+amount)
+      setFormattedValue(formatted)
+    } else {
+      setFormattedValue('')
+    }
+  }, [amount, maximumFractionDigits])
 
   return (
-    <Flex align="center" css={{ gap: '$1' }}>
-      {value !== '-' ? children : null}
-      <Text style={textStyle} css={css}>
-        {value}
-      </Text>
-    </Flex>
+    <Text
+      {...props}
+      style={props.style || 'subtitle2'}
+      color={props.color || 'base'}
+    >
+      {formattedValue}
+    </Text>
   )
 }
 

@@ -1,6 +1,6 @@
 import { styled } from '../../stitches.config'
 import React, { FC } from 'react'
-import { Box, Flex, FormatEth, Text, Grid } from '../primitives'
+import { Box, Flex, FormatEth, Text, Grid, FormatCurrency } from '../primitives'
 
 type Props = {
   img?: string
@@ -10,6 +10,7 @@ type Props = {
   price?: number
   usdPrice?: number | string
   royalty?: number
+  isUnavailable?: boolean
 }
 
 const Img = styled('img', {
@@ -25,13 +26,11 @@ const TokenPrimitive: FC<Props> = ({
   source,
   usdPrice,
   price,
+  isUnavailable,
 }) => {
   return (
     <Box>
-      <Text
-        style="subtitle2"
-        css={{ mb: 5, color: '$neutralText', display: 'block' }}
-      >
+      <Text style="subtitle2" color="subtle" css={{ mb: 5, display: 'block' }}>
         Item
       </Text>
       <Flex css={{ justifyContent: 'space-between' }}>
@@ -42,8 +41,12 @@ const TokenPrimitive: FC<Props> = ({
             css={{ borderRadius: 4, overflow: 'hidden' }}
           />
           <Grid css={{ rowGap: 2 }}>
-            <Text style="h6">{name}</Text>
-            <Text style="body2">{collection}</Text>
+            <Text style="h6" color={isUnavailable ? 'subtle' : 'base'}>
+              {name}
+            </Text>
+            <Text style="body2" color={isUnavailable ? 'subtle' : 'base'}>
+              {collection}
+            </Text>
             {!!royalty && <Text style="tiny">{royalty}% royalty</Text>}
           </Grid>
         </Flex>
@@ -55,11 +58,18 @@ const TokenPrimitive: FC<Props> = ({
               css={{ w: 17, h: 17, borderRadius: 99999, overflow: 'hidden' }}
             />
           )}
-          <FormatEth amount={price} />
-          {usdPrice && (
-            <Text style="tiny" css={{ color: '$neutralText' }}>
-              {usdPrice}
+          {price ? (
+            <FormatEth
+              amount={price}
+              textColor={isUnavailable ? 'subtle' : 'base'}
+            />
+          ) : (
+            <Text style="subtitle2" color={isUnavailable ? 'subtle' : 'base'}>
+              --
             </Text>
+          )}
+          {usdPrice && (
+            <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
           )}
         </Grid>
       </Flex>

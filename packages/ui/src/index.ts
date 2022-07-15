@@ -7,8 +7,8 @@ export {
   useCollection,
   useCoreSdk,
   useTokenDetails,
+  useHistoricalSales,
   useTokenOpenseaBanned,
-  useEthConverter,
 } from './hooks'
 
 // Themes

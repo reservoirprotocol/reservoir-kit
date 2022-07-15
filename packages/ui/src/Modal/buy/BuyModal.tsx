@@ -2,7 +2,8 @@ import React, { FC, useEffect, useState, useMemo } from 'react'
 import {
   useCollection,
   useTokenDetails,
-  useEthConverter,
+  useHistoricalSales,
+  useEthConversion,
   useCoreSdk,
   useCopyToClipboard,
   useTokenOpenseaBanned,
@@ -10,12 +11,6 @@ import {
 } from '../../hooks'
 
 import { Signer, utils } from 'ethers'
-<<<<<<< HEAD
-=======
-import { getSignerDetails } from '../../lib/signer'
-import { Close } from '@radix-ui/react-dialog'
-
->>>>>>> 445f51e... add success screen
 import {
   Flex,
   Box,
@@ -24,6 +19,7 @@ import {
   Anchor,
   Button,
   FormatEth,
+  FormatCurrency,
   Loader,
 } from '../../primitives'
 
@@ -31,7 +27,11 @@ import addFundsImage from 'data-url:../../../assets/transferFunds.png'
 import { Progress } from './Progress'
 import Popover from '../../primitives/Popover'
 import { Modal } from '../Modal'
-import { faCopy, faCircleExclamation, aCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCopy,
+  faCircleExclamation,
+  faCheckCircle,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 
@@ -86,6 +86,7 @@ export const BuyModal: FC<Props> = ({
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [hasEnoughEth, setHasEnoughEth] = useState(true)
+  const [txHash, setTxHash] = useState<string | null>(null)
 
   const tokenQuery = useMemo(
     () => ({
@@ -101,13 +102,24 @@ export const BuyModal: FC<Props> = ({
     [collectionId]
   )
 
+  const salesQuery = useMemo(
+    (): Parameters<typeof useHistoricalSales>['0'] => ({
+      token: `${collectionId}:${tokenId}`,
+      limit: 1,
+    }),
+    [collectionId, tokenId]
+  )
+
   const tokenDetails = useTokenDetails(open && tokenQuery)
   const collection = useCollection(open && collectionQuery)
-
+  const lastSale = useHistoricalSales(
+    buyStep === BuyStep.Unavailable && salesQuery
+  )
   let token = !!tokenDetails?.tokens?.length && tokenDetails?.tokens[0]
 
-  const feeUsd = useEthConverter(referrerFee, 'USD')
-  const totalUsd = useEthConverter(totalPrice, 'USD')
+  const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
+  const feeUsd = referrerFee * (ethUsdPrice || 0)
+  const totalUsd = totalPrice * (ethUsdPrice || 0)
 
   const { copy: copyToClipboard, copied } = useCopyToClipboard()
 
@@ -129,7 +141,7 @@ export const BuyModal: FC<Props> = ({
         setTotalPrice(floorPrice)
       } else {
         setBuyStep(BuyStep.Unavailable)
-        setTotalPrice(0) //todo fetch last sold price
+        setTotalPrice(0)
       }
     }
   }, [tokenDetails, referrerFeeBps])
@@ -145,7 +157,10 @@ export const BuyModal: FC<Props> = ({
     }
   }, [totalPrice, signerDetails])
 
-  const isBanned = useTokenOpenseaBanned(collectionId, tokenId)
+  const isBanned = useTokenOpenseaBanned(
+    open ? collectionId : undefined,
+    tokenId
+  )
 
   return (
     <Modal
@@ -158,6 +173,7 @@ export const BuyModal: FC<Props> = ({
             }
           : null
       }
+      open={open}
       onOpenChange={(open) => {
         if (!open) {
           setBuyStep(BuyStep.Checkout)
@@ -169,9 +185,12 @@ export const BuyModal: FC<Props> = ({
       {buyStep === BuyStep.Unavailable && token && (
         <Flex direction="column">
           <TokenLineItem
+            lastSale={lastSale}
             token={token}
             collection={collection}
             isSuspicious={isBanned}
+            usdConversion={ethUsdPrice || 0}
+            isUnavailable={true}
           />
           <Button
             onClick={() => {
@@ -209,6 +228,7 @@ export const BuyModal: FC<Props> = ({
           <TokenLineItem
             token={token}
             collection={collection}
+            usdConversion={ethUsdPrice || 0}
             isSuspicious={isBanned}
           />
           {referrerFeeBps && (
@@ -222,9 +242,11 @@ export const BuyModal: FC<Props> = ({
                 <FormatEth amount={referrerFee} />
               </Flex>
               <Flex justify="end">
-                <Text style="subtitle2" color="subtle" css={{ pr: '$4' }}>
-                  {feeUsd}
-                </Text>
+                <FormatCurrency
+                  amount={feeUsd}
+                  color="subtle"
+                  css={{ pr: '$4' }}
+                />
               </Flex>
             </>
           )}
@@ -234,9 +256,11 @@ export const BuyModal: FC<Props> = ({
             <FormatEth textStyle="h6" amount={totalPrice} />
           </Flex>
           <Flex justify="end">
-            <Text style="subtitle2" color="subtle" css={{ mr: '$4' }}>
-              {totalUsd}
-            </Text>
+            <FormatCurrency
+              amount={totalUsd}
+              color="subtle"
+              css={{ mr: '$4' }}
+            />
           </Flex>
 
           <Box css={{ p: '$4', width: '100%' }}>
@@ -272,6 +296,7 @@ export const BuyModal: FC<Props> = ({
 
                         if (currentStep) {
                           if (currentStep.txHash) {
+                            setTxHash(currentStep.txHash)
                             setBuyStep(BuyStep.Finalizing)
                           } else {
                             setBuyStep(BuyStep.Confirming)
@@ -345,8 +370,13 @@ export const BuyModal: FC<Props> = ({
       {(buyStep === BuyStep.Confirming || buyStep === BuyStep.Finalizing) &&
         token && (
           <Flex direction="column">
-            <TokenLineItem token={token} collection={collection} />
-            <Progress buyStep={buyStep} />
+            <TokenLineItem
+              token={token}
+              collection={collection}
+              usdConversion={ethUsdPrice || 0}
+              isSuspicious={isBanned}
+            />
+            <Progress buyStep={buyStep} txHash={txHash} />
             <Button disabled={true} css={{ m: '$4' }}>
               <Loader />
               {buyStep === BuyStep.Confirming
@@ -408,29 +438,35 @@ export const BuyModal: FC<Props> = ({
           <Flex css={{ p: '$4' }}>
             {!!onGoToToken ? (
               <>
-                <Close asChild>
-                  <Button css={{ mr: '$3', flex: 1 }} color="ghost">
-                    Close
-                  </Button>
-                </Close>
-                <Close asChild>
-                  <Button
-                    style={{ flex: 1 }}
-                    color="primary"
-                    onClick={() => {
-                      onGoToToken()
-                    }}
-                  >
-                    Go to Token
-                  </Button>
-                </Close>
-              </>
-            ) : (
-              <Close asChild>
-                <Button style={{ flex: 1 }} color="primary">
+                <Button
+                  onClick={() => {
+                    setOpen(false)
+                  }}
+                  css={{ mr: '$3', flex: 1 }}
+                  color="ghost"
+                >
                   Close
                 </Button>
-              </Close>
+                <Button
+                  style={{ flex: 1 }}
+                  color="primary"
+                  onClick={() => {
+                    onGoToToken()
+                  }}
+                >
+                  Go to Token
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={() => {
+                  setOpen(false)
+                }}
+                style={{ flex: 1 }}
+                color="primary"
+              >
+                Close
+              </Button>
             )}
           </Flex>
         </Flex>
@@ -508,7 +544,6 @@ export const BuyModal: FC<Props> = ({
                 value={signerDetails?.address || ''}
                 css={{
                   color: '$neutralText',
-                  //background: '$gray5',
                   textAlign: 'left',
                 }}
               />
