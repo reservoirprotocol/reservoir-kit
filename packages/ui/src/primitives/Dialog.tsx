@@ -48,6 +48,10 @@ const Content = styled(DialogPrimitive.Content, {
   maxHeight: '85vh',
   overflowY: 'auto',
   '&:focus': { outline: 'none' },
+  '@media(max-width: 520px)': {
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 0,
+  },
 })
 
 const AnimatedContent = forwardRef<
@@ -96,7 +100,7 @@ const AnimatedContent = forwardRef<
       <motion.div
         key={isMobile + 'modal'}
         ref={forwardedRef}
-        transition={{ type: 'spring', duration: 0.5 }}
+        transition={{ type: isMobile ? 'tween' : 'spring', duration: 0.5 }}
         {...animation}
       >
         {children}
