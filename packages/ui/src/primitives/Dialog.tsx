@@ -51,6 +51,7 @@ const Content = styled(DialogPrimitive.Content, {
   '@media(max-width: 520px)': {
     borderBottomRightRadius: 0,
     borderBottomLeftRadius: 0,
+    border: 0,
   },
 })
 
