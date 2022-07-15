@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useMediaQuery } from '../hooks'
 
 const Overlay = styled(DialogPrimitive.Overlay, {
   backgroundColor: '$overlayBackground',
@@ -39,10 +40,9 @@ const Content = styled(DialogPrimitive.Content, {
   boxShadow: 'box-shadow: 0px 2px 16px $$shadowColor',
   border: '1px solid $borderColor',
   position: 'fixed',
-  top: '12.5%',
   left: '50%',
-  transform: 'translateX(-50%)',
   maxWidth: 516,
+  top: '100%',
   width: '100%',
   maxHeight: '85vh',
   overflowY: 'auto',
@@ -52,28 +52,57 @@ const Content = styled(DialogPrimitive.Content, {
 const AnimatedContent = forwardRef<
   ElementRef<typeof DialogPrimitive.DialogContent>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.DialogContent>
->(({ children, ...props }, forwardedRef) => (
-  <Content forceMount asChild {...props}>
-    <motion.div
-      ref={forwardedRef}
-      transition={{ type: 'spring', duration: 0.5 }}
-      initial={{
-        opacity: 0,
-        top: '14%',
-      }}
-      animate={{
-        opacity: 1,
-        top: '9%',
-      }}
-      exit={{
-        opacity: 0,
-        top: '14%',
-      }}
-    >
-      {children}
-    </motion.div>
-  </Content>
-))
+>(({ children, ...props }, forwardedRef) => {
+  const isMobile = useMediaQuery('(max-width: 520px)')
+
+  const animation = isMobile
+    ? {
+        initial: {
+          opacity: 0,
+          transform: 'translateX(-50%)translateY(0%)',
+        },
+        animate: {
+          opacity: 1,
+          transform: 'translateX(-50%)translateY(-100%)',
+        },
+
+        exit: {
+          opacity: 0,
+          transform: 'translateX(-50%)translateY(0%)',
+        },
+      }
+    : {
+        initial: {
+          opacity: 0,
+          top: '14%',
+          transform: 'translateX(-50%)',
+        },
+        animate: {
+          opacity: 1,
+          top: '9%',
+          transform: 'translateX(-50%)',
+        },
+
+        exit: {
+          opacity: 0,
+          top: '14%',
+          transform: 'translateX(-50%)',
+        },
+      }
+
+  return (
+    <Content forceMount asChild {...props}>
+      <motion.div
+        key={isMobile + 'modal'}
+        ref={forwardedRef}
+        transition={{ type: 'spring', duration: 0.5 }}
+        {...animation}
+      >
+        {children}
+      </motion.div>
+    </Content>
+  )
+})
 
 type Props = {
   trigger: ReactNode
