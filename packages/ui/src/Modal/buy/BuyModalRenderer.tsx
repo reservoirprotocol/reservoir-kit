@@ -17,6 +17,7 @@ import {
 } from '../../hooks'
 
 import { Signer, utils } from 'ethers'
+import { Execute } from '@reservoir0x/reservoir-kit-core'
 
 export enum BuyStep {
   Checkout,
@@ -130,7 +131,7 @@ export const BuyModalRenderer: FC<Props> = ({
             contract: collectionId,
           },
         ],
-        onProgress: (steps) => {
+        onProgress: (steps: Execute['steps']) => {
           if (!steps) {
             return
           }
@@ -153,8 +154,9 @@ export const BuyModalRenderer: FC<Props> = ({
           referrerFeeBps: referrerFeeBps,
         },
       })
-      .catch((error) => {
-        if (error?.message.includes('ETH balance')) {
+      .catch((e: any) => {
+        const error = e as Error
+        if (error && error?.message.includes('ETH balance')) {
           setHasEnoughEth(false)
         } else {
           const transactionError = new Error(error?.message || '', {
