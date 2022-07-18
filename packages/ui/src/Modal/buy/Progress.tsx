@@ -1,8 +1,8 @@
 import { Anchor, Flex, Text } from '../../primitives'
 import React, { FC } from 'react'
 import { BuyStep } from './BuyModalRenderer'
-import confirmingProgress from 'data-url:../../../assets/confirmingProgress.gif'
-import finalizingProgress from 'data-url:../../../assets/finalizingProgress.gif'
+import confirmingProgress from 'url:../../../assets/confirmingProgress.gif'
+import finalizingProgress from 'url:../../../assets/finalizingProgress.gif'
 
 type Props = {
   buyStep: BuyStep
