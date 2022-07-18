@@ -14,7 +14,7 @@
     "scripts": {
         "clean": "rm -rf dist",
         "version": "yarn version",
-        "syncApi": "npx openapi-typescript https://api.reservoir.tools/admin/open-api --output ./src/types/api.ts"
+        "syncApi": "npx openapi-typescript https://api.reservoir.tools/swagger.json --output ./src/types/api.ts"
     },
     "repository": {
         "type": "git",
