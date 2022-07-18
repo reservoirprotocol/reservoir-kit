@@ -2515,6 +2515,7 @@ __metadata:
     ethers: ^5.6.1
     react: ^18.0
     react-dom: ^18.0
+    wagmi: ^0.5.8
   languageName: unknown
   linkType: soft
 

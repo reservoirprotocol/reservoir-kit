@@ -6,12 +6,10 @@ import finalizingProgress from 'data-url:../../../assets/finalizingProgress.gif'
 
 type Props = {
   buyStep: BuyStep
-  txHash?: string | null
+  etherscanBaseUrl?: string
 }
 
-export const Progress: FC<Props> = ({ buyStep, txHash }) => {
-  //todo read currently connected to chain
-  const etherscanBaseUrl = 'https://etherscan.io/tx'
+export const Progress: FC<Props> = ({ buyStep, etherscanBaseUrl }) => {
   return (
     <Flex
       direction="column"
@@ -42,7 +40,7 @@ export const Progress: FC<Props> = ({ buyStep, txHash }) => {
           fontSize: 12,
           visibility: buyStep == BuyStep.Finalizing ? 'visible' : 'hidden',
         }}
-        href={`${etherscanBaseUrl}/${txHash}`}
+        href={etherscanBaseUrl}
         target="_blank"
       >
         View on Etherscan

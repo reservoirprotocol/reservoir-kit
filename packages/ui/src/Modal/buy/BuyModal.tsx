@@ -1,7 +1,6 @@
 import React, { ReactElement, useState } from 'react'
 import { useCopyToClipboard } from '../../hooks'
 
-import { Signer } from 'ethers'
 import {
   Flex,
   Box,
@@ -31,7 +30,6 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   onGoToToken?: () => any
-  signer: Signer
 } & (
     | {
         referrerFeeBps: number
@@ -60,7 +58,6 @@ export function BuyModal({
   collectionId,
   referrer,
   referrerFeeBps,
-  signer,
   onGoToToken,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
@@ -73,7 +70,6 @@ export function BuyModal({
       collectionId={collectionId}
       referrer={referrer}
       referrerFeeBps={referrerFeeBps}
-      signer={signer}
     >
       {({
         token,
@@ -89,7 +85,9 @@ export function BuyModal({
         totalUsd,
         ethUsdPrice,
         isBanned,
-        signerDetails,
+        balance,
+        address,
+        etherscanBaseUrl,
         buyToken,
         setBuyStep,
       }) => {
@@ -216,10 +214,7 @@ export function BuyModal({
                           Insufficient Balance
                         </Text>
 
-                        <FormatEth
-                          amount={signerDetails?.balance}
-                          textStyle="body2"
-                        />
+                        <FormatEth amount={balance} textStyle="body2" />
                       </Flex>
 
                       <Button
@@ -246,7 +241,10 @@ export function BuyModal({
                     usdConversion={ethUsdPrice || 0}
                     isSuspicious={isBanned}
                   />
-                  <Progress buyStep={buyStep} txHash={txHash} />
+                  <Progress
+                    buyStep={buyStep}
+                    etherscanBaseUrl={`${etherscanBaseUrl}/tx/${txHash}`}
+                  />
                   <Button disabled={true} css={{ m: '$4' }}>
                     <Loader />
                     {buyStep === BuyStep.Confirming
@@ -299,7 +297,7 @@ export function BuyModal({
                     color="primary"
                     weight="medium"
                     css={{ fontSize: 12 }}
-                    href={`https://etherscan.io/tx/${txHash}`}
+                    href={`${etherscanBaseUrl}/tx/${txHash}`}
                     target="_blank"
                   >
                     View on Etherscan
@@ -411,10 +409,8 @@ export function BuyModal({
                     </Flex>
                     <Input
                       readOnly
-                      onClick={() =>
-                        copyToClipboard(signerDetails?.address as string)
-                      }
-                      value={signerDetails?.address || ''}
+                      onClick={() => copyToClipboard(address as string)}
+                      value={address || ''}
                       css={{
                         color: '$neutralText',
                         textAlign: 'left',
@@ -437,9 +433,7 @@ export function BuyModal({
                 <Button
                   css={{ m: '$4' }}
                   color="primary"
-                  onClick={() =>
-                    copyToClipboard(signerDetails?.address as string)
-                  }
+                  onClick={() => copyToClipboard(address as string)}
                 >
                   Copy Wallet Address
                 </Button>
