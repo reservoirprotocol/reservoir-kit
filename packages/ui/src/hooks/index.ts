@@ -7,4 +7,3 @@ export { default as useTokenOpenseaBanned } from './useTokenOpenseaBanned'
 
 export { default as useCopyToClipboard } from './useCopyToClipboard'
 export { default as useMediaQuery } from './useMediaQuery'
-export { default as useSignerDetails } from './useSignerDetails'

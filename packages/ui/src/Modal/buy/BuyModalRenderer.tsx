@@ -13,10 +13,10 @@ import {
   useEthConversion,
   useCoreSdk,
   useTokenOpenseaBanned,
-  useSignerDetails,
 } from '../../hooks'
+import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 
-import { Signer, utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { Execute } from '@reservoir0x/reservoir-kit-core'
 
 export enum BuyStep {
@@ -46,7 +46,9 @@ type ChildrenProps = {
   totalUsd: number
   ethUsdPrice: ReturnType<typeof useEthConversion>
   isBanned: boolean
-  signerDetails: ReturnType<typeof useSignerDetails>
+  balance?: BigNumber
+  address?: string
+  etherscanBaseUrl: string
   buyToken: () => void
   setBuyStep: React.Dispatch<React.SetStateAction<BuyStep>>
 }
@@ -55,7 +57,6 @@ type Props = {
   open: boolean
   tokenId?: string
   collectionId?: string
-  signer: Signer
   referrerFeeBps?: number
   referrer?: string
   children: (props: ChildrenProps) => ReactNode
@@ -67,15 +68,18 @@ export const BuyModalRenderer: FC<Props> = ({
   collectionId,
   referrer,
   referrerFeeBps,
-  signer,
   children,
 }) => {
+  const { data: signer } = useSigner()
   const [totalPrice, setTotalPrice] = useState(0)
   const [referrerFee, setReferrerFee] = useState(0)
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [hasEnoughEth, setHasEnoughEth] = useState(true)
   const [txHash, setTxHash] = useState<string | null>(null)
+  const { chain: activeChain } = useNetwork()
+  const etherscanBaseUrl =
+    activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
 
   const tokenQuery = useMemo(
     () => ({
@@ -113,6 +117,10 @@ export const BuyModalRenderer: FC<Props> = ({
   const sdk = useCoreSdk()
 
   const buyToken = useCallback(() => {
+    if (!signer) {
+      throw 'Missing a signer'
+    }
+
     if (!tokenId || !collectionId) {
       throw 'Missing tokenId or collectionId'
     }
@@ -188,16 +196,24 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   }, [tokenDetails, referrerFeeBps])
 
-  const signerDetails = useSignerDetails(open && signer)
+  const { address } = useAccount()
+  const { data: balance } = useBalance({
+    addressOrName: address,
+    watch: true,
+  })
 
   useEffect(() => {
-    if (
-      signerDetails?.balance &&
-      signerDetails.balance.lt(utils.parseEther(`${totalPrice}`))
-    ) {
-      setHasEnoughEth(false)
+    if (balance) {
+      if (!balance.value) {
+        setHasEnoughEth(false)
+      } else if (
+        balance.value &&
+        balance.value.lt(utils.parseEther(`${totalPrice}`))
+      ) {
+        setHasEnoughEth(false)
+      }
     }
-  }, [totalPrice, signerDetails])
+  }, [totalPrice, balance])
 
   const isBanned = useTokenOpenseaBanned(
     open ? collectionId : undefined,
@@ -220,7 +236,9 @@ export const BuyModalRenderer: FC<Props> = ({
         totalUsd,
         ethUsdPrice,
         isBanned,
-        signerDetails,
+        balance: balance?.value,
+        address: address,
+        etherscanBaseUrl,
         buyToken,
         setBuyStep,
       })}
