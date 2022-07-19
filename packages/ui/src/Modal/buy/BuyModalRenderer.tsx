@@ -17,7 +17,7 @@ import {
 import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 
 import { BigNumber, utils } from 'ethers'
-import { Execute } from '@reservoir0x/reservoir-kit-core'
+import { Execute, ReservoirSDKActions } from '@reservoir0x/reservoir-kit-core'
 
 export enum BuyStep {
   Checkout,
@@ -129,6 +129,14 @@ export const BuyModalRenderer: FC<Props> = ({
       throw 'ReservoirSdk was not initialized'
     }
 
+    const options: Parameters<ReservoirSDKActions['buyToken']>['0']['options'] =
+      {}
+
+    if (referrer && referrerFeeBps) {
+      options.referrer = referrer
+      options.referrerFeeBps = referrerFeeBps
+    }
+
     sdk.actions
       .buyToken({
         expectedPrice: totalPrice,
@@ -157,10 +165,7 @@ export const BuyModalRenderer: FC<Props> = ({
             setBuyStep(BuyStep.Complete)
           }
         },
-        options: {
-          referrer: referrer,
-          referrerFeeBps: referrerFeeBps,
-        },
+        options,
       })
       .catch((e: any) => {
         const error = e as Error

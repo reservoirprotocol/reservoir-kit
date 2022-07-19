@@ -30,6 +30,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   onGoToToken?: () => any
+  onComplete?: () => void
 } & (
     | {
         referrerFeeBps: number
@@ -58,6 +59,7 @@ export function BuyModal({
   collectionId,
   referrer,
   referrerFeeBps,
+  onComplete,
   onGoToToken,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
@@ -309,6 +311,9 @@ export function BuyModal({
                       <Button
                         onClick={() => {
                           setOpen(false)
+                          if (onComplete) {
+                            onComplete()
+                          }
                         }}
                         css={{ mr: '$3', flex: 1 }}
                         color="ghost"
@@ -320,6 +325,9 @@ export function BuyModal({
                         color="primary"
                         onClick={() => {
                           onGoToToken()
+                          if (onComplete) {
+                            onComplete()
+                          }
                         }}
                       >
                         Go to Token
@@ -329,6 +337,9 @@ export function BuyModal({
                     <Button
                       onClick={() => {
                         setOpen(false)
+                        if (onComplete) {
+                          onComplete()
+                        }
                       }}
                       style={{ flex: 1 }}
                       color="primary"
