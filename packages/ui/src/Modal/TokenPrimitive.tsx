@@ -38,7 +38,11 @@ const TokenPrimitive: FC<Props> = ({
           <Img
             src={img}
             alt={name}
-            css={{ borderRadius: 4, overflow: 'hidden' }}
+            css={{
+              borderRadius: 4,
+              overflow: 'hidden',
+              visibility: img && img.length === 0 ? 'hidden' : 'visible',
+            }}
           />
           <Grid css={{ rowGap: 2 }}>
             <Text style="h6" color={isUnavailable ? 'subtle' : 'base'}>

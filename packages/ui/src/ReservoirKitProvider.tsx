@@ -7,11 +7,11 @@ import React, {
   useRef,
 } from 'react'
 import { ReservoirClientOptions } from '@reservoir0x/reservoir-kit-core'
-import { ReservoirKitTheme } from './themes/ReservoirKitTheme'
+import { ReservoirKitTheme, darkTheme } from './themes'
 import { ReservoirCoreProvider } from './ReservoirCoreProvider'
 export interface ReservoirKitProviderProps {
   children: ReactNode
-  options: ReservoirClientOptions
+  options?: ReservoirClientOptions
   theme?: ReservoirKitTheme
 }
 
@@ -19,29 +19,31 @@ import { createTheme } from '../stitches.config'
 
 export const ThemeContext = createContext('default')
 
+const defaultOptions = {
+  apiBase: 'https://api.reservoir.tools',
+}
+
 export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   children,
-  options,
+  options = defaultOptions,
   theme,
 }: ReservoirKitProviderProps) {
   const [globalTheme, setGlobalTheme] = useState('')
   const currentTheme = useRef(null as any)
 
   useEffect(() => {
-    if (theme) {
-      let newTheme = createTheme(theme as any)
-      let oldTheme = currentTheme.current
+    let newTheme = createTheme(theme ? (theme as any) : (darkTheme() as any))
+    let oldTheme = currentTheme.current
 
-      currentTheme.current = newTheme
+    currentTheme.current = newTheme
 
-      document.body.classList.add(newTheme)
+    document.body.classList.add(newTheme)
 
-      if (oldTheme) {
-        document.body.classList.remove(oldTheme)
-      }
-
-      setGlobalTheme(newTheme)
+    if (oldTheme) {
+      document.body.classList.remove(oldTheme)
     }
+
+    setGlobalTheme(newTheme)
   }, [JSON.stringify(theme)])
 
   return (
