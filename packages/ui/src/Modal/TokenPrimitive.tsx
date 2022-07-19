@@ -41,7 +41,7 @@ const TokenPrimitive: FC<Props> = ({
             css={{
               borderRadius: 4,
               overflow: 'hidden',
-              visibility: img && img.length === 0 ? 'hidden' : 'visible',
+              visibility: !img || img.length === 0 ? 'hidden' : 'visible',
             }}
           />
           <Grid css={{ rowGap: 2 }}>
