@@ -42,10 +42,12 @@ ReservoirSDK.client().actions.buyToken(...)
 
 Head over to our [docs](https://docs.reservoir.tools) to learn more.
 
+### Configuring Reservoir Kit UI
+
 ## Updating the types
 
-To get the latest types for the Reservoir API, navigate to `/src/types` and run the following command:
+To get the latest types for the Reservoir API, navigate to `packages/core` and run the following command:
 
-```bs
-npx openapi-typescript https://api.reservoir.tools/swagger.json --output api.ts
+```
+yarn syncApi
 ```
