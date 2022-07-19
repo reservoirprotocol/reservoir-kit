@@ -74,7 +74,7 @@ export type ReservoirKitOverrides = {
   borderRadius?: number
   font?: string
   buttonFont?: string
-  headlineFont: string
+  headlineFont?: string
   primaryColor?: string
   primaryHoverColor?: string
   wellBackground?: string
