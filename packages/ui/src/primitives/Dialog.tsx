@@ -15,6 +15,7 @@ const Overlay = styled(DialogPrimitive.Overlay, {
   backgroundColor: '$overlayBackground',
   position: 'fixed',
   inset: 0,
+  zIndex: 1000,
 })
 
 const AnimatedOverlay = forwardRef<
@@ -47,6 +48,7 @@ const Content = styled(DialogPrimitive.Content, {
   width: '100%',
   maxHeight: '85vh',
   overflowY: 'auto',
+  zIndex: 1000,
   '&:focus': { outline: 'none' },
   '@media(max-width: 520px)': {
     borderBottomRightRadius: 0,
