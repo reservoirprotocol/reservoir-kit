@@ -268,7 +268,7 @@ export function BuyModal({
                   }}
                 >
                   <Text style="h5" css={{ mb: 24 }}>
-                    Nice Token!
+                    Congratulations!
                   </Text>
                   <img
                     src={token?.token?.image}
