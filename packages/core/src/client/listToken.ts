@@ -44,14 +44,25 @@ export async function listToken(data: Data) {
     // Construct a URL object for the `/execute/list/v2` endpoint
     const url = new URL('/execute/list/v2', client.apiBase)
     const query: ListTokenPathParameters = {
-      fee: client.fee,
-      feeRecipient: client.feeRecipient,
-      automatedRoyalties: client.automatedRoyalties,
       ...options,
       token,
       weiPrice,
       expirationTime,
       maker,
+    }
+
+    if (
+      client.fee &&
+      client.feeRecipient &&
+      !options.fee &&
+      !options.feeRecipient
+    ) {
+      query.fee = client.fee
+      query.feeRecipient = client.feeRecipient
+    }
+
+    if (client.automatedRoyalties && !options.automatedRoyalties) {
+      query.automatedRoyalties = client.automatedRoyalties
     }
 
     setParams(url, query)

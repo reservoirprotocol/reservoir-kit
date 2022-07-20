@@ -62,12 +62,23 @@ export async function placeBid(data: Data) {
     // Construct a URL object for the `/execute/bid/v2` endpoint
     const url = new URL('/execute/bid/v2', client.apiBase)
     const query: PlaceBidPathParameters = {
-      fee: client.fee,
-      feeRecipient: client.feeRecipient,
-      automatedRoyalties: client.automatedRoyalties,
       ...options,
       maker,
       weiPrice,
+    }
+
+    if (
+      client.fee &&
+      client.feeRecipient &&
+      !options.fee &&
+      !options.feeRecipient
+    ) {
+      query.fee = client.fee
+      query.feeRecipient = client.feeRecipient
+    }
+
+    if (client.automatedRoyalties && !options.automatedRoyalties) {
+      query.automatedRoyalties = client.automatedRoyalties
     }
 
     if (token) query.token = token

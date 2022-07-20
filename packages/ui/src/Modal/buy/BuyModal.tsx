@@ -13,7 +13,7 @@ import {
   Loader,
 } from '../../primitives'
 
-import addFundsImage from 'data-url:../../../assets/transferFunds.png'
+import addFundsImage from 'url:../../../assets/transferFunds.png'
 import { Progress } from './Progress'
 import Popover from '../../primitives/Popover'
 import { Modal } from '../Modal'
@@ -375,7 +375,7 @@ export function BuyModal({
                           cryptocurrencies. Popular exchanges include{' '}
                           <Anchor
                             css={{ fontSize: 12 }}
-                            href="https://coinbase.com"
+                            href="https://www.coinbase.com/"
                             target="_blank"
                             color="primary"
                           >
@@ -435,6 +435,7 @@ export function BuyModal({
                         touchEvents: 'none',
                         transform: 'translateY(-50%)',
                         color: '$neutralText',
+                        pointerEvents: 'none',
                       }}
                     >
                       <FontAwesomeIcon icon={faCopy} width={16} height={16} />

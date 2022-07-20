@@ -11,6 +11,7 @@ const Arrow = styled(Popover.Arrow, {
 
 const Content = styled(Popover.Content, {
   filter: 'drop-shadow(0px 2px 16px rgba(0, 0, 0, 0.9))',
+  zIndex: 1000,
 })
 
 const RKPopover = ({ children, content }: any) => {
