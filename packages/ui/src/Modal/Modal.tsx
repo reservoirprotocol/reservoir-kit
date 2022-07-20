@@ -10,11 +10,17 @@ import { ProviderOptionsContext } from '../ReservoirKitProvider'
 
 const Title = styled(DialogPrimitive.Title, {})
 
+export enum ModalSize {
+  MD,
+  LG,
+}
+
 type Props = {
   title: string
   children: ReactNode
   trigger: ReactNode
   open?: boolean
+  size?: ModalSize
   onOpenChange?: (open: boolean) => void
   onBack?: (() => void) | null
   loading?: boolean
@@ -32,13 +38,19 @@ export const Modal: FC<Props> = ({
   trigger,
   onBack,
   open,
+  size = ModalSize.MD,
   onOpenChange,
   loading,
 }) => {
   const providerOptionsContext = useContext(ProviderOptionsContext)
 
   return (
-    <Dialog trigger={trigger} open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      trigger={trigger}
+      open={open}
+      onOpenChange={onOpenChange}
+      size={size}
+    >
       <Flex
         css={{
           p: 16,
