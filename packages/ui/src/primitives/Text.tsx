@@ -65,6 +65,11 @@ export default styled('span', {
         fontWeight: 400,
         fontSize: 12,
       },
+
+      body3: {
+        fontWeight: 400,
+        fontSize: 14,
+      },
       tiny: {
         fontWeight: 500,
         fontSize: 10,

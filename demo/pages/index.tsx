@@ -1,11 +1,12 @@
-import { useContext } from 'react'
+import { Children, useContext } from 'react'
 import { NextPage } from 'next'
-import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
+import { BuyModal, ListModal } from '@reservoir0x/reservoir-kit-ui'
+import { useSigner } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ThemeSwitcherContext } from './_app'
 import { darkTheme, lightTheme } from '@reservoir0x/reservoir-kit-ui'
 
-const Trigger = () => (
+const Trigger = ({ children }) => (
   <button
     style={{
       padding: 24,
@@ -17,7 +18,7 @@ const Trigger = () => (
       fontWeight: 800,
     }}
   >
-    Buy Token
+    {children}
   </button>
 )
 
@@ -74,6 +75,7 @@ const Index: NextPage = () => {
       }}
     >
       <ConnectButton />
+
       <BuyModal
         trigger={
           <div
@@ -85,13 +87,32 @@ const Index: NextPage = () => {
               width: '100%',
             }}
           >
-            <Trigger />
+            <Trigger>Buy Now</Trigger>
           </div>
         }
         collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
         tokenId="754236"
         onGoToToken={() => console.log('Awesome!')}
         onComplete={() => console.log('Purchase Complete')}
+      />
+
+      <ListModal
+        trigger={
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flex: 1,
+              width: '100%',
+            }}
+          >
+            <Trigger>List Item</Trigger>
+          </div>
+        }
+        collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
+        tokenId="527500"
+        onGoToToken={() => console.log('Awesome!')}
       />
       <select
         onClick={(e) => {

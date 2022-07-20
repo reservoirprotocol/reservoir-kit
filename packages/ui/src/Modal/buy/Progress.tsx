@@ -1,7 +1,9 @@
 import { Anchor, Flex, Text } from '../../primitives'
 import React, { FC } from 'react'
 import { BuyStep } from './BuyModalRenderer'
+// @ts-ignore
 import confirmingProgress from 'url:../../../assets/confirmingProgress.gif'
+// @ts-ignore
 import finalizingProgress from 'url:../../../assets/finalizingProgress.gif'
 
 type Props = {
