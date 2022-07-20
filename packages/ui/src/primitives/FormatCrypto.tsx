@@ -25,7 +25,7 @@ const FormatCrypto: FC<Props> = ({
   return (
     <Flex align="center" css={{ gap: '$1' }}>
       {value !== '-' ? children : null}
-      <Text style={textStyle} color={textColor} css={css}>
+      <Text style={textStyle} color={textColor} css={css} as="p">
         {value}
       </Text>
     </Flex>

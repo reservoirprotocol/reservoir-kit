@@ -4,13 +4,14 @@ import * as SwitchPrimitive from '@radix-ui/react-switch'
 
 const StyledSwitch = styled(SwitchPrimitive.Root, {
   all: 'unset',
+  cursor: 'pointer',
   width: 46,
   height: 24,
   backgroundColor: '$neutralBgActive',
   borderRadius: '9999px',
   position: 'relative',
   transition: 'background-color 250ms linear',
-  $$focusColor: '$shadowCOlor',
+  $$focusColor: '$colors$accentBorder',
   '&[data-state="checked"]': { backgroundColor: '$accentSolid' },
   '&:focus-visible': {
     boxShadow: '0 0 0 2px $$focusColor',
