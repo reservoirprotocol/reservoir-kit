@@ -25,8 +25,11 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   )
 
 const Img = styled('img', {
-  height: 150,
-  width: 150,
+  width: '100%',
+  '@bp1': {
+    height: 150,
+    width: 150,
+  },
   borderRadius: '$borderRadius',
 })
 
@@ -99,6 +102,83 @@ const MarketPlaceToggle = ({
 
 Stat.toString = () => '.rk-stat-well'
 
+const Token = ({ token }: any) => (
+  <Flex
+    css={{
+      //borderRight: '1px solid $borderColor',
+      width: '100%',
+      flexDirection: 'row',
+      '@bp1': {
+        width: 220,
+        flexDirection: 'column',
+      },
+      p: '$4',
+    }}
+  >
+    <Box
+      css={{
+        mr: '$4',
+        width: 120,
+        '@bp1': {
+          mr: 0,
+          width: '100%',
+        },
+      }}
+    >
+      <Text
+        style="subtitle2"
+        color="subtle"
+        css={{ mb: '$1', display: 'block' }}
+      >
+        Item
+      </Text>
+      <Img src={token?.token?.image} css={{ mb: '$2' }} />
+      <Text style="h6" css={{ flex: 1 }} as="h6">
+        {token?.token?.name || `#${token?.token?.tokenId}`}
+      </Text>
+      <Box>
+        <Text style="subtitle2" color="subtle" as="p">
+          {token?.token?.collection?.name}
+        </Text>
+      </Box>
+    </Box>
+    <Box
+      css={{
+        flex: 1,
+        mt: '$4',
+        [`& ${Stat}:not(:last-child)`]: {
+          mb: '$1',
+        },
+        mb: '$3',
+      }}
+    >
+      {[
+        {
+          label: 'Creator Royalties',
+          value: '10%',
+        },
+        {
+          label: 'Last Price',
+          value: '20',
+          asEth: true,
+        },
+        {
+          label: 'Floor',
+          value: '21',
+          asEth: true,
+        },
+        {
+          label: 'Highest Trait Floor',
+          value: '21',
+          asEth: true,
+        },
+      ].map((stat) => (
+        <Stat {...stat} />
+      ))}
+    </Box>
+  </Flex>
+)
+
 export function ListModal({
   trigger,
   tokenId,
@@ -155,69 +235,27 @@ export function ListModal({
                 <Flex
                   css={{
                     width: '100%',
-                    borderTop: '1px solid $borderColor',
-                    borderBottom: '1px solid $borderColor',
+                    // borderTop: '1px solid $borderColor',
+                    //borderBottom: '1px solid $borderColor',
+                    flexDirection: 'column',
+                    '@bp1': {
+                      flexDirection: 'row',
+                    },
                   }}
                 >
-                  <Box
+                  <Token token={token} />
+
+                  <Flex
+                    direction="column"
                     css={{
-                      borderRight: '1px solid $borderColor',
-                      width: 220,
-                      p: '$4',
+                      flex: 1,
+                      borderColor: '$borderColor',
+                      borderTopWidth: 1,
+                      '@bp1': {
+                        borderWidth: 0,
+                      },
                     }}
                   >
-                    <Text
-                      style="subtitle2"
-                      color="subtle"
-                      css={{ mb: '$1', display: 'block' }}
-                    >
-                      Item
-                    </Text>
-                    <Img src={token?.token?.image} css={{ mb: '$1' }} />
-                    <Text style="h6">
-                      {token?.token?.name || `#${token?.token?.tokenId}`}
-                    </Text>
-                    <Box>
-                      <Text style="subtitle2" color="subtle" as="p">
-                        {token?.token?.collection?.name}
-                      </Text>
-                    </Box>
-                    <Box
-                      css={{
-                        mt: '$4',
-                        [`& ${Stat}:not(:last-child)`]: {
-                          mb: '$1',
-                        },
-                        mb: '$3',
-                      }}
-                    >
-                      {[
-                        {
-                          label: 'Creator Royalties',
-                          value: '10%',
-                        },
-                        {
-                          label: 'Last Price',
-                          value: '20',
-                          asEth: true,
-                        },
-                        {
-                          label: 'Floor',
-                          value: '21',
-                          asEth: true,
-                        },
-                        {
-                          label: 'Highest Trait Floor',
-                          value: '21',
-                          asEth: true,
-                        },
-                      ].map((stat) => (
-                        <Stat {...stat} />
-                      ))}
-                    </Box>
-                  </Box>
-
-                  <Flex direction="column" css={{ flex: 1 }}>
                     <Box css={{ p: '$4', flex: 1 }}>
                       <Text style="subtitle1" as="h3" css={{ mb: '$4' }}>
                         Select Marketplaces
