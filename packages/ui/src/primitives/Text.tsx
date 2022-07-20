@@ -27,22 +27,27 @@ export default styled('span', {
       h2: {
         fontWeight: 700,
         fontSize: 48,
+        fontFamily: '$headline',
       },
       h3: {
         fontWeight: 700,
         fontSize: 32,
+        fontFamily: '$headline',
       },
       h4: {
         fontWeight: 700,
         fontSize: 24,
+        fontFamily: '$headline',
       },
       h5: {
         fontWeight: 700,
         fontSize: 20,
+        fontFamily: '$headline',
       },
       h6: {
         fontWeight: 700,
         fontSize: 16,
+        fontFamily: '$headline',
       },
       subtitle1: {
         fontWeight: 500,
