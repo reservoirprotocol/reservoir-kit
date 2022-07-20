@@ -22,7 +22,7 @@ export const Progress: FC<Props> = ({ buyStep, etherscanBaseUrl }) => {
     >
       {buyStep == BuyStep.Confirming && (
         <>
-          <Text style="h6">Confirm Transaction in your wallet</Text>
+          <Text style="h6">Confirm transaction in your wallet</Text>
           <img style={{ height: 100 }} src={confirmingProgress} />
         </>
       )}

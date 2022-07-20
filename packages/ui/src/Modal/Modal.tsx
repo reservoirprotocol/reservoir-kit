@@ -81,7 +81,7 @@ export const Modal: FC<Props> = ({
           py: 10.5,
         }}
       >
-        <Anchor href="https://reservoirprotocol.github.io/" target="_blank">
+        <Anchor href="https://reservoir.tools/" target="_blank">
           <Text
             style="body2"
             css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}

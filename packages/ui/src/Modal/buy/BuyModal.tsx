@@ -13,7 +13,7 @@ import {
   Loader,
 } from '../../primitives'
 
-import addFundsImage from 'url:../../../assets/transferFunds.png'
+import addFundsImage from 'url:../../../assets/transferFunds.svg'
 import { Progress } from './Progress'
 import Popover from '../../primitives/Popover'
 import { Modal } from '../Modal'
@@ -250,8 +250,8 @@ export function BuyModal({
                   <Button disabled={true} css={{ m: '$4' }}>
                     <Loader />
                     {buyStep === BuyStep.Confirming
-                      ? 'Waiting for Approval...'
-                      : 'Waiting for Transaction to be Validated'}
+                      ? 'Waiting for approval...'
+                      : 'Waiting for transaction to be validated'}
                   </Button>
                 </Flex>
               )}
