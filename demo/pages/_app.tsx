@@ -10,7 +10,6 @@ import '../fonts.css'
 import {
   ReservoirKitProvider,
   darkTheme as defaultTheme,
-  lightTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 
 const { chains, provider } = configureChains(
