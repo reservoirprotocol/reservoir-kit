@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC, ReactNode, useContext } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
@@ -6,6 +6,7 @@ import { Anchor, Button, Flex, Text, Loader } from '../primitives'
 import { styled } from '../../stitches.config'
 import { Dialog } from '../primitives/Dialog'
 import ReservoirLogoWhiteText from '../img/ReservoirLogoWhiteText'
+import { ProviderOptionsContext } from '../ReservoirKitProvider'
 
 const Title = styled(DialogPrimitive.Title, {})
 
@@ -34,6 +35,8 @@ export const Modal: FC<Props> = ({
   onOpenChange,
   loading,
 }) => {
+  const providerOptionsContext = useContext(ProviderOptionsContext)
+
   return (
     <Dialog trigger={trigger} open={open} onOpenChange={onOpenChange}>
       <Flex
@@ -72,24 +75,27 @@ export const Modal: FC<Props> = ({
         />
       )}
       {children}
-      <Flex
-        css={{
-          mx: 'auto',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '$footerBackground',
-          py: 10.5,
-        }}
-      >
-        <Anchor href="https://reservoir.tools/" target="_blank">
-          <Text
-            style="body2"
-            css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
-          >
-            Powered by <Logo />
-          </Text>
-        </Anchor>
-      </Flex>
+      {!providerOptionsContext.disablePoweredByReservoir && (
+        <Flex
+          css={{
+            mx: 'auto',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '$footerBackground',
+            py: 10.5,
+            visibility: '$poweredByReservoirVisibility',
+          }}
+        >
+          <Anchor href="https://reservoir.tools/" target="_blank">
+            <Text
+              style="body2"
+              css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+            >
+              Powered by <Logo />
+            </Text>
+          </Anchor>
+        </Flex>
+      )}
     </Dialog>
   )
 }

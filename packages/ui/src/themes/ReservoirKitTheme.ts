@@ -86,10 +86,13 @@ export type ReservoirKitOverrides = {
   borderColor?: string
 }
 
-export const sharedThemeConfig = (overrides?: ReservoirKitOverrides) => {
+type ReservoirKitSharedTheme = Pick<ReservoirKitTheme, 'fonts' | 'borderRadius'>
+
+export const sharedThemeConfig = (
+  overrides?: ReservoirKitOverrides
+): ReservoirKitSharedTheme => {
   return {
     borderRadius: overrides?.borderRadius || 4,
-
     fonts: {
       body: overrides?.font || 'sans-serif',
       button: overrides?.buttonFont || overrides?.font || 'sans-serif',

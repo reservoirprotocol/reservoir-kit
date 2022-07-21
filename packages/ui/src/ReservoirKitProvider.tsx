@@ -9,15 +9,21 @@ import React, {
 import { ReservoirClientOptions } from '@reservoir0x/reservoir-kit-core'
 import { ReservoirKitTheme, darkTheme } from './themes'
 import { ReservoirCoreProvider } from './ReservoirCoreProvider'
+
+type ReservoirKitProviderOptions = {
+  disablePoweredByReservoir?: boolean
+}
 export interface ReservoirKitProviderProps {
   children: ReactNode
-  options?: ReservoirClientOptions
+  options?: ReservoirClientOptions & ReservoirKitProviderOptions
   theme?: ReservoirKitTheme
 }
 
 import { createTheme } from '../stitches.config'
 
 export const ThemeContext = createContext('default')
+export const ProviderOptionsContext =
+  createContext<ReservoirKitProviderOptions>({})
 
 const defaultOptions = {
   apiBase: 'https://api.reservoir.tools',
@@ -30,6 +36,8 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   theme,
 }: ReservoirKitProviderProps) {
   const [globalTheme, setGlobalTheme] = useState('')
+  const [providerOptions, setProviderOptions] =
+    useState<ReservoirKitProviderOptions>({})
   const currentTheme = useRef(null as any)
 
   useEffect(() => {
@@ -47,11 +55,17 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
     setGlobalTheme(newTheme)
   }, [JSON.stringify(theme)])
 
+  useEffect(() => {
+    setProviderOptions(options)
+  }, [options])
+
   return (
     <ThemeContext.Provider value={globalTheme}>
-      <ReservoirCoreProvider options={options}>
-        {children}
-      </ReservoirCoreProvider>
+      <ProviderOptionsContext.Provider value={providerOptions}>
+        <ReservoirCoreProvider options={options}>
+          {children}
+        </ReservoirCoreProvider>
+      </ProviderOptionsContext.Provider>
     </ThemeContext.Provider>
   )
 }
