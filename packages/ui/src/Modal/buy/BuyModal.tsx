@@ -115,7 +115,6 @@ export function BuyModal({
             {buyStep === BuyStep.Unavailable && token && (
               <Flex direction="column">
                 <TokenLineItem
-                  lastSale={lastSale}
                   token={token}
                   collection={collection}
                   isSuspicious={isBanned}
