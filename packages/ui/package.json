@@ -22,7 +22,8 @@
   "scripts": {
     "clean": "rm -rf dist",
     "version": "yarn version",
-    "version:update": "yarn version ${0}; git add -A; git commit -m '🎉 ui v$npm_package_version'; git push"
+    "version:update": "yarn version ${0}; git add -A; git commit -m \"🎉 ui v$npm_package_version\"; git push",
+    "version:test": "echo \"v$npm_package_version\""
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
