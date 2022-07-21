@@ -108,9 +108,6 @@ export function BuyModal({
             }
             open={open}
             onOpenChange={(open) => {
-              if (!open) {
-                setBuyStep(BuyStep.Checkout)
-              }
               setOpen(open)
             }}
             loading={!token}
