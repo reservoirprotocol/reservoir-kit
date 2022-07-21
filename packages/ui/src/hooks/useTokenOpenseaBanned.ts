@@ -1,4 +1,4 @@
-import { isOpenSeaBanned } from '@reservoir0x/reservoir-kit-core'
+import { isOpenSeaBanned } from '@reservoir0x/reservoir-kit-client'
 import { useEffect, useState } from 'react'
 
 export default function (contract?: string, token?: number | string) {

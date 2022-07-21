@@ -5,7 +5,7 @@ import { setParams } from './params'
 import { Signer } from 'ethers'
 import { TypedDataSigner } from '@ethersproject/abstract-signer'
 import axios from 'axios'
-import { ReservoirSDK } from '../client/index'
+import { getClient } from '../actions/index'
 
 /**
  * When attempting to perform actions, such as, selling a token or
@@ -33,7 +33,7 @@ export async function executeSteps(
     if (!json) {
       const options: RequestInit | undefined = {}
 
-      const client = ReservoirSDK.client()
+      const client = getClient()
       if (client && client.apiKey) {
         options.headers = {
           'x-api-key': client.apiKey,

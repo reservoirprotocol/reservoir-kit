@@ -1,3 +1,3 @@
-export * from './client'
+export * from './actions'
 export * from './utils'
 export * from './types'

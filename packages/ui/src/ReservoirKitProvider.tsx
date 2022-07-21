@@ -6,9 +6,9 @@ import React, {
   useState,
   useRef,
 } from 'react'
-import { ReservoirClientOptions } from '@reservoir0x/reservoir-kit-core'
+import { ReservoirClientOptions } from '@reservoir0x/reservoir-kit-client'
 import { ReservoirKitTheme, darkTheme } from './themes'
-import { ReservoirCoreProvider } from './ReservoirCoreProvider'
+import { ReservoirClientProvider } from './ReservoirClientProvider'
 
 type ReservoirKitProviderOptions = {
   disablePoweredByReservoir?: boolean
@@ -62,9 +62,9 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   return (
     <ThemeContext.Provider value={globalTheme}>
       <ProviderOptionsContext.Provider value={providerOptions}>
-        <ReservoirCoreProvider options={options}>
+        <ReservoirClientProvider options={options}>
           {children}
-        </ReservoirCoreProvider>
+        </ReservoirClientProvider>
       </ProviderOptionsContext.Provider>
     </ThemeContext.Provider>
   )
