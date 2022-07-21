@@ -220,6 +220,14 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   }, [totalPrice, balance])
 
+  useEffect(() => {
+    if (!open) {
+      setBuyStep(BuyStep.Checkout)
+      setTxHash(null)
+      setTransactionError(null)
+    }
+  }, [open])
+
   const isBanned = useTokenOpenseaBanned(
     open ? collectionId : undefined,
     tokenId

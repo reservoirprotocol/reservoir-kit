@@ -13,9 +13,16 @@ export default function (
 
   useEffect(() => {
     if (query) {
+      const options: RequestInit | undefined = {}
+      if (sdk?.apiKey) {
+        options.headers = {
+          'x-api-key': sdk.apiKey,
+        }
+      }
+
       const path = new URL(`${sdk?.apiBase}/tokens/details/v4`)
       setParams(path, query)
-      fetch(path)
+      fetch(path, options)
         .then((response) => response.json())
         .then((data) => setResp(data))
         .catch((err) => {
