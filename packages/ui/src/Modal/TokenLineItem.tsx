@@ -1,10 +1,10 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC } from 'react'
 import { Box, Flex, Text } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import { useCollection, useTokenDetails, useHistoricalSales } from '../hooks'
+import { useCollection, useTokenDetails } from '../hooks'
 
 type TokenLineItemProps = {
   token: NonNullable<
@@ -13,7 +13,6 @@ type TokenLineItemProps = {
   collection: ReturnType<typeof useCollection>
   usdConversion?: number
   isSuspicious?: Boolean
-  lastSale?: ReturnType<typeof useHistoricalSales>
   isUnavailable?: boolean
 }
 
@@ -22,21 +21,16 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   collection,
   usdConversion = 0,
   isSuspicious,
-  lastSale,
   isUnavailable,
 }) => {
-  const [price, setPrice] = useState(0)
   const tokenDetails = token.token
   const marketData = token.market
-  const usdPrice = price * usdConversion
+  let price: number = token.market?.floorAsk?.price || 0
 
-  useEffect(() => {
-    if (token.market?.floorAsk?.price) {
-      setPrice(token.market.floorAsk.price)
-    } else if (lastSale?.sales && lastSale?.sales?.length > 0) {
-      setPrice(lastSale.sales[0].price || 0)
-    }
-  }, [tokenDetails, lastSale])
+  if (!price && token.token?.lastSell?.value) {
+    price = token.token.lastSell.value
+  }
+  const usdPrice = price * usdConversion
 
   if (!tokenDetails) {
     return null

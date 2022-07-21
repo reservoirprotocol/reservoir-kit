@@ -9,7 +9,6 @@ import React, {
 import {
   useCollection,
   useTokenDetails,
-  useHistoricalSales,
   useEthConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
@@ -38,7 +37,6 @@ type ChildrenProps = {
         NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
       >['0']
   collection: ReturnType<typeof useCollection>
-  lastSale: ReturnType<typeof useHistoricalSales>
   totalPrice: number
   referrerFee: number
   buyStep: BuyStep
@@ -98,19 +96,8 @@ export const BuyModalRenderer: FC<Props> = ({
     [collectionId]
   )
 
-  const salesQuery = useMemo(
-    (): Parameters<typeof useHistoricalSales>['0'] => ({
-      token: `${collectionId}:${tokenId}`,
-      limit: 1,
-    }),
-    [collectionId, tokenId]
-  )
-
   const tokenDetails = useTokenDetails(open && tokenQuery)
   const collection = useCollection(open && collectionQuery)
-  const lastSale = useHistoricalSales(
-    buyStep === BuyStep.Unavailable && salesQuery
-  )
   let token = !!tokenDetails?.tokens?.length && tokenDetails?.tokens[0]
 
   const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
