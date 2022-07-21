@@ -15,7 +15,15 @@ export default function (
     if (query) {
       const path = new URL(`${sdk?.apiBase}/collection/v2`)
       setParams(path, query)
-      fetch(path)
+
+      const options: RequestInit | undefined = {}
+      if (sdk?.apiKey) {
+        options.headers = {
+          'x-api-key': sdk.apiKey,
+        }
+      }
+
+      fetch(path, options)
         .then((response) => response.json())
         .then((data) =>
           setResp(data && data.collection ? data.collection : null)

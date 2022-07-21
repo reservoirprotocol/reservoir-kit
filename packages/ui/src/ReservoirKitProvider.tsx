@@ -21,6 +21,7 @@ export const ThemeContext = createContext('default')
 
 const defaultOptions = {
   apiBase: 'https://api.reservoir.tools',
+  apiKey: '',
 }
 
 export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
