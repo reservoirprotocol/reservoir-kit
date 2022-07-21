@@ -1,7 +1,7 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
-import { ReservoirSDK } from '.'
+import { ReservoirClient } from '.'
 
 type ListTokenPathParameters =
   paths['/execute/list/v2']['get']['parameters']['query']
@@ -32,12 +32,12 @@ type Data = {
 
 export async function listToken(data: Data) {
   const { token, weiPrice, expirationTime, signer, onProgress } = data
-  const client = ReservoirSDK.client()
+  const client = ReservoirClient.get()
   const options = data.options || {}
   const maker = await signer.getAddress()
 
   if (!client.apiBase) {
-    throw new ReferenceError('ReservoirSDK missing configuration')
+    throw new ReferenceError('ReservoirClient missing configuration')
   }
 
   try {

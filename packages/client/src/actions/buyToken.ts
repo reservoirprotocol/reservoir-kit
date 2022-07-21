@@ -1,7 +1,7 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
-import { ReservoirSDK } from '.'
+import { ReservoirClient } from '.'
 
 export type Token = Pick<
   NonNullable<
@@ -34,16 +34,16 @@ type Data = {
 export async function buyToken(data: Data) {
   const { tokens, expectedPrice, signer, onProgress } = data
   const taker = await signer.getAddress()
-  const client = ReservoirSDK.client()
+  const client = ReservoirClient.get()
   const options = data.options || {}
 
   if (!client.apiBase) {
-    throw new ReferenceError('ReservoirSDK missing configuration')
+    throw new ReferenceError('ReservoirClient missing configuration')
   }
 
   if (!tokens || !tokens.length) {
     console.debug(data)
-    throw new ReferenceError('ReservoirSDK missing data')
+    throw new ReferenceError('ReservoirClient missing data')
   }
 
   try {

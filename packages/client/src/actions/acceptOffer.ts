@@ -1,5 +1,5 @@
 import { Signer } from 'ethers'
-import { ReservoirSDK } from '.'
+import { ReservoirClient } from '.'
 import { Execute, paths } from '../types'
 import { executeSteps, setParams } from '../utils'
 
@@ -37,11 +37,11 @@ type Data = {
 export async function acceptOffer(data: Data) {
   const { token, expectedPrice, signer, onProgress } = data
   const taker = await signer.getAddress()
-  const client = ReservoirSDK.client()
+  const client = ReservoirClient.get()
   const options = data.options || {}
 
   if (!client.apiBase) {
-    throw new ReferenceError('ReservoirSDK missing configuration')
+    throw new ReferenceError('ReservoirClient missing configuration')
   }
 
   try {

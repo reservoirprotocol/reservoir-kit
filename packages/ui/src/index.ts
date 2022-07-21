@@ -1,11 +1,11 @@
 //Providers
 export { ReservoirKitProvider } from './ReservoirKitProvider'
-export { ReservoirCoreProvider } from './ReservoirCoreProvider'
+export { ReservoirClientProvider } from './ReservoirClientProvider'
 
 // Hooks
 export {
   useCollection,
-  useCoreSdk,
+  useReservoirClient,
   useTokenDetails,
   useHistoricalSales,
   useTokenOpenseaBanned,

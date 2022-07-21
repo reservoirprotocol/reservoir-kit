@@ -1,7 +1,7 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
-import { ReservoirSDK } from '.'
+import { ReservoirClient } from '.'
 
 type CancelOrderPathParameters =
   paths['/execute/cancel/v1']['get']['parameters']['query']
@@ -24,12 +24,12 @@ type Data = {
  */
 export async function cancelOrder(data: Data) {
   const { id, signer, onProgress } = data
-  const client = ReservoirSDK.client()
+  const client = ReservoirClient.get()
   const maker = await signer.getAddress()
   const options = data.options || {}
 
   if (!client.apiBase) {
-    throw new ReferenceError('ReservoirSDK missing configuration')
+    throw new ReferenceError('ReservoirClient missing configuration')
   }
 
   try {

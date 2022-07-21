@@ -11,13 +11,16 @@ import {
   useTokenDetails,
   useHistoricalSales,
   useEthConversion,
-  useCoreSdk,
+  useReservoirClient,
   useTokenOpenseaBanned,
 } from '../../hooks'
 import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 
 import { BigNumber, utils } from 'ethers'
-import { Execute, ReservoirSDKActions } from '@reservoir0x/reservoir-kit-core'
+import {
+  Execute,
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-kit-client'
 
 export enum BuyStep {
   Checkout,
@@ -114,7 +117,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const feeUsd = referrerFee * (ethUsdPrice || 0)
   const totalUsd = totalPrice * (ethUsdPrice || 0)
 
-  const sdk = useCoreSdk()
+  const client = useReservoirClient()
 
   const buyToken = useCallback(() => {
     if (!signer) {
@@ -125,19 +128,20 @@ export const BuyModalRenderer: FC<Props> = ({
       throw 'Missing tokenId or collectionId'
     }
 
-    if (!sdk) {
-      throw 'ReservoirSdk was not initialized'
+    if (!client) {
+      throw 'ReservoirClient was not initialized'
     }
 
-    const options: Parameters<ReservoirSDKActions['buyToken']>['0']['options'] =
-      {}
+    const options: Parameters<
+      ReservoirClientActions['buyToken']
+    >['0']['options'] = {}
 
     if (referrer && referrerFeeBps) {
       options.referrer = referrer
       options.referrerFeeBps = referrerFeeBps
     }
 
-    sdk.actions
+    client.actions
       .buyToken({
         expectedPrice: totalPrice,
         signer,
@@ -180,7 +184,7 @@ export const BuyModalRenderer: FC<Props> = ({
         setBuyStep(BuyStep.Checkout)
         console.log(error)
       })
-  }, [tokenId, collectionId, referrer, referrerFeeBps, sdk, signer])
+  }, [tokenId, collectionId, referrer, referrerFeeBps, client, signer])
 
   useEffect(() => {
     if (token) {

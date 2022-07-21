@@ -5,12 +5,12 @@ type NonUndefined<T> = T extends undefined ? never : T
 
 type Fee = NonUndefined<
   NonNullable<
-    Parameters<ReservoirSDKActions['listToken']>['0']['options']
+    Parameters<ReservoirClientActions['listToken']>['0']['options']
   >['fee']
 >
 type FeeRecipient = NonUndefined<
   NonNullable<
-    Parameters<ReservoirSDKActions['listToken']>['0']['options']
+    Parameters<ReservoirClientActions['listToken']>['0']['options']
   >['feeRecipient']
 >
 
@@ -29,10 +29,10 @@ export type ReservoirClientOptions = {
     }
 )
 
-export type ReservoirSDKActions = typeof actions
+export type ReservoirClientActions = typeof actions
 
-export class ReservoirSDK {
-  private static _client: ReservoirSDK
+export class ReservoirClient {
+  private static _client: ReservoirClient
 
   apiBase: string
   apiKey?: string
@@ -50,18 +50,18 @@ export class ReservoirSDK {
     this.feeRecipient = options.feeRecipient
   }
 
-  public static init(options: ReservoirClientOptions): ReservoirSDK {
-    if (!ReservoirSDK._client) {
-      ReservoirSDK._client = new ReservoirSDK(options)
+  public static init(options: ReservoirClientOptions): ReservoirClient {
+    if (!ReservoirClient._client) {
+      ReservoirClient._client = new ReservoirClient(options)
     }
 
-    return ReservoirSDK._client
+    return ReservoirClient._client
   }
 
-  public static configure(options: ReservoirClientOptions): ReservoirSDK {
-    let client = ReservoirSDK._client
+  public static configure(options: ReservoirClientOptions): ReservoirClient {
+    let client = ReservoirClient._client
     if (!client) {
-      client = ReservoirSDK.init(options)
+      client = ReservoirClient.init(options)
     } else {
       client.apiKey = options.apiKey ? options.apiKey : client.apiKey
       client.apiBase = options.apiBase ? options.apiBase : client.apiBase
@@ -73,10 +73,10 @@ export class ReservoirSDK {
     return client
   }
 
-  public static client(): ReservoirSDK {
-    if (!ReservoirSDK._client) {
+  public static get(): ReservoirClient {
+    if (!ReservoirClient._client) {
       throw 'No client available, please call init to create a client'
     }
-    return ReservoirSDK._client
+    return ReservoirClient._client
   }
 }
