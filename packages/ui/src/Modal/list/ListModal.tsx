@@ -1,13 +1,22 @@
 import { styled } from '../../../stitches.config'
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useState, useMemo } from 'react'
 
-import { Flex, Box, Text, Button, FormatEth, Switch } from '../../primitives'
+import { Flex, Box, Text, Button, Switch } from '../../primitives'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from '../Modal'
 
 import { ListModalRenderer, ListStep } from './ListModalRenderer'
 
 import { ModalSize } from '../Modal'
+
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import debounce from '../../lib/debounce'
+import initialMarkets from './initialMarkets'
+
+import Token from './TokenStats'
+import MarketplaceToggle from './MarketplaceToggle'
+import MarketplacePriceInput from './MarketplacePriceInput'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -24,166 +33,28 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
       }
   )
 
-const Img = styled('img', {
+const ContentContainer = styled(Flex, {
   width: '100%',
+  flexDirection: 'column',
   '@bp1': {
-    height: 150,
-    width: 150,
+    flexDirection: 'row',
   },
-  borderRadius: '$borderRadius',
 })
 
-type StatProps = {
-  label: string
-  value: string
-  toolTipText?: string
-  asEth?: boolean
-}
+const MainContainer = styled(Flex, {
+  flex: 1,
+  borderColor: '$borderColor',
+  borderTopWidth: 1,
+  borderLeftWidth: 0,
+  '@bp1': {
+    borderTopWidth: 0,
+    borderLeftWidth: 1,
+  },
 
-const Stat = ({
-  label,
-  value,
-  toolTipText,
-  asEth = false,
-  ...props
-}: StatProps) => (
-  <Flex
-    align="center"
-    className="rk-stat-well"
-    css={{
-      backgroundColor: '$wellBackground',
-      p: '$2',
-      borderRadius: '$borderRadius',
-    }}
-    {...props}
-  >
-    <Text style="subtitle2" color="subtle" as="p" css={{ flex: 1 }}>
-      {label}
-    </Text>
-    {asEth ? (
-      <FormatEth amount={value} textStyle="subtitle2" />
-    ) : (
-      <Text style="subtitle2" as="p">
-        {value}
-      </Text>
-    )}
-  </Flex>
-)
-
-type MarketPlaceToggleProps = {
-  name: string
-  imgURL: string
-  fee: number
-  isSelected: boolean
-  onSelection: () => void
-}
-
-const MarketPlaceToggle = ({
-  name,
-  imgURL,
-  fee,
-  isSelected,
-  onSelection,
-  ...props
-}: MarketPlaceToggleProps) => (
-  <Flex {...props} align="center">
-    <Box css={{ mr: '$2' }}>
-      <img src={imgURL} style={{ height: 32, width: 32, borderRadius: 4 }} />
-    </Box>
-    <Text style="body3" css={{ flex: 1 }}>
-      {name}
-    </Text>
-    <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
-      Marketplace fee: {fee * 100}%
-    </Text>
-    <Switch checked={isSelected} onCheckedChange={onSelection} />
-  </Flex>
-)
-
-Stat.toString = () => '.rk-stat-well'
-
-const Token = ({ token, collection }: any) => {
-  let attributeFloor = Math.max(
-    ...token.token.attributes.map((attr: any) => Number(attr.floorAskPrice)),
-    0
-  )
-  return (
-    <Flex
-      css={{
-        //borderRight: '1px solid $borderColor',
-        width: '100%',
-        flexDirection: 'row',
-        '@bp1': {
-          width: 220,
-          flexDirection: 'column',
-        },
-        p: '$4',
-      }}
-    >
-      <Box
-        css={{
-          mr: '$4',
-          width: 120,
-          '@bp1': {
-            mr: 0,
-            width: '100%',
-          },
-        }}
-      >
-        <Text
-          style="subtitle2"
-          color="subtle"
-          css={{ mb: '$1', display: 'block' }}
-        >
-          Item
-        </Text>
-        <Img src={token?.token?.image} css={{ mb: '$2' }} />
-        <Text style="h6" css={{ flex: 1 }} as="h6">
-          {token?.token?.name || `#${token?.token?.tokenId}`}
-        </Text>
-        <Box>
-          <Text style="subtitle2" color="subtle" as="p">
-            {token?.token?.collection?.name}
-          </Text>
-        </Box>
-      </Box>
-      <Box
-        css={{
-          flex: 1,
-          mt: '$4',
-          [`& ${Stat}:not(:last-child)`]: {
-            mb: '$1',
-          },
-          mb: '$3',
-        }}
-      >
-        {[
-          {
-            label: 'Creator Royalties',
-            value: (collection?.royalties?.bsp || 0) * 10_000 + '%',
-          },
-          {
-            label: 'Last Price',
-            value: token?.token?.lastSell?.value,
-            asEth: true,
-          },
-          {
-            label: 'Floor',
-            value: collection?.floorAsk?.price || 0,
-            asEth: true,
-          },
-          {
-            label: 'Highest Trait Floor',
-            value: attributeFloor || collection?.floorAsk?.price || 0,
-            asEth: true,
-          },
-        ].map((stat) => (
-          <Stat {...stat} />
-        ))}
-      </Box>
-    </Flex>
-  )
-}
+  defaultVariants: {
+    direction: 'column',
+  },
+})
 
 export function ListModal({
   trigger,
@@ -192,21 +63,9 @@ export function ListModal({
   onGoToToken,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
-  const [markets, setMarkets] = useState([
-    {
-      name: 'OpenSea',
-      imgURL: 'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
-      isSelected: false,
-      fee: 0.025,
-    },
-
-    {
-      name: 'LooksRare',
-      imgURL: 'https://api.reservoir.tools/redirect/sources/LooksRare/logo/v2',
-      isSelected: false,
-      fee: 0.02,
-    },
-  ])
+  const [syncProfit, setSyncProfit] = useState(true)
+  const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
+  const [markets, setMarkets] = useState(initialMarkets)
 
   return (
     <ListModalRenderer
@@ -221,10 +80,70 @@ export function ListModal({
         ethUsdPrice,
         isBanned,
         listStep,
+        setListStep,
         balance,
         address,
         etherscanBaseUrl,
       }) => {
+        // sync prices
+        const updateMarketPrices = (_price: any, market: any) => {
+          if (syncProfit) {
+            let updatingMarket = markets.find((m) => m.name == market.name)
+            let profit =
+              (1 - (updatingMarket?.fee || 0)) *
+              Number(updatingMarket?.price || 0)
+
+            setMarkets(
+              markets.map((m) => {
+                let truePrice = profit / (1 - m.fee)
+                m.price = Math.round((profit / (1 - m.fee)) * 1000) / 1000
+                m.truePrice = truePrice
+                return m
+              })
+            )
+          }
+        }
+
+        const updateMarket = (price: any, market: any) => {
+          setMarkets(
+            markets.map((m) => {
+              if (m.name == market.name) {
+                m.price = price
+                m.truePrice = price
+              }
+              return m
+            })
+          )
+        }
+
+        let debouncedUpdateMarkets = useMemo(
+          () => debounce(updateMarketPrices, 500),
+          [syncProfit]
+        )
+
+        useEffect(() => {
+          if (token && collection && !loadedInitalPrice) {
+            let startingPrice: number =
+              Math.max(
+                ...(token?.token?.attributes?.map((attr: any) =>
+                  Number(attr?.floorAskPrice || 0)
+                ) || []),
+                0
+              ) ||
+              collection?.floorAsk?.price ||
+              0
+
+            setLoadedInitalPrice(true)
+            setMarkets(
+              markets.map((market) => {
+                market.price = startingPrice
+                market.truePrice = startingPrice
+                return market
+              })
+            )
+          }
+        }, [token, collection])
+
         return (
           <Modal
             trigger={trigger}
@@ -237,67 +156,44 @@ export function ListModal({
             loading={!token}
           >
             {token && listStep == ListStep.SelectMarkets && (
-              <>
-                <Flex
-                  css={{
-                    width: '100%',
-                    // borderTop: '1px solid $borderColor',
-                    //borderBottom: '1px solid $borderColor',
-                    flexDirection: 'column',
-                    '@bp1': {
-                      flexDirection: 'row',
-                    },
-                  }}
-                >
-                  <Token token={token} collection={collection} />
+              <ContentContainer>
+                <Token token={token} collection={collection} />
 
-                  <Flex
-                    direction="column"
-                    css={{
-                      flex: 1,
-                      borderColor: '$borderColor',
-                      borderTopWidth: 1,
-                      '@bp1': {
-                        borderWidth: 0,
-                      },
-                    }}
-                  >
-                    <Box css={{ p: '$4', flex: 1 }}>
-                      <Text style="subtitle1" as="h3" css={{ mb: '$4' }}>
-                        Select Marketplaces
+                <MainContainer>
+                  <Box css={{ p: '$4', flex: 1 }}>
+                    <Text style="subtitle1" as="h3" css={{ mb: '$4' }}>
+                      Select Marketplaces
+                    </Text>
+                    <Text style="subtitle2" as="p" color="subtle">
+                      Default
+                    </Text>
+                    <Flex align="center" css={{ mb: '$4', mt: '$2' }}>
+                      <Box css={{ mr: '$2' }}>
+                        <img
+                          src="https://uploads-ssl.webflow.com/620e7cf70a42fe89735b1b17/62901415219ac32d60cc658b_chimpers-logo-head.png"
+                          style={{ height: 32, width: 32, borderRadius: 4 }}
+                        />
+                      </Box>
+                      <Text style="body3" css={{ flex: 1 }}>
+                        Chimpers Market
                       </Text>
-                      <Text style="subtitle2" as="p" color="subtle">
-                        Default
+                      <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
+                        Marketplace fee: 0%
                       </Text>
-                      <Flex align="center" css={{ mb: '$4', mt: '$2' }}>
-                        <Box css={{ mr: '$2' }}>
-                          <img
-                            src="https://uploads-ssl.webflow.com/620e7cf70a42fe89735b1b17/62901415219ac32d60cc658b_chimpers-logo-head.png"
-                            style={{ height: 32, width: 32, borderRadius: 4 }}
-                          />
-                        </Box>
-                        <Text style="body3" css={{ flex: 1 }}>
-                          Chimpers Market
-                        </Text>
-                        <Text
-                          style="subtitle2"
-                          color="subtle"
-                          css={{ mr: '$2' }}
-                        >
-                          Marketplace fee: 0%
-                        </Text>
-                      </Flex>
-                      <Text
-                        style="subtitle2"
-                        color="subtle"
-                        as="p"
-                        css={{ mb: '$2' }}
-                      >
-                        Select other marketplaces to list on
-                      </Text>
-                      {markets.map((marketplace) => (
+                    </Flex>
+                    <Text
+                      style="subtitle2"
+                      color="subtle"
+                      as="p"
+                      css={{ mb: '$2' }}
+                    >
+                      Select other marketplaces to list on
+                    </Text>
+                    {markets
+                      .filter((market) => !market.isNative)
+                      .map((marketplace) => (
                         <Box css={{ mb: '$3' }}>
-                          <MarketPlaceToggle
+                          <MarketplaceToggle
                             {...marketplace}
                             onSelection={() => {
                               setMarkets(
@@ -316,13 +212,84 @@ export function ListModal({
                           />
                         </Box>
                       ))}
-                    </Box>
-                    <Box css={{ p: '$4', width: '100%' }}>
-                      <Button css={{ width: '100%' }}>Next</Button>
-                    </Box>
-                  </Flex>
-                </Flex>
-              </>
+                  </Box>
+                  <Box css={{ p: '$4', width: '100%' }}>
+                    <Button
+                      onClick={() => setListStep(ListStep.SetPrice)}
+                      css={{ width: '100%' }}
+                    >
+                      Next
+                    </Button>
+                  </Box>
+                </MainContainer>
+              </ContentContainer>
+            )}
+
+            {token && listStep == ListStep.SetPrice && (
+              <ContentContainer>
+                <Token token={token} collection={collection} />
+
+                <MainContainer>
+                  <Box css={{ p: '$4', flex: 1 }}>
+                    <Flex align="center" css={{ mb: '$4' }}>
+                      <Button
+                        color="ghost"
+                        size="none"
+                        css={{ mr: '$2', color: '$neutralText' }}
+                        onClick={() => setListStep(ListStep.SelectMarkets)}
+                      >
+                        <FontAwesomeIcon
+                          icon={faChevronLeft}
+                          width={16}
+                          height={16}
+                        />
+                      </Button>
+                      <Text style="subtitle1" as="h3">
+                        Set Your Price
+                      </Text>
+                    </Flex>
+                    <Flex align="center" css={{ mb: '$4' }} justify="between">
+                      <Text style="subtitle2" as="p" color="subtle">
+                        Get the same amount of ETH across different marketplaces
+                      </Text>
+                      <Switch
+                        checked={syncProfit}
+                        onCheckedChange={(isChecked: boolean) =>
+                          setSyncProfit(!syncProfit)
+                        }
+                      />
+                    </Flex>
+                    <Flex css={{ mb: '$2' }} justify="between">
+                      <Text style="subtitle2" color="subtle" as="p">
+                        List Price
+                      </Text>
+                      <Text style="subtitle2" color="subtle" as="p">
+                        You Get
+                      </Text>
+                    </Flex>
+
+                    {markets.map((marketplace) => (
+                      <Box css={{ mb: '$3' }}>
+                        <MarketplacePriceInput
+                          {...marketplace}
+                          onChange={(e) => {
+                            updateMarket(e.target.value, marketplace)
+                            debouncedUpdateMarkets(e.target.value, marketplace)
+                          }}
+                        />
+                      </Box>
+                    ))}
+                  </Box>
+                  <Box css={{ p: '$4', width: '100%' }}>
+                    <Button
+                      onClick={() => setListStep(ListStep.SetPrice)}
+                      css={{ width: '100%' }}
+                    >
+                      Next
+                    </Button>
+                  </Box>
+                </MainContainer>
+              </ContentContainer>
             )}
           </Modal>
         )
