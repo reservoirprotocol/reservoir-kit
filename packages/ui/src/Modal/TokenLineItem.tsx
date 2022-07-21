@@ -51,7 +51,11 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   const srcImg = marketData?.floorAsk?.source
     ? (marketData?.floorAsk?.source['icon'] as string)
     : ''
-  const royalty: number | undefined = collection?.royalties?.bps || undefined
+  let royalty: number | undefined = collection?.royalties?.bps || undefined
+
+  if (royalty) {
+    royalty = royalty * 0.01
+  }
 
   return (
     <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
