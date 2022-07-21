@@ -1,5 +1,5 @@
 import { Signer } from 'ethers'
-import { ReservoirClient } from '.'
+import { getClient } from '.'
 import { Execute, paths } from '../types'
 import { executeSteps, setParams } from '../utils'
 
@@ -37,7 +37,7 @@ type Data = {
 export async function acceptOffer(data: Data) {
   const { token, expectedPrice, signer, onProgress } = data
   const taker = await signer.getAddress()
-  const client = ReservoirClient.get()
+  const client = getClient()
   const options = data.options || {}
 
   if (!client.apiBase) {

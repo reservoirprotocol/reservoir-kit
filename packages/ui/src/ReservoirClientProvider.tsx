@@ -2,6 +2,7 @@ import React, { createContext, FC, ReactNode, useState } from 'react'
 import {
   ReservoirClientOptions,
   ReservoirClient,
+  createClient,
 } from '@reservoir0x/reservoir-kit-client'
 
 export interface ReservoirClientProviderProps {
@@ -16,7 +17,7 @@ export const ReservoirClientContext = createContext<ReservoirClient | null>(
 export const ReservoirClientProvider: FC<ReservoirClientProviderProps> =
   function ({ children, options }: ReservoirClientProviderProps) {
     const [clientContext, _] = useState<ReservoirClient | null>(
-      ReservoirClient.init(options)
+      createClient(options)
     )
 
     return (

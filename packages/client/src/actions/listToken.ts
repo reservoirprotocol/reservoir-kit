@@ -1,7 +1,7 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
-import { ReservoirClient } from '.'
+import { getClient } from '.'
 
 type ListTokenPathParameters =
   paths['/execute/list/v2']['get']['parameters']['query']
@@ -32,7 +32,7 @@ type Data = {
 
 export async function listToken(data: Data) {
   const { token, weiPrice, expirationTime, signer, onProgress } = data
-  const client = ReservoirClient.get()
+  const client = getClient()
   const options = data.options || {}
   const maker = await signer.getAddress()
 

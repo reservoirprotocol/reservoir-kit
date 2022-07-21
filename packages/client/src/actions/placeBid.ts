@@ -1,7 +1,7 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
-import { ReservoirClient } from '.'
+import { getClient } from '.'
 
 type PlaceBidPathParameters =
   paths['/execute/bid/v2']['get']['parameters']['query']
@@ -46,7 +46,7 @@ export async function placeBid(data: Data) {
     weiPrice,
     onProgress,
   } = data
-  const client = ReservoirClient.get()
+  const client = getClient()
   const options = data.options || {}
   const maker = await signer.getAddress()
 

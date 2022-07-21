@@ -1,7 +1,7 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
-import { ReservoirClient } from '.'
+import { getClient } from '.'
 
 export type Token = Pick<
   NonNullable<
@@ -34,7 +34,7 @@ type Data = {
 export async function buyToken(data: Data) {
   const { tokens, expectedPrice, signer, onProgress } = data
   const taker = await signer.getAddress()
-  const client = ReservoirClient.get()
+  const client = getClient()
   const options = data.options || {}
 
   if (!client.apiBase) {

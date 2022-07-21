@@ -1,7 +1,7 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { executeSteps, setParams } from '../utils'
-import { ReservoirClient } from '.'
+import { getClient } from '.'
 
 type CancelOrderPathParameters =
   paths['/execute/cancel/v1']['get']['parameters']['query']
@@ -24,7 +24,7 @@ type Data = {
  */
 export async function cancelOrder(data: Data) {
   const { id, signer, onProgress } = data
-  const client = ReservoirClient.get()
+  const client = getClient()
   const maker = await signer.getAddress()
   const options = data.options || {}
 

@@ -31,18 +31,18 @@ export type ReservoirClientOptions = {
 
 export type ReservoirClientActions = typeof actions
 
-export class ReservoirClient {
-  private static _client: ReservoirClient
+let _client: ReservoirClient
 
+export class ReservoirClient {
   apiBase: string
   apiKey?: string
   fee?: Fee
   feeRecipient?: FeeRecipient
   automatedRoyalties?: boolean
-  actions = actions
-  utils = utils
+  readonly actions = actions
+  readonly utils = utils
 
-  private constructor(options: ReservoirClientOptions) {
+  constructor(options: ReservoirClientOptions) {
     this.apiKey = options.apiKey
     this.apiBase = options.apiBase
     this.automatedRoyalties = options.automatedRoyalties
@@ -50,33 +50,26 @@ export class ReservoirClient {
     this.feeRecipient = options.feeRecipient
   }
 
-  public static init(options: ReservoirClientOptions): ReservoirClient {
-    if (!ReservoirClient._client) {
-      ReservoirClient._client = new ReservoirClient(options)
-    }
+  configure(options: ReservoirClientOptions) {
+    this.apiKey = options.apiKey ? options.apiKey : this.apiKey
+    this.apiBase = options.apiBase ? options.apiBase : this.apiBase
+    this.fee = options.fee
+    this.feeRecipient = options.feeRecipient
+    this.automatedRoyalties = options.automatedRoyalties
+  }
+}
 
-    return ReservoirClient._client
+export function getClient() {
+  //throw an error
+  return _client
+}
+
+export function createClient(options: ReservoirClientOptions) {
+  if (!_client) {
+    _client = new ReservoirClient(options)
+  } else {
+    _client.configure(options)
   }
 
-  public static configure(options: ReservoirClientOptions): ReservoirClient {
-    let client = ReservoirClient._client
-    if (!client) {
-      client = ReservoirClient.init(options)
-    } else {
-      client.apiKey = options.apiKey ? options.apiKey : client.apiKey
-      client.apiBase = options.apiBase ? options.apiBase : client.apiBase
-      client.fee = options.fee
-      client.feeRecipient = options.feeRecipient
-      client.automatedRoyalties = options.automatedRoyalties
-    }
-
-    return client
-  }
-
-  public static get(): ReservoirClient {
-    if (!ReservoirClient._client) {
-      throw 'No client available, please call init to create a client'
-    }
-    return ReservoirClient._client
-  }
+  return _client
 }
