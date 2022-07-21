@@ -102,82 +102,88 @@ const MarketPlaceToggle = ({
 
 Stat.toString = () => '.rk-stat-well'
 
-const Token = ({ token }: any) => (
-  <Flex
-    css={{
-      //borderRight: '1px solid $borderColor',
-      width: '100%',
-      flexDirection: 'row',
-      '@bp1': {
-        width: 220,
-        flexDirection: 'column',
-      },
-      p: '$4',
-    }}
-  >
-    <Box
+const Token = ({ token, collection }: any) => {
+  let attributeFloor = Math.max(
+    ...token.token.attributes.map((attr: any) => Number(attr.floorAskPrice)),
+    0
+  )
+  return (
+    <Flex
       css={{
-        mr: '$4',
-        width: 120,
+        //borderRight: '1px solid $borderColor',
+        width: '100%',
+        flexDirection: 'row',
         '@bp1': {
-          mr: 0,
-          width: '100%',
+          width: 220,
+          flexDirection: 'column',
         },
+        p: '$4',
       }}
     >
-      <Text
-        style="subtitle2"
-        color="subtle"
-        css={{ mb: '$1', display: 'block' }}
+      <Box
+        css={{
+          mr: '$4',
+          width: 120,
+          '@bp1': {
+            mr: 0,
+            width: '100%',
+          },
+        }}
       >
-        Item
-      </Text>
-      <Img src={token?.token?.image} css={{ mb: '$2' }} />
-      <Text style="h6" css={{ flex: 1 }} as="h6">
-        {token?.token?.name || `#${token?.token?.tokenId}`}
-      </Text>
-      <Box>
-        <Text style="subtitle2" color="subtle" as="p">
-          {token?.token?.collection?.name}
+        <Text
+          style="subtitle2"
+          color="subtle"
+          css={{ mb: '$1', display: 'block' }}
+        >
+          Item
         </Text>
+        <Img src={token?.token?.image} css={{ mb: '$2' }} />
+        <Text style="h6" css={{ flex: 1 }} as="h6">
+          {token?.token?.name || `#${token?.token?.tokenId}`}
+        </Text>
+        <Box>
+          <Text style="subtitle2" color="subtle" as="p">
+            {token?.token?.collection?.name}
+          </Text>
+        </Box>
       </Box>
-    </Box>
-    <Box
-      css={{
-        flex: 1,
-        mt: '$4',
-        [`& ${Stat}:not(:last-child)`]: {
-          mb: '$1',
-        },
-        mb: '$3',
-      }}
-    >
-      {[
-        {
-          label: 'Creator Royalties',
-          value: '10%',
-        },
-        {
-          label: 'Last Price',
-          value: '20',
-          asEth: true,
-        },
-        {
-          label: 'Floor',
-          value: '21',
-          asEth: true,
-        },
-        {
-          label: 'Highest Trait Floor',
-          value: '21',
-          asEth: true,
-        },
-      ].map((stat) => (
-        <Stat {...stat} />
-      ))}
-    </Box>
-  </Flex>
-)
+      <Box
+        css={{
+          flex: 1,
+          mt: '$4',
+          [`& ${Stat}:not(:last-child)`]: {
+            mb: '$1',
+          },
+          mb: '$3',
+        }}
+      >
+        {[
+          {
+            label: 'Creator Royalties',
+            value: (collection?.royalties?.bsp || 0) * 10_000 + '%',
+          },
+          {
+            label: 'Last Price',
+            value: token?.token?.lastSell?.value,
+            asEth: true,
+          },
+          {
+            label: 'Floor',
+            value: collection?.floorAsk?.price || 0,
+            asEth: true,
+          },
+          {
+            label: 'Highest Trait Floor',
+            value: attributeFloor || collection?.floorAsk?.price || 0,
+            asEth: true,
+          },
+        ].map((stat) => (
+          <Stat {...stat} />
+        ))}
+      </Box>
+    </Flex>
+  )
+}
 
 export function ListModal({
   trigger,
@@ -243,7 +249,7 @@ export function ListModal({
                     },
                   }}
                 >
-                  <Token token={token} />
+                  <Token token={token} collection={collection} />
 
                   <Flex
                     direction="column"
