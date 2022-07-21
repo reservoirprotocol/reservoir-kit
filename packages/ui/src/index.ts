@@ -7,7 +7,6 @@ export {
   useCollection,
   useReservoirClient,
   useTokenDetails,
-  useHistoricalSales,
   useTokenOpenseaBanned,
 } from './hooks'
 
