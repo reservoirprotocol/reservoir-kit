@@ -112,7 +112,6 @@ import { BuyModal, BuyStep } from '@reservoir0x/reservoir-kit-ui'
   {({
     token,
     collection,
-    lastSale,
     totalPrice,
     referrerFee,
     buyStep,

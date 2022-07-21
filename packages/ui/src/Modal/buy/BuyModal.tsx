@@ -76,7 +76,6 @@ export function BuyModal({
       {({
         token,
         collection,
-        lastSale,
         totalPrice,
         referrerFee,
         buyStep,

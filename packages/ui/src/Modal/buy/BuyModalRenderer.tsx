@@ -229,7 +229,6 @@ export const BuyModalRenderer: FC<Props> = ({
       {children({
         token,
         collection,
-        lastSale,
         totalPrice,
         referrerFee,
         buyStep,
