@@ -13,6 +13,7 @@ import {
   Loader,
 } from '../../primitives'
 
+// @ts-ignore
 import addFundsImage from 'url:../../../assets/transferFunds.svg'
 import { Progress } from './Progress'
 import Popover from '../../primitives/Popover'

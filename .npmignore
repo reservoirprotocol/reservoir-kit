@@ -5,3 +5,4 @@ demo
 .gitignore
 tsconfig.json
 .scratch
+parcel-bundle-reports

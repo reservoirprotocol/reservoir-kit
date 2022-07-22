@@ -1,5 +1,7 @@
 export interface ReservoirKitTheme {
-  borderRadius: number
+  radii: {
+    borderRadius: string
+  }
   fonts: {
     body: string
     button: string
@@ -71,7 +73,7 @@ export interface ReservoirKitThemeColors {
 }
 
 export type ReservoirKitOverrides = {
-  borderRadius?: number
+  borderRadius?: string
   font?: string
   buttonFont?: string
   headlineFont?: string
@@ -86,13 +88,16 @@ export type ReservoirKitOverrides = {
   borderColor?: string
 }
 
-type ReservoirKitSharedTheme = Pick<ReservoirKitTheme, 'fonts' | 'borderRadius'>
+type ReservoirKitSharedTheme = Pick<ReservoirKitTheme, 'fonts' | 'radii'>
 
 export const sharedThemeConfig = (
   overrides?: ReservoirKitOverrides
 ): ReservoirKitSharedTheme => {
   return {
-    borderRadius: overrides?.borderRadius || 4,
+    radii: {
+      borderRadius: overrides?.borderRadius || '4px',
+    },
+
     fonts: {
       body: overrides?.font || 'sans-serif',
       button: overrides?.buttonFont || overrides?.font || 'sans-serif',
