@@ -1,6 +1,10 @@
 import { Children, useContext } from 'react'
 import { NextPage } from 'next'
-import { BuyModal, ListModal } from '@reservoir0x/reservoir-kit-ui'
+import {
+  BuyModal,
+  ListModal,
+  useReservoirClient,
+} from '@reservoir0x/reservoir-kit-ui'
 import { useSigner } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ThemeSwitcherContext } from './_app'
@@ -61,7 +65,8 @@ const getThemeFromOption = (option: string) => {
 
 const Index: NextPage = () => {
   const { setTheme } = useContext(ThemeSwitcherContext)
-
+  const client = useReservoirClient()
+  const { data: signer } = useSigner()
   return (
     <div
       style={{
@@ -75,6 +80,29 @@ const Index: NextPage = () => {
       }}
     >
       <ConnectButton />
+
+      <button
+        onClick={() => {
+          const listings = [
+            {
+              token: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b:1158273',
+              weiPrice: '20000000000000000',
+              orderKind: 'seaport',
+              orderbook: 'reservoir',
+            },
+          ]
+          debugger
+          client.actions.batchListToken({
+            signer,
+            listings,
+            onProgress: (steps) => {
+              console.log(steps)
+            },
+          })
+        }}
+      >
+        Batch List Time!
+      </button>
 
       <BuyModal
         trigger={

@@ -86,15 +86,21 @@ export async function executeSteps(
 
     let { kind, data } = json.steps[incompleteIndex]
 
-    // Append any extra params provided by API
-    if (json.query) setParams(url, json.query)
-
     // If step is missing data, poll until it is ready
     if (!data) {
-      json = (await pollUntilHasData(url, incompleteIndex)) as Execute
+      json = (await pollUntilHasData(
+        {
+          url: url.href,
+          params: json.query,
+        },
+        (json) => (json?.steps?.[incompleteIndex]?.data ? true : false)
+      )) as Execute
       if (!json.steps) throw json
       data = json.steps[incompleteIndex].data
     }
+
+    // Append any extra params provided by API
+    if (json.query) setParams(url, json.query)
 
     //Update tx data on current step from previous step if available
     json.steps[incompleteIndex].txHash = json.txHash

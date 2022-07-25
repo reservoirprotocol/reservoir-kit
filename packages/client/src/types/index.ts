@@ -19,3 +19,19 @@ export type Execute = {
   message?: string
   txHash?: string
 }
+
+export type BatchExecute = {
+  error?: string
+  steps: {
+    message?: string
+    error?: string
+    action: string
+    description: string
+    kind: 'transaction' | 'signature' | 'request' | 'confirmation'
+    items?: {
+      status: 'complete' | 'incomplete'
+      data?: any
+      txHash?: string
+    }[]
+  }[]
+}
