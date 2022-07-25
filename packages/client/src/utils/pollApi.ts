@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 /**
  * Poll the URL with a 5 second interval until the step has data
@@ -33,15 +33,22 @@ export async function pollUntilHasData(
  * @param url An URL object
  * @returns When it has finished polling
  */
-export async function pollUntilOk(url: URL) {
-  const res = await fetch(url.href)
+export async function pollUntilOk(
+  url: URL,
+  validate?: (res: AxiosResponse) => boolean
+) {
+  const res = await axios.get(url.href)
+
+  if (!validate) {
+    validate = (res) => res.status === 200
+  }
 
   // Check that the response from an endpoint updated
-  if (res.ok) {
-    return
+  if (validate(res)) {
+    return true
   } else {
     // The response is still unchanged. Check again in five seconds
     await new Promise((resolve) => setTimeout(resolve, 5000))
-    await pollUntilOk(url)
+    await pollUntilOk(url, validate)
   }
 }

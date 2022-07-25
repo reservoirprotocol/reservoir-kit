@@ -1,10 +1,11 @@
-import { arrayify, splitSignature } from 'ethers/lib/utils'
-import { BatchExecute } from '../types'
-import { pollUntilHasData } from './pollApi'
+import { arrayify } from 'ethers/lib/utils'
+import { BatchExecute, paths } from '../types'
+import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { Signer } from 'ethers'
 import { TypedDataSigner } from '@ethersproject/abstract-signer'
 import axios, { AxiosRequestConfig } from 'axios'
 import { getClient } from '../actions/index'
+import { setParams } from './params'
 
 /**
  * When attempting to perform actions, such as, selling a token or
@@ -83,9 +84,6 @@ export async function batchExecuteSteps(
     let { kind } = step
     let stepItem = stepItems[incompleteStepItemIndex]
 
-    // Append any extra params provided by API
-    // if (json.query) setParams(url, json.query)
-
     // If step item is missing data, poll until it is ready
     if (!stepItem.data) {
       json = (await pollUntilHasData(request, (json) => {
@@ -113,8 +111,6 @@ export async function batchExecuteSteps(
     switch (kind) {
       // Make an on-chain transaction
       case 'transaction': {
-        // json.steps[incompleteIndex].message = 'Waiting for user to confirm'
-        // setState([...json?.steps])
         const tx = await signer.sendTransaction(stepData)
 
         if (json.steps[incompleteStepIndex].items?.[incompleteStepItemIndex]) {
@@ -123,6 +119,14 @@ export async function batchExecuteSteps(
         setState([...json?.steps])
 
         await tx.wait()
+
+        //Implicitly poll the confirmation url to confirm the transaction went through
+        const url = new URL(request.url || '')
+        const confirmationUrl = new URL(
+          `/transactions/${tx.hash}/synced/v1`,
+          url.origin
+        )
+        await pollUntilOk(confirmationUrl, (res) => res && res.data.synced)
         break
       }
 
@@ -143,9 +147,6 @@ export async function batchExecuteSteps(
           }
 
           if (signature) {
-            // Split signature into r,s,v components
-            // Include signature params in any future requests
-            // setParams(url, { r, s, v })
             request.params = {
               ...request.params,
               signature,
@@ -156,9 +157,6 @@ export async function batchExecuteSteps(
         if (postData) {
           const url = new URL(request.url || '')
           const postOrderUrl = new URL(postData.endpoint, url.origin)
-
-          // json.steps[incompleteIndex].message = 'Verifying'
-          // setState([...json?.steps])
 
           try {
             const getData = async function () {
@@ -180,25 +178,40 @@ export async function batchExecuteSteps(
             const res = await getData()
 
             if (res.status > 299 || res.status < 200) throw res.data
+
+            stepItem.orderId = res.data.orderId
+            setState([...json?.steps])
           } catch (err) {
             json.steps[incompleteStepIndex].error =
               'Your order could not be posted.'
             setState([...json?.steps])
             throw err
           }
+
+          //Confirm that on-chain tx has been picked up by the indexer
+          if (
+            stepItem.txHash &&
+            (url.pathname.includes('/execute/sell') ||
+              url.pathname.includes('/execute/buy'))
+          ) {
+            const url = new URL(request.url || '')
+            const confirmationUrl = new URL('/sales/v3', url.origin)
+            const queryParams: paths['/sales/v3']['get']['parameters']['query'] =
+              {
+                txHash: stepItem.txHash,
+              }
+            setParams(confirmationUrl, queryParams)
+            pollUntilOk(confirmationUrl, (res) => {
+              if (res.status === 200) {
+                const data =
+                  res.data as paths['/sales/v3']['get']['responses']['200']['schema']
+                return data.sales && data.sales.length > 0 ? true : false
+              }
+              return false
+            })
+          }
         }
 
-        break
-      }
-
-      // Confirm that an on-chain tx has been picked up by indexer
-      case 'confirmation': {
-        // const confirmationUrl = new URL(data.endpoint, url.origin)
-
-        // json.steps[incompleteIndex].message = 'Verifying'
-        // setState([...json?.steps])
-
-        // await pollUntilOk(confirmationUrl)
         break
       }
 

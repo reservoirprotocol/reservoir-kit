@@ -32,6 +32,7 @@ export type BatchExecute = {
       status: 'complete' | 'incomplete'
       data?: any
       txHash?: string
+      orderId?: string
     }[]
   }[]
 }
