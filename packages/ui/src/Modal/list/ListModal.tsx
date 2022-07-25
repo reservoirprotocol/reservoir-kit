@@ -1,7 +1,7 @@
 import { styled } from '../../../stitches.config'
 import React, { ReactElement, useEffect, useState, useMemo } from 'react'
 
-import { Flex, Box, Text, Button, Switch } from '../../primitives'
+import { Flex, Box, Text, Button, Switch, Select } from '../../primitives'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from '../Modal'
@@ -66,6 +66,7 @@ export function ListModal({
   const [syncProfit, setSyncProfit] = useState(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [markets, setMarkets] = useState(initialMarkets)
+  const [expirationDate, setExpirationDate] = useState('hi')
 
   return (
     <ListModalRenderer
@@ -268,19 +269,36 @@ export function ListModal({
                       </Text>
                     </Flex>
 
-                    {markets.map((marketplace) => (
-                      <Box css={{ mb: '$3' }}>
-                        <MarketplacePriceInput
-                          {...marketplace}
-                          onChange={(e) => {
-                            updateMarket(e.target.value, marketplace)
-                            debouncedUpdateMarkets(e.target.value, marketplace)
-                          }}
-                        />
-                      </Box>
-                    ))}
+                    {markets
+                      .filter((marketplace) => !!marketplace.isSelected)
+                      .map((marketplace) => (
+                        <Box css={{ mb: '$3' }}>
+                          <MarketplacePriceInput
+                            {...marketplace}
+                            onChange={(e) => {
+                              updateMarket(e.target.value, marketplace)
+                              debouncedUpdateMarkets(
+                                e.target.value,
+                                marketplace
+                              )
+                            }}
+                          />
+                        </Box>
+                      ))}
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
+                    <Box css={{ mb: '$3' }}>
+                      <Select
+                        value={expirationDate}
+                        onValueChange={(val) => {
+                          setExpirationDate(val)
+                        }}
+                      >
+                        <Select.Item value="hi">hi</Select.Item>
+                        <Select.Item value="word">word</Select.Item>
+                        <Select.Item value="what">what</Select.Item>
+                      </Select>
+                    </Box>
                     <Button
                       onClick={() => setListStep(ListStep.SetPrice)}
                       css={{ width: '100%' }}
