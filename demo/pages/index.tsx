@@ -85,13 +85,18 @@ const Index: NextPage = () => {
         onClick={() => {
           const listings = [
             {
-              token: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b:1158273',
+              token: '0x4d68e14cd7dec510c84326f54ee41f88e8fad59b:11',
               weiPrice: '20000000000000000',
               orderKind: 'seaport',
               orderbook: 'reservoir',
             },
+            {
+              token: '0x4d68e14cd7dec510c84326f54ee41f88e8fad59b:11',
+              weiPrice: '20000000000000000',
+              orderKind: 'looks-rare',
+              orderbook: 'looks-rare',
+            },
           ]
-          debugger
           client.actions.batchListToken({
             signer,
             listings,
@@ -119,7 +124,7 @@ const Index: NextPage = () => {
           </div>
         }
         collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
-        tokenId="754236"
+        tokenId="495039"
         onGoToToken={() => console.log('Awesome!')}
         onComplete={() => console.log('Purchase Complete')}
       />

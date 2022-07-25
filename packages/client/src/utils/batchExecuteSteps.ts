@@ -24,7 +24,8 @@ export async function batchExecuteSteps(
   request: AxiosRequestConfig,
   signer: Signer,
   setState: (steps: BatchExecute['steps']) => any,
-  newJson?: BatchExecute
+  newJson?: BatchExecute,
+  expectedPrice?: number
 ) {
   try {
     let json = newJson
@@ -48,11 +49,41 @@ export async function batchExecuteSteps(
     // Handle errors
     if (json.error || !json.steps) throw json
 
+    const isBuy = request.url?.includes('/execute/buy')
+    const isSell = request.url?.includes('/execute/sell')
+
     // Handle price changes to protect users from paying more
     // than expected when buying and selling for less than expected
-    // when selling
+    if (json.path && expectedPrice) {
+      const quote = json.path.reduce((total, path) => {
+        total += path.quote || 0
+        return total
+      }, 0)
 
-    // Todo when implementing buying and selling
+      // Check if the user is selling
+      let error = null
+      if (isSell && quote - expectedPrice < -0.00001) {
+        error = {
+          type: 'price mismatch',
+          message: `The quote price of ${quote} ETH is less than the expected price of ${expectedPrice} ETH`,
+        }
+      }
+
+      // Check if the user is buying
+      if (isBuy && quote - expectedPrice > 0.00001) {
+        error = {
+          type: 'price mismatch',
+          message: `The quote price of ${quote} ETH is greater than the expected price of ${expectedPrice} ETH`,
+        }
+      }
+
+      if (error) {
+        json.steps[0].error = error.message
+        json.steps[0].errorData = json.path
+        setState([...json?.steps])
+        throw error
+      }
+    }
 
     // Update state on first call or recursion
     setState([...json?.steps])
@@ -189,11 +220,7 @@ export async function batchExecuteSteps(
           }
 
           //Confirm that on-chain tx has been picked up by the indexer
-          if (
-            stepItem.txHash &&
-            (url.pathname.includes('/execute/sell') ||
-              url.pathname.includes('/execute/buy'))
-          ) {
+          if (stepItem.txHash && (isSell || isBuy)) {
             const url = new URL(request.url || '')
             const confirmationUrl = new URL('/sales/v3', url.origin)
             const queryParams: paths['/sales/v3']['get']['parameters']['query'] =

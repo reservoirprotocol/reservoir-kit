@@ -1,7 +1,7 @@
-import { Execute, paths } from '../types'
+import { BatchExecute, paths } from '../types'
 import { Signer } from 'ethers'
-import { executeSteps, setParams } from '../utils'
 import { getClient } from '.'
+import { batchExecuteSteps } from '../utils/batchExecuteSteps'
 
 export type Token = Pick<
   NonNullable<
@@ -11,7 +11,7 @@ export type Token = Pick<
 >
 
 type BuyTokenPathParameters =
-  paths['/execute/buy/v2']['get']['parameters']['query']
+  paths['/execute/buy/v3']['get']['parameters']['query']
 
 export type BuyTokenOptions = Omit<BuyTokenPathParameters, 'taker'>
 
@@ -20,7 +20,7 @@ type Data = {
   expectedPrice?: number
   options?: BuyTokenOptions
   signer: Signer
-  onProgress: (steps: Execute['steps']) => any
+  onProgress: (steps: BatchExecute['steps']) => any
 }
 
 /**
@@ -48,9 +48,7 @@ export async function buyToken(data: Data) {
 
   try {
     // Construct a URL object for the `/execute/buy` endpoint
-    const url = new URL('/execute/buy/v2', client.apiBase)
-
-    const query: BuyTokenPathParameters = {
+    const params: BuyTokenPathParameters = {
       taker: taker,
       ...options,
     }
@@ -61,9 +59,17 @@ export async function buyToken(data: Data) {
         (query[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
     )
 
-    setParams(url, query)
-
-    await executeSteps(url, signer, onProgress, undefined, expectedPrice)
+    await batchExecuteSteps(
+      {
+        url: `${client.apiBase}/execute/buy/v3`,
+        method: 'get',
+        params,
+      },
+      signer,
+      onProgress,
+      undefined,
+      expectedPrice
+    )
     return true
   } catch (err: any) {
     console.error(err)
