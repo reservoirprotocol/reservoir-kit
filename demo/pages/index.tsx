@@ -1,12 +1,20 @@
-import { useContext } from 'react'
+import {
+  ButtonHTMLAttributes,
+  FC,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { NextPage } from 'next'
 import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ThemeSwitcherContext } from './_app'
 import { darkTheme, lightTheme } from '@reservoir0x/reservoir-kit-ui'
+import { useAccount } from 'wagmi'
 
-const Trigger = () => (
+const Trigger: FC<ButtonHTMLAttributes<any>> = (props) => (
   <button
+    disabled={props.disabled}
     style={{
       padding: 24,
       background: 'blue',
@@ -15,6 +23,7 @@ const Trigger = () => (
       border: '1px solid #ffffff',
       borderRadius: 8,
       fontWeight: 800,
+      opacity: props.disabled ? 0.5 : 1,
     }}
   >
     Buy Token
@@ -60,6 +69,16 @@ const getThemeFromOption = (option: string) => {
 
 const Index: NextPage = () => {
   const { setTheme } = useContext(ThemeSwitcherContext)
+  const account = useAccount()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
 
   return (
     <div
@@ -85,7 +104,7 @@ const Index: NextPage = () => {
               width: '100%',
             }}
           >
-            <Trigger />
+            <Trigger disabled={!account.isConnected} />
           </div>
         }
         collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
