@@ -71,7 +71,7 @@ If that isn't enough customization you can also create a completely custom Reser
 
 ```
 const theme: ReservoirKitTheme = {
-  borderRadius: 4,
+  radii: { ... },
   fonts: { ... },
   colors: { ... }
 }

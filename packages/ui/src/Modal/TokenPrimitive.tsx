@@ -42,10 +42,15 @@ const TokenPrimitive: FC<Props> = ({
               borderRadius: 4,
               overflow: 'hidden',
               visibility: !img || img.length === 0 ? 'hidden' : 'visible',
+              flexShrink: 0,
             }}
           />
           <Grid css={{ rowGap: 2 }}>
-            <Text style="h6" color={isUnavailable ? 'subtle' : 'base'}>
+            <Text
+              style="h6"
+              ellipsify
+              color={isUnavailable ? 'subtle' : 'base'}
+            >
               {name}
             </Text>
             <Text style="body2" color={isUnavailable ? 'subtle' : 'base'}>

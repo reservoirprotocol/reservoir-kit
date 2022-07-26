@@ -97,7 +97,6 @@ export const sharedThemeConfig = (
     radii: {
       borderRadius: overrides?.borderRadius || '4px',
     },
-
     fonts: {
       body: overrides?.font || 'sans-serif',
       button: overrides?.buttonFont || overrides?.font || 'sans-serif',
