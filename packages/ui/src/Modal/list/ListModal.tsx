@@ -60,6 +60,7 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
+  ethUsdPrice,
   onGoToToken,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
@@ -74,8 +75,27 @@ export function ListModal({
       value: 'hour',
       relativeTime: '1h',
     },
+    {
+      text: '12 Hours',
+      value: '12 hours',
+      relativeTime: '12h',
+    },
+
+    {
+      text: '1 Day',
+      value: '1 day',
+      relativeTime: '1d',
+    },
+
+    {
+      text: '3 Day',
+      value: '3 days',
+      relativeTime: '3d',
+    },
     { text: '1 Week', value: 'week', relativeTime: '1w' },
     { text: '1 Month', value: 'month', relativeTime: '1M' },
+
+    { text: '3 Months', value: '3 months', relativeTime: '3M' },
     { text: 'None', value: 'never', relativeTime: null },
   ]
 
@@ -102,7 +122,7 @@ export function ListModal({
         etherscanBaseUrl,
       }) => {
         // sync prices
-        const updateMarketPrices = (_price: any, market: any) => {
+        const updateMarketPrices = (market: any) => {
           if (syncProfit) {
             let updatingMarket = markets.find((m) => m.name == market.name)
             let profit =
@@ -133,8 +153,8 @@ export function ListModal({
         }
 
         let debouncedUpdateMarkets = useMemo(
-          () => debounce(updateMarketPrices, 500),
-          [syncProfit]
+          () => debounce(updateMarketPrices, 1200),
+          [syncProfit, markets]
         )
 
         useEffect(() => {
@@ -157,6 +177,8 @@ export function ListModal({
                 return market
               })
             )
+
+            updateMarketPrices(markets[0])
           }
         }, [token, collection])
 
@@ -290,12 +312,10 @@ export function ListModal({
                         <Box css={{ mb: '$3' }}>
                           <MarketplacePriceInput
                             {...marketplace}
+                            ethUsdPrice={ethUsdPrice}
                             onChange={(e) => {
                               updateMarket(e.target.value, marketplace)
-                              debouncedUpdateMarkets(
-                                e.target.value,
-                                marketplace
-                              )
+                              debouncedUpdateMarkets(marketplace)
                             }}
                           />
                         </Box>

@@ -31,12 +31,12 @@ const StyledTrigger = styled(Select.Trigger, {
 })
 
 const StyledContent = styled(Select.Content, {
-  top: 0,
-  left: 0,
   backgroundColor: '$inputBackground',
   color: '$textColor',
-  p: '$4',
   borderRadius: '$borderRadius',
+  overflow: 'hidden',
+  $$focusColor: '$colors$accentBorderHover',
+  boxShadow: '0 0 0 2px $$focusColor',
 })
 
 export const RKSelect: React.FC<
@@ -56,7 +56,9 @@ export const RKSelect: React.FC<
     </StyledTrigger>
     <Select.Portal style={{ zIndex: 1000000 }}>
       <StyledContent>
+        <Select.ScrollUpButton />
         <Select.Viewport>{children}</Select.Viewport>
+        <Select.ScrollDownButton />
       </StyledContent>
     </Select.Portal>
   </Select.Root>
@@ -64,6 +66,11 @@ export const RKSelect: React.FC<
 
 const StyledItem = styled(Select.Item, {
   cursor: 'pointer',
+  py: '$3',
+  px: '$4',
+  '&:hover': {
+    background: '$neutralBgActive',
+  },
 })
 
 RKSelect.Item = StyledItem
