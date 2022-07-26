@@ -1,8 +1,9 @@
 import React, { ComponentPropsWithoutRef } from 'react'
 import { styled } from '../../stitches.config'
 import * as Select from '@radix-ui/react-select'
-import Text from './Text'
-import { faLeftLong } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Box from './Box'
 
 type Props = {
   children: React.ReactNode
@@ -10,6 +11,7 @@ type Props = {
 
 type SelectProps = {
   Item: typeof Select.Item
+  ItemText: typeof Select.ItemText
 }
 
 const StyledTrigger = styled(Select.Trigger, {
@@ -31,19 +33,28 @@ const StyledTrigger = styled(Select.Trigger, {
 const StyledContent = styled(Select.Content, {
   top: 0,
   left: 0,
-  backgroundColor: 'black',
-  color: 'white',
+  backgroundColor: '$inputBackground',
+  color: '$textColor',
   p: '$4',
+  borderRadius: '$borderRadius',
 })
 
-const RKSelect: React.FC<Props & ComponentPropsWithoutRef<typeof Select.Root>> &
+export const RKSelect: React.FC<
+  Props &
+    ComponentPropsWithoutRef<typeof Select.Root> &
+    ComponentPropsWithoutRef<typeof Select.Value>
+> &
   SelectProps = ({ children, ...props }) => (
-  <Select.Root {...props} open={true}>
+  <Select.Root {...props}>
     <StyledTrigger>
-      <Select.Value placeholder="select expiration">{props.value}</Select.Value>
-      <Select.Icon />
+      <Select.Value placeholder={props.placeholder}>{props.value}</Select.Value>
+      <Select.Icon asChild>
+        <Box css={{ color: '$neutralSolidHover' }}>
+          <FontAwesomeIcon icon={faChevronDown} width="14" color="" />
+        </Box>
+      </Select.Icon>
     </StyledTrigger>
-    <Select.Portal>
+    <Select.Portal style={{ zIndex: 1000000 }}>
       <StyledContent>
         <Select.Viewport>{children}</Select.Viewport>
       </StyledContent>
@@ -51,6 +62,11 @@ const RKSelect: React.FC<Props & ComponentPropsWithoutRef<typeof Select.Root>> &
   </Select.Root>
 )
 
-RKSelect.Item = Select.Item
+const StyledItem = styled(Select.Item, {
+  cursor: 'pointer',
+})
+
+RKSelect.Item = StyledItem
+RKSelect.ItemText = Select.ItemText
 
 export default RKSelect

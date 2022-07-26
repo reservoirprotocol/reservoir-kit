@@ -2962,6 +2962,7 @@ __metadata:
     "@rainbow-me/rainbowkit": ^0.4.1
     "@reservoir0x/reservoir-kit-client": "workspace:*"
     "@stitches/react": ^1.2.8
+    dayjs: ^1.11.4
     framer-motion: ^6.4.2
   peerDependencies:
     ethers: ^5.6.1
@@ -4349,6 +4350,13 @@ __metadata:
   version: 3.1.0
   resolution: "csstype@npm:3.1.0"
   checksum: 644e986cefab86525f0b674a06889cfdbb1f117e5b7d1ce0fc55b0423ecc58807a1ea42ecc75c4f18999d14fc42d1d255f84662a45003a52bb5840e977eb2ffd
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.4":
+  version: 1.11.4
+  resolution: "dayjs@npm:1.11.4"
+  checksum: 478c8a2db9e3fc752db9f02ef23f00e12308eebbeb85569913731ea78e8d5616f2335e14f25af48e9f16bbcbd796653092eca4d2f42c0218a948402c31735f59
   languageName: node
   linkType: hard
 

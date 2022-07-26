@@ -66,7 +66,22 @@ export function ListModal({
   const [syncProfit, setSyncProfit] = useState(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [markets, setMarkets] = useState(initialMarkets)
-  const [expirationDate, setExpirationDate] = useState('hi')
+
+  //Todo use Day.js to calculate relative time from now
+  const expirationOptions = [
+    {
+      text: '1 Hour',
+      value: 'hour',
+      relativeTime: '1h',
+    },
+    { text: '1 Week', value: 'week', relativeTime: '1w' },
+    { text: '1 Month', value: 'month', relativeTime: '1M' },
+    { text: 'None', value: 'never', relativeTime: null },
+  ]
+
+  const [expirationOption, setExpirationOption] = useState<
+    typeof expirationOptions[0] | undefined
+  >(expirationOptions[0])
 
   return (
     <ListModalRenderer
@@ -289,14 +304,19 @@ export function ListModal({
                   <Box css={{ p: '$4', width: '100%' }}>
                     <Box css={{ mb: '$3' }}>
                       <Select
-                        value={expirationDate}
-                        onValueChange={(val) => {
-                          setExpirationDate(val)
+                        value={expirationOption?.text || ''}
+                        onValueChange={(value: string) => {
+                          const option = expirationOptions.find(
+                            (option) => option.value == value
+                          )
+                          setExpirationOption(option)
                         }}
                       >
-                        <Select.Item value="hi">hi</Select.Item>
-                        <Select.Item value="word">word</Select.Item>
-                        <Select.Item value="what">what</Select.Item>
+                        {expirationOptions.map((option) => (
+                          <Select.Item value={option.value}>
+                            <Select.ItemText>{option.text}</Select.ItemText>
+                          </Select.Item>
+                        ))}
                       </Select>
                     </Box>
                     <Button
