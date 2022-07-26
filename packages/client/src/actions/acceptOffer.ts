@@ -1,7 +1,7 @@
 import { Signer } from 'ethers'
 import { getClient } from '.'
-import { Execute, paths } from '../types'
-import { executeSteps, setParams } from '../utils'
+import { BatchExecute, paths } from '../types'
+import { batchExecuteSteps } from '../utils'
 
 export type Token = Pick<
   NonNullable<
@@ -11,7 +11,7 @@ export type Token = Pick<
 >
 
 type AcceptOfferPathParameters =
-  paths['/execute/sell/v2']['get']['parameters']['query']
+  paths['/execute/sell/v3']['get']['parameters']['query']
 
 export type AcceptOfferOptions = Omit<
   AcceptOfferPathParameters,
@@ -23,7 +23,7 @@ type Data = {
   options?: AcceptOfferOptions
   expectedPrice?: number
   signer: Signer
-  onProgress: (steps: Execute['steps']) => any
+  onProgress: (steps: BatchExecute['steps']) => any
 }
 
 /**
@@ -45,17 +45,23 @@ export async function acceptOffer(data: Data) {
   }
 
   try {
-    // Construct a URL object for the `/execute/sell` endpoint
-    const url = new URL('/execute/sell/v2', client.apiBase)
-
-    const query: AcceptOfferPathParameters = {
+    const params: AcceptOfferPathParameters = {
       taker: taker,
       token: `${token.contract}:${token.tokenId}`,
+      source: client.source,
       ...options,
     }
-    setParams(url, query)
 
-    await executeSteps(url, signer, onProgress, undefined, expectedPrice)
+    await batchExecuteSteps(
+      {
+        url: `${client.apiBase}/execute/sell/v3`,
+        params,
+      },
+      signer,
+      onProgress,
+      undefined,
+      expectedPrice
+    )
     return true
   } catch (err: any) {
     console.error(err)

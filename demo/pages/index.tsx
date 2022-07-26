@@ -97,9 +97,9 @@ const Index: NextPage = () => {
               orderbook: 'looks-rare',
             },
           ]
-          client.actions.batchListToken({
+          client.actions.cancelOrder({
+            id: '0xa7bf56a9b1620f937e215ff86c38f9a9336c67cc7222f7f045756a4950ce99bb',
             signer,
-            listings,
             onProgress: (steps) => {
               console.log(steps)
             },
@@ -124,7 +124,7 @@ const Index: NextPage = () => {
           </div>
         }
         collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
-        tokenId="495039"
+        tokenId="527496"
         onGoToToken={() => console.log('Awesome!')}
         onComplete={() => console.log('Purchase Complete')}
       />

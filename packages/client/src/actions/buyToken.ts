@@ -50,13 +50,14 @@ export async function buyToken(data: Data) {
     // Construct a URL object for the `/execute/buy` endpoint
     const params: BuyTokenPathParameters = {
       taker: taker,
+      source: client.source,
       ...options,
     }
 
     tokens?.forEach(
       (token, index) =>
         //@ts-ignore
-        (query[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
+        (params[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
     )
 
     await batchExecuteSteps(
