@@ -60,7 +60,7 @@ export async function placeBid(data: Data) {
 
   try {
     // Construct a URL object for the `/execute/bid/v2` endpoint
-    const url = new URL('/execute/bid/v2', client.apiBase)
+    const url = new URL(`${client.apiBase}/execute/bid/v2`)
     const query: PlaceBidPathParameters = {
       ...options,
       maker,

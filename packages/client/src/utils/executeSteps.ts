@@ -4,7 +4,7 @@ import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { setParams } from './params'
 import { Signer } from 'ethers'
 import { TypedDataSigner } from '@ethersproject/abstract-signer'
-import axios from 'axios'
+import axios, { AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions/index'
 
 /**
@@ -29,11 +29,12 @@ export async function executeSteps(
 ) {
   try {
     let json = newJson
+    const client = getClient()
+    const baseUrl = client.apiBase ? client.apiBase : url.origin
 
     if (!json) {
       const options: RequestInit | undefined = {}
 
-      const client = getClient()
       if (client && client.apiKey) {
         options.headers = {
           'x-api-key': client.apiKey,
@@ -151,21 +152,27 @@ export async function executeSteps(
 
       // Post a signed order object to order book
       case 'request': {
-        const postOrderUrl = new URL(data.endpoint, url.origin)
+        const postOrderUrl = new URL(`${baseUrl}${data.endpoint}`)
 
         json.steps[incompleteIndex].message = 'Verifying'
         setState([...json?.steps])
 
         try {
           const getData = async function () {
+            const headers: AxiosRequestHeaders = {
+              'Content-Type': 'application/json',
+            }
+
+            if (client && client.apiKey) {
+              headers['x-api-key'] = client.apiKey
+            }
+
             let response = await axios.post(
               postOrderUrl.href,
               JSON.stringify(data.body),
               {
                 method: data.method,
-                headers: {
-                  'Content-Type': 'application/json',
-                },
+                headers: headers,
               }
             )
 
@@ -187,7 +194,7 @@ export async function executeSteps(
 
       // Confirm that an on-chain tx has been picked up by indexer
       case 'confirmation': {
-        const confirmationUrl = new URL(data.endpoint, url.origin)
+        const confirmationUrl = new URL(`${baseUrl}${data.endpoint}`)
 
         json.steps[incompleteIndex].message = 'Verifying'
         setState([...json?.steps])
