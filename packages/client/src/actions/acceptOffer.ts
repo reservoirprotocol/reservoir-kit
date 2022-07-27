@@ -46,7 +46,7 @@ export async function acceptOffer(data: Data) {
 
   try {
     // Construct a URL object for the `/execute/sell` endpoint
-    const url = new URL('/execute/sell/v2', client.apiBase)
+    const url = new URL(`${client.apiBase}/execute/sell/v2`)
 
     const query: AcceptOfferPathParameters = {
       taker: taker,

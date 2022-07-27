@@ -1,7 +1,15 @@
 import { styled } from '../../../stitches.config'
 import React, { ReactElement, useEffect, useState, useMemo } from 'react'
 
-import { Flex, Box, Text, Button, Switch, Select } from '../../primitives'
+import {
+  Flex,
+  Box,
+  Text,
+  Button,
+  Switch,
+  Loader,
+  Select,
+} from '../../primitives'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from '../Modal'
@@ -14,9 +22,12 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import debounce from '../../lib/debounce'
 import initialMarkets from './initialMarkets'
 
-import Token from './TokenStats'
+import TokenStats from './TokenStats'
 import MarketplaceToggle from './MarketplaceToggle'
 import MarketplacePriceInput from './MarketplacePriceInput'
+import TokenListingDetails from './TokenListingDetails'
+import ProgressBar from './ProgressBar'
+import ListingTransactionProgress from './ListingTransactionProgress'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -195,7 +206,7 @@ export function ListModal({
           >
             {token && listStep == ListStep.SelectMarkets && (
               <ContentContainer>
-                <Token token={token} collection={collection} />
+                <TokenStats token={token} collection={collection} />
 
                 <MainContainer>
                   <Box css={{ p: '$4', flex: 1 }}>
@@ -265,7 +276,7 @@ export function ListModal({
 
             {token && listStep == ListStep.SetPrice && (
               <ContentContainer>
-                <Token token={token} collection={collection} />
+                <TokenStats token={token} collection={collection} />
 
                 <MainContainer>
                   <Box css={{ p: '$4', flex: 1 }}>
@@ -346,6 +357,65 @@ export function ListModal({
                       Next
                     </Button>
                   </Box>
+                </MainContainer>
+              </ContentContainer>
+            )}
+
+            {token && listStep == ListStep.ListItem && (
+              <ContentContainer>
+                <TokenListingDetails
+                  token={token}
+                  collection={collection}
+                  listings={[
+                    {
+                      value: '21',
+                      marketImg:
+                        'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
+                      expiration: 'Expired in 3 days',
+                    },
+                    {
+                      value: '21.25',
+                      marketImg:
+                        'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
+                      expiration: 'Expired in 3 days',
+                    },
+                  ]}
+                />
+                <MainContainer css={{ p: '$4' }}>
+                  <ProgressBar value={1} max={8} />
+                  <Text
+                    css={{ textAlign: 'center', mt: 48, mb: 28 }}
+                    style="subtitle1"
+                  >
+                    Approve Seaport to access item <br /> in your wallet
+                  </Text>
+                  <ListingTransactionProgress
+                    justify="center"
+                    fromImg={
+                      'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2'
+                    }
+                    toImg={
+                      'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2'
+                    }
+                  />
+                  <Text
+                    css={{
+                      textAlign: 'center',
+                      mt: 24,
+                      maxWidth: 395,
+                      mx: 'auto',
+                    }}
+                    style="body3"
+                    color="subtle"
+                  >
+                    We’ll ask your approval for the marketplace exchange to
+                    access your token. This is a one-time only operation per
+                    collection.
+                  </Text>
+                  <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
+                    <Loader />
+                    Waiting for Approval
+                  </Button>
                 </MainContainer>
               </ContentContainer>
             )}
