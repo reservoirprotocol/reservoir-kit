@@ -97,8 +97,11 @@ const Index: NextPage = () => {
               orderbook: 'looks-rare',
             },
           ]
-          client.actions.cancelOrder({
-            id: '0xa7bf56a9b1620f937e215ff86c38f9a9336c67cc7222f7f045756a4950ce99bb',
+          client.actions.acceptOffer({
+            token: {
+              tokenId: '91524',
+              contract: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
+            },
             signer,
             onProgress: (steps) => {
               console.log(steps)
@@ -123,8 +126,8 @@ const Index: NextPage = () => {
             <Trigger>Buy Now</Trigger>
           </div>
         }
-        collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
-        tokenId="527496"
+        collectionId="0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85"
+        tokenId="91011039799772450558997130593882792704008142764887310139950855526031423180232"
         onGoToToken={() => console.log('Awesome!')}
         onComplete={() => console.log('Purchase Complete')}
       />

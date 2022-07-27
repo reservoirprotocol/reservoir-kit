@@ -137,7 +137,7 @@ export async function batchExecuteSteps(
     }
 
     const stepData = stepItem.data
-
+    debugger
     // Handle each step based on it's kind
     switch (kind) {
       // Make an on-chain transaction
@@ -158,6 +158,26 @@ export async function batchExecuteSteps(
           url.origin
         )
         await pollUntilOk(confirmationUrl, (res) => res && res.data.synced)
+
+        //Confirm that on-chain tx has been picked up by the indexer
+        if (stepItem.txHash && (isSell || isBuy)) {
+          const url = new URL(request.url || '')
+          const indexerConfirmationUrl = new URL('/sales/v3', url.origin)
+          const queryParams: paths['/sales/v3']['get']['parameters']['query'] =
+            {
+              txHash: stepItem.txHash,
+            }
+          setParams(indexerConfirmationUrl, queryParams)
+          await pollUntilOk(indexerConfirmationUrl, (res) => {
+            if (res.status === 200) {
+              const data =
+                res.data as paths['/sales/v3']['get']['responses']['200']['schema']
+              return data.sales && data.sales.length > 0 ? true : false
+            }
+            return false
+          })
+        }
+
         break
       }
 
@@ -217,25 +237,6 @@ export async function batchExecuteSteps(
               'Your order could not be posted.'
             setState([...json?.steps])
             throw err
-          }
-
-          //Confirm that on-chain tx has been picked up by the indexer
-          if (stepItem.txHash && (isSell || isBuy)) {
-            const url = new URL(request.url || '')
-            const confirmationUrl = new URL('/sales/v3', url.origin)
-            const queryParams: paths['/sales/v3']['get']['parameters']['query'] =
-              {
-                txHash: stepItem.txHash,
-              }
-            setParams(confirmationUrl, queryParams)
-            pollUntilOk(confirmationUrl, (res) => {
-              if (res.status === 200) {
-                const data =
-                  res.data as paths['/sales/v3']['get']['responses']['200']['schema']
-                return data.sales && data.sales.length > 0 ? true : false
-              }
-              return false
-            })
           }
         }
 

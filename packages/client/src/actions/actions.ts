@@ -2,7 +2,6 @@ import { acceptOffer } from './acceptOffer'
 import { buyToken } from './buyToken'
 import { cancelOrder } from './cancelOrder'
 import { listToken } from './listToken'
-import { batchListToken } from './batchListToken'
 import { placeBid } from './placeBid'
 
 const actions = {
@@ -10,7 +9,6 @@ const actions = {
   buyToken,
   cancelOrder,
   listToken,
-  batchListToken,
   placeBid,
 }
 

@@ -5,12 +5,12 @@ type NonUndefined<T> = T extends undefined ? never : T
 
 type Fee = NonUndefined<
   NonNullable<
-    Parameters<ReservoirClientActions['listToken']>['0']['options']
+    Parameters<ReservoirClientActions['listToken']>['0']['listings'][0]
   >['fee']
 >
 type FeeRecipient = NonUndefined<
   NonNullable<
-    Parameters<ReservoirClientActions['listToken']>['0']['options']
+    Parameters<ReservoirClientActions['listToken']>['0']['listings'][0]
   >['feeRecipient']
 >
 

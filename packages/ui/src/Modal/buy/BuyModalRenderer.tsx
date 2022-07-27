@@ -147,8 +147,10 @@ export const BuyModalRenderer: FC<Props> = ({
             | NonNullable<BatchExecute['steps'][0]['items']>[0]
             | undefined
           steps.find((step) => {
-            currentStepItem = step.items?.find((item) => item.txHash)
-            return currentStepItem && currentStepItem.txHash
+            currentStepItem = step.items?.find(
+              (item) => item.status === 'incomplete'
+            )
+            return currentStepItem
           })
 
           if (currentStepItem) {

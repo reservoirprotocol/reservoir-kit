@@ -270,7 +270,11 @@ export function BuyModal({
                     src={token?.token?.image}
                     style={{ width: 100, height: 100 }}
                   />
-                  <Flex css={{ mb: 24, mt: '$2' }} align="center">
+                  <Flex
+                    css={{ mb: 24, mt: '$2' }}
+                    align="center"
+                    justify="center"
+                  >
                     {!!token.token?.collection?.image && (
                       <Box css={{ mr: '$1' }}>
                         <img
@@ -280,7 +284,11 @@ export function BuyModal({
                       </Box>
                     )}
 
-                    <Text style="subtitle2">{`#${token?.token?.tokenId}`}</Text>
+                    <Text
+                      style="subtitle2"
+                      css={{ maxWidth: '85%' }}
+                      ellipsify
+                    >{`#${token?.token?.tokenId}`}</Text>
                   </Flex>
 
                   <Flex css={{ mb: '$2' }} align="center">

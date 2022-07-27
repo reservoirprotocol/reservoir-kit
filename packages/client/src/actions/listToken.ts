@@ -1,39 +1,29 @@
-import { Execute, paths } from '../types'
+import { BatchExecute, paths } from '../types'
 import { Signer } from 'ethers'
-import { executeSteps, setParams } from '../utils'
 import { getClient } from '.'
+import { batchExecuteSteps } from '../utils/batchExecuteSteps'
 
-type ListTokenPathParameters =
-  paths['/execute/list/v2']['get']['parameters']['query']
-
-export type ListTokenOptions = Omit<
-  paths['/execute/list/v2']['get']['parameters']['query'],
-  'token' | 'maker' | 'weiPrice' | 'expirationTime'
+type ListTokenPathBody = NonNullable<
+  paths['/execute/list/v3']['post']['parameters']['body']['body']
 >
 
 type Data = {
-  token: ListTokenPathParameters['token']
-  weiPrice: ListTokenPathParameters['weiPrice']
-  expirationTime: ListTokenPathParameters['expirationTime']
   signer: Signer
-  options?: ListTokenOptions
-  onProgress: (steps: Execute['steps']) => any
+  source: ListTokenPathBody['source']
+  listings: Required<ListTokenPathBody>['params']
+  onProgress: (steps: BatchExecute['steps']) => any
 }
 
 /**
  * List a token for sale
- * @param data.token Token to list
- * @param data.weiPrice Price in wei to list the token as
- * @param data.expirationTime Unix time to expire the listing
+ * @param data.listings Listings data to be processed
  * @param data.signer Ethereum signer object provided by the browser
- * @param data.options Additional options to pass into the list request
  * @param data.onProgress Callback to update UI state has execution progresses
  */
 
 export async function listToken(data: Data) {
-  const { token, weiPrice, expirationTime, signer, onProgress } = data
+  const { source, listings, signer, onProgress } = data
   const client = getClient()
-  const options = data.options || {}
   const maker = await signer.getAddress()
 
   if (!client.apiBase) {
@@ -41,33 +31,44 @@ export async function listToken(data: Data) {
   }
 
   try {
-    // Construct a URL object for the `/execute/list/v2` endpoint
-    const url = new URL('/execute/list/v2', client.apiBase)
-    const query: ListTokenPathParameters = {
-      ...options,
-      token,
-      weiPrice,
-      expirationTime,
+    const data: ListTokenPathBody = {
       maker,
     }
 
-    if (
-      client.fee &&
-      client.feeRecipient &&
-      !options.fee &&
-      !options.feeRecipient
-    ) {
-      query.fee = client.fee
-      query.feeRecipient = client.feeRecipient
+    if (source) {
+      data.source = source
     }
 
-    if (client.automatedRoyalties && !options.automatedRoyalties) {
-      query.automatedRoyalties = client.automatedRoyalties
-    }
+    listings.forEach((listing) => {
+      if (
+        !listing.fee &&
+        !listing.feeRecipient &&
+        client.fee &&
+        client.feeRecipient
+      ) {
+        listing.fee = client.fee
+        listing.feeRecipient = client.feeRecipient
+      }
 
-    setParams(url, query)
+      if (
+        typeof listing.automatedRoyalties === 'undefined' &&
+        client.automatedRoyalties
+      ) {
+        listing.automatedRoyalties = client.automatedRoyalties
+      }
+    })
 
-    await executeSteps(url, signer, onProgress)
+    data.params = listings
+
+    await batchExecuteSteps(
+      {
+        url: `${client.apiBase}/execute/list/v3`,
+        method: 'post',
+        data: data,
+      },
+      signer,
+      onProgress
+    )
     return true
   } catch (err: any) {
     console.error(err)
