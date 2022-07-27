@@ -1,7 +1,7 @@
 import { styled } from '../../../stitches.config'
 import React, { ReactElement, useEffect, useState, useMemo } from 'react'
 
-import { Flex, Box, Text, Button, Switch } from '../../primitives'
+import { Flex, Box, Text, Button, Switch, Select } from '../../primitives'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from '../Modal'
@@ -60,12 +60,48 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
+  ethUsdPrice,
   onGoToToken,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
   const [syncProfit, setSyncProfit] = useState(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [markets, setMarkets] = useState(initialMarkets)
+
+  //Todo use Day.js to calculate relative time from now
+  const expirationOptions = [
+    {
+      text: '1 Hour',
+      value: 'hour',
+      relativeTime: '1h',
+    },
+    {
+      text: '12 Hours',
+      value: '12 hours',
+      relativeTime: '12h',
+    },
+
+    {
+      text: '1 Day',
+      value: '1 day',
+      relativeTime: '1d',
+    },
+
+    {
+      text: '3 Day',
+      value: '3 days',
+      relativeTime: '3d',
+    },
+    { text: '1 Week', value: 'week', relativeTime: '1w' },
+    { text: '1 Month', value: 'month', relativeTime: '1M' },
+
+    { text: '3 Months', value: '3 months', relativeTime: '3M' },
+    { text: 'None', value: 'never', relativeTime: null },
+  ]
+
+  const [expirationOption, setExpirationOption] = useState<
+    typeof expirationOptions[0] | undefined
+  >(expirationOptions[0])
 
   return (
     <ListModalRenderer
@@ -86,7 +122,7 @@ export function ListModal({
         etherscanBaseUrl,
       }) => {
         // sync prices
-        const updateMarketPrices = (_price: any, market: any) => {
+        const updateMarketPrices = (market: any) => {
           if (syncProfit) {
             let updatingMarket = markets.find((m) => m.name == market.name)
             let profit =
@@ -117,8 +153,8 @@ export function ListModal({
         }
 
         let debouncedUpdateMarkets = useMemo(
-          () => debounce(updateMarketPrices, 500),
-          [syncProfit]
+          () => debounce(updateMarketPrices, 1200),
+          [syncProfit, markets]
         )
 
         useEffect(() => {
@@ -141,6 +177,8 @@ export function ListModal({
                 return market
               })
             )
+
+            updateMarketPrices(markets[0])
           }
         }, [token, collection])
 
@@ -268,19 +306,39 @@ export function ListModal({
                       </Text>
                     </Flex>
 
-                    {markets.map((marketplace) => (
-                      <Box css={{ mb: '$3' }}>
-                        <MarketplacePriceInput
-                          {...marketplace}
-                          onChange={(e) => {
-                            updateMarket(e.target.value, marketplace)
-                            debouncedUpdateMarkets(e.target.value, marketplace)
-                          }}
-                        />
-                      </Box>
-                    ))}
+                    {markets
+                      .filter((marketplace) => !!marketplace.isSelected)
+                      .map((marketplace) => (
+                        <Box css={{ mb: '$3' }}>
+                          <MarketplacePriceInput
+                            {...marketplace}
+                            ethUsdPrice={ethUsdPrice}
+                            onChange={(e) => {
+                              updateMarket(e.target.value, marketplace)
+                              debouncedUpdateMarkets(marketplace)
+                            }}
+                          />
+                        </Box>
+                      ))}
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
+                    <Box css={{ mb: '$3' }}>
+                      <Select
+                        value={expirationOption?.text || ''}
+                        onValueChange={(value: string) => {
+                          const option = expirationOptions.find(
+                            (option) => option.value == value
+                          )
+                          setExpirationOption(option)
+                        }}
+                      >
+                        {expirationOptions.map((option) => (
+                          <Select.Item value={option.value}>
+                            <Select.ItemText>{option.text}</Select.ItemText>
+                          </Select.Item>
+                        ))}
+                      </Select>
+                    </Box>
                     <Button
                       onClick={() => setListStep(ListStep.SetPrice)}
                       css={{ width: '100%' }}
