@@ -1,23 +1,25 @@
-import React from 'react'
-import { styled } from '../../../stitches.config'
-import { Flex, Box, Text } from '../../primitives'
-
+import React, { FC } from 'react'
+import { Flex, Box } from '../../primitives'
+import Token from './Token'
 import Stat from './Stat'
+import { useTokenDetails, useCollection } from '../../hooks'
 
-const Img = styled('img', {
-  width: '100%',
-  '@bp1': {
-    height: 150,
-    width: 150,
-  },
-  borderRadius: '$borderRadius',
-})
+type Props = {
+  token?: NonNullable<
+    NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
+  >['0']
+  collection: ReturnType<typeof useCollection>
+}
 
-const TokenStats = ({ token, collection }: any) => {
-  let attributeFloor = Math.max(
-    ...token.token.attributes.map((attr: any) => Number(attr.floorAskPrice)),
-    0
-  )
+const TokenStats: FC<Props> = ({ token, collection }) => {
+  let attributeFloor = token?.token?.attributes
+    ? Math.max(
+        ...token.token.attributes.map((attr: any) =>
+          Number(attr.floorAskPrice)
+        ),
+        0
+      )
+    : 0
   return (
     <Flex
       css={{
@@ -30,33 +32,7 @@ const TokenStats = ({ token, collection }: any) => {
         p: '$4',
       }}
     >
-      <Box
-        css={{
-          mr: '$4',
-          width: 120,
-          '@bp1': {
-            mr: 0,
-            width: '100%',
-          },
-        }}
-      >
-        <Text
-          style="subtitle2"
-          color="subtle"
-          css={{ mb: '$1', display: 'block' }}
-        >
-          Item
-        </Text>
-        <Img src={token?.token?.image} css={{ mb: '$2' }} />
-        <Text style="h6" css={{ flex: 1 }} as="h6">
-          {token?.token?.name || `#${token?.token?.tokenId}`}
-        </Text>
-        <Box>
-          <Text style="subtitle2" color="subtle" as="p">
-            {token?.token?.collection?.name}
-          </Text>
-        </Box>
-      </Box>
+      <Token collection={collection} token={token} />
       <Box
         css={{
           flex: 1,
@@ -70,11 +46,11 @@ const TokenStats = ({ token, collection }: any) => {
         {[
           {
             label: 'Creator Royalties',
-            value: (collection?.royalties?.bsp || 0) * 10_000 + '%',
+            value: (collection?.royalties?.bps || 0) * 10_000 + '%',
           },
           {
             label: 'Last Price',
-            value: token?.token?.lastSell?.value,
+            value: token?.token?.lastSell?.value || '--',
             asEth: true,
           },
           {

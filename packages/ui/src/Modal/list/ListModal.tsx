@@ -1,7 +1,15 @@
 import { styled } from '../../../stitches.config'
 import React, { ReactElement, useEffect, useState, useMemo } from 'react'
 
-import { Flex, Box, Text, Button, Switch } from '../../primitives'
+import {
+  Flex,
+  Box,
+  Text,
+  Button,
+  Switch,
+  Loader,
+  Select,
+} from '../../primitives'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from '../Modal'
@@ -14,9 +22,12 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import debounce from '../../lib/debounce'
 import initialMarkets from './initialMarkets'
 
-import Token from './TokenStats'
+import TokenStats from './TokenStats'
 import MarketplaceToggle from './MarketplaceToggle'
 import MarketplacePriceInput from './MarketplacePriceInput'
+import TokenListingDetails from './TokenListingDetails'
+import ProgressBar from './ProgressBar'
+import ListingTransactionProgress from './ListingTransactionProgress'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -60,12 +71,48 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
+  ethUsdPrice,
   onGoToToken,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
   const [syncProfit, setSyncProfit] = useState(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [markets, setMarkets] = useState(initialMarkets)
+
+  //Todo use Day.js to calculate relative time from now
+  const expirationOptions = [
+    {
+      text: '1 Hour',
+      value: 'hour',
+      relativeTime: '1h',
+    },
+    {
+      text: '12 Hours',
+      value: '12 hours',
+      relativeTime: '12h',
+    },
+
+    {
+      text: '1 Day',
+      value: '1 day',
+      relativeTime: '1d',
+    },
+
+    {
+      text: '3 Day',
+      value: '3 days',
+      relativeTime: '3d',
+    },
+    { text: '1 Week', value: 'week', relativeTime: '1w' },
+    { text: '1 Month', value: 'month', relativeTime: '1M' },
+
+    { text: '3 Months', value: '3 months', relativeTime: '3M' },
+    { text: 'None', value: 'never', relativeTime: null },
+  ]
+
+  const [expirationOption, setExpirationOption] = useState<
+    typeof expirationOptions[0] | undefined
+  >(expirationOptions[0])
 
   return (
     <ListModalRenderer
@@ -86,7 +133,7 @@ export function ListModal({
         etherscanBaseUrl,
       }) => {
         // sync prices
-        const updateMarketPrices = (_price: any, market: any) => {
+        const updateMarketPrices = (market: any) => {
           if (syncProfit) {
             let updatingMarket = markets.find((m) => m.name == market.name)
             let profit =
@@ -117,8 +164,8 @@ export function ListModal({
         }
 
         let debouncedUpdateMarkets = useMemo(
-          () => debounce(updateMarketPrices, 500),
-          [syncProfit]
+          () => debounce(updateMarketPrices, 1200),
+          [syncProfit, markets]
         )
 
         useEffect(() => {
@@ -141,6 +188,8 @@ export function ListModal({
                 return market
               })
             )
+
+            updateMarketPrices(markets[0])
           }
         }, [token, collection])
 
@@ -157,7 +206,7 @@ export function ListModal({
           >
             {token && listStep == ListStep.SelectMarkets && (
               <ContentContainer>
-                <Token token={token} collection={collection} />
+                <TokenStats token={token} collection={collection} />
 
                 <MainContainer>
                   <Box css={{ p: '$4', flex: 1 }}>
@@ -227,7 +276,7 @@ export function ListModal({
 
             {token && listStep == ListStep.SetPrice && (
               <ContentContainer>
-                <Token token={token} collection={collection} />
+                <TokenStats token={token} collection={collection} />
 
                 <MainContainer>
                   <Box css={{ p: '$4', flex: 1 }}>
@@ -268,19 +317,39 @@ export function ListModal({
                       </Text>
                     </Flex>
 
-                    {markets.map((marketplace) => (
-                      <Box css={{ mb: '$3' }}>
-                        <MarketplacePriceInput
-                          {...marketplace}
-                          onChange={(e) => {
-                            updateMarket(e.target.value, marketplace)
-                            debouncedUpdateMarkets(e.target.value, marketplace)
-                          }}
-                        />
-                      </Box>
-                    ))}
+                    {markets
+                      .filter((marketplace) => !!marketplace.isSelected)
+                      .map((marketplace) => (
+                        <Box css={{ mb: '$3' }}>
+                          <MarketplacePriceInput
+                            {...marketplace}
+                            ethUsdPrice={ethUsdPrice}
+                            onChange={(e) => {
+                              updateMarket(e.target.value, marketplace)
+                              debouncedUpdateMarkets(marketplace)
+                            }}
+                          />
+                        </Box>
+                      ))}
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
+                    <Box css={{ mb: '$3' }}>
+                      <Select
+                        value={expirationOption?.text || ''}
+                        onValueChange={(value: string) => {
+                          const option = expirationOptions.find(
+                            (option) => option.value == value
+                          )
+                          setExpirationOption(option)
+                        }}
+                      >
+                        {expirationOptions.map((option) => (
+                          <Select.Item value={option.value}>
+                            <Select.ItemText>{option.text}</Select.ItemText>
+                          </Select.Item>
+                        ))}
+                      </Select>
+                    </Box>
                     <Button
                       onClick={() => setListStep(ListStep.SetPrice)}
                       css={{ width: '100%' }}
@@ -288,6 +357,65 @@ export function ListModal({
                       Next
                     </Button>
                   </Box>
+                </MainContainer>
+              </ContentContainer>
+            )}
+
+            {token && listStep == ListStep.ListItem && (
+              <ContentContainer>
+                <TokenListingDetails
+                  token={token}
+                  collection={collection}
+                  listings={[
+                    {
+                      value: '21',
+                      marketImg:
+                        'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
+                      expiration: 'Expired in 3 days',
+                    },
+                    {
+                      value: '21.25',
+                      marketImg:
+                        'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
+                      expiration: 'Expired in 3 days',
+                    },
+                  ]}
+                />
+                <MainContainer css={{ p: '$4' }}>
+                  <ProgressBar value={1} max={8} />
+                  <Text
+                    css={{ textAlign: 'center', mt: 48, mb: 28 }}
+                    style="subtitle1"
+                  >
+                    Approve Seaport to access item <br /> in your wallet
+                  </Text>
+                  <ListingTransactionProgress
+                    justify="center"
+                    fromImg={
+                      'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2'
+                    }
+                    toImg={
+                      'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2'
+                    }
+                  />
+                  <Text
+                    css={{
+                      textAlign: 'center',
+                      mt: 24,
+                      maxWidth: 395,
+                      mx: 'auto',
+                    }}
+                    style="body3"
+                    color="subtle"
+                  >
+                    We’ll ask your approval for the marketplace exchange to
+                    access your token. This is a one-time only operation per
+                    collection.
+                  </Text>
+                  <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
+                    <Loader />
+                    Waiting for Approval
+                  </Button>
                 </MainContainer>
               </ContentContainer>
             )}

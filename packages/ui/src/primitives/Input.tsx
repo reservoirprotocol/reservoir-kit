@@ -21,6 +21,11 @@ const StyledInput = styled('input', {
   $$focusColor: '$colors$accentBorderHover',
   '&:placeholder': { color: '$neutralText' },
   '&:focus': { boxShadow: '0 0 0 2px $$focusColor' },
+
+  '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+    '-webkit-appearance': 'none',
+    margin: 0,
+  },
 })
 
 export const Input = forwardRef<
