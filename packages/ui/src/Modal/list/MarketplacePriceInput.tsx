@@ -18,6 +18,7 @@ type MarketPlaceInputProps = {
   price: number
   // without rounding
   truePrice: number
+  ethUsdPrice: number
   onChange: (e: any) => void
 }
 
@@ -27,31 +28,36 @@ const MarketplacePriceInput = ({
   fee,
   price,
   truePrice,
+  ethUsdPrice,
   onChange,
   ...props
-}: MarketPlaceInputProps) => (
-  <Flex {...props} align="center">
-    <Box css={{ mr: '$2' }}>
-      <img src={imgURL} style={{ height: 32, width: 32, borderRadius: 4 }} />
-    </Box>
-    <Flex align="center">
-      <EthLogo width={10} />
-      <Text style="body1" color="subtle" css={{ ml: '$1', mr: '$4' }} as="p">
-        ETH
-      </Text>
+}: MarketPlaceInputProps) => {
+  let profit = (1 - (fee || 0)) * Number(truePrice)
+
+  return (
+    <Flex {...props} align="center">
+      <Box css={{ mr: '$2' }}>
+        <img src={imgURL} style={{ height: 32, width: 32, borderRadius: 4 }} />
+      </Box>
+      <Flex align="center">
+        <EthLogo width={10} />
+        <Text style="body1" color="subtle" css={{ ml: '$1', mr: '$4' }} as="p">
+          ETH
+        </Text>
+      </Flex>
+      <Box css={{ flex: 1 }}>
+        <Input type="number" value={price} onChange={onChange} />
+      </Box>
+      <Flex direction="column" align="end" css={{ ml: '$3' }}>
+        <FormatEth amount={profit} textStyle="h6" logoWidth={12} />
+        <FormatCurrency
+          amount={profit * ethUsdPrice}
+          style="subtitle2"
+          color="subtle"
+        />
+      </Flex>
     </Flex>
-    <Box css={{ flex: 1 }}>
-      <Input value={price} onChange={onChange} />
-    </Box>
-    <Flex direction="column" align="end" css={{ ml: '$3' }}>
-      <FormatEth
-        amount={(1 - (fee || 0)) * Number(truePrice)}
-        textStyle="h6"
-        logoWidth={12}
-      />
-      <FormatCurrency amount={40000} style="subtitle2" color="subtle" />
-    </Flex>
-  </Flex>
-)
+  )
+}
 
 export default MarketplacePriceInput
