@@ -42,7 +42,7 @@ export async function listToken(data: Data) {
 
   try {
     // Construct a URL object for the `/execute/list/v2` endpoint
-    const url = new URL('/execute/list/v2', client.apiBase)
+    const url = new URL(`${client.apiBase}/execute/list/v2`)
     const query: ListTokenPathParameters = {
       ...options,
       token,

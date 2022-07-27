@@ -48,7 +48,7 @@ export async function buyToken(data: Data) {
 
   try {
     // Construct a URL object for the `/execute/buy` endpoint
-    const url = new URL('/execute/buy/v2', client.apiBase)
+    const url = new URL(`${client.apiBase}/execute/buy/v2`)
 
     const query: BuyTokenPathParameters = {
       taker: taker,
