@@ -128,6 +128,8 @@ export const BuyModalRenderer: FC<Props> = ({
       options.referrerFeeBps = referrerFeeBps
     }
 
+    setBuyStep(BuyStep.Confirming)
+
     client.actions
       .buyToken({
         expectedPrice: totalPrice,
