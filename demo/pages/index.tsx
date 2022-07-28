@@ -1,6 +1,10 @@
 import { Children, useContext } from 'react'
 import { NextPage } from 'next'
-import { BuyModal, ListModal } from '@reservoir0x/reservoir-kit-ui'
+import {
+  BuyModal,
+  ListModal,
+  useReservoirClient,
+} from '@reservoir0x/reservoir-kit-ui'
 import { useSigner } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ThemeSwitcherContext } from './_app'
@@ -61,7 +65,8 @@ const getThemeFromOption = (option: string) => {
 
 const Index: NextPage = () => {
   const { setTheme } = useContext(ThemeSwitcherContext)
-
+  const client = useReservoirClient()
+  const { data: signer } = useSigner()
   return (
     <div
       style={{
@@ -75,7 +80,6 @@ const Index: NextPage = () => {
       }}
     >
       <ConnectButton />
-
       <BuyModal
         trigger={
           <div

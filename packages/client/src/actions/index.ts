@@ -5,18 +5,19 @@ type NonUndefined<T> = T extends undefined ? never : T
 
 type Fee = NonUndefined<
   NonNullable<
-    Parameters<ReservoirClientActions['listToken']>['0']['options']
+    Parameters<ReservoirClientActions['listToken']>['0']['listings'][0]
   >['fee']
 >
 type FeeRecipient = NonUndefined<
   NonNullable<
-    Parameters<ReservoirClientActions['listToken']>['0']['options']
+    Parameters<ReservoirClientActions['listToken']>['0']['listings'][0]
   >['feeRecipient']
 >
 
 export type ReservoirClientOptions = {
   apiBase: string
   apiKey?: string
+  source?: string
   automatedRoyalties?: boolean
 } & (
   | {
@@ -35,6 +36,7 @@ let _client: ReservoirClient
 
 export class ReservoirClient {
   apiBase: string
+  source?: string
   apiKey?: string
   fee?: Fee
   feeRecipient?: FeeRecipient
@@ -48,9 +50,18 @@ export class ReservoirClient {
     this.automatedRoyalties = options.automatedRoyalties
     this.fee = options.fee
     this.feeRecipient = options.feeRecipient
+
+    if (!options.source) {
+      if (typeof window !== 'undefined') {
+        this.source = location.hostname
+      }
+    } else {
+      this.source = options.source
+    }
   }
 
   configure(options: ReservoirClientOptions) {
+    this.source = options.source ? options.source : this.source
     this.apiKey = options.apiKey ? options.apiKey : this.apiKey
     this.apiBase = options.apiBase ? options.apiBase : this.apiBase
     this.fee = options.fee

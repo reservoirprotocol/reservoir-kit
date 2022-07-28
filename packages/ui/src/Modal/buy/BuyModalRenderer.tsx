@@ -143,16 +143,31 @@ export const BuyModalRenderer: FC<Props> = ({
             return
           }
 
-          const currentStep = steps.find((step) => step.status === 'incomplete')
+          let currentStepItem:
+            | NonNullable<Execute['steps'][0]['items']>[0]
+            | undefined
+          steps.find((step) => {
+            currentStepItem = step.items?.find(
+              (item) => item.status === 'incomplete'
+            )
+            return currentStepItem
+          })
 
-          if (currentStep) {
-            if (currentStep.txHash) {
-              setTxHash(currentStep.txHash)
+          if (currentStepItem) {
+            if (currentStepItem.txHash) {
+              setTxHash(currentStepItem.txHash)
               setBuyStep(BuyStep.Finalizing)
             } else {
               setBuyStep(BuyStep.Confirming)
             }
-          } else if (steps.every((step) => step.status === 'complete')) {
+          } else if (
+            steps.every(
+              (step) =>
+                !step.items ||
+                step.items.length == 0 ||
+                step.items?.every((item) => item.status === 'complete')
+            )
+          ) {
             setBuyStep(BuyStep.Complete)
           }
         },
@@ -195,7 +210,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { address } = useAccount()
   const { data: balance } = useBalance({
     addressOrName: address,
-    watch: true,
+    watch: open,
   })
 
   useEffect(() => {

@@ -71,7 +71,6 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
-  ethUsdPrice,
   onGoToToken,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
@@ -323,7 +322,7 @@ export function ListModal({
                         <Box css={{ mb: '$3' }}>
                           <MarketplacePriceInput
                             {...marketplace}
-                            ethUsdPrice={ethUsdPrice}
+                            ethUsdPrice={ethUsdPrice || 0}
                             onChange={(e) => {
                               updateMarket(e.target.value, marketplace)
                               debouncedUpdateMarkets(marketplace)

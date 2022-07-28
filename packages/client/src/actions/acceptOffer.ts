@@ -1,7 +1,7 @@
 import { Signer } from 'ethers'
 import { getClient } from '.'
 import { Execute, paths } from '../types'
-import { executeSteps, setParams } from '../utils'
+import { executeSteps } from '../utils'
 
 export type Token = Pick<
   NonNullable<
@@ -11,7 +11,7 @@ export type Token = Pick<
 >
 
 type AcceptOfferPathParameters =
-  paths['/execute/sell/v2']['get']['parameters']['query']
+  paths['/execute/sell/v3']['get']['parameters']['query']
 
 export type AcceptOfferOptions = Omit<
   AcceptOfferPathParameters,
@@ -32,7 +32,7 @@ type Data = {
  * @param data.expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.options Additional options to pass into the accept request
- * @param data.onProgress Callback to update UI state has execution progresses
+ * @param data.onProgress Callback to update UI state as execution progresses
  */
 export async function acceptOffer(data: Data) {
   const { token, expectedPrice, signer, onProgress } = data
@@ -45,17 +45,23 @@ export async function acceptOffer(data: Data) {
   }
 
   try {
-    // Construct a URL object for the `/execute/sell` endpoint
-    const url = new URL(`${client.apiBase}/execute/sell/v2`)
-
-    const query: AcceptOfferPathParameters = {
+    const params: AcceptOfferPathParameters = {
       taker: taker,
       token: `${token.contract}:${token.tokenId}`,
+      source: client.source,
       ...options,
     }
-    setParams(url, query)
 
-    await executeSteps(url, signer, onProgress, undefined, expectedPrice)
+    await executeSteps(
+      {
+        url: `${client.apiBase}/execute/sell/v3`,
+        params,
+      },
+      signer,
+      onProgress,
+      undefined,
+      expectedPrice
+    )
     return true
   } catch (err: any) {
     console.error(err)
