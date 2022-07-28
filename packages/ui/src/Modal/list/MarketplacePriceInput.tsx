@@ -18,7 +18,7 @@ type MarketPlaceInputProps = {
   price: number
   // without rounding
   truePrice: number
-  ethUsdPrice: number
+  ethUsdPrice?: number | null
   onChange: (e: any) => void
 }
 
@@ -51,7 +51,7 @@ const MarketplacePriceInput = ({
       <Flex direction="column" align="end" css={{ ml: '$3' }}>
         <FormatEth amount={profit} textStyle="h6" logoWidth={12} />
         <FormatCurrency
-          amount={profit * ethUsdPrice}
+          amount={profit * (ethUsdPrice || 1000)}
           style="subtitle2"
           color="subtle"
         />

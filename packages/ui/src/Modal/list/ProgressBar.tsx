@@ -8,7 +8,7 @@ type Props = {
 
 const ProgressBar: FC<Props> = ({ value, max, ...props }) => {
   return (
-    <Flex {...props} css={{ width: '100%', gap: '$4' }}>
+    <Flex {...props} css={{ width: '100%', gap: '$2' }}>
       {[...Array(max)].map((_item, i) => (
         <Flex
           key={i}
