@@ -35,6 +35,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   ethUsdPrice?: number
   onGoToToken?: () => any
+  onComplete?: () => void
 } & (
     | {
         referrerFeeBps: number
@@ -77,6 +78,7 @@ export function ListModal({
   collectionId,
   ethUsdPrice,
   onGoToToken,
+  onComplete,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
   const [syncProfit, setSyncProfit] = useState(true)
@@ -454,7 +456,7 @@ export function ListModal({
                     align="center"
                     justify="center"
                     direction="column"
-                    css={{ flex: 1, textAlign: 'center' }}
+                    css={{ flex: 1, textAlign: 'center', py: '$5' }}
                   >
                     <Box css={{ color: '$successAccent', mb: 24 }}>
                       <FontAwesomeIcon icon={faCheckCircle} size="3x" />
@@ -493,6 +495,58 @@ export function ListModal({
                         </a>
                       ))}
                     </Flex>
+                  </Flex>
+
+                  <Flex
+                    css={{
+                      flexDirection: 'column',
+                      gap: '$3',
+                      '@bp1': {
+                        flexDirection: 'row',
+                      },
+                    }}
+                  >
+                    {!!onGoToToken ? (
+                      <>
+                        <Button
+                          onClick={() => {
+                            setOpen(false)
+                            if (onComplete) {
+                              onComplete()
+                            }
+                          }}
+                          css={{ flex: 1 }}
+                          color="ghost"
+                        >
+                          Close
+                        </Button>
+                        <Button
+                          style={{ flex: 1 }}
+                          color="primary"
+                          onClick={() => {
+                            onGoToToken()
+                            if (onComplete) {
+                              onComplete()
+                            }
+                          }}
+                        >
+                          Go to Token
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          setOpen(false)
+                          if (onComplete) {
+                            onComplete()
+                          }
+                        }}
+                        style={{ flex: 1 }}
+                        color="primary"
+                      >
+                        Close
+                      </Button>
+                    )}
                   </Flex>
                 </MainContainer>
               </ContentContainer>

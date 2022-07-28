@@ -91,7 +91,7 @@ const Index: NextPage = () => {
           </div>
         }
         collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
-        tokenId="91523"
+        tokenId="754238"
         onGoToToken={() => console.log('Awesome!')}
         onComplete={() => console.log('Purchase Complete')}
       />
@@ -111,7 +111,7 @@ const Index: NextPage = () => {
           </div>
         }
         collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
-        tokenId="527500"
+        tokenId="754238"
         onGoToToken={() => console.log('Awesome!')}
       />
       <select
