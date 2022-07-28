@@ -210,7 +210,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { address } = useAccount()
   const { data: balance } = useBalance({
     addressOrName: address,
-    watch: true,
+    watch: open,
   })
 
   useEffect(() => {
