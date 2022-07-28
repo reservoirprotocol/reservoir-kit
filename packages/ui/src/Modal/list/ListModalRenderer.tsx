@@ -46,7 +46,7 @@ export const ListModalRenderer: FC<Props> = ({
   collectionId,
   children,
 }) => {
-  const [listStep, setListStep] = useState<ListStep>(ListStep.Complete)
+  const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [txHash] = useState<string | null>(null)
   const { chain: activeChain } = useNetwork()
   const etherscanBaseUrl =
