@@ -18,7 +18,7 @@ import { ListModalRenderer, ListStep } from './ListModalRenderer'
 
 import { ModalSize } from '../Modal'
 
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import debounce from '../../lib/debounce'
 import initialMarkets from './initialMarkets'
 
@@ -27,11 +27,13 @@ import MarketplaceToggle from './MarketplaceToggle'
 import MarketplacePriceInput from './MarketplacePriceInput'
 import TokenListingDetails from './TokenListingDetails'
 import ProgressBar from './ProgressBar'
+import { useReservoirClient } from '../../hooks'
 import ListingTransactionProgress from './ListingTransactionProgress'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
+  ethUsdPrice?: number
   onGoToToken?: () => any
 } & (
     | {
@@ -44,6 +46,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
       }
   )
 
+const Image = styled('img', {})
+const Span = styled('span', {})
 const ContentContainer = styled(Flex, {
   width: '100%',
   flexDirection: 'column',
@@ -77,6 +81,8 @@ export function ListModal({
   const [syncProfit, setSyncProfit] = useState(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [markets, setMarkets] = useState(initialMarkets)
+
+  const client = useReservoirClient()
 
   //Todo use Day.js to calculate relative time from now
   const expirationOptions = [
@@ -112,6 +118,21 @@ export function ListModal({
   const [expirationOption, setExpirationOption] = useState<
     typeof expirationOptions[0] | undefined
   >(expirationOptions[0])
+
+  let listings = [
+    {
+      value: '21',
+      marketImg: 'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
+      expiration: 'Expired in 3 days',
+      name: 'OpenSea',
+    },
+    {
+      value: '21.25',
+      marketImg: 'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
+      expiration: 'Expired in 3 days',
+      name: 'OpenSea',
+    },
+  ]
 
   return (
     <ListModalRenderer
@@ -415,6 +436,63 @@ export function ListModal({
                     <Loader />
                     Waiting for Approval
                   </Button>
+                </MainContainer>
+              </ContentContainer>
+            )}
+
+            {token && listStep == ListStep.Complete && (
+              <ContentContainer>
+                <TokenListingDetails
+                  token={token}
+                  collection={collection}
+                  listings={listings}
+                />
+                <MainContainer css={{ p: '$4' }}>
+                  <ProgressBar value={8} max={8} />
+                  <Flex
+                    align="center"
+                    justify="center"
+                    direction="column"
+                    css={{ flex: 1, textAlign: 'center' }}
+                  >
+                    <Box css={{ color: '$successAccent', mb: 24 }}>
+                      <FontAwesomeIcon icon={faCheckCircle} size="3x" />
+                    </Box>
+                    <Text style="h5" css={{ mb: '$2' }} as="h5">
+                      Your item has been listed!
+                    </Text>
+                    <Text
+                      style="body3"
+                      color="subtle"
+                      as="p"
+                      css={{ mb: 24, maxWidth: 300 }}
+                    >
+                      <Span css={{ color: '$accentText' }}>
+                        #{token?.token?.tokenId}
+                      </Span>{' '}
+                      from{' '}
+                      <Span css={{ color: '$accentText' }}>
+                        {token?.token?.collection?.name}
+                      </Span>{' '}
+                      has been listed for sale
+                    </Text>
+                    <Text style="subtitle2" as="p" css={{ mb: '$3' }}>
+                      View Listing on
+                    </Text>
+                    <Flex css={{ gap: '$3' }}>
+                      {listings.map((listing) => (
+                        <a
+                          target="_blank"
+                          href={`${client?.apiBase}/redirect/sources/${listing.name}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                        >
+                          <Image
+                            css={{ width: 24 }}
+                            src={`${client?.apiBase}/redirect/sources/${listing.name}/logo/v2`}
+                          />
+                        </a>
+                      ))}
+                    </Flex>
+                  </Flex>
                 </MainContainer>
               </ContentContainer>
             )}
