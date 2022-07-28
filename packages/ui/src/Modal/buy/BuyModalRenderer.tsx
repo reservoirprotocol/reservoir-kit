@@ -17,7 +17,7 @@ import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 
 import { BigNumber, utils } from 'ethers'
 import {
-  BatchExecute,
+  Execute,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
 
@@ -138,13 +138,13 @@ export const BuyModalRenderer: FC<Props> = ({
             contract: collectionId,
           },
         ],
-        onProgress: (steps: BatchExecute['steps']) => {
+        onProgress: (steps: Execute['steps']) => {
           if (!steps) {
             return
           }
 
           let currentStepItem:
-            | NonNullable<BatchExecute['steps'][0]['items']>[0]
+            | NonNullable<Execute['steps'][0]['items']>[0]
             | undefined
           steps.find((step) => {
             currentStepItem = step.items?.find(

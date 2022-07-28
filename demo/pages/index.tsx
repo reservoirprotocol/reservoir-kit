@@ -80,38 +80,6 @@ const Index: NextPage = () => {
       }}
     >
       <ConnectButton />
-
-      <button
-        onClick={() => {
-          const listings = [
-            {
-              token: '0x4d68e14cd7dec510c84326f54ee41f88e8fad59b:11',
-              weiPrice: '20000000000000000',
-              orderKind: 'seaport',
-              orderbook: 'reservoir',
-            },
-            {
-              token: '0x4d68e14cd7dec510c84326f54ee41f88e8fad59b:11',
-              weiPrice: '20000000000000000',
-              orderKind: 'looks-rare',
-              orderbook: 'looks-rare',
-            },
-          ]
-          client.actions.acceptOffer({
-            token: {
-              tokenId: '91524',
-              contract: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
-            },
-            signer,
-            onProgress: (steps) => {
-              console.log(steps)
-            },
-          })
-        }}
-      >
-        Batch List Time!
-      </button>
-
       <BuyModal
         trigger={
           <div

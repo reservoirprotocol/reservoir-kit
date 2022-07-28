@@ -1,11 +1,11 @@
-import { arrayify, splitSignature } from 'ethers/lib/utils'
-import { Execute } from '../types'
+import { arrayify } from 'ethers/lib/utils'
+import { Execute, paths } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
-import { setParams } from './params'
 import { Signer } from 'ethers'
 import { TypedDataSigner } from '@ethersproject/abstract-signer'
-import axios, { AxiosRequestHeaders } from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import { getClient } from '../actions/index'
+import { setParams } from './params'
 
 /**
  * When attempting to perform actions, such as, selling a token or
@@ -14,14 +14,14 @@ import { getClient } from '../actions/index'
  * user has enough balance, before providing the transaction to be signed by
  * the user. This function executes all transactions, in order, to complete the
  * action.
- * @param url URL object with the endpoint to be called. Example: `/execute/buy`
+ * @param request AxiosRequestConfig object with at least a url set
  * @param signer Ethereum signer object provided by the browser
  * @param setState Callback to update UI state has execution progresses
- * @param expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
  * @returns The data field of the last element in the steps array
  */
+
 export async function executeSteps(
-  url: URL,
+  request: AxiosRequestConfig,
   signer: Signer,
   setState: (steps: Execute['steps']) => any,
   newJson?: Execute,
@@ -29,177 +29,216 @@ export async function executeSteps(
 ) {
   try {
     let json = newJson
+
+    if (!request.headers) {
+      request.headers = {}
+    }
+
     const client = getClient()
-    const baseUrl = client.apiBase ? client.apiBase : url.origin
-
-    if (!json) {
-      const options: RequestInit | undefined = {}
-
-      if (client && client.apiKey) {
-        options.headers = {
-          'x-api-key': client.apiKey,
-        }
+    if (client && client.apiKey) {
+      request.headers = {
+        'x-api-key': client.apiKey,
       }
-      const res = await fetch(url.href, options)
-      json = (await res.json()) as Execute
-      if (!res.ok) throw json
+    }
+    if (!json) {
+      const res = await axios.request(request)
+      json = res.data as Execute
+      if (res.status !== 200) throw json
     }
 
     // Handle errors
     if (json.error || !json.steps) throw json
 
+    const isBuy = request.url?.includes('/execute/buy')
+    const isSell = request.url?.includes('/execute/sell')
+
     // Handle price changes to protect users from paying more
     // than expected when buying and selling for less than expected
-    // when selling
-    if (json.quote && expectedPrice) {
+    if (json.path && expectedPrice) {
+      const quote = json.path.reduce((total, path) => {
+        total += path.quote || 0
+        return total
+      }, 0)
+
       // Check if the user is selling
-      if (
-        url.pathname.includes('/execute/sell') &&
-        json.quote - expectedPrice < -0.00001
-      ) {
-        throw {
+      let error = null
+      if (isSell && quote - expectedPrice < -0.00001) {
+        error = {
           type: 'price mismatch',
-          message: `The quote price of ${json.quote} ETH is less than the expected price of ${expectedPrice} ETH`,
+          message: `The quote price of ${quote} ETH is less than the expected price of ${expectedPrice} ETH`,
         }
       }
 
       // Check if the user is buying
-      if (
-        url.pathname.includes('/execute/buy') &&
-        json.quote - expectedPrice > 0.00001
-      ) {
-        throw {
+      if (isBuy && quote - expectedPrice > 0.00001) {
+        error = {
           type: 'price mismatch',
-          message: `The quote price of ${json.quote} ETH is greater than the expected price of ${expectedPrice} ETH`,
+          message: `The quote price of ${quote} ETH is greater than the expected price of ${expectedPrice} ETH`,
         }
+      }
+
+      if (error) {
+        json.steps[0].error = error.message
+        json.steps[0].errorData = json.path
+        setState([...json?.steps])
+        throw error
       }
     }
 
     // Update state on first call or recursion
     setState([...json?.steps])
 
-    const incompleteIndex = json.steps.findIndex(
-      ({ status }) => status === 'incomplete'
-    )
+    let incompleteStepIndex = -1
+    let incompleteStepItemIndex = -1
+    json.steps.find((step, i) => {
+      if (!step.items) {
+        return false
+      }
+
+      incompleteStepItemIndex = step.items.findIndex(
+        (item) => item.status == 'incomplete'
+      )
+      if (incompleteStepItemIndex !== -1) {
+        incompleteStepIndex = i
+        return true
+      }
+    })
 
     // There are no more incomplete steps
-    if (incompleteIndex === -1) return
+    if (incompleteStepIndex === -1) return
 
-    let { kind, data } = json.steps[incompleteIndex]
+    const step = json.steps[incompleteStepIndex]
+    const stepItems = json.steps[incompleteStepIndex].items
 
-    // If step is missing data, poll until it is ready
-    if (!data) {
-      json = (await pollUntilHasData(
-        {
-          url: url.href,
-          params: json.query,
-        },
-        (json) => (json?.steps?.[incompleteIndex]?.data ? true : false)
-      )) as Execute
-      if (!json.steps) throw json
-      data = json.steps[incompleteIndex].data
+    if (!stepItems) return
+
+    let { kind } = step
+    let stepItem = stepItems[incompleteStepItemIndex]
+
+    // If step item is missing data, poll until it is ready
+    if (!stepItem.data) {
+      json = (await pollUntilHasData(request, (json) => {
+        const data = json as Execute
+        return data?.steps?.[incompleteStepIndex].items?.[
+          incompleteStepItemIndex
+        ].data
+          ? true
+          : false
+      })) as Execute
+      if (!json.steps || !json.steps[incompleteStepIndex].items) throw json
+      const items = json.steps[incompleteStepIndex].items
+      if (
+        !items ||
+        !items[incompleteStepItemIndex] ||
+        !items[incompleteStepItemIndex].data
+      )
+        throw json
+      stepItem = items[incompleteStepItemIndex]
     }
 
-    // Append any extra params provided by API
-    if (json.query) setParams(url, json.query)
-
-    //Update tx data on current step from previous step if available
-    json.steps[incompleteIndex].txHash = json.txHash
-
+    const stepData = stepItem.data
     // Handle each step based on it's kind
     switch (kind) {
       // Make an on-chain transaction
       case 'transaction': {
-        json.steps[incompleteIndex].message = 'Waiting for user to confirm'
-        setState([...json?.steps])
+        const tx = await signer.sendTransaction(stepData)
 
-        const tx = await signer.sendTransaction(data)
-
-        json.steps[incompleteIndex].message = 'Finalizing on blockchain'
-        json.steps[incompleteIndex].txHash = tx.hash
-        json.txHash = tx.hash
+        if (json.steps[incompleteStepIndex].items?.[incompleteStepItemIndex]) {
+          stepItem.txHash = tx.hash
+        }
         setState([...json?.steps])
 
         await tx.wait()
+
+        //Implicitly poll the confirmation url to confirm the transaction went through
+        const url = new URL(request.url || '')
+        const confirmationUrl = new URL(
+          `/transactions/${tx.hash}/synced/v1`,
+          url.origin
+        )
+        await pollUntilOk(confirmationUrl, (res) => res && res.data.synced)
+
+        //Confirm that on-chain tx has been picked up by the indexer
+        if (stepItem.txHash && (isSell || isBuy)) {
+          const url = new URL(request.url || '')
+          const indexerConfirmationUrl = new URL('/sales/v3', url.origin)
+          const queryParams: paths['/sales/v3']['get']['parameters']['query'] =
+            {
+              txHash: stepItem.txHash,
+            }
+          setParams(indexerConfirmationUrl, queryParams)
+          await pollUntilOk(indexerConfirmationUrl, (res) => {
+            if (res.status === 200) {
+              const data =
+                res.data as paths['/sales/v3']['get']['responses']['200']['schema']
+              return data.sales && data.sales.length > 0 ? true : false
+            }
+            return false
+          })
+        }
+
         break
       }
 
       // Sign a message
       case 'signature': {
         let signature: string | undefined
+        const signData = stepData['sign']
+        const postData = stepData['post']
 
-        json.steps[incompleteIndex].message = 'Waiting for user to sign'
-        setState([...json?.steps])
-
-        // Request user signature
-        if (data.signatureKind === 'eip191') {
-          signature = await signer.signMessage(arrayify(data.message))
-        } else if (data.signatureKind === 'eip712') {
-          signature = await (
-            signer as unknown as TypedDataSigner
-          )._signTypedData(data.domain, data.types, data.value)
-        }
-
-        if (signature) {
-          // Split signature into r,s,v components
-          const { r, s, v } = splitSignature(signature)
-          // Include signature params in any future requests
-          setParams(url, { r, s, v })
-        }
-
-        break
-      }
-
-      // Post a signed order object to order book
-      case 'request': {
-        const postOrderUrl = new URL(`${baseUrl}${data.endpoint}`)
-
-        json.steps[incompleteIndex].message = 'Verifying'
-        setState([...json?.steps])
-
-        try {
-          const getData = async function () {
-            const headers: AxiosRequestHeaders = {
-              'Content-Type': 'application/json',
-            }
-
-            if (client && client.apiKey) {
-              headers['x-api-key'] = client.apiKey
-            }
-
-            let response = await axios.post(
-              postOrderUrl.href,
-              JSON.stringify(data.body),
-              {
-                method: data.method,
-                headers: headers,
-              }
-            )
-
-            return response
+        if (signData) {
+          // Request user signature
+          if (signData.signatureKind === 'eip191') {
+            signature = await signer.signMessage(arrayify(signData.message))
+          } else if (signData.signatureKind === 'eip712') {
+            signature = await (
+              signer as unknown as TypedDataSigner
+            )._signTypedData(signData.domain, signData.types, signData.value)
           }
 
-          const res = await getData()
-
-          const resToJson = res.data as Execute
-
-          if (res.status > 299 || res.status < 200) throw resToJson
-        } catch (err) {
-          json.steps[incompleteIndex].error = 'Your order could not be posted.'
-          setState([...json?.steps])
-          throw err
+          if (signature) {
+            request.params = {
+              ...request.params,
+              signature,
+            }
+          }
         }
-        break
-      }
 
-      // Confirm that an on-chain tx has been picked up by indexer
-      case 'confirmation': {
-        const confirmationUrl = new URL(`${baseUrl}${data.endpoint}`)
+        if (postData) {
+          const url = new URL(request.url || '')
+          const postOrderUrl = new URL(postData.endpoint, url.origin)
 
-        json.steps[incompleteIndex].message = 'Verifying'
-        setState([...json?.steps])
+          try {
+            const getData = async function () {
+              let response = await axios.post(
+                postOrderUrl.href,
+                JSON.stringify(postData.body),
+                {
+                  method: postData.method,
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  params: request.params,
+                }
+              )
 
-        await pollUntilOk(confirmationUrl)
+              return response
+            }
+
+            const res = await getData()
+
+            if (res.status > 299 || res.status < 200) throw res.data
+
+            stepItem.orderId = res.data.orderId
+            setState([...json?.steps])
+          } catch (err) {
+            json.steps[incompleteStepIndex].error =
+              'Your order could not be posted.'
+            setState([...json?.steps])
+            throw err
+          }
+        }
+
         break
       }
 
@@ -207,11 +246,11 @@ export async function executeSteps(
         break
     }
 
-    delete json.steps[incompleteIndex].message
-    json.steps[incompleteIndex].status = 'complete'
+    delete step.message
+    stepItem.status = 'complete'
 
     // Recursively call executeSteps()
-    await executeSteps(url, signer, setState, json)
+    await executeSteps(request, signer, setState, json)
   } catch (err: any) {
     const error = new Error(err?.message)
     console.error(error)

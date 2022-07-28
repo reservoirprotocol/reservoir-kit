@@ -1,6 +1,6 @@
-import { BatchExecute, paths } from '../types'
+import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
-import { batchExecuteSteps } from '../utils'
+import { executeSteps } from '../utils'
 import { getClient } from '.'
 
 type CancelOrderPathParameters =
@@ -12,7 +12,7 @@ type Data = {
   id: CancelOrderPathParameters['id']
   signer: Signer
   options?: CancelOrderOptions
-  onProgress: (steps: BatchExecute['steps']) => any
+  onProgress: (steps: Execute['steps']) => any
 }
 
 /**
@@ -35,7 +35,7 @@ export async function cancelOrder(data: Data) {
   try {
     const params: CancelOrderPathParameters = { id, maker, ...options }
 
-    await batchExecuteSteps(
+    await executeSteps(
       {
         url: `${client.apiBase}/execute/cancel/v2`,
         params: params,

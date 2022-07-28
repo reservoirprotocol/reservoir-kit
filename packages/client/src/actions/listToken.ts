@@ -1,28 +1,27 @@
-import { BatchExecute, paths } from '../types'
+import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { getClient } from '.'
-import { batchExecuteSteps } from '../utils/batchExecuteSteps'
+import { executeSteps } from '../utils/executeSteps'
 
-type ListTokenPathBody = NonNullable<
+type ListTokenBody = NonNullable<
   paths['/execute/list/v3']['post']['parameters']['body']['body']
 >
 
 type Data = {
+  listings: Required<ListTokenBody>['params']
   signer: Signer
-  source: ListTokenPathBody['source']
-  listings: Required<ListTokenPathBody>['params']
-  onProgress: (steps: BatchExecute['steps']) => any
+  onProgress: (steps: Execute['steps']) => any
 }
 
 /**
  * List a token for sale
  * @param data.listings Listings data to be processed
  * @param data.signer Ethereum signer object provided by the browser
- * @param data.onProgress Callback to update UI state has execution progresses
+ * @param data.onProgress Callback to update UI state as execution progresses
  */
 
 export async function listToken(data: Data) {
-  const { source, listings, signer, onProgress } = data
+  const { listings, signer, onProgress } = data
   const client = getClient()
   const maker = await signer.getAddress()
 
@@ -31,28 +30,25 @@ export async function listToken(data: Data) {
   }
 
   try {
-    const data: ListTokenPathBody = {
+    const data: ListTokenBody = {
       maker,
-    }
-
-    if (source) {
-      data.source = source
+      source: client.source,
     }
 
     listings.forEach((listing) => {
       if (
-        !listing.fee &&
-        !listing.feeRecipient &&
         client.fee &&
-        client.feeRecipient
+        client.feeRecipient &&
+        !('fee' in listing) &&
+        !('feeRecipient' in listing)
       ) {
         listing.fee = client.fee
         listing.feeRecipient = client.feeRecipient
       }
 
       if (
-        typeof listing.automatedRoyalties === 'undefined' &&
-        client.automatedRoyalties
+        !('automatedRoyalties' in listing) &&
+        'automatedRoyalties' in client
       ) {
         listing.automatedRoyalties = client.automatedRoyalties
       }
@@ -60,11 +56,11 @@ export async function listToken(data: Data) {
 
     data.params = listings
 
-    await batchExecuteSteps(
+    await executeSteps(
       {
         url: `${client.apiBase}/execute/list/v3`,
         method: 'post',
-        data: data,
+        data,
       },
       signer,
       onProgress

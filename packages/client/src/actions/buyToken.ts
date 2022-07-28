@@ -1,7 +1,7 @@
-import { BatchExecute, paths } from '../types'
+import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { getClient } from '.'
-import { batchExecuteSteps } from '../utils/batchExecuteSteps'
+import { executeSteps } from '../utils/executeSteps'
 
 export type Token = Pick<
   NonNullable<
@@ -20,7 +20,7 @@ type Data = {
   expectedPrice?: number
   options?: BuyTokenOptions
   signer: Signer
-  onProgress: (steps: BatchExecute['steps']) => any
+  onProgress: (steps: Execute['steps']) => any
 }
 
 /**
@@ -29,7 +29,7 @@ type Data = {
  * @param data.expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
  * @param data.options Additional options to pass into the buy request
  * @param data.signer Ethereum signer object provided by the browser
- * @param data.onProgress Callback to update UI state has execution progresses
+ * @param data.onProgress Callback to update UI state as execution progresses
  */
 export async function buyToken(data: Data) {
   const { tokens, expectedPrice, signer, onProgress } = data
@@ -60,7 +60,7 @@ export async function buyToken(data: Data) {
         (params[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
     )
 
-    await batchExecuteSteps(
+    await executeSteps(
       {
         url: `${client.apiBase}/execute/buy/v3`,
         method: 'get',
