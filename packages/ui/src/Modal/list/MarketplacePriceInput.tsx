@@ -10,34 +10,29 @@ import {
 } from '../../primitives'
 
 import { EthLogo } from '../../primitives/FormatEth'
+import { Market } from './ListModalRenderer'
 
 type MarketPlaceInputProps = {
-  name: string
-  imgURL: string
-  fee: number
-  price: number
-  // without rounding
-  truePrice: number
+  marketplace: Market
   ethUsdPrice?: number | null
   onChange: (e: any) => void
 }
 
 const MarketplacePriceInput = ({
-  name,
-  imgURL,
-  fee,
-  price,
-  truePrice,
+  marketplace,
   ethUsdPrice,
   onChange,
   ...props
 }: MarketPlaceInputProps) => {
-  let profit = (1 - (fee || 0)) * Number(truePrice)
+  let profit = (1 - (marketplace.fee || 0)) * Number(marketplace.truePrice)
 
   return (
     <Flex {...props} align="center">
       <Box css={{ mr: '$2' }}>
-        <img src={imgURL} style={{ height: 32, width: 32, borderRadius: 4 }} />
+        <img
+          src={marketplace.imgURL}
+          style={{ height: 32, width: 32, borderRadius: 4 }}
+        />
       </Box>
       <Flex align="center">
         <EthLogo width={10} />
@@ -46,7 +41,7 @@ const MarketplacePriceInput = ({
         </Text>
       </Flex>
       <Box css={{ flex: 1 }}>
-        <Input type="number" value={price} onChange={onChange} />
+        <Input type="number" value={marketplace.price} onChange={onChange} />
       </Box>
       <Flex direction="column" align="end" css={{ ml: '$3' }}>
         <FormatEth amount={profit} textStyle="h6" logoWidth={12} />

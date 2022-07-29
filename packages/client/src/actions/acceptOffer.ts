@@ -48,7 +48,7 @@ export async function acceptOffer(data: Data) {
     const params: AcceptOfferPathParameters = {
       taker: taker,
       token: `${token.contract}:${token.tokenId}`,
-      source: client.source,
+      source: client.source || '',
       ...options,
     }
 

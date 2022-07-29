@@ -12,12 +12,13 @@ export type Execute = {
     errorData?: any
     action: string
     description: string
-    kind: 'transaction' | 'signature' | 'request' | 'confirmation'
+    kind: 'transaction' | 'signature'
     items?: {
       status: 'complete' | 'incomplete'
       data?: any
       txHash?: string
       orderId?: string
+      orderIndex?: number
     }[]
   }[]
 }

@@ -8,6 +8,8 @@ export default [
     fee: 0,
     price: 0,
     truePrice: 0,
+    orderBook: 'reservoir',
+    orderKind: 'seaport',
   },
   {
     name: 'OpenSea',
@@ -17,6 +19,8 @@ export default [
     fee: 0.025,
     price: 0,
     truePrice: 0,
+    orderBook: 'opensea',
+    orderKind: 'seaport',
   },
 
   {
@@ -27,5 +31,7 @@ export default [
     fee: 0.02,
     price: 0,
     truePrice: 0,
+    orderBook: 'looks-rare',
+    orderKind: 'looks-rare',
   },
 ]

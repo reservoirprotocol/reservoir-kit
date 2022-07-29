@@ -108,15 +108,21 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const buyToken = useCallback(() => {
     if (!signer) {
-      throw 'Missing a signer'
+      const error = new Error('Missing a signer')
+      setTransactionError(error)
+      throw error
     }
 
     if (!tokenId || !collectionId) {
-      throw 'Missing tokenId or collectionId'
+      const error = new Error('Missing tokenId or collectionId')
+      setTransactionError(error)
+      throw error
     }
 
     if (!client) {
-      throw 'ReservoirClient was not initialized'
+      const error = new Error('ReservoirClient was not initialized')
+      setTransactionError(error)
+      throw error
     }
 
     const options: Parameters<
