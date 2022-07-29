@@ -59,6 +59,13 @@ export type ListingData = {
   marketplace: Market
 }
 
+export type StepData = {
+  totalSteps: number
+  stepProgress: number
+  currentStep: Execute['steps'][0]
+  listingData: ListingData
+}
+
 type ChildrenProps = {
   token:
     | false
@@ -76,11 +83,12 @@ type ChildrenProps = {
   syncProfit: boolean
   listingData: ListingData[]
   transactionError?: Error | null
+  stepData: StepData | null
   setListStep: React.Dispatch<React.SetStateAction<ListStep>>
   toggleMarketplace: (marketplace: Market) => void
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setSyncProfit: React.Dispatch<React.SetStateAction<boolean>>
-  updateMarket: (price: number, market: Market) => void
+  setMarketPrice: (price: number, market: Market) => void
   listToken: () => void
 }
 
@@ -105,6 +113,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [syncProfit, setSyncProfit] = useState(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
+  const [stepData, setStepData] = useState<StepData | null>(null)
 
   const expirationOptions: ExpirationOption[] = [
     {
@@ -187,7 +196,7 @@ export const ListModalRenderer: FC<Props> = ({
     )
   }
 
-  const updateMarketPrices = (market: any) => {
+  const syncMarketPrices = (market: any) => {
     if (syncProfit) {
       let updatingMarket = markets.find((m) => m.name == market.name)
       let profit =
@@ -204,7 +213,7 @@ export const ListModalRenderer: FC<Props> = ({
     }
   }
 
-  const updateMarket = (price: any, market: any) => {
+  const setMarketPrice = (price: any, market: any) => {
     setMarkets(
       markets.map((m) => {
         if (m.name == market.name) {
@@ -218,7 +227,7 @@ export const ListModalRenderer: FC<Props> = ({
   }
 
   let debouncedUpdateMarkets = useMemo(
-    () => debounce(updateMarketPrices, 1200),
+    () => debounce(syncMarketPrices, 1200),
     [syncProfit, markets]
   )
 
@@ -243,7 +252,7 @@ export const ListModalRenderer: FC<Props> = ({
         })
       )
 
-      updateMarketPrices(markets[0])
+      syncMarketPrices(markets[0])
     }
   }, [token, collection])
 
@@ -276,7 +285,7 @@ export const ListModalRenderer: FC<Props> = ({
       if (market.isSelected) {
         const listing: Listings[0] = {
           token: `${collectionId}:${tokenId}`,
-          weiPrice: parseEther(`${market.truePrice}`).toString(),
+          weiPrice: parseEther(`${market.truePrice.toFixed(18)}`).toString(),
           //@ts-ignore
           orderbook: market.orderBook,
           //@ts-ignore
@@ -302,9 +311,62 @@ export const ListModalRenderer: FC<Props> = ({
         listings: listingData.map((data) => data.listing),
         signer,
         onProgress: (steps: Execute['steps']) => {
-          console.log(steps)
-          //find which step item is currently processing
-          //backtrack it to the listing based on the orderIndex
+          const executableSteps = steps.filter(
+            (step) => step.items && step.items.length > 0
+          )
+
+          let stepCount = executableSteps.length
+          let incompleteStepItemIndex: number | null = null
+          let incompleteStepIndex: number | null = null
+
+          executableSteps.find((step, i) => {
+            if (!step.items) {
+              return false
+            }
+
+            incompleteStepItemIndex = step.items.findIndex(
+              (item) => item.status == 'incomplete'
+            )
+            if (incompleteStepItemIndex !== -1) {
+              incompleteStepIndex = i
+              return true
+            }
+          })
+          debugger
+          if (
+            incompleteStepIndex === null ||
+            incompleteStepItemIndex === null
+          ) {
+            const currentStep = executableSteps[executableSteps.length - 1]
+            const currentStepItem = currentStep.items
+              ? currentStep.items[currentStep.items.length]
+              : null
+            setListStep(ListStep.Complete)
+            setStepData({
+              totalSteps: stepCount,
+              stepProgress: stepCount,
+              currentStep,
+              listingData:
+                currentStepItem && currentStepItem.orderIndex !== undefined
+                  ? listingData[currentStepItem.orderIndex]
+                  : listingData[listingData.length - 1],
+            })
+          } else {
+            const currentStep = executableSteps[incompleteStepIndex]
+            const currentStepItem = currentStep.items
+              ? currentStep.items[incompleteStepItemIndex]
+              : null
+            const listings =
+              currentStepItem?.orderIndex !== undefined
+                ? listingData[currentStepItem.orderIndex]
+                : listingData[listingData.length - 1]
+            setStepData({
+              totalSteps: stepCount,
+              stepProgress: incompleteStepIndex,
+              currentStep: executableSteps[incompleteStepIndex],
+              listingData: listings,
+            })
+          }
         },
       })
       .catch((e: any) => {
@@ -330,9 +392,10 @@ export const ListModalRenderer: FC<Props> = ({
         syncProfit,
         listingData,
         transactionError,
+        stepData,
         setListStep,
         toggleMarketplace,
-        updateMarket,
+        setMarketPrice,
         setSyncProfit,
         listToken,
         setExpirationOption,

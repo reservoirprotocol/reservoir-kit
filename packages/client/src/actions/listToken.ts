@@ -32,7 +32,7 @@ export async function listToken(data: Data) {
   try {
     const data: ListTokenBody = {
       maker,
-      source: client.source,
+      source: client.source || '',
     }
 
     listings.forEach((listing) => {

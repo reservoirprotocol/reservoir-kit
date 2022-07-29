@@ -1,5 +1,5 @@
 import { styled } from '../../../stitches.config'
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 
 import {
   Flex,
@@ -78,6 +78,7 @@ export function ListModal({
   onComplete,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
+  const [stepTitle, setStepTitle] = useState('')
   const client = useReservoirClient()
 
   return (
@@ -97,13 +98,39 @@ export function ListModal({
         syncProfit,
         listingData,
         transactionError,
+        stepData,
         setListStep,
         listToken,
-        updateMarket,
+        setMarketPrice,
         toggleMarketplace,
         setSyncProfit,
         setExpirationOption,
       }) => {
+        const tokenImage =
+          token && token.token?.image
+            ? token.token.image
+            : (collection?.metadata?.imageUrl as string)
+
+        useEffect(() => {
+          if (stepData) {
+            const marketplaceName = stepData.listingData.marketplace.name
+            switch (stepData.currentStep.kind) {
+              case 'transaction': {
+                setStepTitle(
+                  `Approve ${marketplaceName} to access item\nin your wallet`
+                )
+                break
+              }
+              case 'signature': {
+                setStepTitle(
+                  `Confirm listing on ${marketplaceName}\nin your wallet`
+                )
+                break
+              }
+            }
+          }
+        }, [stepData])
+
         return (
           <Modal
             trigger={trigger}
@@ -225,7 +252,7 @@ export function ListModal({
                             marketplace={marketplace}
                             ethUsdPrice={ethUsdPrice}
                             onChange={(e) => {
-                              updateMarket(e.target.value, marketplace)
+                              setMarketPrice(e.target.value, marketplace)
                             }}
                           />
                         </Box>
@@ -267,7 +294,10 @@ export function ListModal({
                   listingData={listingData}
                 />
                 <MainContainer css={{ p: '$4' }}>
-                  <ProgressBar value={1} max={8} />
+                  <ProgressBar
+                    value={stepData?.stepProgress || 0}
+                    max={stepData?.totalSteps || 0}
+                  />
                   {transactionError && (
                     <Flex
                       css={{
@@ -289,36 +319,43 @@ export function ListModal({
                       </Text>
                     </Flex>
                   )}
-                  <Text
-                    css={{ textAlign: 'center', mt: 48, mb: 28 }}
-                    style="subtitle1"
-                  >
-                    Approve Opensea to access item <br /> in your wallet
-                  </Text>
-                  <ListingTransactionProgress
-                    justify="center"
-                    fromImg={
-                      'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2'
-                    }
-                    toImg={
-                      'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2'
-                    }
-                  />
-                  <Text
-                    css={{
-                      textAlign: 'center',
-                      mt: 24,
-                      maxWidth: 395,
-                      mx: 'auto',
-                      mb: '$4',
-                    }}
-                    style="body3"
-                    color="subtle"
-                  >
-                    We'll ask your approval for the marketplace exchange to
-                    access your token. This is a one-time only operation per
-                    collection.
-                  </Text>
+                  {stepData && (
+                    <>
+                      <Text
+                        css={{ textAlign: 'center', mt: 48, mb: 28 }}
+                        style="subtitle1"
+                      >
+                        {stepTitle}
+                      </Text>
+                      <ListingTransactionProgress
+                        justify="center"
+                        fromImg={tokenImage}
+                        toImg={stepData?.listingData.marketplace.imgURL || ''}
+                      />
+                      <Text
+                        css={{
+                          textAlign: 'center',
+                          mt: 24,
+                          maxWidth: 395,
+                          mx: 'auto',
+                          mb: '$4',
+                        }}
+                        style="body3"
+                        color="subtle"
+                      >
+                        {stepData?.currentStep.description}
+                      </Text>
+                    </>
+                  )}
+                  {!stepData && (
+                    <Flex
+                      css={{ height: '100%' }}
+                      justify="center"
+                      align="center"
+                    >
+                      <Loader />
+                    </Flex>
+                  )}
                   {!transactionError && (
                     <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
                       <Loader />
@@ -328,7 +365,7 @@ export function ListModal({
                   {transactionError && (
                     <Flex css={{ mt: 'auto', gap: 10 }}>
                       <Button
-                        color="ghost"
+                        color="secondary"
                         css={{ flex: 1 }}
                         onClick={() => setListStep(ListStep.SetPrice)}
                       >
@@ -351,7 +388,10 @@ export function ListModal({
                   listingData={listingData}
                 />
                 <MainContainer css={{ p: '$4' }}>
-                  <ProgressBar value={8} max={8} />
+                  <ProgressBar
+                    value={stepData?.totalSteps || 0}
+                    max={stepData?.totalSteps || 0}
+                  />
                   <Flex
                     align="center"
                     justify="center"
@@ -370,9 +410,9 @@ export function ListModal({
                       as="p"
                       css={{ mb: 24, maxWidth: 300 }}
                     >
-                      <Span css={{ color: '$accentText' }}>
+                      <Text color="accent" ellipsify style="body3">
                         #{token?.token?.tokenId}
-                      </Span>{' '}
+                      </Text>{' '}
                       from{' '}
                       <Span css={{ color: '$accentText' }}>
                         {token?.token?.collection?.name}
@@ -383,14 +423,15 @@ export function ListModal({
                       View Listing on
                     </Text>
                     <Flex css={{ gap: '$3' }}>
-                      {listingData.map((listing) => (
+                      {listingData.map((data) => (
                         <a
+                          key={data.listing.orderbook}
                           target="_blank"
-                          href={`${client?.apiBase}/redirect/sources/${listing.marketplace.name}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                          href={`${client?.apiBase}/redirect/sources/${data.marketplace.name}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
                         >
                           <Image
                             css={{ width: 24 }}
-                            src={`${client?.apiBase}/redirect/sources/${listing.marketplace.name}/logo/v2`}
+                            src={`${client?.apiBase}/redirect/sources/${data.marketplace.name}/logo/v2`}
                           />
                         </a>
                       ))}

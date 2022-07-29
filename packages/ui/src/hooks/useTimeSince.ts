@@ -9,7 +9,6 @@ export default function (timestamp?: number) {
 
   useEffect(() => {
     if (timestamp) {
-      console.log(timestamp)
       setTimeSince(dayjs.unix(timestamp).fromNow())
     } else {
       setTimeSince('')
