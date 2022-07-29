@@ -64,7 +64,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
             asEth: true,
           },
         ].map((stat) => (
-          <Stat {...stat} />
+          <Stat key={stat.label} {...stat} />
         ))}
       </Box>
     </Flex>

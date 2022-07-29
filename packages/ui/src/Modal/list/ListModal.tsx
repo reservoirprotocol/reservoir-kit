@@ -1,5 +1,5 @@
 import { styled } from '../../../stitches.config'
-import React, { ReactElement, useEffect, useState, useMemo } from 'react'
+import React, { ReactElement, useState } from 'react'
 
 import {
   Flex,
@@ -13,15 +13,13 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from '../Modal'
-
 import { ListModalRenderer, ListStep } from './ListModalRenderer'
-
 import { ModalSize } from '../Modal'
-
-import { faChevronLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
-import debounce from '../../lib/debounce'
-import initialMarkets from './initialMarkets'
-
+import {
+  faChevronLeft,
+  faCheckCircle,
+  faCircleExclamation,
+} from '@fortawesome/free-solid-svg-icons'
 import TokenStats from './TokenStats'
 import MarketplaceToggle from './MarketplaceToggle'
 import MarketplacePriceInput from './MarketplacePriceInput'
@@ -78,61 +76,7 @@ export function ListModal({
   onGoToToken,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
-  const [syncProfit, setSyncProfit] = useState(true)
-  const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
-  const [markets, setMarkets] = useState(initialMarkets)
-
   const client = useReservoirClient()
-
-  //Todo use Day.js to calculate relative time from now
-  const expirationOptions = [
-    {
-      text: '1 Hour',
-      value: 'hour',
-      relativeTime: '1h',
-    },
-    {
-      text: '12 Hours',
-      value: '12 hours',
-      relativeTime: '12h',
-    },
-
-    {
-      text: '1 Day',
-      value: '1 day',
-      relativeTime: '1d',
-    },
-
-    {
-      text: '3 Day',
-      value: '3 days',
-      relativeTime: '3d',
-    },
-    { text: '1 Week', value: 'week', relativeTime: '1w' },
-    { text: '1 Month', value: 'month', relativeTime: '1M' },
-
-    { text: '3 Months', value: '3 months', relativeTime: '3M' },
-    { text: 'None', value: 'never', relativeTime: null },
-  ]
-
-  const [expirationOption, setExpirationOption] = useState<
-    typeof expirationOptions[0] | undefined
-  >(expirationOptions[0])
-
-  let listings = [
-    {
-      value: '21',
-      marketImg: 'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
-      expiration: 'Expired in 3 days',
-      name: 'OpenSea',
-    },
-    {
-      value: '21.25',
-      marketImg: 'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
-      expiration: 'Expired in 3 days',
-      name: 'OpenSea',
-    },
-  ]
 
   return (
     <ListModalRenderer
@@ -143,76 +87,21 @@ export function ListModal({
       {({
         token,
         collection,
-        txHash,
         ethUsdPrice,
-        isBanned,
         listStep,
+        expirationOption,
+        expirationOptions,
+        markets,
+        syncProfit,
+        listingData,
+        transactionError,
         setListStep,
-        balance,
-        address,
-        etherscanBaseUrl,
+        listToken,
+        updateMarket,
+        toggleMarketplace,
+        setSyncProfit,
+        setExpirationOption,
       }) => {
-        // sync prices
-        const updateMarketPrices = (market: any) => {
-          if (syncProfit) {
-            let updatingMarket = markets.find((m) => m.name == market.name)
-            let profit =
-              (1 - (updatingMarket?.fee || 0)) *
-              Number(updatingMarket?.price || 0)
-
-            setMarkets(
-              markets.map((m) => {
-                let truePrice = profit / (1 - m.fee)
-                m.price = Math.round((profit / (1 - m.fee)) * 1000) / 1000
-                m.truePrice = truePrice
-                return m
-              })
-            )
-          }
-        }
-
-        const updateMarket = (price: any, market: any) => {
-          setMarkets(
-            markets.map((m) => {
-              if (m.name == market.name) {
-                m.price = price
-                m.truePrice = price
-              }
-              return m
-            })
-          )
-        }
-
-        let debouncedUpdateMarkets = useMemo(
-          () => debounce(updateMarketPrices, 1200),
-          [syncProfit, markets]
-        )
-
-        useEffect(() => {
-          if (token && collection && !loadedInitalPrice) {
-            let startingPrice: number =
-              Math.max(
-                ...(token?.token?.attributes?.map((attr: any) =>
-                  Number(attr?.floorAskPrice || 0)
-                ) || []),
-                0
-              ) ||
-              collection?.floorAsk?.price ||
-              0
-
-            setLoadedInitalPrice(true)
-            setMarkets(
-              markets.map((market) => {
-                market.price = startingPrice
-                market.truePrice = startingPrice
-                return market
-              })
-            )
-
-            updateMarketPrices(markets[0])
-          }
-        }, [token, collection])
-
         return (
           <Modal
             trigger={trigger}
@@ -261,22 +150,11 @@ export function ListModal({
                     {markets
                       .filter((market) => !market.isNative)
                       .map((marketplace) => (
-                        <Box css={{ mb: '$3' }}>
+                        <Box key={marketplace.name} css={{ mb: '$3' }}>
                           <MarketplaceToggle
-                            {...marketplace}
+                            marketplace={marketplace}
                             onSelection={() => {
-                              setMarkets(
-                                markets.map((market) => {
-                                  if (market.name == marketplace.name) {
-                                    return {
-                                      ...market,
-                                      isSelected: !market.isSelected,
-                                    }
-                                  } else {
-                                    return market
-                                  }
-                                })
-                              )
+                              toggleMarketplace(marketplace)
                             }}
                           />
                         </Box>
@@ -340,13 +218,12 @@ export function ListModal({
                     {markets
                       .filter((marketplace) => !!marketplace.isSelected)
                       .map((marketplace) => (
-                        <Box css={{ mb: '$3' }}>
+                        <Box key={marketplace.name} css={{ mb: '$3' }}>
                           <MarketplacePriceInput
-                            {...marketplace}
-                            ethUsdPrice={ethUsdPrice || 0}
+                            marketplace={marketplace}
+                            ethUsdPrice={ethUsdPrice}
                             onChange={(e) => {
                               updateMarket(e.target.value, marketplace)
-                              debouncedUpdateMarkets(marketplace)
                             }}
                           />
                         </Box>
@@ -360,20 +237,19 @@ export function ListModal({
                           const option = expirationOptions.find(
                             (option) => option.value == value
                           )
-                          setExpirationOption(option)
+                          if (option) {
+                            setExpirationOption(option)
+                          }
                         }}
                       >
                         {expirationOptions.map((option) => (
-                          <Select.Item value={option.value}>
+                          <Select.Item key={option.text} value={option.value}>
                             <Select.ItemText>{option.text}</Select.ItemText>
                           </Select.Item>
                         ))}
                       </Select>
                     </Box>
-                    <Button
-                      onClick={() => setListStep(ListStep.SetPrice)}
-                      css={{ width: '100%' }}
-                    >
+                    <Button onClick={listToken} css={{ width: '100%' }}>
                       Next
                     </Button>
                   </Box>
@@ -386,28 +262,36 @@ export function ListModal({
                 <TokenListingDetails
                   token={token}
                   collection={collection}
-                  listings={[
-                    {
-                      value: '21',
-                      marketImg:
-                        'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
-                      expiration: 'Expired in 3 days',
-                    },
-                    {
-                      value: '21.25',
-                      marketImg:
-                        'https://api.reservoir.tools/redirect/sources/OpenSea/logo/v2',
-                      expiration: 'Expired in 3 days',
-                    },
-                  ]}
+                  listingData={listingData}
                 />
                 <MainContainer css={{ p: '$4' }}>
                   <ProgressBar value={1} max={8} />
+                  {transactionError && (
+                    <Flex
+                      css={{
+                        color: '$errorAccent',
+                        p: '$4',
+                        gap: '$2',
+                        background: '$wellBackground',
+                        mt: 24,
+                      }}
+                      align="center"
+                    >
+                      <FontAwesomeIcon
+                        icon={faCircleExclamation}
+                        width={16}
+                        height={16}
+                      />
+                      <Text style="body2" color="errorLight">
+                        Oops, something went wrong. Please try again.
+                      </Text>
+                    </Flex>
+                  )}
                   <Text
                     css={{ textAlign: 'center', mt: 48, mb: 28 }}
                     style="subtitle1"
                   >
-                    Approve Seaport to access item <br /> in your wallet
+                    Approve Opensea to access item <br /> in your wallet
                   </Text>
                   <ListingTransactionProgress
                     justify="center"
@@ -424,18 +308,35 @@ export function ListModal({
                       mt: 24,
                       maxWidth: 395,
                       mx: 'auto',
+                      mb: '$4',
                     }}
                     style="body3"
                     color="subtle"
                   >
-                    We’ll ask your approval for the marketplace exchange to
+                    We'll ask your approval for the marketplace exchange to
                     access your token. This is a one-time only operation per
                     collection.
                   </Text>
-                  <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
-                    <Loader />
-                    Waiting for Approval
-                  </Button>
+                  {!transactionError && (
+                    <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
+                      <Loader />
+                      Waiting for Approval
+                    </Button>
+                  )}
+                  {transactionError && (
+                    <Flex css={{ mt: 'auto', gap: 10 }}>
+                      <Button
+                        color="ghost"
+                        css={{ flex: 1 }}
+                        onClick={() => setListStep(ListStep.SetPrice)}
+                      >
+                        Edit Listing
+                      </Button>
+                      <Button css={{ flex: 1 }} onClick={() => listToken()}>
+                        Retry
+                      </Button>
+                    </Flex>
+                  )}
                 </MainContainer>
               </ContentContainer>
             )}
@@ -445,7 +346,7 @@ export function ListModal({
                 <TokenListingDetails
                   token={token}
                   collection={collection}
-                  listings={listings}
+                  listingData={listingData}
                 />
                 <MainContainer css={{ p: '$4' }}>
                   <ProgressBar value={8} max={8} />
@@ -480,14 +381,14 @@ export function ListModal({
                       View Listing on
                     </Text>
                     <Flex css={{ gap: '$3' }}>
-                      {listings.map((listing) => (
+                      {listingData.map((listing) => (
                         <a
                           target="_blank"
-                          href={`${client?.apiBase}/redirect/sources/${listing.name}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                          href={`${client?.apiBase}/redirect/sources/${listing.marketplace.name}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
                         >
                           <Image
                             css={{ width: 24 }}
-                            src={`${client?.apiBase}/redirect/sources/${listing.name}/logo/v2`}
+                            src={`${client?.apiBase}/redirect/sources/${listing.marketplace.name}/logo/v2`}
                           />
                         </a>
                       ))}
