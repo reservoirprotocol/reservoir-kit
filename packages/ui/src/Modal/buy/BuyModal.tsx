@@ -309,7 +309,16 @@ export function BuyModal({
                     View on Etherscan
                   </Anchor>
                 </Flex>
-                <Flex css={{ p: '$4' }}>
+                <Flex
+                  css={{
+                    p: '$4',
+                    flexDirection: 'column',
+                    gap: '$3',
+                    '@bp1': {
+                      flexDirection: 'row',
+                    },
+                  }}
+                >
                   {!!onGoToToken ? (
                     <>
                       <Button
@@ -319,7 +328,7 @@ export function BuyModal({
                             onComplete()
                           }
                         }}
-                        css={{ mr: '$3', flex: 1 }}
+                        css={{ flex: 1 }}
                         color="ghost"
                       >
                         Close
