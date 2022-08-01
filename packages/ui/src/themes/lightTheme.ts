@@ -78,6 +78,9 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       contentBackground: overrides?.contentBackground || '$neutralBgSubtle',
       wellBackground: overrides?.wellBackground || '$gray3',
     },
+    misc: {
+      ethIcon: overrides?.ethIcon || 'gray',
+    },
     ...sharedTheme,
   }
 }

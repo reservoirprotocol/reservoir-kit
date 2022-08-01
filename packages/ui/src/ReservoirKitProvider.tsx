@@ -19,9 +19,11 @@ export interface ReservoirKitProviderProps {
   theme?: ReservoirKitTheme
 }
 
-import { createTheme } from '../stitches.config'
+import { createTheme, ReservoirKitThemeContext } from '../stitches.config'
 
-export const ThemeContext = createContext('default')
+export const ThemeContext = createContext<undefined | ReservoirKitThemeContext>(
+  undefined
+)
 export const ProviderOptionsContext =
   createContext<ReservoirKitProviderOptions>({})
 
@@ -35,7 +37,9 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   options = defaultOptions,
   theme,
 }: ReservoirKitProviderProps) {
-  const [globalTheme, setGlobalTheme] = useState('')
+  const [globalTheme, setGlobalTheme] = useState<
+    undefined | ReservoirKitThemeContext
+  >()
   const [providerOptions, setProviderOptions] =
     useState<ReservoirKitProviderOptions>({})
   const currentTheme = useRef(null as any)
@@ -43,7 +47,6 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   useEffect(() => {
     let newTheme = createTheme(theme ? (theme as any) : (darkTheme() as any))
     let oldTheme = currentTheme.current
-
     currentTheme.current = newTheme
 
     document.body.classList.add(newTheme)
@@ -52,7 +55,7 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
       document.body.classList.remove(oldTheme)
     }
 
-    setGlobalTheme(newTheme)
+    setGlobalTheme(newTheme as any)
   }, [JSON.stringify(theme)])
 
   useEffect(() => {
