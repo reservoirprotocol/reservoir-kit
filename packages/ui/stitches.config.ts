@@ -114,9 +114,9 @@ export const { createTheme, keyframes, styled, globalCss, getCssText, theme } =
   })
 
 export type ReservoirKitThemeContext = {
-  misc: {
+  assets: {
     ethIcon: {
-      value: ReservoirKitTheme['misc']['ethIcon']
+      value: ReservoirKitTheme['assets']['ethIcon']
     }
   }
 } & typeof theme

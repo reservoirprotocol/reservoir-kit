@@ -84,7 +84,7 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       contentBackground: overrides?.contentBackground || '$neutralBg',
       wellBackground: overrides?.wellBackground || '$neutralBase',
     },
-    misc: {
+    assets: {
       ethIcon: overrides?.ethIcon || 'purple',
     },
     ...sharedTheme,

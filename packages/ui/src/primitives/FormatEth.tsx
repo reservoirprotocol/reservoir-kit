@@ -20,9 +20,9 @@ const FormatEth: FC<Props> = ({
   textColor,
 }) => {
   const themeContext = useContext(ThemeContext)
-  const ethIcon: ReservoirKitThemeContext['misc']['ethIcon']['value'] =
+  const ethIcon: ReservoirKitThemeContext['assets']['ethIcon']['value'] =
     themeContext && (themeContext as any)
-      ? themeContext['misc']['ethIcon']['value']
+      ? themeContext['assets']['ethIcon']['value']
       : 'glyph'
   let icon = null
 

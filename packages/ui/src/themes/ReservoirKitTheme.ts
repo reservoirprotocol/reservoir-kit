@@ -8,7 +8,7 @@ export interface ReservoirKitTheme {
     headline: string
   }
   colors: ReservoirKitThemeColors
-  misc: {
+  assets: {
     ethIcon: 'glyph' | 'gray' | 'purple'
   }
 }
@@ -89,7 +89,7 @@ export type ReservoirKitOverrides = {
   footerBackground?: string
   overlayBackground?: string
   borderColor?: string
-  ethIcon?: ReservoirKitTheme['misc']['ethIcon']
+  ethIcon?: ReservoirKitTheme['assets']['ethIcon']
 }
 
 type ReservoirKitSharedTheme = Pick<ReservoirKitTheme, 'fonts' | 'radii'>
