@@ -1,7 +1,8 @@
 import { createStitches } from '@stitches/react'
 import type * as Stitches from '@stitches/react'
+import { ReservoirKitTheme } from './src/themes/ReservoirKitTheme'
 
-export const { createTheme, keyframes, styled, globalCss, getCssText } =
+export const { createTheme, keyframes, styled, globalCss, getCssText, theme } =
   createStitches({
     theme: {
       space: {
@@ -99,3 +100,11 @@ export const { createTheme, keyframes, styled, globalCss, getCssText } =
     },
     prefix: 'rk',
   })
+
+export type ReservoirKitThemeContext = {
+  assets: {
+    ethIcon: {
+      value: ReservoirKitTheme['assets']['ethIcon']
+    }
+  }
+} & typeof theme
