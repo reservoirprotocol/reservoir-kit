@@ -66,6 +66,7 @@ type ChildrenProps = {
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   marketplaces: Marketplace[]
+  localMarketplace: Marketplace | null
   syncProfit: boolean
   listingData: ListingData[]
   transactionError?: Error | null
@@ -100,6 +101,9 @@ export const ListModalRenderer: FC<Props> = ({
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<StepData | null>(null)
+  const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
+    null
+  )
 
   const expirationOptions: ExpirationOption[] = [
     {
@@ -216,20 +220,22 @@ export const ListModalRenderer: FC<Props> = ({
       return marketplace
     })
     setMarketplaces(updatedMarketplaces)
-    debouncedUpdateMarkets()
+    debouncedUpdateMarkets(updatedMarketplaces)
   }
 
   let debouncedUpdateMarkets = useMemo(
     () =>
-      debounce(() => {
-        const nativeMarketplace = marketplaces.find(
+      debounce((updatedMarketplaces: Marketplace[]) => {
+        const nativeMarketplace = updatedMarketplaces.find(
           (marketplace) => marketplace.orderbook === 'reservoir'
         )
         if (nativeMarketplace) {
-          setMarketplaces(syncMarketPrices(nativeMarketplace, marketplaces))
+          setMarketplaces(
+            syncMarketPrices(nativeMarketplace, updatedMarketplaces)
+          )
         }
       }, 1200),
-    [syncProfit, marketplaces]
+    [syncProfit]
   )
 
   useEffect(() => {
@@ -259,6 +265,18 @@ export const ListModalRenderer: FC<Props> = ({
       setMarketplaces(updatedMarketplaces)
     }
   }, [token, collection, loadedInitalPrice, open])
+
+  useEffect(() => {
+    if (marketplaces) {
+      setLocalMarketplace(
+        marketplaces.find(
+          (marketplace) => marketplace.orderbook === 'reservoir'
+        ) || null
+      )
+    } else {
+      setLocalMarketplace(null)
+    }
+  }, [marketplaces])
 
   useEffect(() => {
     if (!open) {
@@ -412,6 +430,7 @@ export const ListModalRenderer: FC<Props> = ({
         expirationOption,
         expirationOptions,
         marketplaces,
+        localMarketplace,
         syncProfit,
         listingData,
         transactionError,

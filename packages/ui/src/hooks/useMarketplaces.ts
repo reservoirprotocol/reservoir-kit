@@ -1,4 +1,5 @@
 import { paths } from '@reservoir0x/reservoir-kit-client'
+import getLocalMarketplaceData from '../lib/getLocalMarketplaceData'
 import { useEffect, useState } from 'react'
 import useReservoirClient from './useReservoirClient'
 
@@ -30,10 +31,12 @@ export default function (
         }
         marketplaces.forEach((marketplace) => {
           if (marketplace.orderbook === 'reservoir') {
-            //todo check local name
-            marketplace.name = 'Chimpers Marketplace'
-            marketplace.imageUrl =
-              'https://uploads-ssl.webflow.com/620e7cf70a42fe89735b1b17/62901415219ac32d60cc658b_chimpers-logo-head.png'
+            const data = getLocalMarketplaceData()
+            marketplace.name = data.title
+            marketplace.feeBps = client?.fee ? Number(client.fee) : 0
+            if (data.icon) {
+              marketplace.imageUrl = data.icon
+            }
           }
           marketplace.price = 0
           marketplace.truePrice = 0

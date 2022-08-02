@@ -95,6 +95,7 @@ export function ListModal({
         expirationOption,
         expirationOptions,
         marketplaces,
+        localMarketplace,
         syncProfit,
         listingData,
         transactionError,
@@ -157,15 +158,22 @@ export function ListModal({
                     <Flex align="center" css={{ mb: '$4', mt: '$2' }}>
                       <Box css={{ mr: '$2' }}>
                         <img
-                          src="https://uploads-ssl.webflow.com/620e7cf70a42fe89735b1b17/62901415219ac32d60cc658b_chimpers-logo-head.png"
-                          style={{ height: 32, width: 32, borderRadius: 4 }}
+                          src={localMarketplace?.imageUrl || ''}
+                          style={{
+                            height: 32,
+                            width: 32,
+                            borderRadius: 4,
+                            visibility: localMarketplace?.imageUrl
+                              ? 'visible'
+                              : 'hidden',
+                          }}
                         />
                       </Box>
                       <Text style="body3" css={{ flex: 1 }}>
-                        Chimpers Market
+                        {localMarketplace?.name}
                       </Text>
                       <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
-                        Marketplace fee: 0%
+                        Marketplace fee: {(localMarketplace?.feeBps || 0) * 100}%
                       </Text>
                     </Flex>
                     <Text
