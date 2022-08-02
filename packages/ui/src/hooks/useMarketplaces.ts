@@ -37,7 +37,8 @@ export default function (
           }
           marketplace.price = 0
           marketplace.truePrice = 0
-          marketplace.isSelected = false
+          marketplace.isSelected =
+            marketplace.orderbook === 'reservoir' ? true : false
         })
         setMarketplaces(marketplaces)
       })

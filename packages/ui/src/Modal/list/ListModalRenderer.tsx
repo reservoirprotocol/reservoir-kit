@@ -15,7 +15,6 @@ import {
 } from '../../hooks'
 import { useSigner } from 'wagmi'
 
-import { BigNumber } from 'ethers'
 import {
   Execute,
   ReservoirClientActions,
@@ -64,8 +63,6 @@ type ChildrenProps = {
   collection: ReturnType<typeof useCollection>
   listStep: ListStep
   ethUsdPrice: ReturnType<typeof useEthConversion>
-  balance?: BigNumber
-  address?: string
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   marketplaces: Marketplace[]
@@ -185,44 +182,58 @@ export const ListModalRenderer: FC<Props> = ({
     )
   }
 
-  const syncMarketPrices = (market: any) => {
+  const syncMarketPrices = (
+    updatingMarket: Marketplace,
+    marketplaces: Marketplace[]
+  ) => {
+    let syncedMarketplaces = marketplaces.slice()
     if (syncProfit) {
-      let updatingMarket = marketplaces.find((m) => m.name == market.name)
       let profit =
-        (1 - (updatingMarket?.feeBps || 0)) * Number(updatingMarket?.price || 0)
+        (1 - (updatingMarket.feeBps || 0)) * Number(updatingMarket.price)
+      syncedMarketplaces = syncedMarketplaces.map((marketplace) => {
+        const feeBps = marketplace.feeBps || 0
+        let truePrice = profit / (1 - feeBps)
 
-      setMarketplaces(
-        marketplaces.map((m) => {
-          const feeBps = m.feeBps || 0
-          let truePrice = profit / (1 - feeBps)
-          m.price = Math.round((profit / (1 - feeBps)) * 1000) / 1000
-          m.truePrice = truePrice
-          return m
-        })
-      )
+        return {
+          ...marketplace,
+          price: Math.round(truePrice * 1000) / 1000,
+          truePrice: truePrice,
+        }
+      })
     }
+    return syncedMarketplaces
   }
 
-  const setMarketPrice = (price: any, market: any) => {
-    setMarketplaces(
-      marketplaces.map((m) => {
-        if (m.name == market.name) {
-          m.price = price
-          m.truePrice = price
+  const setMarketPrice = (price: number, market: Marketplace) => {
+    let updatedMarketplaces = marketplaces.map((marketplace) => {
+      if (marketplace.name == market.name) {
+        return {
+          ...marketplace,
+          price: price,
+          truePrice: price,
         }
-        return m
-      })
-    )
-    debouncedUpdateMarkets(market)
+      }
+      return marketplace
+    })
+    setMarketplaces(updatedMarketplaces)
+    debouncedUpdateMarkets()
   }
 
   let debouncedUpdateMarkets = useMemo(
-    () => debounce(syncMarketPrices, 1200),
+    () =>
+      debounce(() => {
+        const nativeMarketplace = marketplaces.find(
+          (marketplace) => marketplace.orderbook === 'reservoir'
+        )
+        if (nativeMarketplace) {
+          setMarketplaces(syncMarketPrices(nativeMarketplace, marketplaces))
+        }
+      }, 1200),
     [syncProfit, marketplaces]
   )
 
   useEffect(() => {
-    if (token && collection && !loadedInitalPrice) {
+    if (open && token && collection && !loadedInitalPrice) {
       let startingPrice: number =
         Math.max(
           ...(token?.token?.attributes?.map((attr: any) =>
@@ -234,17 +245,39 @@ export const ListModalRenderer: FC<Props> = ({
         0
 
       setLoadedInitalPrice(true)
+      let updatedMarketplaces = marketplaces.map((marketplace) => {
+        return {
+          ...marketplace,
+          price: startingPrice,
+          truePrice: startingPrice,
+        }
+      })
+      updatedMarketplaces = syncMarketPrices(
+        updatedMarketplaces[0],
+        updatedMarketplaces
+      )
+      setMarketplaces(updatedMarketplaces)
+    }
+  }, [token, collection, loadedInitalPrice, open])
+
+  useEffect(() => {
+    if (!open) {
+      setListStep(ListStep.SelectMarkets)
+      setTransactionError(null)
       setMarketplaces(
-        marketplaces.map((market) => {
-          market.price = startingPrice
-          market.truePrice = startingPrice
-          return market
+        marketplaces.map((marketplace) => {
+          return {
+            ...marketplace,
+            isSelected: marketplace.orderbook !== 'reservoir',
+          }
         })
       )
-
-      syncMarketPrices(marketplaces[0])
+      setLoadedInitalPrice(false)
+      setStepData(null)
+      setExpirationOption(expirationOptions[0])
+      setSyncProfit(true)
     }
-  }, [token, collection])
+  }, [open])
 
   const listToken = useCallback(() => {
     if (!signer) {

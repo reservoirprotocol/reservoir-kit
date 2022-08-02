@@ -249,14 +249,17 @@ export function ListModal({
                     </Flex>
 
                     {marketplaces
-                      .filter((marketplace) => !!marketplace.isSelected)
+                      .filter((marketplace) => marketplace.isSelected)
                       .map((marketplace) => (
                         <Box key={marketplace.name} css={{ mb: '$3' }}>
                           <MarketplacePriceInput
                             marketplace={marketplace}
                             ethUsdPrice={ethUsdPrice}
                             onChange={(e) => {
-                              setMarketPrice(e.target.value, marketplace)
+                              setMarketPrice(
+                                Number(e.target.value),
+                                marketplace
+                              )
                             }}
                           />
                         </Box>
