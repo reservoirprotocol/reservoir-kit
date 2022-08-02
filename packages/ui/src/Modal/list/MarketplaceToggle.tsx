@@ -1,10 +1,10 @@
 import React from 'react'
 
 import { Box, Text, Flex, Switch } from '../../primitives'
-import { Market } from './ListModalRenderer'
+import { Marketplace } from '../../hooks/useMarketplaces'
 
 type MarketPlaceToggleProps = {
-  marketplace: Market
+  marketplace: Marketplace
   onSelection: () => void
 }
 
@@ -16,7 +16,7 @@ const MarketplaceToggle = ({
   <Flex {...props} align="center">
     <Box css={{ mr: '$2' }}>
       <img
-        src={marketplace.imgURL}
+        src={marketplace.imageUrl}
         style={{ height: 32, width: 32, borderRadius: 4 }}
       />
     </Box>
@@ -24,7 +24,7 @@ const MarketplaceToggle = ({
       {marketplace.name}
     </Text>
     <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
-      Marketplace fee: {marketplace.fee * 100}%
+      Marketplace fee: {(marketplace.feeBps || 0) * 100}%
     </Text>
     <Switch checked={marketplace.isSelected} onCheckedChange={onSelection} />
   </Flex>

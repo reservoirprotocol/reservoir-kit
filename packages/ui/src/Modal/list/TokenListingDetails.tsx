@@ -41,7 +41,7 @@ const TokenListingDetails: FC<Props> = ({ token, collection, listingData }) => (
         <ListingStat
           key={i}
           listing={data.listing}
-          marketImg={data.marketplace.imgURL}
+          marketImg={data.marketplace.imageUrl || ''}
         />
       ))}
     </Box>

@@ -94,7 +94,8 @@ export function ListModal({
         listStep,
         expirationOption,
         expirationOptions,
-        markets,
+        marketplaces,
+        localMarketplace,
         syncProfit,
         listingData,
         transactionError,
@@ -157,15 +158,22 @@ export function ListModal({
                     <Flex align="center" css={{ mb: '$4', mt: '$2' }}>
                       <Box css={{ mr: '$2' }}>
                         <img
-                          src="https://uploads-ssl.webflow.com/620e7cf70a42fe89735b1b17/62901415219ac32d60cc658b_chimpers-logo-head.png"
-                          style={{ height: 32, width: 32, borderRadius: 4 }}
+                          src={localMarketplace?.imageUrl || ''}
+                          style={{
+                            height: 32,
+                            width: 32,
+                            borderRadius: 4,
+                            visibility: localMarketplace?.imageUrl
+                              ? 'visible'
+                              : 'hidden',
+                          }}
                         />
                       </Box>
                       <Text style="body3" css={{ flex: 1 }}>
-                        Chimpers Market
+                        {localMarketplace?.name}
                       </Text>
                       <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
-                        Marketplace fee: 0%
+                        Marketplace fee: {(localMarketplace?.feeBps || 0) * 100}%
                       </Text>
                     </Flex>
                     <Text
@@ -176,8 +184,12 @@ export function ListModal({
                     >
                       Select other marketplaces to list on
                     </Text>
-                    {markets
-                      .filter((market) => !market.isNative)
+                    {marketplaces
+                      .filter(
+                        (market) =>
+                          market.orderbook !== 'reservoir' &&
+                          market.listingEnabled
+                      )
                       .map((marketplace) => (
                         <Box key={marketplace.name} css={{ mb: '$3' }}>
                           <MarketplaceToggle
@@ -244,15 +256,18 @@ export function ListModal({
                       </Text>
                     </Flex>
 
-                    {markets
-                      .filter((marketplace) => !!marketplace.isSelected)
+                    {marketplaces
+                      .filter((marketplace) => marketplace.isSelected)
                       .map((marketplace) => (
                         <Box key={marketplace.name} css={{ mb: '$3' }}>
                           <MarketplacePriceInput
                             marketplace={marketplace}
                             ethUsdPrice={ethUsdPrice}
                             onChange={(e) => {
-                              setMarketPrice(e.target.value, marketplace)
+                              setMarketPrice(
+                                Number(e.target.value),
+                                marketplace
+                              )
                             }}
                           />
                         </Box>
@@ -330,7 +345,7 @@ export function ListModal({
                       <ListingTransactionProgress
                         justify="center"
                         fromImg={tokenImage}
-                        toImg={stepData?.listingData.marketplace.imgURL || ''}
+                        toImg={stepData?.listingData.marketplace.imageUrl || ''}
                       />
                       <Text
                         css={{

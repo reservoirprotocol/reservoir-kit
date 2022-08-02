@@ -50,7 +50,7 @@ const AppWrapper = ({ children }) => {
     <ReservoirKitProvider
       options={{
         apiBase: 'https://api-rinkeby.reservoir.tools',
-        apiKey: 'reservoir-kit-demo',
+        apiKey: 'reservoir-kit-demo'
       }}
       theme={theme}
     >

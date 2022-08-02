@@ -11,36 +11,24 @@ import {
   useTokenDetails,
   useEthConversion,
   useReservoirClient,
+  useMarketplaces,
 } from '../../hooks'
 import { useSigner } from 'wagmi'
 
-import { BigNumber } from 'ethers'
 import {
   Execute,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
-import initialMarkets from './initialMarkets'
 import debounce from '../../lib/debounce'
 import { parseEther } from 'ethers/lib/utils'
 import dayjs, { ManipulateType } from 'dayjs'
+import { Marketplace } from '../../hooks/useMarketplaces'
 
 export enum ListStep {
   SelectMarkets,
   SetPrice,
   ListItem,
   Complete,
-}
-
-export type Market = {
-  name: string
-  imgURL: string
-  isSelected: boolean
-  isNative: boolean
-  fee: number
-  price: number
-  truePrice: number
-  orderBook: string
-  orderKind: string
 }
 
 type ExpirationOption = {
@@ -56,7 +44,7 @@ export type Listings = Parameters<
 
 export type ListingData = {
   listing: Listings[0]
-  marketplace: Market
+  marketplace: Marketplace
 }
 
 export type StepData = {
@@ -75,20 +63,19 @@ type ChildrenProps = {
   collection: ReturnType<typeof useCollection>
   listStep: ListStep
   ethUsdPrice: ReturnType<typeof useEthConversion>
-  balance?: BigNumber
-  address?: string
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
-  markets: Market[]
+  marketplaces: Marketplace[]
+  localMarketplace: Marketplace | null
   syncProfit: boolean
   listingData: ListingData[]
   transactionError?: Error | null
   stepData: StepData | null
   setListStep: React.Dispatch<React.SetStateAction<ListStep>>
-  toggleMarketplace: (marketplace: Market) => void
+  toggleMarketplace: (marketplace: Marketplace) => void
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setSyncProfit: React.Dispatch<React.SetStateAction<boolean>>
-  setMarketPrice: (price: number, market: Market) => void
+  setMarketPrice: (price: number, market: Marketplace) => void
   listToken: () => void
 }
 
@@ -109,11 +96,14 @@ export const ListModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
-  const [markets, setMarkets] = useState(initialMarkets)
+  const [marketplaces, setMarketplaces] = useMarketplaces(true)
   const [syncProfit, setSyncProfit] = useState(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<StepData | null>(null)
+  const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
+    null
+  )
 
   const expirationOptions: ExpirationOption[] = [
     {
@@ -181,9 +171,9 @@ export const ListModalRenderer: FC<Props> = ({
 
   const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
 
-  const toggleMarketplace = (marketplace: Market) => {
-    setMarkets(
-      markets.map((market) => {
+  const toggleMarketplace = (marketplace: Marketplace) => {
+    setMarketplaces(
+      marketplaces.map((market) => {
         if (market.name == marketplace.name) {
           return {
             ...market,
@@ -196,43 +186,60 @@ export const ListModalRenderer: FC<Props> = ({
     )
   }
 
-  const syncMarketPrices = (market: any) => {
+  const syncMarketPrices = (
+    updatingMarket: Marketplace,
+    marketplaces: Marketplace[]
+  ) => {
+    let syncedMarketplaces = marketplaces.slice()
     if (syncProfit) {
-      let updatingMarket = markets.find((m) => m.name == market.name)
       let profit =
-        (1 - (updatingMarket?.fee || 0)) * Number(updatingMarket?.price || 0)
+        (1 - (updatingMarket.feeBps || 0)) * Number(updatingMarket.price)
+      syncedMarketplaces = syncedMarketplaces.map((marketplace) => {
+        const feeBps = marketplace.feeBps || 0
+        let truePrice = profit / (1 - feeBps)
 
-      setMarkets(
-        markets.map((m) => {
-          let truePrice = profit / (1 - m.fee)
-          m.price = Math.round((profit / (1 - m.fee)) * 1000) / 1000
-          m.truePrice = truePrice
-          return m
-        })
-      )
+        return {
+          ...marketplace,
+          price: Math.round(truePrice * 1000) / 1000,
+          truePrice: truePrice,
+        }
+      })
     }
+    return syncedMarketplaces
   }
 
-  const setMarketPrice = (price: any, market: any) => {
-    setMarkets(
-      markets.map((m) => {
-        if (m.name == market.name) {
-          m.price = price
-          m.truePrice = price
+  const setMarketPrice = (price: number, market: Marketplace) => {
+    let updatedMarketplaces = marketplaces.map((marketplace) => {
+      if (marketplace.name == market.name) {
+        return {
+          ...marketplace,
+          price: price,
+          truePrice: price,
         }
-        return m
-      })
-    )
-    debouncedUpdateMarkets(market)
+      }
+      return marketplace
+    })
+    setMarketplaces(updatedMarketplaces)
+    debouncedUpdateMarkets(updatedMarketplaces)
   }
 
   let debouncedUpdateMarkets = useMemo(
-    () => debounce(syncMarketPrices, 1200),
-    [syncProfit, markets]
+    () =>
+      debounce((updatedMarketplaces: Marketplace[]) => {
+        const nativeMarketplace = updatedMarketplaces.find(
+          (marketplace) => marketplace.orderbook === 'reservoir'
+        )
+        if (nativeMarketplace) {
+          setMarketplaces(
+            syncMarketPrices(nativeMarketplace, updatedMarketplaces)
+          )
+        }
+      }, 1200),
+    [syncProfit]
   )
 
   useEffect(() => {
-    if (token && collection && !loadedInitalPrice) {
+    if (open && token && collection && !loadedInitalPrice) {
       let startingPrice: number =
         Math.max(
           ...(token?.token?.attributes?.map((attr: any) =>
@@ -244,17 +251,51 @@ export const ListModalRenderer: FC<Props> = ({
         0
 
       setLoadedInitalPrice(true)
-      setMarkets(
-        markets.map((market) => {
-          market.price = startingPrice
-          market.truePrice = startingPrice
-          return market
+      let updatedMarketplaces = marketplaces.map((marketplace) => {
+        return {
+          ...marketplace,
+          price: startingPrice,
+          truePrice: startingPrice,
+        }
+      })
+      updatedMarketplaces = syncMarketPrices(
+        updatedMarketplaces[0],
+        updatedMarketplaces
+      )
+      setMarketplaces(updatedMarketplaces)
+    }
+  }, [token, collection, loadedInitalPrice, open])
+
+  useEffect(() => {
+    if (marketplaces) {
+      setLocalMarketplace(
+        marketplaces.find(
+          (marketplace) => marketplace.orderbook === 'reservoir'
+        ) || null
+      )
+    } else {
+      setLocalMarketplace(null)
+    }
+  }, [marketplaces])
+
+  useEffect(() => {
+    if (!open) {
+      setListStep(ListStep.SelectMarkets)
+      setTransactionError(null)
+      setMarketplaces(
+        marketplaces.map((marketplace) => {
+          return {
+            ...marketplace,
+            isSelected: marketplace.orderbook !== 'reservoir',
+          }
         })
       )
-
-      syncMarketPrices(markets[0])
+      setLoadedInitalPrice(false)
+      setStepData(null)
+      setExpirationOption(expirationOptions[0])
+      setSyncProfit(true)
     }
-  }, [token, collection])
+  }, [open])
 
   const listToken = useCallback(() => {
     if (!signer) {
@@ -281,13 +322,13 @@ export const ListModalRenderer: FC<Props> = ({
         .toString()
     }
 
-    markets.forEach((market) => {
+    marketplaces.forEach((market) => {
       if (market.isSelected) {
         const listing: Listings[0] = {
           token: `${collectionId}:${tokenId}`,
           weiPrice: parseEther(`${market.truePrice.toFixed(18)}`).toString(),
           //@ts-ignore
-          orderbook: market.orderBook,
+          orderbook: market.orderbook,
           //@ts-ignore
           orderKind: market.orderKind,
         }
@@ -332,7 +373,7 @@ export const ListModalRenderer: FC<Props> = ({
               return true
             }
           })
-          debugger
+
           if (
             incompleteStepIndex === null ||
             incompleteStepItemIndex === null
@@ -377,7 +418,7 @@ export const ListModalRenderer: FC<Props> = ({
         setTransactionError(transactionError)
         console.log(error)
       })
-  }, [client, markets, signer, collectionId, tokenId, expirationOption])
+  }, [client, marketplaces, signer, collectionId, tokenId, expirationOption])
 
   return (
     <>
@@ -388,7 +429,8 @@ export const ListModalRenderer: FC<Props> = ({
         ethUsdPrice,
         expirationOption,
         expirationOptions,
-        markets,
+        marketplaces,
+        localMarketplace,
         syncProfit,
         listingData,
         transactionError,

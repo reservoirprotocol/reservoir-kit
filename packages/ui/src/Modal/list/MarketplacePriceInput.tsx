@@ -10,10 +10,10 @@ import {
 } from '../../primitives'
 
 import { EthLogo } from '../../primitives/FormatEth'
-import { Market } from './ListModalRenderer'
+import { Marketplace } from '../../hooks/useMarketplaces'
 
 type MarketPlaceInputProps = {
-  marketplace: Market
+  marketplace: Marketplace
   ethUsdPrice?: number | null
   onChange: (e: any) => void
 }
@@ -24,13 +24,13 @@ const MarketplacePriceInput = ({
   onChange,
   ...props
 }: MarketPlaceInputProps) => {
-  let profit = (1 - (marketplace.fee || 0)) * Number(marketplace.truePrice)
+  let profit = (1 - (marketplace.feeBps || 0)) * Number(marketplace.truePrice)
 
   return (
     <Flex {...props} align="center">
       <Box css={{ mr: '$2' }}>
         <img
-          src={marketplace.imgURL}
+          src={marketplace.imageUrl}
           style={{ height: 32, width: 32, borderRadius: 4 }}
         />
       </Box>
