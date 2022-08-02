@@ -94,7 +94,7 @@ export function ListModal({
         listStep,
         expirationOption,
         expirationOptions,
-        markets,
+        marketplaces,
         syncProfit,
         listingData,
         transactionError,
@@ -176,8 +176,12 @@ export function ListModal({
                     >
                       Select other marketplaces to list on
                     </Text>
-                    {markets
-                      .filter((market) => !market.isNative)
+                    {marketplaces
+                      .filter(
+                        (market) =>
+                          market.orderbook !== 'reservoir' &&
+                          market.listingEnabled
+                      )
                       .map((marketplace) => (
                         <Box key={marketplace.name} css={{ mb: '$3' }}>
                           <MarketplaceToggle
@@ -244,7 +248,7 @@ export function ListModal({
                       </Text>
                     </Flex>
 
-                    {markets
+                    {marketplaces
                       .filter((marketplace) => !!marketplace.isSelected)
                       .map((marketplace) => (
                         <Box key={marketplace.name} css={{ mb: '$3' }}>
@@ -330,7 +334,7 @@ export function ListModal({
                       <ListingTransactionProgress
                         justify="center"
                         fromImg={tokenImage}
-                        toImg={stepData?.listingData.marketplace.imgURL || ''}
+                        toImg={stepData?.listingData.marketplace.imageUrl || ''}
                       />
                       <Text
                         css={{

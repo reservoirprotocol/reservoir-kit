@@ -11,6 +11,7 @@ import {
   useTokenDetails,
   useEthConversion,
   useReservoirClient,
+  useMarketplaces,
 } from '../../hooks'
 import { useSigner } from 'wagmi'
 
@@ -19,28 +20,16 @@ import {
   Execute,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
-import initialMarkets from './initialMarkets'
 import debounce from '../../lib/debounce'
 import { parseEther } from 'ethers/lib/utils'
 import dayjs, { ManipulateType } from 'dayjs'
+import { Marketplace } from '../../hooks/useMarketplaces'
 
 export enum ListStep {
   SelectMarkets,
   SetPrice,
   ListItem,
   Complete,
-}
-
-export type Market = {
-  name: string
-  imgURL: string
-  isSelected: boolean
-  isNative: boolean
-  fee: number
-  price: number
-  truePrice: number
-  orderBook: string
-  orderKind: string
 }
 
 type ExpirationOption = {
@@ -56,7 +45,7 @@ export type Listings = Parameters<
 
 export type ListingData = {
   listing: Listings[0]
-  marketplace: Market
+  marketplace: Marketplace
 }
 
 export type StepData = {
@@ -79,16 +68,16 @@ type ChildrenProps = {
   address?: string
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
-  markets: Market[]
+  marketplaces: Marketplace[]
   syncProfit: boolean
   listingData: ListingData[]
   transactionError?: Error | null
   stepData: StepData | null
   setListStep: React.Dispatch<React.SetStateAction<ListStep>>
-  toggleMarketplace: (marketplace: Market) => void
+  toggleMarketplace: (marketplace: Marketplace) => void
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setSyncProfit: React.Dispatch<React.SetStateAction<boolean>>
-  setMarketPrice: (price: number, market: Market) => void
+  setMarketPrice: (price: number, market: Marketplace) => void
   listToken: () => void
 }
 
@@ -109,7 +98,7 @@ export const ListModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
-  const [markets, setMarkets] = useState(initialMarkets)
+  const [marketplaces, setMarketplaces] = useMarketplaces(true)
   const [syncProfit, setSyncProfit] = useState(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -181,9 +170,9 @@ export const ListModalRenderer: FC<Props> = ({
 
   const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
 
-  const toggleMarketplace = (marketplace: Market) => {
-    setMarkets(
-      markets.map((market) => {
+  const toggleMarketplace = (marketplace: Marketplace) => {
+    setMarketplaces(
+      marketplaces.map((market) => {
         if (market.name == marketplace.name) {
           return {
             ...market,
@@ -198,14 +187,15 @@ export const ListModalRenderer: FC<Props> = ({
 
   const syncMarketPrices = (market: any) => {
     if (syncProfit) {
-      let updatingMarket = markets.find((m) => m.name == market.name)
+      let updatingMarket = marketplaces.find((m) => m.name == market.name)
       let profit =
-        (1 - (updatingMarket?.fee || 0)) * Number(updatingMarket?.price || 0)
+        (1 - (updatingMarket?.feeBps || 0)) * Number(updatingMarket?.price || 0)
 
-      setMarkets(
-        markets.map((m) => {
-          let truePrice = profit / (1 - m.fee)
-          m.price = Math.round((profit / (1 - m.fee)) * 1000) / 1000
+      setMarketplaces(
+        marketplaces.map((m) => {
+          const feeBps = m.feeBps || 0
+          let truePrice = profit / (1 - feeBps)
+          m.price = Math.round((profit / (1 - feeBps)) * 1000) / 1000
           m.truePrice = truePrice
           return m
         })
@@ -214,8 +204,8 @@ export const ListModalRenderer: FC<Props> = ({
   }
 
   const setMarketPrice = (price: any, market: any) => {
-    setMarkets(
-      markets.map((m) => {
+    setMarketplaces(
+      marketplaces.map((m) => {
         if (m.name == market.name) {
           m.price = price
           m.truePrice = price
@@ -228,7 +218,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   let debouncedUpdateMarkets = useMemo(
     () => debounce(syncMarketPrices, 1200),
-    [syncProfit, markets]
+    [syncProfit, marketplaces]
   )
 
   useEffect(() => {
@@ -244,15 +234,15 @@ export const ListModalRenderer: FC<Props> = ({
         0
 
       setLoadedInitalPrice(true)
-      setMarkets(
-        markets.map((market) => {
+      setMarketplaces(
+        marketplaces.map((market) => {
           market.price = startingPrice
           market.truePrice = startingPrice
           return market
         })
       )
 
-      syncMarketPrices(markets[0])
+      syncMarketPrices(marketplaces[0])
     }
   }, [token, collection])
 
@@ -281,13 +271,13 @@ export const ListModalRenderer: FC<Props> = ({
         .toString()
     }
 
-    markets.forEach((market) => {
+    marketplaces.forEach((market) => {
       if (market.isSelected) {
         const listing: Listings[0] = {
           token: `${collectionId}:${tokenId}`,
           weiPrice: parseEther(`${market.truePrice.toFixed(18)}`).toString(),
           //@ts-ignore
-          orderbook: market.orderBook,
+          orderbook: market.orderbook,
           //@ts-ignore
           orderKind: market.orderKind,
         }
@@ -332,7 +322,7 @@ export const ListModalRenderer: FC<Props> = ({
               return true
             }
           })
-          debugger
+
           if (
             incompleteStepIndex === null ||
             incompleteStepItemIndex === null
@@ -377,7 +367,7 @@ export const ListModalRenderer: FC<Props> = ({
         setTransactionError(transactionError)
         console.log(error)
       })
-  }, [client, markets, signer, collectionId, tokenId, expirationOption])
+  }, [client, marketplaces, signer, collectionId, tokenId, expirationOption])
 
   return (
     <>
@@ -388,7 +378,7 @@ export const ListModalRenderer: FC<Props> = ({
         ethUsdPrice,
         expirationOption,
         expirationOptions,
-        markets,
+        marketplaces,
         syncProfit,
         listingData,
         transactionError,
