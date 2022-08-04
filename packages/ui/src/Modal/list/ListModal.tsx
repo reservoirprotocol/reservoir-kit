@@ -80,6 +80,7 @@ export function ListModal({
   const [open, setOpen] = useState(false)
   const [stepTitle, setStepTitle] = useState('')
   const client = useReservoirClient()
+  const [approvalRequired, setApprovalRequired] = useState(false)
 
   return (
     <ListModalRenderer
@@ -95,6 +96,7 @@ export function ListModal({
         expirationOption,
         expirationOptions,
         marketplaces,
+        unapprovedMarketplaces,
         localMarketplace,
         syncProfit,
         listingData,
@@ -131,6 +133,23 @@ export function ListModal({
             }
           }
         }, [stepData])
+
+        useEffect(() => {
+          if (unapprovedMarketplaces.length > 0) {
+            const unapprovedNames = unapprovedMarketplaces.map(
+              (marketplace) => marketplace.name
+            )
+            setApprovalRequired(
+              marketplaces.some(
+                (marketplace) =>
+                  marketplace.isSelected &&
+                  unapprovedNames.includes(marketplace.name)
+              )
+            )
+          } else {
+            setApprovalRequired(false)
+          }
+        }, [unapprovedMarketplaces, marketplaces])
 
         return (
           <Modal
@@ -203,6 +222,20 @@ export function ListModal({
                       ))}
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
+                    {approvalRequired && (
+                      <Text
+                        color="accent"
+                        style="subtitle2"
+                        css={{
+                          my: 10,
+                          width: '100%',
+                          textAlign: 'center',
+                          display: 'block',
+                        }}
+                      >
+                        Additional gas fee due to unapproved marketplaces
+                      </Text>
+                    )}
                     <Button
                       onClick={() => setListStep(ListStep.SetPrice)}
                       css={{ width: '100%' }}

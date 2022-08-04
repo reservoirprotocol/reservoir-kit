@@ -45,6 +45,7 @@ export async function placeBid({ bids, signer, onProgress }: Data) {
         }
       }
       if (
+        bid.orderbook === 'reservoir' &&
         client.fee &&
         client.feeRecipient &&
         !('fee' in bid) &&

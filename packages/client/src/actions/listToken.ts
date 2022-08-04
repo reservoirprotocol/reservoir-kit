@@ -2,6 +2,7 @@ import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { getClient } from '.'
 import { executeSteps } from '../utils/executeSteps'
+import axios, { AxiosRequestConfig } from 'axios'
 
 type ListTokenBody = NonNullable<
   paths['/execute/list/v3']['post']['parameters']['body']['body']
@@ -10,7 +11,8 @@ type ListTokenBody = NonNullable<
 type Data = {
   listings: Required<ListTokenBody>['params']
   signer: Signer
-  onProgress: (steps: Execute['steps']) => any
+  onProgress?: (steps: Execute['steps']) => any
+  precheck?: boolean
 }
 
 /**
@@ -18,10 +20,13 @@ type Data = {
  * @param data.listings Listings data to be processed
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.onProgress Callback to update UI state as execution progresses
+ * @param data.precheck Set to true to skip executing steps and just to get the initial steps required
  */
 
-export async function listToken(data: Data) {
-  const { listings, signer, onProgress } = data
+export async function listToken(
+  data: Data
+): Promise<Execute['steps'] | boolean> {
+  const { listings, signer, onProgress = () => {}, precheck } = data
   const client = getClient()
   const maker = await signer.getAddress()
 
@@ -37,6 +42,7 @@ export async function listToken(data: Data) {
 
     listings.forEach((listing) => {
       if (
+        listing.orderbook === 'reservoir' &&
         client.fee &&
         client.feeRecipient &&
         !('fee' in listing) &&
@@ -56,15 +62,28 @@ export async function listToken(data: Data) {
 
     data.params = listings
 
-    await executeSteps(
-      {
-        url: `${client.apiBase}/execute/list/v3`,
-        method: 'post',
-        data,
-      },
-      signer,
-      onProgress
-    )
+    const request: AxiosRequestConfig = {
+      url: `${client.apiBase}/execute/list/v3`,
+      method: 'post',
+      data,
+    }
+
+    if (precheck) {
+      if (client && client.apiKey) {
+        request.headers = {
+          'x-api-key': client.apiKey,
+        }
+      }
+
+      const res = await axios.request(request)
+      if (res.status !== 200) throw res.data
+      const data = res.data as Execute
+      onProgress(data['steps'])
+      return data['steps']
+    } else {
+      await executeSteps(request, signer, onProgress)
+    }
+
     return true
   } catch (err: any) {
     console.error(err)
