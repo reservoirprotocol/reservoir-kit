@@ -173,7 +173,8 @@ export function ListModal({
                         {localMarketplace?.name}
                       </Text>
                       <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
-                        Marketplace fee: {(localMarketplace?.feeBps || 0) * 100}%
+                        Marketplace fee: {(localMarketplace?.feeBps || 0) * 100}
+                        %
                       </Text>
                     </Flex>
                     <Text
@@ -270,6 +271,25 @@ export function ListModal({
                               )
                             }}
                           />
+                          {collection?.floorAsk?.price !== undefined &&
+                            marketplace.truePrice <
+                              collection?.floorAsk?.price && (
+                              <Box>
+                                <Text style="body2" color="error">
+                                  Price is{' '}
+                                  {Math.round(
+                                    ((collection.floorAsk.price -
+                                      marketplace.truePrice) /
+                                      ((collection.floorAsk.price +
+                                        marketplace.truePrice) /
+                                        2)) *
+                                      100 *
+                                      1000
+                                  ) / 1000}
+                                  % below the floor
+                                </Text>
+                              </Box>
+                            )}
                         </Box>
                       ))}
                   </Box>

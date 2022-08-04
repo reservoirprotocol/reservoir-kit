@@ -46,7 +46,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
         {[
           {
             label: 'Creator Royalties',
-            value: (collection?.royalties?.bps || 0) * 10_000 + '%',
+            value: (collection?.royalties?.bps || 0) * 0.01 + '%',
           },
           {
             label: 'Last Price',
