@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import { useCopyToClipboard } from '../../hooks'
 
 import {
@@ -27,11 +27,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep } from './BuyModalRenderer'
 
+type PurchaseData = {
+  tokenId?: string
+  collectionId?: string
+  txHash?: string
+  maker?: string
+}
+
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   onGoToToken?: () => any
-  onComplete?: () => void
+  onPurchaseComplete?: (data: PurchaseData) => void
+  onPurchaseError?: (error: Error, data: PurchaseData) => void
+  onClose?: () => void
 } & (
     | {
         referrerFeeBps: number
@@ -60,7 +69,9 @@ export function BuyModal({
   collectionId,
   referrer,
   referrerFeeBps,
-  onComplete,
+  onPurchaseComplete,
+  onPurchaseError,
+  onClose,
   onGoToToken,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
@@ -94,6 +105,31 @@ export function BuyModal({
         setBuyStep,
       }) => {
         const title = titleForStep(buyStep)
+
+        useEffect(() => {
+          if (buyStep === BuyStep.Complete && onPurchaseComplete) {
+            const data: PurchaseData = {
+              tokenId: tokenId,
+              collectionId: collectionId,
+              maker: address,
+            }
+            if (txHash) {
+              data.txHash = txHash
+            }
+            onPurchaseComplete(data)
+          }
+        }, [buyStep])
+
+        useEffect(() => {
+          if (transactionError && onPurchaseError) {
+            const data: PurchaseData = {
+              tokenId: tokenId,
+              collectionId: collectionId,
+              maker: address,
+            }
+            onPurchaseError(transactionError, data)
+          }
+        }, [transactionError])
 
         return (
           <Modal
@@ -324,8 +360,8 @@ export function BuyModal({
                       <Button
                         onClick={() => {
                           setOpen(false)
-                          if (onComplete) {
-                            onComplete()
+                          if (onClose) {
+                            onClose()
                           }
                         }}
                         css={{ flex: 1 }}
@@ -338,8 +374,8 @@ export function BuyModal({
                         color="primary"
                         onClick={() => {
                           onGoToToken()
-                          if (onComplete) {
-                            onComplete()
+                          if (onClose) {
+                            onClose()
                           }
                         }}
                       >
@@ -350,8 +386,8 @@ export function BuyModal({
                     <Button
                       onClick={() => {
                         setOpen(false)
-                        if (onComplete) {
-                          onComplete()
+                        if (onClose) {
+                          onClose()
                         }
                       }}
                       style={{ flex: 1 }}
