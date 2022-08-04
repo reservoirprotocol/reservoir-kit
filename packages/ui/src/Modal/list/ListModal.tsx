@@ -9,6 +9,7 @@ import {
   Switch,
   Loader,
   Select,
+  Popover,
 } from '../../primitives'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -19,6 +20,7 @@ import {
   faChevronLeft,
   faCheckCircle,
   faCircleExclamation,
+  faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons'
 import TokenStats from './TokenStats'
 import MarketplaceToggle from './MarketplaceToggle'
@@ -188,9 +190,26 @@ export function ListModal({
                           }}
                         />
                       </Box>
-                      <Text style="body3" css={{ flex: 1 }}>
-                        {localMarketplace?.name}
-                      </Text>
+                      <Box css={{ mr: '$2', flex: 1 }}>
+                        <Text style="body3">{localMarketplace?.name}</Text>
+                        <Text style="body3" color="subtle" as="p">
+                          on reservoir{' '}
+                          <Popover
+                            side="bottom"
+                            width={200}
+                            content={
+                              <Text style={'body2'} as="p">
+                                Listings made on this marketplace will be
+                                distributed across the reservoir ecosystem
+                              </Text>
+                            }
+                          >
+                            <Box css={{ color: '$neutralText' }}>
+                              <FontAwesomeIcon icon={faInfoCircle} />
+                            </Box>
+                          </Popover>
+                        </Text>
+                      </Box>
                       <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
                         Marketplace fee: {(localMarketplace?.feeBps || 0) * 100}
                         %
@@ -285,9 +304,30 @@ export function ListModal({
                       <Text style="subtitle2" color="subtle" as="p">
                         List Price
                       </Text>
-                      <Text style="subtitle2" color="subtle" as="p">
-                        You Get
-                      </Text>
+                      <Flex align="center">
+                        <Text
+                          style="subtitle2"
+                          color="subtle"
+                          as="p"
+                          css={{ mr: '$2' }}
+                        >
+                          You Get
+                        </Text>
+                        <Popover
+                          side="left"
+                          width={200}
+                          content={
+                            <Text style={'body2'} as="p">
+                              How much Eth you will receive after marketplace
+                              fees and creator royalties are subtracted.
+                            </Text>
+                          }
+                        >
+                          <Box css={{ color: '$neutralText' }}>
+                            <FontAwesomeIcon icon={faInfoCircle} />
+                          </Box>
+                        </Popover>
+                      </Flex>
                     </Flex>
 
                     {marketplaces

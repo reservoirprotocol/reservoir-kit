@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
-import { Flex, Box } from '../../primitives'
+import { Flex, Box, Popover, Text } from '../../primitives'
 import Token from './Token'
 import Stat from './Stat'
 import { useTokenDetails, useCollection } from '../../hooks'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   token?: NonNullable<
@@ -45,26 +47,66 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
       >
         {[
           {
-            label: 'Creator Royalties',
+            id: 0,
+            label: (
+              <span>
+                Creator Royalties{' '}
+                <Popover
+                  side="right"
+                  width={200}
+                  content={
+                    <Text style={'body2'} as="p">
+                      A fee taken out of every order that goes to the collection
+                      creator. This is set by the collection creators and is
+                      different for every collection.
+                    </Text>
+                  }
+                >
+                  <Box css={{ color: '$neutralText' }}>
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                  </Box>
+                </Popover>
+              </span>
+            ),
             value: (collection?.royalties?.bps || 0) * 0.01 + '%',
           },
           {
+            id: 1,
             label: 'Last Price',
             value: token?.token?.lastSell?.value || '--',
             asEth: true,
           },
           {
+            id: 2,
             label: 'Floor',
             value: collection?.floorAsk?.price || 0,
             asEth: true,
           },
           {
-            label: 'Highest Trait Floor',
+            id: 3,
+            label: (
+              <span>
+                Highest Trait Floor{' '}
+                <Popover
+                  side="right"
+                  width={200}
+                  content={
+                    <Text style={'body2'} as="p">
+                      the highest floor price that a trait holds for this token.
+                    </Text>
+                  }
+                >
+                  <Box css={{ color: '$neutralText' }}>
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                  </Box>
+                </Popover>
+              </span>
+            ),
             value: attributeFloor || collection?.floorAsk?.price || 0,
             asEth: true,
           },
         ].map((stat) => (
-          <Stat key={stat.label} {...stat} />
+          <Stat key={stat.id} {...stat} />
         ))}
       </Box>
     </Flex>
