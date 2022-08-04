@@ -12,6 +12,7 @@ import {
   useEthConversion,
   useReservoirClient,
   useMarketplaces,
+  useListingPreapprovalCheck,
 } from '../../hooks'
 import { useSigner } from 'wagmi'
 
@@ -66,6 +67,7 @@ type ChildrenProps = {
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   marketplaces: Marketplace[]
+  unapprovedMarketplaces: Marketplace[]
   localMarketplace: Marketplace | null
   syncProfit: boolean
   listingData: ListingData[]
@@ -103,6 +105,11 @@ export const ListModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<StepData | null>(null)
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
     null
+  )
+  const unapprovedMarketplaces = useListingPreapprovalCheck(
+    marketplaces,
+    open ? tokenId : undefined,
+    open ? collectionId : undefined
   )
 
   const expirationOptions: ExpirationOption[] = [
@@ -286,7 +293,7 @@ export const ListModalRenderer: FC<Props> = ({
         marketplaces.map((marketplace) => {
           return {
             ...marketplace,
-            isSelected: marketplace.orderbook !== 'reservoir',
+            isSelected: marketplace.orderbook === 'reservoir',
           }
         })
       )
@@ -430,6 +437,7 @@ export const ListModalRenderer: FC<Props> = ({
         expirationOption,
         expirationOptions,
         marketplaces,
+        unapprovedMarketplaces,
         localMarketplace,
         syncProfit,
         listingData,
