@@ -13,31 +13,8 @@ export default function (
   const [unapprovedMarketplaces, setUnapprovedMarketplaces] = useState<
     Marketplace[]
   >([])
-  const [marketplaceNames, setMarketplaceNames] = useState<string[]>([])
   const client = useReservoirClient()
   const { data: signer } = useSigner()
-
-  useEffect(() => {
-    const names = marketplaces.reduce((names, marketplace) => {
-      if (marketplace.name) {
-        names.push(marketplace.name)
-      }
-      return names
-    }, [] as string[])
-
-    const newName = names.some((name) => !marketplaceNames.includes(name))
-
-    if (newName) {
-      setMarketplaceNames(names)
-    } else {
-      const missingName = marketplaceNames.some(
-        (marketplaceName) => !names.includes(marketplaceName)
-      )
-      if (missingName) {
-        setMarketplaceNames(names)
-      }
-    }
-  }, [marketplaces])
 
   useEffect(() => {
     if (
@@ -98,7 +75,7 @@ export default function (
     } else if (unapprovedMarketplaces.length > 0) {
       setUnapprovedMarketplaces([])
     }
-  }, [client, signer, tokenId, collectionId, marketplaceNames])
+  }, [client, signer, tokenId, collectionId, marketplaces.length])
 
   return unapprovedMarketplaces
 }
