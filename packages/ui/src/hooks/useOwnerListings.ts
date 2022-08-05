@@ -1,11 +1,21 @@
 import useListings from './useListings'
 import { useAccount } from 'wagmi'
+import { paths } from '@reservoir0x/reservoir-kit-client'
+import { SWRConfiguration } from 'swr'
 
-export default function () {
+export default function (
+  query?: paths['/tokens/details/v4']['get']['parameters']['query'] | false,
+  swrOptions?: SWRConfiguration
+) {
   const { address } = useAccount()
-  const listings = useListings({
+  let queryOptions = {
     maker: address,
-  })
-
-  return listings
+  }
+  if (query) {
+    queryOptions = {
+      ...queryOptions,
+      ...query,
+    }
+  }
+  return useListings(queryOptions, swrOptions)
 }

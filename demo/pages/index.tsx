@@ -4,11 +4,12 @@ import {
   BuyModal,
   ListModal,
   useReservoirClient,
+  darkTheme,
+  lightTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useSigner } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ThemeSwitcherContext } from './_app'
-import { darkTheme, lightTheme } from '@reservoir0x/reservoir-kit-ui'
 
 const Trigger = ({ children }) => (
   <button
@@ -127,6 +128,7 @@ const Index: NextPage = () => {
         tokenId="91011039799772450558997130593882792704008142764887310139950855526031423180232"
         onGoToToken={() => console.log('Awesome!')}
       />
+
       <select
         onClick={(e) => {
           e.stopPropagation()
