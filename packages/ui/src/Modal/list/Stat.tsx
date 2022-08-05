@@ -1,20 +1,13 @@
-import React, { FC } from 'react'
+import React, { FC, ReactElement } from 'react'
 import { Flex, Text, FormatEth } from '../../primitives'
 
 type StatProps = {
-  label: string
+  label: string | ReactElement
   value: string | number
-  toolTipText?: string
   asEth?: boolean
 }
 
-const Stat: FC<StatProps> = ({
-  label,
-  value,
-  toolTipText,
-  asEth = false,
-  ...props
-}) => (
+const Stat: FC<StatProps> = ({ label, value, asEth = false, ...props }) => (
   <Flex
     align="center"
     className="rk-stat-well"

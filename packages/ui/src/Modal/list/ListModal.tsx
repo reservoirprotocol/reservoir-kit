@@ -13,7 +13,7 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from '../Modal'
-import { ListModalRenderer, ListStep } from './ListModalRenderer'
+import { ListingData, ListModalRenderer, ListStep } from './ListModalRenderer'
 import { ModalSize } from '../Modal'
 import {
   faChevronLeft,
@@ -29,12 +29,20 @@ import { useReservoirClient } from '../../hooks'
 import ListingTransactionProgress from './ListingTransactionProgress'
 import InfoTooltip from './InfoTooltip'
 
+type ListingCallbackData = {
+  listings?: ListingData[]
+  tokenId?: string
+  collectionId?: string
+}
+
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   ethUsdPrice?: number
   onGoToToken?: () => any
-  onComplete?: () => void
+  onListingComplete?: (data: ListingCallbackData) => void
+  onListingError?: (error: Error, data: ListingCallbackData) => void
+  onClose?: () => void
 } & (
     | {
         referrerFeeBps: number
@@ -76,7 +84,9 @@ export function ListModal({
   tokenId,
   collectionId,
   onGoToToken,
-  onComplete,
+  onListingComplete,
+  onListingError,
+  onClose,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
   const [stepTitle, setStepTitle] = useState('')
@@ -151,6 +161,28 @@ export function ListModal({
             setApprovalRequired(false)
           }
         }, [unapprovedMarketplaces, marketplaces])
+
+        useEffect(() => {
+          if (listStep === ListStep.Complete && onListingComplete) {
+            const data: ListingCallbackData = {
+              tokenId: tokenId,
+              collectionId: collectionId,
+              listings: listingData,
+            }
+            onListingComplete(data)
+          }
+        }, [listStep])
+
+        useEffect(() => {
+          if (transactionError && onListingError) {
+            const data: ListingCallbackData = {
+              tokenId: tokenId,
+              collectionId: collectionId,
+              listings: listingData,
+            }
+            onListingError(transactionError, data)
+          }
+        }, [transactionError])
 
         return (
           <Modal
@@ -545,8 +577,8 @@ export function ListModal({
                         <Button
                           onClick={() => {
                             setOpen(false)
-                            if (onComplete) {
-                              onComplete()
+                            if (onClose) {
+                              onClose()
                             }
                           }}
                           css={{ flex: 1 }}
@@ -559,8 +591,8 @@ export function ListModal({
                           color="primary"
                           onClick={() => {
                             onGoToToken()
-                            if (onComplete) {
-                              onComplete()
+                            if (onClose) {
+                              onClose()
                             }
                           }}
                         >
@@ -571,8 +603,8 @@ export function ListModal({
                       <Button
                         onClick={() => {
                           setOpen(false)
-                          if (onComplete) {
-                            onComplete()
+                          if (onClose) {
+                            onClose()
                           }
                         }}
                         style={{ flex: 1 }}

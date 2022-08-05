@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Flex, Box, Popover, Text } from '../../primitives'
+import { Flex, Box } from '../../primitives'
 import Token from './Token'
 import Stat from './Stat'
 import { useTokenDetails, useCollection } from '../../hooks'

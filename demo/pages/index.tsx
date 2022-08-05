@@ -125,6 +125,15 @@ const Index: NextPage = () => {
         collectionId="0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85"
         tokenId="91011039799772450558997130593882792704008142764887310139950855526031423180232"
         onGoToToken={() => console.log('Awesome!')}
+        onListingComplete={(data) => {
+          console.log('Listing Complete', data)
+        }}
+        onListingError={(error, data) => {
+          console.log('Transaction Error', error, data)
+        }}
+        onClose={() => {
+          console.log('ListModal Closed')
+        }}
       />
       <select
         onClick={(e) => {
