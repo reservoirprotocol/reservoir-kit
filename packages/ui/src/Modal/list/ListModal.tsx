@@ -27,6 +27,7 @@ import TokenListingDetails from './TokenListingDetails'
 import ProgressBar from './ProgressBar'
 import { useReservoirClient } from '../../hooks'
 import ListingTransactionProgress from './ListingTransactionProgress'
+import InfoTooltip from './InfoTooltip'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -188,9 +189,19 @@ export function ListModal({
                           }}
                         />
                       </Box>
-                      <Text style="body3" css={{ flex: 1 }}>
-                        {localMarketplace?.name}
-                      </Text>
+                      <Box css={{ mr: '$2', flex: 1 }}>
+                        <Text style="body3">{localMarketplace?.name}</Text>
+                        <Text style="body3" color="subtle" as="p">
+                          on reservoir{' '}
+                          <InfoTooltip
+                            side="bottom"
+                            width={200}
+                            content={
+                              'Listings made on this marketplace will be distributed across the reservoir ecosystem'
+                            }
+                          />
+                        </Text>
+                      </Box>
                       <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
                         Marketplace fee: {(localMarketplace?.feeBps || 0) * 100}
                         %
@@ -285,9 +296,23 @@ export function ListModal({
                       <Text style="subtitle2" color="subtle" as="p">
                         List Price
                       </Text>
-                      <Text style="subtitle2" color="subtle" as="p">
-                        You Get
-                      </Text>
+                      <Flex align="center">
+                        <Text
+                          style="subtitle2"
+                          color="subtle"
+                          as="p"
+                          css={{ mr: '$2' }}
+                        >
+                          You Get
+                        </Text>
+                        <InfoTooltip
+                          side="left"
+                          width={200}
+                          content={
+                            'How much Eth you will receive after marketplace fees and creator royalties are subtracted.'
+                          }
+                        />
+                      </Flex>
                     </Flex>
 
                     {marketplaces

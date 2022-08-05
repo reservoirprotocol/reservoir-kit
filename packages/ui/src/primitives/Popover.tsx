@@ -14,16 +14,22 @@ const Content = styled(Popover.Content, {
   zIndex: 1000,
 })
 
-const RKPopover = ({ children, content }: any) => {
+const RKPopover = ({
+  children,
+  content,
+  side = 'bottom',
+  width = '100%',
+}: any) => {
   return (
     <Popover.Root>
       <Popover.Trigger>{children}</Popover.Trigger>
-      <Content>
+      <Content side={side}>
         <Arrow />
         <Box
           css={{
             p: '$3',
             maxWidth: 320,
+            width: width,
             borderRadius: 8,
             backgroundColor: '$neutralBgActive',
           }}

@@ -35,7 +35,7 @@ const MarketplacePriceInput = ({
         />
       </Box>
       <Flex align="center">
-        <EthLogo width={10} />
+        <EthLogo width={20} />
         <Text style="body1" color="subtle" css={{ ml: '$1', mr: '$4' }} as="p">
           ETH
         </Text>
