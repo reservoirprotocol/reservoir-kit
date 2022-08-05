@@ -9,7 +9,6 @@ import {
   Switch,
   Loader,
   Select,
-  Popover,
 } from '../../primitives'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -20,7 +19,6 @@ import {
   faChevronLeft,
   faCheckCircle,
   faCircleExclamation,
-  faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons'
 import TokenStats from './TokenStats'
 import MarketplaceToggle from './MarketplaceToggle'
@@ -29,6 +27,7 @@ import TokenListingDetails from './TokenListingDetails'
 import ProgressBar from './ProgressBar'
 import { useReservoirClient } from '../../hooks'
 import ListingTransactionProgress from './ListingTransactionProgress'
+import InfoTooltip from './InfoTooltip'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -194,20 +193,13 @@ export function ListModal({
                         <Text style="body3">{localMarketplace?.name}</Text>
                         <Text style="body3" color="subtle" as="p">
                           on reservoir{' '}
-                          <Popover
+                          <InfoTooltip
                             side="bottom"
                             width={200}
                             content={
-                              <Text style={'body2'} as="p">
-                                Listings made on this marketplace will be
-                                distributed across the reservoir ecosystem
-                              </Text>
+                              'Listings made on this marketplace will be distributed across the reservoir ecosystem'
                             }
-                          >
-                            <Box css={{ color: '$neutralText' }}>
-                              <FontAwesomeIcon icon={faInfoCircle} />
-                            </Box>
-                          </Popover>
+                          />
                         </Text>
                       </Box>
                       <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
@@ -313,20 +305,13 @@ export function ListModal({
                         >
                           You Get
                         </Text>
-                        <Popover
+                        <InfoTooltip
                           side="left"
                           width={200}
                           content={
-                            <Text style={'body2'} as="p">
-                              How much Eth you will receive after marketplace
-                              fees and creator royalties are subtracted.
-                            </Text>
+                            'How much Eth you will receive after marketplace fees and creator royalties are subtracted.'
                           }
-                        >
-                          <Box css={{ color: '$neutralText' }}>
-                            <FontAwesomeIcon icon={faInfoCircle} />
-                          </Box>
-                        </Popover>
+                        />
                       </Flex>
                     </Flex>
 
