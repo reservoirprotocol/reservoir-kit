@@ -1,11 +1,4 @@
-import React, {
-  FC,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  ReactNode,
-} from 'react'
+import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
   useCollection,
   useTokenDetails,
@@ -80,22 +73,16 @@ export const BuyModalRenderer: FC<Props> = ({
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
 
-  const tokenQuery = useMemo(
-    () => ({
+  const { tokens } = useTokenDetails(
+    open && {
       tokens: [`${collectionId}:${tokenId}`],
-    }),
-    [collectionId, tokenId]
+    }
   )
-
-  const collectionQuery = useMemo(
-    () => ({
+  const { collection } = useCollection(
+    open && {
       id: collectionId,
-    }),
-    [collectionId]
+    }
   )
-
-  const { tokens } = useTokenDetails(open && tokenQuery)
-  const { collection } = useCollection(open && collectionQuery)
   let token = !!tokens?.length && tokens[0]
 
   const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)

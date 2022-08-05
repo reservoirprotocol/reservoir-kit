@@ -155,22 +155,12 @@ export const ListModalRenderer: FC<Props> = ({
     expirationOptions[0]
   )
 
-  const tokenQuery = useMemo(
-    () => ({
-      tokens: [`${collectionId}:${tokenId}`],
-    }),
-    [collectionId, tokenId]
-  )
-
-  const collectionQuery = useMemo(
-    () => ({
-      id: collectionId,
-    }),
-    [collectionId]
-  )
-
-  const { tokens } = useTokenDetails(open && tokenQuery)
-  const { collection } = useCollection(open && collectionQuery)
+  const { tokens } = useTokenDetails(open && {
+    tokens: [`${collectionId}:${tokenId}`],
+  })
+  const { collection } = useCollection(open && {
+    id: collectionId,
+  })
 
   let token = !!tokens?.length && tokens[0]
 
