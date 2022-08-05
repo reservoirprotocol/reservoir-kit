@@ -67,6 +67,7 @@ const Index: NextPage = () => {
   const { setTheme } = useContext(ThemeSwitcherContext)
   const client = useReservoirClient()
   const { data: signer } = useSigner()
+
   return (
     <div
       style={{

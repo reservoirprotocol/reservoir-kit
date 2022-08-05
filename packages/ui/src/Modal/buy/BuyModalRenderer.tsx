@@ -33,10 +33,8 @@ export enum BuyStep {
 type ChildrenProps = {
   token:
     | false
-    | NonNullable<
-        NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
-      >['0']
-  collection: ReturnType<typeof useCollection>
+    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['tokens']>[0]
+  collection: ReturnType<typeof useCollection>['collection']
   totalPrice: number
   referrerFee: number
   buyStep: BuyStep
@@ -96,9 +94,9 @@ export const BuyModalRenderer: FC<Props> = ({
     [collectionId]
   )
 
-  const tokenDetails = useTokenDetails(open && tokenQuery)
-  const collection = useCollection(open && collectionQuery)
-  let token = !!tokenDetails?.tokens?.length && tokenDetails?.tokens[0]
+  const { tokens } = useTokenDetails(open && tokenQuery)
+  const { collection } = useCollection(open && collectionQuery)
+  let token = !!tokens?.length && tokens[0]
 
   const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
   const feeUsd = referrerFee * (ethUsdPrice || 0)
@@ -213,7 +211,7 @@ export const BuyModalRenderer: FC<Props> = ({
         setTotalPrice(0)
       }
     }
-  }, [tokenDetails, referrerFeeBps])
+  }, [token, referrerFeeBps])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({

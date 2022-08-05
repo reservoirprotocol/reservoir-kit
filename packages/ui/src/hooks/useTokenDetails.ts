@@ -1,35 +1,29 @@
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useReservoirClient from './useReservoirClient'
-import { useEffect, useState } from 'react'
+import useSWR, { SWRConfiguration } from 'swr'
 
 type TokenDetailsResponse =
   paths['/tokens/details/v4']['get']['responses']['200']['schema']
 
 export default function (
-  query?: paths['/tokens/details/v4']['get']['parameters']['query'] | false
+  query?: paths['/tokens/details/v4']['get']['parameters']['query'] | false,
+  swrOptions: SWRConfiguration = {}
 ) {
-  const [resp, setResp] = useState<TokenDetailsResponse | null>(null)
   const client = useReservoirClient()
 
-  useEffect(() => {
-    if (query) {
-      const options: RequestInit | undefined = {}
-      if (client?.apiKey) {
-        options.headers = {
-          'x-api-key': client.apiKey,
-        }
-      }
+  const path = new URL(`${client?.apiBase}/tokens/details/v4`)
+  setParams(path, query || {})
 
-      const path = new URL(`${client?.apiBase}/tokens/details/v4`)
-      setParams(path, query)
-      fetch(path, options)
-        .then((response) => response.json())
-        .then((data) => setResp(data))
-        .catch((err) => {
-          console.error(err.message)
-        })
+  const { data, mutate, error, isValidating } = useSWR<TokenDetailsResponse>(
+    query ? [path.href, client?.apiKey] : null,
+    null,
+    {
+      revalidateOnMount: true,
+      ...swrOptions,
     }
-  }, [query])
+  )
 
-  return resp
+  const tokens = data && data?.tokens ? data.tokens : null
+
+  return { data, tokens, mutate, error, isValidating }
 }

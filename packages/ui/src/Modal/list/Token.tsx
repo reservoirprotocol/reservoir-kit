@@ -16,7 +16,7 @@ type Props = {
   token?: NonNullable<
     NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
   >['0']
-  collection: ReturnType<typeof useCollection>
+  collection: ReturnType<typeof useCollection>['collection']
 }
 
 const Token: FC<Props> = ({ token, collection }) => {

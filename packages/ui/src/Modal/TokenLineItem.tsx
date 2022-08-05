@@ -7,28 +7,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useCollection, useTokenDetails } from '../hooks'
 
 type TokenLineItemProps = {
-  token: NonNullable<
+  tokenDetails: NonNullable<
     NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
-  >['0']
-  collection: ReturnType<typeof useCollection>
+  >[0]
+  collection: ReturnType<typeof useCollection>['collection']
   usdConversion?: number
   isSuspicious?: Boolean
   isUnavailable?: boolean
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
-  token,
+  tokenDetails,
   collection,
   usdConversion = 0,
   isSuspicious,
   isUnavailable,
 }) => {
-  const tokenDetails = token.token
-  const marketData = token.market
-  let price: number = token.market?.floorAsk?.price || 0
+  const marketData = tokenDetails?.market
+  let price: number = marketData?.floorAsk?.price || 0
 
-  if (!price && token.token?.lastSell?.value) {
-    price = token.token.lastSell.value
+  if (!price && tokenDetails?.token?.lastSell?.value) {
+    price = tokenDetails?.token.lastSell.value
   }
   const usdPrice = price * usdConversion
 
@@ -36,11 +35,12 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
     return null
   }
 
-  const name = tokenDetails?.name || `#${tokenDetails.tokenId}`
-  const collectionName = tokenDetails.collection?.name || collection?.name || ''
+  const name = tokenDetails?.token?.name || `#${tokenDetails?.token?.tokenId}`
+  const collectionName =
+    tokenDetails?.token?.collection?.name || collection?.name || ''
 
-  const img = tokenDetails.image
-    ? tokenDetails.image
+  const img = tokenDetails?.token?.image
+    ? tokenDetails.token.image
     : (collection?.metadata?.imageUrl as string)
   const srcImg = marketData?.floorAsk?.source
     ? (marketData?.floorAsk?.source['icon'] as string)
