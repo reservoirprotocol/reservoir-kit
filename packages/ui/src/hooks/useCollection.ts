@@ -18,8 +18,8 @@ export default function (
     query ? [path.href, client?.apiKey] : null,
     null,
     {
-      revalidateOnMount: true,
       ...swrOptions,
+      revalidateOnMount: true,
     }
   )
   const collection: CollectionResponse['collection'] | null =

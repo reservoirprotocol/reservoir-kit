@@ -7202,6 +7202,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-intersection-observer@npm:^9.4.0":
+  version: 9.4.0
+  resolution: "react-intersection-observer@npm:9.4.0"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
+  checksum: 6b9caff424c27ffac81bd7275f0d97512366d24434ebe15718f5e106e7198448a7027b1586ecbbb3eff81ac1348362320b7f740ac3d6cd505d62222fd251d718
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -7386,6 +7395,7 @@ __metadata:
     next-themes: ^0.2.0
     react: ^18.0.0
     react-dom: ^18.0.0
+    react-intersection-observer: ^9.4.0
     typescript: ^4.7.4
     wagmi: ^0.5.8
   languageName: unknown
