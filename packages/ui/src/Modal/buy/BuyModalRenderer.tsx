@@ -1,11 +1,4 @@
-import React, {
-  FC,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  ReactNode,
-} from 'react'
+import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
   useCollection,
   useTokenDetails,
@@ -33,10 +26,8 @@ export enum BuyStep {
 type ChildrenProps = {
   token:
     | false
-    | NonNullable<
-        NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
-      >['0']
-  collection: ReturnType<typeof useCollection>
+    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
+  collection: ReturnType<typeof useCollection>['data']
   totalPrice: number
   referrerFee: number
   buyStep: BuyStep
@@ -82,23 +73,17 @@ export const BuyModalRenderer: FC<Props> = ({
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
 
-  const tokenQuery = useMemo(
-    () => ({
+  const { data: tokens } = useTokenDetails(
+    open && {
       tokens: [`${collectionId}:${tokenId}`],
-    }),
-    [collectionId, tokenId]
+    }
   )
-
-  const collectionQuery = useMemo(
-    () => ({
+  const { data: collection } = useCollection(
+    open && {
       id: collectionId,
-    }),
-    [collectionId]
+    }
   )
-
-  const tokenDetails = useTokenDetails(open && tokenQuery)
-  const collection = useCollection(open && collectionQuery)
-  let token = !!tokenDetails?.tokens?.length && tokenDetails?.tokens[0]
+  let token = !!tokens?.length && tokens[0]
 
   const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
   const feeUsd = referrerFee * (ethUsdPrice || 0)
@@ -108,15 +93,21 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const buyToken = useCallback(() => {
     if (!signer) {
-      throw 'Missing a signer'
+      const error = new Error('Missing a signer')
+      setTransactionError(error)
+      throw error
     }
 
     if (!tokenId || !collectionId) {
-      throw 'Missing tokenId or collectionId'
+      const error = new Error('Missing tokenId or collectionId')
+      setTransactionError(error)
+      throw error
     }
 
     if (!client) {
-      throw 'ReservoirClient was not initialized'
+      const error = new Error('ReservoirClient was not initialized')
+      setTransactionError(error)
+      throw error
     }
 
     const options: Parameters<
@@ -145,16 +136,31 @@ export const BuyModalRenderer: FC<Props> = ({
             return
           }
 
-          const currentStep = steps.find((step) => step.status === 'incomplete')
+          let currentStepItem:
+            | NonNullable<Execute['steps'][0]['items']>[0]
+            | undefined
+          steps.find((step) => {
+            currentStepItem = step.items?.find(
+              (item) => item.status === 'incomplete'
+            )
+            return currentStepItem
+          })
 
-          if (currentStep) {
-            if (currentStep.txHash) {
-              setTxHash(currentStep.txHash)
+          if (currentStepItem) {
+            if (currentStepItem.txHash) {
+              setTxHash(currentStepItem.txHash)
               setBuyStep(BuyStep.Finalizing)
             } else {
               setBuyStep(BuyStep.Confirming)
             }
-          } else if (steps.every((step) => step.status === 'complete')) {
+          } else if (
+            steps.every(
+              (step) =>
+                !step.items ||
+                step.items.length == 0 ||
+                step.items?.every((item) => item.status === 'complete')
+            )
+          ) {
             setBuyStep(BuyStep.Complete)
           }
         },
@@ -192,7 +198,7 @@ export const BuyModalRenderer: FC<Props> = ({
         setTotalPrice(0)
       }
     }
-  }, [tokenDetails, referrerFeeBps])
+  }, [token, referrerFeeBps])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({

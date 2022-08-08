@@ -13,6 +13,7 @@ import {
   Loader,
 } from '../../primitives'
 
+// @ts-ignore
 import addFundsImage from 'url:../../../assets/transferFunds.svg'
 import { Progress } from './Progress'
 import Popover from '../../primitives/Popover'
@@ -150,7 +151,7 @@ export function BuyModal({
             {buyStep === BuyStep.Unavailable && token && (
               <Flex direction="column">
                 <TokenLineItem
-                  token={token}
+                  tokenDetails={token}
                   collection={collection}
                   isSuspicious={isBanned}
                   usdConversion={ethUsdPrice || 0}
@@ -190,7 +191,7 @@ export function BuyModal({
                   </Flex>
                 )}
                 <TokenLineItem
-                  token={token}
+                  tokenDetails={token}
                   collection={collection}
                   usdConversion={ethUsdPrice || 0}
                   isSuspicious={isBanned}
@@ -269,7 +270,7 @@ export function BuyModal({
               token && (
                 <Flex direction="column">
                   <TokenLineItem
-                    token={token}
+                    tokenDetails={token}
                     collection={collection}
                     usdConversion={ethUsdPrice || 0}
                     isSuspicious={isBanned}
@@ -305,7 +306,11 @@ export function BuyModal({
                     src={token?.token?.image}
                     style={{ width: 100, height: 100 }}
                   />
-                  <Flex css={{ mb: 24, mt: '$2' }} align="center">
+                  <Flex
+                    css={{ mb: 24, mt: '$2' }}
+                    align="center"
+                    justify="center"
+                  >
                     {!!token.token?.collection?.image && (
                       <Box css={{ mr: '$1' }}>
                         <img
@@ -315,7 +320,11 @@ export function BuyModal({
                       </Box>
                     )}
 
-                    <Text style="subtitle2">{`#${token?.token?.tokenId}`}</Text>
+                    <Text
+                      style="subtitle2"
+                      css={{ maxWidth: '85%' }}
+                      ellipsify
+                    >{`#${token?.token?.tokenId}`}</Text>
                   </Flex>
 
                   <Flex css={{ mb: '$2' }} align="center">
@@ -336,7 +345,16 @@ export function BuyModal({
                     View on Etherscan
                   </Anchor>
                 </Flex>
-                <Flex css={{ p: '$4' }}>
+                <Flex
+                  css={{
+                    p: '$4',
+                    flexDirection: 'column',
+                    gap: '$3',
+                    '@bp1': {
+                      flexDirection: 'row',
+                    },
+                  }}
+                >
                   {!!onGoToToken ? (
                     <>
                       <Button
@@ -346,7 +364,7 @@ export function BuyModal({
                             onClose()
                           }
                         }}
-                        css={{ mr: '$3', flex: 1 }}
+                        css={{ flex: 1 }}
                         color="ghost"
                       >
                         Close

@@ -28,7 +28,10 @@ const wagmiClient = createClient({
   provider,
 })
 
-export const ThemeSwitcherContext = React.createContext(defaultTheme())
+export const ThemeSwitcherContext = React.createContext({
+  theme: defaultTheme(),
+  setTheme: null,
+})
 
 const ThemeSwitcher = ({ children }) => {
   const [theme, setTheme] = useState(defaultTheme())
@@ -47,7 +50,7 @@ const AppWrapper = ({ children }) => {
     <ReservoirKitProvider
       options={{
         apiBase: 'https://api-rinkeby.reservoir.tools',
-        apiKey: 'reservoir-kit-demo',
+        apiKey: 'reservoir-kit-demo'
       }}
       theme={theme}
     >

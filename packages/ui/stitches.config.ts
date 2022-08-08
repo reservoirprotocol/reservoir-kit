@@ -87,18 +87,6 @@ export const { createTheme, keyframes, styled, globalCss, getCssText, theme } =
         width: value,
         height: value,
       }),
-
-      // GRID
-      colSpan: (value: number | 'full') => {
-        if (value === 'full') {
-          return {
-            gridColumn: '1 / -1',
-          }
-        }
-        return {
-          gridColumn: `span ${value} / span ${value}`,
-        }
-      },
     },
     media: {
       bp1: '(min-width: 600px)',

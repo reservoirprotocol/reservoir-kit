@@ -1,10 +1,10 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
-import { executeSteps, setParams } from '../utils'
+import { executeSteps } from '../utils'
 import { getClient } from '.'
 
 type CancelOrderPathParameters =
-  paths['/execute/cancel/v1']['get']['parameters']['query']
+  paths['/execute/cancel/v2']['get']['parameters']['query']
 
 export type CancelOrderOptions = Omit<CancelOrderPathParameters, 'maker' | 'id'>
 
@@ -33,12 +33,16 @@ export async function cancelOrder(data: Data) {
   }
 
   try {
-    // Construct a URL object for the `/execute/cancel/v1` endpoint
-    const url = new URL(`${client.apiBase}/execute/cancel/v1`)
-    const query: CancelOrderPathParameters = { id, maker, ...options }
-    setParams(url, query)
+    const params: CancelOrderPathParameters = { id, maker, ...options }
 
-    await executeSteps(url, signer, onProgress)
+    await executeSteps(
+      {
+        url: `${client.apiBase}/execute/cancel/v2`,
+        params: params,
+      },
+      signer,
+      onProgress
+    )
     return true
   } catch (err: any) {
     console.error(err)

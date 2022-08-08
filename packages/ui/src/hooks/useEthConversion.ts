@@ -1,22 +1,18 @@
-import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 
 export default function (symbol?: string) {
-  const [marketPrice, setMarketPrice] = useState<number | null>()
-
-  useEffect(() => {
-    if (symbol) {
-      fetch(
-        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${symbol}&ids=ethereum`
-      )
-        .then((response) => response.json())
-        .then((resp) => {
-          setMarketPrice(resp[0].current_price)
-        })
-        .catch((err) => {
-          console.error(err.message)
-        })
+  const { data } = useSWR(
+    symbol
+      ? `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${symbol}&ids=ethereum`
+      : null,
+    null,
+    {
+      refreshInterval: 60 * 1000 * 5, //5m Interval
     }
-  }, [symbol])
+  )
 
-  return marketPrice
+  if (data && data[0] && data[0].current_price) {
+    return data[0].current_price
+  }
+  return null
 }

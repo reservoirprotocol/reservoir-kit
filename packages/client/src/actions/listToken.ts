@@ -1,39 +1,33 @@
 import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
-import { executeSteps, setParams } from '../utils'
 import { getClient } from '.'
+import { executeSteps } from '../utils/executeSteps'
+import axios, { AxiosRequestConfig } from 'axios'
 
-type ListTokenPathParameters =
-  paths['/execute/list/v2']['get']['parameters']['query']
-
-export type ListTokenOptions = Omit<
-  paths['/execute/list/v2']['get']['parameters']['query'],
-  'token' | 'maker' | 'weiPrice' | 'expirationTime'
+type ListTokenBody = NonNullable<
+  paths['/execute/list/v3']['post']['parameters']['body']['body']
 >
 
 type Data = {
-  token: ListTokenPathParameters['token']
-  weiPrice: ListTokenPathParameters['weiPrice']
-  expirationTime: ListTokenPathParameters['expirationTime']
+  listings: Required<ListTokenBody>['params']
   signer: Signer
-  options?: ListTokenOptions
-  onProgress: (steps: Execute['steps']) => any
+  onProgress?: (steps: Execute['steps']) => any
+  precheck?: boolean
 }
 
 /**
  * List a token for sale
- * @param data.token Token to list
- * @param data.weiPrice Price in wei to list the token as
- * @param data.expirationTime Unix time to expire the listing
+ * @param data.listings Listings data to be processed
  * @param data.signer Ethereum signer object provided by the browser
- * @param data.options Additional options to pass into the list request
- * @param data.onProgress Callback to update UI state has execution progresses
+ * @param data.onProgress Callback to update UI state as execution progresses
+ * @param data.precheck Set to true to skip executing steps and just to get the initial steps required
  */
 
-export async function listToken(data: Data) {
-  const { token, weiPrice, expirationTime, signer, onProgress } = data
+export async function listToken(
+  data: Data
+): Promise<Execute['steps'] | boolean> {
+  const { listings, signer, onProgress = () => {}, precheck } = data
   const client = getClient()
-  const options = data.options || {}
   const maker = await signer.getAddress()
 
   if (!client.apiBase) {
@@ -41,33 +35,55 @@ export async function listToken(data: Data) {
   }
 
   try {
-    // Construct a URL object for the `/execute/list/v2` endpoint
-    const url = new URL(`${client.apiBase}/execute/list/v2`)
-    const query: ListTokenPathParameters = {
-      ...options,
-      token,
-      weiPrice,
-      expirationTime,
+    const data: ListTokenBody = {
       maker,
+      source: client.source || '',
     }
 
-    if (
-      client.fee &&
-      client.feeRecipient &&
-      !options.fee &&
-      !options.feeRecipient
-    ) {
-      query.fee = client.fee
-      query.feeRecipient = client.feeRecipient
+    listings.forEach((listing) => {
+      if (
+        listing.orderbook === 'reservoir' &&
+        client.fee &&
+        client.feeRecipient &&
+        !('fee' in listing) &&
+        !('feeRecipient' in listing)
+      ) {
+        listing.fee = client.fee
+        listing.feeRecipient = client.feeRecipient
+      }
+
+      if (
+        !('automatedRoyalties' in listing) &&
+        'automatedRoyalties' in client
+      ) {
+        listing.automatedRoyalties = client.automatedRoyalties
+      }
+    })
+
+    data.params = listings
+
+    const request: AxiosRequestConfig = {
+      url: `${client.apiBase}/execute/list/v3`,
+      method: 'post',
+      data,
     }
 
-    if (client.automatedRoyalties && !options.automatedRoyalties) {
-      query.automatedRoyalties = client.automatedRoyalties
+    if (precheck) {
+      if (client && client.apiKey) {
+        request.headers = {
+          'x-api-key': client.apiKey,
+        }
+      }
+
+      const res = await axios.request(request)
+      if (res.status !== 200) throw res.data
+      const data = res.data as Execute
+      onProgress(data['steps'])
+      return data['steps']
+    } else {
+      await executeSteps(request, signer, onProgress)
     }
 
-    setParams(url, query)
-
-    await executeSteps(url, signer, onProgress)
     return true
   } catch (err: any) {
     console.error(err)

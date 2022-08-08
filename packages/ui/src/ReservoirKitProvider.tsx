@@ -5,10 +5,12 @@ import React, {
   useEffect,
   useState,
   useRef,
+  ComponentPropsWithoutRef,
 } from 'react'
 import { ReservoirClientOptions } from '@reservoir0x/reservoir-kit-client'
 import { ReservoirKitTheme, darkTheme } from './themes'
 import { ReservoirClientProvider } from './ReservoirClientProvider'
+import { SWRConfig } from 'swr'
 
 type ReservoirKitProviderOptions = {
   disablePoweredByReservoir?: boolean
@@ -17,9 +19,11 @@ export interface ReservoirKitProviderProps {
   children: ReactNode
   options?: ReservoirClientOptions & ReservoirKitProviderOptions
   theme?: ReservoirKitTheme
+  swrOptions?: ComponentPropsWithoutRef<typeof SWRConfig>['value']
 }
 
 import { createTheme, ReservoirKitThemeContext } from '../stitches.config'
+import { swrDefaultOptions } from './lib/swr'
 
 export const ThemeContext = createContext<undefined | ReservoirKitThemeContext>(
   undefined
@@ -36,6 +40,7 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   children,
   options = defaultOptions,
   theme,
+  swrOptions = {},
 }: ReservoirKitProviderProps) {
   const [globalTheme, setGlobalTheme] = useState<
     undefined | ReservoirKitThemeContext
@@ -66,7 +71,9 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
     <ThemeContext.Provider value={globalTheme}>
       <ProviderOptionsContext.Provider value={providerOptions}>
         <ReservoirClientProvider options={options}>
-          {children}
+          <SWRConfig value={{ ...swrDefaultOptions, ...swrOptions }}>
+            {children}
+          </SWRConfig>
         </ReservoirClientProvider>
       </ProviderOptionsContext.Provider>
     </ThemeContext.Provider>

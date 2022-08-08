@@ -9,6 +9,7 @@ import React, {
   useEffect,
 } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { ModalSize } from '../modal/Modal'
 import { useMediaQuery } from '../hooks'
 
 const Overlay = styled(DialogPrimitive.Overlay, {
@@ -112,11 +113,14 @@ const AnimatedContent = forwardRef<
   )
 })
 
+const StyledAnimatedContent = styled(AnimatedContent, {})
+
 type Props = {
   trigger: ReactNode
   portalProps?: DialogPrimitive.PortalProps
   onOpenChange?: (open: boolean) => void
   open?: boolean
+  size?: ModalSize
 }
 
 const Dialog = forwardRef<
@@ -124,7 +128,7 @@ const Dialog = forwardRef<
   ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & Props
 >(
   (
-    { children, trigger, portalProps, onOpenChange, open, ...props },
+    { children, trigger, portalProps, onOpenChange, open, size, ...props },
     forwardedRef
   ) => {
     const [dialogOpen, setDialogOpen] = useState(false)
@@ -155,9 +159,16 @@ const Dialog = forwardRef<
           {dialogOpen && (
             <DialogPrimitive.DialogPortal forceMount {...portalProps}>
               <AnimatedOverlay />
-              <AnimatedContent ref={forwardedRef} {...props} forceMount>
+              <StyledAnimatedContent
+                ref={forwardedRef}
+                {...props}
+                forceMount
+                css={{
+                  maxWidth: size === ModalSize.MD ? 516 : 750,
+                }}
+              >
                 {children}
-              </AnimatedContent>
+              </StyledAnimatedContent>
             </DialogPrimitive.DialogPortal>
           )}
         </AnimatePresence>

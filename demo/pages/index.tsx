@@ -1,11 +1,17 @@
-import { useContext } from 'react'
+import { Children, useContext } from 'react'
 import { NextPage } from 'next'
-import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
+import {
+  BuyModal,
+  ListModal,
+  useReservoirClient,
+  darkTheme,
+  lightTheme,
+} from '@reservoir0x/reservoir-kit-ui'
+import { useSigner } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ThemeSwitcherContext } from './_app'
-import { darkTheme, lightTheme } from '@reservoir0x/reservoir-kit-ui'
 
-const Trigger = () => (
+const Trigger = ({ children }) => (
   <button
     style={{
       padding: 24,
@@ -17,7 +23,7 @@ const Trigger = () => (
       fontWeight: 800,
     }}
   >
-    Buy Token
+    {children}
   </button>
 )
 
@@ -60,6 +66,8 @@ const getThemeFromOption = (option: string) => {
 
 const Index: NextPage = () => {
   const { setTheme } = useContext(ThemeSwitcherContext)
+  const client = useReservoirClient()
+  const { data: signer } = useSigner()
 
   return (
     <div
@@ -85,7 +93,7 @@ const Index: NextPage = () => {
               width: '100%',
             }}
           >
-            <Trigger />
+            <Trigger>Buy Now</Trigger>
           </div>
         }
         collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
@@ -101,6 +109,35 @@ const Index: NextPage = () => {
           console.log('BuyModal Closed')
         }}
       />
+
+      <ListModal
+        trigger={
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flex: 1,
+              width: '100%',
+            }}
+          >
+            <Trigger>List Item</Trigger>
+          </div>
+        }
+        collectionId="0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85"
+        tokenId="91011039799772450558997130593882792704008142764887310139950855526031423180232"
+        onGoToToken={() => console.log('Awesome!')}
+        onListingComplete={(data) => {
+          console.log('Listing Complete', data)
+        }}
+        onListingError={(error, data) => {
+          console.log('Transaction Error', error, data)
+        }}
+        onClose={() => {
+          console.log('ListModal Closed')
+        }}
+      />
+
       <select
         onClick={(e) => {
           e.stopPropagation()
