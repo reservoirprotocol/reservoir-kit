@@ -34,7 +34,7 @@
     "@radix-ui/react-select": "^1.0.0",
     "@radix-ui/react-switch": "^0.1.5",
     "@rainbow-me/rainbowkit": "^0.4.1",
-    "@reservoir0x/reservoir-kit-client": "/Users/pedrocunha/Desktop/unevenlabs/reservoir-kit/packages/client",
+    "@reservoir0x/reservoir-kit-client": "workspace:*",
     "@stitches/react": "^1.2.8",
     "dayjs": "^1.11.4",
     "framer-motion": "^6.4.2",
