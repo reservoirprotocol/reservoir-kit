@@ -36,7 +36,7 @@ export const EthLogo = ({ width }: EthLogoProps) => {
 const FormatEth: FC<Props> = ({
   amount,
   maximumFractionDigits,
-  logoWidth = 12,
+  logoWidth = 14,
   textStyle,
   css,
   textColor,

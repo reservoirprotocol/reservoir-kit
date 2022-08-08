@@ -2,6 +2,7 @@ import { useTokenDetails, useCollection } from '../../hooks'
 import React, { FC } from 'react'
 import { styled } from '../../../stitches.config'
 import { Box, Text } from '../../primitives'
+import optimizeImage from '../../lib/optimizeImage'
 
 const Img = styled('img', {
   width: '100%',
@@ -20,9 +21,12 @@ type Props = {
 }
 
 const Token: FC<Props> = ({ token, collection }) => {
-  const img = token?.token?.image
-    ? token.token.image
-    : (collection?.metadata?.imageUrl as string)
+  const img = optimizeImage(
+    token?.token?.image
+      ? token.token.image
+      : (collection?.metadata?.imageUrl as string),
+    600
+  )
   return (
     <Box
       css={{

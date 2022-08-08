@@ -13,7 +13,7 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from '../Modal'
-import { ListModalRenderer, ListStep } from './ListModalRenderer'
+import { ListingData, ListModalRenderer, ListStep } from './ListModalRenderer'
 import { ModalSize } from '../Modal'
 import {
   faChevronLeft,
@@ -27,13 +27,22 @@ import TokenListingDetails from './TokenListingDetails'
 import ProgressBar from './ProgressBar'
 import { useReservoirClient } from '../../hooks'
 import ListingTransactionProgress from './ListingTransactionProgress'
+import InfoTooltip from './InfoTooltip'
+
+type ListingCallbackData = {
+  listings?: ListingData[]
+  tokenId?: string
+  collectionId?: string
+}
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   ethUsdPrice?: number
   onGoToToken?: () => any
-  onComplete?: () => void
+  onListingComplete?: (data: ListingCallbackData) => void
+  onListingError?: (error: Error, data: ListingCallbackData) => void
+  onClose?: () => void
 } & (
     | {
         referrerFeeBps: number
@@ -75,7 +84,9 @@ export function ListModal({
   tokenId,
   collectionId,
   onGoToToken,
-  onComplete,
+  onListingComplete,
+  onListingError,
+  onClose,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
   const [stepTitle, setStepTitle] = useState('')
@@ -151,6 +162,28 @@ export function ListModal({
           }
         }, [unapprovedMarketplaces, marketplaces])
 
+        useEffect(() => {
+          if (listStep === ListStep.Complete && onListingComplete) {
+            const data: ListingCallbackData = {
+              tokenId: tokenId,
+              collectionId: collectionId,
+              listings: listingData,
+            }
+            onListingComplete(data)
+          }
+        }, [listStep])
+
+        useEffect(() => {
+          if (transactionError && onListingError) {
+            const data: ListingCallbackData = {
+              tokenId: tokenId,
+              collectionId: collectionId,
+              listings: listingData,
+            }
+            onListingError(transactionError, data)
+          }
+        }, [transactionError])
+
         return (
           <Modal
             trigger={trigger}
@@ -188,9 +221,19 @@ export function ListModal({
                           }}
                         />
                       </Box>
-                      <Text style="body3" css={{ flex: 1 }}>
-                        {localMarketplace?.name}
-                      </Text>
+                      <Box css={{ mr: '$2', flex: 1 }}>
+                        <Text style="body3">{localMarketplace?.name}</Text>
+                        <Text style="body3" color="subtle" as="p">
+                          on reservoir{' '}
+                          <InfoTooltip
+                            side="bottom"
+                            width={200}
+                            content={
+                              'Listings made on this marketplace will be distributed across the reservoir ecosystem'
+                            }
+                          />
+                        </Text>
+                      </Box>
                       <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
                         Marketplace fee: {(localMarketplace?.feeBps || 0) * 100}
                         %
@@ -285,9 +328,23 @@ export function ListModal({
                       <Text style="subtitle2" color="subtle" as="p">
                         List Price
                       </Text>
-                      <Text style="subtitle2" color="subtle" as="p">
-                        You Get
-                      </Text>
+                      <Flex align="center">
+                        <Text
+                          style="subtitle2"
+                          color="subtle"
+                          as="p"
+                          css={{ mr: '$2' }}
+                        >
+                          You Get
+                        </Text>
+                        <InfoTooltip
+                          side="left"
+                          width={200}
+                          content={
+                            'How much Eth you will receive after marketplace fees and creator royalties are subtracted.'
+                          }
+                        />
+                      </Flex>
                     </Flex>
 
                     {marketplaces
@@ -520,8 +577,8 @@ export function ListModal({
                         <Button
                           onClick={() => {
                             setOpen(false)
-                            if (onComplete) {
-                              onComplete()
+                            if (onClose) {
+                              onClose()
                             }
                           }}
                           css={{ flex: 1 }}
@@ -534,8 +591,8 @@ export function ListModal({
                           color="primary"
                           onClick={() => {
                             onGoToToken()
-                            if (onComplete) {
-                              onComplete()
+                            if (onClose) {
+                              onClose()
                             }
                           }}
                         >
@@ -546,8 +603,8 @@ export function ListModal({
                       <Button
                         onClick={() => {
                           setOpen(false)
-                          if (onComplete) {
-                            onComplete()
+                          if (onClose) {
+                            onClose()
                           }
                         }}
                         style={{ flex: 1 }}
