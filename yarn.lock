@@ -2937,7 +2937,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reservoir0x/reservoir-kit-client@workspace:*, @reservoir0x/reservoir-kit-client@workspace:packages/client":
+"@reservoir0x/reservoir-kit-client@file:/Users/pedrocunha/Desktop/unevenlabs/reservoir-kit/packages/client::locator=%40reservoir0x%2Freservoir-kit-ui%40workspace%3Apackages%2Fui":
+  version: 0.0.4
+  resolution: "@reservoir0x/reservoir-kit-client@file:/Users/pedrocunha/Desktop/unevenlabs/reservoir-kit/packages/client#/Users/pedrocunha/Desktop/unevenlabs/reservoir-kit/packages/client::hash=d1f44b&locator=%40reservoir0x%2Freservoir-kit-ui%40workspace%3Apackages%2Fui"
+  dependencies:
+    axios: ^0.27.2
+  peerDependencies:
+    ethers: ^5.6.1
+  checksum: 583594cf84d995c15f41a1ef79f8cad2307d442482b4eec4c525f6538cda790a1152b1e56b3f38284e156435223376becac981c53bb532dd8deac87d3fc2a5ad
+  languageName: node
+  linkType: hard
+
+"@reservoir0x/reservoir-kit-client@workspace:packages/client":
   version: 0.0.0-use.local
   resolution: "@reservoir0x/reservoir-kit-client@workspace:packages/client"
   dependencies:
@@ -2960,7 +2971,7 @@ __metadata:
     "@radix-ui/react-select": ^1.0.0
     "@radix-ui/react-switch": ^0.1.5
     "@rainbow-me/rainbowkit": ^0.4.1
-    "@reservoir0x/reservoir-kit-client": "workspace:*"
+    "@reservoir0x/reservoir-kit-client": /Users/pedrocunha/Desktop/unevenlabs/reservoir-kit/packages/client
     "@stitches/react": ^1.2.8
     dayjs: ^1.11.4
     framer-motion: ^6.4.2
