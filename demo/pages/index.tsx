@@ -4,11 +4,12 @@ import {
   BuyModal,
   ListModal,
   useReservoirClient,
+  darkTheme,
+  lightTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useSigner } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ThemeSwitcherContext } from './_app'
-import { darkTheme, lightTheme } from '@reservoir0x/reservoir-kit-ui'
 
 const Trigger = ({ children }) => (
   <button
@@ -67,6 +68,7 @@ const Index: NextPage = () => {
   const { setTheme } = useContext(ThemeSwitcherContext)
   const client = useReservoirClient()
   const { data: signer } = useSigner()
+
   return (
     <div
       style={{
@@ -135,6 +137,7 @@ const Index: NextPage = () => {
           console.log('ListModal Closed')
         }}
       />
+
       <select
         onClick={(e) => {
           e.stopPropagation()

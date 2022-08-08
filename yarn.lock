@@ -2964,6 +2964,7 @@ __metadata:
     "@stitches/react": ^1.2.8
     dayjs: ^1.11.4
     framer-motion: ^6.4.2
+    swr: ^1.3.0
   peerDependencies:
     ethers: ^5.6.1
     react: ^18.0
@@ -7201,6 +7202,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-intersection-observer@npm:^9.4.0":
+  version: 9.4.0
+  resolution: "react-intersection-observer@npm:9.4.0"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
+  checksum: 6b9caff424c27ffac81bd7275f0d97512366d24434ebe15718f5e106e7198448a7027b1586ecbbb3eff81ac1348362320b7f740ac3d6cd505d62222fd251d718
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -7385,6 +7395,7 @@ __metadata:
     next-themes: ^0.2.0
     react: ^18.0.0
     react-dom: ^18.0.0
+    react-intersection-observer: ^9.4.0
     typescript: ^4.7.4
     wagmi: ^0.5.8
   languageName: unknown
@@ -7939,6 +7950,15 @@ __metadata:
   bin:
     svgo: bin/svgo
   checksum: b92f71a8541468ffd0b81b8cdb36b1e242eea320bf3c1a9b2c8809945853e9d8c80c19744267eb91cabf06ae9d5fff3592d677df85a31be4ed59ff78534fa420
+  languageName: node
+  linkType: hard
+
+"swr@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "swr@npm:1.3.0"
+  peerDependencies:
+    react: ^16.11.0 || ^17.0.0 || ^18.0.0
+  checksum: e7a184f0d560e9c8be85c023cc8e65e56a88a6ed46f9394b301b07f838edca23d2e303685319a4fcd620b81d447a7bcb489c7fa0a752c259f91764903c690cdb
   languageName: node
   linkType: hard
 

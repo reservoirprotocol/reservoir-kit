@@ -1,38 +1,29 @@
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
-import { useEffect, useState } from 'react'
+import useSWR, { SWRConfiguration } from 'swr'
 import useReservoirClient from './useReservoirClient'
 
 type CollectionResponse =
-  paths['/collection/v2']['get']['responses']['200']['schema']['collection']
+  paths['/collection/v2']['get']['responses']['200']['schema']
 
 export default function (
-  query?: paths['/collection/v2']['get']['parameters']['query'] | false
+  query?: paths['/collection/v2']['get']['parameters']['query'] | false,
+  swrOptions: SWRConfiguration = {}
 ) {
-  const [resp, setResp] = useState<CollectionResponse | null>(null)
   const client = useReservoirClient()
 
-  useEffect(() => {
-    if (query) {
-      const path = new URL(`${client?.apiBase}/collection/v2`)
-      setParams(path, query)
+  const path = new URL(`${client?.apiBase}/collection/v2`)
+  setParams(path, query || {})
 
-      const options: RequestInit | undefined = {}
-      if (client?.apiKey) {
-        options.headers = {
-          'x-api-key': client.apiKey,
-        }
-      }
-
-      fetch(path, options)
-        .then((response) => response.json())
-        .then((data) =>
-          setResp(data && data.collection ? data.collection : null)
-        )
-        .catch((err) => {
-          console.error(err.message)
-        })
+  const { data, mutate, error, isValidating } = useSWR<CollectionResponse>(
+    query ? [path.href, client?.apiKey] : null,
+    null,
+    {
+      ...swrOptions,
+      revalidateOnMount: true,
     }
-  }, [query])
+  )
+  const collection: CollectionResponse['collection'] | null =
+    data && data.collection ? data.collection : null
 
-  return resp
+  return { response: data, data: collection, mutate, error, isValidating }
 }

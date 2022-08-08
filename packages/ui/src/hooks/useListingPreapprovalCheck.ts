@@ -42,7 +42,7 @@ export default function (
           signer,
           precheck: true,
         })
-        .then((data) => {
+        .then((data: any) => {
           const steps = data as Execute['steps']
           const approvalStep = steps.find(
             (step) =>

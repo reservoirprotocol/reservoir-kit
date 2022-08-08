@@ -15,9 +15,9 @@ const Img = styled('img', {
 
 type Props = {
   token?: NonNullable<
-    NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
+    NonNullable<ReturnType<typeof useTokenDetails>>['data']
   >['0']
-  collection: ReturnType<typeof useCollection>
+  collection: ReturnType<typeof useCollection>['data']
 }
 
 const Token: FC<Props> = ({ token, collection }) => {

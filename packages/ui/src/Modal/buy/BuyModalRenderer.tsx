@@ -1,11 +1,4 @@
-import React, {
-  FC,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  ReactNode,
-} from 'react'
+import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
   useCollection,
   useTokenDetails,
@@ -33,10 +26,8 @@ export enum BuyStep {
 type ChildrenProps = {
   token:
     | false
-    | NonNullable<
-        NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
-      >['0']
-  collection: ReturnType<typeof useCollection>
+    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
+  collection: ReturnType<typeof useCollection>['data']
   totalPrice: number
   referrerFee: number
   buyStep: BuyStep
@@ -82,23 +73,17 @@ export const BuyModalRenderer: FC<Props> = ({
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
 
-  const tokenQuery = useMemo(
-    () => ({
+  const { data: tokens } = useTokenDetails(
+    open && {
       tokens: [`${collectionId}:${tokenId}`],
-    }),
-    [collectionId, tokenId]
+    }
   )
-
-  const collectionQuery = useMemo(
-    () => ({
+  const { data: collection } = useCollection(
+    open && {
       id: collectionId,
-    }),
-    [collectionId]
+    }
   )
-
-  const tokenDetails = useTokenDetails(open && tokenQuery)
-  const collection = useCollection(open && collectionQuery)
-  let token = !!tokenDetails?.tokens?.length && tokenDetails?.tokens[0]
+  let token = !!tokens?.length && tokens[0]
 
   const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
   const feeUsd = referrerFee * (ethUsdPrice || 0)
@@ -213,7 +198,7 @@ export const BuyModalRenderer: FC<Props> = ({
         setTotalPrice(0)
       }
     }
-  }, [tokenDetails, referrerFeeBps])
+  }, [token, referrerFeeBps])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({

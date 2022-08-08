@@ -151,7 +151,7 @@ export function BuyModal({
             {buyStep === BuyStep.Unavailable && token && (
               <Flex direction="column">
                 <TokenLineItem
-                  token={token}
+                  tokenDetails={token}
                   collection={collection}
                   isSuspicious={isBanned}
                   usdConversion={ethUsdPrice || 0}
@@ -191,7 +191,7 @@ export function BuyModal({
                   </Flex>
                 )}
                 <TokenLineItem
-                  token={token}
+                  tokenDetails={token}
                   collection={collection}
                   usdConversion={ethUsdPrice || 0}
                   isSuspicious={isBanned}
@@ -270,7 +270,7 @@ export function BuyModal({
               token && (
                 <Flex direction="column">
                   <TokenLineItem
-                    token={token}
+                    tokenDetails={token}
                     collection={collection}
                     usdConversion={ethUsdPrice || 0}
                     isSuspicious={isBanned}
