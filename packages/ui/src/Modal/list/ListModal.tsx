@@ -223,7 +223,7 @@ export function ListModal({
                       </Box>
                       <Box css={{ mr: '$2', flex: 1 }}>
                         <Text style="body3">{localMarketplace?.name}</Text>
-                        <Text style="body3" color="subtle" as="p">
+                        <Text style="body3" color="subtle" as="div">
                           on reservoir{' '}
                           <InfoTooltip
                             side="bottom"

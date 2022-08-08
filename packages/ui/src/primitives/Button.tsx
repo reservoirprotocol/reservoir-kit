@@ -34,10 +34,10 @@ const Button = styled('button', {
         },
       },
       secondary: {
-        backgroundColor: '$neutralBg',
-        color: '$buttonTextColor',
+        backgroundColor: '$neutralBgHover',
+        color: '$textColor',
         '&:hover': {
-          backgroundColor: '$neutralBgHover',
+          backgroundColor: '$neutralBgActive',
         },
       },
       ghost: {

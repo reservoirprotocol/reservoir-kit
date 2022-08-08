@@ -18,7 +18,7 @@ const Stat: FC<StatProps> = ({ label, value, asEth = false, ...props }) => (
     }}
     {...props}
   >
-    <Text style="subtitle2" color="subtle" as="p" css={{ flex: 1 }}>
+    <Text style="subtitle2" color="subtle" css={{ flex: 1 }}>
       {label}
     </Text>
     {asEth ? (

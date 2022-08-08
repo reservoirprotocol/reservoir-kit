@@ -1,10 +1,10 @@
 import React from 'react'
 
 type IconProps = {
-    width: number
-  }
-  
-  export default ({ width }: IconProps) => (
+  width: number
+}
+
+export default ({ width }: IconProps) => (
   <svg
     width={width}
     height="24"
@@ -12,7 +12,7 @@ type IconProps = {
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g clip-path="url(#clip0_2127_56739)">
+    <g clipPath="url(#clip0_2127_56739)">
       <path
         d="M11.9979 0L11.8369 0.546928V16.4161L11.9979 16.5767L19.3641 12.2225L11.9979 0Z"
         fill="#343434"
