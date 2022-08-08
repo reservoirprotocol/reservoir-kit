@@ -3,23 +3,23 @@ import useSWR, { SWRConfiguration } from 'swr'
 import useReservoirClient from './useReservoirClient'
 
 type CollectionResponse =
-  paths['/collection/v2']['get']['responses']['200']['schema']
+  paths['/collection/v3']['get']['responses']['200']['schema']
 
 export default function (
-  query?: paths['/collection/v2']['get']['parameters']['query'] | false,
+  query?: paths['/collection/v3']['get']['parameters']['query'] | false,
   swrOptions: SWRConfiguration = {}
 ) {
   const client = useReservoirClient()
 
-  const path = new URL(`${client?.apiBase}/collection/v2`)
+  const path = new URL(`${client?.apiBase}/collection/v3`)
   setParams(path, query || {})
 
   const { data, mutate, error, isValidating } = useSWR<CollectionResponse>(
     query ? [path.href, client?.apiKey] : null,
     null,
     {
-      ...swrOptions,
       revalidateOnMount: true,
+      ...swrOptions,
     }
   )
   const collection: CollectionResponse['collection'] | null =

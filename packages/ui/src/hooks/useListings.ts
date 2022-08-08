@@ -30,10 +30,10 @@ export default function (
       },
       null,
       {
-        ...swrOptions,
         revalidateOnMount: true,
         revalidateAll: false,
         revalidateFirstPage: false,
+        ...swrOptions,
       }
     )
 

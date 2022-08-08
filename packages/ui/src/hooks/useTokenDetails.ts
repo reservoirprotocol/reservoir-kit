@@ -18,8 +18,8 @@ export default function (
     query ? [path.href, client?.apiKey] : null,
     null,
     {
-      ...swrOptions,
       revalidateOnMount: true,
+      ...swrOptions,
     }
   )
 
