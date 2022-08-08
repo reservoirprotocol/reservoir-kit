@@ -64,7 +64,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           {
             id: 1,
             label: 'Last Price',
-            value: token?.token?.lastSell?.value || '--',
+            value: token?.token?.lastSell?.value || null,
             asEth: true,
           },
           {

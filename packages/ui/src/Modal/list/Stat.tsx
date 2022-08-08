@@ -3,7 +3,7 @@ import { Flex, Text, FormatEth } from '../../primitives'
 
 type StatProps = {
   label: string | ReactElement
-  value: string | number
+  value: string | number | null
   asEth?: boolean
 }
 
@@ -25,7 +25,7 @@ const Stat: FC<StatProps> = ({ label, value, asEth = false, ...props }) => (
       <FormatEth amount={value} textStyle="subtitle2" />
     ) : (
       <Text style="subtitle2" as="p">
-        {value}
+        {value ? value : '-'}
       </Text>
     )}
   </Flex>
