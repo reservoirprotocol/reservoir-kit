@@ -58,8 +58,8 @@ export type StepData = {
 type ChildrenProps = {
   token:
     | false
-    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['tokens']>[0]
-  collection: ReturnType<typeof useCollection>['collection']
+    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
+  collection: ReturnType<typeof useCollection>['data']
   listStep: ListStep
   ethUsdPrice: ReturnType<typeof useEthConversion>
   expirationOptions: ExpirationOption[]
@@ -155,12 +155,16 @@ export const ListModalRenderer: FC<Props> = ({
     expirationOptions[0]
   )
 
-  const { tokens } = useTokenDetails(open && {
-    tokens: [`${collectionId}:${tokenId}`],
-  })
-  const { collection } = useCollection(open && {
-    id: collectionId,
-  })
+  const { data: tokens } = useTokenDetails(
+    open && {
+      tokens: [`${collectionId}:${tokenId}`],
+    }
+  )
+  const { data: collection } = useCollection(
+    open && {
+      id: collectionId,
+    }
+  )
 
   let token = !!tokens?.length && tokens[0]
 

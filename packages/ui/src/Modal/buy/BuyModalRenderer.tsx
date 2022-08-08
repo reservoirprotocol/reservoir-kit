@@ -26,8 +26,8 @@ export enum BuyStep {
 type ChildrenProps = {
   token:
     | false
-    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['tokens']>[0]
-  collection: ReturnType<typeof useCollection>['collection']
+    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
+  collection: ReturnType<typeof useCollection>['data']
   totalPrice: number
   referrerFee: number
   buyStep: BuyStep
@@ -73,12 +73,12 @@ export const BuyModalRenderer: FC<Props> = ({
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
 
-  const { tokens } = useTokenDetails(
+  const { data: tokens } = useTokenDetails(
     open && {
       tokens: [`${collectionId}:${tokenId}`],
     }
   )
-  const { collection } = useCollection(
+  const { data: collection } = useCollection(
     open && {
       id: collectionId,
     }

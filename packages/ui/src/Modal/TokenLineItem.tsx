@@ -8,9 +8,9 @@ import { useCollection, useTokenDetails } from '../hooks'
 
 type TokenLineItemProps = {
   tokenDetails: NonNullable<
-    NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
+    NonNullable<ReturnType<typeof useTokenDetails>>['data']
   >[0]
-  collection: ReturnType<typeof useCollection>['collection']
+  collection: ReturnType<typeof useCollection>['data']
   usdConversion?: number
   isSuspicious?: Boolean
   isUnavailable?: boolean

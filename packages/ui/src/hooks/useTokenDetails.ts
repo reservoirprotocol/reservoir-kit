@@ -25,5 +25,5 @@ export default function (
 
   const tokens = data && data?.tokens ? data.tokens : null
 
-  return { data, tokens, mutate, error, isValidating }
+  return { response: data, data: tokens, mutate, error, isValidating }
 }

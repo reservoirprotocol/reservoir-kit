@@ -25,5 +25,5 @@ export default function (
   const collection: CollectionResponse['collection'] | null =
     data && data.collection ? data.collection : null
 
-  return { data, collection, mutate, error, isValidating }
+  return { response: data, data: collection, mutate, error, isValidating }
 }

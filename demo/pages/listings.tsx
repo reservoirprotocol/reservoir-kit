@@ -5,7 +5,11 @@ import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
 
 const Listings: NextPage = () => {
-  const { listings, isFetchingPage, fetchNextPage, hasNextPage } = useListings({
+  const {
+    data: listings,
+    fetchNextPage,
+    hasNextPage,
+  } = useListings({
     contracts: ['0x81ae0be3a8044772d04f32398bac1e1b4b215aa8'],
   })
 
@@ -13,7 +17,6 @@ const Listings: NextPage = () => {
 
   useEffect(() => {
     if (inView) {
-      console.log('FETCHING', inView)
       fetchNextPage()
     }
   }, [inView])

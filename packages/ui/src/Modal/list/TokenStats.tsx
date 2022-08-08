@@ -7,9 +7,9 @@ import InfoTooltip from './InfoTooltip'
 
 type Props = {
   token?: NonNullable<
-    NonNullable<ReturnType<typeof useTokenDetails>>['tokens']
+    NonNullable<ReturnType<typeof useTokenDetails>>['data']
   >['0']
-  collection: ReturnType<typeof useCollection>['collection']
+  collection: ReturnType<typeof useCollection>['data']
 }
 
 const TokenStats: FC<Props> = ({ token, collection }) => {

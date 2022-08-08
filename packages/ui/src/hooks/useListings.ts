@@ -50,8 +50,8 @@ export default function (
   }
 
   return {
-    data,
-    listings,
+    response: data,
+    data: listings,
     hasNextPage,
     isFetchingInitialData,
     isFetchingPage,
