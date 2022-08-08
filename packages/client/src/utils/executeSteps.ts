@@ -151,17 +151,14 @@ export async function executeSteps(
         await tx.wait()
 
         //Implicitly poll the confirmation url to confirm the transaction went through
-        const url = new URL(request.url || '')
         const confirmationUrl = new URL(
-          `/transactions/${tx.hash}/synced/v1`,
-          url.origin
+          `${client.apiBase}/transactions/${tx.hash}/synced/v1`
         )
         await pollUntilOk(confirmationUrl, (res) => res && res.data.synced)
 
         //Confirm that on-chain tx has been picked up by the indexer
         if (stepItem.txHash && (isSell || isBuy)) {
-          const url = new URL(request.url || '')
-          const indexerConfirmationUrl = new URL('/sales/v3', url.origin)
+          const indexerConfirmationUrl = new URL(`${client.apiBase}/sales/v3`)
           const queryParams: paths['/sales/v3']['get']['parameters']['query'] =
             {
               txHash: stepItem.txHash,
@@ -205,8 +202,7 @@ export async function executeSteps(
         }
 
         if (postData) {
-          const url = new URL(request.url || '')
-          const postOrderUrl = new URL(postData.endpoint, url.origin)
+          const postOrderUrl = new URL(`${client.apiBase}${postData.endpoint}`)
 
           try {
             const getData = async function () {
