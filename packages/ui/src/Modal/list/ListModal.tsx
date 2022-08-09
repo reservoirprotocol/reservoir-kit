@@ -28,6 +28,7 @@ import ProgressBar from './ProgressBar'
 import { useReservoirClient } from '../../hooks'
 import ListingTransactionProgress from './ListingTransactionProgress'
 import InfoTooltip from './InfoTooltip'
+import { Marketplace } from '../../hooks/useMarketplaces'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -91,7 +92,9 @@ export function ListModal({
   const [open, setOpen] = useState(false)
   const [stepTitle, setStepTitle] = useState('')
   const client = useReservoirClient()
-  const [approvalRequired, setApprovalRequired] = useState(false)
+  const [marketplacesToApprove, setMarketplacesToApprove] = useState<
+    Marketplace[]
+  >([])
 
   return (
     <ListModalRenderer
@@ -108,6 +111,7 @@ export function ListModal({
         expirationOptions,
         marketplaces,
         unapprovedMarketplaces,
+        isFetchingUnapprovedMarketplaces,
         localMarketplace,
         syncProfit,
         listingData,
@@ -150,15 +154,15 @@ export function ListModal({
             const unapprovedNames = unapprovedMarketplaces.map(
               (marketplace) => marketplace.name
             )
-            setApprovalRequired(
-              marketplaces.some(
+            setMarketplacesToApprove(
+              marketplaces.filter(
                 (marketplace) =>
                   marketplace.isSelected &&
                   unapprovedNames.includes(marketplace.name)
               )
             )
           } else {
-            setApprovalRequired(false)
+            setMarketplacesToApprove([])
           }
         }, [unapprovedMarketplaces, marketplaces])
 
@@ -265,7 +269,23 @@ export function ListModal({
                       ))}
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
-                    {approvalRequired && (
+                    {!isFetchingUnapprovedMarketplaces &&
+                      !marketplacesToApprove.length && (
+                        <Text
+                          color="success"
+                          style="subtitle2"
+                          css={{
+                            my: 10,
+                            width: '100%',
+                            textAlign: 'center',
+                            display: 'block',
+                          }}
+                        >
+                          All marketplaces approved, no gas fee required!
+                        </Text>
+                      )}
+                    {(marketplacesToApprove.length > 0 ||
+                      isFetchingUnapprovedMarketplaces) && (
                       <Text
                         color="accent"
                         style="subtitle2"
@@ -276,7 +296,11 @@ export function ListModal({
                           display: 'block',
                         }}
                       >
-                        Additional gas fee due to unapproved marketplaces
+                        {isFetchingUnapprovedMarketplaces
+                          ? 'Checking if gas fee required...'
+                          : `Gas fee required to approve listing (${marketplacesToApprove
+                              .map((marketplace) => marketplace.name)
+                              .join(', ')})`}
                       </Text>
                     )}
                     <Button

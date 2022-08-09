@@ -66,6 +66,7 @@ type ChildrenProps = {
   expirationOption: ExpirationOption
   marketplaces: Marketplace[]
   unapprovedMarketplaces: Marketplace[]
+  isFetchingUnapprovedMarketplaces: boolean
   localMarketplace: Marketplace | null
   syncProfit: boolean
   listingData: ListingData[]
@@ -104,7 +105,10 @@ export const ListModalRenderer: FC<Props> = ({
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
     null
   )
-  const unapprovedMarketplaces = useListingPreapprovalCheck(
+  const {
+    data: unapprovedMarketplaces,
+    isFetching: isFetchingUnapprovedMarketplaces,
+  } = useListingPreapprovalCheck(
     marketplaces,
     open ? tokenId : undefined,
     open ? collectionId : undefined
@@ -434,6 +438,7 @@ export const ListModalRenderer: FC<Props> = ({
         expirationOptions,
         marketplaces,
         unapprovedMarketplaces,
+        isFetchingUnapprovedMarketplaces,
         localMarketplace,
         syncProfit,
         listingData,
