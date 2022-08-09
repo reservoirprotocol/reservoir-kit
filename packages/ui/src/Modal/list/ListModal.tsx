@@ -572,18 +572,25 @@ export function ListModal({
                       View Listing on
                     </Text>
                     <Flex css={{ gap: '$3' }}>
-                      {listingData.map((data) => (
-                        <a
-                          key={data.listing.orderbook}
-                          target="_blank"
-                          href={`${client?.apiBase}/redirect/sources/${data.marketplace.name}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
-                        >
-                          <Image
-                            css={{ width: 24 }}
-                            src={`${client?.apiBase}/redirect/sources/${data.marketplace.name}/logo/v2`}
-                          />
-                        </a>
-                      ))}
+                      {listingData.map((data) => {
+                        const source =
+                          data.listing.orderbook === 'reservoir' &&
+                          client?.source
+                            ? client?.source
+                            : data.marketplace.name
+                        return (
+                          <a
+                            key={data.listing.orderbook}
+                            target="_blank"
+                            href={`${client?.apiBase}/redirect/sources/${source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                          >
+                            <Image
+                              css={{ width: 24 }}
+                              src={data.marketplace.imageUrl}
+                            />
+                          </a>
+                        )
+                      })}
                     </Flex>
                   </Flex>
 
