@@ -31,7 +31,7 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       accentBgActive: '$indigo5',
       accentLine: '$indigo6',
       accentBorder: '$indigo7',
-      accentBorderHover: '$indigo8',
+      accentBorderHover: overrides?.primaryColor || '$indigo8',
       accentSolid: overrides?.primaryColor || '$indigo9',
       accentSolidHover:
         overrides?.primaryHoverColor || overrides?.primaryColor || '$indigo10',

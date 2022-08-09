@@ -219,21 +219,25 @@ export const ListModalRenderer: FC<Props> = ({
       return marketplace
     })
     setMarketplaces(updatedMarketplaces)
-    debouncedUpdateMarkets(updatedMarketplaces)
+    const updatedMarketplace = updatedMarketplaces.find(
+      (marketplace) => market.name == marketplace.name
+    )
+    debouncedUpdateMarkets(updatedMarketplace, updatedMarketplaces)
   }
 
   let debouncedUpdateMarkets = useMemo(
     () =>
-      debounce((updatedMarketplaces: Marketplace[]) => {
-        const nativeMarketplace = updatedMarketplaces.find(
-          (marketplace) => marketplace.orderbook === 'reservoir'
-        )
-        if (nativeMarketplace) {
+      debounce(
+        (
+          updatedMarketplace: Marketplace,
+          updatedMarketplaces: Marketplace[]
+        ) => {
           setMarketplaces(
-            syncMarketPrices(nativeMarketplace, updatedMarketplaces)
+            syncMarketPrices(updatedMarketplace, updatedMarketplaces)
           )
-        }
-      }, 1200),
+        },
+        1200
+      ),
     [syncProfit]
   )
 

@@ -224,7 +224,7 @@ export function ListModal({
                       <Box css={{ mr: '$2', flex: 1 }}>
                         <Text style="body3">{localMarketplace?.name}</Text>
                         <Text style="body3" color="subtle" as="div">
-                          on reservoir{' '}
+                          on Reservoir{' '}
                           <InfoTooltip
                             side="bottom"
                             width={200}
@@ -341,7 +341,7 @@ export function ListModal({
                           side="left"
                           width={200}
                           content={
-                            'How much Eth you will receive after marketplace fees and creator royalties are subtracted.'
+                            'How much ETH you will receive after marketplace fees and creator royalties are subtracted.'
                           }
                         />
                       </Flex>

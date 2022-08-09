@@ -82,7 +82,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
                   side="right"
                   width={200}
                   content={
-                    'the highest floor price that a trait holds for this token.'
+                    'The highest floor price that a trait holds for this token.'
                   }
                 />
               </span>
