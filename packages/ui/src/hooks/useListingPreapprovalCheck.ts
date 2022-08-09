@@ -13,6 +13,7 @@ export default function (
   const [unapprovedMarketplaces, setUnapprovedMarketplaces] = useState<
     Marketplace[]
   >([])
+  const [isFetching, setIsFetching] = useState(false)
   const client = useReservoirClient()
   const { data: signer } = useSigner()
 
@@ -35,7 +36,7 @@ export default function (
         }
         return listing
       })
-
+      setIsFetching(true)
       client.actions
         .listToken({
           listings: listings,
@@ -56,14 +57,11 @@ export default function (
                   item.orderIndex !== undefined
                 ) {
                   const listing = listings[item.orderIndex]
-                  const marketplace = marketplaces.find(
-                    (marketplace) =>
-                      marketplace.orderbook === listing.orderbook &&
-                      marketplace.orderKind === listing.orderKind
-                  )
-                  if (marketplace) {
-                    unapproved.push(marketplace)
-                  }
+                  marketplaces.forEach((marketplace) => {
+                    if (marketplace.orderKind === listing.orderKind) {
+                      unapproved.push(marketplace)
+                    }
+                  })
                 }
                 return unapproved
               }, [] as Marketplace[])
@@ -71,11 +69,15 @@ export default function (
           } else if (unapprovedMarketplaces.length > 0) {
             setUnapprovedMarketplaces([])
           }
+          setIsFetching(false)
+        })
+        .catch(() => {
+          setIsFetching(false)
         })
     } else if (unapprovedMarketplaces.length > 0) {
       setUnapprovedMarketplaces([])
     }
   }, [client, signer, tokenId, collectionId, marketplaces.length])
 
-  return unapprovedMarketplaces
+  return { data: unapprovedMarketplaces, isFetching }
 }

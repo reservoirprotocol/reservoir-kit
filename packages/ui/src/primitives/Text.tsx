@@ -22,6 +22,9 @@ export default styled('span', {
       accent: {
         color: '$accentText',
       },
+      success: {
+        color: '$successAccent',
+      },
     },
     style: {
       h2: {
