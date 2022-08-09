@@ -73,6 +73,7 @@ export interface ReservoirKitThemeColors {
   footerBackground: string
   contentBackground: string
   wellBackground: string
+  popoverBackground: string
 }
 
 export type ReservoirKitOverrides = {
@@ -88,6 +89,7 @@ export type ReservoirKitOverrides = {
   contentBackground?: string
   footerBackground?: string
   overlayBackground?: string
+  popoverBackground?: string
   borderColor?: string
   ethIcon?: ReservoirKitTheme['assets']['ethIcon']
 }

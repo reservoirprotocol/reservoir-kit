@@ -6,11 +6,11 @@ import Box from './Box'
 const Arrow = styled(Popover.Arrow, {
   width: 15,
   height: 7,
-  fill: '$neutralBgActive',
+  fill: '$popoverBackground',
 })
 
 const Content = styled(Popover.Content, {
-  filter: 'drop-shadow(0px 2px 16px rgba(0, 0, 0, 0.9))',
+  filter: 'drop-shadow(0px 2px 16px rgba(0, 0, 0, 0.75))',
   zIndex: 1000,
 })
 
@@ -31,7 +31,7 @@ const RKPopover = ({
             maxWidth: 320,
             width: width,
             borderRadius: 8,
-            backgroundColor: '$neutralBgActive',
+            backgroundColor: '$popoverBackground',
           }}
         >
           {content}

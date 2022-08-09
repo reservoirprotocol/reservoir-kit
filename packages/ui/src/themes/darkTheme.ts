@@ -83,6 +83,7 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       footerBackground: overrides?.footerBackground || '$neutralBgSubtle',
       contentBackground: overrides?.contentBackground || '$neutralBg',
       wellBackground: overrides?.wellBackground || '$neutralBase',
+      popoverBackground: overrides?.popoverBackground || '$neutralBgActive',
     },
     assets: {
       ethIcon: overrides?.ethIcon || 'purple',
