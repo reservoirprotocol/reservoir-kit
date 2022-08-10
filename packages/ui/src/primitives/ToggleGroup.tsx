@@ -30,6 +30,7 @@ const ToggleGroupButton = styled(ToggleGroupPrimitive.Item, {
   '&:hover': { backgroundColor: '$neutralBgActive' },
   '&[data-state=on]': {
     backgroundColor: '$neutralBgSubtle',
+    pointerEvents: 'none',
   },
   '&:focus': { position: 'relative', boxShadow: '0 0 0 2px $$focusColor' },
 })

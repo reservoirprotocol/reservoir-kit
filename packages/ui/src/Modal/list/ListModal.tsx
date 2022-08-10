@@ -341,15 +341,9 @@ export function ListModal({
                       <ToggleGroup
                         type="single"
                         value={syncProfit ? 'sync' : 'custom'}
-                        onValueChange={(value) => {
-                          if (
-                            (syncProfit && value === 'sync') ||
-                            (!syncProfit && value !== 'sync')
-                          ) {
-                            return
-                          }
+                        onValueChange={(value) =>
                           setSyncProfit(value === 'sync')
-                        }}
+                        }
                       >
                         <ToggleGroupButton value="sync">
                           <Text style="subtitle2">Same Profit</Text>
