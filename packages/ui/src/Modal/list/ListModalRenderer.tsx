@@ -274,6 +274,12 @@ export const ListModalRenderer: FC<Props> = ({
   }, [token, collection, loadedInitalPrice, open])
 
   useEffect(() => {
+    if (open && syncProfit && loadedInitalPrice && localMarketplace) {
+      setMarketplaces(syncMarketPrices(localMarketplace, marketplaces))
+    }
+  }, [open, syncProfit])
+
+  useEffect(() => {
     if (marketplaces) {
       setLocalMarketplace(
         marketplaces.find(
