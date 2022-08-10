@@ -313,7 +313,6 @@ export function ListModal({
                 </MainContainer>
               </ContentContainer>
             )}
-
             {token && listStep == ListStep.SetPrice && (
               <ContentContainer>
                 <TokenStats token={token} collection={collection} />
@@ -379,10 +378,7 @@ export function ListModal({
                             marketplace={marketplace}
                             ethUsdPrice={ethUsdPrice}
                             onChange={(e) => {
-                              setMarketPrice(
-                                Number(e.target.value),
-                                marketplace
-                              )
+                              setMarketPrice(e.target.value, marketplace)
                             }}
                           />
                           {collection?.floorAsk?.price !== undefined &&
@@ -406,8 +402,7 @@ export function ListModal({
                             )}
                         </Box>
                       ))}
-                  </Box>
-                  <Box css={{ p: '$4', width: '100%' }}>
+
                     <Box css={{ mb: '$3' }}>
                       <Select
                         value={expirationOption?.text || ''}
@@ -427,6 +422,8 @@ export function ListModal({
                         ))}
                       </Select>
                     </Box>
+                  </Box>
+                  <Box css={{ p: '$4', width: '100%' }}>
                     <Button onClick={listToken} css={{ width: '100%' }}>
                       Next
                     </Button>
@@ -434,7 +431,6 @@ export function ListModal({
                 </MainContainer>
               </ContentContainer>
             )}
-
             {token && listStep == ListStep.ListItem && (
               <ContentContainer>
                 <TokenListingDetails
@@ -528,7 +524,6 @@ export function ListModal({
                 </MainContainer>
               </ContentContainer>
             )}
-
             {token && listStep == ListStep.Complete && (
               <ContentContainer>
                 <TokenListingDetails

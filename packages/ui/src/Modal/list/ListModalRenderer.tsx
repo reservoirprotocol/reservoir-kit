@@ -203,7 +203,7 @@ export const ListModalRenderer: FC<Props> = ({
 
         return {
           ...marketplace,
-          price: Math.round(truePrice * 1000) / 1000,
+          price: Math.round(truePrice * 10000) / 10000,
           truePrice: truePrice,
         }
       })
@@ -240,7 +240,7 @@ export const ListModalRenderer: FC<Props> = ({
             syncMarketPrices(updatedMarketplace, updatedMarketplaces)
           )
         },
-        1200
+        800
       ),
     [syncProfit]
   )

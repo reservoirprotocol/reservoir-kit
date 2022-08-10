@@ -54,7 +54,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
                   side="right"
                   width={200}
                   content={
-                    'A fee taken out of every order that goes to the collection creator. This is set by the collection creators and is different for every collection.'
+                    'A fee on every order that goes to the collection creator.'
                   }
                 />
               </span>
@@ -63,13 +63,13 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           },
           {
             id: 1,
-            label: 'Last Price',
+            label: 'Last Sale',
             value: token?.token?.lastSell?.value || null,
             asEth: true,
           },
           {
             id: 2,
-            label: 'Floor',
+            label: 'Collection Floor',
             value: collection?.floorAsk?.price || 0,
             asEth: true,
           },
@@ -82,7 +82,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
                   side="right"
                   width={200}
                   content={
-                    'The highest floor price that a trait holds for this token.'
+                    'The floor price of the most valuable trait of a token.'
                   }
                 />
               </span>
