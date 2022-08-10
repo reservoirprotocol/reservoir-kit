@@ -388,6 +388,7 @@ export function ListModal({
                             }}
                           />
                           {collection?.floorAsk?.price !== undefined &&
+                            marketplace.truePrice !== null &&
                             marketplace.truePrice <
                               collection?.floorAsk?.price && (
                               <Box>
@@ -395,9 +396,9 @@ export function ListModal({
                                   Price is{' '}
                                   {Math.round(
                                     ((collection.floorAsk.price -
-                                      marketplace.truePrice) /
+                                      +marketplace.truePrice) /
                                       ((collection.floorAsk.price +
-                                        marketplace.truePrice) /
+                                        +marketplace.truePrice) /
                                         2)) *
                                       100 *
                                       1000
