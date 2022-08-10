@@ -246,7 +246,13 @@ export const ListModalRenderer: FC<Props> = ({
   )
 
   useEffect(() => {
-    if (open && token && collection && !loadedInitalPrice) {
+    if (
+      open &&
+      token &&
+      collection &&
+      !loadedInitalPrice &&
+      marketplaces.length > 0
+    ) {
       let startingPrice: number =
         Math.max(
           ...(token?.token?.attributes?.map((attr: any) =>
@@ -271,7 +277,7 @@ export const ListModalRenderer: FC<Props> = ({
       )
       setMarketplaces(updatedMarketplaces)
     }
-  }, [token, collection, loadedInitalPrice, open])
+  }, [token, collection, loadedInitalPrice, open, marketplaces.length])
 
   useEffect(() => {
     if (open && syncProfit && loadedInitalPrice && localMarketplace) {

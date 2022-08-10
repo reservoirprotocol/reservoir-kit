@@ -21,8 +21,17 @@
  * @param url An URL instance
  * @param query An object containing all needed query params.
  */
+
 export function setParams(url: URL, query: { [x: string]: any }) {
-  Object.keys(query).map((key) =>
-    url.searchParams.set(key, query[key]?.toString())
-  )
+  Object.keys(query).map((key) => {
+    let value = query[key]
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        url.searchParams.append(key, item)
+      })
+    } else {
+      url.searchParams.append(key, query[key]?.toString())
+    }
+    return url
+  })
 }
