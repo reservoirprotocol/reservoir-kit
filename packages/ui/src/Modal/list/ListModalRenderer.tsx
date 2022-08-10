@@ -301,14 +301,16 @@ export const ListModalRenderer: FC<Props> = ({
     if (!open) {
       setListStep(ListStep.SelectMarkets)
       setTransactionError(null)
-      setMarketplaces(
-        marketplaces.map((marketplace) => {
-          return {
-            ...marketplace,
-            isSelected: marketplace.orderbook === 'reservoir',
-          }
-        })
-      )
+      if (marketplaces.length > 0) {
+        setMarketplaces(
+          marketplaces.map((marketplace) => {
+            return {
+              ...marketplace,
+              isSelected: marketplace.orderbook === 'reservoir',
+            }
+          })
+        )
+      }
       setLoadedInitalPrice(false)
       setStepData(null)
       setExpirationOption(expirationOptions[0])
