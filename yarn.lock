@@ -2567,6 +2567,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-roving-focus@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@radix-ui/react-roving-focus@npm:1.0.0"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 1.0.0
+    "@radix-ui/react-collection": 1.0.0
+    "@radix-ui/react-compose-refs": 1.0.0
+    "@radix-ui/react-context": 1.0.0
+    "@radix-ui/react-direction": 1.0.0
+    "@radix-ui/react-id": 1.0.0
+    "@radix-ui/react-primitive": 1.0.0
+    "@radix-ui/react-use-callback-ref": 1.0.0
+    "@radix-ui/react-use-controllable-state": 1.0.0
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: 163df73f858ce5888294d03a888d05e6fdec178936b21b5fabd661a3b797b4495e11b570ab365a2fb24494d08631ac094b1b7272b9a72bfd0cf743d6c121483d
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-select@npm:^1.0.0":
   version: 1.0.0
   resolution: "@radix-ui/react-select@npm:1.0.0"
@@ -2664,6 +2685,40 @@ __metadata:
   peerDependencies:
     react: ^16.8 || ^17.0
   checksum: e000cfeff7438a9ae3ff6877d1e86c0e8f1902b4358ff5ed29343ab685c848d03560e6ac379908a40006b7e28c1c17fe03952b70f13d6a444d3a142537d3de80
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-toggle-group@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@radix-ui/react-toggle-group@npm:1.0.0"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 1.0.0
+    "@radix-ui/react-context": 1.0.0
+    "@radix-ui/react-direction": 1.0.0
+    "@radix-ui/react-primitive": 1.0.0
+    "@radix-ui/react-roving-focus": 1.0.0
+    "@radix-ui/react-toggle": 1.0.0
+    "@radix-ui/react-use-controllable-state": 1.0.0
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: f0f91633ad45ff13ff49866118c15997a311fa31019c6eb1b60e6118e85a8973b6504a7eef739f37be74abdc2f465a0f7e02c57ce8e45856bd49e4471ca4cd55
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-toggle@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@radix-ui/react-toggle@npm:1.0.0"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 1.0.0
+    "@radix-ui/react-primitive": 1.0.0
+    "@radix-ui/react-use-controllable-state": 1.0.0
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: 6e4de11b0446e18245b6aceabd9d0f84ec08320b6945f0111d00d322f9397eb8f8bf4626eee292f6640ca5c5a6c416842472f955d3eac69b5822cf268f05c08a
   languageName: node
   linkType: hard
 
@@ -2959,6 +3014,7 @@ __metadata:
     "@radix-ui/react-popover": 0.1.7-rc.46
     "@radix-ui/react-select": ^1.0.0
     "@radix-ui/react-switch": ^0.1.5
+    "@radix-ui/react-toggle-group": ^1.0.0
     "@rainbow-me/rainbowkit": ^0.4.1
     "@reservoir0x/reservoir-kit-client": "workspace:*"
     "@stitches/react": ^1.2.8

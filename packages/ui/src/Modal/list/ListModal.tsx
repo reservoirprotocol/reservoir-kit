@@ -6,7 +6,8 @@ import {
   Box,
   Text,
   Button,
-  Switch,
+  ToggleGroup,
+  ToggleGroupButton,
   Loader,
   Select,
 } from '../../primitives'
@@ -336,16 +337,27 @@ export function ListModal({
                         Set Your Price
                       </Text>
                     </Flex>
-                    <Flex align="center" css={{ mb: '$4' }} justify="between">
-                      <Text style="subtitle2" as="p" color="subtle">
-                        Get the same amount of ETH across different marketplaces
-                      </Text>
-                      <Switch
-                        checked={syncProfit}
-                        onCheckedChange={(isChecked: boolean) =>
-                          setSyncProfit(!syncProfit)
-                        }
-                      />
+                    <Flex align="center" css={{ mb: '$4' }} justify="center">
+                      <ToggleGroup
+                        type="single"
+                        value={syncProfit ? 'sync' : 'custom'}
+                        onValueChange={(value) => {
+                          if (
+                            (syncProfit && value === 'sync') ||
+                            (!syncProfit && value !== 'sync')
+                          ) {
+                            return
+                          }
+                          setSyncProfit(value === 'sync')
+                        }}
+                      >
+                        <ToggleGroupButton value="sync">
+                          <Text style="subtitle2">Same Profit</Text>
+                        </ToggleGroupButton>
+                        <ToggleGroupButton value="custom">
+                          <Text style="subtitle2">Custom</Text>
+                        </ToggleGroupButton>
+                      </ToggleGroup>
                     </Flex>
                     <Flex css={{ mb: '$2' }} justify="between">
                       <Text style="subtitle2" color="subtle" as="p">
