@@ -70,7 +70,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           {
             id: 2,
             label: 'Collection Floor',
-            value: 1 || collection?.floorAsk?.price || 0,
+            value: collection?.floorAsk?.price || 0,
             asEth: true,
           },
           {
@@ -82,7 +82,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
                   side="right"
                   width={200}
                   content={
-                    'The highest floor price that a trait holds for this token.'
+                    'The floor price of the most valuable trait of a token.'
                   }
                 />
               </span>

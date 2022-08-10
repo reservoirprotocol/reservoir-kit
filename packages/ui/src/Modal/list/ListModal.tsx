@@ -354,10 +354,7 @@ export function ListModal({
                             marketplace={marketplace}
                             ethUsdPrice={ethUsdPrice}
                             onChange={(e) => {
-                              setMarketPrice(
-                                Number(e.target.value),
-                                marketplace
-                              )
+                              setMarketPrice(e.target.value, marketplace)
                             }}
                           />
                           {collection?.floorAsk?.price !== undefined &&
