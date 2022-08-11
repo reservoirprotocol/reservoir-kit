@@ -386,6 +386,11 @@ export function ListModal({
                             onChange={(e) => {
                               setMarketPrice(e.target.value, marketplace)
                             }}
+                            onBlur={() => {
+                              if (marketplace.price === '') {
+                                setMarketPrice(0, marketplace)
+                              }
+                            }}
                           />
                           {collection?.floorAsk?.price !== undefined &&
                             marketplace.truePrice !== null &&
