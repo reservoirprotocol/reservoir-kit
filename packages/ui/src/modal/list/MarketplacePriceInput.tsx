@@ -16,14 +16,12 @@ type MarketPlaceInputProps = {
   marketplace: Marketplace
   ethUsdPrice?: number | null
   onChange: (e: any) => void
-  onBlur: (e: any) => void
 }
 
 const MarketplacePriceInput = ({
   marketplace,
   ethUsdPrice,
   onChange,
-  onBlur,
   ...props
 }: MarketPlaceInputProps) => {
   let profit = (1 - (marketplace.feeBps || 0)) * Number(marketplace.truePrice)
@@ -43,12 +41,7 @@ const MarketplacePriceInput = ({
         </Text>
       </Flex>
       <Box css={{ flex: 1 }}>
-        <Input
-          type="number"
-          value={marketplace.price}
-          onChange={onChange}
-          onBlur={onBlur}
-        />
+        <Input type="number" value={marketplace.price} onChange={onChange} />
       </Box>
       <Flex direction="column" align="end" css={{ ml: '$3' }}>
         <FormatEth amount={profit} textStyle="h6" logoWidth={12} />
