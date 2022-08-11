@@ -347,7 +347,7 @@ export const ListModalRenderer: FC<Props> = ({
       if (market.isSelected) {
         const listing: Listings[0] = {
           token: `${collectionId}:${tokenId}`,
-          weiPrice: parseEther(`${market.truePrice.toFixed(18)}`).toString(),
+          weiPrice: parseEther(`${(+market.truePrice).toFixed(18)}`).toString(),
           //@ts-ignore
           orderbook: market.orderbook,
           //@ts-ignore
