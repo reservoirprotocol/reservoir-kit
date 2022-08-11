@@ -234,7 +234,7 @@ export function ListModal({
                             side="bottom"
                             width={200}
                             content={
-                              'Listings made on this marketplace will be distributed across the reservoir ecosystem'
+                              'Listings made here will be shown across the Reservoir ecosystem.'
                             }
                           />
                         </Text>
@@ -341,7 +341,7 @@ export function ListModal({
                       <ToggleGroup
                         type="single"
                         value={syncProfit ? 'sync' : 'custom'}
-                        onValueChange={(value) =>
+                        onValueChange={(value: string) =>
                           setSyncProfit(value === 'sync')
                         }
                       >
@@ -364,7 +364,7 @@ export function ListModal({
                           as="p"
                           css={{ mr: '$2' }}
                         >
-                          You Get
+                          Profit
                         </Text>
                         <InfoTooltip
                           side="left"

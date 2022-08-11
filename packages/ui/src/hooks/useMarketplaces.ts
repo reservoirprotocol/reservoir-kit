@@ -46,6 +46,7 @@ export default function (
         marketplace.isSelected =
           marketplace.orderbook === 'reservoir' ? true : false
       })
+      console.log(updatedMarketplaces)
       setMarketplaces(updatedMarketplaces)
     }
   }, [data, listingEnabledOnly])
