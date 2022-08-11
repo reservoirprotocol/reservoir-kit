@@ -364,7 +364,7 @@ export function ListModal({
                           as="p"
                           css={{ mr: '$2' }}
                         >
-                          You Get
+                          Profit
                         </Text>
                         <InfoTooltip
                           side="left"
@@ -410,7 +410,15 @@ export function ListModal({
                         </Box>
                       ))}
 
-                    <Box css={{ mb: '$3' }}>
+                    <Box css={{ mb: '$3', mt: '$4' }}>
+                      <Text
+                        as="div"
+                        css={{ mb: '$2' }}
+                        style="subtitle2"
+                        color="subtle"
+                      >
+                        Expiration Date
+                      </Text>
                       <Select
                         value={expirationOption?.text || ''}
                         onValueChange={(value: string) => {
@@ -431,7 +439,13 @@ export function ListModal({
                     </Box>
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
-                    <Button onClick={listToken} css={{ width: '100%' }}>
+                    <Button
+                      disabled={marketplaces.some(
+                        (marketplace) => marketplace.price === ''
+                      )}
+                      onClick={listToken}
+                      css={{ width: '100%' }}
+                    >
                       Next
                     </Button>
                   </Box>
