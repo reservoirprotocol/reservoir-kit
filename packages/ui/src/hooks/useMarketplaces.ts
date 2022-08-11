@@ -8,8 +8,8 @@ export type Marketplace = NonNullable<
   paths['/admin/get-marketplaces']['get']['responses']['200']['schema']['marketplaces']
 >[0] & {
   isSelected: boolean
-  price: number
-  truePrice: number
+  price: number | string
+  truePrice: number | string
 }
 
 export default function (

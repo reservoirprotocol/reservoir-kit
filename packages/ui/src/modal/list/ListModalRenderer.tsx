@@ -211,7 +211,7 @@ export const ListModalRenderer: FC<Props> = ({
     return syncedMarketplaces
   }
 
-  const setMarketPrice = (price: number, market: Marketplace) => {
+  const setMarketPrice = (price: number | string, market: Marketplace) => {
     let updatedMarketplaces = marketplaces.map((marketplace) => {
       if (marketplace.name == market.name) {
         return {
@@ -223,10 +223,12 @@ export const ListModalRenderer: FC<Props> = ({
       return marketplace
     })
     setMarketplaces(updatedMarketplaces)
-    const updatedMarketplace = updatedMarketplaces.find(
-      (marketplace) => market.name == marketplace.name
-    )
-    debouncedUpdateMarkets(updatedMarketplace, updatedMarketplaces)
+    if (price !== '') {
+      const updatedMarketplace = updatedMarketplaces.find(
+        (marketplace) => market.name == marketplace.name
+      )
+      debouncedUpdateMarkets(updatedMarketplace, updatedMarketplaces)
+    }
   }
 
   let debouncedUpdateMarkets = useMemo(
@@ -264,7 +266,7 @@ export const ListModalRenderer: FC<Props> = ({
         0
 
       setLoadedInitalPrice(true)
-      let updatedMarketplaces = marketplaces.map((marketplace) => {
+      let updatedMarketplaces = marketplaces.map((marketplace): Marketplace => {
         return {
           ...marketplace,
           price: startingPrice,
