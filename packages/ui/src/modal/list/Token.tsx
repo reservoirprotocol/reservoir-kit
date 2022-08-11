@@ -50,6 +50,7 @@ const Token: FC<Props> = ({ token, collection }) => {
         css={{
           mb: '$2',
           visibility: !img || img.length === 0 ? 'hidden' : 'visible',
+          objectFit: 'cover',
         }}
       />
       <Text style="h6" css={{ flex: 1 }} as="h6" ellipsify>
