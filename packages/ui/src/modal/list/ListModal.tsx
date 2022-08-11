@@ -578,10 +578,12 @@ export function ListModal({
                       style="body3"
                       color="subtle"
                       as="p"
-                      css={{ mb: 24, maxWidth: 300 }}
+                      css={{ mb: 24, maxWidth: 300, overflow: 'hidden' }}
                     >
                       <Text color="accent" ellipsify style="body3">
-                        #{token?.token?.tokenId}
+                        {token?.token?.name
+                          ? token?.token?.name
+                          : `#${token?.token?.tokenId}`}
                       </Text>{' '}
                       from{' '}
                       <Span css={{ color: '$accentText' }}>
