@@ -10,7 +10,10 @@ const Listings: NextPage = () => {
     fetchNextPage,
     hasNextPage,
   } = useListings({
-    contracts: ['0x81ae0be3a8044772d04f32398bac1e1b4b215aa8'],
+    contracts: [
+      '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
+      '0x27af21619746a2abb01d3056f971cde936145939',
+    ],
   })
 
   const { ref, inView } = useInView()

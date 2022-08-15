@@ -12,11 +12,10 @@ export default function (
 ) {
   const client = useReservoirClient()
 
-  const url = new URL(`${client?.apiBase || ''}/orders/asks/v2`)
-
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<Asks>(
       (pageIndex, previousPageData) => {
+        const url = new URL(`${client?.apiBase || ''}/orders/asks/v2`)
         let query: AsksQuery = options || {}
 
         if (previousPageData && !previousPageData.continuation) {
