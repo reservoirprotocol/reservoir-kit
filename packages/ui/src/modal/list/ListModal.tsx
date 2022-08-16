@@ -131,7 +131,15 @@ export function ListModal({
 
         useEffect(() => {
           if (stepData) {
-            const marketplaceName = stepData.listingData.marketplace.name
+            const isNativeOrder =
+              stepData.listingData.marketplace.orderbook === 'reservoir'
+            const isSeaportOrder =
+              stepData.listingData.marketplace.orderKind === 'seaport'
+            const marketplaceName =
+              isNativeOrder && isSeaportOrder
+                ? `${stepData.listingData.marketplace.name} (on Seaport)`
+                : stepData.listingData.marketplace.name
+
             switch (stepData.currentStep.kind) {
               case 'transaction': {
                 setStepTitle(
