@@ -307,7 +307,7 @@ export function BuyModal({
                     style={{ width: 100, height: 100 }}
                   />
                   <Flex
-                    css={{ mb: 24, mt: '$2' }}
+                    css={{ mb: 24, mt: '$2', maxWidth: '100%' }}
                     align="center"
                     justify="center"
                   >
@@ -322,9 +322,13 @@ export function BuyModal({
 
                     <Text
                       style="subtitle2"
-                      css={{ maxWidth: '85%' }}
+                      css={{ maxWidth: '100%' }}
                       ellipsify
-                    >{`#${token?.token?.tokenId}`}</Text>
+                    >
+                      {token?.token?.name
+                        ? token?.token?.name
+                        : `#${token?.token?.tokenId}`}
+                    </Text>
                   </Flex>
 
                   <Flex css={{ mb: '$2' }} align="center">
