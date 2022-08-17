@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 import { Flex, Box } from '../../primitives'
 import Token from './Token'
-import Stat from './Stat'
+import Stat from '../Stat'
 import { useTokenDetails, useCollection } from '../../hooks'
-import InfoTooltip from './InfoTooltip'
+import InfoTooltip from '../InfoTooltip'
 
 type Props = {
   token?: NonNullable<

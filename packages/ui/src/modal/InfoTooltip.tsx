@@ -1,7 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import { Box, Popover, Text } from '../../primitives'
+import { Box, Popover, Text } from '../primitives'
 type Props = {
   side: string
   content: string

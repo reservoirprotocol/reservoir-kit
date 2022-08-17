@@ -3,6 +3,7 @@ import { NextPage } from 'next'
 import {
   BuyModal,
   ListModal,
+  TokenOfferModal,
   useReservoirClient,
   darkTheme,
   lightTheme,
@@ -136,6 +137,24 @@ const Index: NextPage = () => {
         onClose={() => {
           console.log('ListModal Closed')
         }}
+      />
+
+      <TokenOfferModal
+        trigger={
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flex: 1,
+              width: '100%',
+            }}
+          >
+            <Trigger>Place Offer</Trigger>
+          </div>
+        }
+        collectionId="0x79e2d470f950f2cf78eef41720e8ff2cf4b3cd78"
+        tokenId="555"
       />
 
       <select

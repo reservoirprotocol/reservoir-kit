@@ -28,7 +28,7 @@ import TokenListingDetails from './TokenListingDetails'
 import ProgressBar from './ProgressBar'
 import { useReservoirClient } from '../../hooks'
 import ListingTransactionProgress from './ListingTransactionProgress'
-import InfoTooltip from './InfoTooltip'
+import InfoTooltip from '../InfoTooltip'
 import { Marketplace } from '../../hooks/useMarketplaces'
 
 type ListingCallbackData = {

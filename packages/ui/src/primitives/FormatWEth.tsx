@@ -1,28 +1,32 @@
-import FormatCurrency from './FormatCurrency'
 import React, { FC, ComponentProps } from 'react'
+import FormatCrypto from './FormatCrypto'
 
 type FormatWEthProps = {
   logoWidth?: number
 }
 
-type Props = ComponentProps<typeof FormatCurrency> & FormatWEthProps
+type Props = ComponentProps<typeof FormatCrypto> & FormatWEthProps
 
 const FormatWEth: FC<Props> = ({
   amount,
   maximumFractionDigits,
-  logoWidth = 8,
+  logoWidth = 14,
+  textStyle,
   css,
+  textColor,
 }) => {
   return (
-    <FormatCurrency
+    <FormatCrypto
       css={css}
+      textColor={textColor}
+      textStyle={textStyle}
       amount={amount}
       maximumFractionDigits={maximumFractionDigits}
     >
       <svg
         width={logoWidth}
-        height="25"
-        viewBox="0 0 15 25"
+        height="24"
+        viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -48,7 +52,7 @@ const FormatWEth: FC<Props> = ({
           fill="#801D45"
         />
       </svg>
-    </FormatCurrency>
+    </FormatCrypto>
   )
 }
 

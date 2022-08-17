@@ -22,3 +22,6 @@ export { BuyStep } from './modal/buy/BuyModalRenderer'
 
 export { ListModal } from './modal/list/ListModal'
 export { ListStep } from './modal/list/ListModalRenderer'
+
+export { TokenOfferModal } from './modal/bid/TokenOfferModal'
+export { TokenOfferStep } from './modal/bid/TokenOfferModalRenderer'
