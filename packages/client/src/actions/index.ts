@@ -53,7 +53,11 @@ export class ReservoirClient {
 
     if (!options.source) {
       if (typeof window !== 'undefined') {
-        this.source = location.hostname
+        let host = location.hostname
+        if (host.indexOf('www.') === 0) {
+          host = host.replace('www.', '')
+        }
+        this.source = host
       }
     } else {
       this.source = options.source
