@@ -44,7 +44,7 @@ const TokenStatsHeader: FC<Props> = ({ token, collection }) => {
         color="subtle"
         css={{ mb: '$1', display: 'block' }}
       >
-        Item
+        {token ? 'Item' : 'Collection'}
       </Text>
       <Img
         src={img}
