@@ -41,8 +41,9 @@ export class ReservoirClient {
   fee?: Fee
   feeRecipient?: FeeRecipient
   automatedRoyalties?: boolean
-  readonly actions = actions
+
   readonly utils = utils
+  readonly actions: ReservoirClientActions = actions
 
   constructor(options: ReservoirClientOptions) {
     this.apiKey = options.apiKey
