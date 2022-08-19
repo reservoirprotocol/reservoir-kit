@@ -9,9 +9,9 @@ import {
 import { useAccount, useBalance, useSigner } from 'wagmi'
 
 import { BigNumber } from 'ethers'
-import {
-  Execute
-} from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-kit-client'
+import { ExpirationOption } from '../../types/ExpirationOption'
+import expirationOptions from '../../lib/defaultExpirationOptions'
 
 export enum TokenOfferStep {
   SetPrice,
@@ -32,7 +32,10 @@ type ChildrenProps = {
   isBanned: boolean
   balance?: BigNumber
   transactionError?: Error | null
+  expirationOptions: ExpirationOption[]
+  expirationOption: ExpirationOption
   setTokenOfferStep: React.Dispatch<React.SetStateAction<TokenOfferStep>>
+  setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   placeBid: () => void
 }
 
@@ -54,6 +57,10 @@ export const TokenOfferModalRenderer: FC<Props> = ({
     TokenOfferStep.SetPrice
   )
   const [transactionError, setTransactionError] = useState<Error | null>()
+
+  const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
+    expirationOptions[0]
+  )
 
   const { data: tokens } = useTokenDetails(
     open && {
@@ -85,6 +92,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
     if (!open) {
       //cleanup
       setTokenOfferStep(TokenOfferStep.SetPrice)
+      setExpirationOption(expirationOptions[0])
     }
   }, [open])
 
@@ -142,7 +150,10 @@ export const TokenOfferModalRenderer: FC<Props> = ({
         tokenOfferStep,
         hasEnoughEth: false,
         transactionError,
+        expirationOption,
+        expirationOptions,
         setTokenOfferStep,
+        setExpirationOption,
         placeBid,
       })}
     </>

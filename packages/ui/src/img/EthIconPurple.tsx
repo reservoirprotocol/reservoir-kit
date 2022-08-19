@@ -1,10 +1,6 @@
 import React from 'react'
 
-type IconProps = {
-  width: number
-}
-
-export default ({ width }: IconProps) => (
+export default () => (
   <svg
     width="100%"
     height="100%"
