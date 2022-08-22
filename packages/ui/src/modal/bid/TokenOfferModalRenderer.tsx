@@ -11,7 +11,16 @@ import { useAccount, useBalance, useSigner } from 'wagmi'
 import { BigNumber } from 'ethers'
 import { Execute } from '@reservoir0x/reservoir-kit-client'
 import { ExpirationOption } from '../../types/ExpirationOption'
-import expirationOptions from '../../lib/defaultExpirationOptions'
+import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
+
+const expirationOptions = defaultExpirationOptions.slice()
+
+expirationOptions.push({
+  text: 'Custom',
+  value: 'custom',
+  relativeTime: null,
+  relativeTimeUnit: null,
+})
 
 export enum TokenOfferStep {
   SetPrice,

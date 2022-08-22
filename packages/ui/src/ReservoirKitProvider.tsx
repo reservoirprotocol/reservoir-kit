@@ -36,6 +36,8 @@ const defaultOptions = {
   apiKey: '',
 }
 
+import calendarCss from './styles/calendar'
+
 export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   children,
   options = defaultOptions,
@@ -48,6 +50,7 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   const [providerOptions, setProviderOptions] =
     useState<ReservoirKitProviderOptions>({})
   const currentTheme = useRef(null as any)
+  calendarCss()
 
   useEffect(() => {
     let newTheme = createTheme(theme ? (theme as any) : (darkTheme() as any))

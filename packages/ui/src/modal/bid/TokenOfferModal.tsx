@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState, useRef } from 'react'
 import { styled } from '../../../stitches.config'
 import {
   Flex,
@@ -22,6 +22,7 @@ import WEthIcon from '../../img/WEthIcon'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
+import Flatpickr from 'react-flatpickr'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -67,6 +68,7 @@ const MainContainer = styled(Flex, {
   },
 })
 
+const minimumDate = dayjs().add(1, 'h').format('DD/MM/YYYY h:mm A')
 export function TokenOfferModal({
   trigger,
   tokenId,
@@ -74,6 +76,7 @@ export function TokenOfferModal({
   onViewOffers,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
+  const datetimeElement = useRef<Flatpickr | null>(null)
 
   return (
     <TokenOfferModalRenderer
@@ -106,7 +109,15 @@ export function TokenOfferModal({
                   expirationOption.relativeTime,
                   expirationOption.relativeTimeUnit
                 )
-                .format('YYYY-MM-DDTHH:mm')
+                .format('DD/MM/YYYY h:mm A')
+            )
+          } else if (
+            expirationOption &&
+            expirationOption.value === 'custom' &&
+            expirationOption.relativeTime
+          ) {
+            setExpirationDate(
+              dayjs.unix(expirationOption.relativeTime).format('DD/MM/YYYY h:mm A')
             )
           } else {
             setExpirationDate('')
@@ -123,6 +134,17 @@ export function TokenOfferModal({
               setOpen(open)
             }}
             loading={!token}
+            onPointerDownOutside={(e) => {
+              if (
+                e.target instanceof Element &&
+                datetimeElement.current?.flatpickr?.calendarContainer &&
+                datetimeElement.current.flatpickr.calendarContainer.contains(
+                  e.target
+                )
+              ) {
+                e.preventDefault()
+              }
+            }}
           >
             {tokenOfferStep === TokenOfferStep.SetPrice && token && (
               <ContentContainer>
@@ -194,6 +216,7 @@ export function TokenOfferModal({
                       ))}
                     </Select>
                     <DateInput
+                      ref={datetimeElement}
                       icon={
                         <FontAwesomeIcon
                           icon={faCalendar}
@@ -202,13 +225,28 @@ export function TokenOfferModal({
                         />
                       }
                       value={expirationDate}
-                      onChange={(e) => {
+                      options={{
+                        minDate: minimumDate,
+                        enableTime: true,
+                      }}
+                      defaultValue={expirationDate}
+                      onChange={(e: any) => {
+                        if (Array.isArray(e)) {
+                          const customOption = expirationOptions.find(
+                            (option) => option.value === 'custom'
+                          )
+                          if (customOption) {
+                            setExpirationOption({
+                              ...customOption,
+                              relativeTime: dayjs(e[0]).unix(),
+                            })
+                          }
+                        }
                         debugger
                       }}
                       containerCss={{
                         width: '100%',
                       }}
-                      type="datetime-local"
                     />
                   </Flex>
                 </MainContainer>

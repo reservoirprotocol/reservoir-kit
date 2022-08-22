@@ -1,4 +1,10 @@
-import React, { FC, ReactNode, useContext } from 'react'
+import React, {
+  ComponentPropsWithoutRef,
+  ElementRef,
+  forwardRef,
+  ReactNode,
+  useContext,
+} from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
@@ -18,13 +24,13 @@ export enum ModalSize {
 type Props = {
   title: string
   children: ReactNode
-  trigger: ReactNode
-  open?: boolean
   size?: ModalSize
-  onOpenChange?: (open: boolean) => void
   onBack?: (() => void) | null
   loading?: boolean
-}
+} & Pick<
+  ComponentPropsWithoutRef<typeof Dialog>,
+  'onPointerDownOutside' | 'onOpenChange' | 'open' | 'trigger'
+>
 
 const Logo = styled(ReservoirLogoWhiteText, {
   '& .letter': {
@@ -32,82 +38,90 @@ const Logo = styled(ReservoirLogoWhiteText, {
   },
 })
 
-export const Modal: FC<Props> = ({
-  title,
-  children,
-  trigger,
-  onBack,
-  open,
-  size = ModalSize.MD,
-  onOpenChange,
-  loading,
-}) => {
-  const providerOptionsContext = useContext(ProviderOptionsContext)
+export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
+  (
+    {
+      title,
+      children,
+      trigger,
+      onBack,
+      open,
+      size = ModalSize.MD,
+      onOpenChange,
+      loading,
+      onPointerDownOutside,
+    },
+    forwardedRef
+  ) => {
+    const providerOptionsContext = useContext(ProviderOptionsContext)
 
-  return (
-    <Dialog
-      trigger={trigger}
-      open={open}
-      onOpenChange={onOpenChange}
-      size={size}
-    >
-      <Flex
-        css={{
-          p: 16,
-          backgroundColor: '$headerBackground',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
+    return (
+      <Dialog
+        ref={forwardedRef}
+        trigger={trigger}
+        open={open}
+        onOpenChange={onOpenChange}
+        size={size}
+        onPointerDownOutside={onPointerDownOutside}
       >
-        <Title css={{ alignItems: 'center', display: 'flex' }}>
-          {onBack && (
-            <Button
-              color="ghost"
-              size="none"
-              css={{ mr: '$2', color: '$neutralText' }}
-              onClick={onBack}
-            >
-              <FontAwesomeIcon icon={faChevronLeft} width={16} height={16} />
-            </Button>
-          )}
-          <Text style="h6">{title}</Text>
-        </Title>
-        <DialogPrimitive.Close asChild>
-          <Button color="ghost" size="none" css={{ color: '$neutralText' }}>
-            <FontAwesomeIcon icon={faClose} width={16} height={16} />
-          </Button>
-        </DialogPrimitive.Close>
-      </Flex>
-      {loading && (
-        <Loader
-          css={{
-            minHeight: 242,
-            backgroundColor: '$contentBackground',
-          }}
-        />
-      )}
-      {children}
-      {!providerOptionsContext.disablePoweredByReservoir && (
         <Flex
           css={{
-            mx: 'auto',
+            p: 16,
+            backgroundColor: '$headerBackground',
             alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '$footerBackground',
-            py: 10.5,
-            visibility: '$poweredByReservoirVisibility',
+            justifyContent: 'space-between',
           }}
         >
-          <Anchor href="https://reservoir.tools/" target="_blank">
-            <Text
-              style="body2"
-              css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
-            >
-              Powered by <Logo />
-            </Text>
-          </Anchor>
+          <Title css={{ alignItems: 'center', display: 'flex' }}>
+            {onBack && (
+              <Button
+                color="ghost"
+                size="none"
+                css={{ mr: '$2', color: '$neutralText' }}
+                onClick={onBack}
+              >
+                <FontAwesomeIcon icon={faChevronLeft} width={16} height={16} />
+              </Button>
+            )}
+            <Text style="h6">{title}</Text>
+          </Title>
+          <DialogPrimitive.Close asChild>
+            <Button color="ghost" size="none" css={{ color: '$neutralText' }}>
+              <FontAwesomeIcon icon={faClose} width={16} height={16} />
+            </Button>
+          </DialogPrimitive.Close>
         </Flex>
-      )}
-    </Dialog>
-  )
-}
+        {loading && (
+          <Loader
+            css={{
+              minHeight: 242,
+              backgroundColor: '$contentBackground',
+            }}
+          />
+        )}
+        {children}
+        {!providerOptionsContext.disablePoweredByReservoir && (
+          <Flex
+            css={{
+              mx: 'auto',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '$footerBackground',
+              py: 10.5,
+              visibility: '$poweredByReservoirVisibility',
+            }}
+          >
+            <Anchor href="https://reservoir.tools/" target="_blank">
+              <Text
+                style="body2"
+                css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+              >
+                Powered by <Logo />
+              </Text>
+            </Anchor>
+          </Flex>
+        )}
+      </Dialog>
+    )
+  }
+)
