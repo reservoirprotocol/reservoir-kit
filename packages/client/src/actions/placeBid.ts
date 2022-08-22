@@ -37,6 +37,7 @@ export async function placeBid({ bids, signer, onProgress }: Data) {
       if (
         !bid.token &&
         !bid.collection &&
+        !bid.tokenSetId &&
         (!bid.attributeKey || !bid.attributeValue)
       ) {
         throw {
