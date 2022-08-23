@@ -5,6 +5,7 @@ import {
   useEthConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
+  useWethBalance,
 } from '../../hooks'
 import { useAccount, useBalance, useSigner } from 'wagmi'
 
@@ -34,16 +35,18 @@ type ChildrenProps = {
     | false
     | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
   collection: ReturnType<typeof useCollection>['data']
-  totalPrice: number
+  bidAmount: string
   tokenOfferStep: TokenOfferStep
   hasEnoughEth: boolean
   ethUsdPrice: ReturnType<typeof useEthConversion>
   isBanned: boolean
   balance?: BigNumber
+  wethBalance?: BigNumber
   transactionError?: Error | null
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   setTokenOfferStep: React.Dispatch<React.SetStateAction<TokenOfferStep>>
+  setBidAmount: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   placeBid: () => void
 }
@@ -66,7 +69,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
     TokenOfferStep.SetPrice
   )
   const [transactionError, setTransactionError] = useState<Error | null>()
-
+  const [bidAmount, setBidAmount] = useState<string>('')
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
     expirationOptions[0]
   )
@@ -93,6 +96,11 @@ export const TokenOfferModalRenderer: FC<Props> = ({
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
+    addressOrName: address,
+    watch: open,
+  })
+
+  const { data: wethBalance } = useWethBalance({
     addressOrName: address,
     watch: open,
   })
@@ -155,13 +163,15 @@ export const TokenOfferModalRenderer: FC<Props> = ({
         ethUsdPrice,
         isBanned,
         balance: balance?.value,
-        totalPrice: 0,
+        wethBalance: wethBalance?.value,
+        bidAmount,
         tokenOfferStep,
         hasEnoughEth: false,
         transactionError,
         expirationOption,
         expirationOptions,
         setTokenOfferStep,
+        setBidAmount,
         setExpirationOption,
         placeBid,
       })}

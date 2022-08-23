@@ -10,17 +10,14 @@ import {
   ToggleGroupButton,
   Loader,
   Select,
+  ErrorWell,
 } from '../../primitives'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from '../Modal'
 import { ListingData, ListModalRenderer, ListStep } from './ListModalRenderer'
 import { ModalSize } from '../Modal'
-import {
-  faChevronLeft,
-  faCheckCircle,
-  faCircleExclamation,
-} from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import TokenStats from './TokenStats'
 import MarketplaceToggle from './MarketplaceToggle'
 import MarketplacePriceInput from './MarketplacePriceInput'
@@ -469,27 +466,7 @@ export function ListModal({
                     value={stepData?.stepProgress || 0}
                     max={stepData?.totalSteps || 0}
                   />
-                  {transactionError && (
-                    <Flex
-                      css={{
-                        color: '$errorAccent',
-                        p: '$4',
-                        gap: '$2',
-                        background: '$wellBackground',
-                        mt: 24,
-                      }}
-                      align="center"
-                    >
-                      <FontAwesomeIcon
-                        icon={faCircleExclamation}
-                        width={16}
-                        height={16}
-                      />
-                      <Text style="body2" color="errorLight">
-                        Oops, something went wrong. Please try again.
-                      </Text>
-                    </Flex>
-                  )}
+                  {transactionError && <ErrorWell css={{ mt: 24 }} />}
                   {stepData && (
                     <>
                       <Text

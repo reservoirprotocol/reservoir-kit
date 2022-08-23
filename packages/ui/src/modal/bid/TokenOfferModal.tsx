@@ -8,6 +8,7 @@ import {
   Input,
   Select,
   DateInput,
+  Button,
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
@@ -15,8 +16,6 @@ import {
   TokenOfferModalRenderer,
   TokenOfferStep,
 } from './TokenOfferModalRenderer'
-// import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenStats from './TokenStats'
 import WEthIcon from '../../img/WEthIcon'
 import dayjs from 'dayjs'
@@ -90,7 +89,11 @@ export function TokenOfferModal({
         tokenOfferStep,
         expirationOption,
         expirationOptions,
+        wethBalance,
+        bidAmount,
+        setBidAmount,
         setExpirationOption,
+        placeBid,
         // ethUsdPrice,
         // isBanned,
         // transactionError,
@@ -161,7 +164,11 @@ export function TokenOfferModal({
                       style="tiny"
                     >
                       Balance:{' '}
-                      <FormatWEth logoWidth={10} textStyle="tiny" amount={3} />{' '}
+                      <FormatWEth
+                        logoWidth={10}
+                        textStyle="tiny"
+                        amount={wethBalance}
+                      />{' '}
                     </Text>
                   </Flex>
                   <Flex css={{ mt: '$2', gap: 20 }}>
@@ -178,6 +185,11 @@ export function TokenOfferModal({
                       WETH
                     </Text>
                     <Input
+                      type="number"
+                      value={bidAmount}
+                      onChange={(e) => {
+                        setBidAmount(e.target.value)
+                      }}
                       placeholder="Enter price here"
                       containerCss={{
                         width: '100%',
@@ -250,6 +262,20 @@ export function TokenOfferModal({
                       }}
                     />
                   </Flex>
+                  {bidAmount === '' ? (
+                    <Button disabled={true} css={{ width: '100%', mt: 'auto' }}>
+                      Enter a Price
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={placeBid}
+                      css={{ width: '100%', mt: 'auto' }}
+                    >
+                      {token.token
+                        ? 'Make an Offer'
+                        : 'Make a collection Offer'}
+                    </Button>
+                  )}
                 </MainContainer>
               </ContentContainer>
             )}
