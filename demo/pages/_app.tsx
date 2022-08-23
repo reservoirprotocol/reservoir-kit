@@ -51,6 +51,8 @@ const AppWrapper = ({ children }) => {
       options={{
         apiBase: 'https://api-rinkeby.reservoir.tools',
         apiKey: 'reservoir-kit-demo',
+        fee: '100',
+        feeRecipient: '0xFd03726FD90ccc7386bf62b44Bb594f7cbFB3995',
       }}
       theme={theme}
     >

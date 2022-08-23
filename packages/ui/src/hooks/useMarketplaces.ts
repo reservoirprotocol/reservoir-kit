@@ -37,6 +37,10 @@ export default function (
           const data = getLocalMarketplaceData()
           marketplace.name = data.title
           marketplace.feeBps = client?.fee ? Number(client.fee) : 0
+          marketplace.fee = {
+            bps: +(client?.fee || 0),
+            percent: +(client?.fee || 0) / 10000,
+          }
           if (data.icon) {
             marketplace.imageUrl = data.icon
           }

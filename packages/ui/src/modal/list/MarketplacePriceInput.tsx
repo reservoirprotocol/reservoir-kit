@@ -26,7 +26,8 @@ const MarketplacePriceInput = ({
   onBlur,
   ...props
 }: MarketPlaceInputProps) => {
-  let profit = (1 - (marketplace.feeBps || 0)) * Number(marketplace.truePrice)
+  let profit =
+    (1 - (marketplace.fee?.percent || 0)) * Number(marketplace.truePrice)
 
   return (
     <Flex {...props} align="center">
