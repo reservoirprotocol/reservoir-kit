@@ -14,14 +14,15 @@ import { Execute } from '@reservoir0x/reservoir-kit-client'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 
-const expirationOptions = defaultExpirationOptions.slice()
-
-expirationOptions.push({
-  text: 'Custom',
-  value: 'custom',
-  relativeTime: null,
-  relativeTimeUnit: null,
-})
+const expirationOptions = [
+  ...defaultExpirationOptions,
+  {
+    text: 'Custom',
+    value: 'custom',
+    relativeTime: null,
+    relativeTimeUnit: null,
+  },
+]
 
 export enum TokenOfferStep {
   SetPrice,

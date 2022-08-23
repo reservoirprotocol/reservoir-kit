@@ -101,29 +101,14 @@ export function TokenOfferModal({
         const [expirationDate, setExpirationDate] = useState('')
 
         useEffect(() => {
-          if (
-            expirationOption &&
-            expirationOption.relativeTime &&
-            expirationOption.relativeTimeUnit
-          ) {
-            setExpirationDate(
-              dayjs()
-                .add(
+          if (expirationOption && expirationOption.relativeTime) {
+            const newExpirationTime = expirationOption.relativeTimeUnit
+              ? dayjs().add(
                   expirationOption.relativeTime,
                   expirationOption.relativeTimeUnit
                 )
-                .format('DD/MM/YYYY h:mm A')
-            )
-          } else if (
-            expirationOption &&
-            expirationOption.value === 'custom' &&
-            expirationOption.relativeTime
-          ) {
-            setExpirationDate(
-              dayjs
-                .unix(expirationOption.relativeTime)
-                .format('DD/MM/YYYY h:mm A')
-            )
+              : dayjs.unix(expirationOption.relativeTime)
+            setExpirationDate(newExpirationTime.format('DD/MM/YYYY h:mm A'))
           } else {
             setExpirationDate('')
           }
@@ -242,6 +227,7 @@ export function TokenOfferModal({
                       options={{
                         minDate: minimumDate,
                         enableTime: true,
+                        minuteIncrement: 1,
                       }}
                       defaultValue={expirationDate}
                       onChange={(e: any) => {
