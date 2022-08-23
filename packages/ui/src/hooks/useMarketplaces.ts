@@ -39,7 +39,7 @@ export default function (
           marketplace.feeBps = client?.fee ? Number(client.fee) : 0
           marketplace.fee = {
             bps: +(client?.fee || 0),
-            percent: +(client?.fee || 0) / 10000,
+            percent: +(client?.fee || 0) / 100,
           }
           if (data.icon) {
             marketplace.imageUrl = data.icon

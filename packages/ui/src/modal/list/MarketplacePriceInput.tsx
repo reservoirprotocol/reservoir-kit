@@ -27,7 +27,7 @@ const MarketplacePriceInput = ({
   ...props
 }: MarketPlaceInputProps) => {
   let profit =
-    (1 - (marketplace.fee?.percent || 0)) * Number(marketplace.truePrice)
+    (1 - (marketplace.fee?.percent || 0) / 100) * Number(marketplace.truePrice)
 
   return (
     <Flex {...props} align="center">
