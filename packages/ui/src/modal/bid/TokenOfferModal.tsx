@@ -117,7 +117,9 @@ export function TokenOfferModal({
             expirationOption.relativeTime
           ) {
             setExpirationDate(
-              dayjs.unix(expirationOption.relativeTime).format('DD/MM/YYYY h:mm A')
+              dayjs
+                .unix(expirationOption.relativeTime)
+                .format('DD/MM/YYYY h:mm A')
             )
           } else {
             setExpirationDate('')
@@ -242,7 +244,6 @@ export function TokenOfferModal({
                             })
                           }
                         }
-                        debugger
                       }}
                       containerCss={{
                         width: '100%',
