@@ -193,6 +193,7 @@ export const BuyModalRenderer: FC<Props> = ({
           setReferrerFee(fee)
         }
         setTotalPrice(floorPrice)
+        setBuyStep(BuyStep.Checkout)
       } else {
         setBuyStep(BuyStep.Unavailable)
         setTotalPrice(0)
