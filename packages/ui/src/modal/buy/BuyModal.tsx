@@ -196,7 +196,7 @@ export function BuyModal({
                   usdConversion={ethUsdPrice || 0}
                   isSuspicious={isBanned}
                 />
-                {referrerFee && (
+                {referrerFee > 0 && (
                   <>
                     <Flex
                       align="center"
