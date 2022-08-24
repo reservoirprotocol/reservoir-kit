@@ -124,8 +124,8 @@ const Index: NextPage = () => {
             <Trigger>List Item</Trigger>
           </div>
         }
-        collectionId="0xfb7e002151343efa2a3a5f2ea98db0d21efb75ce"
-        tokenId="1054"
+        collectionId="0xca1eef3784c65508f7332a97b9b066033bd58e2e"
+        tokenId="173"
         onGoToToken={() => console.log('Awesome!')}
         onListingComplete={(data) => {
           console.log('Listing Complete', data)

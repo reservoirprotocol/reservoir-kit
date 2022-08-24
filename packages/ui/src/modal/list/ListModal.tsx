@@ -103,7 +103,6 @@ export function ListModal({
         expirationOptions,
         marketplaces,
         unapprovedMarketplaces,
-        isFetchingUnapprovedMarketplaces,
         localMarketplace,
         syncProfit,
         listingData,
@@ -123,7 +122,15 @@ export function ListModal({
 
         useEffect(() => {
           if (stepData) {
-            const marketplaceName = stepData.listingData.marketplace.name
+            const isNativeOrder =
+              stepData.listingData.marketplace.orderbook === 'reservoir'
+            const isSeaportOrder =
+              stepData.listingData.marketplace.orderKind === 'seaport'
+            const marketplaceName =
+              isNativeOrder && isSeaportOrder
+                ? `${stepData.listingData.marketplace.name} (on Seaport)`
+                : stepData.listingData.marketplace.name
+
             switch (stepData.currentStep.kind) {
               case 'transaction': {
                 setStepTitle(
@@ -143,20 +150,30 @@ export function ListModal({
 
         useEffect(() => {
           if (unapprovedMarketplaces.length > 0) {
-            const unapprovedNames = unapprovedMarketplaces.map(
-              (marketplace) => marketplace.name
+            const unapprovedNames = unapprovedMarketplaces.reduce(
+              (names, marketplace) => {
+                if (
+                  marketplace.name &&
+                  localMarketplace?.orderKind !== marketplace.orderKind
+                ) {
+                  names.push(marketplace.name)
+                }
+                return names
+              },
+              [] as string[]
             )
             setMarketplacesToApprove(
               marketplaces.filter(
                 (marketplace) =>
                   marketplace.isSelected &&
+                  marketplace.name &&
                   unapprovedNames.includes(marketplace.name)
               )
             )
           } else {
             setMarketplacesToApprove([])
           }
-        }, [unapprovedMarketplaces, marketplaces])
+        }, [unapprovedMarketplaces, marketplaces, localMarketplace])
 
         useEffect(() => {
           if (listStep === ListStep.Complete && onListingComplete) {
@@ -261,23 +278,7 @@ export function ListModal({
                       ))}
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
-                    {!isFetchingUnapprovedMarketplaces &&
-                      !marketplacesToApprove.length && (
-                        <Text
-                          color="success"
-                          style="subtitle2"
-                          css={{
-                            my: 10,
-                            width: '100%',
-                            textAlign: 'center',
-                            display: 'block',
-                          }}
-                        >
-                          All marketplaces approved, no gas fee required!
-                        </Text>
-                      )}
-                    {(marketplacesToApprove.length > 0 ||
-                      isFetchingUnapprovedMarketplaces) && (
+                    {marketplacesToApprove.length > 0 && (
                       <Text
                         color="accent"
                         style="subtitle2"
@@ -288,11 +289,9 @@ export function ListModal({
                           display: 'block',
                         }}
                       >
-                        {isFetchingUnapprovedMarketplaces
-                          ? 'Checking if gas fee required...'
-                          : `Gas fee required to approve listing (${marketplacesToApprove
-                              .map((marketplace) => marketplace.name)
-                              .join(', ')})`}
+                        {`Additional Gas fee required to approve listing (${marketplacesToApprove
+                          .map((marketplace) => marketplace.name)
+                          .join(', ')})`}
                       </Text>
                     )}
                     <Button
