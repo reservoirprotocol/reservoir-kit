@@ -50,15 +50,28 @@ export async function buyToken(data: Data) {
     // Construct a URL object for the `/execute/buy` endpoint
     const params: BuyTokenPathParameters = {
       taker: taker,
-      source: client.source || "",
+      source: client.source || '',
       ...options,
     }
 
-    tokens?.forEach(
-      (token, index) =>
-        //@ts-ignore
-        (params[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
-    )
+    if (
+      client.fee &&
+      client.feeRecipient &&
+      (!options.referrerFeeBps || !options.referrer)
+    ) {
+      params.referrer = client.feeRecipient
+      params.referrerFeeBps = +client.fee
+    }
+
+    if (tokens.length === 1 && options.quantity) {
+      params.token = `${tokens[0].contract}:${tokens[0].tokenId}`
+    } else {
+      tokens?.forEach(
+        (token, index) =>
+          //@ts-ignore
+          (params[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
+      )
+    }
 
     await executeSteps(
       {

@@ -29,7 +29,8 @@ export default function (
         data.marketplaces as Marketplace[]
       if (listingEnabledOnly) {
         updatedMarketplaces = updatedMarketplaces.filter(
-          (marketplace) => marketplace.listingEnabled
+          (marketplace) =>
+            marketplace.listingEnabled && marketplace.orderbook !== 'x2y2'
         )
       }
       updatedMarketplaces.forEach((marketplace) => {
@@ -37,6 +38,10 @@ export default function (
           const data = getLocalMarketplaceData()
           marketplace.name = data.title
           marketplace.feeBps = client?.fee ? Number(client.fee) : 0
+          marketplace.fee = {
+            bps: +(client?.fee || 0),
+            percent: +(client?.fee || 0) / 100,
+          }
           if (data.icon) {
             marketplace.imageUrl = data.icon
           }
