@@ -196,10 +196,11 @@ export const ListModalRenderer: FC<Props> = ({
     let syncedMarketplaces = marketplaces.slice()
     if (syncProfit) {
       let profit =
-        (1 - (updatingMarket.feeBps || 0)) * Number(updatingMarket.price)
+        (1 - (updatingMarket.fee?.percent || 0) / 100) *
+        Number(updatingMarket.price)
+
       syncedMarketplaces = syncedMarketplaces.map((marketplace) => {
-        const feeBps = marketplace.feeBps || 0
-        let truePrice = profit / (1 - feeBps)
+        let truePrice = profit / (1 - (marketplace?.fee?.percent || 0) / 100)
 
         return {
           ...marketplace,
@@ -350,7 +351,6 @@ export const ListModalRenderer: FC<Props> = ({
         const listing: Listings[0] = {
           token: `${collectionId}:${tokenId}`,
           weiPrice: parseEther(`${market.price}`).toString(),
-
           //@ts-ignore
           orderbook: market.orderbook,
           //@ts-ignore

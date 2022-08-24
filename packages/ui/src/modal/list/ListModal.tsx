@@ -45,16 +45,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
   onClose?: () => void
-} & (
-    | {
-        referrerFeeBps: number
-        referrer: string
-      }
-    | {
-        referrerFeeBps?: undefined
-        referrer?: undefined
-      }
-  )
+}
 
 const Image = styled('img', {})
 const Span = styled('span', {})
@@ -257,8 +248,8 @@ export function ListModal({
                         </Text>
                       </Box>
                       <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
-                        Marketplace fee: {(localMarketplace?.feeBps || 0) * 100}
-                        %
+                        Marketplace fee:{' '}
+                        {((localMarketplace?.fee?.bps || 0) / 10000) * 100}%
                       </Text>
                     </Flex>
                     <Text
