@@ -13,11 +13,7 @@ type FormatEthProps = {
 
 type Props = ComponentProps<typeof FormatCrypto> & FormatEthProps
 
-type EthLogoProps = {
-  width: number
-}
-
-export const EthLogo = ({ width }: EthLogoProps) => {
+export const EthLogo = () => {
   const themeContext = useContext(ThemeContext)
   const ethIcon: ReservoirKitThemeContext['assets']['ethIcon']['value'] =
     themeContext && (themeContext as any)
@@ -26,11 +22,11 @@ export const EthLogo = ({ width }: EthLogoProps) => {
 
   switch (ethIcon) {
     case 'glyph':
-      return <EthIconGlyph width={width} />
+      return <EthIconGlyph />
     case 'gray':
-      return <EthIconGray width={width} />
+      return <EthIconGray />
     case 'purple':
-      return <EthIconPurple width={width} />
+      return <EthIconPurple />
   }
 }
 
@@ -56,7 +52,7 @@ const FormatEth: FC<Props> = ({
           height: logoWidth,
         }}
       >
-        <EthLogo width={logoWidth} />
+        <EthLogo />
       </Box>
     </FormatCrypto>
   )

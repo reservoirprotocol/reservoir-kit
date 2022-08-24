@@ -1,5 +1,6 @@
 import { styled } from '../../stitches.config'
 import Flex from './Flex'
+import Box from './Box'
 import React, {
   ComponentPropsWithoutRef,
   ElementRef,
@@ -37,7 +38,18 @@ export const Input = forwardRef<
 >(({ children, icon, containerCss, ...props }, forwardedRef) => (
   <Flex css={{ ...containerCss, position: 'relative' }}>
     {icon && (
-      <div style={{ position: 'absolute', top: 16, left: 16 }}>{icon}</div>
+      <Box
+        css={{
+          position: 'absolute',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          left: 16,
+          color: '$neutralTextContrast',
+          pointerEvents: 'none',
+        }}
+      >
+        {icon}
+      </Box>
     )}
     <StyledInput css={{ pl: icon ? 48 : 16 }} ref={forwardedRef} {...props} />
   </Flex>

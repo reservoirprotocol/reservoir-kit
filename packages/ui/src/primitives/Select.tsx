@@ -7,6 +7,7 @@ import Box from './Box'
 
 type Props = {
   children: React.ReactNode
+  css?: ComponentPropsWithoutRef<typeof StyledTrigger>['css']
 }
 
 type SelectProps = {
@@ -44,9 +45,9 @@ export const RKSelect: React.FC<
     ComponentPropsWithoutRef<typeof Select.Root> &
     ComponentPropsWithoutRef<typeof Select.Value>
 > &
-  SelectProps = ({ children, ...props }) => (
+  SelectProps = ({ children, css, ...props }) => (
   <Select.Root {...props}>
-    <StyledTrigger>
+    <StyledTrigger css={css}>
       <Select.Value placeholder={props.placeholder}>{props.value}</Select.Value>
       <Select.Icon asChild>
         <Box css={{ color: '$neutralSolidHover' }}>
