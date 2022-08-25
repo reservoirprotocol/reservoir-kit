@@ -80,7 +80,6 @@ const calendarCss = globalCss({
   },
   '.flatpickr-calendar.hasTime .flatpickr-time': {
     height: 40,
-    borderTop: '1px solid #20222c',
   },
   '.flatpickr-calendar.noCalendar.hasTime .flatpickr-time': {
     height: 'auto',
@@ -191,7 +190,7 @@ const calendarCss = globalCss({
     },
   '.flatpickr-months .flatpickr-prev-month:hover, .flatpickr-months .flatpickr-next-month:hover':
     {
-      color: '#eee',
+      color: '$neutralText',
     },
   '.flatpickr-months .flatpickr-prev-month:hover svg, .flatpickr-months .flatpickr-next-month:hover svg':
     {
@@ -283,7 +282,7 @@ const calendarCss = globalCss({
   '.flatpickr-current-month': {
     fontSize: '135%',
     fontWeight: 300,
-    color: 'inherit',
+    color: '$neutralText',
     position: 'absolute',
     width: '75%',
     left: '12.5%',
@@ -296,7 +295,7 @@ const calendarCss = globalCss({
   '.flatpickr-current-month span.cur-month': {
     fontFamily: 'inherit',
     fontWeight: 700,
-    color: 'inherit',
+    color: '$neutralText',
     display: 'inline-block',
     marginLeft: '0.5ch',
     padding: 0,
@@ -347,7 +346,7 @@ const calendarCss = globalCss({
     border: 'none',
     borderRadius: 0,
     boxSizing: 'border-box',
-    color: 'inherit',
+    color: '$neutralText',
     cursor: 'pointer',
     fontSize: 'inherit',
     fontFamily: 'inherit',
@@ -370,12 +369,13 @@ const calendarCss = globalCss({
   },
   '.flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month':
     {
-      backgroundColor: '#3f4458',
+      backgroundColor: '$neutralBg',
       outline: 'none',
       padding: 0,
     },
   '.flatpickr-weekdays': {
     backgroundColor: 'transparent',
+    color: '$neutralText',
     textAlign: 'center',
     overflow: 'hidden',
     width: '100%',
@@ -392,7 +392,7 @@ const calendarCss = globalCss({
     cursor: 'default',
     fontSize: '90%',
     background: '#3f4458',
-    color: '#fff',
+    color: '$neutralText',
     lineHeight: '1px',
     margin: 0,
     textAlign: 'center',
@@ -436,7 +436,7 @@ const calendarCss = globalCss({
     border: '1px solid transparent',
     borderRadius: 150,
     boxSizing: 'border-box',
-    color: 'rgba(255,255,255,0.95)',
+    color: '$neutralText',
     cursor: 'pointer',
     fontWeight: 400,
     width: '14.2857143%',
@@ -534,7 +534,7 @@ const calendarCss = globalCss({
       display: 'block',
       width: '100%',
       maxWidth: 'none',
-      color: 'rgba(255,255,255,0.3)',
+      color: '$neutralText',
       background: 'transparent',
       cursor: 'default',
       border: 'none',
@@ -592,7 +592,7 @@ const calendarCss = globalCss({
     padding: 0,
     height: 'inherit',
     lineHeight: 'inherit',
-    color: 'rgba(255,255,255,0.95)',
+    color: '$neutralText',
     fontSize: 14,
     position: 'relative',
     boxSizing: 'border-box',
@@ -614,7 +614,7 @@ const calendarCss = globalCss({
       height: 'inherit',
       float: 'left',
       lineHeight: 'inherit',
-      color: 'rgba(255,255,255,0.95)',
+      color: '$neutralText',
       fontWeight: 'bold',
       width: '2%',
       userSelect: 'none',
