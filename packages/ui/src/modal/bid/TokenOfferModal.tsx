@@ -10,6 +10,8 @@ import {
   DateInput,
   Button,
   FormatEth,
+  ErrorWell,
+  Loader,
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
@@ -23,6 +25,10 @@ import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
 import Flatpickr from 'react-flatpickr'
+import TransactionProgress from '../../modal/TransactionProgress'
+import ProgressBar from '../../modal/ProgressBar'
+import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
+import WethApproval from '../../img/WethApproval'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -75,6 +81,14 @@ export function TokenOfferModal({
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
   const datetimeElement = useRef<Flatpickr | null>(null)
+  const [stepTitle, setStepTitle] = useState('')
+  const [localMarketplace, setLocalMarketplace] = useState<ReturnType<
+    typeof getLocalMarketplaceData
+  > | null>(null)
+
+  useEffect(() => {
+    setLocalMarketplace(getLocalMarketplaceData())
+  }, [])
 
   return (
     <TokenOfferModalRenderer
@@ -95,14 +109,36 @@ export function TokenOfferModal({
         ethAmountToWrap,
         balance,
         wethUniswapLink,
+        transactionError,
+        stepData,
         setBidAmount,
         setExpirationOption,
+        setTokenOfferStep,
         placeBid,
         // ethUsdPrice,
         // isBanned,
-        // transactionError,
       }) => {
         const [expirationDate, setExpirationDate] = useState('')
+
+        const itemImage =
+          token && token.token?.image
+            ? token.token?.image
+            : (collection?.metadata?.imageUrl as string)
+
+        useEffect(() => {
+          if (stepData) {
+            switch (stepData.currentStep.kind) {
+              case 'signature': {
+                setStepTitle('Confirm Offer')
+                break
+              }
+              default: {
+                setStepTitle(stepData.currentStep.action)
+                break
+              }
+            }
+          }
+        }, [stepData])
 
         useEffect(() => {
           if (expirationOption && expirationOption.relativeTime) {
@@ -300,6 +336,83 @@ export function TokenOfferModal({
                         </Button>
                       </Flex>
                     </Box>
+                  )}
+                </MainContainer>
+              </ContentContainer>
+            )}
+
+            {tokenOfferStep === TokenOfferStep.Offering && token && (
+              <ContentContainer>
+                <TokenStats token={token} collection={collection} />
+                <MainContainer css={{ p: '$4' }}>
+                  <ProgressBar
+                    value={stepData?.stepProgress || 0}
+                    max={stepData?.totalSteps || 0}
+                  />
+                  {transactionError && <ErrorWell css={{ mt: 24 }} />}
+                  {stepData && (
+                    <>
+                      <Text
+                        css={{ textAlign: 'center', mt: 48, mb: 28 }}
+                        style="subtitle1"
+                      >
+                        {stepTitle}
+                      </Text>
+                      {stepData.currentStep.kind === 'signature' && (
+                        <TransactionProgress
+                          justify="center"
+                          fromImg={itemImage || ''}
+                          toImg={localMarketplace?.icon || ''}
+                        />
+                      )}
+                      {stepData.currentStep.kind !== 'signature' && (
+                        <WethApproval style={{ margin: '0 auto' }} />
+                      )}
+                      <Text
+                        css={{
+                          textAlign: 'center',
+                          mt: 24,
+                          maxWidth: 395,
+                          mx: 'auto',
+                          mb: '$4',
+                        }}
+                        style="body3"
+                        color="subtle"
+                      >
+                        {stepData?.currentStep.description}
+                      </Text>
+                    </>
+                  )}
+                  {!stepData && (
+                    <Flex
+                      css={{ height: '100%' }}
+                      justify="center"
+                      align="center"
+                    >
+                      <Loader />
+                    </Flex>
+                  )}
+                  {!transactionError && (
+                    <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
+                      <Loader />
+                      Waiting for Approval
+                    </Button>
+                  )}
+                  {transactionError && (
+                    <Flex css={{ mt: 'auto', gap: 10 }}>
+                      <Button
+                        color="secondary"
+                        css={{ flex: 1 }}
+                        onClick={() =>
+                          setTokenOfferStep(TokenOfferStep.SetPrice)
+                        }
+                      >
+                        Edit Bid
+                      </Button>
+                      <Button css={{ flex: 1 }} onClick={() => placeBid()}>
+                        Retry
+                      </Button>
+                    </Flex>
                   )}
                 </MainContainer>
               </ContentContainer>

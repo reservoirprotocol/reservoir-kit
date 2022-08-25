@@ -1,4 +1,4 @@
-import { Flex } from '../../primitives'
+import { Flex } from '../primitives'
 import React, { ComponentPropsWithoutRef, FC } from 'react'
 
 type Props = {
