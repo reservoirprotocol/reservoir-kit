@@ -9,7 +9,7 @@ import React, {
 import {
   useCollection,
   useTokenDetails,
-  useEthConversion,
+  useCoinConversion,
   useReservoirClient,
   useMarketplaces,
   useListingPreapprovalCheck,
@@ -56,7 +56,7 @@ type ChildrenProps = {
     | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
   collection: ReturnType<typeof useCollection>['data']
   listStep: ListStep
-  ethUsdPrice: ReturnType<typeof useEthConversion>
+  ethUsdPrice: ReturnType<typeof useCoinConversion>
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   marketplaces: Marketplace[]
@@ -126,7 +126,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   let token = !!tokens?.length && tokens[0]
 
-  const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
+  const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
 
   const toggleMarketplace = (marketplace: Marketplace) => {
     setMarketplaces(

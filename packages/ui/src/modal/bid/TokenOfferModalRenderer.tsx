@@ -2,17 +2,18 @@ import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
   useCollection,
   useTokenDetails,
-  useEthConversion,
+  useCoinConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
   useWethBalance,
 } from '../../hooks'
-import { useAccount, useBalance, useSigner } from 'wagmi'
+import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
 
-import { BigNumber } from 'ethers'
+import { BigNumber, constants, utils } from 'ethers'
 import { Execute } from '@reservoir0x/reservoir-kit-client'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
+import { formatBN } from '../../lib/numbers'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -26,7 +27,6 @@ const expirationOptions = [
 
 export enum TokenOfferStep {
   SetPrice,
-  Swap,
   Offering,
   Complete,
 }
@@ -39,10 +39,13 @@ type ChildrenProps = {
   bidAmount: string
   tokenOfferStep: TokenOfferStep
   hasEnoughEth: boolean
-  ethUsdPrice: ReturnType<typeof useEthConversion>
+  hasEnoughWEth: boolean
+  ethAmountToWrap: string
+  ethUsdPrice: ReturnType<typeof useCoinConversion>
   isBanned: boolean
   balance?: BigNumber
   wethBalance?: BigNumber
+  wethUniswapLink: string
   transactionError?: Error | null
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
@@ -74,6 +77,9 @@ export const TokenOfferModalRenderer: FC<Props> = ({
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
     expirationOptions[0]
   )
+  const [hasEnoughEth, setHasEnoughEth] = useState(false)
+  const [hasEnoughWEth, setHasEnoughWEth] = useState(false)
+  const [ethAmountToWrap, setEthAmountToWrap] = useState('')
 
   const { data: tokens } = useTokenDetails(
     open && {
@@ -89,7 +95,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
   )
   let token = !!tokens?.length && tokens[0]
 
-  const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
+  const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
   // const feeUsd = referrerFee * (ethUsdPrice || 0)
   // const totalUsd = totalPrice * (ethUsdPrice || 0)
 
@@ -101,16 +107,52 @@ export const TokenOfferModalRenderer: FC<Props> = ({
     watch: open,
   })
 
-  const { data: wethBalance } = useWethBalance({
+  const {
+    balance: { data: wethBalance },
+    contractAddress,
+  } = useWethBalance({
     addressOrName: address,
     watch: open,
   })
+
+  const { chain } = useNetwork()
+  const wethUniswapLink = `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${ethAmountToWrap}&chain=${
+    chain?.network || 'mainnet'
+  }&inputCurrency=eth&outputCurrency=${contractAddress}`
+
+  useEffect(() => {
+    if (bidAmount !== '') {
+      const bid = utils.parseEther(bidAmount)
+      if (!balance?.value || balance.value.lt(bid)) {
+        setHasEnoughEth(false)
+      } else {
+        setHasEnoughEth(true)
+      }
+
+      if (!wethBalance?.value || wethBalance?.value.lt(bid)) {
+        setHasEnoughWEth(false)
+        const wethAmount = wethBalance?.value || constants.Zero
+        setEthAmountToWrap(formatBN(bid.sub(wethAmount), 5))
+      } else {
+        setHasEnoughWEth(true)
+        setEthAmountToWrap('')
+      }
+    } else {
+      setHasEnoughEth(true)
+      setHasEnoughWEth(true)
+      setEthAmountToWrap('')
+    }
+  }, [bidAmount, balance, wethBalance])
 
   useEffect(() => {
     if (!open) {
       //cleanup
       setTokenOfferStep(TokenOfferStep.SetPrice)
       setExpirationOption(expirationOptions[0])
+      setHasEnoughEth(false)
+      setHasEnoughWEth(false)
+      setEthAmountToWrap('')
+      setBidAmount('')
     }
   }, [open])
 
@@ -165,9 +207,12 @@ export const TokenOfferModalRenderer: FC<Props> = ({
         isBanned,
         balance: balance?.value,
         wethBalance: wethBalance?.value,
+        wethUniswapLink,
         bidAmount,
         tokenOfferStep,
-        hasEnoughEth: false,
+        hasEnoughEth,
+        hasEnoughWEth,
+        ethAmountToWrap,
         transactionError,
         expirationOption,
         expirationOptions,

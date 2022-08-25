@@ -9,6 +9,7 @@ import {
   Select,
   DateInput,
   Button,
+  FormatEth,
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
@@ -35,8 +36,6 @@ function titleForStep(step: TokenOfferStep) {
   switch (step) {
     case TokenOfferStep.SetPrice:
       return 'Make an Offer'
-    case TokenOfferStep.Swap:
-      return 'Add Funds'
     case TokenOfferStep.Offering:
       return 'Complete Offer'
     case TokenOfferStep.Complete:
@@ -91,6 +90,11 @@ export function TokenOfferModal({
         expirationOptions,
         wethBalance,
         bidAmount,
+        hasEnoughEth,
+        hasEnoughWEth,
+        ethAmountToWrap,
+        balance,
+        wethUniswapLink,
         setBidAmount,
         setExpirationOption,
         placeBid,
@@ -248,11 +252,13 @@ export function TokenOfferModal({
                       }}
                     />
                   </Flex>
-                  {bidAmount === '' ? (
+                  {bidAmount === '' && (
                     <Button disabled={true} css={{ width: '100%', mt: 'auto' }}>
                       Enter a Price
                     </Button>
-                  ) : (
+                  )}
+
+                  {bidAmount !== '' && hasEnoughWEth && (
                     <Button
                       onClick={placeBid}
                       css={{ width: '100%', mt: 'auto' }}
@@ -261,6 +267,39 @@ export function TokenOfferModal({
                         ? 'Make an Offer'
                         : 'Make a collection Offer'}
                     </Button>
+                  )}
+
+                  {bidAmount !== '' && !hasEnoughWEth && (
+                    <Box css={{ width: '100%', mt: 'auto' }}>
+                      {!hasEnoughEth && (
+                        <Flex css={{ gap: '$2', mt: 10 }} justify="center">
+                          <Text style="body2" color="error">
+                            Insufficient ETH Balance
+                          </Text>
+                          <FormatEth amount={balance} />
+                        </Flex>
+                      )}
+                      <Flex css={{ gap: '$2', mt: 10, overflow: 'hidden' }}>
+                        <Button
+                          css={{ flex: '1 0 auto' }}
+                          color="secondary"
+                          onClick={() => {
+                            window.open(wethUniswapLink, '_blank')
+                          }}
+                        >
+                          Convert Manually
+                        </Button>
+                        <Button
+                          css={{ flex: 1, maxHeight: 44 }}
+                          disabled={!hasEnoughEth}
+                          onClick={placeBid}
+                        >
+                          <Text style="h6" ellipsify>
+                            Convert {ethAmountToWrap} ETH for me
+                          </Text>
+                        </Button>
+                      </Flex>
+                    </Box>
                   )}
                 </MainContainer>
               </ContentContainer>

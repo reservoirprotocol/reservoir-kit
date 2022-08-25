@@ -13,8 +13,13 @@ export default function (params: Parameters<typeof useBalance>['0']) {
       ? wethContracts[chain.id]
       : wethContracts[1]
 
-  return useBalance({
+  const balance = useBalance({
     ...params,
     token: contractAddress,
   })
+
+  return {
+    balance,
+    contractAddress,
+  }
 }

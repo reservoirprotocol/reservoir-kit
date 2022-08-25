@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
   useCollection,
   useTokenDetails,
-  useEthConversion,
+  useCoinConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
 } from '../../hooks'
@@ -36,7 +36,7 @@ type ChildrenProps = {
   txHash: string | null
   feeUsd: number
   totalUsd: number
-  ethUsdPrice: ReturnType<typeof useEthConversion>
+  ethUsdPrice: ReturnType<typeof useCoinConversion>
   isBanned: boolean
   balance?: BigNumber
   address?: string
@@ -85,7 +85,7 @@ export const BuyModalRenderer: FC<Props> = ({
   )
   let token = !!tokens?.length && tokens[0]
 
-  const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
+  const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
   const feeUsd = referrerFee * (ethUsdPrice || 0)
   const totalUsd = totalPrice * (ethUsdPrice || 0)
 
