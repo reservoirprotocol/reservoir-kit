@@ -238,10 +238,10 @@ const calendarCss = globalCss({
     boxSizing: 'border-box',
   },
   '.numInputWrapper span:hover': {
-    background: '$accentBgHover',
+    background: '$neutralBgHover',
   },
   '.numInputWrapper span:active': {
-    background: '$accentBgActive',
+    background: '$neutralBgActive',
   },
   '.numInputWrapper span:after': {
     display: 'block',
@@ -272,10 +272,10 @@ const calendarCss = globalCss({
     height: 'auto',
   },
   '.numInputWrapper span svg path': {
-    fill: '$accentBgHover',
+    fill: '$neutralBgHover',
   },
   '.numInputWrapper:hover': {
-    background: '$accentBgHover',
+    background: '$neutralBgHover',
   },
   '.numInputWrapper:hover span': {
     opacity: 1,
@@ -633,7 +633,7 @@ const calendarCss = globalCss({
   },
   '.flatpickr-time input:hover, .flatpickr-time .flatpickr-am-pm:hover, .flatpickr-time input:focus, .flatpickr-time .flatpickr-am-pm:focus':
     {
-      background: '$accentBgHover',
+      background: '$neutralBgHover',
     },
   '.flatpickr-input[readonly]': {
     cursor: 'pointer',
