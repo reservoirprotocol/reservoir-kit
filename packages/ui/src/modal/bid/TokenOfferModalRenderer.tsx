@@ -42,6 +42,8 @@ type ChildrenProps = {
     | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
   collection: ReturnType<typeof useCollection>['data']
   bidAmount: string
+  bidData: BidData | null
+  bidAmountUsd: number
   tokenOfferStep: TokenOfferStep
   hasEnoughEth: boolean
   hasEnoughWEth: boolean
@@ -68,6 +70,10 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
 }
 
+export type BidData = Parameters<
+  ReservoirClientActions['placeBid']
+>['0']['bids'][0]
+
 export type StepData = {
   totalSteps: number
   stepProgress: number
@@ -93,12 +99,14 @@ export const TokenOfferModalRenderer: FC<Props> = ({
   const [hasEnoughWEth, setHasEnoughWEth] = useState(false)
   const [ethAmountToWrap, setEthAmountToWrap] = useState('')
   const [stepData, setStepData] = useState<StepData | null>(null)
+  const [bidData, setBidData] = useState<BidData | null>(null)
 
   const { data: tokens } = useTokenDetails(
-    open && {
-      tokens: [`${collectionId}:${tokenId}`],
-      includeTopBid: true,
-    }
+    open &&
+      tokenId !== undefined && {
+        tokens: [`${collectionId}:${tokenId}`],
+        includeTopBid: true,
+      }
   )
   const { data: collection } = useCollection(
     open && {
@@ -109,8 +117,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
   let token = !!tokens?.length && tokens[0]
 
   const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
-  // const feeUsd = referrerFee * (ethUsdPrice || 0)
-  // const totalUsd = totalPrice * (ethUsdPrice || 0)
+  const bidAmountUsd = +bidAmount * (ethUsdPrice || 0)
 
   const client = useReservoirClient()
 
@@ -162,7 +169,6 @@ export const TokenOfferModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (!open) {
-      //cleanup
       setTokenOfferStep(TokenOfferStep.SetPrice)
       setExpirationOption(expirationOptions[0])
       setHasEnoughEth(false)
@@ -170,6 +176,8 @@ export const TokenOfferModalRenderer: FC<Props> = ({
       setEthAmountToWrap('')
       setBidAmount('')
       setStepData(null)
+      setBidData(null)
+      setTransactionError(null)
     }
   }, [open])
 
@@ -185,8 +193,8 @@ export const TokenOfferModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (!tokenId || !collectionId) {
-      const error = new Error('Missing tokenId or collectionId')
+    if (!tokenId && !collectionId) {
+      const error = new Error('Missing tokenId and collectionId')
       setTransactionError(error)
       throw error
     }
@@ -199,13 +207,13 @@ export const TokenOfferModalRenderer: FC<Props> = ({
 
     setTokenOfferStep(TokenOfferStep.Offering)
     setTransactionError(null)
+    setBidData(null)
 
-    const bid: Parameters<ReservoirClientActions['placeBid']>['0']['bids'][0] =
-      {
-        weiPrice: parseEther(`${bidAmount}`).toString(),
-        orderbook: 'reservoir',
-        orderKind: 'seaport',
-      }
+    const bid: BidData = {
+      weiPrice: parseEther(`${bidAmount}`).toString(),
+      orderbook: 'reservoir',
+      orderKind: 'seaport',
+    }
 
     if (tokenId && collectionId) {
       bid.token = `${collectionId}:${tokenId}`
@@ -225,6 +233,8 @@ export const TokenOfferModalRenderer: FC<Props> = ({
           .toString()
       }
     }
+
+    setBidData(bid)
 
     client.actions
       .placeBid({
@@ -284,6 +294,8 @@ export const TokenOfferModalRenderer: FC<Props> = ({
         wethBalance: wethBalance?.value,
         wethUniswapLink,
         bidAmount,
+        bidData,
+        bidAmountUsd,
         tokenOfferStep,
         hasEnoughEth,
         hasEnoughWEth,

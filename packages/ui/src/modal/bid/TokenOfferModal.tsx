@@ -12,6 +12,7 @@ import {
   FormatEth,
   ErrorWell,
   Loader,
+  FormatCurrency,
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
@@ -29,6 +30,8 @@ import TransactionProgress from '../../modal/TransactionProgress'
 import ProgressBar from '../../modal/ProgressBar'
 import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
 import WethApproval from '../../img/WethApproval'
+import OfferSubmitted from '../../img/OfferSubmitted'
+import TransactionBidDetails from './TransactionBidDetails'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
@@ -104,6 +107,7 @@ export function TokenOfferModal({
         expirationOptions,
         wethBalance,
         bidAmount,
+        bidAmountUsd,
         hasEnoughEth,
         hasEnoughWEth,
         ethAmountToWrap,
@@ -111,12 +115,12 @@ export function TokenOfferModal({
         wethUniswapLink,
         transactionError,
         stepData,
+        bidData,
+        isBanned,
         setBidAmount,
         setExpirationOption,
         setTokenOfferStep,
         placeBid,
-        // ethUsdPrice,
-        // isBanned,
       }) => {
         const [expirationDate, setExpirationDate] = useState('')
 
@@ -163,7 +167,7 @@ export function TokenOfferModal({
             onOpenChange={(open) => {
               setOpen(open)
             }}
-            loading={!token}
+            loading={!collection}
             onPointerDownOutside={(e) => {
               if (
                 e.target instanceof Element &&
@@ -176,10 +180,19 @@ export function TokenOfferModal({
               }
             }}
           >
-            {tokenOfferStep === TokenOfferStep.SetPrice && token && (
+            {tokenOfferStep === TokenOfferStep.SetPrice && collection && (
               <ContentContainer>
-                <TokenStats token={token} collection={collection} />
+                <TokenStats
+                  token={token ? token : undefined}
+                  collection={collection}
+                />
                 <MainContainer css={{ p: '$4' }}>
+                  {isBanned && (
+                    <ErrorWell
+                      message="Token is not tradable on OpenSea"
+                      css={{ mb: '$2', p: '$2', borderRadius: 4 }}
+                    />
+                  )}
                   <Flex justify="between">
                     <Text style="tiny">Offer Amount</Text>
                     <Text
@@ -225,13 +238,16 @@ export function TokenOfferModal({
                       }}
                     />
                   </Flex>
-                  <Text
-                    as={Box}
-                    css={{ marginLeft: 'auto', mt: '$2' }}
+                  <FormatCurrency
+                    css={{
+                      marginLeft: 'auto',
+                      mt: '$2',
+                      display: 'inline-block',
+                      minHeight: 15,
+                    }}
                     style="tiny"
-                  >
-                    $0
-                  </Text>
+                    amount={bidAmountUsd}
+                  />
                   <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
                     Expiration Date
                   </Text>
@@ -299,7 +315,7 @@ export function TokenOfferModal({
                       onClick={placeBid}
                       css={{ width: '100%', mt: 'auto' }}
                     >
-                      {token.token
+                      {token && token.token
                         ? 'Make an Offer'
                         : 'Make a collection Offer'}
                     </Button>
@@ -341,9 +357,13 @@ export function TokenOfferModal({
               </ContentContainer>
             )}
 
-            {tokenOfferStep === TokenOfferStep.Offering && token && (
+            {tokenOfferStep === TokenOfferStep.Offering && collection && (
               <ContentContainer>
-                <TokenStats token={token} collection={collection} />
+                <TransactionBidDetails
+                  token={token ? token : undefined}
+                  collection={collection}
+                  bidData={bidData}
+                />
                 <MainContainer css={{ p: '$4' }}>
                   <ProgressBar
                     value={stepData?.stepProgress || 0}
@@ -409,13 +429,34 @@ export function TokenOfferModal({
                       >
                         Edit Bid
                       </Button>
-                      <Button css={{ flex: 1 }} onClick={() => placeBid()}>
+                      <Button css={{ flex: 1 }} onClick={placeBid}>
                         Retry
                       </Button>
                     </Flex>
                   )}
                 </MainContainer>
               </ContentContainer>
+            )}
+
+            {tokenOfferStep === TokenOfferStep.Complete && (
+              <Flex direction="column" align="center" css={{ p: '$4' }}>
+                <Text style="h5" css={{ textAlign: 'center', mt: 56 }}>
+                  Offer Submitted!
+                </Text>
+                <OfferSubmitted style={{ marginTop: 30, marginBottom: 84 }} />
+                {onViewOffers ? (
+                  <Button css={{ width: '100%' }} onClick={onViewOffers}>
+                    View Offers
+                  </Button>
+                ) : (
+                  <Button
+                    css={{ width: '100%' }}
+                    onClick={() => setOpen(false)}
+                  >
+                    Close
+                  </Button>
+                )}
+              </Flex>
             )}
           </Modal>
         )

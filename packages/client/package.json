@@ -37,5 +37,8 @@
     },
     "publishConfig": {
         "access": "public"
+    },
+    "devDependencies": {
+        "openapi-typescript": "^5.4.1"
     }
 }
