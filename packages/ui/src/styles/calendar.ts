@@ -345,7 +345,7 @@ const calendarCss = globalCss({
     },
   '.flatpickr-current-month .flatpickr-monthDropdown-months': {
     appearance: 'menulist',
-    backgroundColor: '$neutralBg',
+    backgroundColor: 'transparent',
     border: 'none',
     borderRadius: 0,
     boxSizing: 'border-box',
@@ -601,9 +601,7 @@ const calendarCss = globalCss({
     boxSizing: 'border-box',
     appearance: 'textfield',
   },
-  '.flatpickr-time input.flatpickr-hour': {
-    fontWeight: 'bold',
-  },
+  '.flatpickr-time input.flatpickr-hour': {},
   '.flatpickr-time input.flatpickr-minute, .flatpickr-time input.flatpickr-second':
     {
       fontWeight: 400,
