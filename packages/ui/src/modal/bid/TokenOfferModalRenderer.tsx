@@ -177,6 +177,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
       setBidAmount('')
       setStepData(null)
       setBidData(null)
+      setTransactionError(null)
     }
   }, [open])
 
