@@ -20,7 +20,6 @@ const calendarCss = globalCss({
     padding: 20,
     animation: 'none',
     direction: 'ltr',
-    border: 0,
     fontSize: 14,
     lineHeight: '24px',
     borderRadius: 5,
@@ -31,6 +30,7 @@ const calendarCss = globalCss({
     backgroundColor: '$contentBackground',
     boxShadow:
       '1px 0 0 #20222c, -1px 0 0 #20222c, 0 1px 0 #20222c, 0 -1px 0 #20222c, 0 3px 13px rgba(0,0,0,0.08)',
+    border: '1px solid $borderColor',
   },
   '.flatpickr-calendar.open': {
     opacity: 1,
@@ -122,20 +122,20 @@ const calendarCss = globalCss({
     bottom: '100%',
   },
   '.flatpickr-calendar.arrowTop:before': {
-    borderBottomColor: '#20222c',
+    display: 'none',
   },
   '.flatpickr-calendar.arrowTop:after': {
-    borderBottomColor: '#3f4458',
+    display: 'none',
   },
   '.flatpickr-calendar.arrowBottom:before, .flatpickr-calendar.arrowBottom:after':
     {
       top: '100%',
     },
   '.flatpickr-calendar.arrowBottom:before': {
-    borderTopColor: '#20222c',
+    display: 'none',
   },
   '.flatpickr-calendar.arrowBottom:after': {
-    borderTopColor: '#3f4458',
+    display: 'none',
   },
   '.flatpickr-calendar:focus': {
     outline: 0,
@@ -234,7 +234,6 @@ const calendarCss = globalCss({
     lineHeight: '50%',
     opacity: 0,
     cursor: 'pointer',
-    border: '1px solid rgba(255,255,255,0.15)',
     boxSizing: 'border-box',
   },
   '.numInputWrapper span:hover': {
@@ -255,7 +254,7 @@ const calendarCss = globalCss({
   '.numInputWrapper span.arrowUp:after': {
     borderLeft: '4px solid transparent',
     borderRight: '4px solid transparent',
-    borderBottom: '4px solid rgba(255,255,255,0.6)',
+    borderBottom: '4px solid $neutralText',
     top: '26%',
   },
   '.numInputWrapper span.arrowDown': {
@@ -264,7 +263,7 @@ const calendarCss = globalCss({
   '.numInputWrapper span.arrowDown:after': {
     borderLeft: '4px solid transparent',
     borderRight: '4px solid transparent',
-    borderTop: '4px solid rgba(255,255,255,0.6)',
+    borderTop: '4px solid $neutralText',
     top: '40%',
   },
   '.numInputWrapper span svg': {
@@ -311,10 +310,10 @@ const calendarCss = globalCss({
     display: 'inline-block',
   },
   '.flatpickr-current-month .numInputWrapper span.arrowUp:after': {
-    borderBottomColor: '#fff',
+    borderBottomColor: '$neutralText',
   },
   '.flatpickr-current-month .numInputWrapper span.arrowDown:after': {
-    borderTopColor: '#fff',
+    borderTopColor: '$neutralText',
   },
   '.flatpickr-current-month input.cur-year': {
     backgroundColor: 'transparent',
@@ -393,7 +392,7 @@ const calendarCss = globalCss({
   'span.flatpickr-weekday': {
     cursor: 'default',
     fontSize: '90%',
-    background: '#3f4458',
+    background: 'transparent',
     color: '$neutralText',
     lineHeight: '1px',
     margin: 0,
@@ -574,10 +573,10 @@ const calendarCss = globalCss({
     float: 'left',
   },
   '.flatpickr-time .numInputWrapper span.arrowUp:after': {
-    borderBottomColor: 'rgba(255,255,255,0.95)',
+    borderBottomColor: '$neutralText',
   },
   '.flatpickr-time .numInputWrapper span.arrowDown:after': {
-    borderTopColor: 'rgba(255,255,255,0.95)',
+    borderTopColor: '$neutralText',
   },
   '.flatpickr-time.hasSeconds .numInputWrapper': {
     width: '26%',
@@ -635,6 +634,16 @@ const calendarCss = globalCss({
     },
   '.flatpickr-input[readonly]': {
     cursor: 'pointer',
+  },
+  '.flatpickr-input.flatpickr-mobile': {
+    '&::-webkit-inner-spin-button': {
+      display: 'none',
+      '-webkit-appearance': 'none',
+    },
+    '&::-webkit-calendar-picker-indicator': {
+      display: 'none',
+      '-webkit-appearance': 'none',
+    },
   },
 })
 
