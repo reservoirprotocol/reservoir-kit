@@ -102,10 +102,11 @@ export const TokenOfferModalRenderer: FC<Props> = ({
   const [bidData, setBidData] = useState<BidData | null>(null)
 
   const { data: tokens } = useTokenDetails(
-    open && {
-      tokens: [`${collectionId}:${tokenId}`],
-      includeTopBid: true,
-    }
+    open &&
+      tokenId !== undefined && {
+        tokens: [`${collectionId}:${tokenId}`],
+        includeTopBid: true,
+      }
   )
   const { data: collection } = useCollection(
     open && {
@@ -191,8 +192,8 @@ export const TokenOfferModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (!tokenId || !collectionId) {
-      const error = new Error('Missing tokenId or collectionId')
+    if (!tokenId && !collectionId) {
+      const error = new Error('Missing tokenId and collectionId')
       setTransactionError(error)
       throw error
     }

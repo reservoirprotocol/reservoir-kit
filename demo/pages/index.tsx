@@ -154,7 +154,6 @@ const Index: NextPage = () => {
           </div>
         }
         collectionId="0x79e2d470f950f2cf78eef41720e8ff2cf4b3cd78"
-        tokenId="555"
       />
 
       <select
