@@ -1,8 +1,6 @@
 import React, { FC } from 'react'
-import { Box, Flex, Text } from '../primitives'
+import { Box, ErrorWell } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { useCollection, useTokenDetails } from '../hooks'
 
@@ -64,22 +62,10 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         isUnavailable={isUnavailable}
       />
       {!!isSuspicious && (
-        <Flex
-          align="center"
-          css={{
-            backgroundColor: '$wellBackground',
-            p: '$3',
-            mt: '$3',
-            borderRadius: 4,
-          }}
-        >
-          <Box css={{ color: '$errorAccent', mr: '$2' }}>
-            <FontAwesomeIcon icon={faInfoCircle} />
-          </Box>
-          <Text style="body2" color="errorLight">
-            This item was reported for suspicious activity on OpenSea
-          </Text>
-        </Flex>
+        <ErrorWell
+          css={{ p: '$3', mt: '$3', borderRadius: 4 }}
+          message="Token is not tradable on OpenSea"
+        />
       )}
     </Box>
   )

@@ -22,9 +22,9 @@ import TokenStats from './TokenStats'
 import MarketplaceToggle from './MarketplaceToggle'
 import MarketplacePriceInput from './MarketplacePriceInput'
 import TokenListingDetails from './TokenListingDetails'
-import ProgressBar from './ProgressBar'
 import { useReservoirClient } from '../../hooks'
-import ListingTransactionProgress from './ListingTransactionProgress'
+import TransactionProgress from '../../modal/TransactionProgress'
+import ProgressBar from '../../modal/ProgressBar'
 import InfoTooltip from '../InfoTooltip'
 import { Marketplace } from '../../hooks/useMarketplaces'
 
@@ -465,7 +465,7 @@ export function ListModal({
                       >
                         {stepTitle}
                       </Text>
-                      <ListingTransactionProgress
+                      <TransactionProgress
                         justify="center"
                         fromImg={tokenImage}
                         toImg={stepData?.listingData.marketplace.imageUrl || ''}

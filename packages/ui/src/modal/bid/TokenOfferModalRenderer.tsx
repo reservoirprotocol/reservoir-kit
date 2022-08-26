@@ -9,11 +9,16 @@ import {
 } from '../../hooks'
 import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
 
-import { BigNumber, constants, utils } from 'ethers'
-import { Execute } from '@reservoir0x/reservoir-kit-client'
+import { BigNumber, constants } from 'ethers'
+import {
+  Execute,
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-kit-client'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
+import { parseEther } from 'ethers/lib/utils'
+import dayjs from 'dayjs'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -37,6 +42,8 @@ type ChildrenProps = {
     | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
   collection: ReturnType<typeof useCollection>['data']
   bidAmount: string
+  bidData: BidData | null
+  bidAmountUsd: number
   tokenOfferStep: TokenOfferStep
   hasEnoughEth: boolean
   hasEnoughWEth: boolean
@@ -49,6 +56,7 @@ type ChildrenProps = {
   transactionError?: Error | null
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
+  stepData: StepData | null
   setTokenOfferStep: React.Dispatch<React.SetStateAction<TokenOfferStep>>
   setBidAmount: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
@@ -60,6 +68,16 @@ type Props = {
   tokenId?: string
   collectionId?: string
   children: (props: ChildrenProps) => ReactNode
+}
+
+export type BidData = Parameters<
+  ReservoirClientActions['placeBid']
+>['0']['bids'][0]
+
+export type StepData = {
+  totalSteps: number
+  stepProgress: number
+  currentStep: Execute['steps'][0]
 }
 
 export const TokenOfferModalRenderer: FC<Props> = ({
@@ -80,12 +98,15 @@ export const TokenOfferModalRenderer: FC<Props> = ({
   const [hasEnoughEth, setHasEnoughEth] = useState(false)
   const [hasEnoughWEth, setHasEnoughWEth] = useState(false)
   const [ethAmountToWrap, setEthAmountToWrap] = useState('')
+  const [stepData, setStepData] = useState<StepData | null>(null)
+  const [bidData, setBidData] = useState<BidData | null>(null)
 
   const { data: tokens } = useTokenDetails(
-    open && {
-      tokens: [`${collectionId}:${tokenId}`],
-      includeTopBid: true,
-    }
+    open &&
+      tokenId !== undefined && {
+        tokens: [`${collectionId}:${tokenId}`],
+        includeTopBid: true,
+      }
   )
   const { data: collection } = useCollection(
     open && {
@@ -96,8 +117,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
   let token = !!tokens?.length && tokens[0]
 
   const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
-  // const feeUsd = referrerFee * (ethUsdPrice || 0)
-  // const totalUsd = totalPrice * (ethUsdPrice || 0)
+  const bidAmountUsd = +bidAmount * (ethUsdPrice || 0)
 
   const client = useReservoirClient()
 
@@ -122,19 +142,22 @@ export const TokenOfferModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (bidAmount !== '') {
-      const bid = utils.parseEther(bidAmount)
-      if (!balance?.value || balance.value.lt(bid)) {
-        setHasEnoughEth(false)
-      } else {
-        setHasEnoughEth(true)
-      }
+      const bid = parseEther(bidAmount)
 
       if (!wethBalance?.value || wethBalance?.value.lt(bid)) {
         setHasEnoughWEth(false)
         const wethAmount = wethBalance?.value || constants.Zero
+        const amountToWrap = bid.sub(wethAmount)
         setEthAmountToWrap(formatBN(bid.sub(wethAmount), 5))
+
+        if (!balance?.value || balance.value.lt(amountToWrap)) {
+          setHasEnoughEth(false)
+        } else {
+          setHasEnoughEth(true)
+        }
       } else {
         setHasEnoughWEth(true)
+        setHasEnoughEth(true)
         setEthAmountToWrap('')
       }
     } else {
@@ -146,13 +169,15 @@ export const TokenOfferModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (!open) {
-      //cleanup
       setTokenOfferStep(TokenOfferStep.SetPrice)
       setExpirationOption(expirationOptions[0])
       setHasEnoughEth(false)
       setHasEnoughWEth(false)
       setEthAmountToWrap('')
       setBidAmount('')
+      setStepData(null)
+      setBidData(null)
+      setTransactionError(null)
     }
   }, [open])
 
@@ -168,8 +193,8 @@ export const TokenOfferModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (!tokenId || !collectionId) {
-      const error = new Error('Missing tokenId or collectionId')
+    if (!tokenId && !collectionId) {
+      const error = new Error('Missing tokenId and collectionId')
       setTransactionError(error)
       throw error
     }
@@ -181,22 +206,82 @@ export const TokenOfferModalRenderer: FC<Props> = ({
     }
 
     setTokenOfferStep(TokenOfferStep.Offering)
+    setTransactionError(null)
+    setBidData(null)
+
+    const bid: BidData = {
+      weiPrice: parseEther(`${bidAmount}`).toString(),
+      orderbook: 'reservoir',
+      orderKind: 'seaport',
+    }
+
+    if (tokenId && collectionId) {
+      bid.token = `${collectionId}:${tokenId}`
+    } else if (collectionId) {
+      bid.collection = collectionId
+    }
+
+    if (expirationOption.relativeTime) {
+      if (expirationOption.relativeTimeUnit) {
+        bid.expirationTime = dayjs()
+          .add(expirationOption.relativeTime, expirationOption.relativeTimeUnit)
+          .unix()
+          .toString()
+      } else {
+        bid.expirationTime = dayjs
+          .unix(expirationOption.relativeTime)
+          .toString()
+      }
+    }
+
+    setBidData(bid)
 
     client.actions
       .placeBid({
         signer,
-        bids: [],
-        onProgress: (steps: Execute['steps']) => {},
+        bids: [bid],
+        onProgress: (steps: Execute['steps']) => {
+          const executableSteps = steps.filter(
+            (step) => step.items && step.items.length > 0
+          )
+
+          let stepCount = executableSteps.length
+          let incompleteStepItemIndex: number | null = null
+          let incompleteStepIndex: number | null = null
+
+          executableSteps.find((step, i) => {
+            if (!step.items) {
+              return false
+            }
+
+            incompleteStepItemIndex = step.items.findIndex(
+              (item) => item.status == 'incomplete'
+            )
+            if (incompleteStepItemIndex !== -1) {
+              incompleteStepIndex = i
+              return true
+            }
+          })
+
+          if (incompleteStepIndex !== null) {
+            setStepData({
+              totalSteps: stepCount,
+              stepProgress: incompleteStepIndex,
+              currentStep: executableSteps[incompleteStepIndex],
+            })
+          } else {
+            setTokenOfferStep(TokenOfferStep.Complete)
+          }
+        },
       })
       .catch((e: any) => {
         const transactionError = new Error(e?.message || '', {
           cause: e,
         })
         setTransactionError(transactionError)
-        setTokenOfferStep(TokenOfferStep.SetPrice)
         console.log(e)
       })
-  }, [tokenId, collectionId, client, signer])
+  }, [tokenId, collectionId, client, signer, bidAmount])
 
   return (
     <>
@@ -209,6 +294,8 @@ export const TokenOfferModalRenderer: FC<Props> = ({
         wethBalance: wethBalance?.value,
         wethUniswapLink,
         bidAmount,
+        bidData,
+        bidAmountUsd,
         tokenOfferStep,
         hasEnoughEth,
         hasEnoughWEth,
@@ -216,6 +303,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
         transactionError,
         expirationOption,
         expirationOptions,
+        stepData,
         setTokenOfferStep,
         setBidAmount,
         setExpirationOption,
