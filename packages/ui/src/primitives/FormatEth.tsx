@@ -5,6 +5,7 @@ import { ReservoirKitThemeContext } from '../../stitches.config'
 import EthIconGlyph from '../img/EthIconGlyph'
 import EthIconGray from '../img/EthIconGray'
 import EthIconPurple from '../img/EthIconPurple'
+import Box from '../primitives/Box'
 
 type FormatEthProps = {
   logoWidth?: number
@@ -12,11 +13,7 @@ type FormatEthProps = {
 
 type Props = ComponentProps<typeof FormatCrypto> & FormatEthProps
 
-type EthLogoProps = {
-  width: number
-}
-
-export const EthLogo = ({ width }: EthLogoProps) => {
+export const EthLogo = () => {
   const themeContext = useContext(ThemeContext)
   const ethIcon: ReservoirKitThemeContext['assets']['ethIcon']['value'] =
     themeContext && (themeContext as any)
@@ -25,11 +22,11 @@ export const EthLogo = ({ width }: EthLogoProps) => {
 
   switch (ethIcon) {
     case 'glyph':
-      return <EthIconGlyph width={width} />
+      return <EthIconGlyph />
     case 'gray':
-      return <EthIconGray width={width} />
+      return <EthIconGray />
     case 'purple':
-      return <EthIconPurple width={width} />
+      return <EthIconPurple />
   }
 }
 
@@ -49,7 +46,14 @@ const FormatEth: FC<Props> = ({
       amount={amount}
       maximumFractionDigits={maximumFractionDigits}
     >
-      <EthLogo width={logoWidth} />
+      <Box
+        css={{
+          width: 'auto',
+          height: logoWidth,
+        }}
+      >
+        <EthLogo />
+      </Box>
     </FormatCrypto>
   )
 }

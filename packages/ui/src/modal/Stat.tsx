@@ -1,13 +1,20 @@
 import React, { FC, ReactElement } from 'react'
-import { Flex, Text, FormatEth } from '../../primitives'
+import { Flex, Text, FormatEth, FormatWEth } from '../primitives'
 
 type StatProps = {
   label: string | ReactElement
   value: string | number | null
   asEth?: boolean
+  asWeth?: boolean
 }
 
-const Stat: FC<StatProps> = ({ label, value, asEth = false, ...props }) => (
+const Stat: FC<StatProps> = ({
+  label,
+  value,
+  asEth = false,
+  asWeth = false,
+  ...props
+}) => (
   <Flex
     align="center"
     className="rk-stat-well"
@@ -21,9 +28,9 @@ const Stat: FC<StatProps> = ({ label, value, asEth = false, ...props }) => (
     <Text style="subtitle2" color="subtle" css={{ flex: 1 }}>
       {label}
     </Text>
-    {asEth ? (
-      <FormatEth amount={value} textStyle="subtitle2" />
-    ) : (
+    {asEth && !asWeth && <FormatEth amount={value} textStyle="subtitle2" />}
+    {asWeth && !asEth && <FormatWEth amount={value} textStyle="subtitle2" />}
+    {!asEth && !asWeth && (
       <Text style="subtitle2" as="p">
         {value ? value : '-'}
       </Text>

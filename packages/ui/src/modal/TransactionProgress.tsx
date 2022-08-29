@@ -1,6 +1,6 @@
-import { Box, Flex } from '../../primitives'
+import { Box, Flex } from '../primitives'
 import React, { FC, ComponentPropsWithoutRef } from 'react'
-import { styled, keyframes } from '../../../stitches.config'
+import { styled, keyframes } from '../../stitches.config'
 
 type Props = {
   fromImg: string
@@ -39,11 +39,7 @@ const loadingEnd = keyframes({
   '100%': { transform: 'scale(0.8)', backgroundColor: '$neutralSolid' },
 })
 
-const ListingTransactionProgress: FC<Props> = ({
-  fromImg,
-  toImg,
-  ...props
-}) => {
+const TransactionProgress: FC<Props> = ({ fromImg, toImg, ...props }) => {
   return (
     <Flex {...props} align="center">
       <Img src={fromImg} />
@@ -63,4 +59,4 @@ const ListingTransactionProgress: FC<Props> = ({
   )
 }
 
-export default ListingTransactionProgress
+export default TransactionProgress

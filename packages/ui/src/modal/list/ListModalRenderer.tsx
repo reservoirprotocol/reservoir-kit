@@ -9,7 +9,7 @@ import React, {
 import {
   useCollection,
   useTokenDetails,
-  useEthConversion,
+  useCoinConversion,
   useReservoirClient,
   useMarketplaces,
   useListingPreapprovalCheck,
@@ -22,21 +22,16 @@ import {
 } from '@reservoir0x/reservoir-kit-client'
 import debounce from '../../lib/debounce'
 import { parseEther } from 'ethers/lib/utils'
-import dayjs, { ManipulateType } from 'dayjs'
+import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
+import { ExpirationOption } from '../../types/ExpirationOption'
+import expirationOptions from '../../lib/defaultExpirationOptions'
 
 export enum ListStep {
   SelectMarkets,
   SetPrice,
   ListItem,
   Complete,
-}
-
-type ExpirationOption = {
-  text: string
-  value: string
-  relativeTime: number | null
-  relativeTimeUnit: ManipulateType | null
 }
 
 export type Listings = Parameters<
@@ -61,7 +56,7 @@ type ChildrenProps = {
     | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
   collection: ReturnType<typeof useCollection>['data']
   listStep: ListStep
-  ethUsdPrice: ReturnType<typeof useEthConversion>
+  ethUsdPrice: ReturnType<typeof useCoinConversion>
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   marketplaces: Marketplace[]
@@ -114,47 +109,6 @@ export const ListModalRenderer: FC<Props> = ({
     open ? collectionId : undefined
   )
 
-  const expirationOptions: ExpirationOption[] = [
-    {
-      text: '1 Hour',
-      value: 'hour',
-      relativeTime: 1,
-      relativeTimeUnit: 'h',
-    },
-    {
-      text: '12 Hours',
-      value: '12 hours',
-      relativeTime: 12,
-      relativeTimeUnit: 'h',
-    },
-    {
-      text: '1 Day',
-      value: '1 day',
-      relativeTime: 1,
-      relativeTimeUnit: 'd',
-    },
-    {
-      text: '3 Day',
-      value: '3 days',
-      relativeTime: 3,
-      relativeTimeUnit: 'd',
-    },
-    { text: '1 Week', value: 'week', relativeTime: 1, relativeTimeUnit: 'w' },
-    { text: '1 Month', value: 'month', relativeTime: 1, relativeTimeUnit: 'M' },
-    {
-      text: '3 Months',
-      value: '3 months',
-      relativeTime: 3,
-      relativeTimeUnit: 'M',
-    },
-    {
-      text: 'None',
-      value: 'never',
-      relativeTime: null,
-      relativeTimeUnit: null,
-    },
-  ]
-
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
     expirationOptions[0]
   )
@@ -172,7 +126,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   let token = !!tokens?.length && tokens[0]
 
-  const ethUsdPrice = useEthConversion(open ? 'USD' : undefined)
+  const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
 
   const toggleMarketplace = (marketplace: Marketplace) => {
     setMarketplaces(

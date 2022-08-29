@@ -21,7 +21,6 @@ const FormatCrypto: FC<Props> = ({
   children,
 }) => {
   const value = formatBN(amount, maximumFractionDigits)
-
   return (
     <Flex align="center" css={{ gap: '$1' }}>
       {value !== '-' ? children : null}
