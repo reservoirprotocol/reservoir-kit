@@ -3,7 +3,7 @@ import { NextPage } from 'next'
 import {
   BuyModal,
   ListModal,
-  BidModal,
+  TokenOfferModal,
   useReservoirClient,
   darkTheme,
   lightTheme,
@@ -139,7 +139,7 @@ const Index: NextPage = () => {
         }}
       />
 
-      <BidModal
+      <TokenOfferModal
         trigger={
           <div
             style={{

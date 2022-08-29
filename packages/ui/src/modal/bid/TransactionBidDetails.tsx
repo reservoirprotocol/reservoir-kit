@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { Flex, Box, FormatWEth, Text } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
 import { useTokenDetails, useCollection } from '../../hooks'
-import { BidData } from './BidModalRenderer'
+import { BidData } from './TokenOfferModalRenderer'
 import { useTimeSince } from '../../hooks'
 import { formatEther } from 'ethers/lib/utils'
 
