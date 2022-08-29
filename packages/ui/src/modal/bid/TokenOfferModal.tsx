@@ -251,9 +251,15 @@ export function TokenOfferModal({
                   <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
                     Expiration Date
                   </Text>
-                  <Flex css={{ gap: '$2' }}>
+                  <Flex css={{ gap: '$2', mb: '$2' }}>
                     <Select
-                      css={{ width: 160 }}
+                      css={{
+                        flex: 1,
+                        '@bp1': {
+                          width: 160,
+                          flexDirection: 'row',
+                        },
+                      }}
                       value={expirationOption?.text || ''}
                       onValueChange={(value: string) => {
                         const option = expirationOptions.find(
@@ -300,7 +306,16 @@ export function TokenOfferModal({
                         }
                       }}
                       containerCss={{
-                        width: '100%',
+                        width: 46,
+                        '@bp1': {
+                          width: '100%',
+                        },
+                      }}
+                      css={{
+                        padding: 0,
+                        '@bp1': {
+                          padding: '12px 16px 12px 48px',
+                        },
                       }}
                     />
                   </Flex>
@@ -331,7 +346,17 @@ export function TokenOfferModal({
                           <FormatEth amount={balance} />
                         </Flex>
                       )}
-                      <Flex css={{ gap: '$2', mt: 10, overflow: 'hidden' }}>
+                      <Flex
+                        css={{
+                          gap: '$2',
+                          mt: 10,
+                          overflow: 'hidden',
+                          flexDirection: 'column-reverse',
+                          '@bp1': {
+                            flexDirection: 'row',
+                          },
+                        }}
+                      >
                         <Button
                           css={{ flex: '1 0 auto' }}
                           color="secondary"

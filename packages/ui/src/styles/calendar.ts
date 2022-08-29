@@ -641,6 +641,14 @@ const calendarCss = globalCss({
       '-webkit-appearance': 'none',
     },
     '&::-webkit-calendar-picker-indicator': {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      width: '100%',
+      height: '100%',
+      backgroundImage: 'none',
+    },
+    '&::-webkit-datetime-edit': {
       display: 'none',
       '-webkit-appearance': 'none',
     },
