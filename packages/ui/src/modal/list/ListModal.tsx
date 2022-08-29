@@ -194,6 +194,10 @@ export function ListModal({
           }
         }, [transactionError])
 
+        const selectedMarketplaces = marketplaces.filter(
+          (marketplace) => marketplace.isSelected
+        )
+
         return (
           <Modal
             trigger={trigger}
@@ -324,22 +328,24 @@ export function ListModal({
                         Set Your Price
                       </Text>
                     </Flex>
-                    <Flex align="center" css={{ mb: '$4' }} justify="center">
-                      <ToggleGroup
-                        type="single"
-                        value={syncProfit ? 'sync' : 'custom'}
-                        onValueChange={(value) =>
-                          setSyncProfit(value === 'sync')
-                        }
-                      >
-                        <ToggleGroupButton value="sync">
-                          <Text style="subtitle2">Same Profit</Text>
-                        </ToggleGroupButton>
-                        <ToggleGroupButton value="custom">
-                          <Text style="subtitle2">Custom</Text>
-                        </ToggleGroupButton>
-                      </ToggleGroup>
-                    </Flex>
+                    {selectedMarketplaces.length > 1 && (
+                      <Flex align="center" css={{ mb: '$4' }} justify="center">
+                        <ToggleGroup
+                          type="single"
+                          value={syncProfit ? 'sync' : 'custom'}
+                          onValueChange={(value) =>
+                            setSyncProfit(value === 'sync')
+                          }
+                        >
+                          <ToggleGroupButton value="sync">
+                            <Text style="subtitle2">Same Profit</Text>
+                          </ToggleGroupButton>
+                          <ToggleGroupButton value="custom">
+                            <Text style="subtitle2">Custom</Text>
+                          </ToggleGroupButton>
+                        </ToggleGroup>
+                      </Flex>
+                    )}
                     <Flex css={{ mb: '$2' }} justify="between">
                       <Text style="subtitle2" color="subtle" as="p">
                         List Price
@@ -363,44 +369,42 @@ export function ListModal({
                       </Flex>
                     </Flex>
 
-                    {marketplaces
-                      .filter((marketplace) => marketplace.isSelected)
-                      .map((marketplace) => (
-                        <Box key={marketplace.name} css={{ mb: '$3' }}>
-                          <MarketplacePriceInput
-                            marketplace={marketplace}
-                            ethUsdPrice={ethUsdPrice}
-                            onChange={(e) => {
-                              setMarketPrice(e.target.value, marketplace)
-                            }}
-                            onBlur={() => {
-                              if (marketplace.price === '') {
-                                setMarketPrice(0, marketplace)
-                              }
-                            }}
-                          />
-                          {collection?.floorAsk?.price !== undefined &&
-                            marketplace.truePrice !== null &&
-                            marketplace.truePrice <
-                              collection?.floorAsk?.price && (
-                              <Box>
-                                <Text style="body2" color="error">
-                                  Price is{' '}
-                                  {Math.round(
-                                    ((collection.floorAsk.price -
+                    {selectedMarketplaces.map((marketplace) => (
+                      <Box key={marketplace.name} css={{ mb: '$3' }}>
+                        <MarketplacePriceInput
+                          marketplace={marketplace}
+                          ethUsdPrice={ethUsdPrice}
+                          onChange={(e) => {
+                            setMarketPrice(e.target.value, marketplace)
+                          }}
+                          onBlur={() => {
+                            if (marketplace.price === '') {
+                              setMarketPrice(0, marketplace)
+                            }
+                          }}
+                        />
+                        {collection?.floorAsk?.price !== undefined &&
+                          marketplace.truePrice !== null &&
+                          marketplace.truePrice <
+                            collection?.floorAsk?.price && (
+                            <Box>
+                              <Text style="body2" color="error">
+                                Price is{' '}
+                                {Math.round(
+                                  ((collection.floorAsk.price -
+                                    +marketplace.truePrice) /
+                                    ((collection.floorAsk.price +
                                       +marketplace.truePrice) /
-                                      ((collection.floorAsk.price +
-                                        +marketplace.truePrice) /
-                                        2)) *
-                                      100 *
-                                      1000
-                                  ) / 1000}
-                                  % below the floor
-                                </Text>
-                              </Box>
-                            )}
-                        </Box>
-                      ))}
+                                      2)) *
+                                    100 *
+                                    1000
+                                ) / 1000}
+                                % below the floor
+                              </Text>
+                            </Box>
+                          )}
+                      </Box>
+                    ))}
 
                     <Box css={{ mb: '$3', mt: '$4' }}>
                       <Text
