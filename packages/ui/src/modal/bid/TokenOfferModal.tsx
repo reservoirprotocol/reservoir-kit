@@ -308,6 +308,7 @@ export function TokenOfferModal({
                       containerCss={{
                         width: 46,
                         '@bp1': {
+                          flex: 1,
                           width: '100%',
                         },
                       }}
