@@ -16,7 +16,7 @@ import {
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
-import { BidModalRenderer, BidStep } from './BidModalRenderer'
+import { BidModalRenderer, BidStep, BidData } from './BidModalRenderer'
 import TokenStats from './TokenStats'
 import WEthIcon from '../../img/WEthIcon'
 import dayjs from 'dayjs'
@@ -30,10 +30,17 @@ import WethApproval from '../../img/WethApproval'
 import OfferSubmitted from '../../img/OfferSubmitted'
 import TransactionBidDetails from './TransactionBidDetails'
 
+type BidCallbackData = {
+  tokenId?: string
+  collectionId?: string
+  bidData: BidData | null
+}
+
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
-  onViewOffers?: () => any
+  onViewOffers?: () => void
+  onClose?: () => void
   onBidComplete?: (data: any) => void
   onBidError?: (error: Error, data: any) => void
 }
@@ -78,6 +85,9 @@ export function BidModal({
   tokenId,
   collectionId,
   onViewOffers,
+  onClose,
+  onBidComplete,
+  onBidError,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
   const datetimeElement = useRef<Flatpickr | null>(null)
@@ -150,6 +160,28 @@ export function BidModal({
             setExpirationDate('')
           }
         }, [expirationOption])
+
+        useEffect(() => {
+          if (bidStep === BidStep.Complete && onBidComplete) {
+            const data: BidCallbackData = {
+              tokenId: tokenId,
+              collectionId: collectionId,
+              bidData,
+            }
+            onBidComplete(data)
+          }
+        }, [bidStep])
+
+        useEffect(() => {
+          if (transactionError && onBidError) {
+            const data: BidCallbackData = {
+              tokenId: tokenId,
+              collectionId: collectionId,
+              bidData,
+            }
+            onBidError(transactionError, data)
+          }
+        }, [transactionError])
 
         return (
           <Modal
@@ -462,13 +494,26 @@ export function BidModal({
                 </Text>
                 <OfferSubmitted style={{ marginTop: 30, marginBottom: 84 }} />
                 {onViewOffers ? (
-                  <Button css={{ width: '100%' }} onClick={onViewOffers}>
+                  <Button
+                    css={{ width: '100%' }}
+                    onClick={() => {
+                      onViewOffers()
+                      if (onClose) {
+                        onClose()
+                      }
+                    }}
+                  >
                     View Offers
                   </Button>
                 ) : (
                   <Button
                     css={{ width: '100%' }}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      setOpen(false)
+                      if (onClose) {
+                        onClose()
+                      }
+                    }}
                   >
                     Close
                   </Button>

@@ -154,6 +154,15 @@ const Index: NextPage = () => {
           </div>
         }
         collectionId="0x79e2d470f950f2cf78eef41720e8ff2cf4b3cd78"
+        onBidComplete={(data) => {
+          console.log('Bid Complete', data)
+        }}
+        onBidError={(error, data) => {
+          console.log('Bid Transaction Error', error, data)
+        }}
+        onClose={() => {
+          console.log('BidModal Closed')
+        }}
       />
 
       <select
