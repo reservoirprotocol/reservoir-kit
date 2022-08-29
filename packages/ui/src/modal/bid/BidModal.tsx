@@ -16,18 +16,15 @@ import {
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
-import {
-  TokenOfferModalRenderer,
-  TokenOfferStep,
-} from './TokenOfferModalRenderer'
+import { BidModalRenderer, BidStep } from './BidModalRenderer'
 import TokenStats from './TokenStats'
 import WEthIcon from '../../img/WEthIcon'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
 import Flatpickr from 'react-flatpickr'
-import TransactionProgress from '../../modal/TransactionProgress'
-import ProgressBar from '../../modal/ProgressBar'
+import TransactionProgress from '../TransactionProgress'
+import ProgressBar from '../ProgressBar'
 import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
 import WethApproval from '../../img/WethApproval'
 import OfferSubmitted from '../../img/OfferSubmitted'
@@ -41,13 +38,13 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onBidError?: (error: Error, data: any) => void
 }
 
-function titleForStep(step: TokenOfferStep) {
+function titleForStep(step: BidStep) {
   switch (step) {
-    case TokenOfferStep.SetPrice:
+    case BidStep.SetPrice:
       return 'Make an Offer'
-    case TokenOfferStep.Offering:
+    case BidStep.Offering:
       return 'Complete Offer'
-    case TokenOfferStep.Complete:
+    case BidStep.Complete:
       return 'Offer Submitted'
   }
 }
@@ -76,7 +73,7 @@ const MainContainer = styled(Flex, {
 })
 
 const minimumDate = dayjs().add(1, 'h').format('DD/MM/YYYY h:mm A')
-export function TokenOfferModal({
+export function BidModal({
   trigger,
   tokenId,
   collectionId,
@@ -94,15 +91,11 @@ export function TokenOfferModal({
   }, [])
 
   return (
-    <TokenOfferModalRenderer
-      open={open}
-      tokenId={tokenId}
-      collectionId={collectionId}
-    >
+    <BidModalRenderer open={open} tokenId={tokenId} collectionId={collectionId}>
       {({
         token,
         collection,
-        tokenOfferStep,
+        bidStep,
         expirationOption,
         expirationOptions,
         wethBalance,
@@ -119,7 +112,7 @@ export function TokenOfferModal({
         isBanned,
         setBidAmount,
         setExpirationOption,
-        setTokenOfferStep,
+        setBidStep,
         placeBid,
       }) => {
         const [expirationDate, setExpirationDate] = useState('')
@@ -162,7 +155,7 @@ export function TokenOfferModal({
           <Modal
             size={ModalSize.LG}
             trigger={trigger}
-            title={titleForStep(tokenOfferStep)}
+            title={titleForStep(bidStep)}
             open={open}
             onOpenChange={(open) => {
               setOpen(open)
@@ -180,7 +173,7 @@ export function TokenOfferModal({
               }
             }}
           >
-            {tokenOfferStep === TokenOfferStep.SetPrice && collection && (
+            {bidStep === BidStep.SetPrice && collection && (
               <ContentContainer>
                 <TokenStats
                   token={token ? token : undefined}
@@ -383,7 +376,7 @@ export function TokenOfferModal({
               </ContentContainer>
             )}
 
-            {tokenOfferStep === TokenOfferStep.Offering && collection && (
+            {bidStep === BidStep.Offering && collection && (
               <ContentContainer>
                 <TransactionBidDetails
                   token={token ? token : undefined}
@@ -449,9 +442,7 @@ export function TokenOfferModal({
                       <Button
                         color="secondary"
                         css={{ flex: 1 }}
-                        onClick={() =>
-                          setTokenOfferStep(TokenOfferStep.SetPrice)
-                        }
+                        onClick={() => setBidStep(BidStep.SetPrice)}
                       >
                         Edit Bid
                       </Button>
@@ -464,7 +455,7 @@ export function TokenOfferModal({
               </ContentContainer>
             )}
 
-            {tokenOfferStep === TokenOfferStep.Complete && (
+            {bidStep === BidStep.Complete && (
               <Flex direction="column" align="center" css={{ p: '$4' }}>
                 <Text style="h5" css={{ textAlign: 'center', mt: 56 }}>
                   Offer Submitted!
@@ -487,8 +478,8 @@ export function TokenOfferModal({
           </Modal>
         )
       }}
-    </TokenOfferModalRenderer>
+    </BidModalRenderer>
   )
 }
 
-TokenOfferModal.Custom = TokenOfferModalRenderer
+BidModal.Custom = BidModalRenderer

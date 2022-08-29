@@ -30,7 +30,7 @@ const expirationOptions = [
   },
 ]
 
-export enum TokenOfferStep {
+export enum BidStep {
   SetPrice,
   Offering,
   Complete,
@@ -44,7 +44,7 @@ type ChildrenProps = {
   bidAmount: string
   bidData: BidData | null
   bidAmountUsd: number
-  tokenOfferStep: TokenOfferStep
+  bidStep: BidStep
   hasEnoughEth: boolean
   hasEnoughWEth: boolean
   ethAmountToWrap: string
@@ -57,7 +57,7 @@ type ChildrenProps = {
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   stepData: StepData | null
-  setTokenOfferStep: React.Dispatch<React.SetStateAction<TokenOfferStep>>
+  setBidStep: React.Dispatch<React.SetStateAction<BidStep>>
   setBidAmount: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   placeBid: () => void
@@ -80,16 +80,14 @@ export type StepData = {
   currentStep: Execute['steps'][0]
 }
 
-export const TokenOfferModalRenderer: FC<Props> = ({
+export const BidModalRenderer: FC<Props> = ({
   open,
   tokenId,
   collectionId,
   children,
 }) => {
   const { data: signer } = useSigner()
-  const [tokenOfferStep, setTokenOfferStep] = useState<TokenOfferStep>(
-    TokenOfferStep.SetPrice
-  )
+  const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [bidAmount, setBidAmount] = useState<string>('')
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
@@ -169,7 +167,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (!open) {
-      setTokenOfferStep(TokenOfferStep.SetPrice)
+      setBidStep(BidStep.SetPrice)
       setExpirationOption(expirationOptions[0])
       setHasEnoughEth(false)
       setHasEnoughWEth(false)
@@ -205,7 +203,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
       throw error
     }
 
-    setTokenOfferStep(TokenOfferStep.Offering)
+    setBidStep(BidStep.Offering)
     setTransactionError(null)
     setBidData(null)
 
@@ -270,7 +268,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
               currentStep: executableSteps[incompleteStepIndex],
             })
           } else {
-            setTokenOfferStep(TokenOfferStep.Complete)
+            setBidStep(BidStep.Complete)
           }
         },
       })
@@ -296,7 +294,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
         bidAmount,
         bidData,
         bidAmountUsd,
-        tokenOfferStep,
+        bidStep,
         hasEnoughEth,
         hasEnoughWEth,
         ethAmountToWrap,
@@ -304,7 +302,7 @@ export const TokenOfferModalRenderer: FC<Props> = ({
         expirationOption,
         expirationOptions,
         stepData,
-        setTokenOfferStep,
+        setBidStep,
         setBidAmount,
         setExpirationOption,
         placeBid,
