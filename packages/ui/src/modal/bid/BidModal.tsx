@@ -185,7 +185,7 @@ export function BidModal({
 
         return (
           <Modal
-            size={ModalSize.LG}
+            size={bidStep !== BidStep.Complete ? ModalSize.LG : ModalSize.MD}
             trigger={trigger}
             title={titleForStep(bidStep)}
             open={open}
@@ -203,6 +203,9 @@ export function BidModal({
               ) {
                 e.preventDefault()
               }
+            }}
+            onFocusCapture={(e) => {
+              e.stopPropagation()
             }}
           >
             {bidStep === BidStep.SetPrice && collection && (
@@ -242,7 +245,7 @@ export function BidModal({
                       style="body1"
                       color="subtle"
                     >
-                      <Box css={{ width: 'auto', height: 20 }}>
+                      <Box css={{ width: 12.5, height: 20 }}>
                         <WEthIcon />
                       </Box>
                       WETH
@@ -325,7 +328,7 @@ export function BidModal({
                           if (customOption) {
                             setExpirationOption({
                               ...customOption,
-                              relativeTime: dayjs(e[0]).unix(),
+                              relativeTime: e[0] / 1000,
                             })
                           }
                         }
@@ -397,7 +400,7 @@ export function BidModal({
                           disabled={!hasEnoughEth}
                           onClick={placeBid}
                         >
-                          <Text style="h6" ellipsify>
+                          <Text style="h6" color="button" ellipsify>
                             Convert {ethAmountToWrap} ETH for me
                           </Text>
                         </Button>

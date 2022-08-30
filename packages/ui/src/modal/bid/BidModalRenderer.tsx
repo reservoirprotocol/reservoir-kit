@@ -226,9 +226,7 @@ export const BidModalRenderer: FC<Props> = ({
           .unix()
           .toString()
       } else {
-        bid.expirationTime = dayjs
-          .unix(expirationOption.relativeTime)
-          .toString()
+        bid.expirationTime = `${expirationOption.relativeTime}`
       }
     }
 
@@ -279,7 +277,7 @@ export const BidModalRenderer: FC<Props> = ({
         setTransactionError(transactionError)
         console.log(e)
       })
-  }, [tokenId, collectionId, client, signer, bidAmount])
+  }, [tokenId, collectionId, client, signer, bidAmount, expirationOption])
 
   return (
     <>

@@ -25,6 +25,9 @@ export default styled('span', {
       success: {
         color: '$successAccent',
       },
+      button: {
+        color: '$buttonTextColor',
+      },
     },
     style: {
       h2: {

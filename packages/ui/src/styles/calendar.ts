@@ -284,7 +284,7 @@ const calendarCss = globalCss({
     fontWeight: 300,
     color: '$neutralText',
     position: 'absolute',
-    width: '75%',
+    width: '83%',
     left: '12.5%',
     lineHeight: '1px',
     height: 34,
@@ -649,6 +649,10 @@ const calendarCss = globalCss({
       backgroundImage: 'none',
     },
     '&::-webkit-datetime-edit': {
+      display: 'none',
+      '-webkit-appearance': 'none',
+    },
+    '&::-webkit-date-and-time-value': {
       display: 'none',
       '-webkit-appearance': 'none',
     },

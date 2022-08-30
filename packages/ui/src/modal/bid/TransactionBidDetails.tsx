@@ -56,6 +56,7 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
           }}
         >
           <Flex justify="between">
+            <Text style="subtitle2">Offer Price</Text>
             <FormatWEth amount={+value} textStyle="subtitle2" />
           </Flex>
           <Text style="subtitle2" color="subtle" as="p" css={{ flex: 1 }}>

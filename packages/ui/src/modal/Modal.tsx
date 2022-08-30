@@ -29,7 +29,11 @@ type Props = {
   loading?: boolean
 } & Pick<
   ComponentPropsWithoutRef<typeof Dialog>,
-  'onPointerDownOutside' | 'onOpenChange' | 'open' | 'trigger'
+  | 'onPointerDownOutside'
+  | 'onOpenChange'
+  | 'open'
+  | 'trigger'
+  | 'onFocusCapture'
 >
 
 const Logo = styled(ReservoirLogoWhiteText, {
@@ -50,6 +54,7 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
       onOpenChange,
       loading,
       onPointerDownOutside,
+      onFocusCapture,
     },
     forwardedRef
   ) => {
@@ -63,6 +68,7 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
         onOpenChange={onOpenChange}
         size={size}
         onPointerDownOutside={onPointerDownOutside}
+        onFocusCapture={onFocusCapture}
       >
         <Flex
           css={{
