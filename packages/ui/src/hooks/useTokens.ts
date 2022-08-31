@@ -3,15 +3,15 @@ import useReservoirClient from './useReservoirClient'
 import useSWR, { SWRConfiguration } from 'swr'
 
 type TokenDetailsResponse =
-  paths['/tokens/details/v4']['get']['responses']['200']['schema']
+  paths['/tokens/v5']['get']['responses']['200']['schema']
 
 export default function (
-  query?: paths['/tokens/details/v4']['get']['parameters']['query'] | false,
+  query?: paths['/tokens/v5']['get']['parameters']['query'] | false,
   swrOptions: SWRConfiguration = {}
 ) {
   const client = useReservoirClient()
 
-  const path = new URL(`${client?.apiBase}/tokens/details/v4`)
+  const path = new URL(`${client?.apiBase}/tokens/v5`)
   setParams(path, query || {})
 
   const { data, mutate, error, isValidating } = useSWR<TokenDetailsResponse>(

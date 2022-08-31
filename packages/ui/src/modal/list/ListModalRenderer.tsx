@@ -7,7 +7,7 @@ import React, {
   useEffect,
 } from 'react'
 import {
-  useTokenDetails,
+  useTokens,
   useCoinConversion,
   useReservoirClient,
   useMarketplaces,
@@ -51,9 +51,7 @@ export type StepData = {
 }
 
 type ChildrenProps = {
-  token:
-    | false
-    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listStep: ListStep
   ethUsdPrice: ReturnType<typeof useCoinConversion>
@@ -113,9 +111,10 @@ export const ListModalRenderer: FC<Props> = ({
     expirationOptions[0]
   )
 
-  const { data: tokens } = useTokenDetails(
+  const { data: tokens } = useTokens(
     open && {
       tokens: [`${collectionId}:${tokenId}`],
+      includeAttributes: true,
     }
   )
   const { data: collections } = useCollections(
@@ -126,7 +125,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   const collection = collections && collections[0] ? collections[0] : undefined
 
-  let token = !!tokens?.length && tokens[0]
+  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
   const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
 

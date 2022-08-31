@@ -2,13 +2,11 @@ import React, { ComponentPropsWithoutRef, FC } from 'react'
 import { Flex, Box } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
 import Stat from '../Stat'
-import { useTokenDetails, useCollections } from '../../hooks'
+import { useTokens, useCollections } from '../../hooks'
 import InfoTooltip from '../InfoTooltip'
 
 type Props = {
-  token?: NonNullable<
-    NonNullable<ReturnType<typeof useTokenDetails>>['data']
-  >['0']
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
 }
 
@@ -34,7 +32,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
       id: 1,
       label: 'Highest Offer',
       value: token
-        ? token.market?.topBid?.value || null
+        ? token.market?.topBid?.price?.amount?.native || null
         : collection?.topBid?.price?.amount?.native || null,
       asWeth: true,
     },
@@ -44,7 +42,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
     stats.push({
       id: 2,
       label: 'List Price',
-      value: token.market?.floorAsk?.price || 0,
+      value: token.market?.floorAsk?.price?.amount?.native || 0,
       asEth: true,
     })
   } else if (!token && collection) {

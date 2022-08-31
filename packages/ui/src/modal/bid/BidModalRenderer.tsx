@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
-  useTokenDetails,
+  useTokens,
   useCoinConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
@@ -37,9 +37,7 @@ export enum BidStep {
 }
 
 type ChildrenProps = {
-  token:
-    | false
-    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   bidAmount: string
   bidData: BidData | null
@@ -99,7 +97,7 @@ export const BidModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<StepData | null>(null)
   const [bidData, setBidData] = useState<BidData | null>(null)
 
-  const { data: tokens } = useTokenDetails(
+  const { data: tokens } = useTokens(
     open &&
       tokenId !== undefined && {
         tokens: [`${collectionId}:${tokenId}`],
@@ -114,7 +112,7 @@ export const BidModalRenderer: FC<Props> = ({
   )
   const collection = collections && collections[0] ? collections[0] : undefined
 
-  let token = !!tokens?.length && tokens[0]
+  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
   const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
   const bidAmountUsd = +bidAmount * (ethUsdPrice || 0)

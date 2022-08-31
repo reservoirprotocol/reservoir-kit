@@ -98,7 +98,7 @@ const Index: NextPage = () => {
           </div>
         }
         collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
-        tokenId="988829"
+        tokenId="1512394"
         onGoToToken={() => console.log('Go to token')}
         onPurchaseComplete={(data) => {
           console.log('Purchase Complete', data)

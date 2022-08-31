@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
-  useTokenDetails,
+  useTokens,
   useCoinConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
@@ -24,9 +24,7 @@ export enum BuyStep {
 }
 
 type ChildrenProps = {
-  token:
-    | false
-    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   totalPrice: number
   referrerFee: number
@@ -73,7 +71,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
 
-  const { data: tokens } = useTokenDetails(
+  const { data: tokens } = useTokens(
     open && {
       tokens: [`${collectionId}:${tokenId}`],
     }
@@ -84,7 +82,7 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   )
   const collection = collections && collections[0] ? collections[0] : undefined
-  let token = !!tokens?.length && tokens[0]
+  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
   const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
   const feeUsd = referrerFee * (ethUsdPrice || 0)
@@ -184,8 +182,8 @@ export const BuyModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (token) {
-      if (token.market?.floorAsk?.price) {
-        let floorPrice = token.market.floorAsk.price
+      if (token.market?.floorAsk?.price?.amount?.native) {
+        let floorPrice = token.market.floorAsk.price.amount.native
 
         if (referrerFeeBps) {
           const fee = (referrerFeeBps / 10000) * floorPrice

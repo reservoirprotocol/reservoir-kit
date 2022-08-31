@@ -1,5 +1,5 @@
 export { default as useCollections } from './useCollections'
-export { default as useTokenDetails } from './useTokenDetails'
+export { default as useTokens } from './useTokens'
 export { default as useCoinConversion } from './useCoinConversion'
 export { default as useReservoirClient } from './useReservoirClient'
 export { default as useTokenOpenseaBanned } from './useTokenOpenseaBanned'

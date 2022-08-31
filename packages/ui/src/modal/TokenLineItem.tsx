@@ -2,11 +2,11 @@ import React, { FC } from 'react'
 import { Box, ErrorWell } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 
-import { useCollections, useTokenDetails } from '../hooks'
+import { useCollections, useTokens } from '../hooks'
 
 type TokenLineItemProps = {
   tokenDetails: NonNullable<
-    NonNullable<ReturnType<typeof useTokenDetails>>['data']
+    NonNullable<ReturnType<typeof useTokens>>['data']
   >[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   usdConversion?: number
@@ -22,7 +22,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   isUnavailable,
 }) => {
   const marketData = tokenDetails?.market
-  let price: number = marketData?.floorAsk?.price || 0
+  let price: number = marketData?.floorAsk?.price?.amount?.native || 0
 
   if (!price && tokenDetails?.token?.lastSell?.value) {
     price = tokenDetails?.token.lastSell.value
