@@ -3,8 +3,8 @@ import useReservoirClient from './useReservoirClient'
 import { SWRConfiguration } from 'swr'
 import useSWRInfinite from 'swr/infinite'
 
-type Asks = paths['/orders/asks/v2']['get']['responses']['200']['schema']
-type AsksQuery = paths['/orders/asks/v2']['get']['parameters']['query']
+type Asks = paths['/orders/asks/v3']['get']['responses']['200']['schema']
+type AsksQuery = paths['/orders/asks/v3']['get']['parameters']['query']
 
 export default function (
   options: AsksQuery,
@@ -15,7 +15,7 @@ export default function (
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<Asks>(
       (pageIndex, previousPageData) => {
-        const url = new URL(`${client?.apiBase || ''}/orders/asks/v2`)
+        const url = new URL(`${client?.apiBase || ''}/orders/asks/v3`)
         let query: AsksQuery = options || {}
 
         if (previousPageData && !previousPageData.continuation) {

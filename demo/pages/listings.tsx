@@ -13,6 +13,7 @@ const Listings: NextPage = () => {
     contracts: [
       '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
       '0x27af21619746a2abb01d3056f971cde936145939',
+      '0xfb7e002151343efa2a3a5f2ea98db0d21efb75ce',
     ],
   })
 
@@ -41,7 +42,7 @@ const Listings: NextPage = () => {
       {listings.map((listing) => (
         <div key={listing.id}>
           <div>Id: {listing.id}</div>
-          <div>Price: {listing.price}</div>
+          <div>Price: {listing.price.amount.native}</div>
           <div>Source: {listing.source.name}</div>
         </div>
       ))}
