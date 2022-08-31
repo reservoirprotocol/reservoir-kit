@@ -1,4 +1,4 @@
-export { default as useCollection } from './useCollection'
+export { default as useCollections } from './useCollections'
 export { default as useTokenDetails } from './useTokenDetails'
 export { default as useCoinConversion } from './useCoinConversion'
 export { default as useReservoirClient } from './useReservoirClient'

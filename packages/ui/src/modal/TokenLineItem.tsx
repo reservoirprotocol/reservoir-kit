@@ -2,13 +2,13 @@ import React, { FC } from 'react'
 import { Box, ErrorWell } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 
-import { useCollection, useTokenDetails } from '../hooks'
+import { useCollections, useTokenDetails } from '../hooks'
 
 type TokenLineItemProps = {
   tokenDetails: NonNullable<
     NonNullable<ReturnType<typeof useTokenDetails>>['data']
   >[0]
-  collection: ReturnType<typeof useCollection>['data']
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   usdConversion?: number
   isSuspicious?: Boolean
   isUnavailable?: boolean
@@ -39,7 +39,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
 
   const img = tokenDetails?.token?.image
     ? tokenDetails.token.image
-    : (collection?.metadata?.imageUrl as string)
+    : (collection?.image as string)
   const srcImg = marketData?.floorAsk?.source
     ? (marketData?.floorAsk?.source['icon'] as string)
     : ''

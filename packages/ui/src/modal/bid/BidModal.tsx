@@ -130,7 +130,7 @@ export function BidModal({
         const itemImage =
           token && token.token?.image
             ? token.token?.image
-            : (collection?.metadata?.imageUrl as string)
+            : (collection?.image as string)
 
         useEffect(() => {
           if (stepData) {

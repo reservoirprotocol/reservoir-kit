@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Flex, Box, FormatWEth, Text } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
-import { useTokenDetails, useCollection } from '../../hooks'
+import { useTokenDetails, useCollections } from '../../hooks'
 import { BidData } from './BidModalRenderer'
 import { useTimeSince } from '../../hooks'
 import { formatEther } from 'ethers/lib/utils'
@@ -10,7 +10,7 @@ type Props = {
   token?: NonNullable<
     NonNullable<ReturnType<typeof useTokenDetails>>['data']
   >['0']
-  collection: ReturnType<typeof useCollection>['data']
+  collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   bidData: BidData | null
 }
 

@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
-  useCollection,
   useTokenDetails,
   useCoinConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
+  useCollections,
 } from '../../hooks'
 import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 
@@ -27,7 +27,7 @@ type ChildrenProps = {
   token:
     | false
     | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
-  collection: ReturnType<typeof useCollection>['data']
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   totalPrice: number
   referrerFee: number
   buyStep: BuyStep
@@ -78,11 +78,12 @@ export const BuyModalRenderer: FC<Props> = ({
       tokens: [`${collectionId}:${tokenId}`],
     }
   )
-  const { data: collection } = useCollection(
+  const { data: collections } = useCollections(
     open && {
       id: collectionId,
     }
   )
+  const collection = collections && collections[0] ? collections[0] : undefined
   let token = !!tokens?.length && tokens[0]
 
   const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)

@@ -7,12 +7,12 @@ import React, {
   useEffect,
 } from 'react'
 import {
-  useCollection,
   useTokenDetails,
   useCoinConversion,
   useReservoirClient,
   useMarketplaces,
   useListingPreapprovalCheck,
+  useCollections,
 } from '../../hooks'
 import { useSigner } from 'wagmi'
 
@@ -54,7 +54,7 @@ type ChildrenProps = {
   token:
     | false
     | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
-  collection: ReturnType<typeof useCollection>['data']
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listStep: ListStep
   ethUsdPrice: ReturnType<typeof useCoinConversion>
   expirationOptions: ExpirationOption[]
@@ -118,11 +118,13 @@ export const ListModalRenderer: FC<Props> = ({
       tokens: [`${collectionId}:${tokenId}`],
     }
   )
-  const { data: collection } = useCollection(
+  const { data: collections } = useCollections(
     open && {
       id: collectionId,
     }
   )
+
+  const collection = collections && collections[0] ? collections[0] : undefined
 
   let token = !!tokens?.length && tokens[0]
 
@@ -217,7 +219,7 @@ export const ListModalRenderer: FC<Props> = ({
           ) || []),
           0
         ) ||
-        collection?.floorAsk?.price ||
+        collection?.floorAsk?.price?.amount?.native ||
         0
 
       setLoadedInitalPrice(true)
