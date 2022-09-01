@@ -7,12 +7,12 @@ import React, {
   useEffect,
 } from 'react'
 import {
-  useCollection,
-  useTokenDetails,
+  useTokens,
   useCoinConversion,
   useReservoirClient,
   useMarketplaces,
   useListingPreapprovalCheck,
+  useCollections,
 } from '../../hooks'
 import { useSigner } from 'wagmi'
 
@@ -51,10 +51,8 @@ export type StepData = {
 }
 
 type ChildrenProps = {
-  token:
-    | false
-    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
-  collection: ReturnType<typeof useCollection>['data']
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listStep: ListStep
   ethUsdPrice: ReturnType<typeof useCoinConversion>
   expirationOptions: ExpirationOption[]
@@ -113,18 +111,24 @@ export const ListModalRenderer: FC<Props> = ({
     expirationOptions[0]
   )
 
-  const { data: tokens } = useTokenDetails(
+  const { data: tokens } = useTokens(
     open && {
       tokens: [`${collectionId}:${tokenId}`],
+      includeAttributes: true,
+    },
+    {
+      revalidateFirstPage: true,
     }
   )
-  const { data: collection } = useCollection(
+  const { data: collections } = useCollections(
     open && {
       id: collectionId,
     }
   )
 
-  let token = !!tokens?.length && tokens[0]
+  const collection = collections && collections[0] ? collections[0] : undefined
+
+  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
   const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
 
@@ -217,7 +221,7 @@ export const ListModalRenderer: FC<Props> = ({
           ) || []),
           0
         ) ||
-        collection?.floorAsk?.price ||
+        collection?.floorAsk?.price?.amount?.native ||
         0
 
       setLoadedInitalPrice(true)

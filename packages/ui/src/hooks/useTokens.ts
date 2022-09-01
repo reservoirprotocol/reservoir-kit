@@ -2,20 +2,26 @@ import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
-type Asks = paths['/orders/asks/v3']['get']['responses']['200']['schema']
-type AsksQuery = paths['/orders/asks/v3']['get']['parameters']['query']
+type TokenDetailsResponse =
+  paths['/tokens/v5']['get']['responses']['200']['schema']
+
+type TokensQuery = paths['/tokens/v5']['get']['parameters']['query']
 
 export default function (
-  options: AsksQuery,
+  options?: TokensQuery | false,
   swrOptions: SWRInfiniteConfiguration = {}
 ) {
   const client = useReservoirClient()
 
   const { data, mutate, error, isValidating, size, setSize } =
-    useSWRInfinite<Asks>(
+    useSWRInfinite<TokenDetailsResponse>(
       (pageIndex, previousPageData) => {
-        const url = new URL(`${client?.apiBase || ''}/orders/asks/v3`)
-        let query: AsksQuery = options || {}
+        if (!options) {
+          return null
+        }
+
+        const url = new URL(`${client?.apiBase}/tokens/v5`)
+        let query: TokensQuery = { ...options }
 
         if (previousPageData && !previousPageData.continuation) {
           return null
@@ -34,7 +40,7 @@ export default function (
       }
     )
 
-  const listings = data?.flatMap((page) => page.orders) ?? []
+  const tokens = data?.flatMap((page) => page.tokens) ?? []
   const hasNextPage = Boolean(data?.[size - 1]?.continuation)
   const isFetchingInitialData = !data && !error
   const isFetchingPage =
@@ -48,7 +54,7 @@ export default function (
 
   return {
     response: data,
-    data: listings,
+    data: tokens,
     hasNextPage,
     isFetchingInitialData,
     isFetchingPage,

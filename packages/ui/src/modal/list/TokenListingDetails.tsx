@@ -3,14 +3,12 @@ import { Flex, Box } from '../../primitives'
 import Token from './Token'
 import Stat from '../Stat'
 import ListingStat from './ListingStat'
-import { useTokenDetails, useCollection } from '../../hooks'
+import { useTokens, useCollections } from '../../hooks'
 import { ListingData } from './ListModalRenderer'
 
 type Props = {
-  token?: NonNullable<
-    NonNullable<ReturnType<typeof useTokenDetails>>['data']
-  >['0']
-  collection: ReturnType<typeof useCollection>['data']
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listingData: ListingData[]
 }
 

@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
-  useCollection,
-  useTokenDetails,
+  useTokens,
   useCoinConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
   useWethBalance,
+  useCollections,
 } from '../../hooks'
 import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
 
@@ -37,10 +37,8 @@ export enum BidStep {
 }
 
 type ChildrenProps = {
-  token:
-    | false
-    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
-  collection: ReturnType<typeof useCollection>['data']
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   bidAmount: string
   bidData: BidData | null
   bidAmountUsd: number
@@ -99,20 +97,25 @@ export const BidModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<StepData | null>(null)
   const [bidData, setBidData] = useState<BidData | null>(null)
 
-  const { data: tokens } = useTokenDetails(
+  const { data: tokens } = useTokens(
     open &&
       tokenId !== undefined && {
         tokens: [`${collectionId}:${tokenId}`],
         includeTopBid: true,
+      }, {
+        revalidateFirstPage: true,
       }
   )
-  const { data: collection } = useCollection(
+  
+  const { data: collections } = useCollections(
     open && {
       id: collectionId,
       includeTopBid: true,
     }
   )
-  let token = !!tokens?.length && tokens[0]
+  const collection = collections && collections[0] ? collections[0] : undefined
+
+  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
   const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
   const bidAmountUsd = +bidAmount * (ethUsdPrice || 0)

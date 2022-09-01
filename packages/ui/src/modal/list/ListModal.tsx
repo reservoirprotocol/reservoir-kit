@@ -115,7 +115,7 @@ export function ListModal({
         const tokenImage =
           token && token.token?.image
             ? token.token.image
-            : (collection?.metadata?.imageUrl as string)
+            : (collection?.image as string)
 
         useEffect(() => {
           if (stepData) {
@@ -383,17 +383,19 @@ export function ListModal({
                             }
                           }}
                         />
-                        {collection?.floorAsk?.price !== undefined &&
+                        {collection &&
+                          collection?.floorAsk?.price?.amount?.native !==
+                            undefined &&
                           marketplace.truePrice !== null &&
                           marketplace.truePrice <
-                            collection?.floorAsk?.price && (
+                            collection?.floorAsk?.price.amount.native && (
                             <Box>
                               <Text style="body2" color="error">
                                 Price is{' '}
                                 {Math.round(
-                                  ((collection.floorAsk.price -
+                                  ((collection.floorAsk.price.amount.native -
                                     +marketplace.truePrice) /
-                                    ((collection.floorAsk.price +
+                                    ((collection.floorAsk.price.amount.native +
                                       +marketplace.truePrice) /
                                       2)) *
                                     100 *

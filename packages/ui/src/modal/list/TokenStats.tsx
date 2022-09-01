@@ -2,14 +2,12 @@ import React, { FC } from 'react'
 import { Flex, Box } from '../../primitives'
 import Token from './Token'
 import Stat from '../Stat'
-import { useTokenDetails, useCollection } from '../../hooks'
+import { useTokens, useCollections } from '../../hooks'
 import InfoTooltip from '../InfoTooltip'
 
 type Props = {
-  token?: NonNullable<
-    NonNullable<ReturnType<typeof useTokenDetails>>['data']
-  >['0']
-  collection: ReturnType<typeof useCollection>['data']
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
 }
 
 const TokenStats: FC<Props> = ({ token, collection }) => {
@@ -70,7 +68,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           {
             id: 2,
             label: 'Collection Floor',
-            value: collection?.floorAsk?.price || 0,
+            value: collection?.floorAsk?.price?.amount?.native || 0,
             asEth: true,
           },
           {
@@ -87,7 +85,10 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
                 />
               </span>
             ),
-            value: attributeFloor || collection?.floorAsk?.price || 0,
+            value:
+              attributeFloor ||
+              collection?.floorAsk?.price?.amount?.native ||
+              0,
             asEth: true,
           },
         ].map((stat) => (

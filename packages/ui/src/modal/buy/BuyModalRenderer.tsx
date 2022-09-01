@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
-  useCollection,
-  useTokenDetails,
+  useTokens,
   useCoinConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
+  useCollections,
 } from '../../hooks'
 import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 
@@ -24,10 +24,8 @@ export enum BuyStep {
 }
 
 type ChildrenProps = {
-  token:
-    | false
-    | NonNullable<NonNullable<ReturnType<typeof useTokenDetails>>['data']>[0]
-  collection: ReturnType<typeof useCollection>['data']
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   totalPrice: number
   referrerFee: number
   buyStep: BuyStep
@@ -73,17 +71,21 @@ export const BuyModalRenderer: FC<Props> = ({
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
 
-  const { data: tokens } = useTokenDetails(
+  const { data: tokens } = useTokens(
     open && {
       tokens: [`${collectionId}:${tokenId}`],
+    },
+    {
+      revalidateFirstPage: true,
     }
   )
-  const { data: collection } = useCollection(
+  const { data: collections } = useCollections(
     open && {
       id: collectionId,
     }
   )
-  let token = !!tokens?.length && tokens[0]
+  const collection = collections && collections[0] ? collections[0] : undefined
+  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
   const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
   const feeUsd = referrerFee * (ethUsdPrice || 0)
@@ -183,8 +185,8 @@ export const BuyModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (token) {
-      if (token.market?.floorAsk?.price) {
-        let floorPrice = token.market.floorAsk.price
+      if (token.market?.floorAsk?.price?.amount?.native) {
+        let floorPrice = token.market.floorAsk.price.amount.native
 
         if (referrerFeeBps) {
           const fee = (referrerFeeBps / 10000) * floorPrice

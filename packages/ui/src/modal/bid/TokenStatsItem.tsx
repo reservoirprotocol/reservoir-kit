@@ -1,4 +1,4 @@
-import { useTokenDetails, useCollection } from '../../hooks'
+import { useTokens, useCollections } from '../../hooks'
 import React, { FC } from 'react'
 import { styled } from '../../../stitches.config'
 import { Box, Text } from '../../primitives'
@@ -14,17 +14,13 @@ const Img = styled('img', {
 })
 
 type Props = {
-  token?: NonNullable<
-    NonNullable<ReturnType<typeof useTokenDetails>>['data']
-  >['0']
-  collection: ReturnType<typeof useCollection>['data']
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
+  collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
 }
 
 const TokenStatsItem: FC<Props> = ({ token, collection }) => {
   const img = optimizeImage(
-    token?.token?.image
-      ? token.token.image
-      : (collection?.metadata?.imageUrl as string),
+    token?.token?.image ? token.token.image : (collection?.image as string),
     600
   )
   return (
