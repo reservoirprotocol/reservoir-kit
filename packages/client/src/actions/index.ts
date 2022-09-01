@@ -1,18 +1,8 @@
 import actions from './actions'
 import * as utils from '../utils'
 
-type NonUndefined<T> = T extends undefined ? never : T
-
-type Fee = NonUndefined<
-  NonNullable<
-    Parameters<ReservoirClientActions['listToken']>['0']['listings'][0]
-  >['fee']
->
-type FeeRecipient = NonUndefined<
-  NonNullable<
-    Parameters<ReservoirClientActions['listToken']>['0']['listings'][0]
-  >['feeRecipient']
->
+type Fee = string
+type FeeRecipient = string
 
 export type ReservoirClientOptions = {
   apiBase: string

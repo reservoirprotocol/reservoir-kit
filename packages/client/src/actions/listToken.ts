@@ -5,7 +5,7 @@ import { executeSteps } from '../utils/executeSteps'
 import axios, { AxiosRequestConfig } from 'axios'
 
 type ListTokenBody = NonNullable<
-  paths['/execute/list/v3']['post']['parameters']['body']['body']
+  paths['/execute/list/v4']['post']['parameters']['body']['body']
 >
 
 type Data = {
@@ -48,8 +48,7 @@ export async function listToken(
         !('fee' in listing) &&
         !('feeRecipient' in listing)
       ) {
-        listing.fee = client.fee
-        listing.feeRecipient = client.feeRecipient
+        listing.fees = [`${client.feeRecipient}:${client.fee}`]
       }
 
       if (
