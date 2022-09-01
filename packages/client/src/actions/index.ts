@@ -42,7 +42,7 @@ export class ReservoirClient {
   feeRecipient?: FeeRecipient
   automatedRoyalties?: boolean
 
-  readonly utils = utils
+  readonly utils = { ...utils }
   readonly actions: ReservoirClientActions = actions
 
   constructor(options: ReservoirClientOptions) {
