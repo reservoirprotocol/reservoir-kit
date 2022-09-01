@@ -1,29 +1,66 @@
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useReservoirClient from './useReservoirClient'
-import useSWR, { SWRConfiguration } from 'swr'
+import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type TokenDetailsResponse =
   paths['/tokens/v5']['get']['responses']['200']['schema']
 
+type TokensQuery = paths['/tokens/v5']['get']['parameters']['query']
+
 export default function (
-  query?: paths['/tokens/v5']['get']['parameters']['query'] | false,
-  swrOptions: SWRConfiguration = {}
+  options?: TokensQuery | false,
+  swrOptions: SWRInfiniteConfiguration = {}
 ) {
   const client = useReservoirClient()
 
-  const path = new URL(`${client?.apiBase}/tokens/v5`)
-  setParams(path, query || {})
+  const { data, mutate, error, isValidating, size, setSize } =
+    useSWRInfinite<TokenDetailsResponse>(
+      (pageIndex, previousPageData) => {
+        if (!options) {
+          return null
+        }
 
-  const { data, mutate, error, isValidating } = useSWR<TokenDetailsResponse>(
-    query ? [path.href, client?.apiKey] : null,
-    null,
-    {
-      revalidateOnMount: true,
-      ...swrOptions,
+        const url = new URL(`${client?.apiBase}/tokens/v5`)
+        let query: TokensQuery = { ...options }
+
+        if (previousPageData && !previousPageData.continuation) {
+          return null
+        } else if (previousPageData && pageIndex > 0) {
+          query.continuation = previousPageData.continuation
+        }
+
+        setParams(url, query)
+        return url.href
+      },
+      null,
+      {
+        revalidateOnMount: true,
+        revalidateFirstPage: false,
+        ...swrOptions,
+      }
+    )
+
+  const tokens = data?.flatMap((page) => page.tokens) ?? []
+  const hasNextPage = Boolean(data?.[size - 1]?.continuation)
+  const isFetchingInitialData = !data && !error
+  const isFetchingPage =
+    isFetchingInitialData ||
+    (size > 0 && data && typeof data[size - 1] === undefined)
+  const fetchNextPage = () => {
+    if (!isFetchingPage && hasNextPage) {
+      setSize((size) => size + 1)
     }
-  )
+  }
 
-  const tokens = data && data?.tokens ? data.tokens : null
-
-  return { response: data, data: tokens, mutate, error, isValidating }
+  return {
+    response: data,
+    data: tokens,
+    hasNextPage,
+    isFetchingInitialData,
+    isFetchingPage,
+    fetchNextPage,
+    mutate,
+    error,
+    isValidating,
+  }
 }

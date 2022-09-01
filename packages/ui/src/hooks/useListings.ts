@@ -1,14 +1,13 @@
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useReservoirClient from './useReservoirClient'
-import { SWRConfiguration } from 'swr'
-import useSWRInfinite from 'swr/infinite'
+import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type Asks = paths['/orders/asks/v3']['get']['responses']['200']['schema']
 type AsksQuery = paths['/orders/asks/v3']['get']['parameters']['query']
 
 export default function (
   options: AsksQuery,
-  swrOptions: SWRConfiguration = {}
+  swrOptions: SWRInfiniteConfiguration = {}
 ) {
   const client = useReservoirClient()
 
@@ -30,7 +29,6 @@ export default function (
       null,
       {
         revalidateOnMount: true,
-        revalidateAll: false,
         revalidateFirstPage: false,
         ...swrOptions,
       }

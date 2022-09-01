@@ -115,6 +115,9 @@ export const ListModalRenderer: FC<Props> = ({
     open && {
       tokens: [`${collectionId}:${tokenId}`],
       includeAttributes: true,
+    },
+    {
+      revalidateFirstPage: true,
     }
   )
   const { data: collections } = useCollections(

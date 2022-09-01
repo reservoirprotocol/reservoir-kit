@@ -74,6 +74,9 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: tokens } = useTokens(
     open && {
       tokens: [`${collectionId}:${tokenId}`],
+    },
+    {
+      revalidateFirstPage: true,
     }
   )
   const { data: collections } = useCollections(

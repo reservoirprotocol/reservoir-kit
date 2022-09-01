@@ -102,8 +102,11 @@ export const BidModalRenderer: FC<Props> = ({
       tokenId !== undefined && {
         tokens: [`${collectionId}:${tokenId}`],
         includeTopBid: true,
+      }, {
+        revalidateFirstPage: true,
       }
   )
+  
   const { data: collections } = useCollections(
     open && {
       id: collectionId,

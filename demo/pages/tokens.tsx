@@ -1,21 +1,16 @@
 import { NextPage } from 'next'
-import { useListings } from '@reservoir0x/reservoir-kit-ui'
+import { useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
 
-const Listings: NextPage = () => {
+const Tokens: NextPage = () => {
   const {
-    data: listings,
+    data: tokens,
     fetchNextPage,
     hasNextPage,
-  } = useListings({
-    contracts: [
-      '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
-      '0x27af21619746a2abb01d3056f971cde936145939',
-      '0xfb7e002151343efa2a3a5f2ea98db0d21efb75ce',
-    ],
-    limit: 10
+  } = useTokens({
+    collection: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
   })
 
   const { ref, inView } = useInView()
@@ -39,12 +34,12 @@ const Listings: NextPage = () => {
       }}
     >
       <ConnectButton />
-      <h3 style={{ fontSize: 20, fontWeight: 600 }}>Listings</h3>
-      {listings.map((listing) => (
-        <div key={listing.id}>
-          <div>Id: {listing.id}</div>
-          <div>Price: {listing.price.amount.native}</div>
-          <div>Source: {listing.source.name}</div>
+      <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tokens</h3>
+      {tokens.map((token) => (
+        <div key={token.token.tokenId}>
+          <div>Id: {token.token.tokenId}</div>
+          <div>Name: {token.token.name}</div>
+          <div>Price: {token.market.floorAsk?.price?.amount?.native}</div>
         </div>
       ))}
       {hasNextPage ? (
@@ -67,4 +62,4 @@ const Listings: NextPage = () => {
   )
 }
 
-export default Listings
+export default Tokens
