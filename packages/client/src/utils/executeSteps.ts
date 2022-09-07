@@ -150,6 +150,16 @@ export async function executeSteps(
 
         await tx.wait()
 
+        // Only confirm that on-chain tx has been picked
+        // up by the indexer for the last transaction
+        if (
+          json.steps
+            .slice(incompleteStepIndex + 1)
+            .findIndex((step) => step.kind === 'transaction') !== -1
+        ) {
+          return true
+        }
+
         //Implicitly poll the confirmation url to confirm the transaction went through
         const confirmationUrl = new URL(
           `${client.apiBase}/transactions/${tx.hash}/synced/v1`
