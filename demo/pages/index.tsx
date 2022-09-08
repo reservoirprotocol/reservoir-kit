@@ -3,6 +3,7 @@ import { NextPage } from 'next'
 import {
   BuyModal,
   ListModal,
+  AcceptOfferModal,
   BidModal,
   useReservoirClient,
   darkTheme,
@@ -162,6 +163,33 @@ const Index: NextPage = () => {
         }}
         onClose={() => {
           console.log('BidModal Closed')
+        }}
+      />
+
+      <AcceptOfferModal
+        trigger={
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flex: 1,
+              width: '100%',
+            }}
+          >
+            <Trigger>Accept Offer</Trigger>
+          </div>
+        }
+        collectionId="0x4d68e14cd7dec510c84326f54ee41f88e8fad59b"
+        tokenId="23423"
+        onOfferAccepted={(data) => {
+          console.log('Offer Accepted', data)
+        }}
+        onAcceptanceError={(error, data) => {
+          console.log('Offer Acceptance Error', error, data)
+        }}
+        onClose={() => {
+          console.log('AcceptOfferModal Closed')
         }}
       />
 
