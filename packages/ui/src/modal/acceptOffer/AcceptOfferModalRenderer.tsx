@@ -27,6 +27,11 @@ type ChildrenProps = {
   totalPrice: number
   acceptOfferStep: AcceptOfferStep
   referrerFee: number
+  fees: {
+    creatorRoyalties: number
+    marketplaceFee: number
+    referalFee: number
+  }
   transactionError?: Error | null
   txHash: string | null
   feeUsd: number
@@ -89,6 +94,14 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
   const totalUsd = totalPrice * (ethUsdPrice || 0)
 
   const client = useReservoirClient()
+
+  const marketplaceFee = (client?.fee ? +client?.fee : 0) / 10000
+
+  const fees = {
+    creatorRoyalties: 0,
+    marketplaceFee,
+    referalFee: referrerFee,
+  }
 
   const acceptOffer = useCallback(() => {
     if (!signer) {
@@ -176,12 +189,12 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
         if (referrerFeeBps) {
           const fee = (referrerFeeBps / 10000) * topBid
 
-          topBid = topBid + fee
+          topBid = topBid - fee
           setReferrerFee(fee)
         } else if (client?.fee && client?.feeRecipient) {
           const fee = (+client.fee / 10000) * topBid
 
-          topBid = topBid + fee
+          topBid = topBid - fee
           setReferrerFee(fee)
         }
         setTotalPrice(topBid)
@@ -225,6 +238,7 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
         collection,
         totalPrice,
         referrerFee,
+        fees,
         acceptOfferStep,
         transactionError,
         txHash,

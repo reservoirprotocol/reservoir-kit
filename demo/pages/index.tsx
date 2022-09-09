@@ -180,8 +180,8 @@ const Index: NextPage = () => {
             <Trigger>Accept Offer</Trigger>
           </div>
         }
-        collectionId="0x4d68e14cd7dec510c84326f54ee41f88e8fad59b"
-        tokenId="23423"
+        collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
+        tokenId="754240"
         onOfferAccepted={(data) => {
           console.log('Offer Accepted', data)
         }}

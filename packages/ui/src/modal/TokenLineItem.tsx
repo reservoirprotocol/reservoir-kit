@@ -75,7 +75,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   }
 
   return (
-    <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
+    <Box css={{ p: '$4', mb: '$4', borderBottom: '1px solid $borderColor' }}>
       <TokenPrimitive
         img={img}
         name={name}

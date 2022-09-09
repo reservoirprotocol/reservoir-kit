@@ -25,6 +25,7 @@ import {
   AcceptOfferStep,
   AcceptOfferModalRenderer,
 } from './AcceptOfferModalRenderer'
+import Fees from '../Fees'
 
 type PurchaseData = {
   tokenId?: string
@@ -87,6 +88,7 @@ export function AcceptOfferModal({
         collection,
         totalPrice,
         referrerFee,
+        fees,
         acceptOfferStep,
         transactionError,
         txHash,
@@ -181,6 +183,7 @@ export function AcceptOfferModal({
                   usdConversion={ethUsdPrice || 0}
                   isOffer={true}
                 />
+                <Fees fees={fees} />
                 {referrerFee > 0 && (
                   <>
                     <Flex
@@ -201,12 +204,8 @@ export function AcceptOfferModal({
                   </>
                 )}
 
-                <Flex
-                  align="center"
-                  justify="between"
-                  css={{ pt: '$4', px: '$4' }}
-                >
-                  <Text style="h6">Total</Text>
+                <Flex align="center" justify="between" css={{ px: '$4' }}>
+                  <Text style="h6">You Get</Text>
                   <FormatEth textStyle="h6" amount={totalPrice} />
                 </Flex>
                 <Flex justify="end">
@@ -216,6 +215,20 @@ export function AcceptOfferModal({
                     css={{ mr: '$4' }}
                   />
                 </Flex>
+
+                <Button
+                  style={{
+                    flex: 1,
+                    marginBottom: 16,
+                    marginTop: 16,
+                    marginRight: 16,
+                    marginLeft: 16,
+                  }}
+                  color="primary"
+                  onClick={acceptOffer}
+                >
+                  Accept
+                </Button>
               </Flex>
             )}
 
@@ -253,44 +266,50 @@ export function AcceptOfferModal({
                     textAlign: 'center',
                   }}
                 >
-                  <Text style="h5" css={{ mb: 24 }}>
-                    Congratulations!
+                  {' '}
+                  <Box
+                    css={{
+                      color: '$successAccent',
+                      mb: 24,
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faCheckCircle} fontSize={32} />
+                  </Box>
+                  <Text style="h5" css={{ mb: 8 }}>
+                    Offer accepted!
                   </Text>
-                  <img
-                    src={token?.token?.image}
-                    style={{ width: 100, height: 100 }}
-                  />
                   <Flex
-                    css={{ mb: 24, mt: '$2', maxWidth: '100%' }}
+                    css={{ mb: 24, maxWidth: '100%' }}
                     align="center"
                     justify="center"
                   >
-                    {!!token.token?.collection?.image && (
-                      <Box css={{ mr: '$1' }}>
-                        <img
-                          src={token.token?.collection?.image}
-                          style={{ width: 24, height: 24, borderRadius: '50%' }}
-                        />
-                      </Box>
-                    )}
-
                     <Text
                       style="subtitle2"
                       css={{ maxWidth: '100%' }}
                       ellipsify
                     >
-                      {token?.token?.name
-                        ? token?.token?.name
-                        : `#${token?.token?.tokenId}`}
-                    </Text>
-                  </Flex>
-
-                  <Flex css={{ mb: '$2' }} align="center">
-                    <Box css={{ color: '$successAccent', mr: '$2' }}>
-                      <FontAwesomeIcon icon={faCheckCircle} />
-                    </Box>
-                    <Text style="body1">
-                      Your transaction went through successfully
+                      You’ve sold{' '}
+                      <Anchor
+                        color="primary"
+                        weight="medium"
+                        css={{ fontSize: 12 }}
+                        href={`https://dev.reservoir.market/${token.token?.contract}/${token?.token?.tokenId}`}
+                        target="_blank"
+                      >
+                        {token?.token?.name
+                          ? token?.token?.name
+                          : `#${token?.token?.tokenId}`}
+                      </Anchor>{' '}
+                      from the{' '}
+                      <Anchor
+                        color="primary"
+                        weight="medium"
+                        css={{ fontSize: 12 }}
+                        href={`https://dev.reservoir.market/collections/${token.token?.contract}`}
+                        target="_blank"
+                      >
+                        {token?.token?.collection?.name}
+                      </Anchor>
                     </Text>
                   </Flex>
                   <Anchor
