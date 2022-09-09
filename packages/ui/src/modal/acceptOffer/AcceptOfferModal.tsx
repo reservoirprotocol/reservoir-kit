@@ -54,7 +54,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 function titleForStep(step: AcceptOfferStep) {
   switch (step) {
     case AcceptOfferStep.Unavailable:
-      return 'Selected item is no longer Available'
+      return 'Selected item is no longer available'
     default:
       return 'Accept Offer'
   }
@@ -130,9 +130,7 @@ export function AcceptOfferModal({
             trigger={trigger}
             title={title}
             open={open}
-            onOpenChange={(open) => {
-              setOpen(open)
-            }}
+            onOpenChange={(open) => setOpen(open)}
             loading={!token}
           >
             {acceptOfferStep === AcceptOfferStep.Unavailable && token && (
@@ -142,6 +140,7 @@ export function AcceptOfferModal({
                   collection={collection}
                   usdConversion={ethUsdPrice || 0}
                   isUnavailable={true}
+                  isOffer={true}
                 />
                 <Button
                   onClick={() => {
@@ -180,6 +179,7 @@ export function AcceptOfferModal({
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={ethUsdPrice || 0}
+                  isOffer={true}
                 />
                 {referrerFee > 0 && (
                   <>
@@ -227,6 +227,7 @@ export function AcceptOfferModal({
                     tokenDetails={token}
                     collection={collection}
                     usdConversion={ethUsdPrice || 0}
+                    isOffer={true}
                   />
                   <Progress
                     acceptOfferStep={acceptOfferStep}
@@ -317,9 +318,8 @@ export function AcceptOfferModal({
                       <Button
                         onClick={() => {
                           setOpen(false)
-                          if (onClose) {
-                            onClose()
-                          }
+                          if (!onClose) return
+                          onClose()
                         }}
                         css={{ flex: 1 }}
                         color="ghost"
@@ -331,9 +331,8 @@ export function AcceptOfferModal({
                         color="primary"
                         onClick={() => {
                           onGoToToken()
-                          if (onClose) {
-                            onClose()
-                          }
+                          if (!onClose) return
+                          onClose()
                         }}
                       >
                         Go to Token
@@ -343,9 +342,8 @@ export function AcceptOfferModal({
                     <Button
                       onClick={() => {
                         setOpen(false)
-                        if (onClose) {
-                          onClose()
-                        }
+                        if (!onClose) return
+                        onClose()
                       }}
                       style={{ flex: 1 }}
                       color="primary"

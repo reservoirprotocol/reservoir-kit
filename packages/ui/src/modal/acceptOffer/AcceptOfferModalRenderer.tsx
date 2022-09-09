@@ -70,6 +70,7 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
   const { data: tokens } = useTokens(
     open && {
       tokens: [`${collectionId}:${tokenId}`],
+      includeTopBid: true,
     },
     {
       revalidateFirstPage: true,
@@ -170,21 +171,20 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (token) {
-      if (token.market?.floorAsk?.price?.amount?.native) {
-        let floorPrice = token.market.floorAsk.price.amount.native
-
+      let topBid = token.market?.topBid?.price?.amount?.native
+      if (topBid) {
         if (referrerFeeBps) {
-          const fee = (referrerFeeBps / 10000) * floorPrice
+          const fee = (referrerFeeBps / 10000) * topBid
 
-          floorPrice = floorPrice + fee
+          topBid = topBid + fee
           setReferrerFee(fee)
         } else if (client?.fee && client?.feeRecipient) {
-          const fee = (+client.fee / 10000) * floorPrice
+          const fee = (+client.fee / 10000) * topBid
 
-          floorPrice = floorPrice + fee
+          topBid = topBid + fee
           setReferrerFee(fee)
         }
-        setTotalPrice(floorPrice)
+        setTotalPrice(topBid)
         setAcceptOfferStep(AcceptOfferStep.Checkout)
       } else {
         setAcceptOfferStep(AcceptOfferStep.Unavailable)

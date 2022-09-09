@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
 import { Box, ErrorWell } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
-
+import relativeTime from 'dayjs/plugin/relativeTime'
+import dayjs from 'dayjs'
+dayjs.extend(relativeTime)
 import { useCollections, useTokens } from '../hooks'
 
 type TokenLineItemProps = {
@@ -12,6 +14,7 @@ type TokenLineItemProps = {
   usdConversion?: number
   isSuspicious?: Boolean
   isUnavailable?: boolean
+  isOffer?: boolean
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
@@ -20,12 +23,18 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   usdConversion = 0,
   isSuspicious,
   isUnavailable,
+  isOffer,
 }) => {
   const marketData = tokenDetails?.market
-  let price: number = marketData?.floorAsk?.price?.amount?.native || 0
+  let price: number = 0
+  if (isOffer) {
+    price = marketData?.topBid?.price?.amount?.native || 0
+  } else {
+    price = marketData?.floorAsk?.price?.amount?.native || 0
 
-  if (!price && tokenDetails?.token?.lastSell?.value) {
-    price = tokenDetails?.token.lastSell.value
+    if (!price && tokenDetails?.token?.lastSell?.value) {
+      price = tokenDetails?.token.lastSell.value
+    }
   }
   const usdPrice = price * usdConversion
 
@@ -36,6 +45,22 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   const name = tokenDetails?.token?.name || `#${tokenDetails?.token?.tokenId}`
   const collectionName =
     tokenDetails?.token?.collection?.name || collection?.name || ''
+
+  const validUntil = marketData?.topBid?.validUntil
+  const expires = validUntil ? dayjs.unix(validUntil).fromNow() : undefined
+
+  const topBid = marketData?.topBid?.price?.amount?.native
+  const floorPrice = marketData?.floorAsk?.price?.amount?.native
+
+  const difference =
+    floorPrice && topBid
+      ? ((floorPrice - topBid) / floorPrice) * 100
+      : undefined
+
+  const floorWarning =
+    difference && difference > 50
+      ? `${difference}% lower than floor price`
+      : undefined
 
   const img = tokenDetails?.token?.image
     ? tokenDetails.token.image
@@ -58,6 +83,9 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         usdPrice={usdPrice}
         collection={collectionName}
         royalty={royalty}
+        expires={expires}
+        floorWarning={floorWarning}
+        isOffer={isOffer}
         source={srcImg}
         isUnavailable={isUnavailable}
       />
