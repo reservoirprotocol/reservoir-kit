@@ -10,10 +10,11 @@ export type Token = Pick<
   'tokenId' | 'contract'
 >
 
-type BuyTokenPathParameters =
-  paths['/execute/buy/v3']['get']['parameters']['query']
+type BuyTokenBodyParameters = NonNullable<
+  paths['/execute/buy/v4']['post']['parameters']['body']['body']
+>
 
-export type BuyTokenOptions = Omit<BuyTokenPathParameters, 'taker' | 'source'>
+export type BuyTokenOptions = Omit<BuyTokenBodyParameters, 'taker' | 'source'>
 
 type Data = {
   tokens: Token[]
@@ -48,36 +49,23 @@ export async function buyToken(data: Data) {
 
   try {
     // Construct a URL object for the `/execute/buy` endpoint
-    const params: BuyTokenPathParameters = {
+    const params: BuyTokenBodyParameters = {
       taker: taker,
       source: client.source || '',
       ...options,
     }
 
-    if (
-      client.fee &&
-      client.feeRecipient &&
-      (!options.referrerFeeBps || !options.referrer)
-    ) {
-      params.referrer = client.feeRecipient
-      params.referrerFeeBps = +client.fee
+    if (client.fee && client.feeRecipient && !options.feesOnTop) {
+      params.feesOnTop = [`${client.feeRecipient}:${client.fee}`]
     }
 
-    if (tokens.length === 1 && options.quantity) {
-      params.token = `${tokens[0].contract}:${tokens[0].tokenId}`
-    } else {
-      tokens?.forEach(
-        (token, index) =>
-          //@ts-ignore
-          (params[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
-      )
-    }
+    params.tokens = tokens?.map((token) => `${token.contract}:${token.tokenId}`)
 
     await executeSteps(
       {
-        url: `${client.apiBase}/execute/buy/v3`,
-        method: 'get',
-        params,
+        url: `${client.apiBase}/execute/buy/v4`,
+        method: 'post',
+        data: params,
       },
       signer,
       onProgress,

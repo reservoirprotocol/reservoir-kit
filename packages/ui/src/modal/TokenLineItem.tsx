@@ -22,7 +22,8 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   isUnavailable,
 }) => {
   const marketData = tokenDetails?.market
-  let price: number = marketData?.floorAsk?.price?.amount?.native || 0
+  let price: number = marketData?.floorAsk?.price?.amount?.decimal || 0
+  const currency = marketData?.floorAsk?.price?.currency
 
   if (!price && tokenDetails?.token?.lastSell?.value) {
     price = tokenDetails?.token.lastSell.value
@@ -57,6 +58,8 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         price={price}
         usdPrice={usdPrice}
         collection={collectionName}
+        currencyContract={currency?.contract}
+        currencyDecimals={currency?.decimals}
         royalty={royalty}
         source={srcImg}
         isUnavailable={isUnavailable}
