@@ -1,11 +1,20 @@
 import { styled } from '../../stitches.config'
 import React, { FC } from 'react'
-import { Box, Flex, FormatEth, Text, Grid, FormatCurrency } from '../primitives'
+import {
+  Box,
+  Flex,
+  Text,
+  Grid,
+  FormatCurrency,
+  FormatCryptoCurrency,
+} from '../primitives'
 
 type Props = {
   img?: string
   name: string
   collection: string
+  currencyContract?: string
+  currencyDecimals?: number
   source?: string
   price?: number
   usdPrice?: number | string
@@ -22,6 +31,8 @@ const TokenPrimitive: FC<Props> = ({
   img,
   name,
   collection,
+  currencyContract,
+  currencyDecimals,
   royalty,
   source,
   usdPrice,
@@ -69,9 +80,11 @@ const TokenPrimitive: FC<Props> = ({
             />
           )}
           {price ? (
-            <FormatEth
+            <FormatCryptoCurrency
               amount={price}
               textColor={isUnavailable ? 'subtle' : 'base'}
+              address={currencyContract}
+              decimals={currencyDecimals}
             />
           ) : (
             <Text style="subtitle2" color={isUnavailable ? 'subtle' : 'base'}>

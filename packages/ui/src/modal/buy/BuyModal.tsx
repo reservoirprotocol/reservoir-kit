@@ -8,8 +8,8 @@ import {
   Input,
   Anchor,
   Button,
-  FormatEth,
   FormatCurrency,
+  FormatCryptoCurrency,
   Loader,
 } from '../../primitives'
 
@@ -26,12 +26,14 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep } from './BuyModalRenderer'
+import { Execute } from '@reservoir0x/reservoir-kit-client'
+import ProgressBar from '../ProgressBar'
 
 type PurchaseData = {
   tokenId?: string
   collectionId?: string
-  txHash?: string
   maker?: string
+  steps?: Execute['steps']
 }
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
@@ -87,16 +89,18 @@ export function BuyModal({
     >
       {({
         token,
+        currency,
         collection,
         totalPrice,
         referrerFee,
         buyStep,
         transactionError,
-        hasEnoughEth,
-        txHash,
+        hasEnoughCurrency,
+        steps,
+        stepData,
         feeUsd,
         totalUsd,
-        ethUsdPrice,
+        usdPrice,
         isBanned,
         balance,
         address,
@@ -113,8 +117,8 @@ export function BuyModal({
               collectionId: collectionId,
               maker: address,
             }
-            if (txHash) {
-              data.txHash = txHash
+            if (steps) {
+              data.steps = steps
             }
             onPurchaseComplete(data)
           }
@@ -130,6 +134,12 @@ export function BuyModal({
             onPurchaseError(transactionError, data)
           }
         }, [transactionError])
+
+        const executableSteps =
+          steps?.filter((step) => step.items && step.items.length > 0) || []
+        const lastStepItems =
+          executableSteps[executableSteps.length - 1]?.items || []
+        let finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
         return (
           <Modal
@@ -154,7 +164,7 @@ export function BuyModal({
                   tokenDetails={token}
                   collection={collection}
                   isSuspicious={isBanned}
-                  usdConversion={ethUsdPrice || 0}
+                  usdConversion={usdPrice || 0}
                   isUnavailable={true}
                 />
                 <Button
@@ -193,7 +203,7 @@ export function BuyModal({
                 <TokenLineItem
                   tokenDetails={token}
                   collection={collection}
-                  usdConversion={ethUsdPrice || 0}
+                  usdConversion={usdPrice || 0}
                   isSuspicious={isBanned}
                 />
                 {referrerFee > 0 && (
@@ -204,7 +214,11 @@ export function BuyModal({
                       css={{ pt: '$4', px: '$4' }}
                     >
                       <Text style="subtitle2">Referral Fee</Text>
-                      <FormatEth amount={referrerFee} />
+                      <FormatCryptoCurrency
+                        amount={referrerFee}
+                        address={currency?.contract}
+                        decimals={currency?.decimals}
+                      />
                     </Flex>
                     <Flex justify="end">
                       <FormatCurrency
@@ -222,7 +236,12 @@ export function BuyModal({
                   css={{ pt: '$4', px: '$4' }}
                 >
                   <Text style="h6">Total</Text>
-                  <FormatEth textStyle="h6" amount={totalPrice} />
+                  <FormatCryptoCurrency
+                    textStyle="h6"
+                    amount={totalPrice}
+                    address={currency?.contract}
+                    decimals={currency?.decimals}
+                  />
                 </Flex>
                 <Flex justify="end">
                   <FormatCurrency
@@ -233,7 +252,7 @@ export function BuyModal({
                 </Flex>
 
                 <Box css={{ p: '$4', width: '100%' }}>
-                  {hasEnoughEth ? (
+                  {hasEnoughCurrency ? (
                     <Button
                       onClick={buyToken}
                       css={{ width: '100%' }}
@@ -248,7 +267,12 @@ export function BuyModal({
                           Insufficient Balance
                         </Text>
 
-                        <FormatEth amount={balance} textStyle="body2" />
+                        <FormatCryptoCurrency
+                          amount={balance}
+                          address={currency?.contract}
+                          decimals={currency?.decimals}
+                          textStyle="body2"
+                        />
                       </Flex>
 
                       <Button
@@ -265,28 +289,37 @@ export function BuyModal({
               </Flex>
             )}
 
-            {(buyStep === BuyStep.Confirming ||
-              buyStep === BuyStep.Finalizing) &&
-              token && (
-                <Flex direction="column">
-                  <TokenLineItem
-                    tokenDetails={token}
-                    collection={collection}
-                    usdConversion={ethUsdPrice || 0}
-                    isSuspicious={isBanned}
+            {buyStep === BuyStep.Approving && token && (
+              <Flex direction="column">
+                <TokenLineItem
+                  tokenDetails={token}
+                  collection={collection}
+                  usdConversion={usdPrice || 0}
+                  isSuspicious={isBanned}
+                />
+                {stepData && stepData.totalSteps > 1 && (
+                  <ProgressBar
+                    css={{ px: '$4', mt: '$3' }}
+                    value={stepData?.stepProgress || 0}
+                    max={stepData?.totalSteps || 0}
                   />
+                )}
+                {!stepData && <Loader css={{ height: 206 }} />}
+                {stepData && (
                   <Progress
-                    buyStep={buyStep}
-                    etherscanBaseUrl={`${etherscanBaseUrl}/tx/${txHash}`}
+                    title={stepData?.currentStep.action || ''}
+                    txHash={stepData?.currentStepItem.txHash}
+                    etherscanBaseUrl={`${etherscanBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
                   />
-                  <Button disabled={true} css={{ m: '$4' }}>
-                    <Loader />
-                    {buyStep === BuyStep.Confirming
-                      ? 'Waiting for approval...'
-                      : 'Waiting for transaction to be validated'}
-                  </Button>
-                </Flex>
-              )}
+                )}
+                <Button disabled={true} css={{ m: '$4' }}>
+                  <Loader />
+                  {stepData?.currentStepItem.txHash
+                    ? 'Waiting for transaction to be validated'
+                    : 'Waiting for approval...'}
+                </Button>
+              </Flex>
+            )}
 
             {buyStep === BuyStep.Complete && token && (
               <Flex direction="column">
@@ -343,7 +376,7 @@ export function BuyModal({
                     color="primary"
                     weight="medium"
                     css={{ fontSize: 12 }}
-                    href={`${etherscanBaseUrl}/tx/${txHash}`}
+                    href={`${etherscanBaseUrl}/tx/${finalTxHash}`}
                     target="_blank"
                   >
                     View on Etherscan
@@ -420,38 +453,38 @@ export function BuyModal({
                     style={{ height: 100, width: 100 }}
                   />
                   <Text style="subtitle1" css={{ my: 24 }}>
-                    Transfer funds from an{' '}
                     <Popover
                       content={
                         <Text style={'body2'}>
-                          An exchange allows users to buy, sell and trade
-                          cryptocurrencies. Popular exchanges include{' '}
+                          Trade one crypto for another on a crypto exchange.
+                          Popular decentralized exchanges include{' '}
                           <Anchor
                             css={{ fontSize: 12 }}
-                            href="https://www.coinbase.com/"
+                            href="https://app.uniswap.org/"
                             target="_blank"
                             color="primary"
                           >
-                            Coinbase
+                            Uniswap
                           </Anchor>
                           ,{' '}
                           <Anchor
                             css={{ fontSize: 12 }}
-                            href="https://crypto.com"
+                            href="https://app.sushi.com/"
                             target="_blank"
                             color="primary"
                           >
-                            Crypto.com
+                            SushiSwap
                           </Anchor>{' '}
                           and many others.
                         </Text>
                       }
                     >
                       <Text as="span" color="accent">
-                        exchange{' '}
+                        Exchange currencies
                       </Text>
                     </Popover>{' '}
-                    or another wallet to your wallet address below:
+                    or transfer funds to your
+                    <br /> wallet address below:
                   </Text>
                   <Box css={{ width: '100%', position: 'relative' }}>
                     <Flex
