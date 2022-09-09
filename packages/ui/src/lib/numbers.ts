@@ -22,7 +22,8 @@ function formatNumber(
  */
 function formatBN(
   amount: BigNumberish | null | undefined,
-  maximumFractionDigits: number
+  maximumFractionDigits: number,
+  decimals: number = 18
 ) {
   if (typeof amount === 'undefined' || amount === null) return '-'
 
@@ -39,7 +40,7 @@ function formatBN(
       maximumFractionDigits,
       notation: 'compact',
       compactDisplay: 'short',
-    }).format(+utils.formatEther(amount))
+    }).format(+utils.formatUnits(amount, decimals))
   }
 
   return value

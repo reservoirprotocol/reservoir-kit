@@ -26,11 +26,13 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   isOffer,
 }) => {
   const marketData = tokenDetails?.market
+
   let price: number = 0
+  const currency = marketData?.floorAsk?.price?.currency
   if (isOffer) {
-    price = marketData?.topBid?.price?.amount?.native || 0
+    price = marketData?.topBid?.price?.amount?.decimal || 0
   } else {
-    price = marketData?.floorAsk?.price?.amount?.native || 0
+    price = marketData?.floorAsk?.price?.amount?.decimal || 0
 
     if (!price && tokenDetails?.token?.lastSell?.value) {
       price = tokenDetails?.token.lastSell.value
@@ -82,6 +84,8 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         price={price}
         usdPrice={usdPrice}
         collection={collectionName}
+        currencyContract={currency?.contract}
+        currencyDecimals={currency?.decimals}
         royalty={royalty}
         expires={expires}
         floorWarning={floorWarning}

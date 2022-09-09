@@ -16,29 +16,45 @@ import {
 
 export enum BuyStep {
   Checkout,
-  Confirming,
-  Finalizing,
+  Approving,
   AddFunds,
   Complete,
   Unavailable,
 }
 
+export type StepData = {
+  totalSteps: number
+  stepProgress: number
+  currentStep: Execute['steps'][0]
+  currentStepItem: NonNullable<Execute['steps'][0]['items']>[0]
+}
+
+type Token = NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+
 type ChildrenProps = {
-  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+  token?: Token
+  currency?: NonNullable<
+    NonNullable<
+      NonNullable<
+        NonNullable<NonNullable<Token>['market']>['floorAsk']
+      >['price']
+    >['currency']
+  >
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   totalPrice: number
   referrerFee: number
   buyStep: BuyStep
   transactionError?: Error | null
-  hasEnoughEth: boolean
-  txHash: string | null
+  hasEnoughCurrency: boolean
   feeUsd: number
   totalUsd: number
-  ethUsdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: ReturnType<typeof useCoinConversion>
   isBanned: boolean
   balance?: BigNumber
   address?: string
   etherscanBaseUrl: string
+  steps: Execute['steps'] | null
+  stepData: StepData | null
   buyToken: () => void
   setBuyStep: React.Dispatch<React.SetStateAction<BuyStep>>
 }
@@ -65,8 +81,9 @@ export const BuyModalRenderer: FC<Props> = ({
   const [referrerFee, setReferrerFee] = useState(0)
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [hasEnoughEth, setHasEnoughEth] = useState(true)
-  const [txHash, setTxHash] = useState<string | null>(null)
+  const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
+  const [stepData, setStepData] = useState<StepData | null>(null)
+  const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const { chain: activeChain } = useNetwork()
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
@@ -86,10 +103,14 @@ export const BuyModalRenderer: FC<Props> = ({
   )
   const collection = collections && collections[0] ? collections[0] : undefined
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
+  const currency = token?.market?.floorAsk?.price?.currency
 
-  const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
-  const feeUsd = referrerFee * (ethUsdPrice || 0)
-  const totalUsd = totalPrice * (ethUsdPrice || 0)
+  const usdPrice = useCoinConversion(
+    open && token ? 'USD' : undefined,
+    currency?.symbol
+  )
+  const feeUsd = referrerFee * (usdPrice || 0)
+  const totalUsd = totalPrice * (usdPrice || 0)
 
   const client = useReservoirClient()
 
@@ -114,14 +135,15 @@ export const BuyModalRenderer: FC<Props> = ({
 
     const options: Parameters<
       ReservoirClientActions['buyToken']
-    >['0']['options'] = {}
-
-    if (referrer && referrerFeeBps) {
-      options.referrer = referrer
-      options.referrerFeeBps = referrerFeeBps
+    >['0']['options'] = {
+      currency: currency?.contract,
     }
 
-    setBuyStep(BuyStep.Confirming)
+    if (referrer && referrerFeeBps) {
+      options.feesOnTop = [`${referrer}:${referrerFeeBps}`]
+    }
+
+    setBuyStep(BuyStep.Approving)
 
     client.actions
       .buyToken({
@@ -137,24 +159,37 @@ export const BuyModalRenderer: FC<Props> = ({
           if (!steps) {
             return
           }
+          setSteps(steps)
+
+          const executableSteps = steps.filter(
+            (step) => step.items && step.items.length > 0
+          )
+
+          let stepCount = executableSteps.length
 
           let currentStepItem:
             | NonNullable<Execute['steps'][0]['items']>[0]
             | undefined
-          steps.find((step) => {
+
+          const currentStepIndex = executableSteps.findIndex((step) => {
             currentStepItem = step.items?.find(
               (item) => item.status === 'incomplete'
             )
             return currentStepItem
           })
 
+          const currentStep =
+            currentStepIndex > -1
+              ? executableSteps[currentStepIndex]
+              : executableSteps[stepCount - 1]
+
           if (currentStepItem) {
-            if (currentStepItem.txHash) {
-              setTxHash(currentStepItem.txHash)
-              setBuyStep(BuyStep.Finalizing)
-            } else {
-              setBuyStep(BuyStep.Confirming)
-            }
+            setStepData({
+              totalSteps: stepCount,
+              stepProgress: currentStepIndex,
+              currentStep,
+              currentStepItem,
+            })
           } else if (
             steps.every(
               (step) =>
@@ -171,7 +206,7 @@ export const BuyModalRenderer: FC<Props> = ({
       .catch((e: any) => {
         const error = e as Error
         if (error && error?.message.includes('ETH balance')) {
-          setHasEnoughEth(false)
+          setHasEnoughCurrency(false)
         } else {
           const transactionError = new Error(error?.message || '', {
             cause: error,
@@ -179,14 +214,24 @@ export const BuyModalRenderer: FC<Props> = ({
           setTransactionError(transactionError)
         }
         setBuyStep(BuyStep.Checkout)
+        setStepData(null)
+        setSteps(null)
         console.log(error)
       })
-  }, [tokenId, collectionId, referrer, referrerFeeBps, client, signer])
+  }, [
+    tokenId,
+    collectionId,
+    referrer,
+    referrerFeeBps,
+    client,
+    signer,
+    currency,
+  ])
 
   useEffect(() => {
     if (token) {
-      if (token.market?.floorAsk?.price?.amount?.native) {
-        let floorPrice = token.market.floorAsk.price.amount.native
+      if (token.market?.floorAsk?.price?.amount?.decimal) {
+        let floorPrice = token.market.floorAsk.price.amount.decimal
 
         if (referrerFeeBps) {
           const fee = (referrerFeeBps / 10000) * floorPrice
@@ -211,27 +256,30 @@ export const BuyModalRenderer: FC<Props> = ({
   const { address } = useAccount()
   const { data: balance } = useBalance({
     addressOrName: address,
+    token: currency?.symbol !== 'ETH' ? currency?.contract : undefined,
     watch: open,
+    formatUnits: currency?.decimals,
   })
 
   useEffect(() => {
     if (balance) {
       if (!balance.value) {
-        setHasEnoughEth(false)
+        setHasEnoughCurrency(false)
       } else if (
         balance.value &&
-        balance.value.lt(utils.parseEther(`${totalPrice}`))
+        balance.value.lt(utils.parseUnits(`${totalPrice}`, currency?.decimals))
       ) {
-        setHasEnoughEth(false)
+        setHasEnoughCurrency(false)
       }
     }
-  }, [totalPrice, balance])
+  }, [totalPrice, balance, currency])
 
   useEffect(() => {
     if (!open) {
       setBuyStep(BuyStep.Checkout)
-      setTxHash(null)
       setTransactionError(null)
+      setStepData(null)
+      setSteps(null)
     }
   }, [open])
 
@@ -244,20 +292,22 @@ export const BuyModalRenderer: FC<Props> = ({
     <>
       {children({
         token,
+        currency,
         collection,
         totalPrice,
         referrerFee,
         buyStep,
         transactionError,
-        hasEnoughEth,
-        txHash,
+        hasEnoughCurrency,
         feeUsd,
         totalUsd,
-        ethUsdPrice,
+        usdPrice,
         isBanned,
         balance: balance?.value,
         address: address,
         etherscanBaseUrl,
+        steps,
+        stepData,
         buyToken,
         setBuyStep,
       })}
