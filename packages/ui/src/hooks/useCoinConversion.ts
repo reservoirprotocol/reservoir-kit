@@ -1,9 +1,9 @@
 import useSWR from 'swr'
 
-export default function (symbol?: string, ids: string = 'ethereum') {
+export default function (vs_currency?: string, symbols: string = 'eth') {
   const { data } = useSWR(
-    symbol
-      ? `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${symbol}&ids=${ids}`
+    vs_currency
+      ? `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vs_currency}&symbols=${symbols}`
       : null,
     null,
     {
