@@ -91,9 +91,9 @@ const TokenPrimitive: FC<Props> = ({
               --
             </Text>
           )}
-          {usdPrice && (
+          {usdPrice ? (
             <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
-          )}
+          ) : null}
         </Grid>
       </Flex>
     </Box>

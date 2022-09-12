@@ -4,6 +4,7 @@ export default styled('span', {
   color: '$textColor',
   fontFamily: '$body',
   letterSpacing: 0,
+  margin: 0,
 
   variants: {
     color: {

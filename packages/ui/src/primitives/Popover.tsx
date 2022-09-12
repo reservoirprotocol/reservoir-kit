@@ -22,7 +22,15 @@ const RKPopover = ({
 }: any) => {
   return (
     <Popover.Root>
-      <Popover.Trigger>{children}</Popover.Trigger>
+      <Popover.Trigger
+        style={{
+          backgroundColor: 'transparent',
+          borderWidth: 0,
+          cursor: 'pointer',
+        }}
+      >
+        {children}
+      </Popover.Trigger>
       <Content side={side}>
         <Arrow />
         <Box

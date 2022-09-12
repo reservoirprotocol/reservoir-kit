@@ -14,7 +14,9 @@ import { Dialog } from '../primitives/Dialog'
 import ReservoirLogoWhiteText from '../img/ReservoirLogoWhiteText'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
 
-const Title = styled(DialogPrimitive.Title, {})
+const Title = styled(DialogPrimitive.Title, {
+  margin: 0,
+})
 
 export enum ModalSize {
   MD,

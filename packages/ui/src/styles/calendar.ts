@@ -31,6 +31,7 @@ const calendarCss = globalCss({
     boxShadow:
       '1px 0 0 #20222c, -1px 0 0 #20222c, 0 1px 0 #20222c, 0 -1px 0 #20222c, 0 3px 13px rgba(0,0,0,0.08)',
     border: '1px solid $borderColor',
+    fontFamily: '$body',
   },
   '.flatpickr-calendar.open': {
     opacity: 1,

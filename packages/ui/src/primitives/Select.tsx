@@ -16,6 +16,8 @@ type SelectProps = {
 }
 
 const StyledTrigger = styled(Select.Trigger, {
+  boxSizing: 'border-box',
+  borderWidth: 0,
   width: '100%',
   px: '$4',
   py: '$3',
@@ -40,6 +42,16 @@ const StyledContent = styled(Select.Content, {
   boxShadow: '0 0 0 2px $$focusColor',
 })
 
+const textCss = {
+  color: '$textColor',
+  fontFamily: '$body',
+  letterSpacing: 0,
+}
+
+const StyledItemText = styled(Select.ItemText, textCss)
+
+const StyledValue = styled(Select.Value, textCss)
+
 export const RKSelect: React.FC<
   Props &
     ComponentPropsWithoutRef<typeof Select.Root> &
@@ -47,8 +59,8 @@ export const RKSelect: React.FC<
 > &
   SelectProps = ({ children, css, ...props }) => (
   <Select.Root {...props}>
-    <StyledTrigger css={css}>
-      <Select.Value placeholder={props.placeholder}>{props.value}</Select.Value>
+    <StyledTrigger css={{ ...textCss, ...css }}>
+      <StyledValue placeholder={props.placeholder}>{props.value}</StyledValue>
       <Select.Icon asChild>
         <Box css={{ color: '$neutralSolidHover' }}>
           <FontAwesomeIcon icon={faChevronDown} width="14" color="" />
@@ -69,12 +81,16 @@ const StyledItem = styled(Select.Item, {
   cursor: 'pointer',
   py: '$3',
   px: '$4',
+  color: '$textColor',
+  fontFamily: '$body',
+  letterSpacing: 0,
+
   '&:hover': {
     background: '$neutralBgActive',
   },
 })
 
 RKSelect.Item = StyledItem
-RKSelect.ItemText = Select.ItemText
+RKSelect.ItemText = StyledItemText
 
 export default RKSelect

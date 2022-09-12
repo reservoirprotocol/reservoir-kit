@@ -1,6 +1,8 @@
 import { styled } from '../../stitches.config'
 
 const Button = styled('button', {
+  backgroundColor: 'transparent',
+  backgroundImage: 'none',
   outline: 'none',
   fontWeight: 700,
   fontSize: 16,
@@ -13,16 +15,21 @@ const Button = styled('button', {
   alignItems: 'center',
   lineHeight: '20px',
   $$focusColor: '$colors$focusColor',
+  cursor: 'pointer',
+  border: 0,
+  borderWidth: 0,
   '&:focus-visible': {
     boxShadow: '0 0 0 2px $$focusColor',
   },
   '&:disabled': {
     backgroundColor: '$neutralBorder',
     color: '$neutralText',
+    cursor: 'default',
   },
   '&:disabled:hover': {
     backgroundColor: '$neutralBorderHover',
     color: '$neutralText',
+    cursor: 'default',
   },
   variants: {
     color: {
