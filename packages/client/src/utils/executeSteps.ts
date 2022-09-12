@@ -150,38 +150,34 @@ export async function executeSteps(
 
         await tx.wait()
 
-        // Only confirm that on-chain tx has been picked
-        // up by the indexer for the last transaction
-        if (
-          json.steps
-            .slice(incompleteStepIndex + 1)
-            .findIndex((step) => step.kind === 'transaction') !== -1
-        ) {
-          return true
-        }
-
         //Implicitly poll the confirmation url to confirm the transaction went through
         const confirmationUrl = new URL(
           `${client.apiBase}/transactions/${tx.hash}/synced/v1`
         )
         await pollUntilOk(confirmationUrl, (res) => res && res.data.synced)
 
-        //Confirm that on-chain tx has been picked up by the indexer
-        if (stepItem.txHash && (isSell || isBuy)) {
-          const indexerConfirmationUrl = new URL(`${client.apiBase}/sales/v3`)
-          const queryParams: paths['/sales/v3']['get']['parameters']['query'] =
-            {
-              txHash: stepItem.txHash,
-            }
-          setParams(indexerConfirmationUrl, queryParams)
-          await pollUntilOk(indexerConfirmationUrl, (res) => {
-            if (res.status === 200) {
-              const data =
-                res.data as paths['/sales/v3']['get']['responses']['200']['schema']
-              return data.sales && data.sales.length > 0 ? true : false
-            }
-            return false
-          })
+        if (
+          json.steps
+            .slice(incompleteStepIndex + 1)
+            .findIndex((step) => step.kind === 'transaction') === -1
+        ) {
+          //Confirm that on-chain tx has been picked up by the indexer for the last transaction
+          if (stepItem.txHash && (isSell || isBuy)) {
+            const indexerConfirmationUrl = new URL(`${client.apiBase}/sales/v3`)
+            const queryParams: paths['/sales/v3']['get']['parameters']['query'] =
+              {
+                txHash: stepItem.txHash,
+              }
+            setParams(indexerConfirmationUrl, queryParams)
+            await pollUntilOk(indexerConfirmationUrl, (res) => {
+              if (res.status === 200) {
+                const data =
+                  res.data as paths['/sales/v3']['get']['responses']['200']['schema']
+                return data.sales && data.sales.length > 0 ? true : false
+              }
+              return false
+            })
+          }
         }
 
         break
