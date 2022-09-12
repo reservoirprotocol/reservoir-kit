@@ -1,17 +1,22 @@
 import { Anchor, Flex, Text } from '../../primitives'
 import React, { FC } from 'react'
-import { AcceptOfferStep } from './AcceptOfferModalRenderer'
+import { AcceptBidStep } from './AcceptBidModalRenderer'
 // @ts-ignore
 import confirmingProgress from 'url:../../../assets/confirmingProgress.gif'
 // @ts-ignore
 import finalizingProgress from 'url:../../../assets/finalizingProgress.gif'
 
 type Props = {
-  acceptOfferStep: AcceptOfferStep
+  acceptBidStep: AcceptBidStep
   etherscanBaseUrl?: string
+  marketplace?: string
 }
 
-export const Progress: FC<Props> = ({ acceptOfferStep, etherscanBaseUrl }) => {
+export const Progress: FC<Props> = ({
+  acceptBidStep,
+  etherscanBaseUrl,
+  marketplace,
+}) => {
   return (
     <Flex
       direction="column"
@@ -22,24 +27,25 @@ export const Progress: FC<Props> = ({ acceptOfferStep, etherscanBaseUrl }) => {
         mb: '$3',
       }}
     >
-      {acceptOfferStep == AcceptOfferStep.ApproveMarketplace && (
+      {acceptBidStep == AcceptBidStep.ApproveMarketplace && (
         <>
-          <Text style="h6">Approve X2Y2 to access item in your wallet</Text>
-          {/* <img style={{ height: 100 }} src={confirmingProgress} /> */}
+          <Text style="h6">
+            Approve {marketplace} to access item in your wallet
+          </Text>
           <Text style="subtitle2">
-            We’ll ask your approval for the marketplace exchange to access your
-            token. This is a one-time only operation per collection.
+            We’ll ask your approval for the {marketplace} exchange to access
+            your token. This is a one-time only operation per collection.
           </Text>
         </>
       )}
-      {acceptOfferStep == AcceptOfferStep.Confirming && (
+      {acceptBidStep == AcceptBidStep.Confirming && (
         <>
           <Text style="h6">Confirm transaction in your wallet</Text>
           <img style={{ height: 100 }} src={confirmingProgress} />
         </>
       )}
 
-      {acceptOfferStep == AcceptOfferStep.Finalizing && (
+      {acceptBidStep == AcceptBidStep.Finalizing && (
         <>
           <Text style="h6">Finalizing on blockchain</Text>
           <img style={{ height: 100 }} src={finalizingProgress} />
@@ -51,9 +57,7 @@ export const Progress: FC<Props> = ({ acceptOfferStep, etherscanBaseUrl }) => {
         css={{
           fontSize: 12,
           visibility:
-            acceptOfferStep == AcceptOfferStep.Finalizing
-              ? 'visible'
-              : 'hidden',
+            acceptBidStep == AcceptBidStep.Finalizing ? 'visible' : 'hidden',
         }}
         href={etherscanBaseUrl}
         target="_blank"

@@ -1,10 +1,7 @@
 import React, { FC } from 'react'
 import { Box, ErrorWell } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import dayjs from 'dayjs'
-dayjs.extend(relativeTime)
-import { useCollections, useTokens } from '../hooks'
+import { useCollections, useTimeSince, useTokens } from '../hooks'
 
 type TokenLineItemProps = {
   tokenDetails: NonNullable<
@@ -14,7 +11,12 @@ type TokenLineItemProps = {
   usdConversion?: number
   isSuspicious?: Boolean
   isUnavailable?: boolean
-  isOffer?: boolean
+  warning?: string
+  price: number
+  currency?: {
+    contract?: string
+    decimals?: number
+  }
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
@@ -23,46 +25,23 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   usdConversion = 0,
   isSuspicious,
   isUnavailable,
-  isOffer,
+  price,
+  warning,
+  currency,
 }) => {
   const marketData = tokenDetails?.market
-
-  let price: number = 0
-  const currency = marketData?.floorAsk?.price?.currency
-  if (isOffer) {
-    price = marketData?.topBid?.price?.amount?.decimal || 0
-  } else {
-    price = marketData?.floorAsk?.price?.amount?.decimal || 0
-
-    if (!price && tokenDetails?.token?.lastSell?.value) {
-      price = tokenDetails?.token.lastSell.value
-    }
-  }
-  const usdPrice = price * usdConversion
+  const validUntil = marketData?.topBid?.validUntil
+  const expires = useTimeSince(validUntil)
 
   if (!tokenDetails) {
     return null
   }
 
+  const usdPrice = price * usdConversion
+
   const name = tokenDetails?.token?.name || `#${tokenDetails?.token?.tokenId}`
   const collectionName =
     tokenDetails?.token?.collection?.name || collection?.name || ''
-
-  const validUntil = marketData?.topBid?.validUntil
-  const expires = validUntil ? dayjs.unix(validUntil).fromNow() : undefined
-
-  const topBid = marketData?.topBid?.price?.amount?.native
-  const floorPrice = marketData?.floorAsk?.price?.amount?.native
-
-  const difference =
-    floorPrice && topBid
-      ? ((floorPrice - topBid) / floorPrice) * 100
-      : undefined
-
-  const floorWarning =
-    difference && difference > 50
-      ? `${difference}% lower than floor price`
-      : undefined
 
   const img = tokenDetails?.token?.image
     ? tokenDetails.token.image
@@ -77,7 +56,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   }
 
   return (
-    <Box css={{ p: '$4', mb: '$4', borderBottom: '1px solid $borderColor' }}>
+    <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
       <TokenPrimitive
         img={img}
         name={name}
@@ -88,8 +67,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         currencyDecimals={currency?.decimals}
         royalty={royalty}
         expires={expires}
-        floorWarning={floorWarning}
-        isOffer={isOffer}
+        warning={warning}
         source={srcImg}
         isUnavailable={isUnavailable}
       />

@@ -12,7 +12,6 @@ import {
 } from '../../primitives'
 
 // @ts-ignore
-import addFundsImage from 'url:../../../assets/transferFunds.svg'
 import { Progress } from './Progress'
 import { Modal } from '../Modal'
 import {
@@ -21,13 +20,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
-import {
-  AcceptOfferStep,
-  AcceptOfferModalRenderer,
-} from './AcceptOfferModalRenderer'
-import Fees from '../Fees'
+import { AcceptBidStep, AcceptBidModalRenderer } from './AcceptBidModalRenderer'
+import Fees from './Fees'
 
-type PurchaseData = {
+type BidData = {
   tokenId?: string
   collectionId?: string
   txHash?: string
@@ -38,8 +34,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   onGoToToken?: () => any
-  onOfferAccepted?: (data: PurchaseData) => void
-  onAcceptanceError?: (error: Error, data: PurchaseData) => void
+  onBidAccepted?: (data: BidData) => void
+  onAcceptanceError?: (error: Error, data: BidData) => void
   onClose?: () => void
 } & (
     | {
@@ -52,31 +48,29 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
       }
   )
 
-function titleForStep(step: AcceptOfferStep) {
+function titleForStep(step: AcceptBidStep) {
   switch (step) {
-    case AcceptOfferStep.Unavailable:
+    case AcceptBidStep.Unavailable:
       return 'Selected item is no longer available'
     default:
-      return 'Accept Offer'
+      return 'Accept Bid'
   }
 }
 
-export function AcceptOfferModal({
+export function AcceptBidModal({
   trigger,
   tokenId,
   collectionId,
   referrer,
   referrerFeeBps,
-  onOfferAccepted,
+  onBidAccepted,
   onAcceptanceError,
   onClose,
-  onGoToToken,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
-  // const { copy: copyToClipboard, copied } = useCopyToClipboard()
 
   return (
-    <AcceptOfferModalRenderer
+    <AcceptBidModalRenderer
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
@@ -89,7 +83,7 @@ export function AcceptOfferModal({
         totalPrice,
         referrerFee,
         fees,
-        acceptOfferStep,
+        acceptBidStep,
         transactionError,
         txHash,
         feeUsd,
@@ -97,14 +91,13 @@ export function AcceptOfferModal({
         ethUsdPrice,
         address,
         etherscanBaseUrl,
-        acceptOffer,
-        setAcceptOfferStep,
+        acceptBid,
       }) => {
-        const title = titleForStep(acceptOfferStep)
+        const title = titleForStep(acceptBidStep)
 
         useEffect(() => {
-          if (acceptOfferStep === AcceptOfferStep.Complete && onOfferAccepted) {
-            const data: PurchaseData = {
+          if (acceptBidStep === AcceptBidStep.Complete && onBidAccepted) {
+            const data: BidData = {
               tokenId: tokenId,
               collectionId: collectionId,
               maker: address,
@@ -112,13 +105,13 @@ export function AcceptOfferModal({
             if (txHash) {
               data.txHash = txHash
             }
-            onOfferAccepted(data)
+            onBidAccepted(data)
           }
-        }, [acceptOfferStep])
+        }, [acceptBidStep])
 
         useEffect(() => {
           if (transactionError && onAcceptanceError) {
-            const data: PurchaseData = {
+            const data: BidData = {
               tokenId: tokenId,
               collectionId: collectionId,
               maker: address,
@@ -126,6 +119,26 @@ export function AcceptOfferModal({
             onAcceptanceError(transactionError, data)
           }
         }, [transactionError])
+
+        const price = token?.market?.topBid?.price?.amount?.decimal || 0
+
+        const topBid = token?.market?.topBid?.price?.amount?.native
+        const floorPrice = token?.market?.floorAsk?.price?.amount?.native
+
+        const difference =
+          floorPrice && topBid
+            ? ((floorPrice - topBid) / floorPrice) * 100
+            : undefined
+
+        const warning =
+          difference && difference > 50
+            ? `${difference}% lower than floor price`
+            : undefined
+
+        const currency = token?.market?.topBid?.price?.currency
+
+        const marketplaceName =
+          (token?.market?.topBid?.source?.name as string) || 'Martkerplace'
 
         return (
           <Modal
@@ -135,27 +148,24 @@ export function AcceptOfferModal({
             onOpenChange={(open) => setOpen(open)}
             loading={!token}
           >
-            {acceptOfferStep === AcceptOfferStep.Unavailable && token && (
+            {acceptBidStep === AcceptBidStep.Unavailable && token && (
               <Flex direction="column">
                 <TokenLineItem
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={ethUsdPrice || 0}
                   isUnavailable={true}
-                  isOffer={true}
+                  price={price}
+                  warning={warning}
+                  currency={currency}
                 />
-                <Button
-                  onClick={() => {
-                    setOpen(false)
-                  }}
-                  css={{ m: '$4' }}
-                >
+                <Button onClick={() => setOpen(false)} css={{ m: '$4' }}>
                   Close
                 </Button>
               </Flex>
             )}
 
-            {acceptOfferStep === AcceptOfferStep.Checkout && token && (
+            {acceptBidStep === AcceptBidStep.Checkout && token && (
               <Flex direction="column">
                 {transactionError && (
                   <Flex
@@ -181,9 +191,11 @@ export function AcceptOfferModal({
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={ethUsdPrice || 0}
-                  isOffer={true}
+                  price={price}
+                  warning={warning}
+                  currency={currency}
                 />
-                <Fees fees={fees} />
+                <Fees fees={fees} marketplace={marketplaceName} />
                 {referrerFee > 0 && (
                   <>
                     <Flex
@@ -204,7 +216,11 @@ export function AcceptOfferModal({
                   </>
                 )}
 
-                <Flex align="center" justify="between" css={{ px: '$4' }}>
+                <Flex
+                  align="center"
+                  justify="between"
+                  css={{ px: '$4', mt: '$4' }}
+                >
                   <Text style="h6">You Get</Text>
                   <FormatEth textStyle="h6" amount={totalPrice} />
                 </Flex>
@@ -225,37 +241,40 @@ export function AcceptOfferModal({
                     marginLeft: 16,
                   }}
                   color="primary"
-                  onClick={acceptOffer}
+                  onClick={acceptBid}
                 >
                   Accept
                 </Button>
               </Flex>
             )}
 
-            {(acceptOfferStep === AcceptOfferStep.Confirming ||
-              acceptOfferStep === AcceptOfferStep.Finalizing) &&
+            {(acceptBidStep === AcceptBidStep.Confirming ||
+              acceptBidStep === AcceptBidStep.Finalizing) &&
               token && (
                 <Flex direction="column">
                   <TokenLineItem
                     tokenDetails={token}
                     collection={collection}
                     usdConversion={ethUsdPrice || 0}
-                    isOffer={true}
+                    price={price}
+                    warning={warning}
+                    currency={currency}
                   />
                   <Progress
-                    acceptOfferStep={acceptOfferStep}
+                    acceptBidStep={acceptBidStep}
                     etherscanBaseUrl={`${etherscanBaseUrl}/tx/${txHash}`}
+                    marketplace={marketplaceName}
                   />
                   <Button disabled={true} css={{ m: '$4' }}>
                     <Loader />
-                    {acceptOfferStep === AcceptOfferStep.Confirming
+                    {acceptBidStep === AcceptBidStep.Confirming
                       ? 'Waiting for approval...'
                       : 'Waiting for transaction to be validated'}
                   </Button>
                 </Flex>
               )}
 
-            {acceptOfferStep === AcceptOfferStep.Complete && token && (
+            {acceptBidStep === AcceptBidStep.Complete && token && (
               <Flex direction="column">
                 <Flex
                   css={{
@@ -276,7 +295,7 @@ export function AcceptOfferModal({
                     <FontAwesomeIcon icon={faCheckCircle} fontSize={32} />
                   </Box>
                   <Text style="h5" css={{ mb: 8 }}>
-                    Offer accepted!
+                    Bid accepted!
                   </Text>
                   <Flex
                     css={{ mb: 24, maxWidth: '100%' }}
@@ -331,53 +350,14 @@ export function AcceptOfferModal({
                       flexDirection: 'row',
                     },
                   }}
-                >
-                  {!!onGoToToken ? (
-                    <>
-                      <Button
-                        onClick={() => {
-                          setOpen(false)
-                          if (!onClose) return
-                          onClose()
-                        }}
-                        css={{ flex: 1 }}
-                        color="ghost"
-                      >
-                        Close
-                      </Button>
-                      <Button
-                        style={{ flex: 1 }}
-                        color="primary"
-                        onClick={() => {
-                          onGoToToken()
-                          if (!onClose) return
-                          onClose()
-                        }}
-                      >
-                        Go to Token
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      onClick={() => {
-                        setOpen(false)
-                        if (!onClose) return
-                        onClose()
-                      }}
-                      style={{ flex: 1 }}
-                      color="primary"
-                    >
-                      Close
-                    </Button>
-                  )}
-                </Flex>
+                ></Flex>
               </Flex>
             )}
           </Modal>
         )
       }}
-    </AcceptOfferModalRenderer>
+    </AcceptBidModalRenderer>
   )
 }
 
-AcceptOfferModal.Custom = AcceptOfferModalRenderer
+AcceptBidModal.Custom = AcceptBidModalRenderer

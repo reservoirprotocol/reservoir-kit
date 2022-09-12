@@ -12,7 +12,7 @@ import {
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
 
-export enum AcceptOfferStep {
+export enum AcceptBidStep {
   Checkout,
   ApproveMarketplace,
   Confirming,
@@ -25,7 +25,7 @@ type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   totalPrice: number
-  acceptOfferStep: AcceptOfferStep
+  acceptBidStep: AcceptBidStep
   referrerFee: number
   fees: {
     creatorRoyalties: number
@@ -39,8 +39,8 @@ type ChildrenProps = {
   ethUsdPrice: ReturnType<typeof useCoinConversion>
   address?: string
   etherscanBaseUrl: string
-  acceptOffer: () => void
-  setAcceptOfferStep: React.Dispatch<React.SetStateAction<AcceptOfferStep>>
+  acceptBid: () => void
+  setAcceptBidStep: React.Dispatch<React.SetStateAction<AcceptBidStep>>
 }
 
 type Props = {
@@ -52,7 +52,7 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
 }
 
-export const AcceptOfferModalRenderer: FC<Props> = ({
+export const AcceptBidModalRenderer: FC<Props> = ({
   open,
   tokenId,
   collectionId,
@@ -63,8 +63,8 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
   const { data: signer } = useSigner()
   const [totalPrice, setTotalPrice] = useState(0)
   const [referrerFee, setReferrerFee] = useState(0)
-  const [acceptOfferStep, setAcceptOfferStep] = useState<AcceptOfferStep>(
-    AcceptOfferStep.Checkout
+  const [acceptBidStep, setAcceptBidStep] = useState<AcceptBidStep>(
+    AcceptBidStep.Checkout
   )
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [txHash, setTxHash] = useState<string | null>(null)
@@ -98,12 +98,12 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
   const marketplaceFee = (client?.fee ? +client?.fee : 0) / 10000
 
   const fees = {
-    creatorRoyalties: 0,
+    creatorRoyalties: collection?.royalties?.bps || 0,
     marketplaceFee,
     referalFee: referrerFee,
   }
 
-  const acceptOffer = useCallback(() => {
+  const acceptBid = useCallback(() => {
     if (!signer) {
       const error = new Error('Missing a signer')
       setTransactionError(error)
@@ -130,7 +130,7 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
       options.referrer = referrer
     }
 
-    setAcceptOfferStep(AcceptOfferStep.Confirming)
+    setAcceptBidStep(AcceptBidStep.Confirming)
 
     client.actions
       .acceptOffer({
@@ -141,14 +141,14 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
           contract: collectionId,
         },
         onProgress: (steps: Execute['steps']) => {
-          if (!steps) {
-            return
-          }
+          if (!steps) return
 
           let currentStepItem:
             | NonNullable<Execute['steps'][0]['items']>[0]
             | undefined
-          steps.find((step) => {
+          let currentStepIndex: number = 0
+          steps.find((step, index) => {
+            currentStepIndex = index
             currentStepItem = step.items?.find(
               (item) => item.status === 'incomplete'
             )
@@ -158,9 +158,11 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
           if (currentStepItem) {
             if (currentStepItem.txHash) {
               setTxHash(currentStepItem.txHash)
-              setAcceptOfferStep(AcceptOfferStep.Finalizing)
+              setAcceptBidStep(AcceptBidStep.Finalizing)
+            } else if (currentStepIndex === 0) {
+              setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
             } else {
-              setAcceptOfferStep(AcceptOfferStep.Confirming)
+              setAcceptBidStep(AcceptBidStep.Confirming)
             }
           } else if (
             steps.every(
@@ -170,17 +172,25 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
                 step.items?.every((item) => item.status === 'complete')
             )
           ) {
-            setAcceptOfferStep(AcceptOfferStep.Complete)
+            setAcceptBidStep(AcceptBidStep.Complete)
           }
         },
         options,
       })
       .catch((e: any) => {
         const error = e as Error
-        setAcceptOfferStep(AcceptOfferStep.Checkout)
+        setAcceptBidStep(AcceptBidStep.Checkout)
         console.log(error)
       })
-  }, [tokenId, collectionId, referrer, referrerFeeBps, client, signer])
+  }, [
+    tokenId,
+    collectionId,
+    referrer,
+    referrerFeeBps,
+    client,
+    signer,
+    totalPrice,
+  ])
 
   useEffect(() => {
     if (token) {
@@ -198,9 +208,9 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
           setReferrerFee(fee)
         }
         setTotalPrice(topBid)
-        setAcceptOfferStep(AcceptOfferStep.Checkout)
+        setAcceptBidStep(AcceptBidStep.Checkout)
       } else {
-        setAcceptOfferStep(AcceptOfferStep.Unavailable)
+        setAcceptBidStep(AcceptBidStep.Unavailable)
         setTotalPrice(0)
       }
     }
@@ -225,7 +235,7 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (!open) {
-      setAcceptOfferStep(AcceptOfferStep.Checkout)
+      setAcceptBidStep(AcceptBidStep.Checkout)
       setTxHash(null)
       setTransactionError(null)
     }
@@ -239,7 +249,7 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
         totalPrice,
         referrerFee,
         fees,
-        acceptOfferStep,
+        acceptBidStep,
         transactionError,
         txHash,
         feeUsd,
@@ -247,8 +257,8 @@ export const AcceptOfferModalRenderer: FC<Props> = ({
         ethUsdPrice,
         address: address,
         etherscanBaseUrl,
-        acceptOffer,
-        setAcceptOfferStep,
+        acceptBid,
+        setAcceptBidStep,
       })}
     </>
   )

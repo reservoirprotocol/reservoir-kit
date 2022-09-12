@@ -20,7 +20,7 @@ type Props = {
   usdPrice?: number | string
   royalty?: number
   expires?: string
-  floorWarning?: string
+  warning?: string
   isOffer?: boolean
   isUnavailable?: boolean
 }
@@ -38,7 +38,7 @@ const TokenPrimitive: FC<Props> = ({
   currencyDecimals,
   royalty,
   expires,
-  floorWarning,
+  warning,
   isOffer,
   source,
   usdPrice,
@@ -116,9 +116,9 @@ const TokenPrimitive: FC<Props> = ({
           {usdPrice && (
             <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
           )}
-          {floorWarning && (
+          {warning && (
             <Text style="subtitle2" color="error">
-              {floorWarning}
+              {warning}
             </Text>
           )}
         </Grid>

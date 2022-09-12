@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
-import { Flex, Text } from '../primitives'
-import InfoTooltip from './InfoTooltip'
+import { Flex, Text } from '../../primitives'
+import InfoTooltip from '../InfoTooltip'
 
 type Props = {
   fees: {
@@ -8,10 +8,12 @@ type Props = {
     marketplaceFee: number
     referalFee: number
   }
+  marketplace: string
 }
 
 const Fees: FC<Props> = ({
   fees: { creatorRoyalties, marketplaceFee, referalFee },
+  marketplace,
 }) => {
   // Return null when there are no fees
   if (!(creatorRoyalties > 0 || marketplaceFee > 0 || referalFee > 0)) {
@@ -40,7 +42,7 @@ const Fees: FC<Props> = ({
       {marketplaceFee > 0 && (
         <Flex css={{ justifyContent: 'space-between', mb: '$2' }}>
           <Text style="body2">
-            X2Y2 Marketplace Fee{' '}
+            {marketplace} Marketplace Fee{' '}
             <InfoTooltip side="right" width={200} content={''} />
           </Text>
           <Text style="body2">{marketplaceFee}%</Text>

@@ -1,15 +1,13 @@
-import { Children, useContext } from 'react'
+import { useContext } from 'react'
 import { NextPage } from 'next'
 import {
   BuyModal,
   ListModal,
-  AcceptOfferModal,
+  AcceptBidModal,
   BidModal,
-  useReservoirClient,
   darkTheme,
   lightTheme,
 } from '@reservoir0x/reservoir-kit-ui'
-import { useSigner } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ThemeSwitcherContext } from './_app'
 
@@ -70,8 +68,6 @@ const getThemeFromOption = (option: string) => {
 
 const Index: NextPage = () => {
   const { setTheme } = useContext(ThemeSwitcherContext)
-  const client = useReservoirClient()
-  const { data: signer } = useSigner()
 
   return (
     <div
@@ -153,7 +149,7 @@ const Index: NextPage = () => {
               width: '100%',
             }}
           >
-            <Trigger>Place Offer</Trigger>
+            <Trigger>Place Bid</Trigger>
           </div>
         }
         collectionId="0x79e2d470f950f2cf78eef41720e8ff2cf4b3cd78"
@@ -168,7 +164,7 @@ const Index: NextPage = () => {
         }}
       />
 
-      <AcceptOfferModal
+      <AcceptBidModal
         trigger={
           <div
             style={{
@@ -179,19 +175,19 @@ const Index: NextPage = () => {
               width: '100%',
             }}
           >
-            <Trigger>Accept Offer</Trigger>
+            <Trigger>Accept Bid</Trigger>
           </div>
         }
-        collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
-        tokenId="754240"
-        onOfferAccepted={(data) => {
-          console.log('Offer Accepted', data)
+        collectionId="0x4d68e14cd7dec510c84326f54ee41f88e8fad59b"
+        tokenId="55454"
+        onBidAccepted={(data) => {
+          console.log('Bid Accepted', data)
         }}
         onAcceptanceError={(error, data) => {
-          console.log('Offer Acceptance Error', error, data)
+          console.log('Bid Acceptance Error', error, data)
         }}
         onClose={() => {
-          console.log('AcceptOfferModal Closed')
+          console.log('AcceptBidModal Closed')
         }}
       />
 
