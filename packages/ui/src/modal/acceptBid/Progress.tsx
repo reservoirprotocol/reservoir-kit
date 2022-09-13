@@ -14,7 +14,7 @@ type Props = {
     name: string
     image: string
   }
-  tokenImage: string
+  tokenImage?: string
 }
 
 export const Progress: FC<Props> = ({
@@ -47,7 +47,7 @@ export const Progress: FC<Props> = ({
             }}
           >
             <TransactionProgress
-              fromImg={tokenImage}
+              fromImg={tokenImage || ''}
               toImg={marketplace?.image}
             />
           </Flex>

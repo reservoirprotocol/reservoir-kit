@@ -183,7 +183,7 @@ const Index: NextPage = () => {
         onBidAccepted={(data) => {
           console.log('Bid Accepted', data)
         }}
-        onAcceptanceError={(error, data) => {
+        onBidAcceptError={(error, data) => {
           console.log('Bid Acceptance Error', error, data)
         }}
         onClose={() => {

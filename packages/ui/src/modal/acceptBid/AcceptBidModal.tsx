@@ -9,9 +9,9 @@ import {
   FormatEth,
   FormatCurrency,
   Loader,
+  FormatCryptoCurrency,
 } from '../../primitives'
 
-// @ts-ignore
 import { Progress } from './Progress'
 import { Modal } from '../Modal'
 import {
@@ -35,8 +35,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   onBidAccepted?: (data: BidData) => void
-  onAcceptanceError?: (error: Error, data: BidData) => void
-  onClose?: () => void
+  onClose: () => void
+  onBidAcceptError?: (error: Error, data: BidData) => void
 } & (
     | {
         referrerFeeBps: number
@@ -64,8 +64,8 @@ export function AcceptBidModal({
   referrer,
   referrerFeeBps,
   onBidAccepted,
-  onAcceptanceError,
   onClose,
+  onBidAcceptError,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
 
@@ -110,13 +110,13 @@ export function AcceptBidModal({
         }, [acceptBidStep])
 
         useEffect(() => {
-          if (transactionError && onAcceptanceError) {
+          if (transactionError && onBidAcceptError) {
             const data: BidData = {
               tokenId: tokenId,
               collectionId: collectionId,
               maker: address,
             }
-            onAcceptanceError(transactionError, data)
+            onBidAcceptError(transactionError, data)
           }
         }, [transactionError])
 
@@ -139,11 +139,12 @@ export function AcceptBidModal({
 
         const marketplace = {
           name:
-            (token?.market?.topBid?.source?.name as string) || 'Martkerplace',
+            (token?.market?.topBid?.source?.name as string) || 'Marketplace',
           image: (token?.market?.topBid?.source?.icon as string) || '',
         }
 
-        const tokenImage = token?.token?.image || ''
+        const tokenImage =
+          token?.token?.image || token?.token?.collection?.image
 
         const validUntil = token?.market?.topBid?.validUntil
         const expires = useTimeSince(validUntil)
@@ -232,7 +233,7 @@ export function AcceptBidModal({
                   css={{ px: '$4', mt: '$4' }}
                 >
                   <Text style="h6">You Get</Text>
-                  <FormatEth textStyle="h6" amount={totalPrice} />
+                  <FormatCryptoCurrency textStyle="h6" amount={totalPrice} />
                 </Flex>
                 <Flex justify="end">
                   <FormatCurrency
@@ -362,7 +363,17 @@ export function AcceptBidModal({
                       flexDirection: 'row',
                     },
                   }}
-                ></Flex>
+                >
+                  <Button
+                    css={{ width: '100%' }}
+                    onClick={() => {
+                      setOpen(false)
+                      if (onClose) onClose()
+                    }}
+                  >
+                    Done
+                  </Button>
+                </Flex>
               </Flex>
             )}
           </Modal>

@@ -23,7 +23,7 @@ const Fees: FC<Props> = ({
     <Flex
       css={{
         px: '$4',
-        mb: '$2',
+        my: '$2',
         flexDirection: 'column',
       }}
     >
@@ -46,15 +46,6 @@ const Fees: FC<Props> = ({
             <InfoTooltip side="right" width={200} content={''} />
           </Text>
           <Text style="body2">{marketplaceFee}%</Text>
-        </Flex>
-      )}
-
-      {referalFee > 0 && (
-        <Flex css={{ justifyContent: 'space-between', mb: '$2' }}>
-          <Text style="body2">
-            Referral Fee <InfoTooltip side="right" width={200} content={''} />
-          </Text>
-          <Text style="body2">{referalFee}%</Text>
         </Flex>
       )}
     </Flex>

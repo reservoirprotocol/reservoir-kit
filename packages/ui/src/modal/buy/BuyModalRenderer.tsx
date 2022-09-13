@@ -208,7 +208,9 @@ export const BuyModalRenderer: FC<Props> = ({
         if (error && error?.message.includes('ETH balance')) {
           setHasEnoughCurrency(false)
         } else {
-          const transactionError = new Error(error?.message || '')
+          const transactionError = new Error(error?.message || '', {
+            cause: error,
+          })
           setTransactionError(transactionError)
         }
         setBuyStep(BuyStep.Checkout)

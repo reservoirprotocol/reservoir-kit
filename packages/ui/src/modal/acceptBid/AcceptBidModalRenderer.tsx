@@ -119,6 +119,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     if (!client) {
       const error = new Error('ReservoirClient was not initialized')
       setTransactionError(error)
+      setTransactionError(null)
       throw error
     }
 
@@ -159,7 +160,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             if (currentStepItem.txHash) {
               setTxHash(currentStepItem.txHash)
               setAcceptBidStep(AcceptBidStep.Finalizing)
-            } else if (currentStepIndex === 0) {
+            } else if (currentStepIndex !== steps.length - 1) {
               setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
             } else {
               setAcceptBidStep(AcceptBidStep.Confirming)
@@ -179,6 +180,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       })
       .catch((e: any) => {
         const error = e as Error
+        setTransactionError(error)
         setAcceptBidStep(AcceptBidStep.Checkout)
         console.log(error)
       })
