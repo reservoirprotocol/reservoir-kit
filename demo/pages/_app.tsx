@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app'
 import React, { useState, useContext } from 'react'
-import { darkTheme, globalReset } from 'stitches.config'
+import { darkTheme } from 'stitches.config'
 import '@rainbow-me/rainbowkit/styles.css'
 import { ThemeProvider } from 'next-themes'
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
@@ -72,7 +72,6 @@ const AppWrapper = ({ children }) => {
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [theme, setTheme] = useState(defaultTheme())
-  globalReset()
 
   return (
     <ThemeSwitcher>

@@ -3,6 +3,9 @@ import { styled } from '../../stitches.config'
 
 const flexCss = {
   display: 'flex',
+  boxSizing: 'border-box',
+  borderStyle: 'solid',
+  borderWidth: 0,
   variants: {
     align: {
       start: {

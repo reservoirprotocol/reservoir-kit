@@ -2,9 +2,12 @@ import React, { ElementRef, forwardRef, ComponentPropsWithoutRef } from 'react'
 import { styled } from '../../stitches.config'
 
 export const StyledAnchor = styled('a', {
+  backgroundColor: 'transparent',
   cursor: 'pointer',
   fontFamily: '$body',
   fontSize: 16,
+  color: 'inherit',
+  textDecoration: 'inherit',
   $$focusColor: '$colors$neutralTextContrast',
   '&:focus-visible': {
     color: '$neutralTextContrast',

@@ -12,7 +12,6 @@ import {
 } from '@radix-ui/colors'
 import { createStitches } from '@stitches/react'
 import type * as Stitches from '@stitches/react'
-import { reset } from 'utils/css/reset'
 
 export const { createTheme, keyframes, styled, globalCss, getCssText } =
   createStitches({
@@ -189,8 +188,6 @@ export const { createTheme, keyframes, styled, globalCss, getCssText } =
       light: '(prefers-color-scheme: light)',
     },
   })
-
-export const globalReset = globalCss(reset)
 
 export const darkTheme = createTheme({
   colors: {
