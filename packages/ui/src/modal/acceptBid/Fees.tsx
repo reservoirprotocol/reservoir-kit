@@ -34,7 +34,13 @@ const Fees: FC<Props> = ({
         <Flex css={{ justifyContent: 'space-between', mb: '$2' }}>
           <Text style="body2">
             Creator Royalties{' '}
-            <InfoTooltip side="right" width={200} content={''} />
+            <InfoTooltip
+              side="right"
+              width={200}
+              content={
+                'A fee on every order that goes to the collection creator.'
+              }
+            />
           </Text>
           <Text style="body2">{creatorRoyalties}%</Text>
         </Flex>
@@ -43,7 +49,13 @@ const Fees: FC<Props> = ({
         <Flex css={{ justifyContent: 'space-between', mb: '$2' }}>
           <Text style="body2">
             {marketplace} Marketplace Fee{' '}
-            <InfoTooltip side="right" width={200} content={''} />
+            <InfoTooltip
+              side="right"
+              width={200}
+              content={
+                'A fee included in the order from the marketplace in which it was created.'
+              }
+            />
           </Text>
           <Text style="body2">{marketplaceFee}%</Text>
         </Flex>
@@ -52,7 +64,14 @@ const Fees: FC<Props> = ({
       {referalFee > 0 && (
         <Flex css={{ justifyContent: 'space-between', mb: '$2' }}>
           <Text style="body2">
-            Referral Fee <InfoTooltip side="right" width={200} content={''} />
+            Referral Fee{' '}
+            <InfoTooltip
+              side="right"
+              width={200}
+              content={
+                'A fee on top of the order by the marketplace that filled the order.'
+              }
+            />
           </Text>
           <Text style="body2">{referalFee}%</Text>
         </Flex>
