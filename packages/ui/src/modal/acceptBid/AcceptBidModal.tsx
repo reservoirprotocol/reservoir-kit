@@ -137,8 +137,13 @@ export function AcceptBidModal({
 
         const currency = token?.market?.topBid?.price?.currency
 
-        const marketplaceName =
-          (token?.market?.topBid?.source?.name as string) || 'Martkerplace'
+        const marketplace = {
+          name:
+            (token?.market?.topBid?.source?.name as string) || 'Martkerplace',
+          image: (token?.market?.topBid?.source?.icon as string) || '',
+        }
+
+        const tokenImage = token?.token?.image || ''
 
         return (
           <Modal
@@ -195,7 +200,7 @@ export function AcceptBidModal({
                   warning={warning}
                   currency={currency}
                 />
-                <Fees fees={fees} marketplace={marketplaceName} />
+                <Fees fees={fees} marketplace={marketplace.name} />
                 {referrerFee > 0 && (
                   <>
                     <Flex
@@ -263,7 +268,8 @@ export function AcceptBidModal({
                   <Progress
                     acceptBidStep={acceptBidStep}
                     etherscanBaseUrl={`${etherscanBaseUrl}/tx/${txHash}`}
-                    marketplace={marketplaceName}
+                    marketplace={marketplace}
+                    tokenImage={tokenImage}
                   />
                   <Button disabled={true} css={{ m: '$4' }}>
                     <Loader />

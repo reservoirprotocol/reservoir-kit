@@ -179,7 +179,7 @@ const Index: NextPage = () => {
           </div>
         }
         collectionId="0x4d68e14cd7dec510c84326f54ee41f88e8fad59b"
-        tokenId="55454"
+        tokenId="23423"
         onBidAccepted={(data) => {
           console.log('Bid Accepted', data)
         }}
