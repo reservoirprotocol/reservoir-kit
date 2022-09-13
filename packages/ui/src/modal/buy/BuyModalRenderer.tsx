@@ -88,9 +88,11 @@ export const BuyModalRenderer: FC<Props> = ({
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
 
+  const contract = collectionId ? collectionId?.split(':')[0] : undefined
+
   const { data: tokens } = useTokens(
     open && {
-      tokens: [`${collectionId}:${tokenId}`],
+      tokens: [`${contract}:${tokenId}`],
     },
     {
       revalidateFirstPage: true,
@@ -133,6 +135,8 @@ export const BuyModalRenderer: FC<Props> = ({
       throw error
     }
 
+    const contract = collectionId?.split(':')[0]
+
     const options: Parameters<
       ReservoirClientActions['buyToken']
     >['0']['options'] = {
@@ -152,7 +156,7 @@ export const BuyModalRenderer: FC<Props> = ({
         tokens: [
           {
             tokenId: tokenId,
-            contract: collectionId,
+            contract: contract,
           },
         ],
         onProgress: (steps: Execute['steps']) => {
@@ -283,10 +287,7 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  const isBanned = useTokenOpenseaBanned(
-    open ? collectionId : undefined,
-    tokenId
-  )
+  const isBanned = useTokenOpenseaBanned(open ? contract : undefined, tokenId)
 
   return (
     <>

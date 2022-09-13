@@ -96,17 +96,19 @@ export const BidModalRenderer: FC<Props> = ({
   const [ethAmountToWrap, setEthAmountToWrap] = useState('')
   const [stepData, setStepData] = useState<StepData | null>(null)
   const [bidData, setBidData] = useState<BidData | null>(null)
+  const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
   const { data: tokens } = useTokens(
     open &&
       tokenId !== undefined && {
-        tokens: [`${collectionId}:${tokenId}`],
+        tokens: [`${contract}:${tokenId}`],
         includeTopBid: true,
-      }, {
-        revalidateFirstPage: true,
-      }
+      },
+    {
+      revalidateFirstPage: true,
+    }
   )
-  
+
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
@@ -182,10 +184,7 @@ export const BidModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  const isBanned = useTokenOpenseaBanned(
-    open ? collectionId : undefined,
-    tokenId
-  )
+  const isBanned = useTokenOpenseaBanned(open ? contract : undefined, tokenId)
 
   const placeBid = useCallback(() => {
     if (!signer) {
@@ -217,7 +216,8 @@ export const BidModalRenderer: FC<Props> = ({
     }
 
     if (tokenId && collectionId) {
-      bid.token = `${collectionId}:${tokenId}`
+      const contract = collectionId ? collectionId?.split(':')[0] : undefined
+      bid.token = `${contract}:${tokenId}`
     } else if (collectionId) {
       bid.collection = collectionId
     }
