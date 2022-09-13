@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Box, ErrorWell } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
-import { useCollections, useTimeSince, useTokens } from '../hooks'
+import { useCollections, useTokens } from '../hooks'
 
 type TokenLineItemProps = {
   tokenDetails: NonNullable<
@@ -17,6 +17,7 @@ type TokenLineItemProps = {
     contract?: string
     decimals?: number
   }
+  expires?: string
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
@@ -28,10 +29,9 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   price,
   warning,
   currency,
+  expires,
 }) => {
   const marketData = tokenDetails?.market
-  const validUntil = marketData?.topBid?.validUntil
-  const expires = useTimeSince(validUntil)
 
   if (!tokenDetails) {
     return null

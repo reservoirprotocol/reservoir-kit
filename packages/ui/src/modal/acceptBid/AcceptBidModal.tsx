@@ -22,6 +22,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { AcceptBidStep, AcceptBidModalRenderer } from './AcceptBidModalRenderer'
 import Fees from './Fees'
+import { useTimeSince } from '../../hooks'
 
 type BidData = {
   tokenId?: string
@@ -145,6 +146,9 @@ export function AcceptBidModal({
 
         const tokenImage = token?.token?.image || ''
 
+        const validUntil = token?.market?.topBid?.validUntil
+        const expires = useTimeSince(validUntil)
+
         return (
           <Modal
             trigger={trigger}
@@ -163,6 +167,7 @@ export function AcceptBidModal({
                   price={price}
                   warning={warning}
                   currency={currency}
+                  expires={expires}
                 />
                 <Button onClick={() => setOpen(false)} css={{ m: '$4' }}>
                   Close
@@ -199,6 +204,7 @@ export function AcceptBidModal({
                   price={price}
                   warning={warning}
                   currency={currency}
+                  expires={expires}
                 />
                 <Fees fees={fees} marketplace={marketplace.name} />
                 {referrerFee > 0 && (
@@ -264,6 +270,7 @@ export function AcceptBidModal({
                     price={price}
                     warning={warning}
                     currency={currency}
+                    expires={expires}
                   />
                   <Progress
                     acceptBidStep={acceptBidStep}
