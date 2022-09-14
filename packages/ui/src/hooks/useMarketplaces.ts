@@ -21,7 +21,7 @@ export default function (
 
   const { data } = useSWRImmutable<
     paths['/admin/get-marketplaces']['get']['responses']['200']['schema']
-  >([path.href, client?.apiKey], null)
+  >([path.href, client?.apiKey, client?.version], null)
 
   useEffect(() => {
     if (data && data.marketplaces) {

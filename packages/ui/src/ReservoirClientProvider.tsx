@@ -4,7 +4,7 @@ import {
   ReservoirClient,
   createClient,
 } from '@reservoir0x/reservoir-kit-client'
-
+import { version } from '../package.json'
 export interface ReservoirClientProviderProps {
   children: ReactNode
   options: ReservoirClientOptions
@@ -17,7 +17,7 @@ export const ReservoirClientContext = createContext<ReservoirClient | null>(
 export const ReservoirClientProvider: FC<ReservoirClientProviderProps> =
   function ({ children, options }: ReservoirClientProviderProps) {
     const [clientContext, _] = useState<ReservoirClient | null>(
-      createClient(options)
+      createClient({ ...options, uiVersion: version })
     )
 
     return (

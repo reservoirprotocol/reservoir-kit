@@ -36,12 +36,14 @@ export async function executeSteps(
     }
 
     const client = getClient()
-    if (client && client.apiKey) {
-      request.headers = {
-        'x-api-key': client.apiKey,
-      }
+    if (client?.apiKey) {
+      request.headers['x-api-key'] = client.apiKey
+    }
+    if (client?.uiVersion) {
+      request.headers['x-rkui-version'] = client.uiVersion
     }
     request.headers['x-rkc-version'] = version
+
     if (!json) {
       const res = await axios.request(request)
       json = res.data as Execute
@@ -162,6 +164,10 @@ export async function executeSteps(
 
         if (client?.apiKey) {
           headers['x-api-key'] = client.apiKey
+        }
+
+        if (client?.uiVersion) {
+          request.headers['x-rkui-version'] = client.uiVersion
         }
 
         await pollUntilOk(
