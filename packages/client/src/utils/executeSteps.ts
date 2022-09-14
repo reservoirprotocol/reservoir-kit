@@ -3,9 +3,10 @@ import { Execute, paths } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { Signer } from 'ethers'
 import { TypedDataSigner } from '@ethersproject/abstract-signer'
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions/index'
 import { setParams } from './params'
+import { version } from '../../package.json'
 
 /**
  * When attempting to perform actions, such as, selling a token or
@@ -40,6 +41,7 @@ export async function executeSteps(
         'x-api-key': client.apiKey,
       }
     }
+    request.headers['x-rkc-version'] = version
     if (!json) {
       const res = await axios.request(request)
       json = res.data as Execute
@@ -154,7 +156,22 @@ export async function executeSteps(
         const confirmationUrl = new URL(
           `${client.apiBase}/transactions/${tx.hash}/synced/v1`
         )
-        await pollUntilOk(confirmationUrl, (res) => res && res.data.synced)
+        const headers: AxiosRequestHeaders = {
+          'x-rkc-version': version,
+        }
+
+        if (client?.apiKey) {
+          headers['x-api-key'] = client.apiKey
+        }
+
+        await pollUntilOk(
+          {
+            url: confirmationUrl.href,
+            method: 'get',
+            headers: headers,
+          },
+          (res) => res && res.data.synced
+        )
 
         if (
           json.steps
@@ -169,14 +186,21 @@ export async function executeSteps(
                 txHash: stepItem.txHash,
               }
             setParams(indexerConfirmationUrl, queryParams)
-            await pollUntilOk(indexerConfirmationUrl, (res) => {
-              if (res.status === 200) {
-                const data =
-                  res.data as paths['/sales/v3']['get']['responses']['200']['schema']
-                return data.sales && data.sales.length > 0 ? true : false
+            await pollUntilOk(
+              {
+                url: indexerConfirmationUrl.href,
+                method: 'get',
+                headers: headers,
+              },
+              (res) => {
+                if (res.status === 200) {
+                  const data =
+                    res.data as paths['/sales/v3']['get']['responses']['200']['schema']
+                  return data.sales && data.sales.length > 0 ? true : false
+                }
+                return false
               }
-              return false
-            })
+            )
           }
         }
 
@@ -219,6 +243,7 @@ export async function executeSteps(
                   method: postData.method,
                   headers: {
                     'Content-Type': 'application/json',
+                    'x-rkc-version': version,
                   },
                   params: request.params,
                 }
