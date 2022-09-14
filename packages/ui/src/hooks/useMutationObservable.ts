@@ -14,6 +14,10 @@ const useMutationObservable = (
     if (!el) {
       return
     }
+    if (typeof window === 'undefined' || !('MutationObserver' in window)) {
+      return
+    }
+
     const obs = new MutationObserver(callback)
     obs.observe(el, options)
     setObserver(obs)
