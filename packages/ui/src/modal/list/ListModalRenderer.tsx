@@ -98,13 +98,14 @@ export const ListModalRenderer: FC<Props> = ({
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
     null
   )
+  const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const {
     data: unapprovedMarketplaces,
     isFetching: isFetchingUnapprovedMarketplaces,
   } = useListingPreapprovalCheck(
     marketplaces,
     open ? tokenId : undefined,
-    open ? collectionId : undefined
+    open ? contract : undefined
   )
 
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
@@ -113,7 +114,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   const { data: tokens } = useTokens(
     open && {
-      tokens: [`${collectionId}:${tokenId}`],
+      tokens: [`${contract}:${tokenId}`],
       includeAttributes: true,
     },
     {
@@ -304,10 +305,12 @@ export const ListModalRenderer: FC<Props> = ({
         .toString()
     }
 
+    const contract = collectionId ? collectionId?.split(':')[0] : undefined
+
     marketplaces.forEach((market) => {
       if (market.isSelected) {
         const listing: Listings[0] = {
-          token: `${collectionId}:${tokenId}`,
+          token: `${contract}:${tokenId}`,
           weiPrice: parseEther(`${market.price}`).toString(),
           //@ts-ignore
           orderbook: market.orderbook,
