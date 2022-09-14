@@ -6,6 +6,8 @@ import React, {
   useState,
   useRef,
   ComponentPropsWithoutRef,
+  useCallback,
+  useMemo,
 } from 'react'
 import { ReservoirClientOptions } from '@reservoir0x/reservoir-kit-client'
 import { ReservoirKitTheme, darkTheme } from './themes'
@@ -37,6 +39,7 @@ const defaultOptions = {
 }
 
 import calendarCss from './styles/calendar'
+import useMutationObservable from './hooks/useMutationObservable'
 
 export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   children,
@@ -50,6 +53,33 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   const [providerOptions, setProviderOptions] =
     useState<ReservoirKitProviderOptions>({})
   const currentTheme = useRef(null as any)
+  const classNameCallback = useCallback(
+    (mutationList: MutationRecord[]) => {
+      mutationList.forEach((mutation) => {
+        const body = mutation.target as HTMLBodyElement
+        if (
+          mutation.attributeName === 'class' &&
+          body &&
+          !body.className.includes(currentTheme.current)
+        ) {
+          document.body.classList.add(currentTheme.current)
+        }
+      })
+    },
+    [currentTheme]
+  )
+  const classNameObserverOptions = useMemo(() => {
+    return {
+      attributeFilter: ['class'],
+    }
+  }, [])
+
+  useMutationObservable(
+    classNameCallback,
+    typeof window !== 'undefined' ? document.body : null,
+    classNameObserverOptions
+  )
+
   calendarCss()
 
   useEffect(() => {
