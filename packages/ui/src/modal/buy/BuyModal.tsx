@@ -141,6 +141,12 @@ export function BuyModal({
           executableSteps[executableSteps.length - 1]?.items || []
         let finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
+        let price = token?.market?.floorAsk?.price?.amount?.decimal || 0
+
+        if (!price && token?.token?.lastSell?.value) {
+          price = token?.token.lastSell.value
+        }
+
         return (
           <Modal
             trigger={trigger}
@@ -166,6 +172,8 @@ export function BuyModal({
                   isSuspicious={isBanned}
                   usdConversion={usdPrice || 0}
                   isUnavailable={true}
+                  price={price}
+                  currency={currency}
                 />
                 <Button
                   onClick={() => {
@@ -205,6 +213,8 @@ export function BuyModal({
                   collection={collection}
                   usdConversion={usdPrice || 0}
                   isSuspicious={isBanned}
+                  price={price}
+                  currency={currency}
                 />
                 {referrerFee > 0 && (
                   <>
@@ -296,6 +306,8 @@ export function BuyModal({
                   collection={collection}
                   usdConversion={usdPrice || 0}
                   isSuspicious={isBanned}
+                  price={price}
+                  currency={currency}
                 />
                 {stepData && stepData.totalSteps > 1 && (
                   <ProgressBar

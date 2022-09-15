@@ -1,14 +1,13 @@
-import { Children, useContext } from 'react'
+import { useContext } from 'react'
 import { NextPage } from 'next'
 import {
   BuyModal,
   ListModal,
+  AcceptBidModal,
   BidModal,
-  useReservoirClient,
   darkTheme,
   lightTheme,
 } from '@reservoir0x/reservoir-kit-ui'
-import { useSigner } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ThemeSwitcherContext } from './_app'
 
@@ -69,8 +68,6 @@ const getThemeFromOption = (option: string) => {
 
 const Index: NextPage = () => {
   const { setTheme } = useContext(ThemeSwitcherContext)
-  const client = useReservoirClient()
-  const { data: signer } = useSigner()
 
   return (
     <div
@@ -152,7 +149,7 @@ const Index: NextPage = () => {
               width: '100%',
             }}
           >
-            <Trigger>Place Offer</Trigger>
+            <Trigger>Place Bid</Trigger>
           </div>
         }
         collectionId="0x79e2d470f950f2cf78eef41720e8ff2cf4b3cd78"
@@ -164,6 +161,33 @@ const Index: NextPage = () => {
         }}
         onClose={() => {
           console.log('BidModal Closed')
+        }}
+      />
+
+      <AcceptBidModal
+        trigger={
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flex: 1,
+              width: '100%',
+            }}
+          >
+            <Trigger>Accept Bid</Trigger>
+          </div>
+        }
+        collectionId="0x4d68e14cd7dec510c84326f54ee41f88e8fad59b"
+        tokenId="23423"
+        onBidAccepted={(data) => {
+          console.log('Bid Accepted', data)
+        }}
+        onBidAcceptError={(error, data) => {
+          console.log('Bid Acceptance Error', error, data)
+        }}
+        onClose={() => {
+          console.log('AcceptBidModal Closed')
         }}
       />
 

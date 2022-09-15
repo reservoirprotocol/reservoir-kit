@@ -25,3 +25,6 @@ export { ListStep } from './modal/list/ListModalRenderer'
 
 export { BidModal } from './modal/bid/BidModal'
 export { BidStep } from './modal/bid/BidModalRenderer'
+
+export { AcceptBidModal } from './modal/acceptBid/AcceptBidModal'
+export { AcceptBidStep } from './modal/acceptBid/AcceptBidModalRenderer'

@@ -19,6 +19,9 @@ type Props = {
   price?: number
   usdPrice?: number | string
   royalty?: number
+  expires?: string
+  warning?: string
+  isOffer?: boolean
   isUnavailable?: boolean
 }
 
@@ -34,6 +37,9 @@ const TokenPrimitive: FC<Props> = ({
   currencyContract,
   currencyDecimals,
   royalty,
+  expires,
+  warning,
+  isOffer,
   source,
   usdPrice,
   price,
@@ -41,9 +47,24 @@ const TokenPrimitive: FC<Props> = ({
 }) => {
   return (
     <Box>
-      <Text style="subtitle2" color="subtle" css={{ mb: 5, display: 'block' }}>
-        Item
-      </Text>
+      <Flex css={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text
+          style="subtitle2"
+          color="subtle"
+          css={{ mb: 10, display: 'block' }}
+        >
+          Item
+        </Text>
+        {isOffer && (
+          <Text
+            style="subtitle2"
+            color="subtle"
+            css={{ mb: 10, display: 'block' }}
+          >
+            Offer
+          </Text>
+        )}
+      </Flex>
       <Flex css={{ justifyContent: 'space-between' }}>
         <Flex css={{ alignItems: 'center', gap: 8 }}>
           <Img
@@ -68,6 +89,7 @@ const TokenPrimitive: FC<Props> = ({
             <Text style="body2" color={isUnavailable ? 'subtle' : 'base'}>
               {collection}
             </Text>
+            {!!expires && <Text style="tiny">Expires {expires}</Text>}
             {!!royalty && <Text style="tiny">{royalty}% royalty</Text>}
           </Grid>
         </Flex>
@@ -94,6 +116,11 @@ const TokenPrimitive: FC<Props> = ({
           {usdPrice ? (
             <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
           ) : null}
+          {warning && (
+            <Text style="subtitle2" color="error">
+              {warning}
+            </Text>
+          )}
         </Grid>
       </Flex>
     </Box>

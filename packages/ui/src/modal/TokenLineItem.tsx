@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { Box, ErrorWell } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
-
 import { useCollections, useTokens } from '../hooks'
 
 type TokenLineItemProps = {
@@ -12,6 +11,15 @@ type TokenLineItemProps = {
   usdConversion?: number
   isSuspicious?: Boolean
   isUnavailable?: boolean
+  warning?: string
+  price: number
+  currency?: {
+    contract?: string
+    decimals?: number
+  }
+  expires?: string
+  hideRoyalty?: boolean
+  isOffer?: boolean
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
@@ -20,19 +28,20 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   usdConversion = 0,
   isSuspicious,
   isUnavailable,
+  price,
+  warning,
+  currency,
+  expires,
+  hideRoyalty,
+  isOffer,
 }) => {
   const marketData = tokenDetails?.market
-  let price: number = marketData?.floorAsk?.price?.amount?.decimal || 0
-  const currency = marketData?.floorAsk?.price?.currency
-
-  if (!price && tokenDetails?.token?.lastSell?.value) {
-    price = tokenDetails?.token.lastSell.value
-  }
-  const usdPrice = price * usdConversion
 
   if (!tokenDetails) {
     return null
   }
+
+  const usdPrice = price * usdConversion
 
   const name = tokenDetails?.token?.name || `#${tokenDetails?.token?.tokenId}`
   const collectionName =
@@ -44,7 +53,9 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   const srcImg = marketData?.floorAsk?.source
     ? (marketData?.floorAsk?.source['icon'] as string)
     : ''
-  let royalty: number | undefined = collection?.royalties?.bps || undefined
+  let royalty: number | undefined = hideRoyalty
+    ? undefined
+    : collection?.royalties?.bps
 
   if (royalty) {
     royalty = royalty * 0.01
@@ -61,8 +72,11 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         currencyContract={currency?.contract}
         currencyDecimals={currency?.decimals}
         royalty={royalty}
+        expires={expires}
+        warning={warning}
         source={srcImg}
         isUnavailable={isUnavailable}
+        isOffer={isOffer}
       />
       {!!isSuspicious && (
         <ErrorWell
