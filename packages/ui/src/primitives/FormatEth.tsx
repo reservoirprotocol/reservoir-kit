@@ -5,7 +5,7 @@ import { ReservoirKitThemeContext } from '../../stitches.config'
 import EthIconGlyph from '../img/EthIconGlyph'
 import EthIconGray from '../img/EthIconGray'
 import EthIconPurple from '../img/EthIconPurple'
-import Box from '../primitives/Box'
+import Flex from '../primitives/Flex'
 
 type FormatEthProps = {
   logoWidth?: number
@@ -46,14 +46,14 @@ const FormatEth: FC<Props> = ({
       amount={amount}
       maximumFractionDigits={maximumFractionDigits}
     >
-      <Box
+      <Flex
         css={{
           width: 'auto',
           height: logoWidth,
         }}
       >
         <EthLogo />
-      </Box>
+      </Flex>
     </FormatCrypto>
   )
 }
