@@ -3,6 +3,7 @@ import { Signer } from 'ethers'
 import { getClient } from '.'
 import { executeSteps } from '../utils/executeSteps'
 import axios, { AxiosRequestConfig } from 'axios'
+import { version } from '../../package.json'
 
 type ListTokenBody = NonNullable<
   paths['/execute/list/v3']['post']['parameters']['body']['body']
@@ -66,13 +67,17 @@ export async function listToken(
       url: `${client.apiBase}/execute/list/v3`,
       method: 'post',
       data,
+      headers: {
+        'x-rkc-version': version,
+      },
     }
 
     if (precheck) {
-      if (client && client.apiKey) {
-        request.headers = {
-          'x-api-key': client.apiKey,
-        }
+      if (client?.apiKey && request.headers) {
+        request.headers['x-api-key'] = client.apiKey
+      }
+      if (client?.uiVersion && request.headers) {
+        request.headers['x-rkui-version'] = client.uiVersion
       }
 
       const res = await axios.request(request)

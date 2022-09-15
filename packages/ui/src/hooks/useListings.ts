@@ -24,7 +24,7 @@ export default function (
         }
 
         setParams(url, query)
-        return url.href
+        return [url.href, client?.apiKey, client?.version]
       },
       null,
       {

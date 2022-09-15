@@ -1,5 +1,6 @@
 import actions from './actions'
 import * as utils from '../utils'
+import { version } from '../../package.json'
 
 type NonUndefined<T> = T extends undefined ? never : T
 
@@ -17,6 +18,7 @@ type FeeRecipient = NonUndefined<
 export type ReservoirClientOptions = {
   apiBase: string
   apiKey?: string
+  uiVersion?: string
   source?: string
   automatedRoyalties?: boolean
 } & (
@@ -35,9 +37,11 @@ export type ReservoirClientActions = typeof actions
 let _client: ReservoirClient
 
 export class ReservoirClient {
+  version: string
   apiBase: string
   source?: string
   apiKey?: string
+  uiVersion?: string
   fee?: Fee
   feeRecipient?: FeeRecipient
   automatedRoyalties?: boolean
@@ -46,7 +50,9 @@ export class ReservoirClient {
   readonly actions: ReservoirClientActions = actions
 
   constructor(options: ReservoirClientOptions) {
+    this.version = version
     this.apiKey = options.apiKey
+    this.uiVersion = options.uiVersion
     this.apiBase = options.apiBase
     this.automatedRoyalties = options.automatedRoyalties
     this.fee = options.fee
@@ -68,6 +74,7 @@ export class ReservoirClient {
   configure(options: ReservoirClientOptions) {
     this.source = options.source ? options.source : this.source
     this.apiKey = options.apiKey ? options.apiKey : this.apiKey
+    this.uiVersion = options.uiVersion ? options.uiVersion : this.uiVersion
     this.apiBase = options.apiBase ? options.apiBase : this.apiBase
     this.fee = options.fee
     this.feeRecipient = options.feeRecipient
