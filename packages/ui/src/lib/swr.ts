@@ -1,26 +1,23 @@
 import { ComponentPropsWithoutRef } from 'react'
 import { SWRConfig } from 'swr'
+import { version } from '../../package.json'
 
 export const swrDefaultOptions: ComponentPropsWithoutRef<
   typeof SWRConfig
 >['value'] = {
-  fetcher: (resource, apiKey) => {
-    if (resource) {
-      if (apiKey) {
-        const config = {
-          headers: {
-            'x-api-key': apiKey,
-          },
-        }
-
-        return fetch(resource, config)
-          .then((res) => res.json())
-          .catch((e) => {
-            throw e
-          })
-      }
+  fetcher: (resource, apiKey, clientVersion) => {
+    const headers: HeadersInit = {
+      'x-rkui-version': version,
     }
-    return fetch(resource)
+    if (apiKey) {
+      headers['x-api-key'] = apiKey
+    }
+    if (clientVersion) {
+      headers['x-rkc-version'] = clientVersion
+    }
+    return fetch(resource, {
+      headers,
+    })
       .then((res) => res.json())
       .catch((e) => {
         throw e

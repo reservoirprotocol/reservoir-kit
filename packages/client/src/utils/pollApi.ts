@@ -34,10 +34,10 @@ export async function pollUntilHasData(
  * @returns When it has finished polling
  */
 export async function pollUntilOk(
-  url: URL,
+  request: AxiosRequestConfig,
   validate?: (res: AxiosResponse) => boolean
 ) {
-  const res = await axios.get(url.href)
+  const res = await axios.request(request)
 
   if (!validate) {
     validate = (res) => res.status === 200
@@ -49,6 +49,6 @@ export async function pollUntilOk(
   } else {
     // The response is still unchanged. Check again in five seconds
     await new Promise((resolve) => setTimeout(resolve, 5000))
-    await pollUntilOk(url, validate)
+    await pollUntilOk(request, validate)
   }
 }
