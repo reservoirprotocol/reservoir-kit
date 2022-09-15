@@ -11,10 +11,11 @@ const useMutationObservable = (
     if (observer) {
       observer.disconnect()
     }
-    if (!el) {
-      return
-    }
-    if (typeof window === 'undefined' || !('MutationObserver' in window)) {
+    if (
+      !el ||
+      typeof window === 'undefined' ||
+      !('MutationObserver' in window)
+    ) {
       return
     }
 

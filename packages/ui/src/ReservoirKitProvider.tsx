@@ -7,7 +7,6 @@ import React, {
   useRef,
   ComponentPropsWithoutRef,
   useCallback,
-  useMemo,
 } from 'react'
 import { ReservoirClientOptions } from '@reservoir0x/reservoir-kit-client'
 import { ReservoirKitTheme, darkTheme } from './themes'
@@ -36,6 +35,10 @@ export const ProviderOptionsContext =
 const defaultOptions = {
   apiBase: 'https://api.reservoir.tools',
   apiKey: '',
+}
+
+const classNameObserverOptions = {
+  attributeFilter: ['class'],
 }
 
 import calendarCss from './styles/calendar'
@@ -68,11 +71,6 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
     },
     [currentTheme]
   )
-  const classNameObserverOptions = useMemo(() => {
-    return {
-      attributeFilter: ['class'],
-    }
-  }, [])
 
   useMutationObservable(
     classNameCallback,
