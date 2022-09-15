@@ -13,7 +13,7 @@ export default () => {
   if (!title && client && client.source) {
     title = client.source
   } else if (!title) {
-    title = location ? location.hostname : ''
+    title = location ? location.hostname.replace('www.', '') : ''
   }
 
   const reservoirIconEl = document.querySelector(
