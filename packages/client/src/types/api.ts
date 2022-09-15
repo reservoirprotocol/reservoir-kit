@@ -309,6 +309,8 @@ export interface paths {
      *
      * - `revalidation` > manual revalidation of orders (e.g. after a bug fixed)
      *
+     * - `reprice` > price update for dynamic orders (e.g. dutch auctions)
+     *
      * - `bootstrap` > initial loading of data, so that all tokens have a price associated
      *
      * Some considerations to keep in mind
@@ -342,6 +344,8 @@ export interface paths {
      * - `approval-change` > the best listing was invalidated due to revoked approval
      *
      * - `revalidation` > manual revalidation of orders (e.g. after a bug fixed)
+     *
+     * - `reprice` > price update for dynamic orders (e.g. dutch auctions)
      *
      * - `bootstrap` > initial loading of data, so that all tokens have a price associated
      *
@@ -4043,8 +4047,8 @@ export interface operations {
         includeMetadata?: boolean;
         /** If true, raw data is included in the response. */
         includeRawData?: boolean;
-        /** Order the items are returned in the response. */
-        sortBy?: string;
+        /** Order the items are returned in the response, Sorting by price allowed only when filtering by token */
+        sortBy?: "createdAt" | "price";
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         /** Amount of items returned in response. */
@@ -4142,8 +4146,8 @@ export interface operations {
         includeMetadata?: boolean;
         /** If true, raw data is included in the response. */
         includeRawData?: boolean;
-        /** Order the items are returned in the response. */
-        sortBy?: string;
+        /** Order the items are returned in the response, Sorting by price allowed only when filtering by token */
+        sortBy?: "createdAt" | "price";
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         /** Amount of items returned in response. */
@@ -4657,6 +4661,8 @@ export interface operations {
    *
    * - `revalidation` > manual revalidation of orders (e.g. after a bug fixed)
    *
+   * - `reprice` > price update for dynamic orders (e.g. dutch auctions)
+   *
    * - `bootstrap` > initial loading of data, so that all tokens have a price associated
    *
    * Some considerations to keep in mind
@@ -4732,6 +4738,8 @@ export interface operations {
    * - `approval-change` > the best listing was invalidated due to revoked approval
    *
    * - `revalidation` > manual revalidation of orders (e.g. after a bug fixed)
+   *
+   * - `reprice` > price update for dynamic orders (e.g. dutch auctions)
    *
    * - `bootstrap` > initial loading of data, so that all tokens have a price associated
    *

@@ -1,4 +1,11 @@
-import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
+import React, {
+  FC,
+  useEffect,
+  useState,
+  useCallback,
+  ReactNode,
+  ComponentProps,
+} from 'react'
 import {
   useTokens,
   useCoinConversion,
@@ -11,6 +18,7 @@ import {
   Execute,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
+import Fees from './Fees'
 
 export enum AcceptBidStep {
   Checkout,
@@ -21,24 +29,25 @@ export enum AcceptBidStep {
   Unavailable,
 }
 
+export type StepData = {
+  totalSteps: number
+  currentStep: Execute['steps'][0]
+  currentStepItem: NonNullable<Execute['steps'][0]['items']>[0]
+}
+
 type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   totalPrice: number
   acceptBidStep: AcceptBidStep
-  referrerFee: number
-  fees: {
-    creatorRoyalties: number
-    marketplaceFee: number
-    referalFee: number
-  }
+  fees: ComponentProps<typeof Fees>['fees']
   transactionError?: Error | null
   txHash: string | null
-  feeUsd: number
   totalUsd: number
   ethUsdPrice: ReturnType<typeof useCoinConversion>
   address?: string
   etherscanBaseUrl: string
+  stepData: StepData | null
   acceptBid: () => void
   setAcceptBidStep: React.Dispatch<React.SetStateAction<AcceptBidStep>>
 }
@@ -61,8 +70,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   children,
 }) => {
   const { data: signer } = useSigner()
+  const [stepData, setStepData] = useState<StepData | null>(null)
   const [totalPrice, setTotalPrice] = useState(0)
-  const [referrerFee, setReferrerFee] = useState(0)
   const [acceptBidStep, setAcceptBidStep] = useState<AcceptBidStep>(
     AcceptBidStep.Checkout
   )
@@ -90,17 +99,17 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
   const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
-  const feeUsd = referrerFee * (ethUsdPrice || 0)
+
   const totalUsd = totalPrice * (ethUsdPrice || 0)
 
   const client = useReservoirClient()
 
-  const marketplaceFee = (client?.fee ? +client?.fee : 0) / 10000
+  const feeBreakdown = token?.market?.topBid?.feeBreakdown
 
   const fees = {
     creatorRoyalties: collection?.royalties?.bps || 0,
-    marketplaceFee,
-    referalFee: referrerFee,
+    feeBreakdown,
+    referalFee: referrerFeeBps || +(client?.fee || 0),
   }
 
   const acceptBid = useCallback(() => {
@@ -144,6 +153,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         onProgress: (steps: Execute['steps']) => {
           if (!steps) return
 
+          const executableSteps = steps.filter(
+            (step) => step.items && step.items.length > 0
+          )
+
+          let stepCount = executableSteps.length
+
           let currentStepItem:
             | NonNullable<Execute['steps'][0]['items']>[0]
             | undefined
@@ -156,12 +171,22 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             return currentStepItem
           })
 
+          const currentStep =
+            currentStepIndex > -1
+              ? executableSteps[currentStepIndex]
+              : executableSteps[stepCount - 1]
+
           if (currentStepItem) {
-            if (currentStepItem.txHash) {
+            setStepData({
+              totalSteps: stepCount,
+              currentStep,
+              currentStepItem,
+            })
+            if (currentStepIndex !== steps.length - 1) {
+              setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
+            } else if (currentStepItem.txHash) {
               setTxHash(currentStepItem.txHash)
               setAcceptBidStep(AcceptBidStep.Finalizing)
-            } else if (currentStepIndex !== steps.length - 1) {
-              setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
             } else {
               setAcceptBidStep(AcceptBidStep.Confirming)
             }
@@ -182,6 +207,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         const error = e as Error
         setTransactionError(error)
         setAcceptBidStep(AcceptBidStep.Checkout)
+        setStepData(null)
         console.log(error)
       })
   }, [
@@ -196,18 +222,16 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (token) {
-      let topBid = token.market?.topBid?.price?.amount?.native
+      let topBid = token.market?.topBid?.price?.netAmount?.native
       if (topBid) {
         if (referrerFeeBps) {
           const fee = (referrerFeeBps / 10000) * topBid
 
           topBid = topBid - fee
-          setReferrerFee(fee)
         } else if (client?.fee && client?.feeRecipient) {
           const fee = (+client.fee / 10000) * topBid
 
           topBid = topBid - fee
-          setReferrerFee(fee)
         }
         setTotalPrice(topBid)
         setAcceptBidStep(AcceptBidStep.Checkout)
@@ -239,6 +263,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     if (!open) {
       setAcceptBidStep(AcceptBidStep.Checkout)
       setTxHash(null)
+      setStepData(null)
       setTransactionError(null)
     }
   }, [open])
@@ -249,18 +274,17 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         token,
         collection,
         totalPrice,
-        referrerFee,
         fees,
         acceptBidStep,
         transactionError,
         txHash,
-        feeUsd,
         totalUsd,
         ethUsdPrice,
         address: address,
         etherscanBaseUrl,
         acceptBid,
         setAcceptBidStep,
+        stepData,
       })}
     </>
   )

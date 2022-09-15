@@ -6,7 +6,6 @@ import {
   Text,
   Anchor,
   Button,
-  FormatEth,
   FormatCurrency,
   Loader,
   FormatCryptoCurrency,
@@ -22,7 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { AcceptBidStep, AcceptBidModalRenderer } from './AcceptBidModalRenderer'
 import Fees from './Fees'
-import { useTimeSince } from '../../hooks'
+import { useReservoirClient, useTimeSince } from '../../hooks'
 
 type BidData = {
   tokenId?: string
@@ -68,6 +67,7 @@ export function AcceptBidModal({
   onBidAcceptError,
 }: Props): ReactElement {
   const [open, setOpen] = useState(false)
+  const client = useReservoirClient()
 
   return (
     <AcceptBidModalRenderer
@@ -81,16 +81,15 @@ export function AcceptBidModal({
         token,
         collection,
         totalPrice,
-        referrerFee,
         fees,
         acceptBidStep,
         transactionError,
         txHash,
-        feeUsd,
         totalUsd,
         ethUsdPrice,
         address,
         etherscanBaseUrl,
+        stepData,
         acceptBid,
       }) => {
         const title = titleForStep(acceptBidStep)
@@ -168,6 +167,7 @@ export function AcceptBidModal({
                   warning={warning}
                   currency={currency}
                   expires={expires}
+                  isOffer={true}
                 />
                 <Button onClick={() => setOpen(false)} css={{ m: '$4' }}>
                   Close
@@ -205,27 +205,9 @@ export function AcceptBidModal({
                   warning={warning}
                   currency={currency}
                   expires={expires}
+                  isOffer={true}
                 />
                 <Fees fees={fees} marketplace={marketplace.name} />
-                {referrerFee > 0 && (
-                  <>
-                    <Flex
-                      align="center"
-                      justify="between"
-                      css={{ pt: '$4', px: '$4' }}
-                    >
-                      <Text style="subtitle2">Referral Fee</Text>
-                      <FormatEth amount={referrerFee} />
-                    </Flex>
-                    <Flex justify="end">
-                      <FormatCurrency
-                        amount={feeUsd}
-                        color="subtle"
-                        css={{ pr: '$4' }}
-                      />
-                    </Flex>
-                  </>
-                )}
 
                 <Flex
                   align="center"
@@ -233,7 +215,11 @@ export function AcceptBidModal({
                   css={{ px: '$4', mt: '$4' }}
                 >
                   <Text style="h6">You Get</Text>
-                  <FormatCryptoCurrency textStyle="h6" amount={totalPrice} />
+                  <FormatCryptoCurrency
+                    textStyle="h6"
+                    amount={totalPrice}
+                    address={currency?.contract}
+                  />
                 </Flex>
                 <Flex justify="end">
                   <FormatCurrency
@@ -271,12 +257,14 @@ export function AcceptBidModal({
                     warning={warning}
                     currency={currency}
                     expires={expires}
+                    isOffer={true}
                   />
                   <Progress
                     acceptBidStep={acceptBidStep}
                     etherscanBaseUrl={`${etherscanBaseUrl}/tx/${txHash}`}
                     marketplace={marketplace}
                     tokenImage={tokenImage}
+                    stepData={stepData}
                   />
                   <Button disabled={true} css={{ m: '$4' }}>
                     <Loader />
@@ -325,23 +313,14 @@ export function AcceptBidModal({
                         color="primary"
                         weight="medium"
                         css={{ fontSize: 12 }}
-                        href={`https://dev.reservoir.market/${token.token?.contract}/${token?.token?.tokenId}`}
+                        href={`${client?.apiBase}/redirect/sources/${client?.source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
                         target="_blank"
                       >
                         {token?.token?.name
                           ? token?.token?.name
                           : `#${token?.token?.tokenId}`}
                       </Anchor>{' '}
-                      from the{' '}
-                      <Anchor
-                        color="primary"
-                        weight="medium"
-                        css={{ fontSize: 12 }}
-                        href={`https://dev.reservoir.market/collections/${token.token?.contract}`}
-                        target="_blank"
-                      >
-                        {token?.token?.collection?.name}
-                      </Anchor>
+                      from the {token?.token?.collection?.name} collection.
                     </Text>
                   </Flex>
                   <Anchor

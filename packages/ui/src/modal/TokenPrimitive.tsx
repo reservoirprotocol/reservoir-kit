@@ -51,7 +51,7 @@ const TokenPrimitive: FC<Props> = ({
         <Text
           style="subtitle2"
           color="subtle"
-          css={{ mb: 5, display: 'block' }}
+          css={{ mb: 10, display: 'block' }}
         >
           Item
         </Text>
@@ -59,7 +59,7 @@ const TokenPrimitive: FC<Props> = ({
           <Text
             style="subtitle2"
             color="subtle"
-            css={{ mb: 5, display: 'block' }}
+            css={{ mb: 10, display: 'block' }}
           >
             Offer
           </Text>

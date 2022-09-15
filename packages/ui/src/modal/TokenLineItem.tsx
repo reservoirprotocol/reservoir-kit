@@ -18,6 +18,8 @@ type TokenLineItemProps = {
     decimals?: number
   }
   expires?: string
+  hideRoyalty?: boolean
+  isOffer?: boolean
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
@@ -30,6 +32,8 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   warning,
   currency,
   expires,
+  hideRoyalty,
+  isOffer,
 }) => {
   const marketData = tokenDetails?.market
 
@@ -49,7 +53,9 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   const srcImg = marketData?.floorAsk?.source
     ? (marketData?.floorAsk?.source['icon'] as string)
     : ''
-  let royalty: number | undefined = collection?.royalties?.bps || undefined
+  let royalty: number | undefined = hideRoyalty
+    ? undefined
+    : collection?.royalties?.bps
 
   if (royalty) {
     royalty = royalty * 0.01
@@ -70,6 +76,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         warning={warning}
         source={srcImg}
         isUnavailable={isUnavailable}
+        isOffer={isOffer}
       />
       {!!isSuspicious && (
         <ErrorWell

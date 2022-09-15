@@ -1,6 +1,6 @@
 import { Anchor, Flex, Text } from '../../primitives'
 import React, { FC } from 'react'
-import { AcceptBidStep } from './AcceptBidModalRenderer'
+import { AcceptBidStep, StepData } from './AcceptBidModalRenderer'
 // @ts-ignore
 import confirmingProgress from 'url:../../../assets/confirmingProgress.gif'
 // @ts-ignore
@@ -15,6 +15,7 @@ type Props = {
     image: string
   }
   tokenImage?: string
+  stepData: StepData | null
 }
 
 export const Progress: FC<Props> = ({
@@ -22,6 +23,7 @@ export const Progress: FC<Props> = ({
   etherscanBaseUrl,
   marketplace,
   tokenImage,
+  stepData,
 }) => {
   return (
     <Flex
@@ -36,7 +38,9 @@ export const Progress: FC<Props> = ({
       {acceptBidStep == AcceptBidStep.ApproveMarketplace && (
         <>
           <Text style="h6" css={{ mb: 28 }}>
-            Approve {marketplace?.name} to access item in your wallet
+            {stepData && stepData.totalSteps > 2
+              ? stepData.currentStep.action
+              : `Approve {marketplace?.name} to access item in your wallet`}
           </Text>
           <Flex
             css={{
@@ -52,8 +56,10 @@ export const Progress: FC<Props> = ({
             />
           </Flex>
           <Text style="subtitle2" css={{ mx: 56, textAlign: 'center' }}>
-            We’ll ask your approval for the {marketplace?.name} exchange to
-            access your token. This is a one-time only operation per collection.
+            {stepData && stepData.totalSteps > 2
+              ? stepData.currentStep.description
+              : `We’ll ask your approval for the ${marketplace?.name} exchange to
+            access your token. This is a one-time only operation per collection.`}
           </Text>
         </>
       )}
