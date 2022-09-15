@@ -14,6 +14,32 @@ function formatNumber(
   return format(amount)
 }
 
+const trauncateFractionAndFormat = (
+  parts: Intl.NumberFormatPart[],
+  digits: number
+) => {
+  return parts
+    .map(({ type, value }) => {
+      if (type !== 'fraction' || !value || value.length < digits) {
+        return value
+      }
+
+      let formattedValue = ''
+      for (
+        let idx = 0, counter = 0;
+        idx < value.length && counter < digits;
+        idx++
+      ) {
+        if (value[idx] !== '0') {
+          counter++
+        }
+        formattedValue += value[idx]
+      }
+      return formattedValue
+    })
+    .reduce((string, part) => string + part)
+}
+
 /**
  *  Convert ETH values to human readable formats
  * @param amount An ETH amount
@@ -27,23 +53,23 @@ function formatBN(
 ) {
   if (typeof amount === 'undefined' || amount === null) return '-'
 
-  let value = ''
+  const amountToFormat =
+    typeof amount === 'number' ? amount : +utils.formatUnits(amount, decimals)
 
-  if (typeof amount === 'number') {
-    value = new Intl.NumberFormat('en-US', {
-      maximumFractionDigits,
-      notation: 'compact',
-      compactDisplay: 'short',
-    }).format(amount)
+  const parts = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 20,
+    notation: 'compact',
+    compactDisplay: 'short',
+  }).formatToParts(amountToFormat)
+
+  if (parts && parts.length > 0) {
+    return trauncateFractionAndFormat(parts, maximumFractionDigits)
   } else {
-    value = new Intl.NumberFormat('en-US', {
-      maximumFractionDigits,
-      notation: 'compact',
-      compactDisplay: 'short',
-    }).format(+utils.formatUnits(amount, decimals))
+    return typeof amount === 'string' || typeof amount === 'number'
+      ? `${amount}`
+      : ''
   }
-
-  return value
 }
 
 export { formatBN, formatNumber }
