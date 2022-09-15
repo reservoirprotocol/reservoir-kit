@@ -34,7 +34,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   onBidAccepted?: (data: BidData) => void
-  onClose: () => void
+  onClose?: () => void
   onBidAcceptError?: (error: Error, data: BidData) => void
 } & (
     | {
