@@ -19,6 +19,7 @@ import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
 import { parseEther } from 'ethers/lib/utils'
 import dayjs from 'dayjs'
+import useAttributes from '../../hooks/useAttributes'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -36,9 +37,15 @@ export enum BidStep {
   Complete,
 }
 
+export type Trait = {
+  key: string
+  value: string
+} | null
+
 type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  attributes?: NonNullable<ReturnType<typeof useAttributes>['data']>
   bidAmount: string
   bidData: BidData | null
   bidAmountUsd: number
@@ -58,6 +65,8 @@ type ChildrenProps = {
   setBidStep: React.Dispatch<React.SetStateAction<BidStep>>
   setBidAmount: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
+  setTrait: React.Dispatch<React.SetStateAction<Trait>>
+  trait: Trait
   placeBid: () => void
 }
 
@@ -97,6 +106,7 @@ export const BidModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<StepData | null>(null)
   const [bidData, setBidData] = useState<BidData | null>(null)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
+  const [trait, setTrait] = useState<Trait>(null)
 
   const { data: tokens } = useTokens(
     open &&
@@ -109,12 +119,17 @@ export const BidModalRenderer: FC<Props> = ({
     }
   )
 
+  const traits = useAttributes(collectionId)
+
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
       includeTopBid: true,
     }
   )
+
+  const attributes = traits.data ? traits.data : undefined
+
   const collection = collections && collections[0] ? collections[0] : undefined
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
@@ -213,6 +228,8 @@ export const BidModalRenderer: FC<Props> = ({
       weiPrice: parseEther(`${bidAmount}`).toString(),
       orderbook: 'reservoir',
       orderKind: 'seaport',
+      attributeKey: trait?.key,
+      attributeValue: trait?.value,
     }
 
     if (tokenId && collectionId) {
@@ -287,6 +304,7 @@ export const BidModalRenderer: FC<Props> = ({
       {children({
         token,
         collection,
+        attributes,
         ethUsdPrice,
         isBanned,
         balance: balance?.value,
@@ -306,6 +324,8 @@ export const BidModalRenderer: FC<Props> = ({
         setBidStep,
         setBidAmount,
         setExpirationOption,
+        setTrait,
+        trait,
         placeBid,
       })}
     </>

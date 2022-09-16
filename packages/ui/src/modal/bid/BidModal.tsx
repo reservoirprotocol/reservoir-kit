@@ -13,6 +13,7 @@ import {
   ErrorWell,
   Loader,
   FormatCurrency,
+  Popover,
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
@@ -29,6 +30,7 @@ import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
 import WethApproval from '../../img/WethApproval'
 import OfferSubmitted from '../../img/OfferSubmitted'
 import TransactionBidDetails from './TransactionBidDetails'
+import AttributeSelector from './AttributeSelector'
 
 type BidCallbackData = {
   tokenId?: string
@@ -105,6 +107,7 @@ export function BidModal({
       {({
         token,
         collection,
+        attributes,
         bidStep,
         expirationOption,
         expirationOptions,
@@ -123,9 +126,13 @@ export function BidModal({
         setBidAmount,
         setExpirationOption,
         setBidStep,
+        setTrait,
+        trait,
         placeBid,
       }) => {
         const [expirationDate, setExpirationDate] = useState('')
+        // const [openAttributeSelector, setOpenAttributeSelector] =
+        // useState<boolean>(false)
 
         const itemImage =
           token && token.token?.image
@@ -276,6 +283,39 @@ export function BidModal({
                     style="tiny"
                     amount={bidAmountUsd}
                   />
+                  <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
+                    Attributes
+                  </Text>
+                  <Flex css={{ gap: '$2', mb: '$2' }}>
+                    <Popover
+                      // open={openAttributeSelector}
+                      // onOpenChange={setOpenAttributeSelector}
+                      content={
+                        <AttributeSelector
+                          attributes={attributes}
+                          setTrait={setTrait}
+                        />
+                      }
+                    >
+                      <div>⬇️</div>
+                    </Popover>
+                    <Input
+                      type="text"
+                      placeholder="All Attributes"
+                      value={
+                        trait ? `${trait?.key}: ${trait?.value}` : undefined
+                      }
+                      containerCss={{
+                        width: '100%',
+                      }}
+                      // onFocus={() => setOpenAttributeSelector(true)}
+                      // onBlur={() => setOpenAttributeSelector(false)}
+                      css={{
+                        color: '$neutralText',
+                        textAlign: 'left',
+                      }}
+                    />
+                  </Flex>
                   <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
                     Expiration Date
                   </Text>
