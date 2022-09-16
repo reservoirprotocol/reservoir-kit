@@ -15,8 +15,8 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
     {
       id: 0,
       label: (
-        <span>
-          Creator Royalties{' '}
+        <Flex css={{ alignItems: 'center', gap: 8 }}>
+          <span>Creator Royalties</span>
           <InfoTooltip
             side="right"
             width={200}
@@ -24,7 +24,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
               'A fee on every order that goes to the collection creator.'
             }
           />
-        </span>
+        </Flex>
       ),
       value: (collection?.royalties?.bps || 0) * 0.01 + '%',
     },

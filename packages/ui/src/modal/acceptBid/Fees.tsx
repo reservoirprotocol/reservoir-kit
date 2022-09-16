@@ -66,12 +66,12 @@ const Fees: FC<Props> = ({
       </Text>
       {parsedFeeBreakdown?.map(({ name, percentage, tooltipMessage }) => (
         <Flex css={{ justifyContent: 'space-between', mb: '$2' }}>
-          <Text style="body2">
-            {name}
+          <Flex css={{ alignItems: 'center', gap: 8 }}>
+            <Text style="body2">{name}</Text>
             {tooltipMessage && (
               <InfoTooltip side="right" width={200} content={tooltipMessage} />
             )}
-          </Text>
+          </Flex>
           <Text style="body2">{percentage}%</Text>
         </Flex>
       ))}

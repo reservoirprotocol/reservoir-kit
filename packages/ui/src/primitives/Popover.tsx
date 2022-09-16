@@ -27,6 +27,7 @@ const RKPopover = ({
           backgroundColor: 'transparent',
           borderWidth: 0,
           cursor: 'pointer',
+          padding: 0,
         }}
       >
         {children}
