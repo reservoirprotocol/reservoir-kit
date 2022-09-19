@@ -24,7 +24,8 @@
     "version": "yarn version",
     "version:update": "yarn version ${0}; git add -A; git commit -m \"🎉 Release ui package v${1}\"; git push",
     "releaseCandidate": "sh ../../scripts/prerelease.sh $npm_package_version",
-    "version:prerelease": "RC_VERSION=$(yarn releaseCandidate); yarn version $RC_VERSION; git add -A; git commit -m \"✨ Prerelease ui package v$RC_VERSION\"; git push"
+    "version:prerelease": "RC_VERSION=$(yarn releaseCandidate); yarn version $RC_VERSION; git add -A; git commit -m \"✨ Prerelease ui package v$RC_VERSION\"; git push",
+    "changelog": "node ../../scripts/generate-changelog.js package=ui"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",

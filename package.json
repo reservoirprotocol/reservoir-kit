@@ -39,6 +39,7 @@
     "@types/react-dom": "^18.0.6",
     "buffer": "^6.0.3",
     "ethers": "^5.6.9",
+    "gitlog": "^4.0.4",
     "parcel": "^2.6.2",
     "prettier": "^2.5.1",
     "process": "^0.11.10",
