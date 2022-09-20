@@ -1,16 +1,18 @@
 import React, { ComponentPropsWithoutRef, FC } from 'react'
-import { Flex, Box } from '../../primitives'
+import { Flex, Box, Text } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
 import Stat from '../Stat'
 import { useTokens, useCollections } from '../../hooks'
 import InfoTooltip from '../InfoTooltip'
+import { Trait } from './BidModalRenderer'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  trait?: Trait
 }
 
-const TokenStats: FC<Props> = ({ token, collection }) => {
+const TokenStats: FC<Props> = ({ token, collection, trait }) => {
   let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = [
     {
       id: 0,
@@ -67,10 +69,26 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
       }}
     >
       <TokenStatsHeader collection={collection} token={token} />
+      {trait && (
+        <Box
+          css={{
+            padding: 8,
+            borderRadius: 4,
+            backgroundColor: '$neutralBgHover',
+            marginBottom: 16,
+            maxWidth: 188,
+            width: 'fit-content',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          <Text color="accent">{trait.key}: </Text>
+          <Text>{trait.value}</Text>
+        </Box>
+      )}
       <Box
         css={{
           flex: 1,
-          mt: '$4',
           [`& ${Stat}:not(:last-child)`]: {
             mb: '$1',
           },

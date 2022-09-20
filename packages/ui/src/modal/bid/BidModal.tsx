@@ -13,7 +13,7 @@ import {
   ErrorWell,
   Loader,
   FormatCurrency,
-  Popover,
+  FormatCryptoCurrency,
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
@@ -31,6 +31,9 @@ import WethApproval from '../../img/WethApproval'
 import OfferSubmitted from '../../img/OfferSubmitted'
 import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
+import { GeneralizedPopover } from '../../primitives/Popover2'
+import PseudoInput from '../../primitives/PseudoInput'
+import { faChevronDown, faX } from '@fortawesome/free-solid-svg-icons'
 
 type BidCallbackData = {
   tokenId?: string
@@ -131,8 +134,6 @@ export function BidModal({
         placeBid,
       }) => {
         const [expirationDate, setExpirationDate] = useState('')
-        // const [openAttributeSelector, setOpenAttributeSelector] =
-        // useState<boolean>(false)
 
         const itemImage =
           token && token.token?.image
@@ -220,6 +221,7 @@ export function BidModal({
                 <TokenStats
                   token={token ? token : undefined}
                   collection={collection}
+                  trait={trait}
                 />
                 <MainContainer css={{ p: '$4' }}>
                   {isBanned && (
@@ -286,36 +288,81 @@ export function BidModal({
                   <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
                     Attributes
                   </Text>
-                  <Flex css={{ gap: '$2', mb: '$2' }}>
-                    <Popover
-                      // open={openAttributeSelector}
-                      // onOpenChange={setOpenAttributeSelector}
-                      content={
+                  <GeneralizedPopover
+                    content={{
+                      children: (
                         <AttributeSelector
                           attributes={attributes}
                           setTrait={setTrait}
                         />
-                      }
-                    >
-                      <div>⬇️</div>
-                    </Popover>
-                    <Input
-                      type="text"
-                      placeholder="All Attributes"
-                      value={
-                        trait ? `${trait?.key}: ${trait?.value}` : undefined
-                      }
-                      containerCss={{
-                        width: '100%',
-                      }}
-                      // onFocus={() => setOpenAttributeSelector(true)}
-                      // onBlur={() => setOpenAttributeSelector(false)}
-                      css={{
-                        color: '$neutralText',
-                        textAlign: 'left',
-                      }}
-                    />
-                  </Flex>
+                      ),
+                      props: { sideOffset: 5 },
+                    }}
+                    trigger={{
+                      props: { asChild: true },
+                      children: (
+                        <PseudoInput>
+                          <Flex
+                            css={{
+                              gap: 8,
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              color: '$neutralText',
+                            }}
+                          >
+                            {trait ? (
+                              <>
+                                <Box
+                                  css={{
+                                    maxWidth: 385,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  <Text color="accent" style="subtitle1">
+                                    {trait?.key}:{' '}
+                                  </Text>
+                                  <Text style="subtitle1">{trait?.value}</Text>
+                                </Box>
+                                <Flex css={{ alignItems: 'center', gap: 8 }}>
+                                  <FormatCryptoCurrency
+                                    amount={
+                                      collection?.floorAsk?.price?.amount
+                                        ?.native
+                                    }
+                                    maximumFractionDigits={2}
+                                  />
+                                  <FontAwesomeIcon
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => setTrait(null)}
+                                    icon={faX}
+                                    width={16}
+                                    height={16}
+                                  />
+                                </Flex>
+                              </>
+                            ) : (
+                              <>
+                                <Text
+                                  css={{
+                                    color: '$neutralText',
+                                  }}
+                                >
+                                  All Attributes
+                                </Text>
+                                <FontAwesomeIcon
+                                  icon={faChevronDown}
+                                  width={16}
+                                  height={16}
+                                />
+                              </>
+                            )}
+                          </Flex>
+                        </PseudoInput>
+                      ),
+                    }}
+                  />
                   <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
                     Expiration Date
                   </Text>
