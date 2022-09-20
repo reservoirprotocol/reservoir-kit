@@ -36,16 +36,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onBidAccepted?: (data: BidData) => void
   onClose?: () => void
   onBidAcceptError?: (error: Error, data: BidData) => void
-} & (
-    | {
-        referrerFeeBps: number
-        referrer: string
-      }
-    | {
-        referrerFeeBps?: undefined
-        referrer?: undefined
-      }
-  )
+}
 
 function titleForStep(step: AcceptBidStep) {
   switch (step) {
@@ -60,8 +51,6 @@ export function AcceptBidModal({
   trigger,
   tokenId,
   collectionId,
-  referrer,
-  referrerFeeBps,
   onBidAccepted,
   onClose,
   onBidAcceptError,
@@ -74,8 +63,6 @@ export function AcceptBidModal({
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
-      referrer={referrer}
-      referrerFeeBps={referrerFeeBps}
     >
       {({
         token,

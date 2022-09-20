@@ -96,8 +96,8 @@ const Index: NextPage = () => {
             <Trigger>Buy Now</Trigger>
           </div>
         }
-        collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
-        tokenId="1885181"
+        collectionId="0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e"
+        tokenId="39"
         onGoToToken={() => console.log('Go to token')}
         onPurchaseComplete={(data) => {
           console.log('Purchase Complete', data)
@@ -124,8 +124,8 @@ const Index: NextPage = () => {
             <Trigger>List Item</Trigger>
           </div>
         }
-        collectionId="0x4d68e14cd7dec510c84326f54ee41f88e8fad59b"
-        tokenId="100"
+        collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
+        tokenId="960982"
         onGoToToken={() => console.log('Awesome!')}
         onListingComplete={(data) => {
           console.log('Listing Complete', data)
@@ -152,7 +152,7 @@ const Index: NextPage = () => {
             <Trigger>Place Bid</Trigger>
           </div>
         }
-        collectionId="0x79e2d470f950f2cf78eef41720e8ff2cf4b3cd78"
+        collectionId="0xc36442b4a4522e871399cd717abdd847ab11fe88"
         onBidComplete={(data) => {
           console.log('Bid Complete', data)
         }}

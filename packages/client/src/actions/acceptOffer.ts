@@ -5,16 +5,18 @@ import { executeSteps } from '../utils'
 
 export type Token = Pick<
   NonNullable<
-    paths['/tokens/v4']['get']['responses']['200']['schema']['tokens']
-  >[0],
+    NonNullable<
+      paths['/tokens/v5']['get']['responses']['200']['schema']['tokens']
+    >[0]['token']
+  >,
   'tokenId' | 'contract'
 >
 
-type AcceptOfferPathParameters =
-  paths['/execute/sell/v3']['get']['parameters']['query']
+type AcceptOfferBodyParameters =
+  paths['/execute/sell/v4']['post']['parameters']['body']['body']
 
 export type AcceptOfferOptions = Omit<
-  AcceptOfferPathParameters,
+  AcceptOfferBodyParameters,
   'token' | 'taker'
 >
 
@@ -45,7 +47,7 @@ export async function acceptOffer(data: Data) {
   }
 
   try {
-    const params: AcceptOfferPathParameters = {
+    const params: AcceptOfferBodyParameters = {
       taker: taker,
       token: `${token.contract}:${token.tokenId}`,
       source: client.source || '',
@@ -54,8 +56,9 @@ export async function acceptOffer(data: Data) {
 
     await executeSteps(
       {
-        url: `${client.apiBase}/execute/sell/v3`,
-        params,
+        url: `${client.apiBase}/execute/sell/v4`,
+        method: 'post',
+        data: params,
       },
       signer,
       onProgress,
