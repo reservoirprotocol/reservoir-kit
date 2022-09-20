@@ -46,8 +46,8 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           {
             id: 0,
             label: (
-              <span>
-                Creator Royalties{' '}
+              <Flex css={{ alignItems: 'center', gap: 8 }}>
+                <span>Creator Royalties</span>
                 <InfoTooltip
                   side="right"
                   width={200}
@@ -55,7 +55,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
                     'A fee on every order that goes to the collection creator.'
                   }
                 />
-              </span>
+              </Flex>
             ),
             value: (collection?.royalties?.bps || 0) * 0.01 + '%',
           },
@@ -74,8 +74,8 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           {
             id: 3,
             label: (
-              <span>
-                Highest Trait Floor{' '}
+              <Flex css={{ alignItems: 'center', gap: 8 }}>
+                <span>Highest Trait Floor</span>
                 <InfoTooltip
                   side="right"
                   width={200}
@@ -83,7 +83,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
                     'The floor price of the most valuable trait of a token.'
                   }
                 />
-              </span>
+              </Flex>
             ),
             value:
               attributeFloor ||

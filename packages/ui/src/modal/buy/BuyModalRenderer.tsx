@@ -63,8 +63,8 @@ type Props = {
   open: boolean
   tokenId?: string
   collectionId?: string
-  referrerFeeBps?: number
-  referrer?: string
+  referrerFeeBps?: number | null
+  referrer?: string | null
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -145,6 +145,8 @@ export const BuyModalRenderer: FC<Props> = ({
 
     if (referrer && referrerFeeBps) {
       options.feesOnTop = [`${referrer}:${referrerFeeBps}`]
+    } else if (referrer === null && referrerFeeBps === null) {
+      delete options.feesOnTop
     }
 
     setBuyStep(BuyStep.Approving)
@@ -237,13 +239,18 @@ export const BuyModalRenderer: FC<Props> = ({
       if (token.market?.floorAsk?.price?.amount?.decimal) {
         let floorPrice = token.market.floorAsk.price.amount.decimal
 
-        if (referrerFeeBps) {
+        if (referrerFeeBps && referrer) {
           const fee = (referrerFeeBps / 10000) * floorPrice
 
           floorPrice = floorPrice + fee
           setReferrerFee(fee)
-        } else if (client?.fee && client?.feeRecipient) {
-          const fee = (+client.fee / 10000) * floorPrice
+        } else if (
+          referrerFeeBps !== null &&
+          referrer !== null &&
+          client?.referralFee &&
+          client?.referralFeeRecipient
+        ) {
+          const fee = (client.referralFee / 10000) * floorPrice
 
           floorPrice = floorPrice + fee
           setReferrerFee(fee)
@@ -255,7 +262,7 @@ export const BuyModalRenderer: FC<Props> = ({
         setTotalPrice(0)
       }
     }
-  }, [token, referrerFeeBps, client])
+  }, [token, referrerFeeBps, referrer, client])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({

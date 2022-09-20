@@ -237,8 +237,10 @@ export function ListModal({
                       </Box>
                       <Box css={{ mr: '$2', flex: 1 }}>
                         <Text style="body3">{localMarketplace?.name}</Text>
-                        <Text style="body3" color="subtle" as="div">
-                          on Reservoir{' '}
+                        <Flex css={{ alignItems: 'center', gap: 8 }}>
+                          <Text style="body3" color="subtle" as="div">
+                            on Reservoir
+                          </Text>
                           <InfoTooltip
                             side="bottom"
                             width={200}
@@ -246,7 +248,7 @@ export function ListModal({
                               'Listings made on this marketplace will be distributed across the reservoir ecosystem'
                             }
                           />
-                        </Text>
+                        </Flex>
                       </Box>
                       <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
                         Marketplace fee:{' '}
@@ -350,13 +352,8 @@ export function ListModal({
                       <Text style="subtitle2" color="subtle" as="p">
                         List Price
                       </Text>
-                      <Flex align="center">
-                        <Text
-                          style="subtitle2"
-                          color="subtle"
-                          as="p"
-                          css={{ mr: '$2' }}
-                        >
+                      <Flex css={{ alignItems: 'center', gap: 8 }}>
+                        <Text style="subtitle2" color="subtle" as="p">
                           Profit
                         </Text>
                         <InfoTooltip

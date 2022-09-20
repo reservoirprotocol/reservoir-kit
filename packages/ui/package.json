@@ -1,7 +1,7 @@
 {
   "name": "@reservoir0x/reservoir-kit-ui",
   "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
-  "version": "0.3.6-rc.2",
+  "version": "0.4.0",
   "author": "Reservoir Protocol",
   "license": "MIT",
   "source": "src/index.ts",
@@ -24,7 +24,8 @@
     "version": "yarn version",
     "version:update": "yarn version ${0}; git add -A; git commit -m \"🎉 Release ui package v${1}\"; git push",
     "releaseCandidate": "sh ../../scripts/prerelease.sh $npm_package_version",
-    "version:prerelease": "RC_VERSION=$(yarn releaseCandidate); yarn version $RC_VERSION; git add -A; git commit -m \"✨ Prerelease ui package v$RC_VERSION\"; git push"
+    "version:prerelease": "RC_VERSION=$(yarn releaseCandidate); yarn version $RC_VERSION; git add -A; git commit -m \"✨ Prerelease ui package v$RC_VERSION\"; git push",
+    "changelog": "node ../../scripts/generate-changelog.js package=ui"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
@@ -54,6 +55,5 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/@reservoir0x/reservoir-kit.git"
-  },
-  "stableVersion": "0.3.6"
+  }
 }

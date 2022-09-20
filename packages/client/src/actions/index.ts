@@ -2,35 +2,28 @@ import actions from './actions'
 import * as utils from '../utils'
 import { version } from '../../package.json'
 
-type NonUndefined<T> = T extends undefined ? never : T
-
-type Fee = NonUndefined<
-  NonNullable<
-    Parameters<ReservoirClientActions['listToken']>['0']['listings'][0]
-  >['fee']
->
-type FeeRecipient = NonUndefined<
-  NonNullable<
-    Parameters<ReservoirClientActions['listToken']>['0']['listings'][0]
-  >['feeRecipient']
->
-
+/**
+ * ReservoirClient Configuration Options
+ * @param apiBase Base api for all reservoir apis, e.g. 'https://api.reservoir.tools'
+ * @param apiKey Reservoir API key to be applied to all api
+ * @param source Used to manually override the source domain used to attribute local orders
+ * @param automatedRoyalties If true, royalties will be automatically included, defaults to true. Only relevant for creating orders.
+ * @param referralFee Fee in bps applied on top of an order when filling it (buying)
+ * @param referralFeeRecipient Referral fee recipient
+ * @param marketplaceFee Fee in bps included when creating an order (listing & bidding)
+ * @param marketplaceFeeRecipient Marketplace fee recipient
+ */
 export type ReservoirClientOptions = {
   apiBase: string
   apiKey?: string
   uiVersion?: string
   source?: string
   automatedRoyalties?: boolean
-} & (
-  | {
-      fee: Fee
-      feeRecipient: FeeRecipient
-    }
-  | {
-      fee?: undefined
-      feeRecipient?: undefined
-    }
-)
+  referralFee?: number
+  referralFeeRecipient?: string
+  marketplaceFee?: number
+  marketplaceFeeRecipient?: string
+}
 
 export type ReservoirClientActions = typeof actions
 
@@ -42,8 +35,10 @@ export class ReservoirClient {
   source?: string
   apiKey?: string
   uiVersion?: string
-  fee?: Fee
-  feeRecipient?: FeeRecipient
+  referralFee?: number
+  referralFeeRecipient?: string
+  marketplaceFee?: number
+  marketplaceFeeRecipient?: string
   automatedRoyalties?: boolean
 
   readonly utils = { ...utils }
@@ -55,8 +50,10 @@ export class ReservoirClient {
     this.uiVersion = options.uiVersion
     this.apiBase = options.apiBase
     this.automatedRoyalties = options.automatedRoyalties
-    this.fee = options.fee
-    this.feeRecipient = options.feeRecipient
+    this.referralFee = options.referralFee
+    this.referralFeeRecipient = options.referralFeeRecipient
+    this.marketplaceFee = options.marketplaceFee
+    this.marketplaceFeeRecipient = options.marketplaceFeeRecipient
 
     if (!options.source) {
       if (typeof window !== 'undefined') {
@@ -76,8 +73,18 @@ export class ReservoirClient {
     this.apiKey = options.apiKey ? options.apiKey : this.apiKey
     this.uiVersion = options.uiVersion ? options.uiVersion : this.uiVersion
     this.apiBase = options.apiBase ? options.apiBase : this.apiBase
-    this.fee = options.fee
-    this.feeRecipient = options.feeRecipient
+    this.referralFee = options.referralFee
+      ? options.referralFee
+      : this.referralFee
+    this.referralFeeRecipient = options.referralFeeRecipient
+      ? options.referralFeeRecipient
+      : this.referralFeeRecipient
+    this.marketplaceFee = options.marketplaceFee
+      ? options.marketplaceFee
+      : this.marketplaceFee
+    this.marketplaceFeeRecipient = options.marketplaceFeeRecipient
+      ? options.marketplaceFeeRecipient
+      : this.marketplaceFeeRecipient
     this.automatedRoyalties = options.automatedRoyalties
   }
 }

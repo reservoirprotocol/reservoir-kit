@@ -56,8 +56,6 @@ type Props = {
   open: boolean
   tokenId?: string
   collectionId?: string
-  referrerFeeBps?: number
-  referrer?: string
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -65,8 +63,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   open,
   tokenId,
   collectionId,
-  referrer,
-  referrerFeeBps,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -109,7 +105,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const fees = {
     creatorRoyalties: collection?.royalties?.bps || 0,
     feeBreakdown,
-    referalFee: referrerFeeBps || +(client?.fee || 0),
   }
 
   const acceptBid = useCallback(() => {
@@ -135,10 +130,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     const options: Parameters<
       ReservoirClientActions['acceptOffer']
     >['0']['options'] = {}
-
-    if (referrer && referrerFeeBps) {
-      options.referrer = referrer
-    }
 
     setAcceptBidStep(AcceptBidStep.Confirming)
 
@@ -210,29 +201,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         setStepData(null)
         console.log(error)
       })
-  }, [
-    tokenId,
-    collectionId,
-    referrer,
-    referrerFeeBps,
-    client,
-    signer,
-    totalPrice,
-  ])
+  }, [tokenId, collectionId, client, signer, totalPrice])
 
   useEffect(() => {
     if (token) {
       let topBid = token.market?.topBid?.price?.netAmount?.native
       if (topBid) {
-        if (referrerFeeBps) {
-          const fee = (referrerFeeBps / 10000) * topBid
-
-          topBid = topBid - fee
-        } else if (client?.fee && client?.feeRecipient) {
-          const fee = (+client.fee / 10000) * topBid
-
-          topBid = topBid - fee
-        }
         setTotalPrice(topBid)
         setAcceptBidStep(AcceptBidStep.Checkout)
       } else {
@@ -240,7 +214,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         setTotalPrice(0)
       }
     }
-  }, [token, referrerFeeBps, client])
+  }, [token, client])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({

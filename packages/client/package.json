@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/reservoir-kit-client",
-    "version": "0.0.20",
+    "version": "0.1.0",
     "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
     "source": "src/index.ts",
     "main": "dist/index.js",
@@ -15,7 +15,8 @@
         "clean": "rm -rf dist",
         "version": "yarn version",
         "version:update": "yarn version ${0}; git add -A; git commit -m \"🎉 Release client package v${1}\"; git push",
-        "syncApi": "npx openapi-typescript https://api.reservoir.tools/swagger.json --output ./src/types/api.ts"
+        "syncApi": "npx openapi-typescript https://api.reservoir.tools/swagger.json --output ./src/types/api.ts",
+        "changelog": "node ../../scripts/generate-changelog.js package=client"
     },
     "repository": {
         "type": "git",

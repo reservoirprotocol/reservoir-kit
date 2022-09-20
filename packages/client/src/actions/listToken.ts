@@ -6,7 +6,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { version } from '../../package.json'
 
 type ListTokenBody = NonNullable<
-  paths['/execute/list/v3']['post']['parameters']['body']['body']
+  paths['/execute/list/v4']['post']['parameters']['body']['body']
 >
 
 type Data = {
@@ -44,13 +44,13 @@ export async function listToken(
     listings.forEach((listing) => {
       if (
         listing.orderbook === 'reservoir' &&
-        client.fee &&
-        client.feeRecipient &&
-        !('fee' in listing) &&
-        !('feeRecipient' in listing)
+        client.marketplaceFee &&
+        client.marketplaceFeeRecipient &&
+        !('fees' in listing)
       ) {
-        listing.fee = client.fee
-        listing.feeRecipient = client.feeRecipient
+        listing.fees = [
+          `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`,
+        ]
       }
 
       if (
@@ -64,7 +64,7 @@ export async function listToken(
     data.params = listings
 
     const request: AxiosRequestConfig = {
-      url: `${client.apiBase}/execute/list/v3`,
+      url: `${client.apiBase}/execute/list/v4`,
       method: 'post',
       data,
       headers: {
