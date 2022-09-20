@@ -1,4 +1,7 @@
 
+## [0.4.0](https://github.com/reservoirprotocol/reservoir-kit/commit/04d58f181669b7426466bdbb57f51763550de3fb) (2022-09-20)
+
+* BREAKING: Break up fees into referral and marketplace to reduce confusion and allow for flexibility [fb7ff72](https://github.com/reservoirprotocol/reservoir-kit/commit/fb7ff72958fbf1592670a31439231684c0060564)
 ## [0.3.7](https://github.com/reservoirprotocol/reservoir-kit/commit/b222a9251a4b440ca1a0849538114ddea14c2747) (2022-09-16)
 
 * fix all tooltip spacing [f879a03](https://github.com/reservoirprotocol/reservoir-kit/commit/f879a03e97cad562f1ef3013c1e5a634a4c0b79e)

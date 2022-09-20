@@ -1,4 +1,10 @@
 
+## [0.1.0](https://github.com/reservoirprotocol/reservoir-kit/commit/36397a39f43b0aac2eca25fcbe9b4da3c03a8f54) (2022-09-20)
+
+* BREAKING: Break up fees into referral and marketplace to reduce confusion and allow for flexibility [fb7ff72](https://github.com/reservoirprotocol/reservoir-kit/commit/fb7ff72958fbf1592670a31439231684c0060564)
+* Upgrade placeBid to bid/v4 [0008477](https://github.com/reservoirprotocol/reservoir-kit/commit/0008477ab814e24636bb0c8a980f371d76d4d52a)
+* Upgrade listToken to use list/v4 [a2934d2](https://github.com/reservoirprotocol/reservoir-kit/commit/a2934d2292627dd213ede076559aa28209b8fd57)
+* Upgrade acceptOffer to use sell/v4 [b5f64d9](https://github.com/reservoirprotocol/reservoir-kit/commit/b5f64d93ad81a6ffb8fc717837077e2f099b8101)
 ## [0.0.20](https://github.com/reservoirprotocol/reservoir-kit/commit/7a7827372c9fe84b83ebd350d6ae3b95dbaeff39) (2022-09-15)
 
 * Merge pull request #58 from reservoirprotocol/accept-bid [d2bb7fa](https://github.com/reservoirprotocol/reservoir-kit/commit/d2bb7fae39f8ba6fdce6d46f5236d5753b425077)
