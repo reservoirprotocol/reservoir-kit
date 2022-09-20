@@ -37,10 +37,12 @@ export default function (
         if (marketplace.orderbook === 'reservoir') {
           const data = getLocalMarketplaceData()
           marketplace.name = data.title
-          marketplace.feeBps = client?.fee ? Number(client.fee) : 0
+          marketplace.feeBps = client?.marketplaceFee
+            ? client.marketplaceFee
+            : 0
           marketplace.fee = {
-            bps: +(client?.fee || 0),
-            percent: +(client?.fee || 0) / 100,
+            bps: client?.marketplaceFee || 0,
+            percent: (client?.marketplaceFee || 0) / 100,
           }
           if (data.icon) {
             marketplace.imageUrl = data.icon

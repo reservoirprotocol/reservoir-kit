@@ -9,17 +9,13 @@ type Props = {
       recipient?: string | undefined
       bps?: number | undefined
     }[]
-    referalFee: number
   }
   marketplace: string
 }
 
-const Fees: FC<Props> = ({
-  fees: { feeBreakdown, referalFee },
-  marketplace,
-}) => {
+const Fees: FC<Props> = ({ fees: { feeBreakdown }, marketplace }) => {
   // Return null when there are no fees
-  if (!((feeBreakdown && feeBreakdown?.length > 0) || referalFee > 0)) {
+  if (!(feeBreakdown && feeBreakdown?.length > 0)) {
     return null
   }
 
@@ -75,21 +71,6 @@ const Fees: FC<Props> = ({
           <Text style="body2">{percentage}%</Text>
         </Flex>
       ))}
-      {referalFee > 0 && (
-        <Flex css={{ justifyContent: 'space-between', mb: '$2' }}>
-          <Text style="body2">
-            Referral Fee{' '}
-            <InfoTooltip
-              side="right"
-              width={200}
-              content={
-                'A fee on top of the order by the marketplace that filled the order.'
-              }
-            />
-          </Text>
-          <Text style="body2">{referalFee}%</Text>
-        </Flex>
-      )}
     </Flex>
   )
 }

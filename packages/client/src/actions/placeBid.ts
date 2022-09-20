@@ -52,7 +52,7 @@ export async function placeBid({ bids, signer, onProgress }: Data) {
         !('fees' in bid)
       ) {
         bid.fees = [
-          `${client.marketplaceFee}:${client.marketplaceFeeRecipient}`,
+          `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`,
         ]
       }
 

@@ -39,20 +39,13 @@ type PurchaseData = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
+  referrerFeeBps?: number | null
+  referrer?: string | null
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
   onPurchaseError?: (error: Error, data: PurchaseData) => void
   onClose?: () => void
-} & (
-    | {
-        referrerFeeBps: number
-        referrer: string
-      }
-    | {
-        referrerFeeBps?: undefined
-        referrer?: undefined
-      }
-  )
+}
 
 function titleForStep(step: BuyStep) {
   switch (step) {

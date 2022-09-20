@@ -5,8 +5,10 @@ import { executeSteps } from '../utils/executeSteps'
 
 export type Token = Pick<
   NonNullable<
-    paths['/tokens/v4']['get']['responses']['200']['schema']['tokens']
-  >[0],
+    NonNullable<
+      paths['/tokens/v5']['get']['responses']['200']['schema']['tokens']
+    >[0]['token']
+  >,
   'tokenId' | 'contract'
 >
 
@@ -55,8 +57,14 @@ export async function buyToken(data: Data) {
       ...options,
     }
 
-    if (client.fee && client.feeRecipient && !options.feesOnTop) {
-      params.feesOnTop = [`${client.feeRecipient}:${client.fee}`]
+    if (
+      client.referralFeeRecipient &&
+      client.referralFee &&
+      !options.feesOnTop
+    ) {
+      params.feesOnTop = [
+        `${client.referralFeeRecipient}:${client.referralFee}`,
+      ]
     }
 
     params.tokens = tokens?.map((token) => `${token.contract}:${token.tokenId}`)
