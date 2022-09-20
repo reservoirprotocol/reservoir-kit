@@ -4,7 +4,7 @@ import { executeSteps } from '../utils'
 import { getClient } from '.'
 
 type PlaceBidBody = NonNullable<
-  paths['/execute/bid/v3']['post']['parameters']['body']['body']
+  paths['/execute/bid/v4']['post']['parameters']['body']['body']
 >
 
 type Data = {
@@ -47,13 +47,13 @@ export async function placeBid({ bids, signer, onProgress }: Data) {
       }
       if (
         bid.orderbook === 'reservoir' &&
-        client.fee &&
-        client.feeRecipient &&
-        !('fee' in bid) &&
-        !('feeRecipient' in bid)
+        client.marketplaceFee &&
+        client.marketplaceFeeRecipient &&
+        !('fees' in bid)
       ) {
-        bid.fee = client.fee
-        bid.feeRecipient = client.feeRecipient
+        bid.fees = [
+          `${client.marketplaceFee}:${client.marketplaceFeeRecipient}`,
+        ]
       }
 
       if (!('automatedRoyalties' in bid) && 'automatedRoyalties' in client) {
@@ -64,7 +64,7 @@ export async function placeBid({ bids, signer, onProgress }: Data) {
     data.params = bids
 
     await executeSteps(
-      { url: `${client.apiBase}/execute/bid/v3`, method: 'post', data },
+      { url: `${client.apiBase}/execute/bid/v4`, method: 'post', data },
       signer,
       onProgress
     )
