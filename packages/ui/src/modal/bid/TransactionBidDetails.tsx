@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Flex, Box, FormatWEth, Text } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
-import { useTokens, useCollections } from '../../hooks'
+import { useTokens, useCollections, useMediaQuery } from '../../hooks'
 import { BidData } from './BidModalRenderer'
 import { useTimeSince } from '../../hooks'
 import { formatEther } from 'ethers/lib/utils'
@@ -14,6 +14,7 @@ type Props = {
 
 const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
   const [value, setValue] = useState('')
+  const isMobile = useMediaQuery('(max-width: 520px)')
   const timeSince = useTimeSince(
     bidData?.expirationTime ? +bidData.expirationTime : 0
   )
@@ -42,7 +43,7 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
           mb: '$3',
         }}
       >
-        {bidData?.attributeKey && (
+        {!isMobile && bidData?.attributeKey && (
           <Box
             css={{
               padding: 8,
@@ -58,6 +59,36 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
             <Text color="accent">{bidData.attributeKey}: </Text>
             <Text>{bidData.attributeValue}</Text>
           </Box>
+        )}
+        {isMobile && bidData?.attributeKey && (
+          <Flex
+            className="rk-stat-well"
+            css={{
+              justifyContent: 'space-between',
+              backgroundColor: '$wellBackground',
+              p: '$2',
+              borderRadius: '$borderRadius',
+              gap: '$1',
+              mb: 4,
+              maxWidth: 222,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Text color="accent">{bidData.attributeKey}</Text>
+            <Text
+              css={{
+                marginLeft: 8,
+                maxWidth: 180,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {bidData.attributeValue}
+            </Text>
+          </Flex>
         )}
         <Flex
           direction="column"

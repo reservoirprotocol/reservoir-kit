@@ -22,6 +22,7 @@ const Stat: FC<StatProps> = ({
       backgroundColor: '$wellBackground',
       p: '$2',
       borderRadius: '$borderRadius',
+      overflow: 'hidden',
     }}
     {...props}
   >
@@ -31,7 +32,17 @@ const Stat: FC<StatProps> = ({
     {asEth && !asWeth && <FormatEth amount={value} textStyle="subtitle2" />}
     {asWeth && !asEth && <FormatWEth amount={value} textStyle="subtitle2" />}
     {!asEth && !asWeth && (
-      <Text style="subtitle2" as="p">
+      <Text
+        style="subtitle2"
+        as="p"
+        css={{
+          marginLeft: 8,
+          maxWidth: 180,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
         {value ? value : '-'}
       </Text>
     )}
