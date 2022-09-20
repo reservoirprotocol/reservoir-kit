@@ -107,29 +107,17 @@ export const BidModalRenderer: FC<Props> = ({
   const [bidData, setBidData] = useState<BidData | null>(null)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const [trait, setTrait] = useState<Trait>(null)
-  const [queryAttributes, setQueryAttributes] = useState<{
-    [key: string]: string
-  }>({})
 
   const { data: tokens } = useTokens(
     open &&
       tokenId !== undefined && {
         tokens: [`${contract}:${tokenId}`],
         includeTopBid: true,
-        ...queryAttributes,
       },
     {
       revalidateFirstPage: true,
     }
   )
-  useEffect(() => {
-    trait
-      ? setQueryAttributes({
-          [`attributes[${trait.key}]`]: trait.value,
-        })
-      : setQueryAttributes({})
-    // mutate()
-  }, [trait])
 
   const traits = useAttributes(collectionId)
 
@@ -208,6 +196,7 @@ export const BidModalRenderer: FC<Props> = ({
       setStepData(null)
       setBidData(null)
       setTransactionError(null)
+      setTrait(null)
     }
   }, [open])
 
@@ -309,7 +298,15 @@ export const BidModalRenderer: FC<Props> = ({
         setTransactionError(transactionError)
         console.log(e)
       })
-  }, [tokenId, collectionId, client, signer, bidAmount, expirationOption])
+  }, [
+    tokenId,
+    collectionId,
+    client,
+    signer,
+    bidAmount,
+    expirationOption,
+    trait,
+  ])
 
   return (
     <>

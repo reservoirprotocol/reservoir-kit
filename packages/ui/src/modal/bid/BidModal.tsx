@@ -285,7 +285,7 @@ export function BidModal({
                     style="tiny"
                     amount={bidAmountUsd}
                   />
-                  <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
+                  <Text as={Box} css={{ mb: '$2' }} style="tiny">
                     Attributes
                   </Text>
                   <GeneralizedPopover
@@ -296,7 +296,14 @@ export function BidModal({
                           setTrait={setTrait}
                         />
                       ),
-                      props: { sideOffset: 5 },
+                      props: {
+                        sideOffset: 5,
+                        css: {
+                          padding: 16,
+                          width: 347,
+                          '@bp1': { width: 484 },
+                        },
+                      },
                     }}
                     trigger={{
                       props: { asChild: true },
@@ -366,7 +373,7 @@ export function BidModal({
                   <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
                     Expiration Date
                   </Text>
-                  <Flex css={{ gap: '$2', mb: '$2' }}>
+                  <Flex css={{ gap: '$2', mb: '$4' }}>
                     <Select
                       css={{
                         flex: 1,
@@ -448,6 +455,8 @@ export function BidModal({
                     >
                       {token && token.token
                         ? 'Make an Offer'
+                        : trait
+                        ? 'Make an attribute Offer'
                         : 'Make a collection Offer'}
                     </Button>
                   )}

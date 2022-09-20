@@ -52,7 +52,7 @@ const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
   if (!attributes) return null
 
   return (
-    <GeneralizedScrollArea viewportProps={{ css: { padding: 16, width: 484 } }}>
+    <>
       <Input
         css={{ marginBottom: 16, padding: '16px 16px 16px 48px' }}
         placeholder="Filter attribute"
@@ -63,62 +63,67 @@ const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
           <FontAwesomeIcon icon={faMagnifyingGlass} width={16} height={16} />
         }
       />
-      {results?.map(({ key, values }) => {
-        if (values?.length === 0) return null
+      <GeneralizedScrollArea>
+        {results?.map(({ key, values }) => {
+          if (values?.length === 0) return null
 
-        return (
-          <Box key={key} css={{ marginBottom: 24 }}>
-            <Text
-              style="subtitle1"
-              color="accent"
-              as="div"
-              css={{ marginBottom: 16 }}
-            >
-              {key}
-            </Text>
-            <Grid
-              css={{
-                'grid-template-columns': 'repeat(3, minmax(0, 1fr))',
-                gap: 8,
-              }}
-            >
-              {values?.map(({ value }) => (
-                <Card
-                  key={value}
-                  css={{
-                    display: 'grid',
-                    cursor: 'pointer',
-                  }}
-                  as="button"
-                  onClick={() => setTrait({ key, value })}
-                >
-                  <Flex css={{ justifyContent: 'space-between', gap: 8 }}>
-                    <Text
-                      css={{
-                        maxWidth: 90,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        textAlign: 'start',
-                      }}
-                    >
-                      {value}
-                    </Text>
-                    <FormatCryptoCurrency
-                      amount={1.345397}
-                      maximumFractionDigits={1}
-                    />
-                  </Flex>
-                  <Flex css={{ justifyContent: 'space-between', gap: 8 }}>
-                    <Text>%</Text>
-                    <Text>floor</Text>
-                  </Flex>
-                </Card>
-              ))}
-            </Grid>
-          </Box>
-        )
-      })}
-    </GeneralizedScrollArea>
+          return (
+            <Box key={key} css={{ paddingRight: 16, marginBottom: 24 }}>
+              <Text
+                style="subtitle1"
+                color="accent"
+                as="div"
+                css={{ marginBottom: 16 }}
+              >
+                {key}
+              </Text>
+              <Grid
+                css={{
+                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                  gap: 8,
+                  '@bp1': {
+                    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                  },
+                }}
+              >
+                {values?.map(({ value }) => (
+                  <Card
+                    key={value}
+                    css={{
+                      display: 'grid',
+                      cursor: 'pointer',
+                    }}
+                    as="button"
+                    onClick={() => setTrait({ key, value })}
+                  >
+                    <Flex css={{ justifyContent: 'space-between', gap: 8 }}>
+                      <Text
+                        css={{
+                          maxWidth: 90,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          textAlign: 'start',
+                        }}
+                      >
+                        {value}
+                      </Text>
+                      <FormatCryptoCurrency
+                        amount={1.345397}
+                        maximumFractionDigits={1}
+                      />
+                    </Flex>
+                    <Flex css={{ justifyContent: 'space-between', gap: 8 }}>
+                      <Text>%</Text>
+                      <Text>floor</Text>
+                    </Flex>
+                  </Card>
+                ))}
+              </Grid>
+            </Box>
+          )
+        })}
+      </GeneralizedScrollArea>
+    </>
   )
 }
 

@@ -2,7 +2,7 @@ import React, { ComponentPropsWithoutRef, FC } from 'react'
 import { Flex, Box, Text } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
 import Stat from '../Stat'
-import { useTokens, useCollections } from '../../hooks'
+import { useTokens, useCollections, useMediaQuery } from '../../hooks'
 import InfoTooltip from '../InfoTooltip'
 import { Trait } from './BidModalRenderer'
 
@@ -13,7 +13,22 @@ type Props = {
 }
 
 const TokenStats: FC<Props> = ({ token, collection, trait }) => {
-  let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = [
+  const isMobile = useMediaQuery('(max-width: 520px)')
+  let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = []
+
+  if (trait) {
+    stats.push({
+      id: 3,
+      label: (
+        <Text color="accent" style="subtitle2">
+          {trait.key}
+        </Text>
+      ),
+      value: trait.value,
+    })
+  }
+
+  stats.push(
     {
       id: 0,
       label: (
@@ -37,8 +52,8 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
         ? token.market?.topBid?.price?.amount?.native || null
         : collection?.topBid?.price?.amount?.native || null,
       asWeth: true,
-    },
-  ]
+    }
+  )
 
   if (token) {
     stats.push({
@@ -69,7 +84,7 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
       }}
     >
       <TokenStatsHeader collection={collection} token={token} />
-      {trait && (
+      {!isMobile && trait && (
         <Box
           css={{
             padding: 8,
@@ -92,7 +107,6 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
           [`& ${Stat}:not(:last-child)`]: {
             mb: '$1',
           },
-          mb: '$3',
         }}
       >
         {stats.map((stat) => (

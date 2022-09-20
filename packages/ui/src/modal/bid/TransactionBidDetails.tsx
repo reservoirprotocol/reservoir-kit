@@ -39,10 +39,26 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
       <Box
         css={{
           flex: 1,
-          mt: '$4',
           mb: '$3',
         }}
       >
+        {bidData?.attributeKey && (
+          <Box
+            css={{
+              padding: 8,
+              borderRadius: 4,
+              backgroundColor: '$neutralBgHover',
+              marginBottom: 16,
+              maxWidth: 188,
+              width: 'fit-content',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            <Text color="accent">{bidData.attributeKey}: </Text>
+            <Text>{bidData.attributeValue}</Text>
+          </Box>
+        )}
         <Flex
           direction="column"
           className="rk-stat-well"

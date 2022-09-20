@@ -43,7 +43,7 @@ const GeneralizedPopover: FC<GeneralizedPopoverProps> = ({
     </PopoverTrigger>
     <PopoverContent {...content?.props}>
       {content.children}
-      <PopoverArrow {...arrowProps} />
+      {arrowProps && <PopoverArrow {...arrowProps} />}
     </PopoverContent>
   </Popover>
 )
