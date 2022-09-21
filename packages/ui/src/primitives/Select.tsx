@@ -1,4 +1,9 @@
-import React, { ComponentPropsWithoutRef } from 'react'
+import React, {
+  ComponentPropsWithoutRef,
+  ElementRef,
+  forwardRef,
+  ReactElement,
+} from 'react'
 import { styled } from '../../stitches.config'
 import * as Select from '@radix-ui/react-select'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
@@ -7,12 +12,16 @@ import Box from './Box'
 
 type Props = {
   children: React.ReactNode
+  trigger?: ReactElement<typeof StyledTrigger>
   css?: ComponentPropsWithoutRef<typeof StyledTrigger>['css']
 }
 
 type SelectProps = {
   Item: typeof Select.Item
-  ItemText: typeof Select.ItemText
+  ItemText: typeof StyledItemText
+  Trigger: typeof StyledTrigger
+  Value: typeof StyledValue
+  DownIcon: typeof SelectDownIcon
 }
 
 const StyledTrigger = styled(Select.Trigger, {
@@ -52,21 +61,32 @@ const StyledItemText = styled(Select.ItemText, textCss)
 
 const StyledValue = styled(Select.Value, textCss)
 
+const SelectDownIcon = forwardRef<
+  ElementRef<typeof Select.Icon>,
+  ComponentPropsWithoutRef<typeof Select.Icon>
+>(({ ...props }, forwardedRef) => (
+  <Select.Icon asChild ref={forwardedRef} {...props}>
+    <Box css={{ color: '$neutralSolidHover' }}>
+      <FontAwesomeIcon icon={faChevronDown} width="14" color="" />
+    </Box>
+  </Select.Icon>
+))
+
 export const RKSelect: React.FC<
   Props &
     ComponentPropsWithoutRef<typeof Select.Root> &
     ComponentPropsWithoutRef<typeof Select.Value>
 > &
-  SelectProps = ({ children, css, ...props }) => (
+  SelectProps = ({ children, trigger, css, ...props }) => (
   <Select.Root {...props}>
-    <StyledTrigger css={{ ...textCss, ...css }}>
-      <StyledValue placeholder={props.placeholder}>{props.value}</StyledValue>
-      <Select.Icon asChild>
-        <Box css={{ color: '$neutralSolidHover' }}>
-          <FontAwesomeIcon icon={faChevronDown} width="14" color="" />
-        </Box>
-      </Select.Icon>
-    </StyledTrigger>
+    {trigger ? (
+      trigger
+    ) : (
+      <StyledTrigger css={{ ...textCss, ...css }}>
+        <StyledValue placeholder={props.placeholder}>{props.value}</StyledValue>
+        <SelectDownIcon />
+      </StyledTrigger>
+    )}
     <Select.Portal style={{ zIndex: 1000000 }}>
       <StyledContent>
         <Select.ScrollUpButton />
@@ -92,5 +112,8 @@ const StyledItem = styled(Select.Item, {
 
 RKSelect.Item = StyledItem
 RKSelect.ItemText = StyledItemText
+RKSelect.Trigger = StyledTrigger
+RKSelect.Value = StyledValue
+RKSelect.DownIcon = SelectDownIcon
 
 export default RKSelect

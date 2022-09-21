@@ -21,11 +21,13 @@ import {
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
 import debounce from '../../lib/debounce'
-import { parseEther } from 'ethers/lib/utils'
+import { parseUnits } from 'ethers/lib/utils'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
+import { constants } from 'ethers'
+import { Currency } from '../../types/Currency'
 
 export enum ListStep {
   SelectMarkets,
@@ -54,7 +56,7 @@ type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listStep: ListStep
-  ethUsdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: ReturnType<typeof useCoinConversion>
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   marketplaces: Marketplace[]
@@ -65,11 +67,14 @@ type ChildrenProps = {
   listingData: ListingData[]
   transactionError?: Error | null
   stepData: StepData | null
+  currencies: Currency[]
+  currency: Currency
   setListStep: React.Dispatch<React.SetStateAction<ListStep>>
   toggleMarketplace: (marketplace: Marketplace) => void
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setSyncProfit: React.Dispatch<React.SetStateAction<boolean>>
   setMarketPrice: (price: number, market: Marketplace) => void
+  setCurrency: (currency: Currency) => void
   listToken: () => void
 }
 
@@ -77,6 +82,7 @@ type Props = {
   open: boolean
   tokenId?: string
   collectionId?: string
+  currencies?: Currency[]
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -84,8 +90,18 @@ export const ListModalRenderer: FC<Props> = ({
   open,
   tokenId,
   collectionId,
+  currencies = [
+    {
+      contract: constants.AddressZero,
+      symbol: 'ETH',
+    },
+  ],
   children,
 }) => {
+  if (!currencies || currencies.length === 0) {
+    throw 'The ListModal requires at least one currency to be supplied'
+  }
+
   const { data: signer } = useSigner()
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
@@ -98,6 +114,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
     null
   )
+  const [currency, setCurrency] = useState<Currency>(currencies[0])
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const {
     data: unapprovedMarketplaces,
@@ -131,7 +148,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
-  const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
+  const usdPrice = useCoinConversion(open ? 'USD' : undefined, currency.symbol)
 
   const toggleMarketplace = (marketplace: Marketplace) => {
     setMarketplaces(
@@ -278,6 +295,7 @@ export const ListModalRenderer: FC<Props> = ({
       setExpirationOption(expirationOptions[0])
       setSyncProfit(true)
     }
+    setCurrency(currencies[0])
   }, [open])
 
   const listToken = useCallback(() => {
@@ -311,7 +329,7 @@ export const ListModalRenderer: FC<Props> = ({
       if (market.isSelected) {
         const listing: Listings[0] = {
           token: `${contract}:${tokenId}`,
-          weiPrice: parseEther(`${market.price}`).toString(),
+          weiPrice: parseUnits(`${market.price}`, currency.decimals).toString(),
           //@ts-ignore
           orderbook: market.orderbook,
           //@ts-ignore
@@ -320,6 +338,10 @@ export const ListModalRenderer: FC<Props> = ({
 
         if (expirationTime) {
           listing.expirationTime = expirationTime
+        }
+
+        if (currency && currency.contract != constants.AddressZero) {
+          listing.currency = currency.contract
         }
 
         listingData.push({
@@ -403,7 +425,15 @@ export const ListModalRenderer: FC<Props> = ({
         setTransactionError(transactionError)
         console.log(error)
       })
-  }, [client, marketplaces, signer, collectionId, tokenId, expirationOption])
+  }, [
+    client,
+    marketplaces,
+    signer,
+    collectionId,
+    tokenId,
+    expirationOption,
+    currency,
+  ])
 
   return (
     <>
@@ -411,7 +441,7 @@ export const ListModalRenderer: FC<Props> = ({
         token,
         collection,
         listStep,
-        ethUsdPrice,
+        usdPrice,
         expirationOption,
         expirationOptions,
         marketplaces,
@@ -422,9 +452,12 @@ export const ListModalRenderer: FC<Props> = ({
         listingData,
         transactionError,
         stepData,
+        currencies,
+        currency,
         setListStep,
         toggleMarketplace,
         setMarketPrice,
+        setCurrency,
         setSyncProfit,
         listToken,
         setExpirationOption,

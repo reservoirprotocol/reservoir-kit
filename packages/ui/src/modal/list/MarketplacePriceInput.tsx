@@ -5,23 +5,26 @@ import {
   Box,
   Input,
   FormatCurrency,
-  FormatEth,
   Text,
+  FormatCryptoCurrency,
 } from '../../primitives'
 
-import { EthLogo } from '../../primitives/FormatEth'
 import { Marketplace } from '../../hooks/useMarketplaces'
+import { Currency } from '../../types/Currency'
+import { CryptoCurrencyIcon } from '../../primitives'
 
 type MarketPlaceInputProps = {
   marketplace: Marketplace
-  ethUsdPrice?: number | null
+  currency: Currency
+  usdPrice?: number | null
   onChange: (e: any) => void
   onBlur: (e: any) => void
 }
 
 const MarketplacePriceInput = ({
   marketplace,
-  ethUsdPrice,
+  currency,
+  usdPrice,
   onChange,
   onBlur,
   ...props
@@ -44,10 +47,14 @@ const MarketplacePriceInput = ({
             height: 20,
           }}
         >
-          <EthLogo />
+          <CryptoCurrencyIcon
+            css={{ height: 18 }}
+            address={currency.contract}
+          />
         </Box>
+
         <Text style="body1" color="subtle" css={{ ml: '$1', mr: '$4' }} as="p">
-          ETH
+          {currency.symbol}
         </Text>
       </Flex>
       <Box css={{ flex: 1 }}>
@@ -59,9 +66,15 @@ const MarketplacePriceInput = ({
         />
       </Box>
       <Flex direction="column" align="end" css={{ ml: '$3' }}>
-        <FormatEth amount={profit} textStyle="h6" logoWidth={12} />
+        <FormatCryptoCurrency
+          amount={profit}
+          address={currency.contract}
+          decimals={currency.decimals}
+          textStyle="h6"
+          logoWidth={18}
+        />
         <FormatCurrency
-          amount={profit * (ethUsdPrice || 1000)}
+          amount={profit * (usdPrice || 1000)}
           style="subtitle2"
           color="subtle"
         />

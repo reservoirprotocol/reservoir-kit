@@ -27,6 +27,7 @@ import TransactionProgress from '../../modal/TransactionProgress'
 import ProgressBar from '../../modal/ProgressBar'
 import InfoTooltip from '../InfoTooltip'
 import { Marketplace } from '../../hooks/useMarketplaces'
+import { Currency } from '../../types/Currency'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -37,7 +38,7 @@ type ListingCallbackData = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
-  ethUsdPrice?: number
+  currencies?: Currency[]
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
@@ -73,6 +74,7 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
+  currencies,
   onGoToToken,
   onListingComplete,
   onListingError,
@@ -90,11 +92,12 @@ export function ListModal({
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
+      currencies={currencies}
     >
       {({
         token,
         collection,
-        ethUsdPrice,
+        usdPrice,
         listStep,
         expirationOption,
         expirationOptions,
@@ -105,9 +108,12 @@ export function ListModal({
         listingData,
         transactionError,
         stepData,
+        currencies,
+        currency,
         setListStep,
         listToken,
         setMarketPrice,
+        setCurrency,
         toggleMarketplace,
         setSyncProfit,
         setExpirationOption,
@@ -215,9 +221,75 @@ export function ListModal({
 
                 <MainContainer>
                   <Box css={{ p: '$4', flex: 1 }}>
-                    <Text style="subtitle1" as="h3" css={{ mb: '$4' }}>
-                      Select Marketplaces
-                    </Text>
+                    {currencies.length > 1 && (
+                      <Text
+                        style="subtitle1"
+                        as={Flex}
+                        css={{ mb: '$4', gap: '$2' }}
+                      >
+                        List item in
+                        <Select
+                          trigger={
+                            <Select.Trigger
+                              css={{
+                                width: 'auto',
+                                p: 0,
+                                backgroundColor: 'transparent',
+                              }}
+                            >
+                              <Select.Value asChild>
+                                <Flex>
+                                  <Image
+                                    src={`${client?.apiBase}/redirect/currency/${currency.contract}/icon/v1`}
+                                    css={{ width: 18 }}
+                                  />
+                                  <Text
+                                    style="subtitle1"
+                                    color="subtle"
+                                    css={{ ml: '$1' }}
+                                  >
+                                    {currency.symbol}
+                                  </Text>
+                                  <Select.DownIcon style={{ marginLeft: 6 }} />
+                                </Flex>
+                              </Select.Value>
+                            </Select.Trigger>
+                          }
+                          value={currency.contract}
+                          onValueChange={(value: string) => {
+                            const option = currencies.find(
+                              (option) => option.contract == value
+                            )
+                            if (option) {
+                              setCurrency(option)
+                            }
+                          }}
+                        >
+                          {currencies.map((option) => (
+                            <Select.Item
+                              key={option.contract}
+                              value={option.contract}
+                            >
+                              <Select.ItemText>
+                                <Flex align="center" css={{ gap: '$1' }}>
+                                  <Image
+                                    src={`${client?.apiBase}/redirect/currency/${option.contract}/icon/v1`}
+                                    css={{ width: 18 }}
+                                  />
+                                  {option.symbol}
+                                </Flex>
+                              </Select.ItemText>
+                            </Select.Item>
+                          ))}
+                        </Select>
+                      </Text>
+                    )}
+                    {currencies.length <= 1 && (
+                      <Text style="subtitle1" as="h3" css={{ mb: '$4' }}>
+                        Select Marketplaces
+                      </Text>
+                    )}
+
                     <Text style="subtitle2" as="p" color="subtle">
                       Default
                     </Text>
@@ -359,9 +431,7 @@ export function ListModal({
                         <InfoTooltip
                           side="left"
                           width={200}
-                          content={
-                            'How much ETH you will receive after marketplace fees and creator royalties are subtracted.'
-                          }
+                          content={`How much ${currency.symbol} you will receive after marketplace fees and creator royalties are subtracted.`}
                         />
                       </Flex>
                     </Flex>
@@ -370,7 +440,8 @@ export function ListModal({
                       <Box key={marketplace.name} css={{ mb: '$3' }}>
                         <MarketplacePriceInput
                           marketplace={marketplace}
-                          ethUsdPrice={ethUsdPrice}
+                          currency={currency}
+                          usdPrice={usdPrice}
                           onChange={(e) => {
                             setMarketPrice(e.target.value, marketplace)
                           }}
@@ -453,6 +524,7 @@ export function ListModal({
                   token={token}
                   collection={collection}
                   listingData={listingData}
+                  currency={currency}
                 />
                 <MainContainer css={{ p: '$4' }}>
                   <ProgressBar
@@ -526,6 +598,7 @@ export function ListModal({
                   token={token}
                   collection={collection}
                   listingData={listingData}
+                  currency={currency}
                 />
                 <MainContainer css={{ p: '$4' }}>
                   <ProgressBar
