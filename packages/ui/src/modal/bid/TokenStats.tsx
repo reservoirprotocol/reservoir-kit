@@ -1,5 +1,5 @@
 import React, { ComponentPropsWithoutRef, FC } from 'react'
-import { Flex, Box, Text } from '../../primitives'
+import { Flex, Box, Text, Grid } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
 import Stat from '../Stat'
 import { useTokens, useCollections, useMediaQuery } from '../../hooks'
@@ -15,18 +15,6 @@ type Props = {
 const TokenStats: FC<Props> = ({ token, collection, trait }) => {
   const isMobile = useMediaQuery('(max-width: 520px)')
   let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = []
-
-  if (trait && isMobile) {
-    stats.push({
-      id: 3,
-      label: (
-        <Text color="accent" style="subtitle2">
-          {trait.key}
-        </Text>
-      ),
-      value: trait.value,
-    })
-  }
 
   stats.push(
     {
@@ -84,34 +72,51 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
       }}
     >
       <TokenStatsHeader collection={collection} token={token} />
-      {!isMobile && trait && (
+      <Grid css={{ flex: 1, alignContent: 'start' }}>
+        {trait && (
+          <Flex
+            css={{
+              padding: '$2',
+              borderRadius: '$1',
+              backgroundColor: '$neutralBgHover',
+              marginBottom: '$1',
+              overflow: 'hidden',
+              gap: '$1',
+              justifyContent: 'space-between',
+              '@bp1': {
+                justifyContent: 'start',
+              },
+            }}
+          >
+            <Text color="accent" style="subtitle2">
+              {trait.key}
+              {`${isMobile ? '' : ':'}`}
+            </Text>
+            <Text
+              style="subtitle2"
+              css={{
+                maxWidth: 200,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {trait.value}
+            </Text>
+          </Flex>
+        )}
         <Box
           css={{
-            padding: '$2',
-            borderRadius: '$1',
-            backgroundColor: '$neutralBgHover',
-            marginBottom: '$4',
-            width: 'fit-content',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
+            flex: 1,
+            [`& ${Stat}:not(:last-child)`]: {
+              mb: '$1',
+            },
           }}
         >
-          <Text color="accent">{trait.key}: </Text>
-          <Text>{trait.value}</Text>
+          {stats.map((stat) => (
+            <Stat key={stat.id} {...stat} />
+          ))}
         </Box>
-      )}
-      <Box
-        css={{
-          flex: 1,
-          [`& ${Stat}:not(:last-child)`]: {
-            mb: '$1',
-          },
-        }}
-      >
-        {stats.map((stat) => (
-          <Stat key={stat.id} {...stat} />
-        ))}
-      </Box>
+      </Grid>
     </Flex>
   )
 }

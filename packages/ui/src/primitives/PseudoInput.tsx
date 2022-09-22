@@ -1,18 +1,13 @@
 import { styled } from '../../stitches.config'
-import React, {
-  ComponentPropsWithoutRef,
-  ElementRef,
-  forwardRef,
-  ReactNode,
-} from 'react'
 
-const StyledInput = styled('div', {
+const PseudoInput = styled('div', {
   all: 'unset',
-  width: '100%',
-  padding: 16,
-  borderRadius: 8,
+  width: 'auto',
+  padding: '$4',
+  borderRadius: '$2',
   fontFamily: '$body',
   fontSize: 16,
+  fontWeight: 400,
   color: '$neutralText',
   backgroundColor: '$inputBackground',
   $$focusColor: '$colors$accentBorderHover',
@@ -23,16 +18,5 @@ const StyledInput = styled('div', {
     margin: 0,
   },
 })
-
-export const PseudoInput = forwardRef<
-  ElementRef<typeof StyledInput>,
-  ComponentPropsWithoutRef<typeof StyledInput> & {
-    icon?: ReactNode
-  }
->(({ children, icon, ...props }, forwardedRef) => (
-  <StyledInput ref={forwardedRef} {...props}>
-    {children}
-  </StyledInput>
-))
 
 export default PseudoInput

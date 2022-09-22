@@ -11,7 +11,7 @@ export default function (
 ) {
   const client = useReservoirClient()
 
-  const pathname = `${client?.apiBase}/collections/${collection}/attributes/all/v1`
+  const pathname = `${client?.apiBase}/collections/${collection}/attributes/all/v2`
 
   const path = collection ? new URL(pathname) : null
 

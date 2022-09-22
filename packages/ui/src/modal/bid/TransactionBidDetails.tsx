@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Flex, Box, FormatWEth, Text } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
-import { useTokens, useCollections, useMediaQuery } from '../../hooks'
+import { useTokens, useCollections } from '../../hooks'
 import { BidData } from './BidModalRenderer'
 import { useTimeSince } from '../../hooks'
 import { formatEther } from 'ethers/lib/utils'
@@ -14,7 +14,6 @@ type Props = {
 
 const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
   const [value, setValue] = useState('')
-  const isMobile = useMediaQuery('(max-width: 520px)')
   const timeSince = useTimeSince(
     bidData?.expirationTime ? +bidData.expirationTime : 0
   )
@@ -43,7 +42,7 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
           mb: '$3',
         }}
       >
-        {!isMobile && bidData?.attributeKey && (
+        {bidData?.attributeKey && (
           <Box
             css={{
               padding: '$2',
@@ -60,7 +59,7 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
             <Text>{bidData.attributeValue}</Text>
           </Box>
         )}
-        {isMobile && bidData?.attributeKey && (
+        {bidData?.attributeKey && (
           <Flex
             className="rk-stat-well"
             css={{

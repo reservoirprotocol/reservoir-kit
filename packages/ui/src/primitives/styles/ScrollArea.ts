@@ -6,11 +6,11 @@ const root: CSS = {
   height: 322,
   borderRadius: 4,
   overflow: 'hidden',
-  boxShadow: `0 2px 10px $blackA7`,
+  boxShadow: `0 2px 10px $inputBackground`,
 }
 
 const viewport: CSS = {
-  backgroundColor: '$gray1',
+  backgroundColor: 'transparent',
   width: '100%',
   height: '100%',
   borderRadius: 'inherit',
@@ -23,9 +23,9 @@ const scrollbar: CSS = {
   // disable browser handling of all panning and zooming gestures on touch devices
   touchAction: 'none',
   padding: 2,
-  background: '$blackA6',
+  background: '$inputBackground',
   transition: 'background 160ms ease-out',
-  '&:hover': { background: '$blackA8' },
+  '&:hover': { background: '$inputBackground' },
   '&[data-orientation="vertical"]': { width: SCROLLBAR_SIZE },
   '&[data-orientation="horizontal"]': {
     flexDirection: 'column',
@@ -35,7 +35,7 @@ const scrollbar: CSS = {
 
 const thumb: CSS = {
   flex: 1,
-  background: '$mauve10',
+  background: '$wellBackground',
   borderRadius: SCROLLBAR_SIZE,
   // increase target size for touch devices https://www.w3.org/WAI/WCAG21/Understanding/target-size.html
   position: 'relative',
@@ -53,7 +53,7 @@ const thumb: CSS = {
 }
 
 const corner: CSS = {
-  background: '$blackA8',
+  background: '$wellBackground',
 }
 
 export { corner, root, scrollbar, thumb, viewport }

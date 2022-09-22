@@ -14,21 +14,19 @@ import { GeneralizedScrollArea } from '../../primitives/ScrollArea'
 import { Trait } from './BidModalRenderer'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
-// SIDEBAR ATTRIBUTES
-// http://localhost:3001/api/reservoir/collections/0x4d68e14cd7dec510c84326f54ee41f88e8fad59b/attributes/all/v1
-
-// FILTERED TOKENS
-// http://localhost:3001/api/reservoir/tokens/v5?limit=20&collection=0x4d68e14cd7dec510c84326f54ee41f88e8fad59b&includeTopBid=true&sortBy=floorAskPrice&attributes[Type]=Special
-
-// TRAIT STATS (FLOOR)
-// http://localhost:3001/api/reservoir/stats/v1?collection=0x4d68e14cd7dec510c84326f54ee41f88e8fad59b&attributes[Type]=Special
-
 type Props = {
   attributes?: NonNullable<ReturnType<typeof useAttributes>['data']>
+  tokenCount?: number
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
+const AttributeSelector: FC<Props> = ({
+  attributes,
+  setTrait,
+  setOpen,
+  tokenCount,
+}) => {
   const [results, setResults] = useState<Props['attributes']>([])
   const [query, setQuery] = useState('')
 
@@ -52,7 +50,16 @@ const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
   if (!attributes) return null
 
   return (
-    <>
+    <Box
+      css={{
+        maxWidth: 500,
+        zIndex: 1000,
+        padding: '$4',
+        overflowY: 'auto',
+        borderRadius: 8,
+        backgroundColor: '$popoverBackground',
+      }}
+    >
       <Input
         css={{ marginBottom: '$4', padding: '16px 16px 16px 48px' }}
         placeholder="Filter attribute"
@@ -86,7 +93,7 @@ const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
                   },
                 }}
               >
-                {values?.map(({ value }) => (
+                {values?.map(({ value, count }) => (
                   <Card
                     key={value}
                     css={{
@@ -94,27 +101,47 @@ const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
                       cursor: 'pointer',
                     }}
                     as="button"
-                    onClick={() => setTrait({ key, value })}
+                    onClick={() => {
+                      setTrait({ key, value })
+                      setOpen(false)
+                    }}
                   >
-                    <Flex css={{ justifyContent: 'space-between', gap: '$2' }}>
+                    <Flex
+                      css={{
+                        justifyContent: 'space-between',
+                        gap: '$2',
+                        marginBottom: '$1',
+                      }}
+                    >
                       <Text
                         css={{
-                          maxWidth: 90,
+                          maxWidth: 85,
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
                           textAlign: 'start',
                         }}
+                        title={value}
+                        style="subtitle2"
                       >
                         {value}
                       </Text>
-                      <FormatCryptoCurrency
-                        amount={1.345397}
-                        maximumFractionDigits={1}
-                      />
+                      <Box css={{ flex: 'none' }}>
+                        <FormatCryptoCurrency
+                          amount={1.345397}
+                          logoWidth={7}
+                          maximumFractionDigits={1}
+                          textStyle="subtitle2"
+                        />
+                      </Box>
                     </Flex>
                     <Flex css={{ justifyContent: 'space-between', gap: '$2' }}>
-                      <Text>%</Text>
-                      <Text>floor</Text>
+                      <Text style="body2">
+                        {count && tokenCount
+                          ? `${Math.floor((count / tokenCount) * 100)}%`
+                          : '-'}
+                      </Text>
+                      <Text style="body2">floor</Text>
                     </Flex>
                   </Card>
                 ))}
@@ -123,7 +150,7 @@ const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
           )
         })}
       </GeneralizedScrollArea>
-    </>
+    </Box>
   )
 }
 

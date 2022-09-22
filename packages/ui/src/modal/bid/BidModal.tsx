@@ -31,7 +31,7 @@ import WethApproval from '../../img/WethApproval'
 import OfferSubmitted from '../../img/OfferSubmitted'
 import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
-import { GeneralizedPopover } from '../../primitives/Popover2'
+import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
 import { faChevronDown, faX } from '@fortawesome/free-solid-svg-icons'
 
@@ -106,6 +106,7 @@ export function BidModal({
   useEffect(() => {
     setLocalMarketplace(getLocalMarketplaceData())
   }, [])
+  const [attributeSelectorOpen, setAttributeSelectorOpen] = useState(false)
 
   return (
     <BidModalRenderer
@@ -141,6 +142,10 @@ export function BidModal({
         placeBid,
       }) => {
         const [expirationDate, setExpirationDate] = useState('')
+
+        const tokenCount = collection?.tokenCount
+          ? +collection.tokenCount
+          : undefined
 
         const itemImage =
           token && token.token?.image
@@ -303,92 +308,84 @@ export function BidModal({
                       <Text as={Box} css={{ mb: '$2' }} style="tiny">
                         Attributes
                       </Text>
-                      <GeneralizedPopover
-                        content={{
-                          children: (
-                            <AttributeSelector
-                              attributes={attributes}
-                              setTrait={setTrait}
-                            />
-                          ),
-                          props: {
-                            sideOffset: 5,
-                            css: {
-                              padding: '$4',
-                              width: 347,
-                              '@bp1': { width: 484 },
-                            },
-                          },
-                        }}
-                        trigger={{
-                          props: { asChild: true },
-                          children: (
-                            <PseudoInput>
-                              <Flex
-                                css={{
-                                  gap: '$2',
-                                  alignItems: 'center',
-                                  justifyContent: 'space-between',
-                                  color: '$neutralText',
-                                }}
-                              >
-                                {trait ? (
-                                  <>
-                                    <Box
-                                      css={{
-                                        maxWidth: 385,
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                      }}
-                                    >
-                                      <Text color="accent" style="subtitle1">
-                                        {trait?.key}:{' '}
-                                      </Text>
-                                      <Text style="subtitle1">
-                                        {trait?.value}
-                                      </Text>
-                                    </Box>
-                                    <Flex
-                                      css={{ alignItems: 'center', gap: '$2' }}
-                                    >
-                                      <FormatCryptoCurrency
-                                        amount={
-                                          collection?.floorAsk?.price?.amount
-                                            ?.native
-                                        }
-                                        maximumFractionDigits={2}
-                                      />
-                                      <FontAwesomeIcon
-                                        style={{ cursor: 'pointer' }}
-                                        onClick={() => setTrait(undefined)}
-                                        icon={faX}
-                                        width={16}
-                                        height={16}
-                                      />
-                                    </Flex>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Text
-                                      css={{
-                                        color: '$neutralText',
-                                      }}
-                                    >
-                                      All Attributes
+                      <Popover.Root
+                        open={attributeSelectorOpen}
+                        onOpenChange={setAttributeSelectorOpen}
+                      >
+                        <Popover.Trigger asChild>
+                          <PseudoInput>
+                            <Flex
+                              css={{
+                                gap: '$2',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                color: '$neutralText',
+                              }}
+                            >
+                              {trait ? (
+                                <>
+                                  <Box
+                                    css={{
+                                      maxWidth: 385,
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap',
+                                    }}
+                                  >
+                                    <Text color="accent" style="subtitle1">
+                                      {trait?.key}:{' '}
                                     </Text>
+                                    <Text style="subtitle1">
+                                      {trait?.value}
+                                    </Text>
+                                  </Box>
+                                  <Flex
+                                    css={{ alignItems: 'center', gap: '$2' }}
+                                  >
+                                    <FormatCryptoCurrency
+                                      amount={
+                                        collection?.floorAsk?.price?.amount
+                                          ?.native
+                                      }
+                                      maximumFractionDigits={2}
+                                    />
                                     <FontAwesomeIcon
-                                      icon={faChevronDown}
+                                      style={{ cursor: 'pointer' }}
+                                      onClick={() => setTrait(undefined)}
+                                      icon={faX}
                                       width={16}
                                       height={16}
                                     />
-                                  </>
-                                )}
-                              </Flex>
-                            </PseudoInput>
-                          ),
-                        }}
-                      />
+                                  </Flex>
+                                </>
+                              ) : (
+                                <>
+                                  <Text
+                                    css={{
+                                      color: '$neutralText',
+                                    }}
+                                  >
+                                    All Attributes
+                                  </Text>
+                                  <FontAwesomeIcon
+                                    icon={faChevronDown}
+                                    width={16}
+                                    height={16}
+                                  />
+                                </>
+                              )}
+                            </Flex>
+                          </PseudoInput>
+                        </Popover.Trigger>
+                        <Popover.Content sideOffset={-50}>
+                          <AttributeSelector
+                            attributes={attributes}
+                            tokenCount={tokenCount}
+                            setTrait={setTrait}
+                            setOpen={setAttributeSelectorOpen}
+                          />
+                        </Popover.Content>
+                      </Popover.Root>
                     </>
                   )}
 

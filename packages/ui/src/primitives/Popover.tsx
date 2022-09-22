@@ -59,4 +59,9 @@ const RKPopover = ({
   )
 }
 
+RKPopover.Root = Popover.Root
+RKPopover.Trigger = Popover.Trigger
+RKPopover.Arrow = Arrow
+RKPopover.Content = Content
+
 export default RKPopover
