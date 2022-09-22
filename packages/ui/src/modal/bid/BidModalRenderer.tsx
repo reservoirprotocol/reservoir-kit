@@ -37,10 +37,12 @@ export enum BidStep {
   Complete,
 }
 
-export type Trait = {
-  key: string
-  value: string
-} | null
+export type Trait =
+  | {
+      key: string
+      value: string
+    }
+  | undefined
 
 type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
@@ -74,6 +76,7 @@ type Props = {
   open: boolean
   tokenId?: string
   collectionId?: string
+  attribute?: Trait
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -91,6 +94,7 @@ export const BidModalRenderer: FC<Props> = ({
   open,
   tokenId,
   collectionId,
+  attribute,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -106,7 +110,7 @@ export const BidModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<StepData | null>(null)
   const [bidData, setBidData] = useState<BidData | null>(null)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
-  const [trait, setTrait] = useState<Trait>(null)
+  const [trait, setTrait] = useState<Trait>(attribute)
 
   const { data: tokens } = useTokens(
     open &&
@@ -196,7 +200,7 @@ export const BidModalRenderer: FC<Props> = ({
       setStepData(null)
       setBidData(null)
       setTransactionError(null)
-      setTrait(null)
+      setTrait(undefined)
     }
   }, [open])
 

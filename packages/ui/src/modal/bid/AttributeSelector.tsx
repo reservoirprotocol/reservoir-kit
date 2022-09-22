@@ -54,7 +54,7 @@ const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
   return (
     <>
       <Input
-        css={{ marginBottom: 16, padding: '16px 16px 16px 48px' }}
+        css={{ marginBottom: '$4', padding: '16px 16px 16px 48px' }}
         placeholder="Filter attribute"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -68,19 +68,19 @@ const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
           if (values?.length === 0) return null
 
           return (
-            <Box key={key} css={{ paddingRight: 16, marginBottom: 24 }}>
+            <Box key={key} css={{ paddingRight: '$4', marginBottom: 24 }}>
               <Text
                 style="subtitle1"
                 color="accent"
                 as="div"
-                css={{ marginBottom: 16 }}
+                css={{ marginBottom: '$4' }}
               >
                 {key}
               </Text>
               <Grid
                 css={{
                   gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                  gap: 8,
+                  gap: '$2',
                   '@bp1': {
                     gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
                   },
@@ -96,7 +96,7 @@ const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
                     as="button"
                     onClick={() => setTrait({ key, value })}
                   >
-                    <Flex css={{ justifyContent: 'space-between', gap: 8 }}>
+                    <Flex css={{ justifyContent: 'space-between', gap: '$2' }}>
                       <Text
                         css={{
                           maxWidth: 90,
@@ -112,7 +112,7 @@ const AttributeSelector: FC<Props> = ({ attributes, setTrait }) => {
                         maximumFractionDigits={1}
                       />
                     </Flex>
-                    <Flex css={{ justifyContent: 'space-between', gap: 8 }}>
+                    <Flex css={{ justifyContent: 'space-between', gap: '$2' }}>
                       <Text>%</Text>
                       <Text>floor</Text>
                     </Flex>

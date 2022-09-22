@@ -36,8 +36,7 @@ const Stat: FC<StatProps> = ({
         style="subtitle2"
         as="p"
         css={{
-          marginLeft: 8,
-          maxWidth: 180,
+          marginLeft: '$2',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',

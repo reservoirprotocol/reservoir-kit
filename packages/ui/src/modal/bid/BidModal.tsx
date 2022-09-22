@@ -17,7 +17,7 @@ import {
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
-import { BidModalRenderer, BidStep, BidData } from './BidModalRenderer'
+import { BidModalRenderer, BidStep, BidData, Trait } from './BidModalRenderer'
 import TokenStats from './TokenStats'
 import WEthIcon from '../../img/WEthIcon'
 import dayjs from 'dayjs'
@@ -44,6 +44,7 @@ type BidCallbackData = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
+  attribute?: Trait
   onViewOffers?: () => void
   onClose?: () => void
   onBidComplete?: (data: any) => void
@@ -89,6 +90,7 @@ export function BidModal({
   trigger,
   tokenId,
   collectionId,
+  attribute,
   onViewOffers,
   onClose,
   onBidComplete,
@@ -106,7 +108,12 @@ export function BidModal({
   }, [])
 
   return (
-    <BidModalRenderer open={open} tokenId={tokenId} collectionId={collectionId}>
+    <BidModalRenderer
+      open={open}
+      tokenId={tokenId}
+      collectionId={collectionId}
+      attribute={attribute}
+    >
       {({
         token,
         collection,
@@ -190,6 +197,12 @@ export function BidModal({
             onBidError(transactionError, data)
           }
         }, [transactionError])
+
+        useEffect(() => {
+          if (!tokenId) {
+            setTrait(attribute)
+          }
+        }, [])
 
         return (
           <Modal
@@ -285,91 +298,100 @@ export function BidModal({
                     style="tiny"
                     amount={bidAmountUsd}
                   />
-                  <Text as={Box} css={{ mb: '$2' }} style="tiny">
-                    Attributes
-                  </Text>
-                  <GeneralizedPopover
-                    content={{
-                      children: (
-                        <AttributeSelector
-                          attributes={attributes}
-                          setTrait={setTrait}
-                        />
-                      ),
-                      props: {
-                        sideOffset: 5,
-                        css: {
-                          padding: 16,
-                          width: 347,
-                          '@bp1': { width: 484 },
-                        },
-                      },
-                    }}
-                    trigger={{
-                      props: { asChild: true },
-                      children: (
-                        <PseudoInput>
-                          <Flex
-                            css={{
-                              gap: 8,
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              color: '$neutralText',
-                            }}
-                          >
-                            {trait ? (
-                              <>
-                                <Box
-                                  css={{
-                                    maxWidth: 385,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap',
-                                  }}
-                                >
-                                  <Text color="accent" style="subtitle1">
-                                    {trait?.key}:{' '}
-                                  </Text>
-                                  <Text style="subtitle1">{trait?.value}</Text>
-                                </Box>
-                                <Flex css={{ alignItems: 'center', gap: 8 }}>
-                                  <FormatCryptoCurrency
-                                    amount={
-                                      collection?.floorAsk?.price?.amount
-                                        ?.native
-                                    }
-                                    maximumFractionDigits={2}
-                                  />
-                                  <FontAwesomeIcon
-                                    style={{ cursor: 'pointer' }}
-                                    onClick={() => setTrait(null)}
-                                    icon={faX}
-                                    width={16}
-                                    height={16}
-                                  />
-                                </Flex>
-                              </>
-                            ) : (
-                              <>
-                                <Text
-                                  css={{
-                                    color: '$neutralText',
-                                  }}
-                                >
-                                  All Attributes
-                                </Text>
-                                <FontAwesomeIcon
-                                  icon={faChevronDown}
-                                  width={16}
-                                  height={16}
-                                />
-                              </>
-                            )}
-                          </Flex>
-                        </PseudoInput>
-                      ),
-                    }}
-                  />
+                  {attributes && attributes.length > 0 && !tokenId && (
+                    <>
+                      <Text as={Box} css={{ mb: '$2' }} style="tiny">
+                        Attributes
+                      </Text>
+                      <GeneralizedPopover
+                        content={{
+                          children: (
+                            <AttributeSelector
+                              attributes={attributes}
+                              setTrait={setTrait}
+                            />
+                          ),
+                          props: {
+                            sideOffset: 5,
+                            css: {
+                              padding: '$4',
+                              width: 347,
+                              '@bp1': { width: 484 },
+                            },
+                          },
+                        }}
+                        trigger={{
+                          props: { asChild: true },
+                          children: (
+                            <PseudoInput>
+                              <Flex
+                                css={{
+                                  gap: '$2',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  color: '$neutralText',
+                                }}
+                              >
+                                {trait ? (
+                                  <>
+                                    <Box
+                                      css={{
+                                        maxWidth: 385,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      <Text color="accent" style="subtitle1">
+                                        {trait?.key}:{' '}
+                                      </Text>
+                                      <Text style="subtitle1">
+                                        {trait?.value}
+                                      </Text>
+                                    </Box>
+                                    <Flex
+                                      css={{ alignItems: 'center', gap: '$2' }}
+                                    >
+                                      <FormatCryptoCurrency
+                                        amount={
+                                          collection?.floorAsk?.price?.amount
+                                            ?.native
+                                        }
+                                        maximumFractionDigits={2}
+                                      />
+                                      <FontAwesomeIcon
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => setTrait(undefined)}
+                                        icon={faX}
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </Flex>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Text
+                                      css={{
+                                        color: '$neutralText',
+                                      }}
+                                    >
+                                      All Attributes
+                                    </Text>
+                                    <FontAwesomeIcon
+                                      icon={faChevronDown}
+                                      width={16}
+                                      height={16}
+                                    />
+                                  </>
+                                )}
+                              </Flex>
+                            </PseudoInput>
+                          ),
+                        }}
+                      />
+                    </>
+                  )}
+
                   <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
                     Expiration Date
                   </Text>

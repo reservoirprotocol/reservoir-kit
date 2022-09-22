@@ -16,7 +16,7 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
   const isMobile = useMediaQuery('(max-width: 520px)')
   let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = []
 
-  if (trait) {
+  if (trait && isMobile) {
     stats.push({
       id: 3,
       label: (
@@ -87,11 +87,10 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
       {!isMobile && trait && (
         <Box
           css={{
-            padding: 8,
-            borderRadius: 4,
+            padding: '$2',
+            borderRadius: '$1',
             backgroundColor: '$neutralBgHover',
-            marginBottom: 16,
-            maxWidth: 188,
+            marginBottom: '$4',
             width: 'fit-content',
             overflow: 'hidden',
             textOverflow: 'ellipsis',

@@ -46,10 +46,10 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
         {!isMobile && bidData?.attributeKey && (
           <Box
             css={{
-              padding: 8,
-              borderRadius: 4,
+              padding: '$2',
+              borderRadius: '$1',
               backgroundColor: '$neutralBgHover',
-              marginBottom: 16,
+              marginBottom: '$4',
               maxWidth: 188,
               width: 'fit-content',
               overflow: 'hidden',
@@ -69,8 +69,7 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
               p: '$2',
               borderRadius: '$borderRadius',
               gap: '$1',
-              mb: 4,
-              maxWidth: 222,
+              mb: '$2',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -79,7 +78,7 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
             <Text color="accent">{bidData.attributeKey}</Text>
             <Text
               css={{
-                marginLeft: 8,
+                marginLeft: '$2',
                 maxWidth: 180,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
