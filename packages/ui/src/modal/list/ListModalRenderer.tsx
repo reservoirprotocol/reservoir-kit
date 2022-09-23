@@ -91,6 +91,15 @@ type PaymentTokens = NonNullable<
   NonNullable<ReturnType<typeof useTokenOpensea>['response']>['collection']
 >['payment_tokens']
 
+const defaultPaymentTokens = [
+  {
+    address: constants.AddressZero,
+    symbol: 'ETH',
+    name: 'Ether',
+    decimals: 18,
+  },
+]
+
 const isCurrencyAllowed = (
   currency: Currency,
   marketplace: Marketplace,
@@ -200,14 +209,8 @@ export const ListModalRenderer: FC<Props> = ({
     open ? tokenId : undefined
   )
 
-  const paymentTokens = openSeaToken?.collection?.payment_tokens || [
-    {
-      address: constants.AddressZero,
-      symbol: 'ETH',
-      name: 'Ether',
-      decimals: 18,
-    },
-  ]
+  const paymentTokens =
+    openSeaToken?.collection?.payment_tokens || defaultPaymentTokens
 
   const collection = collections && collections[0] ? collections[0] : undefined
 

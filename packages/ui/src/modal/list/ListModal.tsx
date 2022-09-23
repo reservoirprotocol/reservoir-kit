@@ -244,7 +244,7 @@ export function ListModal({
                               }}
                             >
                               <Select.Value asChild>
-                                <Flex>
+                                <Flex align="center">
                                   <CryptoCurrencyIcon
                                     address={currency.contract}
                                     css={{ height: 18 }}
