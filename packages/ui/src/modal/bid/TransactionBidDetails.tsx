@@ -55,6 +55,7 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
               justifyContent: 'space-between',
               '@bp1': {
                 justifyContent: 'start',
+                width: 'fit-content',
               },
             }}
           >

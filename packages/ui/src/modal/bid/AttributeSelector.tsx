@@ -56,7 +56,7 @@ const AttributeSelector: FC<Props> = ({
         zIndex: 1000,
         padding: '$4',
         overflowY: 'auto',
-        borderRadius: 8,
+        borderRadius: '$space$2',
         backgroundColor: '$popoverBackground',
       }}
     >
@@ -135,12 +135,14 @@ const AttributeSelector: FC<Props> = ({
                       </Box>
                     </Flex>
                     <Flex css={{ justifyContent: 'space-between', gap: '$2' }}>
-                      <Text style="body2">
+                      <Text style="body2" color="subtle">
                         {count && tokenCount
                           ? `${Math.round((count / tokenCount) * 100)}%`
                           : '-'}
                       </Text>
-                      <Text style="body2">floor</Text>
+                      <Text style="body2" color="subtle">
+                        floor
+                      </Text>
                     </Flex>
                   </Card>
                 ))}

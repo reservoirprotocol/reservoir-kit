@@ -204,10 +204,10 @@ export function BidModal({
         }, [transactionError])
 
         useEffect(() => {
-          if (!tokenId) {
+          if (!tokenId && attributes) {
             setTrait(attribute)
           }
-        }, [])
+        }, [tokenId, attributes])
 
         return (
           <Modal

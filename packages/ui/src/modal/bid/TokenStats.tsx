@@ -77,7 +77,7 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
           <Flex
             css={{
               padding: '$2',
-              borderRadius: '$1',
+              borderRadius: '$space$1',
               backgroundColor: '$neutralBgHover',
               marginBottom: '$1',
               overflow: 'hidden',
@@ -85,6 +85,8 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
               justifyContent: 'space-between',
               '@bp1': {
                 justifyContent: 'start',
+                width: 'fit-content',
+                marginBottom: '$4',
               },
             }}
           >
