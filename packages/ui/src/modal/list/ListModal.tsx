@@ -11,6 +11,7 @@ import {
   Loader,
   Select,
   ErrorWell,
+  CryptoCurrencyIcon,
 } from '../../primitives'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -27,6 +28,8 @@ import TransactionProgress from '../../modal/TransactionProgress'
 import ProgressBar from '../../modal/ProgressBar'
 import InfoTooltip from '../InfoTooltip'
 import { Marketplace } from '../../hooks/useMarketplaces'
+import { Currency } from '../../types/Currency'
+import { constants } from 'ethers'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -37,7 +40,7 @@ type ListingCallbackData = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
-  ethUsdPrice?: number
+  currencies?: Currency[]
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
@@ -73,6 +76,7 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
+  currencies,
   onGoToToken,
   onListingComplete,
   onListingError,
@@ -90,11 +94,12 @@ export function ListModal({
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
+      currencies={currencies}
     >
       {({
         token,
         collection,
-        ethUsdPrice,
+        usdPrice,
         listStep,
         expirationOption,
         expirationOptions,
@@ -105,9 +110,12 @@ export function ListModal({
         listingData,
         transactionError,
         stepData,
+        currencies,
+        currency,
         setListStep,
         listToken,
         setMarketPrice,
+        setCurrency,
         toggleMarketplace,
         setSyncProfit,
         setExpirationOption,
@@ -194,7 +202,11 @@ export function ListModal({
           }
         }, [transactionError])
 
-        const selectedMarketplaces = marketplaces.filter(
+        const availableMarketplaces = marketplaces.filter(
+          (market) => market.listingEnabled
+        )
+
+        const selectedMarketplaces = availableMarketplaces.filter(
           (marketplace) => marketplace.isSelected
         )
 
@@ -215,9 +227,76 @@ export function ListModal({
 
                 <MainContainer>
                   <Box css={{ p: '$4', flex: 1 }}>
-                    <Text style="subtitle1" as="h3" css={{ mb: '$4' }}>
-                      Select Marketplaces
-                    </Text>
+                    {currencies.length > 1 ? (
+                      <Text
+                        style="subtitle1"
+                        as={Flex}
+                        css={{ mb: '$4', gap: '$2' }}
+                      >
+                        List item in
+                        <Select
+                          trigger={
+                            <Select.Trigger
+                              css={{
+                                width: 'auto',
+                                p: 0,
+                                backgroundColor: 'transparent',
+                              }}
+                            >
+                              <Select.Value asChild>
+                                <Flex>
+                                  <CryptoCurrencyIcon
+                                    address={currency.contract}
+                                    css={{ height: 18 }}
+                                  />
+                                  <Text
+                                    style="subtitle1"
+                                    color="subtle"
+                                    css={{ ml: '$1' }}
+                                  >
+                                    {currency.symbol}
+                                  </Text>
+                                  <Select.DownIcon style={{ marginLeft: 6 }} />
+                                </Flex>
+                              </Select.Value>
+                            </Select.Trigger>
+                          }
+                          value={currency.contract}
+                          onValueChange={(value: string) => {
+                            const option = currencies.find(
+                              (option) => option.contract == value
+                            )
+                            if (option) {
+                              setCurrency(option)
+                            }
+                          }}
+                        >
+                          {currencies.map((option) => (
+                            <Select.Item
+                              key={option.contract}
+                              value={option.contract}
+                            >
+                              <Select.ItemText>
+                                <Flex align="center" css={{ gap: '$1' }}>
+                                  <CryptoCurrencyIcon
+                                    address={option.contract}
+                                    css={{ height: 18 }}
+                                  />
+                                  {option.symbol}
+                                </Flex>
+                              </Select.ItemText>
+                            </Select.Item>
+                          ))}
+                        </Select>
+                      </Text>
+                    ) : (
+                      <Text style="subtitle1" as="h3" css={{ mb: '$4' }}>
+                        {availableMarketplaces.length > 1
+                          ? 'Select Marketplaces'
+                          : 'Available Marketplace'}
+                      </Text>
+                    )}
+
                     <Text style="subtitle2" as="p" color="subtle">
                       Default
                     </Text>
@@ -255,19 +334,19 @@ export function ListModal({
                         {((localMarketplace?.fee?.bps || 0) / 10000) * 100}%
                       </Text>
                     </Flex>
-                    <Text
-                      style="subtitle2"
-                      color="subtle"
-                      as="p"
-                      css={{ mb: '$2' }}
-                    >
-                      Select other marketplaces to list on
-                    </Text>
-                    {marketplaces
+                    {availableMarketplaces.length > 1 && (
+                      <Text
+                        style="subtitle2"
+                        color="subtle"
+                        as="p"
+                        css={{ mb: '$2' }}
+                      >
+                        Select other marketplaces to list on
+                      </Text>
+                    )}
+                    {availableMarketplaces
                       .filter(
-                        (market) =>
-                          market.orderbook !== 'reservoir' &&
-                          market.listingEnabled
+                        (marketplace) => marketplace.orderbook !== 'reservoir'
                       )
                       .map((marketplace) => (
                         <Box key={marketplace.name} css={{ mb: '$3' }}>
@@ -359,9 +438,7 @@ export function ListModal({
                         <InfoTooltip
                           side="left"
                           width={200}
-                          content={
-                            'How much ETH you will receive after marketplace fees and creator royalties are subtracted.'
-                          }
+                          content={`How much ${currency.symbol} you will receive after marketplace fees and creator royalties are subtracted.`}
                         />
                       </Flex>
                     </Flex>
@@ -370,7 +447,8 @@ export function ListModal({
                       <Box key={marketplace.name} css={{ mb: '$3' }}>
                         <MarketplacePriceInput
                           marketplace={marketplace}
-                          ethUsdPrice={ethUsdPrice}
+                          currency={currency}
+                          usdPrice={usdPrice}
                           onChange={(e) => {
                             setMarketPrice(e.target.value, marketplace)
                           }}
@@ -383,7 +461,9 @@ export function ListModal({
                         {collection &&
                           collection?.floorAsk?.price?.amount?.native !==
                             undefined &&
+                          marketplace.truePrice !== '' &&
                           marketplace.truePrice !== null &&
+                          currency.contract === constants.AddressZero &&
                           marketplace.truePrice <
                             collection?.floorAsk?.price.amount.native && (
                             <Box>
@@ -434,15 +514,17 @@ export function ListModal({
                     </Box>
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
-                    <Button
-                      disabled={marketplaces.some(
-                        (marketplace) => marketplace.price === ''
-                      )}
-                      onClick={listToken}
-                      css={{ width: '100%' }}
-                    >
-                      Next
-                    </Button>
+                    {marketplaces.some(
+                      (marketplace) => marketplace.price === ''
+                    ) ? (
+                      <Button disabled={true} css={{ width: '100%' }}>
+                        Set your price
+                      </Button>
+                    ) : (
+                      <Button onClick={listToken} css={{ width: '100%' }}>
+                        Next
+                      </Button>
+                    )}
                   </Box>
                 </MainContainer>
               </ContentContainer>
@@ -453,6 +535,7 @@ export function ListModal({
                   token={token}
                   collection={collection}
                   listingData={listingData}
+                  currency={currency}
                 />
                 <MainContainer css={{ p: '$4' }}>
                   <ProgressBar
@@ -526,6 +609,7 @@ export function ListModal({
                   token={token}
                   collection={collection}
                   listingData={listingData}
+                  currency={currency}
                 />
                 <MainContainer css={{ p: '$4' }}>
                   <ProgressBar
