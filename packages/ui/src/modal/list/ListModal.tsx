@@ -11,6 +11,7 @@ import {
   Loader,
   Select,
   ErrorWell,
+  CryptoCurrencyIcon,
 } from '../../primitives'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -244,9 +245,9 @@ export function ListModal({
                             >
                               <Select.Value asChild>
                                 <Flex>
-                                  <Image
-                                    src={`${client?.apiBase}/redirect/currency/${currency.contract}/icon/v1`}
-                                    css={{ width: 18 }}
+                                  <CryptoCurrencyIcon
+                                    address={currency.contract}
+                                    css={{ height: 18 }}
                                   />
                                   <Text
                                     style="subtitle1"
@@ -277,9 +278,9 @@ export function ListModal({
                             >
                               <Select.ItemText>
                                 <Flex align="center" css={{ gap: '$1' }}>
-                                  <Image
-                                    src={`${client?.apiBase}/redirect/currency/${option.contract}/icon/v1`}
-                                    css={{ width: 18 }}
+                                  <CryptoCurrencyIcon
+                                    address={option.contract}
+                                    css={{ height: 18 }}
                                   />
                                   {option.symbol}
                                 </Flex>

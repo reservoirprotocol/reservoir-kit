@@ -88,8 +88,8 @@ type Props = {
 }
 
 type PaymentTokens = NonNullable<
-  ReturnType<typeof useTokenOpensea>['response']
->['collection']['payment_tokens']
+  NonNullable<ReturnType<typeof useTokenOpensea>['response']>['collection']
+>['payment_tokens']
 
 const isCurrencyAllowed = (
   currency: Currency,
