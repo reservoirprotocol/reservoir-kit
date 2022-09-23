@@ -13,6 +13,7 @@ import {
   useMarketplaces,
   useListingPreapprovalCheck,
   useCollections,
+  useTokenOpensea,
 } from '../../hooks'
 import { useSigner } from 'wagmi'
 
@@ -86,6 +87,51 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
 }
 
+type PaymentTokens = NonNullable<
+  ReturnType<typeof useTokenOpensea>['response']
+>['collection']['payment_tokens']
+
+const isCurrencyAllowed = (
+  currency: Currency,
+  marketplace: Marketplace,
+  openseaPaymentTokens: PaymentTokens
+) => {
+  if (marketplace.listingEnabled) {
+    if (currency.contract === constants.AddressZero) {
+      return true
+    }
+    switch (marketplace.orderbook) {
+      case 'reservoir':
+        return true
+      case 'opensea':
+        return openseaPaymentTokens.some(
+          (token) => token.address === currency.contract
+        )
+    }
+  }
+  return false
+}
+
+const startingPrice = (
+  currency: Currency,
+  token: ReturnType<typeof useTokens>['data'][0],
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>['0']
+) => {
+  let startingPrice: number | string = ''
+  if (currency.contract === constants.AddressZero) {
+    startingPrice =
+      Math.max(
+        ...(token?.token?.attributes?.map((attr: any) =>
+          Number(attr?.floorAskPrice || 0)
+        ) || []),
+        0
+      ) ||
+      collection?.floorAsk?.price?.amount?.native ||
+      0
+  }
+  return startingPrice
+}
+
 export const ListModalRenderer: FC<Props> = ({
   open,
   tokenId,
@@ -100,12 +146,17 @@ export const ListModalRenderer: FC<Props> = ({
 }) => {
   if (!currencies || currencies.length === 0) {
     throw 'The ListModal requires at least one currency to be supplied'
+  } else if (currencies.length > 5) {
+    console.warn(
+      'The ListModal UI was designed to have a maximum of 5 currencies, going above 5 may degrade the user experience.'
+    )
   }
 
   const { data: signer } = useSigner()
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
+  const [allMarketplaces] = useMarketplaces(true)
   const [marketplaces, setMarketplaces] = useMarketplaces(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [syncProfit, setSyncProfit] = useState(true)
@@ -143,6 +194,20 @@ export const ListModalRenderer: FC<Props> = ({
       id: collectionId,
     }
   )
+
+  const { response: openSeaToken } = useTokenOpensea(
+    open ? contract : undefined,
+    open ? tokenId : undefined
+  )
+
+  const paymentTokens = openSeaToken?.collection.payment_tokens || [
+    {
+      address: constants.AddressZero,
+      symbol: 'ETH',
+      name: 'Ether',
+      decimals: 18,
+    },
+  ]
 
   const collection = collections && collections[0] ? collections[0] : undefined
 
@@ -230,39 +295,70 @@ export const ListModalRenderer: FC<Props> = ({
       token &&
       collection &&
       !loadedInitalPrice &&
-      marketplaces.length > 0
+      allMarketplaces.length > 0
     ) {
-      let startingPrice: number =
-        Math.max(
-          ...(token?.token?.attributes?.map((attr: any) =>
-            Number(attr?.floorAskPrice || 0)
-          ) || []),
-          0
-        ) ||
-        collection?.floorAsk?.price?.amount?.native ||
-        0
-
-      setLoadedInitalPrice(true)
-      let updatedMarketplaces = marketplaces.map((marketplace): Marketplace => {
-        return {
-          ...marketplace,
-          price: startingPrice,
-          truePrice: startingPrice,
+      const price = startingPrice(currency, token, collection)
+      let updatedMarketplaces = allMarketplaces.map(
+        (marketplace): Marketplace => {
+          const listingEnabled = isCurrencyAllowed(
+            currency,
+            marketplace,
+            paymentTokens
+          )
+          return {
+            ...marketplace,
+            price: price,
+            truePrice: price,
+            listingEnabled,
+            isSelected: listingEnabled ? marketplace.isSelected : false,
+          }
         }
-      })
-      updatedMarketplaces = syncMarketPrices(
-        updatedMarketplaces[0],
-        updatedMarketplaces
       )
+      if (price !== '') {
+        updatedMarketplaces = syncMarketPrices(
+          updatedMarketplaces[0],
+          updatedMarketplaces
+        )
+      }
       setMarketplaces(updatedMarketplaces)
+      setLoadedInitalPrice(true)
     }
   }, [token, collection, loadedInitalPrice, open, marketplaces.length])
 
   useEffect(() => {
     if (open && syncProfit && loadedInitalPrice && localMarketplace) {
-      setMarketplaces(syncMarketPrices(localMarketplace, marketplaces))
+      setMarketplaces(syncMarketPrices(localMarketplace, allMarketplaces))
     }
   }, [open, syncProfit])
+
+  useEffect(() => {
+    if (open && loadedInitalPrice) {
+      const price = startingPrice(currency, token, collection)
+      let updatedMarketplaces = allMarketplaces.map(
+        (marketplace): Marketplace => {
+          const listingEnabled = isCurrencyAllowed(
+            currency,
+            marketplace,
+            paymentTokens
+          )
+          return {
+            ...marketplace,
+            price: price,
+            truePrice: price,
+            listingEnabled,
+            isSelected: listingEnabled ? marketplace.isSelected : false,
+          }
+        }
+      )
+      if (price !== '') {
+        updatedMarketplaces = syncMarketPrices(
+          updatedMarketplaces[0],
+          updatedMarketplaces
+        )
+      }
+      setMarketplaces(updatedMarketplaces)
+    }
+  }, [open, currency, paymentTokens])
 
   useEffect(() => {
     if (marketplaces) {

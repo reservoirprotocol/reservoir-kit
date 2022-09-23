@@ -28,6 +28,7 @@ import ProgressBar from '../../modal/ProgressBar'
 import InfoTooltip from '../InfoTooltip'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { Currency } from '../../types/Currency'
+import { constants } from 'ethers'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -200,7 +201,11 @@ export function ListModal({
           }
         }, [transactionError])
 
-        const selectedMarketplaces = marketplaces.filter(
+        const availableMarketplaces = marketplaces.filter(
+          (market) => market.listingEnabled
+        )
+
+        const selectedMarketplaces = availableMarketplaces.filter(
           (marketplace) => marketplace.isSelected
         )
 
@@ -221,7 +226,7 @@ export function ListModal({
 
                 <MainContainer>
                   <Box css={{ p: '$4', flex: 1 }}>
-                    {currencies.length > 1 && (
+                    {currencies.length > 1 ? (
                       <Text
                         style="subtitle1"
                         as={Flex}
@@ -283,10 +288,11 @@ export function ListModal({
                           ))}
                         </Select>
                       </Text>
-                    )}
-                    {currencies.length <= 1 && (
+                    ) : (
                       <Text style="subtitle1" as="h3" css={{ mb: '$4' }}>
-                        Select Marketplaces
+                        {availableMarketplaces.length > 1
+                          ? 'Select Marketplaces'
+                          : 'Available Marketplace'}
                       </Text>
                     )}
 
@@ -327,19 +333,19 @@ export function ListModal({
                         {((localMarketplace?.fee?.bps || 0) / 10000) * 100}%
                       </Text>
                     </Flex>
-                    <Text
-                      style="subtitle2"
-                      color="subtle"
-                      as="p"
-                      css={{ mb: '$2' }}
-                    >
-                      Select other marketplaces to list on
-                    </Text>
-                    {marketplaces
+                    {availableMarketplaces.length > 1 && (
+                      <Text
+                        style="subtitle2"
+                        color="subtle"
+                        as="p"
+                        css={{ mb: '$2' }}
+                      >
+                        Select other marketplaces to list on
+                      </Text>
+                    )}
+                    {availableMarketplaces
                       .filter(
-                        (market) =>
-                          market.orderbook !== 'reservoir' &&
-                          market.listingEnabled
+                        (marketplace) => marketplace.orderbook !== 'reservoir'
                       )
                       .map((marketplace) => (
                         <Box key={marketplace.name} css={{ mb: '$3' }}>
@@ -454,7 +460,9 @@ export function ListModal({
                         {collection &&
                           collection?.floorAsk?.price?.amount?.native !==
                             undefined &&
+                          marketplace.truePrice !== '' &&
                           marketplace.truePrice !== null &&
+                          currency.contract === constants.AddressZero &&
                           marketplace.truePrice <
                             collection?.floorAsk?.price.amount.native && (
                             <Box>
@@ -505,15 +513,17 @@ export function ListModal({
                     </Box>
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
-                    <Button
-                      disabled={marketplaces.some(
-                        (marketplace) => marketplace.price === ''
-                      )}
-                      onClick={listToken}
-                      css={{ width: '100%' }}
-                    >
-                      Next
-                    </Button>
+                    {marketplaces.some(
+                      (marketplace) => marketplace.price === ''
+                    ) ? (
+                      <Button disabled={true} css={{ width: '100%' }}>
+                        Set your price
+                      </Button>
+                    ) : (
+                      <Button onClick={listToken} css={{ width: '100%' }}>
+                        Next
+                      </Button>
+                    )}
                   </Box>
                 </MainContainer>
               </ContentContainer>

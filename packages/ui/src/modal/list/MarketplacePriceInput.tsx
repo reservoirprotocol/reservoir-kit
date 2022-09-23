@@ -63,6 +63,7 @@ const MarketplacePriceInput = ({
           value={marketplace.price}
           onChange={onChange}
           onBlur={onBlur}
+          placeholder="Enter a listing price"
         />
       </Box>
       <Flex direction="column" align="end" css={{ ml: '$3' }}>
