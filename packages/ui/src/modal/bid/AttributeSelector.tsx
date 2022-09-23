@@ -61,7 +61,7 @@ const AttributeSelector: FC<Props> = ({
       }}
     >
       <Input
-        css={{ marginBottom: '$4', padding: '16px 16px 16px 48px' }}
+        css={{ marginBottom: '$4', padding: '$space$4 $space$4 $space$4 48px' }}
         placeholder="Filter attribute"
         value={query}
         onChange={(e) => setQuery(e.target.value)}

@@ -1,10 +1,11 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Flex, Box, FormatWEth, Text } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
-import { useTokens, useCollections, useMediaQuery } from '../../hooks'
+import { useTokens, useCollections } from '../../hooks'
 import { BidData } from './BidModalRenderer'
 import { useTimeSince } from '../../hooks'
 import { formatEther } from 'ethers/lib/utils'
+import SelectedAttribute from './SelectedAttribute'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
@@ -14,7 +15,6 @@ type Props = {
 
 const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
   const [value, setValue] = useState('')
-  const isMobile = useMediaQuery('(max-width: 520px)')
   const timeSince = useTimeSince(
     bidData?.expirationTime ? +bidData.expirationTime : 0
   )
@@ -43,38 +43,10 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
           mb: '$3',
         }}
       >
-        {bidData?.attributeKey && (
-          <Flex
-            css={{
-              padding: '$2',
-              borderRadius: '$1',
-              backgroundColor: '$neutralBgHover',
-              marginBottom: '$1',
-              overflow: 'hidden',
-              gap: '$1',
-              justifyContent: 'space-between',
-              '@bp1': {
-                justifyContent: 'start',
-                width: 'fit-content',
-              },
-            }}
-          >
-            <Text color="accent" style="subtitle2">
-              {bidData.attributeKey}
-              {`${isMobile ? '' : ':'}`}
-            </Text>
-            <Text
-              style="subtitle2"
-              css={{
-                maxWidth: 200,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {bidData.attributeValue}
-            </Text>
-          </Flex>
-        )}
+        <SelectedAttribute
+          attributeKey={bidData?.attributeKey}
+          attributeValue={bidData?.attributeValue}
+        />
         <Flex
           direction="column"
           className="rk-stat-well"

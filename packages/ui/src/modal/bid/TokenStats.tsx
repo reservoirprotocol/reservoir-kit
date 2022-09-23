@@ -1,10 +1,11 @@
 import React, { ComponentPropsWithoutRef, FC } from 'react'
-import { Flex, Box, Text, Grid } from '../../primitives'
+import { Flex, Box, Grid } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
 import Stat from '../Stat'
-import { useTokens, useCollections, useMediaQuery } from '../../hooks'
+import { useTokens, useCollections } from '../../hooks'
 import InfoTooltip from '../InfoTooltip'
 import { Trait } from './BidModalRenderer'
+import SelectedAttribute from './SelectedAttribute'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
@@ -13,7 +14,6 @@ type Props = {
 }
 
 const TokenStats: FC<Props> = ({ token, collection, trait }) => {
-  const isMobile = useMediaQuery('(max-width: 520px)')
   let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = []
 
   stats.push(
@@ -73,39 +73,10 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
     >
       <TokenStatsHeader collection={collection} token={token} />
       <Grid css={{ flex: 1, alignContent: 'start' }}>
-        {trait && (
-          <Flex
-            css={{
-              padding: '$2',
-              borderRadius: '$space$1',
-              backgroundColor: '$neutralBgHover',
-              marginBottom: '$1',
-              overflow: 'hidden',
-              gap: '$1',
-              justifyContent: 'space-between',
-              '@bp1': {
-                justifyContent: 'start',
-                width: 'fit-content',
-                marginBottom: '$4',
-              },
-            }}
-          >
-            <Text color="accent" style="subtitle2">
-              {trait.key}
-              {`${isMobile ? '' : ':'}`}
-            </Text>
-            <Text
-              style="subtitle2"
-              css={{
-                maxWidth: 200,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {trait.value}
-            </Text>
-          </Flex>
-        )}
+        <SelectedAttribute
+          attributeKey={trait?.key}
+          attributeValue={trait?.value}
+        />
         <Box
           css={{
             flex: 1,

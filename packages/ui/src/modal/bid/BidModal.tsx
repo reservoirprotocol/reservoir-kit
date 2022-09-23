@@ -488,8 +488,8 @@ export function BidModal({
                       {token && token.token
                         ? 'Make an Offer'
                         : trait
-                        ? 'Make an attribute Offer'
-                        : 'Make a collection Offer'}
+                        ? 'Make an Attribute Offer'
+                        : 'Make a Collection Offer'}
                     </Button>
                   )}
 
