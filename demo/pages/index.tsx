@@ -162,7 +162,7 @@ const Index: NextPage = () => {
             <Trigger>Place Bid</Trigger>
           </div>
         }
-        collectionId="0xc36442b4a4522e871399cd717abdd847ab11fe88"
+        collectionId="0x2ef35e14695736e64d967edb064d2120edbc8af7"
         onBidComplete={(data) => {
           console.log('Bid Complete', data)
         }}

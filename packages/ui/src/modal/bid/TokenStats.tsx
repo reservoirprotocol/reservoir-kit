@@ -1,17 +1,22 @@
 import React, { ComponentPropsWithoutRef, FC } from 'react'
-import { Flex, Box } from '../../primitives'
+import { Flex, Box, Grid } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
 import Stat from '../Stat'
 import { useTokens, useCollections } from '../../hooks'
 import InfoTooltip from '../InfoTooltip'
+import { Trait } from './BidModalRenderer'
+import SelectedAttribute from './SelectedAttribute'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  trait?: Trait
 }
 
-const TokenStats: FC<Props> = ({ token, collection }) => {
-  let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = [
+const TokenStats: FC<Props> = ({ token, collection, trait }) => {
+  let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = []
+
+  stats.push(
     {
       id: 0,
       label: (
@@ -35,8 +40,8 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
         ? token.market?.topBid?.price?.amount?.native || null
         : collection?.topBid?.price?.amount?.native || null,
       asWeth: true,
-    },
-  ]
+    }
+  )
 
   if (token) {
     stats.push({
@@ -67,20 +72,24 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
       }}
     >
       <TokenStatsHeader collection={collection} token={token} />
-      <Box
-        css={{
-          flex: 1,
-          mt: '$4',
-          [`& ${Stat}:not(:last-child)`]: {
-            mb: '$1',
-          },
-          mb: '$3',
-        }}
-      >
-        {stats.map((stat) => (
-          <Stat key={stat.id} {...stat} />
-        ))}
-      </Box>
+      <Grid css={{ flex: 1, alignContent: 'start' }}>
+        <SelectedAttribute
+          attributeKey={trait?.key}
+          attributeValue={trait?.value}
+        />
+        <Box
+          css={{
+            flex: 1,
+            [`& ${Stat}:not(:last-child)`]: {
+              mb: '$1',
+            },
+          }}
+        >
+          {stats.map((stat) => (
+            <Stat key={stat.id} {...stat} />
+          ))}
+        </Box>
+      </Grid>
     </Flex>
   )
 }

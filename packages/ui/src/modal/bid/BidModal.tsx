@@ -13,15 +13,20 @@ import {
   ErrorWell,
   Loader,
   FormatCurrency,
+  FormatCryptoCurrency,
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
-import { BidModalRenderer, BidStep, BidData } from './BidModalRenderer'
+import { BidModalRenderer, BidStep, BidData, Trait } from './BidModalRenderer'
 import TokenStats from './TokenStats'
 import WEthIcon from '../../img/WEthIcon'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCalendar } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCalendar,
+  faClose,
+  faChevronDown,
+} from '@fortawesome/free-solid-svg-icons'
 import Flatpickr from 'react-flatpickr'
 import TransactionProgress from '../TransactionProgress'
 import ProgressBar from '../ProgressBar'
@@ -29,6 +34,9 @@ import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
 import WethApproval from '../../img/WethApproval'
 import OfferSubmitted from '../../img/OfferSubmitted'
 import TransactionBidDetails from './TransactionBidDetails'
+import AttributeSelector from './AttributeSelector'
+import Popover from '../../primitives/Popover'
+import PseudoInput from '../../primitives/PseudoInput'
 
 type BidCallbackData = {
   tokenId?: string
@@ -39,6 +47,7 @@ type BidCallbackData = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
+  attribute?: Trait
   onViewOffers?: () => void
   onClose?: () => void
   onBidComplete?: (data: any) => void
@@ -84,6 +93,7 @@ export function BidModal({
   trigger,
   tokenId,
   collectionId,
+  attribute,
   onViewOffers,
   onClose,
   onBidComplete,
@@ -99,12 +109,19 @@ export function BidModal({
   useEffect(() => {
     setLocalMarketplace(getLocalMarketplaceData())
   }, [])
+  const [attributeSelectorOpen, setAttributeSelectorOpen] = useState(false)
 
   return (
-    <BidModalRenderer open={open} tokenId={tokenId} collectionId={collectionId}>
+    <BidModalRenderer
+      open={open}
+      tokenId={tokenId}
+      collectionId={collectionId}
+      attribute={attribute}
+    >
       {({
         token,
         collection,
+        attributes,
         bidStep,
         expirationOption,
         expirationOptions,
@@ -123,9 +140,15 @@ export function BidModal({
         setBidAmount,
         setExpirationOption,
         setBidStep,
+        setTrait,
+        trait,
         placeBid,
       }) => {
         const [expirationDate, setExpirationDate] = useState('')
+
+        const tokenCount = collection?.tokenCount
+          ? +collection.tokenCount
+          : undefined
 
         const itemImage =
           token && token.token?.image
@@ -183,6 +206,12 @@ export function BidModal({
           }
         }, [transactionError])
 
+        useEffect(() => {
+          if (!tokenId && attributes) {
+            setTrait(attribute)
+          }
+        }, [tokenId, attributes])
+
         return (
           <Modal
             size={bidStep !== BidStep.Complete ? ModalSize.LG : ModalSize.MD}
@@ -213,6 +242,7 @@ export function BidModal({
                 <TokenStats
                   token={token ? token : undefined}
                   collection={collection}
+                  trait={trait}
                 />
                 <MainContainer css={{ p: '$4' }}>
                   {isBanned && (
@@ -276,10 +306,112 @@ export function BidModal({
                     style="tiny"
                     amount={bidAmountUsd}
                   />
+                  {attributes && attributes.length > 0 && !tokenId && (
+                    <>
+                      <Text as={Box} css={{ mb: '$2' }} style="tiny">
+                        Attributes
+                      </Text>
+                      <Popover.Root
+                        open={attributeSelectorOpen}
+                        onOpenChange={setAttributeSelectorOpen}
+                      >
+                        <Popover.Trigger asChild>
+                          <PseudoInput>
+                            <Flex
+                              justify="between"
+                              css={{
+                                gap: '$2',
+                                alignItems: 'center',
+                                color: '$neutralText',
+                              }}
+                            >
+                              {trait ? (
+                                <>
+                                  <Box
+                                    css={{
+                                      maxWidth: 385,
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap',
+                                    }}
+                                  >
+                                    <Text color="accent" style="subtitle1">
+                                      {trait?.key}:{' '}
+                                    </Text>
+                                    <Text style="subtitle1">
+                                      {trait?.value}
+                                    </Text>
+                                  </Box>
+                                  <Flex
+                                    css={{
+                                      alignItems: 'center',
+                                      gap: '$2',
+                                    }}
+                                  >
+                                    <Box css={{ flex: 'none' }}>
+                                      <FormatCryptoCurrency
+                                        amount={
+                                          collection?.floorAsk?.price?.amount
+                                            ?.native
+                                        }
+                                        maximumFractionDigits={2}
+                                        logoWidth={11}
+                                      />
+                                    </Box>
+                                    <FontAwesomeIcon
+                                      style={{
+                                        cursor: 'pointer',
+                                        margin: '-16px -16px -16px 0',
+                                        padding: '16px 16px 16px 8px',
+                                      }}
+                                      onClick={(e) => {
+                                        e.preventDefault()
+                                        setTrait(undefined)
+                                      }}
+                                      icon={faClose}
+                                      width={16}
+                                      height={16}
+                                    />
+                                  </Flex>
+                                </>
+                              ) : (
+                                <>
+                                  <Text
+                                    css={{
+                                      color: '$neutralText',
+                                    }}
+                                  >
+                                    All Attributes
+                                  </Text>
+                                  <FontAwesomeIcon
+                                    icon={faChevronDown}
+                                    width={16}
+                                    height={16}
+                                  />
+                                </>
+                              )}
+                            </Flex>
+                          </PseudoInput>
+                        </Popover.Trigger>
+                        <Popover.Content sideOffset={-50}>
+                          <AttributeSelector
+                            attributes={attributes}
+                            tokenCount={tokenCount}
+                            floorPrice={
+                              collection?.floorAsk?.price?.amount?.native
+                            }
+                            setTrait={setTrait}
+                            setOpen={setAttributeSelectorOpen}
+                          />
+                        </Popover.Content>
+                      </Popover.Root>
+                    </>
+                  )}
+
                   <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
                     Expiration Date
                   </Text>
-                  <Flex css={{ gap: '$2', mb: '$2' }}>
+                  <Flex css={{ gap: '$2', mb: '$4' }}>
                     <Select
                       css={{
                         flex: 1,
@@ -361,7 +493,9 @@ export function BidModal({
                     >
                       {token && token.token
                         ? 'Make an Offer'
-                        : 'Make a collection Offer'}
+                        : trait
+                        ? 'Make an Attribute Offer'
+                        : 'Make a Collection Offer'}
                     </Button>
                   )}
 

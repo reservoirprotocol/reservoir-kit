@@ -2280,6 +2280,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-scroll-area@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@radix-ui/react-scroll-area@npm:1.0.0"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/number": 1.0.0
+    "@radix-ui/primitive": 1.0.0
+    "@radix-ui/react-compose-refs": 1.0.0
+    "@radix-ui/react-context": 1.0.0
+    "@radix-ui/react-direction": 1.0.0
+    "@radix-ui/react-presence": 1.0.0
+    "@radix-ui/react-primitive": 1.0.0
+    "@radix-ui/react-use-callback-ref": 1.0.0
+    "@radix-ui/react-use-layout-effect": 1.0.0
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: 0b7756f1df19ac13c570941461794668d0fb15fd576f37a698a6d0a39f48b728db751455f8de202e5ccb8750c3d9f31a02ada7b79d9f064347aa96e780d8f104
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-select@npm:1.0.1-rc.2":
   version: 1.0.1-rc.2
   resolution: "@radix-ui/react-select@npm:1.0.1-rc.2"
@@ -2522,6 +2543,7 @@ __metadata:
     "@radix-ui/colors": ^0.1.8
     "@radix-ui/react-dialog": 1.0.1-rc.2
     "@radix-ui/react-popover": 1.0.1-rc.2
+    "@radix-ui/react-scroll-area": ^1.0.0
     "@radix-ui/react-select": 1.0.1-rc.2
     "@radix-ui/react-switch": 1.0.0
     "@radix-ui/react-toggle-group": ^1.0.0

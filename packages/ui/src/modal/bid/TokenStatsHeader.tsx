@@ -28,6 +28,7 @@ const TokenStatsHeader: FC<Props> = ({ token, collection }) => {
     <Box
       css={{
         mr: '$4',
+        marginBottom: '$4',
         width: 120,
         '@bp1': {
           mr: 0,

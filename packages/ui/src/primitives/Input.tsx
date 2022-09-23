@@ -34,8 +34,9 @@ export const Input = forwardRef<
   ComponentPropsWithoutRef<typeof StyledInput> & {
     icon?: ReactNode
     containerCss?: CSS
+    iconCss?: CSS
   }
->(({ children, icon, containerCss, ...props }, forwardedRef) => (
+>(({ children, icon, containerCss, iconCss, ...props }, forwardedRef) => (
   <Flex css={{ ...containerCss, position: 'relative' }}>
     {icon && (
       <Box
@@ -46,12 +47,17 @@ export const Input = forwardRef<
           left: 16,
           color: '$neutralTextContrast',
           pointerEvents: 'none',
+          ...iconCss,
         }}
       >
         {icon}
       </Box>
     )}
-    <StyledInput css={{ pl: icon ? 48 : 16 }} ref={forwardedRef} {...props} />
+    <StyledInput
+      css={{ pl: icon ? 48 : 16, ...props.css }}
+      ref={forwardedRef}
+      {...props}
+    />
   </Flex>
 ))
 
