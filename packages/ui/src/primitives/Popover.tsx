@@ -44,7 +44,7 @@ const RKPopover = ({
         <Box
           css={{
             p: '$3',
-            maxWidth: 484,
+            maxWidth: 320,
             overflowY: 'auto',
             maxHeight: 322,
             width: width,

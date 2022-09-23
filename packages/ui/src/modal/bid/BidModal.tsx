@@ -318,10 +318,10 @@ export function BidModal({
                         <Popover.Trigger asChild>
                           <PseudoInput>
                             <Flex
+                              justify="between"
                               css={{
                                 gap: '$2',
                                 alignItems: 'center',
-                                justifyContent: 'space-between',
                                 color: '$neutralText',
                               }}
                             >
@@ -397,6 +397,9 @@ export function BidModal({
                           <AttributeSelector
                             attributes={attributes}
                             tokenCount={tokenCount}
+                            floorPrice={
+                              collection?.floorAsk?.price?.amount?.native
+                            }
                             setTrait={setTrait}
                             setOpen={setAttributeSelectorOpen}
                           />

@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { FC, useEffect, useState } from 'react'
 import {
   Box,
-  Card,
   Flex,
   FormatCryptoCurrency,
   Grid,
@@ -17,12 +16,14 @@ import { useAttributes } from '../../hooks'
 type Props = {
   attributes?: NonNullable<ReturnType<typeof useAttributes>['data']>
   tokenCount?: number
+  floorPrice?: number
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const AttributeSelector: FC<Props> = ({
   attributes,
+  floorPrice,
   setTrait,
   setOpen,
   tokenCount,
@@ -94,12 +95,19 @@ const AttributeSelector: FC<Props> = ({
                 }}
               >
                 {values?.map(({ value, count }) => (
-                  <Card
+                  <Box
                     key={value}
                     css={{
                       display: 'grid',
                       alignContent: 'space-between',
                       cursor: 'pointer',
+                      backgroundColor: '$contentBackground',
+                      borderRadius: '$space$2',
+                      $$shadowColor: '$colors$gray7',
+                      boxShadow: 'box-shadow: 0px 2px 16px $$shadowColor',
+                      border: '1px solid $borderColor',
+                      width: '100%',
+                      padding: '12px 16px',
                     }}
                     as="button"
                     onClick={() => {
@@ -108,8 +116,8 @@ const AttributeSelector: FC<Props> = ({
                     }}
                   >
                     <Flex
+                      justify="between"
                       css={{
-                        justifyContent: 'space-between',
                         gap: '$2',
                         marginBottom: '$1',
                       }}
@@ -127,14 +135,14 @@ const AttributeSelector: FC<Props> = ({
                       </Text>
                       <Box css={{ flex: 'none' }}>
                         <FormatCryptoCurrency
-                          amount={1.345397}
+                          amount={floorPrice}
                           logoWidth={7}
                           maximumFractionDigits={1}
                           textStyle="subtitle2"
                         />
                       </Box>
                     </Flex>
-                    <Flex css={{ justifyContent: 'space-between', gap: '$2' }}>
+                    <Flex justify="between" css={{ gap: '$2' }}>
                       <Text style="body2" color="subtle">
                         {count && tokenCount
                           ? `${Math.round((count / tokenCount) * 100)}%`
@@ -144,7 +152,7 @@ const AttributeSelector: FC<Props> = ({
                         floor
                       </Text>
                     </Flex>
-                  </Card>
+                  </Box>
                 ))}
               </Grid>
             </Box>
