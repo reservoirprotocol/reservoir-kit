@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Flex, Box, FormatWEth, Text } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
-import { useTokens, useCollections } from '../../hooks'
+import { useTokens, useCollections, useMediaQuery } from '../../hooks'
 import { BidData } from './BidModalRenderer'
 import { useTimeSince } from '../../hooks'
 import { formatEther } from 'ethers/lib/utils'
@@ -14,6 +14,7 @@ type Props = {
 
 const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
   const [value, setValue] = useState('')
+  const isMobile = useMediaQuery('(max-width: 520px)')
   const timeSince = useTimeSince(
     bidData?.expirationTime ? +bidData.expirationTime : 0
   )
@@ -43,45 +44,30 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
         }}
       >
         {bidData?.attributeKey && (
-          <Box
+          <Flex
             css={{
               padding: '$2',
               borderRadius: '$1',
               backgroundColor: '$neutralBgHover',
-              marginBottom: '$4',
-              maxWidth: 188,
-              width: 'fit-content',
+              marginBottom: '$1',
               overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            <Text color="accent">{bidData.attributeKey}: </Text>
-            <Text>{bidData.attributeValue}</Text>
-          </Box>
-        )}
-        {bidData?.attributeKey && (
-          <Flex
-            className="rk-stat-well"
-            css={{
-              justifyContent: 'space-between',
-              backgroundColor: '$wellBackground',
-              p: '$2',
-              borderRadius: '$borderRadius',
               gap: '$1',
-              mb: '$2',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              justifyContent: 'space-between',
+              '@bp1': {
+                justifyContent: 'start',
+              },
             }}
           >
-            <Text color="accent">{bidData.attributeKey}</Text>
+            <Text color="accent" style="subtitle2">
+              {bidData.attributeKey}
+              {`${isMobile ? '' : ':'}`}
+            </Text>
             <Text
+              style="subtitle2"
               css={{
-                marginLeft: '$2',
-                maxWidth: 180,
+                maxWidth: 200,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
               }}
             >
               {bidData.attributeValue}

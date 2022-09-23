@@ -98,6 +98,7 @@ const AttributeSelector: FC<Props> = ({
                     key={value}
                     css={{
                       display: 'grid',
+                      alignContent: 'space-between',
                       cursor: 'pointer',
                     }}
                     as="button"
@@ -118,10 +119,8 @@ const AttributeSelector: FC<Props> = ({
                           maxWidth: 85,
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
                           textAlign: 'start',
                         }}
-                        title={value}
                         style="subtitle2"
                       >
                         {value}
@@ -138,7 +137,7 @@ const AttributeSelector: FC<Props> = ({
                     <Flex css={{ justifyContent: 'space-between', gap: '$2' }}>
                       <Text style="body2">
                         {count && tokenCount
-                          ? `${Math.floor((count / tokenCount) * 100)}%`
+                          ? `${Math.round((count / tokenCount) * 100)}%`
                           : '-'}
                       </Text>
                       <Text style="body2">floor</Text>

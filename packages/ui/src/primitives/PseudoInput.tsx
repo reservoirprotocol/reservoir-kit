@@ -4,7 +4,7 @@ const PseudoInput = styled('div', {
   all: 'unset',
   width: 'auto',
   padding: '$4',
-  borderRadius: '$2',
+  borderRadius: 8,
   fontFamily: '$body',
   fontSize: 16,
   fontWeight: 400,

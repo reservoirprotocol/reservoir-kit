@@ -340,18 +340,31 @@ export function BidModal({
                                     </Text>
                                   </Box>
                                   <Flex
-                                    css={{ alignItems: 'center', gap: '$2' }}
+                                    css={{
+                                      alignItems: 'center',
+                                      gap: '$2',
+                                    }}
                                   >
-                                    <FormatCryptoCurrency
-                                      amount={
-                                        collection?.floorAsk?.price?.amount
-                                          ?.native
-                                      }
-                                      maximumFractionDigits={2}
-                                    />
+                                    <Box css={{ flex: 'none' }}>
+                                      <FormatCryptoCurrency
+                                        amount={
+                                          collection?.floorAsk?.price?.amount
+                                            ?.native
+                                        }
+                                        maximumFractionDigits={2}
+                                        logoWidth={11}
+                                      />
+                                    </Box>
                                     <FontAwesomeIcon
-                                      style={{ cursor: 'pointer' }}
-                                      onClick={() => setTrait(undefined)}
+                                      style={{
+                                        cursor: 'pointer',
+                                        margin: '-16px -16px -16px 0',
+                                        padding: '16px 16px 16px 8px',
+                                      }}
+                                      onClick={(e) => {
+                                        e.preventDefault()
+                                        setTrait(undefined)
+                                      }}
                                       icon={faX}
                                       width={16}
                                       height={16}
