@@ -10,7 +10,7 @@ import {
   Input,
   Text,
 } from '../../primitives'
-import { GeneralizedScrollArea } from '../../primitives/ScrollArea'
+import ScrollArea from '../../primitives/ScrollArea'
 import { Trait } from './BidModalRenderer'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
@@ -70,7 +70,7 @@ const AttributeSelector: FC<Props> = ({
           <FontAwesomeIcon icon={faMagnifyingGlass} width={16} height={16} />
         }
       />
-      <GeneralizedScrollArea>
+      <ScrollArea>
         {results?.map(({ key, values }) => {
           if (values?.length === 0) return null
 
@@ -150,7 +150,7 @@ const AttributeSelector: FC<Props> = ({
             </Box>
           )
         })}
-      </GeneralizedScrollArea>
+      </ScrollArea>
     </Box>
   )
 }
