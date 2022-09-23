@@ -48,7 +48,6 @@ const Content = styled(DialogPrimitive.Content, {
   top: '100%',
   width: '100%',
   maxHeight: '85vh',
-  overflowY: 'auto',
   zIndex: 1000,
   '&:focus': { outline: 'none' },
   '@media(max-width: 520px)': {

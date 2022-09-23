@@ -5,6 +5,7 @@ import { useTokens, useCollections } from '../../hooks'
 import { BidData } from './BidModalRenderer'
 import { useTimeSince } from '../../hooks'
 import { formatEther } from 'ethers/lib/utils'
+import SelectedAttribute from './SelectedAttribute'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
@@ -39,10 +40,13 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
       <Box
         css={{
           flex: 1,
-          mt: '$4',
           mb: '$3',
         }}
       >
+        <SelectedAttribute
+          attributeKey={bidData?.attributeKey}
+          attributeValue={bidData?.attributeValue}
+        />
         <Flex
           direction="column"
           className="rk-stat-well"

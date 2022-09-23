@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import * as Popover from '@radix-ui/react-popover'
 import { styled } from '../../stitches.config'
 import Box from './Box'
@@ -14,14 +14,21 @@ const Content = styled(Popover.Content, {
   zIndex: 1000,
 })
 
+type Props = {
+  content?: ReactNode
+  side?: any
+  width?: any
+} & Popover.PopoverProps
+
 const RKPopover = ({
   children,
   content,
   side = 'bottom',
   width = '100%',
-}: any) => {
+  ...props
+}: Props) => {
   return (
-    <Popover.Root>
+    <Popover.Root {...props}>
       <Popover.Trigger
         style={{
           backgroundColor: 'transparent',
@@ -38,6 +45,8 @@ const RKPopover = ({
           css={{
             p: '$3',
             maxWidth: 320,
+            overflowY: 'auto',
+            maxHeight: 322,
             width: width,
             borderRadius: 8,
             backgroundColor: '$popoverBackground',
@@ -49,5 +58,10 @@ const RKPopover = ({
     </Popover.Root>
   )
 }
+
+RKPopover.Root = Popover.Root
+RKPopover.Trigger = Popover.Trigger
+RKPopover.Arrow = Arrow
+RKPopover.Content = Content
 
 export default RKPopover

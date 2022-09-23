@@ -13,7 +13,7 @@ import {
 } from '@reservoir0x/reservoir-kit-ui'
 
 const { chains, provider } = configureChains(
-  [chain.mainnet, chain.rinkeby],
+  [chain.mainnet, chain.goerli],
   [publicProvider()]
 )
 
