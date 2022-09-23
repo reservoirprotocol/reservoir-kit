@@ -6,6 +6,7 @@ import {
   useTokenOpenseaBanned,
   useWethBalance,
   useCollections,
+  useAttributes,
 } from '../../hooks'
 import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
 
@@ -19,7 +20,6 @@ import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
 import { parseEther } from 'ethers/lib/utils'
 import dayjs from 'dayjs'
-import useAttributes from '../../hooks/useAttributes'
 
 const expirationOptions = [
   ...defaultExpirationOptions,

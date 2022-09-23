@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { FC, useEffect, useState } from 'react'
-import useAttributes from '../../hooks/useAttributes'
 import {
   Box,
   Card,
@@ -13,6 +12,7 @@ import {
 import ScrollArea from '../../primitives/ScrollArea'
 import { Trait } from './BidModalRenderer'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { useAttributes } from '../../hooks'
 
 type Props = {
   attributes?: NonNullable<ReturnType<typeof useAttributes>['data']>
