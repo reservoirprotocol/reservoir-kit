@@ -5,14 +5,21 @@ import Stat from '../Stat'
 import ListingStat from './ListingStat'
 import { useTokens, useCollections } from '../../hooks'
 import { ListingData } from './ListModalRenderer'
+import { Currency } from '../../types/Currency'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listingData: ListingData[]
+  currency: Currency
 }
 
-const TokenListingDetails: FC<Props> = ({ token, collection, listingData }) => (
+const TokenListingDetails: FC<Props> = ({
+  token,
+  collection,
+  listingData,
+  currency,
+}) => (
   <Flex
     css={{
       width: '100%',
@@ -40,6 +47,7 @@ const TokenListingDetails: FC<Props> = ({ token, collection, listingData }) => (
           key={i}
           listing={data.listing}
           marketImg={data.marketplace.imageUrl || ''}
+          currency={currency}
         />
       ))}
     </Box>

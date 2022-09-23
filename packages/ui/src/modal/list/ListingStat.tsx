@@ -1,9 +1,9 @@
-import React, { FC, useEffect, useState } from 'react'
-import { Flex, Text, FormatEth } from '../../primitives'
+import React, { FC } from 'react'
+import { Flex, Text, FormatCryptoCurrency } from '../../primitives'
 import { styled } from '../../../stitches.config'
 import { Listings } from './ListModalRenderer'
 import { useTimeSince } from '../../hooks'
-import { formatEther } from 'ethers/lib/utils'
+import { Currency } from '../../types/Currency'
 
 const Img = styled('img', {
   width: 16,
@@ -13,17 +13,13 @@ const Img = styled('img', {
 type Props = {
   listing: Listings[0]
   marketImg: string
+  currency: Currency
 }
 
-const ListingStat: FC<Props> = ({ listing, marketImg, ...props }) => {
-  const [value, setValue] = useState('')
+const ListingStat: FC<Props> = ({ listing, marketImg, currency, ...props }) => {
   const timeSince = useTimeSince(
     listing.expirationTime ? +listing.expirationTime : 0
   )
-
-  useEffect(() => {
-    setValue(formatEther(listing.weiPrice))
-  }, [listing])
 
   return (
     <Flex
@@ -38,7 +34,12 @@ const ListingStat: FC<Props> = ({ listing, marketImg, ...props }) => {
       {...props}
     >
       <Flex justify="between">
-        <FormatEth amount={+value} textStyle="subtitle2" />
+        <FormatCryptoCurrency
+          amount={listing.weiPrice}
+          textStyle="subtitle2"
+          address={currency.contract}
+          decimals={currency.decimals}
+        />
         <Img src={marketImg} />
       </Flex>
       <Text style="subtitle2" color="subtle" as="p" css={{ flex: 1 }}>

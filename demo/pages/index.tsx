@@ -124,8 +124,18 @@ const Index: NextPage = () => {
             <Trigger>List Item</Trigger>
           </div>
         }
-        collectionId="0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b"
-        tokenId="960982"
+        collectionId="0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e"
+        tokenId="39"
+        currencies={[
+          {
+            contract: '0x0000000000000000000000000000000000000000',
+            symbol: 'ETH',
+          },
+          {
+            contract: '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557',
+            symbol: 'USDC',
+          },
+        ]}
         onGoToToken={() => console.log('Awesome!')}
         onListingComplete={(data) => {
           console.log('Listing Complete', data)
