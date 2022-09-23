@@ -1,8 +1,8 @@
 import useSWR, { SWRConfiguration } from 'swr'
 
 export type OpenSeaTokenResponse = {
-  supports_wyvern: boolean
-  collection: {
+  supports_wyvern?: boolean
+  collection?: {
     payment_tokens: {
       address: string
       decimals: number

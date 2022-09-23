@@ -200,7 +200,7 @@ export const ListModalRenderer: FC<Props> = ({
     open ? tokenId : undefined
   )
 
-  const paymentTokens = openSeaToken?.collection.payment_tokens || [
+  const paymentTokens = openSeaToken?.collection?.payment_tokens || [
     {
       address: constants.AddressZero,
       symbol: 'ETH',
