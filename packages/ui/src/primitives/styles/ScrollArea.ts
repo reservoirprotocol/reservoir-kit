@@ -4,7 +4,7 @@ const SCROLLBAR_SIZE = 10
 
 const root: CSS = {
   height: 322,
-  borderRadius: 4,
+  borderRadius: '$space$2',
   overflow: 'hidden',
   boxShadow: `0 2px 10px $inputBackground`,
 }

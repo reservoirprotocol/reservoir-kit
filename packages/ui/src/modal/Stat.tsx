@@ -37,10 +37,8 @@ const Stat: FC<StatProps> = ({
         as="p"
         css={{
           marginLeft: '$2',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
         }}
+        ellipsify
       >
         {value ? value : '-'}
       </Text>
