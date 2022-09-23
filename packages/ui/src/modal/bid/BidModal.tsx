@@ -22,7 +22,11 @@ import TokenStats from './TokenStats'
 import WEthIcon from '../../img/WEthIcon'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCalendar } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCalendar,
+  faClose,
+  faChevronDown,
+} from '@fortawesome/free-solid-svg-icons'
 import Flatpickr from 'react-flatpickr'
 import TransactionProgress from '../TransactionProgress'
 import ProgressBar from '../ProgressBar'
@@ -33,7 +37,6 @@ import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
-import { faChevronDown, faX } from '@fortawesome/free-solid-svg-icons'
 
 type BidCallbackData = {
   tokenId?: string
@@ -365,7 +368,7 @@ export function BidModal({
                                         e.preventDefault()
                                         setTrait(undefined)
                                       }}
-                                      icon={faX}
+                                      icon={faClose}
                                       width={16}
                                       height={16}
                                     />
