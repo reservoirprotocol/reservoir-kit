@@ -14,7 +14,8 @@
     "scripts": {
         "clean": "rm -rf dist",
         "version": "yarn version",
-        "version:update": "yarn version ${0}; git add -A; git commit -m \"🎉 Release client package v${1}\"; git push",
+        "version:package": "sh ../../scripts/package-version.sh",
+        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release client package v$PACKAGE_VERSION\"; git push",
         "syncApi": "npx openapi-typescript https://api.reservoir.tools/swagger.json --output ./src/types/api.ts",
         "changelog": "node ../../scripts/generate-changelog.js package=client"
     },

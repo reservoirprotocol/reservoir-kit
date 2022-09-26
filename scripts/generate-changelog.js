@@ -21,7 +21,11 @@ const { gitlogPromise } = require('gitlog')
 gitlogPromise(options)
   .then((commits) => {
     const changelog = commits.reduce((changelog, commit) => {
-      if (!commit.subject || commit.subject.includes('changelog:')) {
+      if (
+        !commit.subject ||
+        commit.subject.includes('changelog:') ||
+        commit.subject.includes('chore:')
+      ) {
         return changelog
       }
 
