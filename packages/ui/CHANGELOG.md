@@ -1,4 +1,11 @@
 
+## [0.4.0-4](https://github.com/reservoirprotocol/reservoir-kit/commit/82659f49844b8c57eb41f97ad15d71de307c0d06) (2022-09-26)
+
+* Fix AcceptBidModal bug when approving a marketplace, Completes RES-503 [dfa611f](https://github.com/reservoirprotocol/reservoir-kit/commit/dfa611fa04a8b15e1b5d728c8517f313cc32926b)
+* fixed attribute offer autofill [f25ce5a](https://github.com/reservoirprotocol/reservoir-kit/commit/f25ce5a703cf75dc08b89a9768bbc0daa1045984)
+* fix spacing and dimensions accept bid modal [c5f3359](https://github.com/reservoirprotocol/reservoir-kit/commit/c5f3359529630caa43a7c0266ac28804c2a46010)
+## [0.4.0-3](https://github.com/reservoirprotocol/reservoir-kit/commit/36aa57aaac8d2fe6318a1ce04b8c506a632b51cf) (2022-09-26)
+
 * Merge branch 'main' of github.com:reservoirprotocol/reservoir-kit [16a3598](https://github.com/reservoirprotocol/reservoir-kit/commit/16a3598ed30dee2dd9beb760a9bbbc815db7b20e)
 ## [0.4.0-rc.2](https://github.com/reservoirprotocol/reservoir-kit/commit/ce968895fddca38536387e0502ce95cc4aa56457) (2022-09-23)
 
