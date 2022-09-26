@@ -1,7 +1,32 @@
 
+* Merge branch 'main' of github.com:reservoirprotocol/reservoir-kit [16a3598](https://github.com/reservoirprotocol/reservoir-kit/commit/16a3598ed30dee2dd9beb760a9bbbc815db7b20e)
+## [0.4.0-rc.2](https://github.com/reservoirprotocol/reservoir-kit/commit/ce968895fddca38536387e0502ce95cc4aa56457) (2022-09-23)
+
+* Merge branch 'main' into trait-offer [ad53da4](https://github.com/reservoirprotocol/reservoir-kit/commit/ad53da4ddcc69814d0cbe354797db4c10d6d97c7)
+* added `floorPrice` [2e20373](https://github.com/reservoirprotocol/reservoir-kit/commit/2e20373e158f2e5ca2e48581072e98018bbf2a50)
+* export `useAttributes` [41e8d78](https://github.com/reservoirprotocol/reservoir-kit/commit/41e8d7874d3432c7d7ab2f143e8da45efa051d8d)
+* simplified scrollarea [3eb7402](https://github.com/reservoirprotocol/reservoir-kit/commit/3eb7402dda962981dd67ce33cad31bcb28bd4afa)
+* added weth address [26d177b](https://github.com/reservoirprotocol/reservoir-kit/commit/26d177b9277f551223613679533328b824c5d33d)
+## [0.4.0-rc.1](https://github.com/reservoirprotocol/reservoir-kit/commit/9041ebe8c788ce2fbc543abece8d7702441abfc4) (2022-09-23)
+
+* Reuse CryptoCurrencyIcon component instead of redirect currency url when necessary [8f86349](https://github.com/reservoirprotocol/reservoir-kit/commit/8f86349375c2d04607ef005df7dcf43deb118063)
+* cleanup [c1ff8dd](https://github.com/reservoirprotocol/reservoir-kit/commit/c1ff8dd248eb8539f9299b639ab8d7b789d5af4a)
+* Fix bug where opensea api returns no data [c00d782](https://github.com/reservoirprotocol/reservoir-kit/commit/c00d782eb4937b908e14da9c8b991a65d7ad184b)
+* created `SelectedAttribute.tsx` [a31f6ff](https://github.com/reservoirprotocol/reservoir-kit/commit/a31f6ffd53ccc0db2ef62d28ea36a47962d8c6ea)
+* Adjust ERC20 listing logic [6903031](https://github.com/reservoirprotocol/reservoir-kit/commit/6903031b2dfad79dd8e786d540438a452dbcce39)
+* misc. changes [1253e2f](https://github.com/reservoirprotocol/reservoir-kit/commit/1253e2fab3bb8ff274ae753299b57c8c7828cd2d)
+* misc changes [42fbdae](https://github.com/reservoirprotocol/reservoir-kit/commit/42fbdae8cbe54512fea1ad162cb00fe1f61ba891)
+* misc changes [dd365a9](https://github.com/reservoirprotocol/reservoir-kit/commit/dd365a91dcc6d7955403aba9b9ab5b278007aadc)
+* changed spacing [5034a7e](https://github.com/reservoirprotocol/reservoir-kit/commit/5034a7e9b5c4f9e7ff2a1a62977cd63e53566607)
+* Support ERC20 on the ListModal [f373897](https://github.com/reservoirprotocol/reservoir-kit/commit/f373897988597efb7f4d3769a134f413ee022fa0)
+* Merge branch 'main' into trait-offer [6893113](https://github.com/reservoirprotocol/reservoir-kit/commit/6893113595b945803a7a401b84958c596d053f85)
+* mobile support [9e4065e](https://github.com/reservoirprotocol/reservoir-kit/commit/9e4065e300fd6aa9ef0abeea38c04e6484c7e373)
 ## [0.4.0](https://github.com/reservoirprotocol/reservoir-kit/commit/04d58f181669b7426466bdbb57f51763550de3fb) (2022-09-20)
 
 * BREAKING: Break up fees into referral and marketplace to reduce confusion and allow for flexibility [fb7ff72](https://github.com/reservoirprotocol/reservoir-kit/commit/fb7ff72958fbf1592670a31439231684c0060564)
+* misc. changes [cb07e82](https://github.com/reservoirprotocol/reservoir-kit/commit/cb07e82c0f16a080fc8c1532db41eeb033fc2312)
+* misc changes [d883e51](https://github.com/reservoirprotocol/reservoir-kit/commit/d883e51cb6f7da2a12638dd9f926f6fb1c0afc88)
+* first commit [c728a81](https://github.com/reservoirprotocol/reservoir-kit/commit/c728a81fc26e2ed73525e6f7b1daf38e9710d8ff)
 ## [0.3.7](https://github.com/reservoirprotocol/reservoir-kit/commit/b222a9251a4b440ca1a0849538114ddea14c2747) (2022-09-16)
 
 * fix all tooltip spacing [f879a03](https://github.com/reservoirprotocol/reservoir-kit/commit/f879a03e97cad562f1ef3013c1e5a634a4c0b79e)
