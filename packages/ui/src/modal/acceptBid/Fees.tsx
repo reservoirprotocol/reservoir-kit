@@ -53,7 +53,6 @@ const Fees: FC<Props> = ({ fees: { feeBreakdown }, marketplace }) => {
       css={{
         px: '$4',
         mt: '$4',
-        mb: '$2',
         flexDirection: 'column',
       }}
     >
@@ -63,12 +62,14 @@ const Fees: FC<Props> = ({ fees: { feeBreakdown }, marketplace }) => {
       {parsedFeeBreakdown?.map(({ name, percentage, tooltipMessage }) => (
         <Flex css={{ justifyContent: 'space-between', mb: '$2' }}>
           <Flex css={{ alignItems: 'center', gap: 8 }}>
-            <Text style="body2">{name}</Text>
+            <Text style="subtitle2" color="subtle">
+              {name}
+            </Text>
             {tooltipMessage && (
               <InfoTooltip side="right" width={200} content={tooltipMessage} />
             )}
           </Flex>
-          <Text style="body2">{percentage}%</Text>
+          <Text style="subtitle2">{percentage}%</Text>
         </Flex>
       ))}
     </Flex>
