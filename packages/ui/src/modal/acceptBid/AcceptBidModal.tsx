@@ -206,6 +206,7 @@ export function AcceptBidModal({
                     textStyle="h6"
                     amount={totalPrice}
                     address={currency?.contract}
+                    logoWidth={19}
                   />
                 </Flex>
                 <Flex justify="end">

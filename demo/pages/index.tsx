@@ -188,8 +188,8 @@ const Index: NextPage = () => {
             <Trigger>Accept Bid</Trigger>
           </div>
         }
-        collectionId="0x4d68e14cd7dec510c84326f54ee41f88e8fad59b"
-        tokenId="23423"
+        collectionId="0x2f727bf6805bac340191a8f5102524b78d868233"
+        tokenId="420"
         onBidAccepted={(data) => {
           console.log('Bid Accepted', data)
         }}

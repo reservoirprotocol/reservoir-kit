@@ -90,10 +90,9 @@ const TokenPrimitive: FC<Props> = ({
               {collection}
             </Text>
             {!!expires && <Text style="tiny">Expires {expires}</Text>}
-            {!!royalty && <Text style="tiny">{royalty}% royalty</Text>}
           </Grid>
         </Flex>
-        <Grid css={{ justifyItems: 'end', rowGap: 4 }}>
+        <Grid css={{ justifyItems: 'end', alignContent: 'start', rowGap: 4 }}>
           {source && (
             <Img
               src={source}
@@ -107,6 +106,7 @@ const TokenPrimitive: FC<Props> = ({
               textColor={isUnavailable ? 'subtle' : 'base'}
               address={currencyContract}
               decimals={currencyDecimals}
+              logoWidth={14.5}
             />
           ) : (
             <Text style="subtitle2" color={isUnavailable ? 'subtle' : 'base'}>
