@@ -207,10 +207,12 @@ export function BidModal({
         }, [transactionError])
 
         useEffect(() => {
-          if (!tokenId && attributes) {
+          if (open && attributes && !tokenId) {
             setTrait(attribute)
+          } else {
+            setTrait(undefined)
           }
-        }, [tokenId, attributes])
+        }, [open, attributes])
 
         return (
           <Modal

@@ -71,7 +71,7 @@ const AttributeSelector: FC<Props> = ({
           <FontAwesomeIcon icon={faMagnifyingGlass} width={16} height={16} />
         }
       />
-      <ScrollArea>
+      <ScrollArea css={{ minWidth: '80vw', '@bp1': { minWidth: 468 } }}>
         {results?.map(({ key, values }) => {
           if (values?.length === 0) return null
 
