@@ -40,7 +40,7 @@ export const Progress: FC<Props> = ({
           <Text style="h6" css={{ mb: 28 }}>
             {stepData && stepData.totalSteps > 2
               ? stepData.currentStep.action
-              : `Approve {marketplace?.name} to access item in your wallet`}
+              : `Approve ${marketplace?.name} to access item in your wallet`}
           </Text>
           <Flex
             css={{

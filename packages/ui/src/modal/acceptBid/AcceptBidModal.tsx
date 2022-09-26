@@ -206,7 +206,7 @@ export function AcceptBidModal({
                     textStyle="h6"
                     amount={totalPrice}
                     address={currency?.contract}
-                    logoWidth={19}
+                    logoWidth={16}
                   />
                 </Flex>
                 <Flex justify="end">
@@ -234,7 +234,8 @@ export function AcceptBidModal({
             )}
 
             {(acceptBidStep === AcceptBidStep.Confirming ||
-              acceptBidStep === AcceptBidStep.Finalizing) &&
+              acceptBidStep === AcceptBidStep.Finalizing ||
+              acceptBidStep === AcceptBidStep.ApproveMarketplace) &&
               token && (
                 <Flex direction="column">
                   <TokenLineItem
