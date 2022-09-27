@@ -3,10 +3,10 @@ import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type UserTokenResponse =
-  paths['/users/{user}/tokens/v4']['get']['responses']['200']['schema']
+  paths['/users/{user}/tokens/v5']['get']['responses']['200']['schema']
 
 type UserTokenQuery =
-  paths['/users/{user}/tokens/v4']['get']['parameters']['query']
+  paths['/users/{user}/tokens/v5']['get']['parameters']['query']
 
 export default function (
   user?: string | undefined,
