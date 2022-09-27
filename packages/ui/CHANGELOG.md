@@ -1,4 +1,12 @@
 
+## [0.4.1](https://github.com/reservoirprotocol/reservoir-kit/commit/b403fe40de958b5316601629374d2bdf3b037515) (2022-09-27)
+
+* Fix isFetchingPage calculation for hooks, add some minor fixes and tweaks for useUserTokens after testing [207c290](https://github.com/reservoirprotocol/reservoir-kit/commit/207c290ee5b5ba96df6e6d6ff1c51db7d2cd08d6)
+* fix: types and pagination logic [c4b57b6](https://github.com/reservoirprotocol/reservoir-kit/commit/c4b57b6e4946c9b0c57ca0c7b5c1b0e5e15560b2)
+* feat: upgrade to v5 [9cbe432](https://github.com/reservoirprotocol/reservoir-kit/commit/9cbe432775a05787471f65fec0e768911c6e5cad)
+* Merge remote-tracking branch 'upstream/main' into user-tokens [5b88e33](https://github.com/reservoirprotocol/reservoir-kit/commit/5b88e33771e750fe330db0e1c1178f8a3fe20312)
+* feat: add user tokens hook [fd47ead](https://github.com/reservoirprotocol/reservoir-kit/commit/fd47eadc428759267d221b9155f98b75e6311cbd)
+* Add useBids hook [62851a1](https://github.com/reservoirprotocol/reservoir-kit/commit/62851a18a44bfdee28d696e0a63f61c00158f2b4)
 ## [0.4.0-4](https://github.com/reservoirprotocol/reservoir-kit/commit/82659f49844b8c57eb41f97ad15d71de307c0d06) (2022-09-26)
 
 * Fix AcceptBidModal bug when approving a marketplace, Completes RES-503 [dfa611f](https://github.com/reservoirprotocol/reservoir-kit/commit/dfa611fa04a8b15e1b5d728c8517f313cc32926b)
