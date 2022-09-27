@@ -7,6 +7,7 @@ export { default as useListings } from './useListings'
 export { default as useOwnerListings } from './useOwnerListings'
 export { default as useBids } from './useBids'
 export { default as useAttributes } from './useAttributes'
+export { default as useUserTokens } from './useUserTokens'
 
 export { default as useCopyToClipboard } from './useCopyToClipboard'
 export { default as useMediaQuery } from './useMediaQuery'

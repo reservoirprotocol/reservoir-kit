@@ -39,7 +39,7 @@ export default function (
   const isFetchingInitialData = !data && !error
   const isFetchingPage =
     isFetchingInitialData ||
-    (size > 0 && data && typeof data[size - 1] === undefined)
+    (size > 0 && data && typeof data[size - 1] === 'undefined')
   const fetchNextPage = () => {
     if (!isFetchingPage && hasNextPage) {
       setSize((size) => size + 1)
