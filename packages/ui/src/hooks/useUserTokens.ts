@@ -15,8 +15,6 @@ export default function (
 ) {
   const client = useReservoirClient()
 
-  console.log(`${client?.apiBase}/users/${user}/tokens/v4`)
-
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<UserTokenResponse>(
       (pageIndex, previousPageData) => {
