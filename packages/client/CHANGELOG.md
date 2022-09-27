@@ -1,4 +1,7 @@
 
+## [0.1.1](https://github.com/reservoirprotocol/reservoir-kit/commit/e13394f98421fd9bdd6c2b7f785d46c5a4c5b7c2) (2022-09-27)
+
+* Sync api [0ef8a8a](https://github.com/reservoirprotocol/reservoir-kit/commit/0ef8a8a1b04004c23d217c2c6097addc0c13ac80)
 ## [0.1.0](https://github.com/reservoirprotocol/reservoir-kit/commit/36397a39f43b0aac2eca25fcbe9b4da3c03a8f54) (2022-09-20)
 
 * BREAKING: Break up fees into referral and marketplace to reduce confusion and allow for flexibility [fb7ff72](https://github.com/reservoirprotocol/reservoir-kit/commit/fb7ff72958fbf1592670a31439231684c0060564)
@@ -23,7 +26,6 @@
 * Merge branch 'main' into pedro/res-178-add-erc20-support-to-buy-modal [27cbc96](https://github.com/reservoirprotocol/reservoir-kit/commit/27cbc9616c7c71f5b8ce04a5b47ed9335ef6fa54)
 ## [0.0.16](https://github.com/reservoirprotocol/reservoir-kit/commit/74dfdd90e0c87d6c8eb916c4758f714c8589893a) (2022-09-09)
 
-* chore: sync api [ae45272](https://github.com/reservoirprotocol/reservoir-kit/commit/ae452724bcc0d537ed0e2c9308fd63125889ac4e)
 * Completes RES-178: BuyModal erc20 support [766cd7e](https://github.com/reservoirprotocol/reservoir-kit/commit/766cd7eaf2bfb7e5713842964353dd1727f0bcb9)
 * Only confirm the last transaction [15e1d9f](https://github.com/reservoirprotocol/reservoir-kit/commit/15e1d9f4ec51f192532eadf5949ec52b56fd599c)
 ## [0.0.15](https://github.com/reservoirprotocol/reservoir-kit/commit/ff952c96f3c4e3cc84f50dd643fd56a9f086283a) (2022-09-01)
