@@ -19,16 +19,19 @@ export default function (
     useSWRInfinite<UserTokenResponse>(
       (pageIndex, previousPageData) => {
         // options are optional, no need to exit early if not provided
+        if (!user) {
+          return null
+        }
 
         const url = new URL(`${client?.apiBase}/users/${user}/tokens/v4`)
 
         let query: UserTokenQuery = { ...options }
 
-        if (previousPageData && previousPageData.tokens.length === 0) {
+        if (previousPageData && previousPageData.tokens?.length === 0) {
           // there are no tokens in the previous page so exit b/c previous page was end
           return null
         } else if (previousPageData && pageIndex > 0) {
-          query.limit = query.limit + query.offset
+          query.offset = (query?.limit || 20) * pageIndex
         }
 
         // append query arguments to url
@@ -66,5 +69,8 @@ export default function (
     isFetchingInitialData,
     isFetchingPage,
     fetchNextPage,
+    mutate,
+    error,
+    isValidating,
   }
 }
