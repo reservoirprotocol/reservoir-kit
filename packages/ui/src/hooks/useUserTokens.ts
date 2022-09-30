@@ -22,7 +22,7 @@ export default function (
           return null
         }
 
-        const url = new URL(`${client?.apiBase}/users/${user}/tokens/v4`)
+        const url = new URL(`${client?.apiBase}/users/${user}/tokens/v5`)
 
         let query: UserTokenQuery = { ...options }
 
