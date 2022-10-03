@@ -2,8 +2,8 @@ import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
-type Bids = paths['/orders/bids/v3']['get']['responses']['200']['schema']
-type BidsQuery = paths['/orders/bids/v3']['get']['parameters']['query']
+type Bids = paths['/orders/bids/v4']['get']['responses']['200']['schema']
+type BidsQuery = paths['/orders/bids/v4']['get']['parameters']['query']
 
 export default function (
   options: BidsQuery,
@@ -14,7 +14,7 @@ export default function (
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<Bids>(
       (pageIndex, previousPageData) => {
-        const url = new URL(`${client?.apiBase || ''}/orders/bids/v3`)
+        const url = new URL(`${client?.apiBase || ''}/orders/bids/v4`)
         let query: BidsQuery = options || {}
 
         if (previousPageData && !previousPageData.continuation) {
