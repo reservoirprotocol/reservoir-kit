@@ -399,9 +399,6 @@ export function BidModal({
                           <AttributeSelector
                             attributes={attributes}
                             tokenCount={tokenCount}
-                            floorPrice={
-                              collection?.floorAsk?.price?.amount?.native
-                            }
                             setTrait={setTrait}
                             setOpen={setAttributeSelectorOpen}
                           />
