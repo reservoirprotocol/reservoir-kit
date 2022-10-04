@@ -1,17 +1,15 @@
 import { NextPage } from 'next'
-import { useBids } from '@reservoir0x/reservoir-kit-ui'
+import { useCollectionActivity } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
 
-const Bids: NextPage = () => {
+const Activity: NextPage = () => {
   const {
-    data: bids,
+    data: activity,
     fetchNextPage,
     hasNextPage,
-  } = useBids({
-    limit: 10,
-  })
+  } = useCollectionActivity('0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b')
 
   const { ref, inView } = useInView()
 
@@ -34,13 +32,9 @@ const Bids: NextPage = () => {
       }}
     >
       <ConnectButton />
-      <h3 style={{ fontSize: 20, fontWeight: 600 }}>Bids</h3>
-      {bids.map((bid) => (
-        <div key={bid.id}>
-          <div>Id: {bid.id}</div>
-          <div>Price: {bid.price.amount.native}</div>
-          <div>Source: {bid.source.name}</div>
-        </div>
+      <h3 style={{ fontSize: 20, fontWeight: 600 }}>Activity</h3>
+      {activity.map((token, i) => (
+        <pre>{JSON.stringify(token, null, 2)}</pre>
       ))}
       {hasNextPage ? (
         <div
@@ -62,4 +56,4 @@ const Bids: NextPage = () => {
   )
 }
 
-export default Bids
+export default Activity

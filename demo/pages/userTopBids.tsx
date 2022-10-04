@@ -1,15 +1,16 @@
 import { NextPage } from 'next'
-import { useBids } from '@reservoir0x/reservoir-kit-ui'
+import { useUserTopBids } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
 
-const Bids: NextPage = () => {
+const UserTopBids: NextPage = () => {
   const {
     data: bids,
     fetchNextPage,
     hasNextPage,
-  } = useBids({
+    isFetchingPage,
+  } = useUserTopBids('0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00', {
     limit: 10,
   })
 
@@ -35,10 +36,10 @@ const Bids: NextPage = () => {
     >
       <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Bids</h3>
-      {bids.map((bid) => (
-        <div key={bid.id}>
+      {bids.map((bid, i) => (
+        <div key={`${bid.id}:${i}`}>
           <div>Id: {bid.id}</div>
-          <div>Price: {bid.price.amount.native}</div>
+          <div>Price: {bid.price}</div>
           <div>Source: {bid.source.name}</div>
         </div>
       ))}
@@ -62,4 +63,4 @@ const Bids: NextPage = () => {
   )
 }
 
-export default Bids
+export default UserTopBids
