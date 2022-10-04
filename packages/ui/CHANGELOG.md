@@ -1,4 +1,21 @@
 
+## [0.4.5](https://github.com/reservoirprotocol/reservoir-kit/commit/d2358e67d6cf43ec118c637de3a2becdb29d279f) (2022-10-04)
+
+* Merge pull request #78 from reservoirprotocol/collection-activity [736d4d7](https://github.com/reservoirprotocol/reservoir-kit/commit/736d4d71026f715ef69db4aef3826c47e2133681)
+* Merge branch 'main' into attribute-selector-floor-prices [3d01b6e](https://github.com/reservoirprotocol/reservoir-kit/commit/3d01b6e5ef20c22bc2275b944022f1d5880b0afc)
+* fixed demo [90732ef](https://github.com/reservoirprotocol/reservoir-kit/commit/90732ef653987ac55c399ff30c501423507799a8)
+* add export [f3d1787](https://github.com/reservoirprotocol/reservoir-kit/commit/f3d17876cbf26e5e23dfd6702b903032c89ed49b)
+* added `collectionActivity` endpoint hook [a34b586](https://github.com/reservoirprotocol/reservoir-kit/commit/a34b586328c4759e5b621b6bcc2234a4cbec03e3)
+## [0.4.4](https://github.com/reservoirprotocol/reservoir-kit/commit/f44e61e8bf2d5f38a66a1cfd2b4e35b7733b9ce4) (2022-10-04)
+
+* Fix issue with ETH currency icon not aligning properly with the text [0549bd2](https://github.com/reservoirprotocol/reservoir-kit/commit/0549bd27b5170639873eebb4a7ba1a745ce8269f)
+* use new `floorAskPrice` [9133feb](https://github.com/reservoirprotocol/reservoir-kit/commit/9133febab0d0497b47fbb7bf0144bb24c8e3fef1)
+## [0.4.3](https://github.com/reservoirprotocol/reservoir-kit/commit/4c3848cba7fb8307550c5d1f0c217d7cc2093745) (2022-10-03)
+
+* Upgrade useBids from v3 to v4 [c126dc4](https://github.com/reservoirprotocol/reservoir-kit/commit/c126dc4cf9981191db79461dd688bbb3059f0cfc)
+## [0.4.2](https://github.com/reservoirprotocol/reservoir-kit/commit/ad9caa2f5e557bfc11b22e08e1231527dd593b37) (2022-09-30)
+
+* Fix wrong version of userTokens being used in useUserTokens hook; v4 => v5 [5cca001](https://github.com/reservoirprotocol/reservoir-kit/commit/5cca00117153c3aa2db31fcacd80070970b8bb62)
 ## [0.4.1](https://github.com/reservoirprotocol/reservoir-kit/commit/b403fe40de958b5316601629374d2bdf3b037515) (2022-09-27)
 
 * Fix isFetchingPage calculation for hooks, add some minor fixes and tweaks for useUserTokens after testing [207c290](https://github.com/reservoirprotocol/reservoir-kit/commit/207c290ee5b5ba96df6e6d6ff1c51db7d2cd08d6)
