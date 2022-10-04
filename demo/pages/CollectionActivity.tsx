@@ -6,10 +6,10 @@ import { useEffect } from 'react'
 
 const Activity: NextPage = () => {
   const {
-    data: tokens,
+    data: activity,
     fetchNextPage,
     hasNextPage,
-  } = useCollectionActivity('0x731b0115fec5b8ee06d98565a7b4b663cad086ba')
+  } = useCollectionActivity('0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b')
 
   const { ref, inView } = useInView()
 
@@ -32,12 +32,9 @@ const Activity: NextPage = () => {
       }}
     >
       <ConnectButton />
-      <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tokens</h3>
-      {tokens.map((token, i) => (
-        <div key={`${token.token.tokenId}-${i}`}>
-          <div>Id: {token.token.tokenId}</div>
-          <div>Name: {token.token.name}</div>
-        </div>
+      <h3 style={{ fontSize: 20, fontWeight: 600 }}>Activity</h3>
+      {activity.map((token, i) => (
+        <pre>{JSON.stringify(token, null, 2)}</pre>
       ))}
       {hasNextPage ? (
         <div
@@ -59,4 +56,4 @@ const Activity: NextPage = () => {
   )
 }
 
-export default Tokens
+export default Activity

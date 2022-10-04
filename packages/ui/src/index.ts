@@ -5,6 +5,7 @@ export { ReservoirClientProvider } from './ReservoirClientProvider'
 // Hooks
 export {
   useCollections,
+  useCollectionActivity,
   useReservoirClient,
   useTokens,
   useTokenOpenseaBanned,
