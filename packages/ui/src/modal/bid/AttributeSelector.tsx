@@ -16,14 +16,12 @@ import { useAttributes } from '../../hooks'
 type Props = {
   attributes?: NonNullable<ReturnType<typeof useAttributes>['data']>
   tokenCount?: number
-  floorPrice?: number
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const AttributeSelector: FC<Props> = ({
   attributes,
-  floorPrice,
   setTrait,
   setOpen,
   tokenCount,
@@ -94,7 +92,7 @@ const AttributeSelector: FC<Props> = ({
                   },
                 }}
               >
-                {values?.map(({ value, count }) => (
+                {values?.map(({ value, count, floorAskPrice }) => (
                   <Box
                     key={value}
                     css={{
@@ -135,7 +133,7 @@ const AttributeSelector: FC<Props> = ({
                       </Text>
                       <Box css={{ flex: 'none' }}>
                         <FormatCryptoCurrency
-                          amount={floorPrice}
+                          amount={floorAskPrice}
                           logoWidth={10}
                           maximumFractionDigits={1}
                           textStyle="subtitle2"
