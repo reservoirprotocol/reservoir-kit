@@ -242,15 +242,20 @@ export async function executeSteps(
 
           try {
             const getData = async function () {
+              const headers: AxiosRequestHeaders = {
+                'Content-Type': 'application/json',
+                'x-rkc-version': version,
+              }
+              if (client?.apiKey) {
+                headers['x-api-key'] = client.apiKey
+              }
+
               let response = await axios.post(
                 postOrderUrl.href,
                 JSON.stringify(postData.body),
                 {
                   method: postData.method,
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'x-rkc-version': version,
-                  },
+                  headers,
                   params: request.params,
                 }
               )
