@@ -1,4 +1,16 @@
 
+## [0.1.5](https://github.com/reservoirprotocol/reservoir-kit/commit/0260f99982808513ae41bf227766198ef36bb56a) (2022-10-04)
+
+* Merge branch 'main' into attribute-selector-floor-prices [3d01b6e](https://github.com/reservoirprotocol/reservoir-kit/commit/3d01b6e5ef20c22bc2275b944022f1d5880b0afc)
+## [0.1.4](https://github.com/reservoirprotocol/reservoir-kit/commit/a10c2d5269407a3b9fc76060feb498e0267ce7b9) (2022-10-04)
+
+## [0.1.3](https://github.com/reservoirprotocol/reservoir-kit/commit/0c0b40c95b23b3f2e71dcf25192964515d5535ac) (2022-10-04)
+
+* Fix api key not passed when posting an order after signing [d6a9f8c](https://github.com/reservoirprotocol/reservoir-kit/commit/d6a9f8cea77e31b59c4d20b9c798152488beb346)
+* use new `floorAskPrice` [9133feb](https://github.com/reservoirprotocol/reservoir-kit/commit/9133febab0d0497b47fbb7bf0144bb24c8e3fef1)
+## [0.1.2](https://github.com/reservoirprotocol/reservoir-kit/commit/1774d335b76c8562867cee38259371b97b6a6a76) (2022-10-03)
+
+* Sync api [dd977e5](https://github.com/reservoirprotocol/reservoir-kit/commit/dd977e5ed94f7c6c2bc2c994abaf691b9e3444b1)
 ## [0.1.1](https://github.com/reservoirprotocol/reservoir-kit/commit/e13394f98421fd9bdd6c2b7f785d46c5a4c5b7c2) (2022-09-27)
 
 * Sync api [0ef8a8a](https://github.com/reservoirprotocol/reservoir-kit/commit/0ef8a8a1b04004c23d217c2c6097addc0c13ac80)
