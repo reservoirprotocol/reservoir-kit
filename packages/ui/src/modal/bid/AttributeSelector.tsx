@@ -134,7 +134,7 @@ const AttributeSelector: FC<Props> = ({
                       <Box css={{ flex: 'none' }}>
                         <FormatCryptoCurrency
                           amount={floorAskPrice}
-                          logoWidth={7}
+                          logoWidth={10}
                           maximumFractionDigits={1}
                           textStyle="subtitle2"
                         />

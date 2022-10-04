@@ -46,7 +46,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           {
             id: 0,
             label: (
-              <Flex css={{ alignItems: 'center', gap: 8 }}>
+              <Flex css={{ alignItems: 'center', gap: '$2', mr: '$1' }}>
                 <span>Creator Royalties</span>
                 <InfoTooltip
                   side="right"
@@ -74,7 +74,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           {
             id: 3,
             label: (
-              <Flex css={{ alignItems: 'center', gap: 8 }}>
+              <Flex css={{ alignItems: 'center', gap: '$2', mr: '$1' }}>
                 <span>Highest Trait Floor</span>
                 <InfoTooltip
                   side="right"

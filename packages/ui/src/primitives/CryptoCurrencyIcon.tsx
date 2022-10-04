@@ -20,7 +20,7 @@ const CryptoCurrencyIcon: FC<Props> = ({
 
   if (constants.AddressZero === address) {
     return (
-      <Box css={css}>
+      <Box css={{ display: 'flex', ...css }}>
         <EthLogo />
       </Box>
     )
