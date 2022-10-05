@@ -13,6 +13,7 @@ import {
   Execute,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
+import { toFixed } from '../../lib/numbers'
 
 export enum BuyStep {
   Checkout,
@@ -274,11 +275,14 @@ export const BuyModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (balance) {
+      const totalPriceTruncated = toFixed(totalPrice, currency?.decimals || 18)
       if (!balance.value) {
         setHasEnoughCurrency(false)
       } else if (
         balance.value &&
-        balance.value.lt(utils.parseUnits(`${totalPrice}`, currency?.decimals))
+        balance.value.lt(
+          utils.parseUnits(`${totalPriceTruncated}`, currency?.decimals)
+        )
       ) {
         setHasEnoughCurrency(false)
       }

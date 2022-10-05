@@ -1,6 +1,12 @@
 import { utils } from 'ethers'
 import { BigNumberish } from '@ethersproject/bignumber'
 
+function toFixed(num: number, fixed: number) {
+  const re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?')
+  const fixedNum = num.toString().match(re)
+  return fixedNum ? fixedNum[0] : num
+}
+
 function formatNumber(
   amount: number | null | undefined,
   maximumFractionDigits: number = 2
@@ -72,4 +78,4 @@ function formatBN(
   }
 }
 
-export { formatBN, formatNumber }
+export { formatBN, formatNumber, toFixed }
