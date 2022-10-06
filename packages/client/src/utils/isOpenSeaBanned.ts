@@ -19,8 +19,8 @@ export async function isOpenSeaBanned(
   const json = res.data
   const client = getClient()
   const apiBase = client?.apiBase
-  const apiKey = client?.apiKey
-  if (res.status === 200 && apiBase && apiKey) {
+  if (res.status === 200 && apiBase) {
+    const apiKey = client?.apiKey
     const headers: AxiosRequestHeaders = {
       'Content-Type': 'application/json',
       'x-rkc-version': version,
