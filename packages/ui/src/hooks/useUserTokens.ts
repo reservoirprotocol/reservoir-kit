@@ -64,6 +64,7 @@ export default function (
     isFetchingInitialData,
     isFetchingPage,
     fetchNextPage,
+    setSize,
     mutate,
     error,
     isValidating,
