@@ -1,4 +1,16 @@
 
+## [0.4.9](https://github.com/reservoirprotocol/reservoir-kit/commit/8cde782bcba4d7e07e40e908540357dc4056e422) (2022-10-11)
+
+* Add useUsersActivity hook and update useCollectionActivity hook to v3 [822d07f](https://github.com/reservoirprotocol/reservoir-kit/commit/822d07f6d2771847c0c9091b0e238dcb5a50f878)
+## [0.4.8](https://github.com/reservoirprotocol/reservoir-kit/commit/acb45d5b5a046badf991ac40743b47605ce36a6f) (2022-10-06)
+
+* Exporse `setSize` [4cd02d7](https://github.com/reservoirprotocol/reservoir-kit/commit/4cd02d7191481ff120caf3338e04671e71d91a95)
+## [0.4.7](https://github.com/reservoirprotocol/reservoir-kit/commit/bb0ff0f49cf32dbb00a77c277225d58158a14201) (2022-10-05)
+
+* Fix an issue where a fee calculation causes an overflow [c588d81](https://github.com/reservoirprotocol/reservoir-kit/commit/c588d81a22a435fd834c85457a6cbc020d4fc08d)
+## [0.4.6](https://github.com/reservoirprotocol/reservoir-kit/commit/3c5f38932011362d4a0254d32ceb3cb0fdd42ce4) (2022-10-04)
+
+* Add useUserTopBids hook [a7ca009](https://github.com/reservoirprotocol/reservoir-kit/commit/a7ca009314c1440687d6c3e96b58b66c45195c82)
 ## [0.4.5](https://github.com/reservoirprotocol/reservoir-kit/commit/d2358e67d6cf43ec118c637de3a2becdb29d279f) (2022-10-04)
 
 * Merge pull request #78 from reservoirprotocol/collection-activity [736d4d7](https://github.com/reservoirprotocol/reservoir-kit/commit/736d4d71026f715ef69db4aef3826c47e2133681)

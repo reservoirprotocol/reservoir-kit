@@ -1,4 +1,12 @@
 
+## [0.1.7](https://github.com/reservoirprotocol/reservoir-kit/commit/c0c3c1403e287828df1664f0a15920fe2c29a25b) (2022-10-11)
+
+* Merge pull request #76 from reservoirprotocol/pedro/res-345-report-stolen-tokens-crowdsourced [4c5d991](https://github.com/reservoirprotocol/reservoir-kit/commit/4c5d991f675a3d66eade2996425caba1701e2a8f)
+* Sync api [3414f38](https://github.com/reservoirprotocol/reservoir-kit/commit/3414f38450b709b8129a6f38efc58df9ef27dfce)
+* Remove apiKey requirement when reporting opensea flagged status [f581cf8](https://github.com/reservoirprotocol/reservoir-kit/commit/f581cf8d3bdc11ce3438a14e76cabef0ba370a71)
+## [0.1.6](https://github.com/reservoirprotocol/reservoir-kit/commit/b374bf07536aecb350eb3cd72968357e46b339a8) (2022-10-05)
+
+* Add support for buyToken action using orderIds, tokens or rawOrder [525d5fd](https://github.com/reservoirprotocol/reservoir-kit/commit/525d5fd0678ca240b80439c3bc1e217494493cc6)
 ## [0.1.5](https://github.com/reservoirprotocol/reservoir-kit/commit/0260f99982808513ae41bf227766198ef36bb56a) (2022-10-04)
 
 * Merge branch 'main' into attribute-selector-floor-prices [3d01b6e](https://github.com/reservoirprotocol/reservoir-kit/commit/3d01b6e5ef20c22bc2275b944022f1d5880b0afc)
@@ -10,6 +18,7 @@
 * use new `floorAskPrice` [9133feb](https://github.com/reservoirprotocol/reservoir-kit/commit/9133febab0d0497b47fbb7bf0144bb24c8e3fef1)
 ## [0.1.2](https://github.com/reservoirprotocol/reservoir-kit/commit/1774d335b76c8562867cee38259371b97b6a6a76) (2022-10-03)
 
+* Add banned reporting to opensea banned function [6ff0ead](https://github.com/reservoirprotocol/reservoir-kit/commit/6ff0ead53863ce85684520b998ee4b5ce5c4ea86)
 * Sync api [dd977e5](https://github.com/reservoirprotocol/reservoir-kit/commit/dd977e5ed94f7c6c2bc2c994abaf691b9e3444b1)
 ## [0.1.1](https://github.com/reservoirprotocol/reservoir-kit/commit/e13394f98421fd9bdd6c2b7f785d46c5a4c5b7c2) (2022-09-27)
 
