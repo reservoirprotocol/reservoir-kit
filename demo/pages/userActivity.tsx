@@ -9,7 +9,9 @@ const UserActivity: NextPage = () => {
     data: activity,
     fetchNextPage,
     hasNextPage,
-  } = useUsersActivity(['0xFd03726FD90ccc7386bf62b44Bb594f7cbFB3995'])
+  } = useUsersActivity(['0xFd03726FD90ccc7386bf62b44Bb594f7cbFB3995'], {
+    limit: 20,
+  })
 
   const { ref, inView } = useInView()
 
