@@ -231,7 +231,7 @@ export function ListModal({
                       <Text
                         style="subtitle1"
                         as={Flex}
-                        css={{ mb: '$4', gap: '$2' }}
+                        css={{ mb: '$4', gap: '$2', alignItems: 'center' }}
                       >
                         List item in
                         <Select
