@@ -6,6 +6,7 @@ export { ReservoirClientProvider } from './ReservoirClientProvider'
 export {
   useCollections,
   useCollectionActivity,
+  useUsersActivity,
   useReservoirClient,
   useTokens,
   useTokenOpenseaBanned,
