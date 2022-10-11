@@ -1,5 +1,6 @@
 export { default as useCollections } from './useCollections'
 export { default as useCollectionActivity } from './useCollectionActivity'
+export { default as useUsersActivity } from './useUsersActivity'
 export { default as useTokens } from './useTokens'
 export { default as useCoinConversion } from './useCoinConversion'
 export { default as useReservoirClient } from './useReservoirClient'

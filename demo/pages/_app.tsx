@@ -49,7 +49,7 @@ const AppWrapper = ({ children }) => {
   return (
     <ReservoirKitProvider
       options={{
-        apiBase: 'https://api.reservoir.tools',
+        apiBase: 'https://api-goerli.reservoir.tools',
         apiKey: 'reservoir-kit-demo',
         marketplaceFee: 100,
         marketplaceFeeRecipient: '0x0CccD55A5Ac261Ea29136831eeaA93bfE07f5Db6',

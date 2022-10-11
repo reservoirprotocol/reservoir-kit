@@ -2,31 +2,29 @@ import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
-type CollectionActivityResponse =
-  paths['/collections/{collection}/activity/v3']['get']['responses']['200']['schema']
+type UsersActivityResponse =
+  paths['/users/activity/v4']['get']['responses']['200']['schema']
 
-type CollectionActivityQuery =
-  paths['/collections/{collection}/activity/v3']['get']['parameters']['query']
+type UsersActivityQuery =
+  paths['/users/activity/v4']['get']['parameters']['query']
 
 export default function (
-  collection?: string | undefined,
-  options?: CollectionActivityQuery | false,
+  users?: string[] | undefined,
+  options?: UsersActivityQuery | false,
   swrOptions: SWRInfiniteConfiguration = {}
 ) {
   const client = useReservoirClient()
 
   const { data, mutate, error, isValidating, size, setSize } =
-    useSWRInfinite<CollectionActivityResponse>(
+    useSWRInfinite<UsersActivityResponse>(
       (pageIndex, previousPageData) => {
-        if (!collection) {
+        if (!users) {
           return null
         }
 
-        const url = new URL(
-          `${client?.apiBase}/collections/${collection}/activity/v2`
-        )
+        const url = new URL(`${client?.apiBase}/users/activity/v4`)
 
-        let query: CollectionActivityQuery = { ...options }
+        let query: UsersActivityQuery = { ...options, users }
 
         if (previousPageData && !previousPageData.continuation) {
           return null
