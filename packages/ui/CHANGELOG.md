@@ -1,4 +1,10 @@
 
+## [0.4.11](https://github.com/reservoirprotocol/reservoir-kit/commit/24ebd22f3c745007f68e468532900517e858e9fb) (2022-10-12)
+
+* Fix ETH icon on safaris [650af0e](https://github.com/reservoirprotocol/reservoir-kit/commit/650af0e74c36ea697687b290584c8f0e4b586db0)
+## [0.4.10](https://github.com/reservoirprotocol/reservoir-kit/commit/b51269313c50973182d3bddd835e6ff3a3f11c9a) (2022-10-11)
+
+* Omit users from useUsersActivity hook options to prevent typescript error [89c2f8b](https://github.com/reservoirprotocol/reservoir-kit/commit/89c2f8bb2b0157559d86f9290a8b5a24852ee86c)
 ## [0.4.9](https://github.com/reservoirprotocol/reservoir-kit/commit/8cde782bcba4d7e07e40e908540357dc4056e422) (2022-10-11)
 
 * Add useUsersActivity hook and update useCollectionActivity hook to v3 [822d07f](https://github.com/reservoirprotocol/reservoir-kit/commit/822d07f6d2771847c0c9091b0e238dcb5a50f878)

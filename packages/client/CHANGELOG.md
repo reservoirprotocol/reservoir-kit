@@ -1,4 +1,8 @@
 
+## [0.1.8](https://github.com/reservoirprotocol/reservoir-kit/commit/6673648c16d8234082b13a9e30cac46c16b9f287) (2022-10-12)
+
+* Upgrade sell and buy api to v5 [3421265](https://github.com/reservoirprotocol/reservoir-kit/commit/3421265e083a06e71288b35f0a25d0f79671ae8f)
+* Sync api [4b54b64](https://github.com/reservoirprotocol/reservoir-kit/commit/4b54b64867b3d06db8c4ae374de5cbb2de42966f)
 ## [0.1.7](https://github.com/reservoirprotocol/reservoir-kit/commit/c0c3c1403e287828df1664f0a15920fe2c29a25b) (2022-10-11)
 
 * Merge pull request #76 from reservoirprotocol/pedro/res-345-report-stolen-tokens-crowdsourced [4c5d991](https://github.com/reservoirprotocol/reservoir-kit/commit/4c5d991f675a3d66eade2996425caba1701e2a8f)
