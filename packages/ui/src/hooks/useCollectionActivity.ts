@@ -23,7 +23,7 @@ export default function (
         }
 
         const url = new URL(
-          `${client?.apiBase}/collections/${collection}/activity/v2`
+          `${client?.apiBase}/collections/${collection}/activity/v3`
         )
 
         let query: CollectionActivityQuery = { ...options }
