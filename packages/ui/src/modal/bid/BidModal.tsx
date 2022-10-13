@@ -105,6 +105,7 @@ export function BidModal({
   const [localMarketplace, setLocalMarketplace] = useState<ReturnType<
     typeof getLocalMarketplaceData
   > | null>(null)
+  const [attributesSelectable, setAttributesSelectable] = useState(false)
 
   useEffect(() => {
     setLocalMarketplace(getLocalMarketplaceData())
@@ -207,10 +208,27 @@ export function BidModal({
         }, [transactionError])
 
         useEffect(() => {
-          if (open && attributes && !tokenId) {
+          if (open && attributes && !tokenId && attribute) {
             setTrait(attribute)
           } else {
             setTrait(undefined)
+          }
+
+          if (open && attributes && !tokenId) {
+            let attributeCount = 0
+            for (let i = 0; i < attributes.length; i++) {
+              attributeCount += attributes[i].attributeCount || 0
+              if (attributeCount >= 2000) {
+                break
+              }
+            }
+            if (attributeCount >= 2000) {
+              setAttributesSelectable(false)
+            } else {
+              setAttributesSelectable(true)
+            }
+          } else {
+            setAttributesSelectable(false)
           }
         }, [open, attributes])
 
@@ -308,104 +326,111 @@ export function BidModal({
                     style="tiny"
                     amount={bidAmountUsd}
                   />
-                  {attributes && attributes.length > 0 && !tokenId && (
-                    <>
-                      <Text as={Box} css={{ mb: '$2' }} style="tiny">
-                        Attributes
-                      </Text>
-                      <Popover.Root
-                        open={attributeSelectorOpen}
-                        onOpenChange={setAttributeSelectorOpen}
-                      >
-                        <Popover.Trigger asChild>
-                          <PseudoInput>
-                            <Flex
-                              justify="between"
-                              css={{
-                                gap: '$2',
-                                alignItems: 'center',
-                                color: '$neutralText',
-                              }}
-                            >
-                              {trait ? (
-                                <>
-                                  <Box
-                                    css={{
-                                      maxWidth: 385,
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
-                                    }}
-                                  >
-                                    <Text color="accent" style="subtitle1">
-                                      {trait?.key}:{' '}
-                                    </Text>
-                                    <Text style="subtitle1">
-                                      {trait?.value}
-                                    </Text>
-                                  </Box>
-                                  <Flex
-                                    css={{
-                                      alignItems: 'center',
-                                      gap: '$2',
-                                    }}
-                                  >
-                                    <Box css={{ flex: 'none' }}>
-                                      <FormatCryptoCurrency
-                                        amount={
-                                          collection?.floorAsk?.price?.amount
-                                            ?.native
-                                        }
-                                        maximumFractionDigits={2}
-                                        logoWidth={11}
-                                      />
+                  {attributes &&
+                    attributes.length > 0 &&
+                    (attributesSelectable || trait) &&
+                    !tokenId && (
+                      <>
+                        <Text as={Box} css={{ mb: '$2' }} style="tiny">
+                          Attributes
+                        </Text>
+                        <Popover.Root
+                          open={attributeSelectorOpen}
+                          onOpenChange={
+                            attributesSelectable
+                              ? setAttributeSelectorOpen
+                              : undefined
+                          }
+                        >
+                          <Popover.Trigger asChild>
+                            <PseudoInput>
+                              <Flex
+                                justify="between"
+                                css={{
+                                  gap: '$2',
+                                  alignItems: 'center',
+                                  color: '$neutralText',
+                                }}
+                              >
+                                {trait ? (
+                                  <>
+                                    <Box
+                                      css={{
+                                        maxWidth: 385,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      <Text color="accent" style="subtitle1">
+                                        {trait?.key}:{' '}
+                                      </Text>
+                                      <Text style="subtitle1">
+                                        {trait?.value}
+                                      </Text>
                                     </Box>
+                                    <Flex
+                                      css={{
+                                        alignItems: 'center',
+                                        gap: '$2',
+                                      }}
+                                    >
+                                      <Box css={{ flex: 'none' }}>
+                                        <FormatCryptoCurrency
+                                          amount={
+                                            collection?.floorAsk?.price?.amount
+                                              ?.native
+                                          }
+                                          maximumFractionDigits={2}
+                                          logoWidth={11}
+                                        />
+                                      </Box>
+                                      <FontAwesomeIcon
+                                        style={{
+                                          cursor: 'pointer',
+                                          margin: '-16px -16px -16px 0',
+                                          padding: '16px 16px 16px 8px',
+                                        }}
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          setTrait(undefined)
+                                        }}
+                                        icon={faClose}
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </Flex>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Text
+                                      css={{
+                                        color: '$neutralText',
+                                      }}
+                                    >
+                                      All Attributes
+                                    </Text>
                                     <FontAwesomeIcon
-                                      style={{
-                                        cursor: 'pointer',
-                                        margin: '-16px -16px -16px 0',
-                                        padding: '16px 16px 16px 8px',
-                                      }}
-                                      onClick={(e) => {
-                                        e.preventDefault()
-                                        setTrait(undefined)
-                                      }}
-                                      icon={faClose}
+                                      icon={faChevronDown}
                                       width={16}
                                       height={16}
                                     />
-                                  </Flex>
-                                </>
-                              ) : (
-                                <>
-                                  <Text
-                                    css={{
-                                      color: '$neutralText',
-                                    }}
-                                  >
-                                    All Attributes
-                                  </Text>
-                                  <FontAwesomeIcon
-                                    icon={faChevronDown}
-                                    width={16}
-                                    height={16}
-                                  />
-                                </>
-                              )}
-                            </Flex>
-                          </PseudoInput>
-                        </Popover.Trigger>
-                        <Popover.Content sideOffset={-50}>
-                          <AttributeSelector
-                            attributes={attributes}
-                            tokenCount={tokenCount}
-                            setTrait={setTrait}
-                            setOpen={setAttributeSelectorOpen}
-                          />
-                        </Popover.Content>
-                      </Popover.Root>
-                    </>
-                  )}
+                                  </>
+                                )}
+                              </Flex>
+                            </PseudoInput>
+                          </Popover.Trigger>
+                          <Popover.Content sideOffset={-50}>
+                            <AttributeSelector
+                              attributes={attributes}
+                              tokenCount={tokenCount}
+                              setTrait={setTrait}
+                              setOpen={setAttributeSelectorOpen}
+                            />
+                          </Popover.Content>
+                        </Popover.Root>
+                      </>
+                    )}
 
                   <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
                     Expiration Date
