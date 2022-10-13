@@ -658,6 +658,13 @@ const calendarCss = globalCss({
       '-webkit-appearance': 'none',
     },
   },
+  '@-moz-document url-prefix()': {
+    '@media only screen and (max-width: 600px)': {
+      '.flatpickr-input[type="text"]': {
+        color: 'transparent',
+      },
+    },
+  },
 })
 
 export default calendarCss

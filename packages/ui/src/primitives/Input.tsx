@@ -27,6 +27,10 @@ const StyledInput = styled('input', {
     '-webkit-appearance': 'none',
     margin: 0,
   },
+
+  '&[type=number]': {
+    '-moz-appearance': 'textfield',
+  },
 })
 
 export const Input = forwardRef<

@@ -47,7 +47,6 @@ const Content = styled(DialogPrimitive.Content, {
   maxWidth: 516,
   top: '100%',
   width: '100%',
-  maxHeight: '85vh',
   zIndex: 1000,
   '&:focus': { outline: 'none' },
   '@media(max-width: 520px)': {
@@ -67,16 +66,22 @@ const AnimatedContent = forwardRef<
     ? {
         initial: {
           opacity: 0,
-          transform: 'translateX(-50%)translateY(0%)',
+          bottom: '-100%',
+          top: 'auto',
+          left: 0,
         },
         animate: {
           opacity: 1,
-          transform: 'translateX(-50%)translateY(-100%)',
+          bottom: 0,
+          top: 'auto',
+          left: 0,
         },
 
         exit: {
           opacity: 0,
-          transform: 'translateX(-50%)translateY(0%)',
+          bottom: '-100%',
+          top: 'auto',
+          left: 0,
         },
       }
     : {

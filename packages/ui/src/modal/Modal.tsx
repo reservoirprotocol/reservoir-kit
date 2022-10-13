@@ -8,7 +8,7 @@ import React, {
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
-import { Anchor, Button, Flex, Text, Loader } from '../primitives'
+import { Anchor, Button, Flex, Text, Loader, Box } from '../primitives'
 import { styled } from '../../stitches.config'
 import { Dialog } from '../primitives/Dialog'
 import ReservoirLogoWhiteText from '../img/ReservoirLogoWhiteText'
@@ -107,7 +107,7 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
             }}
           />
         )}
-        {children}
+        <Box css={{ maxHeight: '85vh', overflowY: 'auto' }}>{children}</Box>
         {!providerOptionsContext.disablePoweredByReservoir && (
           <Flex
             css={{
