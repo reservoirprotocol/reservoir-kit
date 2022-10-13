@@ -1,4 +1,12 @@
 
+## [0.4.13](https://github.com/reservoirprotocol/reservoir-kit/commit/14c41b1b2049b33212096589800daa46a843dddf) (2022-10-13)
+
+* Improve performance when calculating attribute count [6455159](https://github.com/reservoirprotocol/reservoir-kit/commit/6455159bef35d820eed4c4ac5b733499de581f8a)
+* Fix performance issues when BidModal renders too many attributes in selector, fix minor BidModal attribute issues [616e28e](https://github.com/reservoirprotocol/reservoir-kit/commit/616e28e96767b1740890d380854d50439a047b20)
+* Fix issue with long modals unable to be scrolled [4d44363](https://github.com/reservoirprotocol/reservoir-kit/commit/4d44363bc94badc9f5a9631fb87bbb9b82adbee9)
+## [0.4.12](https://github.com/reservoirprotocol/reservoir-kit/commit/473d9e5cad7d296ea77498784f998a251e6ef2c4) (2022-10-12)
+
+* Fix useCollectionActivity using wrong version (v2 => v3) [7e4e054](https://github.com/reservoirprotocol/reservoir-kit/commit/7e4e054f4fc6789797bba4d8127c513e208d3fa8)
 ## [0.4.11](https://github.com/reservoirprotocol/reservoir-kit/commit/24ebd22f3c745007f68e468532900517e858e9fb) (2022-10-12)
 
 * Fix ETH icon on safaris [650af0e](https://github.com/reservoirprotocol/reservoir-kit/commit/650af0e74c36ea697687b290584c8f0e4b586db0)
