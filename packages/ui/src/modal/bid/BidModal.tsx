@@ -214,7 +214,7 @@ export function BidModal({
             setTrait(undefined)
           }
 
-          if (attributes) {
+          if (open && attributes && !tokenId) {
             let attributeCount = 0
             for (let i = 0; i < attributes.length; i++) {
               attributeCount += attributes[i].attributeCount || 0
