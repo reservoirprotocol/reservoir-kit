@@ -14,12 +14,13 @@ const SelectedAttribute: FC<Props> = ({ attributeKey, attributeValue }) => {
     <Flex
       css={{
         padding: '$2',
-        borderRadius: '$1',
+        borderRadius: 4,
         backgroundColor: '$neutralBgHover',
-        marginBottom: '$1',
+        marginBottom: '$4',
         overflow: 'hidden',
         gap: '$1',
         justifyContent: 'space-between',
+        maxWidth: '100%',
         '@bp1': {
           justifyContent: 'start',
           width: 'fit-content',

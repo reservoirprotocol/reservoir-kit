@@ -35,12 +35,15 @@ const AttributeSelector: FC<Props> = ({
     } else {
       let results: Props['attributes'] = []
       attributes?.forEach((attribute) => {
-        results?.push({
-          ...attribute,
-          values: attribute.values?.filter(({ value }) =>
-            value.toLowerCase().includes(query.toLowerCase())
-          ),
-        })
+        const values = attribute.values?.filter(({ value }) =>
+          value.toLowerCase().includes(query.toLowerCase())
+        )
+        if (values && values.length > 0) {
+          results?.push({
+            ...attribute,
+            values: values,
+          })
+        }
       })
       setResults(results ? [...results] : [])
     }
