@@ -2259,6 +2259,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-primitive@npm:1.0.1-rc.2":
+  version: 1.0.1-rc.2
+  resolution: "@radix-ui/react-primitive@npm:1.0.1-rc.2"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/react-slot": 1.0.0
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: 0a6813094956d0a0fcb8e12c65105e6b86673bcc981de7b93f315620c0e54564e013b7d679d6b5a504b9caa660d568f3a26a2a4df34c36ec576518581714722d
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-roving-focus@npm:1.0.0":
   version: 1.0.0
   resolution: "@radix-ui/react-roving-focus@npm:1.0.0"
@@ -2280,9 +2293,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-scroll-area@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@radix-ui/react-scroll-area@npm:1.0.0"
+"@radix-ui/react-scroll-area@npm:1.0.1-rc.2":
+  version: 1.0.1-rc.2
+  resolution: "@radix-ui/react-scroll-area@npm:1.0.1-rc.2"
   dependencies:
     "@babel/runtime": ^7.13.10
     "@radix-ui/number": 1.0.0
@@ -2291,13 +2304,13 @@ __metadata:
     "@radix-ui/react-context": 1.0.0
     "@radix-ui/react-direction": 1.0.0
     "@radix-ui/react-presence": 1.0.0
-    "@radix-ui/react-primitive": 1.0.0
+    "@radix-ui/react-primitive": 1.0.1-rc.2
     "@radix-ui/react-use-callback-ref": 1.0.0
     "@radix-ui/react-use-layout-effect": 1.0.0
   peerDependencies:
     react: ^16.8 || ^17.0 || ^18.0
     react-dom: ^16.8 || ^17.0 || ^18.0
-  checksum: 0b7756f1df19ac13c570941461794668d0fb15fd576f37a698a6d0a39f48b728db751455f8de202e5ccb8750c3d9f31a02ada7b79d9f064347aa96e780d8f104
+  checksum: 67b98fc3109f58f7065bfe825fdae958724cae033eeb9cf8c9100861379771f188c3bd0fe73683d9a94386262a2defbae446baeb5af83e6e94647654e4d044f2
   languageName: node
   linkType: hard
 
@@ -2543,7 +2556,7 @@ __metadata:
     "@radix-ui/colors": ^0.1.8
     "@radix-ui/react-dialog": 1.0.1-rc.2
     "@radix-ui/react-popover": 1.0.1-rc.2
-    "@radix-ui/react-scroll-area": ^1.0.0
+    "@radix-ui/react-scroll-area": 1.0.1-rc.2
     "@radix-ui/react-select": 1.0.1-rc.2
     "@radix-ui/react-switch": 1.0.0
     "@radix-ui/react-toggle-group": ^1.0.0

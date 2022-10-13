@@ -60,6 +60,7 @@ const RKPopover = ({
 }
 
 RKPopover.Root = Popover.Root
+RKPopover.Portal = Popover.Portal
 RKPopover.Trigger = Popover.Trigger
 RKPopover.Arrow = Arrow
 RKPopover.Content = Content
