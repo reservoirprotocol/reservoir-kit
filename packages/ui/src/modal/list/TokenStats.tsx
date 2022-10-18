@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Flex, Box } from '../../primitives'
+import { Flex, Box, Text } from '../../primitives'
 import Token from './Token'
 import Stat from '../Stat'
 import { useTokens, useCollections } from '../../hooks'
@@ -74,8 +74,15 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           {
             id: 3,
             label: (
-              <Flex css={{ alignItems: 'center', gap: '$2', mr: '$1' }}>
-                <span>Highest Trait Floor</span>
+              <Flex css={{ alignItems: 'center', gap: '$2', mr: '$1', minWidth: '0' }}>
+                <Text
+                  style="subtitle2"
+                  color="subtle"
+                  css={{ minWidth: '0' }}
+                  ellipsify
+                >
+                  Highest Trait Floor
+                </Text>
                 <InfoTooltip
                   side="right"
                   width={200}

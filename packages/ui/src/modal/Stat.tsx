@@ -26,7 +26,7 @@ const Stat: FC<StatProps> = ({
     }}
     {...props}
   >
-    <Text style="subtitle2" color="subtle" css={{ flex: 1 }}>
+    <Text style="subtitle2" color="subtle" css={{ flex: 1, minWidth: '0' }}>
       {label}
     </Text>
     {asEth && !asWeth && <FormatEth amount={value} textStyle="subtitle2" />}
