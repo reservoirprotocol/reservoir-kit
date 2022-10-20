@@ -1,4 +1,5 @@
 
+* Sync api [ce600d4](https://github.com/reservoirprotocol/reservoir-kit/commit/ce600d43f8e5de8e9aecced30a3b2d5648a28aff)
 ## [0.1.8](https://github.com/reservoirprotocol/reservoir-kit/commit/6673648c16d8234082b13a9e30cac46c16b9f287) (2022-10-12)
 
 * Upgrade sell and buy api to v5 [3421265](https://github.com/reservoirprotocol/reservoir-kit/commit/3421265e083a06e71288b35f0a25d0f79671ae8f)
