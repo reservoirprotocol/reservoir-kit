@@ -5,11 +5,14 @@ import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 type UsersActivityResponse =
   paths['/users/activity/v4']['get']['responses']['200']['schema']
 
-type UsersActivityQuery =
+type UsersActivityBaseQuery =
   paths['/users/activity/v4']['get']['parameters']['query']
 
+type UsersQuery = UsersActivityBaseQuery['users'] | undefined
+type UsersActivityQuery = Omit<UsersActivityBaseQuery, 'users'>
+
 export default function (
-  users?: string[] | undefined,
+  users?: UsersQuery,
   options?: UsersActivityQuery | false,
   swrOptions: SWRInfiniteConfiguration = {}
 ) {
@@ -24,7 +27,7 @@ export default function (
 
         const url = new URL(`${client?.apiBase}/users/activity/v4`)
 
-        let query: UsersActivityQuery = { ...options, users }
+        let query: UsersActivityBaseQuery = { ...options, users }
 
         if (previousPageData && !previousPageData.continuation) {
           return null
