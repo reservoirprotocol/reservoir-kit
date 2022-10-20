@@ -56,6 +56,7 @@ const AppWrapper = ({ children }) => {
         marketplaceFeeRecipient: '0x0CccD55A5Ac261Ea29136831eeaA93bfE07f5Db6',
         referralFee: 200,
         referralFeeRecipient: '0x0CccD55A5Ac261Ea29136831eeaA93bfE07f5Db6',
+        source: 'pedro.market',
       }}
       theme={theme}
     >
