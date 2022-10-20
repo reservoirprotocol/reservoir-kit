@@ -5,10 +5,8 @@ import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 type UsersActivityResponse =
   paths['/users/activity/v4']['get']['responses']['200']['schema']
 
-type UsersActivityQuery = Omit<
-  paths['/users/activity/v4']['get']['parameters']['query'],
-  'users'
->
+type UsersActivityQuery =
+  paths['/users/activity/v4']['get']['parameters']['query']
 
 export default function (
   users?: string[] | undefined,
