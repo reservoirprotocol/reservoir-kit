@@ -1,4 +1,7 @@
 
+## [0.5.1](https://github.com/reservoirprotocol/reservoir-kit/commit/44bbcbccca2321549a918590e3f09db68446cfbf) (2022-10-20)
+
+* Fix issue with useUserActivity types [167b246](https://github.com/reservoirprotocol/reservoir-kit/commit/167b2468625e212b75a25b2b1cf605993eb8a1ba)
 ## [0.5.0](https://github.com/reservoirprotocol/reservoir-kit/commit/d6ed02c3356e447cd44e452a54da97cf4333f174) (2022-10-20)
 
 * Upgrade useCollectionActivity to v4 [be913c1](https://github.com/reservoirprotocol/reservoir-kit/commit/be913c15b52631a99c684430846e0a1cf4785789)
