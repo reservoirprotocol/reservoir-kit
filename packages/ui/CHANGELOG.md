@@ -1,4 +1,11 @@
 
+## [0.5.0](https://github.com/reservoirprotocol/reservoir-kit/commit/d6ed02c3356e447cd44e452a54da97cf4333f174) (2022-10-20)
+
+* Upgrade useCollectionActivity to v4 [be913c1](https://github.com/reservoirprotocol/reservoir-kit/commit/be913c15b52631a99c684430846e0a1cf4785789)
+* Fix typescript error in useUserActivity [9e63f50](https://github.com/reservoirprotocol/reservoir-kit/commit/9e63f50685ff553f4eb1c2ff834a69f348300510)
+## [0.4.14](https://github.com/reservoirprotocol/reservoir-kit/commit/c2ddf9d22a0ba705fca835de6948cbcfbf8a1b67) (2022-10-20)
+
+* Display blank for List Price when no listing is available [9142c21](https://github.com/reservoirprotocol/reservoir-kit/commit/9142c21980383eda52341ae3575041d24c48cebd)
 ## [0.4.13](https://github.com/reservoirprotocol/reservoir-kit/commit/14c41b1b2049b33212096589800daa46a843dddf) (2022-10-13)
 
 * Improve performance when calculating attribute count [6455159](https://github.com/reservoirprotocol/reservoir-kit/commit/6455159bef35d820eed4c4ac5b733499de581f8a)
