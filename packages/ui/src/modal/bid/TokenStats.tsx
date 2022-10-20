@@ -47,14 +47,14 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
     stats.push({
       id: 2,
       label: 'List Price',
-      value: token.market?.floorAsk?.price?.amount?.native || 0,
+      value: token.market?.floorAsk?.price?.amount?.native || null,
       asEth: true,
     })
   } else if (!token && collection) {
     stats.push({
       id: 2,
       label: 'Floor',
-      value: collection?.floorAsk?.price?.amount?.native || 0,
+      value: collection?.floorAsk?.price?.amount?.native || null,
       asEth: true,
     })
   }
