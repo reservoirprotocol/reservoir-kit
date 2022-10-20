@@ -3,13 +3,12 @@ import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type CollectionActivityResponse =
-  paths['/collections/{collection}/activity/v3']['get']['responses']['200']['schema']
+  paths['/collections/activity/v4']['get']['responses']['200']['schema']
 
 type CollectionActivityQuery =
-  paths['/collections/{collection}/activity/v3']['get']['parameters']['query']
+  paths['/collections/activity/v4']['get']['parameters']['query']
 
 export default function (
-  collection?: string | undefined,
   options?: CollectionActivityQuery | false,
   swrOptions: SWRInfiniteConfiguration = {}
 ) {
@@ -18,13 +17,16 @@ export default function (
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<CollectionActivityResponse>(
       (pageIndex, previousPageData) => {
-        if (!collection) {
+        if (
+          !options ||
+          (!options.collection &&
+            !options.collectionsSetId &&
+            !options.community)
+        ) {
           return null
         }
 
-        const url = new URL(
-          `${client?.apiBase}/collections/${collection}/activity/v3`
-        )
+        const url = new URL(`${client?.apiBase}/collections/activity/v4`)
 
         let query: CollectionActivityQuery = { ...options }
 

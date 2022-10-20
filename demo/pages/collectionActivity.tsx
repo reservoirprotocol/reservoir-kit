@@ -9,7 +9,9 @@ const Activity: NextPage = () => {
     data: activity,
     fetchNextPage,
     hasNextPage,
-  } = useCollectionActivity('0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b')
+  } = useCollectionActivity({
+    collection: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
+  })
 
   const { ref, inView } = useInView()
 
