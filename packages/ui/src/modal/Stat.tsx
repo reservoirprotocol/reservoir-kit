@@ -17,6 +17,7 @@ const Stat: FC<StatProps> = ({
 }) => (
   <Flex
     align="center"
+    justify="between"
     className="rk-stat-well"
     css={{
       backgroundColor: '$wellBackground',
@@ -26,9 +27,9 @@ const Stat: FC<StatProps> = ({
     }}
     {...props}
   >
-    <Text style="subtitle2" color="subtle" css={{ flex: 1, minWidth: '0' }}>
+    <Flex css={{ flex: 1, minWidth: '0', alignItems: 'center', gap: '$2', mr: '$1' }}>
       {label}
-    </Text>
+    </Flex>
     {asEth && !asWeth && <FormatEth amount={value} textStyle="subtitle2" />}
     {asWeth && !asEth && <FormatWEth amount={value} textStyle="subtitle2" />}
     {!asEth && !asWeth && (
