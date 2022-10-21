@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
 
 import {
   Flex,
@@ -21,7 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { AcceptBidStep, AcceptBidModalRenderer } from './AcceptBidModalRenderer'
 import Fees from './Fees'
-import { useReservoirClient, useTimeSince } from '../../hooks'
+import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
 
 type BidData = {
   tokenId?: string
@@ -31,6 +31,7 @@ type BidData = {
 }
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
+  openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
   onBidAccepted?: (data: BidData) => void
@@ -48,6 +49,7 @@ function titleForStep(step: AcceptBidStep) {
 }
 
 export function AcceptBidModal({
+  openState,
   trigger,
   tokenId,
   collectionId,
@@ -55,7 +57,10 @@ export function AcceptBidModal({
   onClose,
   onBidAcceptError,
 }: Props): ReactElement {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useFallbackState(
+    openState ? openState[0] : false,
+    openState
+  )
   const client = useReservoirClient()
 
   return (

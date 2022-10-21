@@ -1,5 +1,11 @@
 import { styled } from '../../../stitches.config'
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react'
 
 import {
   Flex,
@@ -23,7 +29,7 @@ import TokenStats from './TokenStats'
 import MarketplaceToggle from './MarketplaceToggle'
 import MarketplacePriceInput from './MarketplacePriceInput'
 import TokenListingDetails from './TokenListingDetails'
-import { useReservoirClient } from '../../hooks'
+import { useFallbackState, useReservoirClient } from '../../hooks'
 import TransactionProgress from '../../modal/TransactionProgress'
 import ProgressBar from '../../modal/ProgressBar'
 import InfoTooltip from '../InfoTooltip'
@@ -38,6 +44,7 @@ type ListingCallbackData = {
 }
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
+  openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
   currencies?: Currency[]
@@ -73,6 +80,7 @@ const MainContainer = styled(Flex, {
 })
 
 export function ListModal({
+  openState,
   trigger,
   tokenId,
   collectionId,
@@ -82,7 +90,10 @@ export function ListModal({
   onListingError,
   onClose,
 }: Props): ReactElement {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useFallbackState(
+    openState ? openState[0] : false,
+    openState
+  )
   const [stepTitle, setStepTitle] = useState('')
   const client = useReservoirClient()
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
