@@ -21,6 +21,7 @@
     "build:fix-type-defs": "node ./scripts/fix-type-defs-imports",
     "build:cleanup": "mv tsconfig.json tsconfig.production.json && mv tsconfig.tmp.json tsconfig.json",
     "publish:stable": "yarn bump:stable && yarn clean && yarn build && yarn workspaces foreach --no-private --exclude reservoir-kit --exclude demo npm publish --tolerate-republish --access public",
+    "changelog": "yarn workspaces foreach --no-private --exclude reservoir-kit --exclude demo run changelog && git add -A; git commit -m 'changelog: update changelog'",
     "bump:stable": "yarn version apply --all",
     "reset": "yarn clean && rm -rf node_modules .yarn/cache .parcel-cache"
   },
