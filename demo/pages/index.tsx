@@ -124,6 +124,7 @@ const Index: NextPage = () => {
             <Trigger>List Item</Trigger>
           </div>
         }
+        nativeOnly={true}
         collectionId="0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e"
         tokenId="39"
         currencies={[
