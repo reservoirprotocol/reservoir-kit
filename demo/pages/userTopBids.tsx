@@ -40,7 +40,7 @@ const UserTopBids: NextPage = () => {
         <div key={`${bid.id}:${i}`}>
           <div>Id: {bid.id}</div>
           <div>Price: {bid.price}</div>
-          <div>Source: {bid.source.name}</div>
+          <div>Source: {bid.source.name as string}</div>
         </div>
       ))}
       {hasNextPage ? (
