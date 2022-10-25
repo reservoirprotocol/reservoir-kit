@@ -16,6 +16,7 @@ const Index: NextPage = () => {
     { contract: '0x0000000000000000000000000000000000000000', symbol: 'ETH' },
     { contract: '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557', symbol: 'USDC' },
   ])
+  const [nativeOnly, setNativeOnly] = useState(false)
 
   return (
     <div
@@ -69,6 +70,16 @@ const Index: NextPage = () => {
           }}
         />
       </div>
+      <div>
+        <label>Native Only: </label>
+        <input
+          type="checkbox"
+          checked={nativeOnly}
+          onChange={(e) => {
+            setNativeOnly(e.target.checked)
+          }}
+        />
+      </div>
 
       <ListModal
         trigger={
@@ -88,6 +99,7 @@ const Index: NextPage = () => {
             List Item
           </button>
         }
+        nativeOnly={nativeOnly}
         collectionId={collectionId}
         tokenId={tokenId}
         currencies={currencies}
