@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Flex, Box } from '../../primitives'
+import { Flex, Box, Text } from '../../primitives'
 import Token from './Token'
 import Stat from '../Stat'
 import { useTokens, useCollections } from '../../hooks'
@@ -13,11 +13,11 @@ type Props = {
 const TokenStats: FC<Props> = ({ token, collection }) => {
   let attributeFloor = token?.token?.attributes
     ? Math.max(
-        ...token.token.attributes.map((attr: any) =>
-          Number(attr.floorAskPrice)
-        ),
-        0
-      )
+      ...token.token.attributes.map((attr: any) =>
+        Number(attr.floorAskPrice)
+      ),
+      0
+    )
     : 0
   return (
     <Flex
@@ -46,36 +46,68 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           {
             id: 0,
             label: (
-              <Flex css={{ alignItems: 'center', gap: '$2', mr: '$1' }}>
-                <span>Creator Royalties</span>
-                <InfoTooltip
-                  side="right"
-                  width={200}
-                  content={
-                    'A fee on every order that goes to the collection creator.'
-                  }
-                />
-              </Flex>
+                <>
+                  <Text
+                    style="subtitle2"
+                    color="subtle"
+                    css={{ minWidth: '0' }}
+                    ellipsify
+                  >
+                    Creator Royalties
+                  </Text>
+                  <InfoTooltip
+                    side="right"
+                    width={200}
+                    content={
+                      'A fee on every order that goes to the collection creator.'
+                    }
+                  />
+                </>
             ),
             value: (collection?.royalties?.bps || 0) * 0.01 + '%',
           },
           {
             id: 1,
-            label: 'Last Sale',
+            label: (
+                <Text
+                  style="subtitle2"
+                  color="subtle"
+                  css={{ minWidth: '0' }}
+                  ellipsify
+                >
+                  Last Sale
+                </Text>
+            ),
             value: token?.token?.lastSell?.value || null,
             asEth: true,
           },
           {
             id: 2,
-            label: 'Collection Floor',
+            label: (
+                <Text
+                  style="subtitle2"
+                  color="subtle"
+                  css={{ minWidth: '0' }}
+                  ellipsify
+                >
+                  Collection Floor
+                </Text>
+            ),
             value: collection?.floorAsk?.price?.amount?.native || 0,
             asEth: true,
           },
           {
             id: 3,
             label: (
-              <Flex css={{ alignItems: 'center', gap: '$2', mr: '$1' }}>
-                <span>Highest Trait Floor</span>
+              <>
+                <Text
+                  style="subtitle2"
+                  color="subtle"
+                  css={{ minWidth: '0' }}
+                  ellipsify
+                >
+                  Highest Trait Floor
+                </Text>
                 <InfoTooltip
                   side="right"
                   width={200}
@@ -83,7 +115,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
                     'The floor price of the most valuable trait of a token.'
                   }
                 />
-              </Flex>
+              </>
             ),
             value:
               attributeFloor ||

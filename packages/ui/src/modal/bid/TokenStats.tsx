@@ -1,5 +1,5 @@
 import React, { ComponentPropsWithoutRef, FC } from 'react'
-import { Flex, Box, Grid } from '../../primitives'
+import { Flex, Box, Grid, Text } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
 import Stat from '../Stat'
 import { useTokens, useCollections } from '../../hooks'
@@ -20,8 +20,15 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
     {
       id: 0,
       label: (
-        <Flex css={{ alignItems: 'center', gap: 8 }}>
-          <span>Creator Royalties</span>
+        <>
+          <Text
+            style="subtitle2"
+            color="subtle"
+            css={{ minWidth: '0' }}
+            ellipsify
+          >
+            Creator Royalties
+          </Text>
           <InfoTooltip
             side="right"
             width={200}
@@ -29,13 +36,22 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
               'A fee on every order that goes to the collection creator.'
             }
           />
-        </Flex>
+        </>
       ),
       value: (collection?.royalties?.bps || 0) * 0.01 + '%',
     },
     {
       id: 1,
-      label: 'Highest Offer',
+      label: (
+        <Text
+          style="subtitle2"
+          color="subtle"
+          css={{ minWidth: '0' }}
+          ellipsify
+        >
+          Highest Offer
+        </Text>
+      ),
       value: token
         ? token.market?.topBid?.price?.amount?.native || null
         : collection?.topBid?.price?.amount?.native || null,
@@ -46,14 +62,32 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
   if (token) {
     stats.push({
       id: 2,
-      label: 'List Price',
+      label: (
+        <Text
+          style="subtitle2"
+          color="subtle"
+          css={{ minWidth: '0' }}
+          ellipsify
+        >
+          List Price
+        </Text>
+      ),
       value: token.market?.floorAsk?.price?.amount?.native || null,
       asEth: true,
     })
   } else if (!token && collection) {
     stats.push({
       id: 2,
-      label: 'Floor',
+      label: (
+        <Text
+          style="subtitle2"
+          color="subtle"
+          css={{ minWidth: '0' }}
+          ellipsify
+        >
+          Floor
+        </Text>
+      ),
       value: collection?.floorAsk?.price?.amount?.native || null,
       asEth: true,
     })
@@ -72,7 +106,7 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
       }}
     >
       <TokenStatsHeader collection={collection} token={token} />
-      <Grid css={{ flex: 1, alignContent: 'start' }}>
+      <Grid css={{ flex: 1, alignContent: 'start', width: '100%', gridTemplateColumns: 'repeat(1, minmax(0, 1fr))' }}>
         <SelectedAttribute
           attributeKey={trait?.key}
           attributeValue={trait?.value}
