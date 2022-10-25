@@ -21,6 +21,7 @@ const Index: NextPage = () => {
   ])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
+  const [nativeOnly, setNativeOnly] = useState(false)
 
   return (
     <div
@@ -75,6 +76,16 @@ const Index: NextPage = () => {
         />
       </div>
       <DeeplinkCheckbox />
+      <div>
+        <label>Native Only: </label>
+        <input
+          type="checkbox"
+          checked={nativeOnly}
+          onChange={(e) => {
+            setNativeOnly(e.target.checked)
+          }}
+        />
+      </div>
 
       <ListModal
         trigger={
@@ -94,6 +105,7 @@ const Index: NextPage = () => {
             List Item
           </button>
         }
+        nativeOnly={nativeOnly}
         collectionId={collectionId}
         tokenId={tokenId}
         currencies={currencies}

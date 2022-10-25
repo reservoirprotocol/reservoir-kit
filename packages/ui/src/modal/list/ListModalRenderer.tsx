@@ -330,7 +330,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (open && syncProfit && loadedInitalPrice && localMarketplace) {
-      setMarketplaces(syncMarketPrices(localMarketplace, allMarketplaces))
+      setMarketplaces(syncMarketPrices(localMarketplace, marketplaces))
     }
   }, [open, syncProfit])
 
@@ -564,3 +564,5 @@ export const ListModalRenderer: FC<Props> = ({
     </>
   )
 }
+
+ListModalRenderer.displayName = 'ListModalRenderer'

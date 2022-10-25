@@ -48,6 +48,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   currencies?: Currency[]
+  nativeOnly?: boolean
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
@@ -85,6 +86,7 @@ export function ListModal({
   tokenId,
   collectionId,
   currencies,
+  nativeOnly,
   onGoToToken,
   onListingComplete,
   onListingError,
@@ -213,9 +215,12 @@ export function ListModal({
           }
         }, [transactionError])
 
-        const availableMarketplaces = marketplaces.filter(
-          (market) => market.listingEnabled
-        )
+        const availableMarketplaces = marketplaces.filter((market) => {
+          const isNative = market.orderbook === 'reservoir'
+          return nativeOnly
+            ? market.listingEnabled && isNative
+            : market.listingEnabled
+        })
 
         const selectedMarketplaces = availableMarketplaces.filter(
           (marketplace) => marketplace.isSelected
