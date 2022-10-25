@@ -1,7 +1,14 @@
 
+## [0.5.4](https://github.com/reservoirprotocol/reservoir-kit/commit/1379ceac17b3026cd6591780e5ad9b27fbfb20f0) (2022-10-25)
+
+* Merge pull request #84 from reservoirprotocol/fix/list-modal-text-overflow [5ea641d](https://github.com/reservoirprotocol/reservoir-kit/commit/5ea641d6955691b0347ec2c45aaf0a26404e7188)
+* Fix issue with attribute prop after opening [94515f0](https://github.com/reservoirprotocol/reservoir-kit/commit/94515f08553d4c60aebc43dd01d22410bf954c37)
+* Merge branch 'main' into pedro/res-520-support-for-opening-modals [4b5db7d](https://github.com/reservoirprotocol/reservoir-kit/commit/4b5db7d77a39173e77f9c9197ef40894d27254bc)
+* Add ListModal toggle for nativeOnly to remove all non native marketplaces [cef9531](https://github.com/reservoirprotocol/reservoir-kit/commit/cef9531924f9d43870818c8cabe26d5bbe161670)
 ## [0.5.3](https://github.com/reservoirprotocol/reservoir-kit/commit/712425aaf48570da98c7df2d0a39a85f6fd6f524) (2022-10-24)
 
 * Switch to standard US date format when displaying dates [a4f5fa1](https://github.com/reservoirprotocol/reservoir-kit/commit/a4f5fa1e5cbeccf0e857ca1c47c2bfb270d6b784)
+* Add openState property to programmatically open the BuyModal, ListModal, BidModal and AcceptBidModal [8d046a6](https://github.com/reservoirprotocol/reservoir-kit/commit/8d046a6b45504daa7d754fbe6e9c606a90800354)
 ## [0.5.2](https://github.com/reservoirprotocol/reservoir-kit/commit/387d2fa6b811df554518a5d87f9c3cef67f29d81) (2022-10-21)
 
 ## [0.5.1](https://github.com/reservoirprotocol/reservoir-kit/commit/44bbcbccca2321549a918590e3f09db68446cfbf) (2022-10-20)
@@ -10,10 +17,13 @@
 ## [0.5.0](https://github.com/reservoirprotocol/reservoir-kit/commit/d6ed02c3356e447cd44e452a54da97cf4333f174) (2022-10-20)
 
 * Upgrade useCollectionActivity to v4 [be913c1](https://github.com/reservoirprotocol/reservoir-kit/commit/be913c15b52631a99c684430846e0a1cf4785789)
+* Merge branch 'main' into fix/list-modal-text-overflow [a57a94c](https://github.com/reservoirprotocol/reservoir-kit/commit/a57a94c6f98947ca19114c365d8a4b70cba91632)
+* added truncation support to all labels on the list and bid modals [6aa5da0](https://github.com/reservoirprotocol/reservoir-kit/commit/6aa5da09cb4a61be16f7c8f6dd93a9338450ce9b)
 * Fix typescript error in useUserActivity [9e63f50](https://github.com/reservoirprotocol/reservoir-kit/commit/9e63f50685ff553f4eb1c2ff834a69f348300510)
 ## [0.4.14](https://github.com/reservoirprotocol/reservoir-kit/commit/c2ddf9d22a0ba705fca835de6948cbcfbf8a1b67) (2022-10-20)
 
 * Display blank for List Price when no listing is available [9142c21](https://github.com/reservoirprotocol/reservoir-kit/commit/9142c21980383eda52341ae3575041d24c48cebd)
+* Added truncation support for the 'Highest Trait Floor' text on the list modal [3f75179](https://github.com/reservoirprotocol/reservoir-kit/commit/3f751792dd328e79bee6c02de8a5bba9cd7a279b)
 ## [0.4.13](https://github.com/reservoirprotocol/reservoir-kit/commit/14c41b1b2049b33212096589800daa46a843dddf) (2022-10-13)
 
 * Improve performance when calculating attribute count [6455159](https://github.com/reservoirprotocol/reservoir-kit/commit/6455159bef35d820eed4c4ac5b733499de581f8a)
