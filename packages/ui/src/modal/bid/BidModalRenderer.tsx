@@ -201,6 +201,8 @@ export const BidModalRenderer: FC<Props> = ({
       setBidData(null)
       setTransactionError(null)
       setTrait(undefined)
+    } else {
+      setTrait(attribute)
     }
   }, [open])
 
