@@ -39,7 +39,7 @@ const Bids: NextPage = () => {
         <div key={bid.id}>
           <div>Id: {bid.id}</div>
           <div>Price: {bid.price.amount.native}</div>
-          <div>Source: {bid.source.name}</div>
+          <div>Source: {bid.source.name as string}</div>
         </div>
       ))}
       {hasNextPage ? (

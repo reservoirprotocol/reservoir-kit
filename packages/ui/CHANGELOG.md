@@ -1,4 +1,9 @@
 
+## [0.5.3](https://github.com/reservoirprotocol/reservoir-kit/commit/712425aaf48570da98c7df2d0a39a85f6fd6f524) (2022-10-24)
+
+* Switch to standard US date format when displaying dates [a4f5fa1](https://github.com/reservoirprotocol/reservoir-kit/commit/a4f5fa1e5cbeccf0e857ca1c47c2bfb270d6b784)
+## [0.5.2](https://github.com/reservoirprotocol/reservoir-kit/commit/387d2fa6b811df554518a5d87f9c3cef67f29d81) (2022-10-21)
+
 ## [0.5.1](https://github.com/reservoirprotocol/reservoir-kit/commit/44bbcbccca2321549a918590e3f09db68446cfbf) (2022-10-20)
 
 * Fix issue with useUserActivity types [167b246](https://github.com/reservoirprotocol/reservoir-kit/commit/167b2468625e212b75a25b2b1cf605993eb8a1ba)

@@ -97,7 +97,7 @@ const MainContainer = styled(Flex, {
   },
 })
 
-const minimumDate = dayjs().add(1, 'h').format('DD/MM/YYYY h:mm A')
+const minimumDate = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
 export function BidModal({
   openState,
   trigger,
@@ -193,7 +193,7 @@ export function BidModal({
                   expirationOption.relativeTimeUnit
                 )
               : dayjs.unix(expirationOption.relativeTime)
-            setExpirationDate(newExpirationTime.format('DD/MM/YYYY h:mm A'))
+            setExpirationDate(newExpirationTime.format('MM/DD/YYYY h:mm A'))
           } else {
             setExpirationDate('')
           }

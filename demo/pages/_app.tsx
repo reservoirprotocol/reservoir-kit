@@ -12,6 +12,7 @@ import {
   darkTheme as defaultTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.goerli],
@@ -50,7 +51,7 @@ const AppWrapper = ({ children }) => {
   return (
     <ReservoirKitProvider
       options={{
-        apiBase: 'https://api-goerli.reservoir.tools',
+        apiBase: API_BASE || 'https://api.reservoir.tools',
         apiKey: API_KEY,
         marketplaceFee: 100,
         marketplaceFeeRecipient: '0x0CccD55A5Ac261Ea29136831eeaA93bfE07f5Db6',

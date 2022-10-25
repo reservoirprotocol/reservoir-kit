@@ -1,15 +1,12 @@
-import { useContext } from 'react'
 import { NextPage } from 'next'
 import {
   BuyModal,
   ListModal,
   AcceptBidModal,
   BidModal,
-  darkTheme,
-  lightTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { ThemeSwitcherContext } from './_app'
+import ThemeSwitcher from 'components/ThemeSwitcher'
 
 const Trigger = ({ children }) => (
   <button
@@ -27,48 +24,7 @@ const Trigger = ({ children }) => (
   </button>
 )
 
-const getThemeFromOption = (option: string) => {
-  switch (option) {
-    case 'light': {
-      return lightTheme({
-        ethIcon: 'glyph',
-      })
-    }
-
-    case 'dark': {
-      return darkTheme()
-    }
-
-    case 'decent': {
-      return lightTheme({
-        font: 'ABC Monument Grotesk',
-        primaryColor: 'black',
-        primaryHoverColor: 'rgb(153 105 255)',
-        headerBackground: 'rgb(246, 234, 229)',
-        contentBackground: '#fbf3f0',
-        footerBackground: 'rgb(246, 234, 229)',
-        textColor: 'rgb(55, 65, 81)',
-        borderColor: 'rgba(0,0,0, 0)',
-        overlayBackground: 'rgba(31, 41, 55, 0.75)',
-      })
-    }
-
-    case 'reservoir': {
-      return lightTheme({
-        font: 'Inter',
-        primaryColor: '#7000FF',
-      })
-    }
-
-    default: {
-      return darkTheme()
-    }
-  }
-}
-
 const Index: NextPage = () => {
-  const { setTheme } = useContext(ThemeSwitcherContext)
-
   return (
     <div
       style={{
@@ -201,20 +157,7 @@ const Index: NextPage = () => {
         }}
       />
 
-      <select
-        onClick={(e) => {
-          e.stopPropagation()
-        }}
-        onChange={(e) => {
-          setTheme(getThemeFromOption(e.target.value))
-        }}
-        style={{ position: 'fixed', top: 16, right: 16 }}
-      >
-        <option value="dark">Dark Theme</option>
-        <option value="light">Light Theme</option>
-        <option value="decent">Decent</option>
-        <option value="reservoir">Reservoir</option>
-      </select>
+      <ThemeSwitcher />
     </div>
   )
 }

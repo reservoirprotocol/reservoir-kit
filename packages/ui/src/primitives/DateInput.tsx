@@ -21,7 +21,7 @@ export default forwardRef<ElementRef<typeof Flatpickr>, Props>(
     <Flatpickr
       ref={forwardedRef}
       value={value}
-      options={{ dateFormat: 'd/m/Y h:i K', ...options }}
+      options={{ dateFormat: 'm/d/Y h:i K', ...options }}
       onChange={onChange}
       defaultValue={defaultValue}
       render={({ defaultValue }, ref) => {

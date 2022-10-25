@@ -15,7 +15,7 @@ const Listings: NextPage = () => {
       '0x27af21619746a2abb01d3056f971cde936145939',
       '0xfb7e002151343efa2a3a5f2ea98db0d21efb75ce',
     ],
-    limit: 10
+    limit: 10,
   })
 
   const { ref, inView } = useInView()
@@ -44,7 +44,7 @@ const Listings: NextPage = () => {
         <div key={listing.id}>
           <div>Id: {listing.id}</div>
           <div>Price: {listing.price.amount.native}</div>
-          <div>Source: {listing.source.name}</div>
+          <div>Source: {listing.source.name as string}</div>
         </div>
       ))}
       {hasNextPage ? (
