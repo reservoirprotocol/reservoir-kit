@@ -1,4 +1,11 @@
-import React, { ReactElement, useEffect, useState, useRef } from 'react'
+import React, {
+  ReactElement,
+  useEffect,
+  useState,
+  useRef,
+  Dispatch,
+  SetStateAction,
+} from 'react'
 import { styled } from '../../../stitches.config'
 import {
   Flex,
@@ -37,6 +44,7 @@ import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
+import { useFallbackState } from '../../hooks'
 
 type BidCallbackData = {
   tokenId?: string
@@ -45,6 +53,7 @@ type BidCallbackData = {
 }
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
+  openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
   attribute?: Trait
@@ -90,6 +99,7 @@ const MainContainer = styled(Flex, {
 
 const minimumDate = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
 export function BidModal({
+  openState,
   trigger,
   tokenId,
   collectionId,
@@ -99,7 +109,11 @@ export function BidModal({
   onBidComplete,
   onBidError,
 }: Props): ReactElement {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useFallbackState(
+    openState ? openState[0] : false,
+    openState
+  )
+
   const datetimeElement = useRef<Flatpickr | null>(null)
   const [stepTitle, setStepTitle] = useState('')
   const [localMarketplace, setLocalMarketplace] = useState<ReturnType<

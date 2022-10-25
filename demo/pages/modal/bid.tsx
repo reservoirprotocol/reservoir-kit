@@ -3,6 +3,8 @@ import { BidModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { ComponentPropsWithoutRef, useState } from 'react'
+import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
+import { useRouter } from 'next/router'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -10,12 +12,15 @@ const DEFAULT_COLLECTION_ID =
 const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '39'
 
 const BidPage: NextPage = () => {
+  const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [attributeKey, setAttributeKey] = useState('')
   const [attributeValue, setAttributeValue] = useState('')
   const [attribute, setAttribute] =
     useState<ComponentPropsWithoutRef<typeof BidModal>['attribute']>(undefined)
+  const deeplinkOpenState = useState(true)
+  const hasDeeplink = router.query.deeplink !== undefined
 
   const computeAttribute = () => {
     {
@@ -79,6 +84,7 @@ const BidPage: NextPage = () => {
           onBlur={computeAttribute}
         />
       </div>
+      <DeeplinkCheckbox />
 
       <BidModal
         trigger={
@@ -101,6 +107,7 @@ const BidPage: NextPage = () => {
         collectionId={collectionId}
         tokenId={tokenId}
         attribute={attribute}
+        openState={hasDeeplink ? deeplinkOpenState : undefined}
         onBidComplete={(data) => {
           console.log('Bid Complete', data)
         }}

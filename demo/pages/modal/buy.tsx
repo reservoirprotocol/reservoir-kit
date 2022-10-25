@@ -3,6 +3,8 @@ import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
+import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
+import { useRouter } from 'next/router'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -10,10 +12,13 @@ const DEFAULT_COLLECTION_ID =
 const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '39'
 
 const BuyPage: NextPage = () => {
+  const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [referrer, setReferrer] = useState<string | undefined>(undefined)
   const [referrerBps, setReferrerBps] = useState<number | undefined>(undefined)
+  const deeplinkOpenState = useState(true)
+  const hasDeeplink = router.query.deeplink !== undefined
 
   return (
     <div
@@ -64,6 +69,7 @@ const BuyPage: NextPage = () => {
           }
         />
       </div>
+      <DeeplinkCheckbox />
 
       <BuyModal
         trigger={
@@ -87,6 +93,7 @@ const BuyPage: NextPage = () => {
         tokenId={tokenId}
         referrer={referrer}
         referrerFeeBps={referrerBps}
+        openState={hasDeeplink ? deeplinkOpenState : undefined}
         onGoToToken={() => console.log('Go to token')}
         onPurchaseComplete={(data) => {
           console.log('Purchase Complete', data)

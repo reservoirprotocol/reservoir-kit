@@ -1,5 +1,5 @@
-import React, { ReactElement, useEffect, useState } from 'react'
-import { useCopyToClipboard } from '../../hooks'
+import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import { useCopyToClipboard, useFallbackState } from '../../hooks'
 
 import {
   Flex,
@@ -37,6 +37,7 @@ type PurchaseData = {
 }
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
+  openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
   referrerFeeBps?: number | null
@@ -59,6 +60,7 @@ function titleForStep(step: BuyStep) {
 }
 
 export function BuyModal({
+  openState,
   trigger,
   tokenId,
   collectionId,
@@ -69,7 +71,10 @@ export function BuyModal({
   onClose,
   onGoToToken,
 }: Props): ReactElement {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useFallbackState(
+    openState ? openState[0] : false,
+    openState
+  )
   const { copy: copyToClipboard, copied } = useCopyToClipboard()
 
   return (

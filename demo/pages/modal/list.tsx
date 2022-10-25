@@ -3,6 +3,8 @@ import { ListModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
+import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
+import { useRouter } from 'next/router'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -10,12 +12,15 @@ const DEFAULT_COLLECTION_ID =
 const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '39'
 
 const Index: NextPage = () => {
+  const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [currencies, setCurrencies] = useState([
     { contract: '0x0000000000000000000000000000000000000000', symbol: 'ETH' },
     { contract: '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557', symbol: 'USDC' },
   ])
+  const deeplinkOpenState = useState(true)
+  const hasDeeplink = router.query.deeplink !== undefined
   const [nativeOnly, setNativeOnly] = useState(false)
 
   return (
@@ -70,6 +75,7 @@ const Index: NextPage = () => {
           }}
         />
       </div>
+      <DeeplinkCheckbox />
       <div>
         <label>Native Only: </label>
         <input
@@ -103,6 +109,7 @@ const Index: NextPage = () => {
         collectionId={collectionId}
         tokenId={tokenId}
         currencies={currencies}
+        openState={hasDeeplink ? deeplinkOpenState : undefined}
         onGoToToken={() => console.log('Awesome!')}
         onListingComplete={(data) => {
           console.log('Listing Complete', data)
