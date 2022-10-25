@@ -4,7 +4,13 @@ import { darkTheme } from 'stitches.config'
 import '@rainbow-me/rainbowkit/styles.css'
 import { ThemeProvider } from 'next-themes'
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
-import { WagmiConfig, createClient, configureChains, chain } from 'wagmi'
+import {
+  WagmiConfig,
+  createClient,
+  configureChains,
+  chain,
+  allChains,
+} from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'
 import '../fonts.css'
 import {
@@ -12,10 +18,25 @@ import {
   darkTheme as defaultTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE || 'https://api.reservoir.tools'
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID || 1
+const SOURCE = process.env.NEXT_PUBLIC_SOURCE || 'reservoirkit.demo'
+const FEE = process.env.NEXT_PUBLIC_MARKETPLACE_FEE
+  ? +process.env.NEXT_PUBLIC_MARKETPLACE_FEE
+  : undefined
+const FEE_RECIPIENT =
+  process.env.NEXT_PUBLIC_MARKETPLACE_FEE_RECIPIENT || undefined
+const REFERRAL_FEE = process.env.NEXT_PUBLIC_REFERRAL_FEE
+  ? +process.env.NEXT_PUBLIC_REFERRAL_FEE
+  : undefined
+const REFERRAL_FEE_RECIPIENT =
+  process.env.NEXT_PUBLIC_REFERRAL_FEE_RECIPIENT || undefined
+
+const envChain = allChains.find((chain) => chain.id === +CHAIN_ID)
 
 const { chains, provider } = configureChains(
-  [chain.mainnet, chain.goerli],
+  [envChain || chain.mainnet],
   [publicProvider()]
 )
 
@@ -51,13 +72,13 @@ const AppWrapper = ({ children }) => {
   return (
     <ReservoirKitProvider
       options={{
-        apiBase: API_BASE || 'https://api.reservoir.tools',
+        apiBase: API_BASE,
         apiKey: API_KEY,
-        marketplaceFee: 100,
-        marketplaceFeeRecipient: '0x0CccD55A5Ac261Ea29136831eeaA93bfE07f5Db6',
-        referralFee: 200,
-        referralFeeRecipient: '0x0CccD55A5Ac261Ea29136831eeaA93bfE07f5Db6',
-        source: 'pedro.market',
+        marketplaceFee: FEE,
+        marketplaceFeeRecipient: FEE_RECIPIENT,
+        referralFee: REFERRAL_FEE,
+        referralFeeRecipient: REFERRAL_FEE_RECIPIENT,
+        source: SOURCE,
       }}
       theme={theme}
     >
@@ -78,8 +99,6 @@ const AppWrapper = ({ children }) => {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [theme, setTheme] = useState(defaultTheme())
-
   return (
     <ThemeSwitcher>
       <AppWrapper>
