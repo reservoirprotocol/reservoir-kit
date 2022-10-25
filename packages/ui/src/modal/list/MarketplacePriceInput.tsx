@@ -15,6 +15,7 @@ import { CryptoCurrencyIcon } from '../../primitives'
 
 type MarketPlaceInputProps = {
   marketplace: Marketplace
+  royalty?: number
   currency: Currency
   usdPrice?: number | null
   onChange: (e: any) => void
@@ -23,14 +24,17 @@ type MarketPlaceInputProps = {
 
 const MarketplacePriceInput = ({
   marketplace,
+  royalty = 0,
   currency,
   usdPrice,
   onChange,
   onBlur,
   ...props
 }: MarketPlaceInputProps) => {
-  let profit =
-    (1 - (marketplace.fee?.percent || 0) / 100) * Number(marketplace.truePrice)
+  const marketplaceFeePercentage = (marketplace.fee?.percent || 0) / 100
+  const royaltyPercentage = (royalty * 0.01) / 100
+  const percentageProfit = 1 - marketplaceFeePercentage - royaltyPercentage
+  let profit = percentageProfit * Number(marketplace.truePrice)
 
   return (
     <Flex {...props} align="center">

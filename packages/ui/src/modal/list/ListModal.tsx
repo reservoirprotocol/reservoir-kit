@@ -462,6 +462,7 @@ export function ListModal({
                     {selectedMarketplaces.map((marketplace) => (
                       <Box key={marketplace.name} css={{ mb: '$3' }}>
                         <MarketplacePriceInput
+                          royalty={collection?.royalties?.bps}
                           marketplace={marketplace}
                           currency={currency}
                           usdPrice={usdPrice}
