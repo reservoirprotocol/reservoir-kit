@@ -4631,6 +4631,8 @@ export interface operations {
         token?: string;
         /** Filter to a particular user. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
         maker?: string;
+        /** Filter to a particular community. Example: `artblocks` */
+        community?: string;
         contracts?: string[];
         /**
          * active = currently valid, inactive = temporarily invalid
@@ -4777,6 +4779,8 @@ export interface operations {
         tokenSetId?: string;
         /** Filter to a particular user. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
         maker?: string;
+        /** Filter to a particular community. Example: `artblocks` */
+        community?: string;
         /** Filter to an array of contracts. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contracts?: string[];
         /**
