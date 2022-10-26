@@ -1,4 +1,8 @@
 
+## [0.5.6](https://github.com/reservoirprotocol/reservoir-kit/commit/3c8cc3b3a8678a2d496c82d6900713b9687a6291) (2022-10-26)
+
+## [0.5.5](https://github.com/reservoirprotocol/reservoir-kit/commit/a83c6b2009ee22818c4c62f8af95e054fc8a8f47) (2022-10-26)
+
 ## [0.5.4](https://github.com/reservoirprotocol/reservoir-kit/commit/1379ceac17b3026cd6591780e5ad9b27fbfb20f0) (2022-10-25)
 
 * Merge pull request #84 from reservoirprotocol/fix/list-modal-text-overflow [5ea641d](https://github.com/reservoirprotocol/reservoir-kit/commit/5ea641d6955691b0347ec2c45aaf0a26404e7188)

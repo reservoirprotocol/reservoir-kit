@@ -1,4 +1,9 @@
 
+## [0.1.12](https://github.com/reservoirprotocol/reservoir-kit/commit/576f594fedf298d9a374f1960792d6157d1d5529) (2022-10-26)
+
+* Sync api [7e7ec76](https://github.com/reservoirprotocol/reservoir-kit/commit/7e7ec76286de7680384dc92d031e69f792a3a082)
+## [0.1.11](https://github.com/reservoirprotocol/reservoir-kit/commit/c9c0268d4248c0cb1823fc6a068c368982865d87) (2022-10-26)
+
 ## [0.1.10](https://github.com/reservoirprotocol/reservoir-kit/commit/19f388224882e56dc1c3966120b00ff652c14646) (2022-10-24)
 
 * Sync api [3e8d578](https://github.com/reservoirprotocol/reservoir-kit/commit/3e8d5787eceae72a35e69254deac69c72cf391a9)
