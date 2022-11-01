@@ -13,7 +13,7 @@ export type Token = Pick<
 >
 
 type BuyTokenBodyParameters = NonNullable<
-  paths['/execute/buy/v5']['post']['parameters']['body']['body']
+  paths['/execute/buy/v6']['post']['parameters']['body']['body']
 >
 
 export type BuyTokenOptions = Omit<
@@ -105,7 +105,7 @@ export async function buyToken(data: Data) {
 
     await executeSteps(
       {
-        url: `${client.apiBase}/execute/buy/v5`,
+        url: `${client.apiBase}/execute/buy/v6`,
         method: 'post',
         data: params,
       },
