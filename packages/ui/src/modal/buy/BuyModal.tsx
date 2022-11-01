@@ -145,6 +145,10 @@ export function BuyModal({
           price = token?.token.lastSell.value
         }
 
+        const sourceImg = token?.market?.floorAsk?.source
+          ? (token?.market?.floorAsk?.source['icon'] as string)
+          : undefined
+
         return (
           <Modal
             trigger={trigger}
@@ -172,6 +176,7 @@ export function BuyModal({
                   isUnavailable={true}
                   price={price}
                   currency={currency}
+                  sourceImg={sourceImg}
                 />
                 <Button
                   onClick={() => {
@@ -213,6 +218,7 @@ export function BuyModal({
                   isSuspicious={isBanned}
                   price={price}
                   currency={currency}
+                  sourceImg={sourceImg}
                 />
                 {referrerFee > 0 && (
                   <>
@@ -306,6 +312,7 @@ export function BuyModal({
                   isSuspicious={isBanned}
                   price={price}
                   currency={currency}
+                  sourceImg={sourceImg}
                 />
                 {stepData && stepData.totalSteps > 1 && (
                   <ProgressBar
