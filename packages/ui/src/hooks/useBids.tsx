@@ -7,13 +7,18 @@ type BidsQuery = paths['/orders/bids/v4']['get']['parameters']['query']
 
 export default function (
   options: BidsQuery,
-  swrOptions: SWRInfiniteConfiguration = {}
+  swrOptions: SWRInfiniteConfiguration = {},
+  enabled: boolean = true
 ) {
   const client = useReservoirClient()
 
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<Bids>(
       (pageIndex, previousPageData) => {
+        if (!enabled) {
+          return null
+        }
+
         const url = new URL(`${client?.apiBase || ''}/orders/bids/v4`)
         let query: BidsQuery = options || {}
 
