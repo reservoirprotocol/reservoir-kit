@@ -66,7 +66,7 @@ export async function executeSteps(
 
       // Check if the user is selling
       let error = null
-      if (isSell && quote - expectedPrice < -0.00001) {
+      if (isSell && Math.abs(quote - expectedPrice) < 0.00001) {
         error = {
           type: 'price mismatch',
           message: `The quote price of ${quote} ETH is less than the expected price of ${expectedPrice} ETH`,
@@ -74,7 +74,7 @@ export async function executeSteps(
       }
 
       // Check if the user is buying
-      if (isBuy && quote - expectedPrice > 0.00001) {
+      if (isBuy && Math.abs(quote - expectedPrice) > 0.00001) {
         error = {
           type: 'price mismatch',
           message: `The quote price of ${quote} ETH is greater than the expected price of ${expectedPrice} ETH`,
