@@ -34,6 +34,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
+  bidId?: string
   onBidAccepted?: (data: BidData) => void
   onClose?: () => void
   onBidAcceptError?: (error: Error, data: BidData) => void
@@ -53,6 +54,7 @@ export function AcceptBidModal({
   trigger,
   tokenId,
   collectionId,
+  bidId,
   onBidAccepted,
   onClose,
   onBidAcceptError,
@@ -68,11 +70,17 @@ export function AcceptBidModal({
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
+      bidId={bidId}
     >
       {({
         token,
         collection,
+        source,
+        expiration,
         totalPrice,
+        bidAmount,
+        bidAmountCurrency,
+        ethBidAmount,
         fees,
         acceptBidStep,
         transactionError,
@@ -111,14 +119,11 @@ export function AcceptBidModal({
           }
         }, [transactionError])
 
-        const price = token?.market?.topBid?.price?.amount?.decimal || 0
-
-        const topBid = token?.market?.topBid?.price?.amount?.native
         const floorPrice = token?.market?.floorAsk?.price?.amount?.native
 
         const difference =
-          floorPrice && topBid
-            ? ((floorPrice - topBid) / floorPrice) * 100
+          floorPrice && ethBidAmount
+            ? ((floorPrice - ethBidAmount) / floorPrice) * 100
             : undefined
 
         const warning =
@@ -126,19 +131,15 @@ export function AcceptBidModal({
             ? `${difference}% lower than floor price`
             : undefined
 
-        const currency = token?.market?.topBid?.price?.currency
-
         const marketplace = {
-          name:
-            (token?.market?.topBid?.source?.name as string) || 'Marketplace',
-          image: (token?.market?.topBid?.source?.icon as string) || '',
+          name: (source?.name as string) || 'Marketplace',
+          image: (source?.icon as string) || '',
         }
 
         const tokenImage =
           token?.token?.image || token?.token?.collection?.image
 
-        const validUntil = token?.market?.topBid?.validUntil
-        const expires = useTimeSince(validUntil)
+        const expires = useTimeSince(expiration)
 
         return (
           <Modal
@@ -155,11 +156,12 @@ export function AcceptBidModal({
                   collection={collection}
                   usdConversion={ethUsdPrice || 0}
                   isUnavailable={true}
-                  price={price}
+                  price={bidAmount}
                   warning={warning}
-                  currency={currency}
+                  currency={bidAmountCurrency}
                   expires={expires}
                   isOffer={true}
+                  sourceImg={source?.icon ? (source.icon as string) : undefined}
                 />
                 <Button onClick={() => setOpen(false)} css={{ m: '$4' }}>
                   Close
@@ -193,11 +195,12 @@ export function AcceptBidModal({
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={ethUsdPrice || 0}
-                  price={price}
+                  price={bidAmount}
                   warning={warning}
-                  currency={currency}
+                  currency={bidAmountCurrency}
                   expires={expires}
                   isOffer={true}
+                  sourceImg={source?.icon ? (source.icon as string) : undefined}
                 />
                 <Fees fees={fees} marketplace={marketplace.name} />
 
@@ -210,7 +213,7 @@ export function AcceptBidModal({
                   <FormatCryptoCurrency
                     textStyle="h6"
                     amount={totalPrice}
-                    address={currency?.contract}
+                    address={bidAmountCurrency?.contract}
                     logoWidth={16}
                   />
                 </Flex>
@@ -247,11 +250,14 @@ export function AcceptBidModal({
                     tokenDetails={token}
                     collection={collection}
                     usdConversion={ethUsdPrice || 0}
-                    price={price}
+                    price={bidAmount}
                     warning={warning}
-                    currency={currency}
+                    currency={bidAmountCurrency}
                     expires={expires}
                     isOffer={true}
+                    sourceImg={
+                      source?.icon ? (source.icon as string) : undefined
+                    }
                   />
                   <Progress
                     acceptBidStep={acceptBidStep}

@@ -20,6 +20,7 @@ type TokenLineItemProps = {
   expires?: string
   hideRoyalty?: boolean
   isOffer?: boolean
+  sourceImg?: string
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
@@ -34,9 +35,8 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   expires,
   hideRoyalty,
   isOffer,
+  sourceImg,
 }) => {
-  const marketData = tokenDetails?.market
-
   if (!tokenDetails) {
     return null
   }
@@ -50,9 +50,6 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   const img = tokenDetails?.token?.image
     ? tokenDetails.token.image
     : (collection?.image as string)
-  const srcImg = marketData?.floorAsk?.source
-    ? (marketData?.floorAsk?.source['icon'] as string)
-    : ''
   let royalty: number | undefined = hideRoyalty
     ? undefined
     : collection?.royalties?.bps
@@ -74,7 +71,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         royalty={royalty}
         expires={expires}
         warning={warning}
-        source={srcImg}
+        source={sourceImg || ''}
         isUnavailable={isUnavailable}
         isOffer={isOffer}
       />
