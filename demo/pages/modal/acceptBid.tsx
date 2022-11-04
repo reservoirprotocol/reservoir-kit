@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { AcceptBidModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 
@@ -17,6 +17,15 @@ const AcceptBidPage: NextPage = () => {
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
+  const [bidId, setBidId] = useState('')
+
+  useEffect(() => {
+    const prefilledBidId = router.query.bidId
+      ? (router.query.bidId as string)
+      : ''
+    setBidId(prefilledBidId)
+    console.log(router.query)
+  }, [router.query])
 
   return (
     <div
@@ -49,6 +58,16 @@ const AcceptBidPage: NextPage = () => {
           onChange={(e) => setTokenId(e.target.value)}
         />
       </div>
+      <div>
+        <label>Bid Id: </label>
+        <input
+          type="text"
+          value={bidId}
+          onChange={(e) => setBidId(e.target.value)}
+          placeholder="Enter an bid id or set a bidId query param"
+          style={{ width: 250 }}
+        />
+      </div>
       <DeeplinkCheckbox />
 
       <AcceptBidModal
@@ -72,6 +91,7 @@ const AcceptBidPage: NextPage = () => {
         collectionId={collectionId}
         tokenId={tokenId}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
+        bidId={bidId}
         onBidAccepted={(data) => {
           console.log('Bid Accepted', data)
         }}

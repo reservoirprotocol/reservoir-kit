@@ -59,8 +59,8 @@ const Fees: FC<Props> = ({ fees: { feeBreakdown }, marketplace }) => {
       <Text style="subtitle2" color="subtle" css={{ mb: '$2' }}>
         Fees
       </Text>
-      {parsedFeeBreakdown?.map(({ name, percentage, tooltipMessage }) => (
-        <Flex css={{ justifyContent: 'space-between', mb: '$2' }}>
+      {parsedFeeBreakdown?.map(({ name, percentage, tooltipMessage }, i) => (
+        <Flex key={i} css={{ justifyContent: 'space-between', mb: '$2' }}>
           <Flex css={{ alignItems: 'center', gap: 8 }}>
             <Text style="subtitle2" color="subtle">
               {name}

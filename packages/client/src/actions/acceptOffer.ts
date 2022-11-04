@@ -13,7 +13,7 @@ export type Token = Pick<
 >
 
 type AcceptOfferBodyParameters =
-  paths['/execute/sell/v5']['post']['parameters']['body']['body']
+  paths['/execute/sell/v6']['post']['parameters']['body']['body']
 
 export type AcceptOfferOptions = Omit<
   AcceptOfferBodyParameters,
@@ -56,7 +56,7 @@ export async function acceptOffer(data: Data) {
 
     await executeSteps(
       {
-        url: `${client.apiBase}/execute/sell/v5`,
+        url: `${client.apiBase}/execute/sell/v6`,
         method: 'post',
         data: params,
       },
