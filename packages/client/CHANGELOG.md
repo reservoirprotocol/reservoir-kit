@@ -1,4 +1,11 @@
 
+* Merge branch 'main' of github.com:reservoirprotocol/reservoir-kit [070fd55](https://github.com/reservoirprotocol/reservoir-kit/commit/070fd5510c7ae1897e8da9e0e172728870d72bba)
+## [0.1.13](https://github.com/reservoirprotocol/reservoir-kit/commit/07c5cc6712e6dee0ca8e0e3d6edbd71bee6301f4) (2022-11-04)
+
+* Merge pull request #88 from reservoirprotocol/pedro/res-931-update-reservoir-kit-to-v6-execute [866f939](https://github.com/reservoirprotocol/reservoir-kit/commit/866f9391be4c98a640c3b074093f0ed6433e9771)
+* Completes RES-823 [596366d](https://github.com/reservoirprotocol/reservoir-kit/commit/596366d139da53e4b2c16b8fd0bd12c668498dcd)
+* Sync api [21139ae](https://github.com/reservoirprotocol/reservoir-kit/commit/21139ae5aac915580dd47652239c4f91ef8a85cb)
+* Upgrade sell/v5 and buy/v5 to v6 [85ad10f](https://github.com/reservoirprotocol/reservoir-kit/commit/85ad10f54553eac8c766cdc039de2390039b6b3d)
 ## [0.1.12](https://github.com/reservoirprotocol/reservoir-kit/commit/576f594fedf298d9a374f1960792d6157d1d5529) (2022-10-26)
 
 * Sync api [7e7ec76](https://github.com/reservoirprotocol/reservoir-kit/commit/7e7ec76286de7680384dc92d031e69f792a3a082)

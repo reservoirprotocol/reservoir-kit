@@ -1,4 +1,8 @@
 
+## [0.5.7](https://github.com/reservoirprotocol/reservoir-kit/commit/31e969397c1ebdee1c888c464ad8312ef831972c) (2022-11-04)
+
+* Add support for accepting a bid by id in the AcceptBidModal [64016b3](https://github.com/reservoirprotocol/reservoir-kit/commit/64016b3dfa2c65fc43328b545facd9331d5e4a61)
+* Add ability to enable/disable useBids hook [8e3d6d9](https://github.com/reservoirprotocol/reservoir-kit/commit/8e3d6d97007bb447f0e650a8b9d46867fbcfd84a)
 ## [0.5.6](https://github.com/reservoirprotocol/reservoir-kit/commit/3c8cc3b3a8678a2d496c82d6900713b9687a6291) (2022-10-26)
 
 ## [0.5.5](https://github.com/reservoirprotocol/reservoir-kit/commit/a83c6b2009ee22818c4c62f8af95e054fc8a8f47) (2022-10-26)
