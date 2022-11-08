@@ -69,7 +69,7 @@ export async function executeSteps(
       if (isSell && quote - expectedPrice < -0.00001) {
         error = {
           type: 'price mismatch',
-          message: `The quote price of ${quote} ETH is less than the expected price of ${expectedPrice} ETH`,
+          message: `The quote price of ${quote} is less than the expected price of ${expectedPrice}`,
         }
       }
 
@@ -77,7 +77,7 @@ export async function executeSteps(
       if (isBuy && quote - expectedPrice > 0.00001) {
         error = {
           type: 'price mismatch',
-          message: `The quote price of ${quote} ETH is greater than the expected price of ${expectedPrice} ETH`,
+          message: `The quote price of ${quote} is greater than the expected price of ${expectedPrice}`,
         }
       }
 

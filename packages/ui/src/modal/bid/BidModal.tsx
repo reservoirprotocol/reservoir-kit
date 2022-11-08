@@ -10,23 +10,22 @@ import { styled } from '../../../stitches.config'
 import {
   Flex,
   Text,
-  FormatWEth,
+  FormatWrappedCurrency,
   Box,
   Input,
   Select,
   DateInput,
   Button,
-  FormatEth,
   ErrorWell,
   Loader,
   FormatCurrency,
   FormatCryptoCurrency,
+  CryptoCurrencyIcon,
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
 import { BidModalRenderer, BidStep, BidData, Trait } from './BidModalRenderer'
 import TokenStats from './TokenStats'
-import WEthIcon from '../../img/WEthIcon'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -38,13 +37,14 @@ import Flatpickr from 'react-flatpickr'
 import TransactionProgress from '../TransactionProgress'
 import ProgressBar from '../ProgressBar'
 import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
-import WethApproval from '../../img/WethApproval'
 import OfferSubmitted from '../../img/OfferSubmitted'
 import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
-import { useFallbackState } from '../../hooks'
+import { useChainCurrency, useFallbackState } from '../../hooks'
+import wrappedContracts from '../../constants/wrappedContracts'
+import wrappedContractNames from '../../constants/wrappedContractNames'
 
 type BidCallbackData = {
   tokenId?: string
@@ -126,6 +126,16 @@ export function BidModal({
   }, [])
   const [attributeSelectorOpen, setAttributeSelectorOpen] = useState(false)
 
+  const chainCurrency = useChainCurrency()
+  const wrappedContractAddress =
+    chainCurrency.chainId in wrappedContracts
+      ? wrappedContracts[chainCurrency.chainId]
+      : wrappedContracts[1]
+  const wrappedContractName =
+    chainCurrency.chainId in wrappedContractNames
+      ? wrappedContractNames[chainCurrency.chainId]
+      : wrappedContractNames[1]
+
   return (
     <BidModalRenderer
       open={open}
@@ -143,11 +153,11 @@ export function BidModal({
         wethBalance,
         bidAmount,
         bidAmountUsd,
-        hasEnoughEth,
+        hasEnoughNativeCurrency,
         hasEnoughWEth,
-        ethAmountToWrap,
+        amountToWrap,
         balance,
-        wethUniswapLink,
+        uniswapConvertLink,
         transactionError,
         stepData,
         bidData,
@@ -294,10 +304,10 @@ export function BidModal({
                       style="tiny"
                     >
                       Balance:{' '}
-                      <FormatWEth
+                      <FormatWrappedCurrency
                         logoWidth={10}
                         textStyle="tiny"
-                        amount={wethBalance}
+                        amount={wethBalance?.value}
                       />{' '}
                     </Text>
                   </Flex>
@@ -309,10 +319,11 @@ export function BidModal({
                       style="body1"
                       color="subtle"
                     >
-                      <Box css={{ width: 12.5, height: 20 }}>
-                        <WEthIcon />
-                      </Box>
-                      WETH
+                      <CryptoCurrencyIcon
+                        css={{ height: 20 }}
+                        address={wrappedContractAddress}
+                      />
+                      {wrappedContractName}
                     </Text>
                     <Input
                       type="number"
@@ -539,12 +550,12 @@ export function BidModal({
 
                   {bidAmount !== '' && !hasEnoughWEth && (
                     <Box css={{ width: '100%', mt: 'auto' }}>
-                      {!hasEnoughEth && (
+                      {!hasEnoughNativeCurrency && (
                         <Flex css={{ gap: '$2', mt: 10 }} justify="center">
                           <Text style="body2" color="error">
-                            Insufficient ETH Balance
+                            {balance?.symbol || 'ETH'} Balance
                           </Text>
-                          <FormatEth amount={balance} />
+                          <FormatCryptoCurrency amount={balance?.value} />
                         </Flex>
                       )}
                       <Flex
@@ -562,18 +573,19 @@ export function BidModal({
                           css={{ flex: '1 0 auto' }}
                           color="secondary"
                           onClick={() => {
-                            window.open(wethUniswapLink, '_blank')
+                            window.open(uniswapConvertLink, '_blank')
                           }}
                         >
                           Convert Manually
                         </Button>
                         <Button
                           css={{ flex: 1, maxHeight: 44 }}
-                          disabled={!hasEnoughEth}
+                          disabled={!hasEnoughNativeCurrency}
                           onClick={placeBid}
                         >
                           <Text style="h6" color="button" ellipsify>
-                            Convert {ethAmountToWrap} ETH for me
+                            Convert {amountToWrap} {balance?.symbol || 'ETH'}{' '}
+                            for me
                           </Text>
                         </Button>
                       </Flex>
@@ -612,7 +624,17 @@ export function BidModal({
                         />
                       )}
                       {stepData.currentStep.kind !== 'signature' && (
-                        <WethApproval style={{ margin: '0 auto' }} />
+                        // <WethApproval style={{ margin: '0 auto' }} />
+                        <Flex align="center" justify="center">
+                          <Flex
+                            css={{ background: '$neutalLine', borderRadius: 8 }}
+                          >
+                            <CryptoCurrencyIcon
+                              css={{ height: 56, width: 56 }}
+                              address={wrappedContractAddress}
+                            />
+                          </Flex>
+                        </Flex>
                       )}
                       <Text
                         css={{
