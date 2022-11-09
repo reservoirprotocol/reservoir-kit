@@ -4,7 +4,7 @@ import { paths } from '@reservoir0x/reservoir-kit-client'
 import { SWRConfiguration } from 'swr'
 
 export default function (
-  query?: paths['/orders/asks/v2']['get']['parameters']['query'] | false,
+  query?: paths['/orders/asks/v3']['get']['parameters']['query'] | false,
   swrOptions?: SWRConfiguration
 ) {
   const { address } = useAccount()
