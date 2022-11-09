@@ -32,8 +32,8 @@ const REFERRAL_FEE = process.env.NEXT_PUBLIC_REFERRAL_FEE
   : undefined
 const REFERRAL_FEE_RECIPIENT =
   process.env.NEXT_PUBLIC_REFERRAL_FEE_RECIPIENT || undefined
-const NORMALIZE_ROYALTIES = process.env.NORMALIZE_ROYALTIES
-  ? process.env.NORMALIZE_ROYALTIES === 'true'
+const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
+  ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
 
 const envChain = allChains.find((chain) => chain.id === +CHAIN_ID)

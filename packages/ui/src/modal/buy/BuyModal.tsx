@@ -42,6 +42,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   referrerFeeBps?: number | null
   referrer?: string | null
+  normalizeRoyalties?: boolean
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
   onPurchaseError?: (error: Error, data: PurchaseData) => void
@@ -66,6 +67,7 @@ export function BuyModal({
   collectionId,
   referrer,
   referrerFeeBps,
+  normalizeRoyalties,
   onPurchaseComplete,
   onPurchaseError,
   onClose,
@@ -84,6 +86,7 @@ export function BuyModal({
       collectionId={collectionId}
       referrer={referrer}
       referrerFeeBps={referrerFeeBps}
+      normalizeRoyalties={normalizeRoyalties}
     >
       {({
         token,

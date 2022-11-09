@@ -26,7 +26,7 @@ export default function (
   setParams(path, query)
 
   const { data, mutate, error, isValidating } = useSWR<CollectionResponse>(
-    query ? [path.href, client?.apiKey, client?.version] : null,
+    options ? [path.href, client?.apiKey, client?.version] : null,
     null,
     {
       revalidateOnMount: true,

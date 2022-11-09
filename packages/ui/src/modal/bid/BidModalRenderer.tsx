@@ -77,6 +77,7 @@ type Props = {
   tokenId?: string
   collectionId?: string
   attribute?: Trait
+  normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -95,6 +96,7 @@ export const BidModalRenderer: FC<Props> = ({
   tokenId,
   collectionId,
   attribute,
+  normalizeRoyalties,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -117,6 +119,7 @@ export const BidModalRenderer: FC<Props> = ({
       tokenId !== undefined && {
         tokens: [`${contract}:${tokenId}`],
         includeTopBid: true,
+        normalizeRoyalties,
       },
     {
       revalidateFirstPage: true,
@@ -129,6 +132,7 @@ export const BidModalRenderer: FC<Props> = ({
     open && {
       id: collectionId,
       includeTopBid: true,
+      normalizeRoyalties,
     }
   )
 

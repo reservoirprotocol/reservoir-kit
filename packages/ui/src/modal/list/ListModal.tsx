@@ -49,6 +49,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   currencies?: Currency[]
   nativeOnly?: boolean
+  normalizeRoyalties?: boolean
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
@@ -87,6 +88,7 @@ export function ListModal({
   collectionId,
   currencies,
   nativeOnly,
+  normalizeRoyalties,
   onGoToToken,
   onListingComplete,
   onListingError,
@@ -108,6 +110,7 @@ export function ListModal({
       tokenId={tokenId}
       collectionId={collectionId}
       currencies={currencies}
+      normalizeRoyalties={normalizeRoyalties}
     >
       {({
         token,

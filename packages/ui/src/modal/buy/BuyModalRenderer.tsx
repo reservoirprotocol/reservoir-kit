@@ -66,6 +66,7 @@ type Props = {
   collectionId?: string
   referrerFeeBps?: number | null
   referrer?: string | null
+  normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -75,6 +76,7 @@ export const BuyModalRenderer: FC<Props> = ({
   collectionId,
   referrer,
   referrerFeeBps,
+  normalizeRoyalties,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -94,6 +96,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: tokens } = useTokens(
     open && {
       tokens: [`${contract}:${tokenId}`],
+      normalizeRoyalties,
     },
     {
       revalidateFirstPage: true,
@@ -102,6 +105,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
+      normalizeRoyalties
     }
   )
   const collection = collections && collections[0] ? collections[0] : undefined
