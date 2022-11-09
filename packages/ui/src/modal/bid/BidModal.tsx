@@ -150,7 +150,7 @@ export function BidModal({
         bidStep,
         expirationOption,
         expirationOptions,
-        wethBalance,
+        wrappedBalance,
         bidAmount,
         bidAmountUsd,
         hasEnoughNativeCurrency,
@@ -307,7 +307,7 @@ export function BidModal({
                       <FormatWrappedCurrency
                         logoWidth={10}
                         textStyle="tiny"
-                        amount={wethBalance?.value}
+                        amount={wrappedBalance?.value}
                       />{' '}
                     </Text>
                   </Flex>

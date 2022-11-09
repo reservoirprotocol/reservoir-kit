@@ -58,7 +58,7 @@ type ChildrenProps = {
   ethUsdPrice: ReturnType<typeof useCoinConversion>
   isBanned: boolean
   balance?: ReturnType<typeof useBalance>['data']
-  wethBalance?: ReturnType<typeof useBalance>['data']
+  wrappedBalance?: ReturnType<typeof useBalance>['data']
   uniswapConvertLink: string
   transactionError?: Error | null
   expirationOptions: ExpirationOption[]
@@ -150,7 +150,7 @@ export const BidModalRenderer: FC<Props> = ({
   })
 
   const {
-    balance: { data: wethBalance },
+    balance: { data: wrappedBalance },
     contractAddress,
   } = useWrappedBalance({
     addressOrName: address,
@@ -169,9 +169,9 @@ export const BidModalRenderer: FC<Props> = ({
     if (bidAmount !== '') {
       const bid = parseEther(bidAmount)
 
-      if (!wethBalance?.value || wethBalance?.value.lt(bid)) {
+      if (!wrappedBalance?.value || wrappedBalance?.value.lt(bid)) {
         setHasEnoughWEth(false)
-        const wethAmount = wethBalance?.value || constants.Zero
+        const wethAmount = wrappedBalance?.value || constants.Zero
         const amountToWrap = bid.sub(wethAmount)
         setAmountToWrap(formatBN(bid.sub(wethAmount), 5))
 
@@ -190,7 +190,7 @@ export const BidModalRenderer: FC<Props> = ({
       setHasEnoughWEth(true)
       setAmountToWrap('')
     }
-  }, [bidAmount, balance, wethBalance])
+  }, [bidAmount, balance, wrappedBalance])
 
   useEffect(() => {
     if (!open) {
@@ -326,7 +326,7 @@ export const BidModalRenderer: FC<Props> = ({
         ethUsdPrice,
         isBanned,
         balance,
-        wethBalance,
+        wrappedBalance,
         uniswapConvertLink,
         bidAmount,
         bidData,
