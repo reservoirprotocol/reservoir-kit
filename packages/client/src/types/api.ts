@@ -3089,6 +3089,8 @@ export interface definitions {
     quantity?: number;
     /** @description Address of wallet filling the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     taker: string;
+    /** @description Address of wallet relaying the filling transaction */
+    relayer?: string;
     /**
      * @description If true, only the path will be returned.
      * @default false
@@ -3132,6 +3134,8 @@ export interface definitions {
     quantity?: number;
     /** @description Address of wallet filling the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     taker: string;
+    /** @description Address of wallet relaying the filling transaction */
+    relayer?: string;
     /**
      * @description If true, only the path will be returned.
      * @default false
@@ -3141,6 +3145,8 @@ export interface definitions {
     forceRouter?: boolean;
     /** @default 0x0000000000000000000000000000000000000000 */
     currency?: string;
+    /** @default true */
+    normalizeRoyalties?: boolean;
     preferredOrderSource?: string;
     /** @description Filling source used for attribution. Example: `reservoir.market` */
     source?: string;
@@ -3166,6 +3172,51 @@ export interface definitions {
     skipBalanceCheck?: boolean;
   };
   Model264: {
+    orderIds?: definitions["orderIds"];
+    rawOrders?: definitions["rawOrders"];
+    tokens?: definitions["Model260"];
+    /** @description Quantity of tokens user is buying. Only compatible when buying a single ERC1155 token. Example: `5` */
+    quantity?: number;
+    /** @description Address of wallet filling the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
+    taker: string;
+    /** @description Address of wallet relaying the filling transaction */
+    relayer?: string;
+    /**
+     * @description If true, only the path will be returned.
+     * @default false
+     */
+    onlyPath?: boolean;
+    /** @description If true, all fills will be executed through the router. */
+    forceRouter?: boolean;
+    /** @default 0x0000000000000000000000000000000000000000 */
+    currency?: string;
+    /** @default false */
+    normalizeRoyalties?: boolean;
+    preferredOrderSource?: string;
+    /** @description Filling source used for attribution. Example: `reservoir.market` */
+    source?: string;
+    feesOnTop?: definitions["Model262"];
+    /**
+     * @description If true, partial orders will be accepted.
+     * @default false
+     */
+    partial?: boolean;
+    /**
+     * @description If true, then skip any errors in processing.
+     * @default false
+     */
+    skipErrors?: boolean;
+    /** @description Optional. Set custom gas price. */
+    maxFeePerGas?: string;
+    /** @description Optional. Set custom gas price. */
+    maxPriorityFeePerGas?: string;
+    /**
+     * @description If true, balance check will be skipped.
+     * @default false
+     */
+    skipBalanceCheck?: boolean;
+  };
+  Model265: {
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Quanity of tokens user is listing. Only compatible with ERC1155 tokens. Example: `5` */
@@ -3202,18 +3253,18 @@ export interface definitions {
     /** @default 0x0000000000000000000000000000000000000000 */
     currency?: string;
   };
-  Model265: definitions["Model264"][];
-  Model266: {
+  Model266: definitions["Model265"][];
+  Model267: {
     /** @description Address of wallet making the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     maker: string;
     /** @description Domain of the platform that created the order. Example: `chimpers.xyz` */
     source?: string;
-    params?: definitions["Model265"];
+    params?: definitions["Model266"];
   };
   getExecuteListV3Response: {
     steps?: definitions["Model256"];
   };
-  Model267: {
+  Model268: {
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Quantity of tokens user is listing. Only compatible with ERC1155 tokens. Example: `5` */
@@ -3249,15 +3300,15 @@ export interface definitions {
     /** @default 0x0000000000000000000000000000000000000000 */
     currency?: string;
   };
-  Model268: definitions["Model267"][];
-  Model269: {
+  Model269: definitions["Model268"][];
+  Model270: {
     /** @description Address of wallet making the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     maker: string;
     /** @description Domain of your app that is creating the order, e.g. `myapp.xyz`. This is used for filtering, and to attribute the "order source" of sales in on-chain analytics, to help your app get discovered. Lean more <a href='https://docs.reservoir.tools/docs/calldata-attribution'>here</a> */
     source?: string;
-    params?: definitions["Model268"];
+    params?: definitions["Model269"];
   };
-  Model270: {
+  Model271: {
     orderId?: string;
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
@@ -3277,7 +3328,7 @@ export interface definitions {
     /** @description Optional. Set custom gas price. */
     maxPriorityFeePerGas?: string;
   };
-  Model271: {
+  Model272: {
     orderId?: string;
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
@@ -3297,7 +3348,7 @@ export interface definitions {
     /** @description Optional. Set custom gas price. */
     maxPriorityFeePerGas?: string;
   };
-  Model272: {
+  Model273: {
     /** @description The token to update the flag status for. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -3306,7 +3357,7 @@ export interface definitions {
      */
     flag: 0 | 1;
   };
-  Model273: {
+  Model274: {
     /** @description Refresh the given token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -3315,7 +3366,7 @@ export interface definitions {
      */
     overrideCoolDown?: boolean;
   };
-  Model274: {
+  Model275: {
     token?: string;
     /**
      * @default v5
@@ -3364,6 +3415,8 @@ export interface operations {
         includeMetadata?: boolean;
         limit?: number;
         continuation?: string;
+        /** Order the items are returned in the response. */
+        sortDirection?: "asc" | "desc";
       };
     };
     responses: {
@@ -4850,6 +4903,8 @@ export interface operations {
         includeMetadata?: boolean;
         /** If true, raw data is included in the response. */
         includeRawData?: boolean;
+        /** If true, prices will include missing royalties to be added on-top. */
+        normalizeRoyalties?: boolean;
         /** Order the items are returned in the response, Sorting by price allowed only when filtering by token */
         sortBy?: "createdAt" | "price";
         /** Use continuation token to request next offset of items. */
@@ -6196,6 +6251,8 @@ export interface operations {
         community?: string;
         /** If true, urls will only be returned for optimized sources that support royalties. */
         optimizeCheckoutURL?: boolean;
+        /** If true, prices will include missing royalties to be added on-top. */
+        normalizeRoyalties?: boolean;
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         /** Order of the items are returned in the response. */
@@ -6826,7 +6883,7 @@ export interface operations {
   postExecuteBuyV6: {
     parameters: {
       body: {
-        body?: definitions["Model263"];
+        body?: definitions["Model264"];
       };
     };
     responses: {
@@ -6840,7 +6897,7 @@ export interface operations {
   postExecuteListV3: {
     parameters: {
       body: {
-        body?: definitions["Model266"];
+        body?: definitions["Model267"];
       };
     };
     responses: {
@@ -6854,7 +6911,7 @@ export interface operations {
   postExecuteListV4: {
     parameters: {
       body: {
-        body?: definitions["Model269"];
+        body?: definitions["Model270"];
       };
     };
     responses: {
@@ -6867,7 +6924,7 @@ export interface operations {
   postExecuteSellV4: {
     parameters: {
       body: {
-        body?: definitions["Model270"];
+        body?: definitions["Model271"];
       };
     };
     responses: {
@@ -6880,7 +6937,7 @@ export interface operations {
   postExecuteSellV5: {
     parameters: {
       body: {
-        body?: definitions["Model271"];
+        body?: definitions["Model272"];
       };
     };
     responses: {
@@ -6893,7 +6950,7 @@ export interface operations {
   postExecuteSellV6: {
     parameters: {
       body: {
-        body?: definitions["Model271"];
+        body?: definitions["Model272"];
       };
     };
     responses: {
@@ -6906,7 +6963,7 @@ export interface operations {
   postTokensFlagV1: {
     parameters: {
       body: {
-        body?: definitions["Model272"];
+        body?: definitions["Model273"];
       };
     };
     responses: {
@@ -6919,7 +6976,7 @@ export interface operations {
   postTokensRefreshV1: {
     parameters: {
       body: {
-        body?: definitions["Model273"];
+        body?: definitions["Model274"];
       };
     };
     responses: {
@@ -6932,7 +6989,7 @@ export interface operations {
   postTokensSimulatefloorV1: {
     parameters: {
       body: {
-        body?: definitions["Model274"];
+        body?: definitions["Model275"];
       };
     };
     responses: {
