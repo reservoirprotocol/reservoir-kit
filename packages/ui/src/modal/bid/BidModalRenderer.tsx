@@ -123,7 +123,7 @@ export const BidModalRenderer: FC<Props> = ({
     }
   )
 
-  const traits = useAttributes(collectionId)
+  const traits = useAttributes(open && !tokenId ? collectionId : undefined)
 
   const { data: collections } = useCollections(
     open && {
