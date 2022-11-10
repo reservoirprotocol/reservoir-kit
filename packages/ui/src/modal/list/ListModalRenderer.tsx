@@ -14,6 +14,7 @@ import {
   useListingPreapprovalCheck,
   useCollections,
   useTokenOpensea,
+  useChainCurrency,
 } from '../../hooks'
 import { useSigner } from 'wagmi'
 
@@ -92,15 +93,6 @@ type PaymentTokens = NonNullable<
   NonNullable<ReturnType<typeof useTokenOpensea>['response']>['collection']
 >['payment_tokens']
 
-const defaultPaymentTokens = [
-  {
-    address: constants.AddressZero,
-    symbol: 'ETH',
-    name: 'Ether',
-    decimals: 18,
-  },
-]
-
 const isCurrencyAllowed = (
   currency: Currency,
   marketplace: Marketplace,
@@ -146,23 +138,10 @@ export const ListModalRenderer: FC<Props> = ({
   open,
   tokenId,
   collectionId,
-  currencies = [
-    {
-      contract: constants.AddressZero,
-      symbol: 'ETH',
-    },
-  ],
+  currencies,
   normalizeRoyalties,
   children,
 }) => {
-  if (!currencies || currencies.length === 0) {
-    throw 'The ListModal requires at least one currency to be supplied'
-  } else if (currencies.length > 5) {
-    console.warn(
-      'The ListModal UI was designed to have a maximum of 5 currencies, going above 5 may degrade the user experience.'
-    )
-  }
-
   const { data: signer } = useSigner()
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
@@ -176,7 +155,14 @@ export const ListModalRenderer: FC<Props> = ({
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
     null
   )
-  const [currency, setCurrency] = useState<Currency>(currencies[0])
+  const chainCurrency = useChainCurrency()
+  const defaultCurrency = {
+    contract: chainCurrency.address,
+    symbol: chainCurrency.symbol,
+  }
+  const [currency, setCurrency] = useState<Currency>(
+    currencies && currencies[0] ? currencies[0] : defaultCurrency
+  )
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const {
     data: unapprovedMarketplaces,
@@ -213,8 +199,7 @@ export const ListModalRenderer: FC<Props> = ({
     open ? tokenId : undefined
   )
 
-  const paymentTokens =
-    openSeaToken?.collection?.payment_tokens || defaultPaymentTokens
+  const paymentTokens = openSeaToken?.collection?.payment_tokens
 
   const collection = collections && collections[0] ? collections[0] : undefined
 
@@ -310,7 +295,7 @@ export const ListModalRenderer: FC<Props> = ({
           const listingEnabled = isCurrencyAllowed(
             currency,
             marketplace,
-            paymentTokens
+            paymentTokens || [chainCurrency]
           )
           return {
             ...marketplace,
@@ -346,7 +331,7 @@ export const ListModalRenderer: FC<Props> = ({
           const listingEnabled = isCurrencyAllowed(
             currency,
             marketplace,
-            paymentTokens
+            paymentTokens || [chainCurrency]
           )
           return {
             ...marketplace,
@@ -398,8 +383,16 @@ export const ListModalRenderer: FC<Props> = ({
       setExpirationOption(expirationOptions[0])
       setSyncProfit(true)
     }
-    setCurrency(currencies[0])
+    setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
   }, [open])
+
+  useEffect(() => {
+    if (currencies && currencies.length > 5) {
+      console.warn(
+        'The ListModal UI was designed to have a maximum of 5 currencies, going above 5 may degrade the user experience.'
+      )
+    }
+  }, [currencies])
 
   const listToken = useCallback(() => {
     if (!signer) {
@@ -555,7 +548,7 @@ export const ListModalRenderer: FC<Props> = ({
         listingData,
         transactionError,
         stepData,
-        currencies,
+        currencies: currencies || [defaultCurrency],
         currency,
         setListStep,
         toggleMarketplace,

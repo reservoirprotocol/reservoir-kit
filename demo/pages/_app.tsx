@@ -12,6 +12,7 @@ import {
   allChains,
 } from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
 import '../fonts.css'
 import {
   ReservoirKitProvider,
@@ -32,15 +33,19 @@ const REFERRAL_FEE = process.env.NEXT_PUBLIC_REFERRAL_FEE
   : undefined
 const REFERRAL_FEE_RECIPIENT =
   process.env.NEXT_PUBLIC_REFERRAL_FEE_RECIPIENT || undefined
+<<<<<<< HEAD
 const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
+=======
+const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || undefined
+>>>>>>> pedro/res-955-rk-broken-currency-logo-on-polygon
 
 const envChain = allChains.find((chain) => chain.id === +CHAIN_ID)
 
 const { chains, provider } = configureChains(
   [envChain || chain.mainnet],
-  [publicProvider()]
+  [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
 
 const { connectors } = getDefaultWallets({
