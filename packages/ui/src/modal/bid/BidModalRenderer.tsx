@@ -132,7 +132,11 @@ export const BidModalRenderer: FC<Props> = ({
     }
   )
 
-  const attributes = traits.data ? traits.data : undefined
+  const attributes = traits.data
+    ? traits.data.filter(
+        (attribute) => attribute.values && attribute.values.length > 0
+      )
+    : undefined
 
   const collection = collections && collections[0] ? collections[0] : undefined
 
