@@ -24,7 +24,6 @@ jobs:
           git push
       - name: Sync polygon with dev
         run: |
-          git fetch --unshallow
           git checkout polygon
           git pull
           git merge --no-ff dev -m "Auto-merge dev into polygon"
