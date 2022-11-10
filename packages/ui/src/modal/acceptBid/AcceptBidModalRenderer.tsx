@@ -108,7 +108,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     }
   )
 
-  const { data: bids } = useBids(
+  const { data: bids, isValidating: isFetchingBidData } = useBids(
     {
       ids: bidId,
       status: 'active',
@@ -282,10 +282,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           price = bid.price?.netAmount?.native
         }
       }
-      setTotalPrice(price)
-      setAcceptBidStep(
-        price > 0 ? AcceptBidStep.Checkout : AcceptBidStep.Unavailable
-      )
+      if (!isFetchingBidData) {
+        setTotalPrice(price)
+        setAcceptBidStep(
+          price > 0 ? AcceptBidStep.Checkout : AcceptBidStep.Unavailable
+        )
+      }
     } else if (token) {
       let topBid = token.market?.topBid?.price?.netAmount?.native
       if (topBid) {
@@ -296,7 +298,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         setTotalPrice(0)
       }
     }
-  }, [token, client, bid])
+  }, [token, client, bid, isFetchingBidData])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
