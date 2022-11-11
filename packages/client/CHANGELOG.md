@@ -1,4 +1,7 @@
 
+## [0.1.14](https://github.com/reservoirprotocol/reservoir-kit/commit/fec1cfcf0773abd02f58829086ba6c8af418dcb4) (2022-11-11)
+
+* Sync api [228769e](https://github.com/reservoirprotocol/reservoir-kit/commit/228769e82efe2d34d01f298ac3b656abc8e05c00)
 * Merge branch 'main' of github.com:reservoirprotocol/reservoir-kit [070fd55](https://github.com/reservoirprotocol/reservoir-kit/commit/070fd5510c7ae1897e8da9e0e172728870d72bba)
 ## [0.1.13](https://github.com/reservoirprotocol/reservoir-kit/commit/07c5cc6712e6dee0ca8e0e3d6edbd71bee6301f4) (2022-11-04)
 
