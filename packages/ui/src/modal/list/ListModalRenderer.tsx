@@ -186,7 +186,7 @@ export const ListModalRenderer: FC<Props> = ({
   )
 
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
-    expirationOptions[0]
+    expirationOptions[5]
   )
 
   const { data: tokens } = useTokens(
