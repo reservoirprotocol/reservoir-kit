@@ -180,7 +180,7 @@ export const ListModalRenderer: FC<Props> = ({
   )
 
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
-    expirationOptions[0]
+    expirationOptions[5]
   )
 
   const { data: tokens } = useTokens(
@@ -399,7 +399,7 @@ export const ListModalRenderer: FC<Props> = ({
       }
       setLoadedInitalPrice(false)
       setStepData(null)
-      setExpirationOption(expirationOptions[0])
+      setExpirationOption(expirationOptions[5])
       setSyncProfit(true)
       setQuantity(1)
     }
