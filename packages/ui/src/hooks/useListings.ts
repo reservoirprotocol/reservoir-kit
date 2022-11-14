@@ -7,13 +7,18 @@ type AsksQuery = paths['/orders/asks/v3']['get']['parameters']['query']
 
 export default function (
   options: AsksQuery,
-  swrOptions: SWRInfiniteConfiguration = {}
+  swrOptions: SWRInfiniteConfiguration = {},
+  enabled: boolean = true
 ) {
   const client = useReservoirClient()
 
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<Asks>(
       (pageIndex, previousPageData) => {
+        if (!enabled) {
+          return null
+        }
+
         const url = new URL(`${client?.apiBase || ''}/orders/asks/v3`)
         let query: AsksQuery = options || {}
 

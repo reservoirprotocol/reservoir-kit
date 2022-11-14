@@ -5,6 +5,7 @@ import {
   useReservoirClient,
   useTokenOpenseaBanned,
   useCollections,
+  useListings,
 } from '../../hooks'
 import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 
@@ -34,6 +35,9 @@ type Token = NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
 
 type ChildrenProps = {
   token?: Token
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  listing?: NonNullable<ReturnType<typeof useListings>['data']>[0]
+  quantityAvailable: number
   currency?: NonNullable<
     NonNullable<
       NonNullable<
@@ -41,7 +45,6 @@ type ChildrenProps = {
       >['price']
     >['currency']
   >
-  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   totalPrice: number
   referrerFee: number
   buyStep: BuyStep
@@ -56,8 +59,10 @@ type ChildrenProps = {
   etherscanBaseUrl: string
   steps: Execute['steps'] | null
   stepData: StepData | null
-  buyToken: () => void
+  quantity: number
   setBuyStep: React.Dispatch<React.SetStateAction<BuyStep>>
+  setQuantity: React.Dispatch<React.SetStateAction<number>>
+  buyToken: () => void
 }
 
 type Props = {
@@ -85,6 +90,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [stepData, setStepData] = useState<StepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
+  const [quantity, setQuantity] = useState(1)
   const { chain: activeChain } = useNetwork()
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
@@ -104,9 +110,21 @@ export const BuyModalRenderer: FC<Props> = ({
       id: collectionId,
     }
   )
+  const { data: listings } = useListings(
+    {
+      token: `${contract}:${tokenId}`,
+      ids: '0xbd2ee9e6eee2a1be3a32b400d9d5ad289b605b38587d491ab31e7e27901226d5',
+    },
+    {
+      revalidateFirstPage: true,
+    },
+    open
+  )
+
+  const listing = listings && listings[0] ? listings[0] : undefined
   const collection = collections && collections[0] ? collections[0] : undefined
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
-  const currency = token?.market?.floorAsk?.price?.currency
+  const currency = listing?.price?.currency
 
   const usdPrice = useCoinConversion(
     open && token ? 'USD' : undefined,
@@ -148,6 +166,10 @@ export const BuyModalRenderer: FC<Props> = ({
       options.feesOnTop = [`${referrer}:${referrerFeeBps}`]
     } else if (referrer === null && referrerFeeBps === null) {
       delete options.feesOnTop
+    }
+
+    if (quantity > 1) {
+      options.quantity = quantity
     }
 
     setBuyStep(BuyStep.Approving)
@@ -230,15 +252,16 @@ export const BuyModalRenderer: FC<Props> = ({
     collectionId,
     referrer,
     referrerFeeBps,
+    quantity,
     client,
     signer,
     currency,
   ])
 
   useEffect(() => {
-    if (token) {
-      if (token.market?.floorAsk?.price?.amount?.decimal) {
-        let floorPrice = token.market.floorAsk.price.amount.decimal
+    if (listing) {
+      if (listing.price?.amount?.decimal) {
+        let floorPrice = listing.price?.amount?.decimal
 
         if (referrerFeeBps && referrer) {
           const fee = (referrerFeeBps / 10000) * floorPrice
@@ -261,9 +284,10 @@ export const BuyModalRenderer: FC<Props> = ({
       } else {
         setBuyStep(BuyStep.Unavailable)
         setTotalPrice(0)
+        setQuantity(1)
       }
     }
-  }, [token, referrerFeeBps, referrer, client])
+  }, [listing, referrerFeeBps, referrer, client])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -295,6 +319,7 @@ export const BuyModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setStepData(null)
       setSteps(null)
+      setQuantity(1)
     }
   }, [open])
 
@@ -304,8 +329,10 @@ export const BuyModalRenderer: FC<Props> = ({
     <>
       {children({
         token,
-        currency,
         collection,
+        listing,
+        quantityAvailable: listing?.quantityRemaining || 1,
+        currency,
         totalPrice,
         referrerFee,
         buyStep,
@@ -320,8 +347,10 @@ export const BuyModalRenderer: FC<Props> = ({
         etherscanBaseUrl,
         steps,
         stepData,
-        buyToken,
+        quantity,
+        setQuantity,
         setBuyStep,
+        buyToken,
       })}
     </>
   )
