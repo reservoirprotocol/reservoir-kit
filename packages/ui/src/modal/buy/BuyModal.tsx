@@ -11,6 +11,7 @@ import {
   FormatCurrency,
   FormatCryptoCurrency,
   Loader,
+  Select,
 } from '../../primitives'
 
 // @ts-ignore
@@ -90,8 +91,11 @@ export function BuyModal({
     >
       {({
         token,
-        currency,
         collection,
+        listing,
+        quantityAvailable,
+        quantity,
+        currency,
         totalPrice,
         referrerFee,
         buyStep,
@@ -106,8 +110,9 @@ export function BuyModal({
         balance,
         address,
         etherscanBaseUrl,
-        buyToken,
+        setQuantity,
         setBuyStep,
+        buyToken,
       }) => {
         const title = titleForStep(buyStep)
 
@@ -142,14 +147,14 @@ export function BuyModal({
           executableSteps[executableSteps.length - 1]?.items || []
         let finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
-        let price = token?.market?.floorAsk?.price?.amount?.decimal || 0
+        let price = listing?.price?.amount?.decimal || 0
 
         if (!price && token?.token?.lastSell?.value) {
           price = token?.token.lastSell.value
         }
 
-        const sourceImg = token?.market?.floorAsk?.source
-          ? (token?.market?.floorAsk?.source['icon'] as string)
+        const sourceImg = listing?.source
+          ? (listing?.source['icon'] as string)
           : undefined
 
         return (
@@ -223,6 +228,30 @@ export function BuyModal({
                   currency={currency}
                   sourceImg={sourceImg}
                 />
+                {quantityAvailable > 1 && (
+                  <Flex
+                    css={{ pt: '$4', px: '$4' }}
+                    align="center"
+                    justify="between"
+                  >
+                    <Text style="body2" color="subtle">
+                      {quantityAvailable} listings are available at this price
+                    </Text>
+                    <Select
+                      css={{ minWidth: 77, width: 'auto', flexGrow: 0 }}
+                      value={`${quantity}`}
+                      onValueChange={(value: string) => {
+                        setQuantity(Number(value))
+                      }}
+                    >
+                      {[...Array(quantityAvailable)].map((_a, i) => (
+                        <Select.Item key={i} value={`${i + 1}`}>
+                          <Select.ItemText>{i + 1}</Select.ItemText>
+                        </Select.Item>
+                      ))}
+                    </Select>
+                  </Flex>
+                )}
                 {referrerFee > 0 && (
                   <>
                     <Flex
