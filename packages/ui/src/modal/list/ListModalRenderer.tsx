@@ -14,8 +14,9 @@ import {
   useListingPreapprovalCheck,
   useCollections,
   useTokenOpensea,
+  useUserTokens,
 } from '../../hooks'
-import { useSigner } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 
 import {
   Execute,
@@ -55,6 +56,7 @@ export type StepData = {
 
 type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+  quantityAvailable: number
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listStep: ListStep
   usdPrice: ReturnType<typeof useCoinConversion>
@@ -70,12 +72,14 @@ type ChildrenProps = {
   stepData: StepData | null
   currencies: Currency[]
   currency: Currency
+  quantity: number
   setListStep: React.Dispatch<React.SetStateAction<ListStep>>
   toggleMarketplace: (marketplace: Marketplace) => void
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setSyncProfit: React.Dispatch<React.SetStateAction<boolean>>
   setMarketPrice: (price: number, market: Marketplace) => void
   setCurrency: (currency: Currency) => void
+  setQuantity: React.Dispatch<React.SetStateAction<number>>
   listToken: () => void
 }
 
@@ -162,6 +166,7 @@ export const ListModalRenderer: FC<Props> = ({
   }
 
   const { data: signer } = useSigner()
+  const account = useAccount()
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
@@ -175,6 +180,7 @@ export const ListModalRenderer: FC<Props> = ({
     null
   )
   const [currency, setCurrency] = useState<Currency>(currencies[0])
+  const [quantity, setQuantity] = useState(1)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const {
     data: unapprovedMarketplaces,
@@ -215,6 +221,19 @@ export const ListModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
+  const is1155 = token?.token?.kind === 'erc1155'
+
+  const { data: userTokens } = useUserTokens(
+    open && is1155 ? account.address : undefined,
+    {
+      tokens: [`${contract}:${tokenId}`],
+    }
+  )
+
+  const quantityAvailable =
+    is1155 && userTokens[0]
+      ? Number(userTokens[0].ownership?.tokenCount || 1)
+      : 1
 
   const usdPrice = useCoinConversion(open ? 'USD' : undefined, currency.symbol)
 
@@ -393,6 +412,7 @@ export const ListModalRenderer: FC<Props> = ({
       setStepData(null)
       setExpirationOption(expirationOptions[0])
       setSyncProfit(true)
+      setQuantity(1)
     }
     setCurrency(currencies[0])
   }, [open])
@@ -433,6 +453,10 @@ export const ListModalRenderer: FC<Props> = ({
           orderbook: market.orderbook,
           //@ts-ignore
           orderKind: market.orderKind,
+        }
+
+        if (quantity > 1) {
+          listing.quantity = quantity
         }
 
         if (expirationTime) {
@@ -538,6 +562,7 @@ export const ListModalRenderer: FC<Props> = ({
     <>
       {children({
         token,
+        quantityAvailable,
         collection,
         listStep,
         usdPrice,
@@ -553,13 +578,15 @@ export const ListModalRenderer: FC<Props> = ({
         stepData,
         currencies,
         currency,
+        quantity,
         setListStep,
         toggleMarketplace,
         setMarketPrice,
         setCurrency,
         setSyncProfit,
-        listToken,
         setExpirationOption,
+        setQuantity,
+        listToken,
       })}
     </>
   )
