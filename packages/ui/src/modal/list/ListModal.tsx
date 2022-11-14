@@ -114,6 +114,7 @@ export function ListModal({
     >
       {({
         token,
+        quantityAvailable,
         collection,
         usdPrice,
         listStep,
@@ -128,6 +129,7 @@ export function ListModal({
         stepData,
         currencies,
         currency,
+        quantity,
         setListStep,
         listToken,
         setMarketPrice,
@@ -135,6 +137,7 @@ export function ListModal({
         toggleMarketplace,
         setSyncProfit,
         setExpirationOption,
+        setQuantity,
       }) => {
         const tokenImage =
           token && token.token?.image
@@ -503,34 +506,59 @@ export function ListModal({
                           )}
                       </Box>
                     ))}
-
-                    <Box css={{ mb: '$3', mt: '$4' }}>
-                      <Text
-                        as="div"
-                        css={{ mb: '$2' }}
-                        style="subtitle2"
-                        color="subtle"
-                      >
-                        Expiration Date
-                      </Text>
-                      <Select
-                        value={expirationOption?.text || ''}
-                        onValueChange={(value: string) => {
-                          const option = expirationOptions.find(
-                            (option) => option.value == value
-                          )
-                          if (option) {
-                            setExpirationOption(option)
-                          }
-                        }}
-                      >
-                        {expirationOptions.map((option) => (
-                          <Select.Item key={option.text} value={option.value}>
-                            <Select.ItemText>{option.text}</Select.ItemText>
-                          </Select.Item>
-                        ))}
-                      </Select>
-                    </Box>
+                    <Flex css={{ mb: '$3', mt: '$4', gap: '$2' }}>
+                      {quantityAvailable > 1 && (
+                        <Box css={{ flexGrow: 1 }}>
+                          <Text
+                            as="div"
+                            css={{ mb: '$2' }}
+                            style="subtitle2"
+                            color="subtle"
+                          >
+                            Quantity
+                          </Text>
+                          <Select
+                            value={`${quantity}`}
+                            onValueChange={(value: string) => {
+                              setQuantity(Number(value))
+                            }}
+                          >
+                            {[...Array(quantityAvailable)].map((_a, i) => (
+                              <Select.Item value={`${i + 1}`}>
+                                <Select.ItemText>{i + 1}</Select.ItemText>
+                              </Select.Item>
+                            ))}
+                          </Select>
+                        </Box>
+                      )}
+                      <Box css={{ flexGrow: 1 }}>
+                        <Text
+                          as="div"
+                          css={{ mb: '$2' }}
+                          style="subtitle2"
+                          color="subtle"
+                        >
+                          Expiration Date
+                        </Text>
+                        <Select
+                          value={expirationOption?.text || ''}
+                          onValueChange={(value: string) => {
+                            const option = expirationOptions.find(
+                              (option) => option.value == value
+                            )
+                            if (option) {
+                              setExpirationOption(option)
+                            }
+                          }}
+                        >
+                          {expirationOptions.map((option) => (
+                            <Select.Item key={option.text} value={option.value}>
+                              <Select.ItemText>{option.text}</Select.ItemText>
+                            </Select.Item>
+                          ))}
+                        </Select>
+                      </Box>
+                    </Flex>
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
                     {marketplaces.some(
