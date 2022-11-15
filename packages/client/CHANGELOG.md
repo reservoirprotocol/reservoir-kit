@@ -1,10 +1,19 @@
 
+## [0.1.15](https://github.com/reservoirprotocol/reservoir-kit/commit/b88b78ab5a46938657f142646dbabfd7ed950ad0) (2022-11-15)
+
+* Merge pull request #90 from reservoirprotocol/pedro/res-967-buymodal-expected-price [848c104](https://github.com/reservoirprotocol/reservoir-kit/commit/848c10440d782667295a7d9fa990f549e8d78e6b)
+* Resolve conflicts [8d2ab48](https://github.com/reservoirprotocol/reservoir-kit/commit/8d2ab48dab8de568eca76960469d184327f2ecf1)
 ## [0.1.14](https://github.com/reservoirprotocol/reservoir-kit/commit/fec1cfcf0773abd02f58829086ba6c8af418dcb4) (2022-11-11)
 
 * Sync api [228769e](https://github.com/reservoirprotocol/reservoir-kit/commit/228769e82efe2d34d01f298ac3b656abc8e05c00)
+* Sync api [80d7c70](https://github.com/reservoirprotocol/reservoir-kit/commit/80d7c705b3248ed11c1feae7f098baa798953a05)
+* Sync api [a383250](https://github.com/reservoirprotocol/reservoir-kit/commit/a383250cc8f37f34f54467e9cb34369b3e2619fe)
+* Fix grammer in price mismatch error [86f9b82](https://github.com/reservoirprotocol/reservoir-kit/commit/86f9b824b4fe2024a6036c792d45b23dcc642b24)
+* Improve error message for price mismatch in buy modal [4d10a02](https://github.com/reservoirprotocol/reservoir-kit/commit/4d10a02c3a4a7ff17e6f54a1746434833a358263)
 * Merge branch 'main' of github.com:reservoirprotocol/reservoir-kit [070fd55](https://github.com/reservoirprotocol/reservoir-kit/commit/070fd5510c7ae1897e8da9e0e172728870d72bba)
 ## [0.1.13](https://github.com/reservoirprotocol/reservoir-kit/commit/07c5cc6712e6dee0ca8e0e3d6edbd71bee6301f4) (2022-11-04)
 
+* Improve expected price comparison when quote is more expensive than price [0eb9b63](https://github.com/reservoirprotocol/reservoir-kit/commit/0eb9b638c2a662990e342768c9bde02110b7b960)
 * Merge pull request #88 from reservoirprotocol/pedro/res-931-update-reservoir-kit-to-v6-execute [866f939](https://github.com/reservoirprotocol/reservoir-kit/commit/866f9391be4c98a640c3b074093f0ed6433e9771)
 * Completes RES-823 [596366d](https://github.com/reservoirprotocol/reservoir-kit/commit/596366d139da53e4b2c16b8fd0bd12c668498dcd)
 * Sync api [21139ae](https://github.com/reservoirprotocol/reservoir-kit/commit/21139ae5aac915580dd47652239c4f91ef8a85cb)
