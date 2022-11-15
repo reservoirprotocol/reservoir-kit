@@ -210,7 +210,7 @@ export function BuyModal({
                       height={16}
                     />
                     <Text style="body2" color="errorLight">
-                      Oops, something went wrong. Please try again.
+                      {transactionError.message}
                     </Text>
                   </Flex>
                 )}
