@@ -84,6 +84,7 @@ type Props = {
   tokenId?: string
   collectionId?: string
   currencies?: Currency[]
+  normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -151,6 +152,7 @@ export const ListModalRenderer: FC<Props> = ({
       symbol: 'ETH',
     },
   ],
+  normalizeRoyalties,
   children,
 }) => {
   if (!currencies || currencies.length === 0) {
@@ -193,6 +195,7 @@ export const ListModalRenderer: FC<Props> = ({
     open && {
       tokens: [`${contract}:${tokenId}`],
       includeAttributes: true,
+      normalizeRoyalties,
     },
     {
       revalidateFirstPage: true,
@@ -201,6 +204,7 @@ export const ListModalRenderer: FC<Props> = ({
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
+      normalizeRoyalties,
     }
   )
 
