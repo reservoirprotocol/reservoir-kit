@@ -1,4 +1,7 @@
 
+## [0.5.8](https://github.com/reservoirprotocol/reservoir-kit/commit/21c03f34f8f4d54a1dfb2bd4d409b53cdffaa324) (2022-11-11)
+
+* Set default ListModal expiration to 1 month [d906c98](https://github.com/reservoirprotocol/reservoir-kit/commit/d906c98fc28e34287ccbf80fe9752d20b5630df2)
 ## [0.5.7](https://github.com/reservoirprotocol/reservoir-kit/commit/31e969397c1ebdee1c888c464ad8312ef831972c) (2022-11-04)
 
 * Add support for accepting a bid by id in the AcceptBidModal [64016b3](https://github.com/reservoirprotocol/reservoir-kit/commit/64016b3dfa2c65fc43328b545facd9331d5e4a61)
