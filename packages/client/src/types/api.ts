@@ -3224,6 +3224,8 @@ export interface definitions {
      * @default false
      */
     skipBalanceCheck?: boolean;
+    /** @description Override the X2Y2 API key used for filling. */
+    x2y2ApiKey?: string;
   };
   Model267: {
     /** @enum {string} */
@@ -3282,6 +3284,8 @@ export interface definitions {
      * @default false
      */
     skipBalanceCheck?: boolean;
+    /** @description Override the X2Y2 API key used for filling. */
+    x2y2ApiKey?: string;
   };
   Model270: {
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
@@ -3416,10 +3420,14 @@ export interface definitions {
      * @default false
      */
     onlyPath?: boolean;
+    /** @default false */
+    normalizeRoyalties?: boolean;
     /** @description Optional. Set custom gas price. */
     maxFeePerGas?: string;
     /** @description Optional. Set custom gas price. */
     maxPriorityFeePerGas?: string;
+    /** @description Override the X2Y2 API key used for filling. */
+    x2y2ApiKey?: string;
   };
   rawOrder: {
     /** @enum {string} */
@@ -3449,10 +3457,14 @@ export interface definitions {
      * @default false
      */
     onlyPath?: boolean;
+    /** @default false */
+    normalizeRoyalties?: boolean;
     /** @description Optional. Set custom gas price. */
     maxFeePerGas?: string;
     /** @description Optional. Set custom gas price. */
     maxPriorityFeePerGas?: string;
+    /** @description Override the X2Y2 API key used for filling. */
+    x2y2ApiKey?: string;
   };
   Model279: {
     /** @description The token to update the flag status for. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
@@ -5413,7 +5425,7 @@ export interface operations {
         collectionsSetId?: string;
         /** Filter to a particular community. Example: `artblocks` */
         community?: string;
-        /** Amount of items returned in response. */
+        /** Amount of items returned in response. If `includeMetadata=true` max limit is 20, otherwise max limit is 1,000. */
         limit?: number;
         /** Order the items are returned in the response, eventTimestamp = The blockchain event time, createdAt - The time in which event was recorded */
         sortBy?: "eventTimestamp" | "createdAt";
