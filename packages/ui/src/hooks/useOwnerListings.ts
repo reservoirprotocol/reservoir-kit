@@ -9,7 +9,7 @@ export default function (
 ) {
   const { address } = useAccount()
   let queryOptions = {
-    maker: address,
+    maker: address as string,
   }
   if (query) {
     queryOptions = {

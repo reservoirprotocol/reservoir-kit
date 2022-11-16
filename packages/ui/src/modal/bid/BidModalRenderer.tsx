@@ -149,7 +149,7 @@ export const BidModalRenderer: FC<Props> = ({
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
-    addressOrName: address,
+    address: address,
     watch: open,
   })
 
@@ -157,7 +157,7 @@ export const BidModalRenderer: FC<Props> = ({
     balance: { data: wethBalance },
     contractAddress,
   } = useWethBalance({
-    addressOrName: address,
+    address: address,
     watch: open,
   })
 
