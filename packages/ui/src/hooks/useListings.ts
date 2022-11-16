@@ -22,6 +22,13 @@ export default function (
         const url = new URL(`${client?.apiBase || ''}/orders/asks/v3`)
         let query: AsksQuery = options || {}
 
+        if (
+          query.normalizeRoyalties === undefined &&
+          client?.normalizeRoyalties !== undefined
+        ) {
+          query.normalizeRoyalties = client.normalizeRoyalties
+        }
+
         if (previousPageData && !previousPageData.continuation) {
           return null
         } else if (previousPageData && pageIndex > 0) {

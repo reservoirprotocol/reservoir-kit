@@ -29,6 +29,13 @@ export default function (
           query.continuation = previousPageData.continuation
         }
 
+        if (
+          query.normalizeRoyalties === undefined &&
+          client?.normalizeRoyalties !== undefined
+        ) {
+          query.normalizeRoyalties = client.normalizeRoyalties
+        }
+
         setParams(url, query)
         return [url.href, client?.apiKey, client?.version]
       },

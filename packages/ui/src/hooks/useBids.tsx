@@ -20,7 +20,14 @@ export default function (
         }
 
         const url = new URL(`${client?.apiBase || ''}/orders/bids/v4`)
-        let query: BidsQuery = options || {}
+        let query = options || {}
+
+        if (
+          query.normalizeRoyalties === undefined &&
+          client?.normalizeRoyalties !== undefined
+        ) {
+          query.normalizeRoyalties = client?.normalizeRoyalties
+        }
 
         if (previousPageData && !previousPageData.continuation) {
           return null
