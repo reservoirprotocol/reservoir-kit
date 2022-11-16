@@ -1,7 +1,7 @@
 {
   "name": "@reservoir0x/reservoir-kit-ui",
   "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "author": "Reservoir Protocol",
   "license": "MIT",
   "source": "src/index.ts",
@@ -50,7 +50,7 @@
     "ethers": "^5.6.1",
     "react": "^18.0",
     "react-dom": "^18.0",
-    "wagmi": "^0.6.0"
+    "wagmi": "^0.7.4"
   },
   "repository": {
     "type": "git",

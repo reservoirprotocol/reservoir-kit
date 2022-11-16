@@ -1,5 +1,6 @@
 import { paths } from './api'
 export * from './api'
+import { useBalance } from 'wagmi'
 
 export type Execute = {
   error?: string
@@ -22,3 +23,5 @@ export type Execute = {
     }[]
   }[]
 }
+
+export type UseBalanceToken = NonNullable<Parameters<typeof useBalance>['0']>['token']
