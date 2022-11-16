@@ -1,8 +1,6 @@
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
-import { ProviderOptionsContext } from '../ReservoirKitProvider'
-import { useContext } from 'react'
 
 type Bids = paths['/orders/bids/v4']['get']['responses']['200']['schema']
 type BidsQuery = paths['/orders/bids/v4']['get']['parameters']['query']
@@ -13,7 +11,6 @@ export default function (
   enabled: boolean = true
 ) {
   const client = useReservoirClient()
-  const providerOptionsContext = useContext(ProviderOptionsContext)
 
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<Bids>(
@@ -27,9 +24,9 @@ export default function (
 
         if (
           query.normalizeRoyalties === undefined &&
-          providerOptionsContext.normalizeRoyalties !== undefined
+          client?.normalizeRoyalties !== undefined
         ) {
-          query.normalizeRoyalties = providerOptionsContext.normalizeRoyalties
+          query.normalizeRoyalties = client?.normalizeRoyalties
         }
 
         if (previousPageData && !previousPageData.continuation) {
