@@ -106,7 +106,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
-      normalizeRoyalties
+      normalizeRoyalties,
     }
   )
   const collection = collections && collections[0] ? collections[0] : undefined
