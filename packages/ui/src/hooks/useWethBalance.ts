@@ -1,4 +1,5 @@
 import { useBalance, useNetwork } from 'wagmi'
+import { UseBalanceToken } from '@reservoir0x/reservoir-kit-client'
 
 const wethContracts: Record<number, string> = {
   1: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
@@ -16,7 +17,7 @@ export default function (params: Parameters<typeof useBalance>['0']) {
 
   const balance = useBalance({
     ...params,
-    token: contractAddress,
+    token: contractAddress as UseBalanceToken,
   })
 
   return {
