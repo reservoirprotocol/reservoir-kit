@@ -10,6 +10,9 @@ const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
   '0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e'
 const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '39'
+const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
+  ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
+  : false
 
 const Index: NextPage = () => {
   const router = useRouter()
@@ -22,6 +25,8 @@ const Index: NextPage = () => {
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [nativeOnly, setNativeOnly] = useState(false)
+  const [normalizeRoyalties, setNormalizeRoyalties] =
+    useState(NORMALIZE_ROYALTIES)
 
   return (
     <div
@@ -86,6 +91,16 @@ const Index: NextPage = () => {
           }}
         />
       </div>
+      <div>
+        <label>Normalize Royalties: </label>
+        <input
+          type="checkbox"
+          checked={normalizeRoyalties}
+          onChange={(e) => {
+            setNormalizeRoyalties(e.target.checked)
+          }}
+        />
+      </div>
 
       <ListModal
         trigger={
@@ -109,6 +124,7 @@ const Index: NextPage = () => {
         collectionId={collectionId}
         tokenId={tokenId}
         currencies={currencies}
+        normalizeRoyalties={normalizeRoyalties}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onGoToToken={() => console.log('Awesome!')}
         onListingComplete={(data) => {

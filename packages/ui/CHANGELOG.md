@@ -1,7 +1,22 @@
 
+## [0.5.9](https://github.com/reservoirprotocol/reservoir-kit/commit/0438c30679229ca48191dad1dd8ac95ba5df6266) (2022-11-15)
+
+* Merge pull request #90 from reservoirprotocol/pedro/res-967-buymodal-expected-price [848c104](https://github.com/reservoirprotocol/reservoir-kit/commit/848c10440d782667295a7d9fa990f549e8d78e6b)
+* Merge pull request #91 from reservoirprotocol/feature/normalized-royalties [96c853e](https://github.com/reservoirprotocol/reservoir-kit/commit/96c853ed088efa14ea6874351b0cfefd04e51309)
+* Resolve conflicts [8d2ab48](https://github.com/reservoirprotocol/reservoir-kit/commit/8d2ab48dab8de568eca76960469d184327f2ecf1)
+* Merge pull request #93 from reservoirprotocol/pedro/res-1060-slow-loading-ux-bid-modal-deeplinking [af10bd4](https://github.com/reservoirprotocol/reservoir-kit/commit/af10bd424ba0e4528c85cd165175a91c572754f2)
+* Merge pull request #94 from reservoirprotocol/pedro/res-709-bidmodal-attribute-filter-doesnt-support [86c0945](https://github.com/reservoirprotocol/reservoir-kit/commit/86c094534102d2acf09e68fbfc2878b2b8375a19)
+* update default and follow-thru on close [21a3d93](https://github.com/reservoirprotocol/reservoir-kit/commit/21a3d939c088f4c16ad2bd1b1ac5b58dda7cf1ee)
+* bid expiry to 1mo to match listing [04f8cd7](https://github.com/reservoirprotocol/reservoir-kit/commit/04f8cd789eb11745f636b00da656257ceee8ad45)
 ## [0.5.8](https://github.com/reservoirprotocol/reservoir-kit/commit/21c03f34f8f4d54a1dfb2bd4d409b53cdffaa324) (2022-11-11)
 
 * Set default ListModal expiration to 1 month [d906c98](https://github.com/reservoirprotocol/reservoir-kit/commit/d906c98fc28e34287ccbf80fe9752d20b5630df2)
+* Filter out range attributes from BidModal attribute selector [c102466](https://github.com/reservoirprotocol/reservoir-kit/commit/c102466d2a746c5bd81492c9735749604aac124d)
+* Fix unnecessary call to fetch attributes when bidding on a token using the BidModal [4d255cf](https://github.com/reservoirprotocol/reservoir-kit/commit/4d255cf12d2c8fc694af46adaaf7e6f681a5fec9)
+* Improve ux when loading a bid to accept in the AcceptBidModal [71c22a2](https://github.com/reservoirprotocol/reservoir-kit/commit/71c22a253b72f48a5c17b5d9e30017ae492709ff)
+* Fixes RES-1028: add ability to override global normalize royalties configuration per relevant modal [c69ce46](https://github.com/reservoirprotocol/reservoir-kit/commit/c69ce46a31199a165882c024484fe79174e03a96)
+* Fixes RES-1030: Add support for global normalized royalties configuration [adb9d62](https://github.com/reservoirprotocol/reservoir-kit/commit/adb9d62ba83af5926d72302c9bb8b14fbc5dd3af)
+* Improve error message for price mismatch in buy modal [4d10a02](https://github.com/reservoirprotocol/reservoir-kit/commit/4d10a02c3a4a7ff17e6f54a1746434833a358263)
 ## [0.5.7](https://github.com/reservoirprotocol/reservoir-kit/commit/31e969397c1ebdee1c888c464ad8312ef831972c) (2022-11-04)
 
 * Add support for accepting a bid by id in the AcceptBidModal [64016b3](https://github.com/reservoirprotocol/reservoir-kit/commit/64016b3dfa2c65fc43328b545facd9331d5e4a61)

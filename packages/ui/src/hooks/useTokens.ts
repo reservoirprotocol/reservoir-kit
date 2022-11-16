@@ -1,6 +1,8 @@
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
+import { useContext } from 'react'
+import { ProviderOptionsContext } from '../ReservoirKitProvider'
 
 type TokenDetailsResponse =
   paths['/tokens/v5']['get']['responses']['200']['schema']
@@ -12,6 +14,7 @@ export default function (
   swrOptions: SWRInfiniteConfiguration = {}
 ) {
   const client = useReservoirClient()
+  const providerOptionsContext = useContext(ProviderOptionsContext)
 
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<TokenDetailsResponse>(
@@ -27,6 +30,13 @@ export default function (
           return null
         } else if (previousPageData && pageIndex > 0) {
           query.continuation = previousPageData.continuation
+        }
+
+        if (
+          query.normalizeRoyalties === undefined &&
+          providerOptionsContext.normalizeRoyalties !== undefined
+        ) {
+          query.normalizeRoyalties = providerOptionsContext.normalizeRoyalties
         }
 
         setParams(url, query)

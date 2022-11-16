@@ -35,6 +35,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   bidId?: string
+  normalizeRoyalties?: boolean
   onBidAccepted?: (data: BidData) => void
   onClose?: () => void
   onBidAcceptError?: (error: Error, data: BidData) => void
@@ -55,6 +56,7 @@ export function AcceptBidModal({
   tokenId,
   collectionId,
   bidId,
+  normalizeRoyalties,
   onBidAccepted,
   onClose,
   onBidAcceptError,
@@ -71,6 +73,7 @@ export function AcceptBidModal({
       tokenId={tokenId}
       collectionId={collectionId}
       bidId={bidId}
+      normalizeRoyalties={normalizeRoyalties}
     >
       {({
         token,

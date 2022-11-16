@@ -67,6 +67,7 @@ type Props = {
   collectionId?: string
   referrerFeeBps?: number | null
   referrer?: string | null
+  normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -76,6 +77,7 @@ export const BuyModalRenderer: FC<Props> = ({
   collectionId,
   referrer,
   referrerFeeBps,
+  normalizeRoyalties,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -95,6 +97,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: tokens } = useTokens(
     open && {
       tokens: [`${contract}:${tokenId}`],
+      normalizeRoyalties,
     },
     {
       revalidateFirstPage: true,
@@ -103,6 +106,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
+      normalizeRoyalties
     }
   )
   const collection = collections && collections[0] ? collections[0] : undefined
@@ -216,7 +220,12 @@ export const BuyModalRenderer: FC<Props> = ({
         if (error && error?.message.includes('ETH balance')) {
           setHasEnoughCurrency(false)
         } else {
-          const transactionError = new Error(error?.message || '', {
+          const errorType = (error as any)?.type
+          let message = 'Oops, something went wrong. Please try again.'
+          if (errorType && errorType === 'price mismatch') {
+            message = error.message
+          }
+          const transactionError = new Error(message, {
             cause: error,
           })
           setTransactionError(transactionError)
