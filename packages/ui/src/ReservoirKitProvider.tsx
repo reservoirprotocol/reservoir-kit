@@ -15,7 +15,6 @@ import { SWRConfig } from 'swr'
 
 type ReservoirKitProviderOptions = {
   disablePoweredByReservoir?: boolean
-  normalizeRoyalties?: boolean
 }
 export interface ReservoirKitProviderProps {
   children: ReactNode
