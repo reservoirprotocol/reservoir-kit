@@ -115,20 +115,22 @@ export const BuyModalRenderer: FC<Props> = ({
       normalizeRoyalties,
     }
   )
+
+  const collection = collections && collections[0] ? collections[0] : undefined
+  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
+
   const { data: listings } = useListings(
     {
       token: `${contract}:${tokenId}`,
-      ids: '0xbd2ee9e6eee2a1be3a32b400d9d5ad289b605b38587d491ab31e7e27901226d5',
+      ids: token?.market?.floorAsk?.id,
     },
     {
       revalidateFirstPage: true,
     },
-    open
+    open && token?.market?.floorAsk?.id !== undefined
   )
 
   const listing = listings && listings[0] ? listings[0] : undefined
-  const collection = collections && collections[0] ? collections[0] : undefined
-  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
   const currency = listing?.price?.currency
 
   const usdPrice = useCoinConversion(
