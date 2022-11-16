@@ -23,6 +23,7 @@ export type ReservoirClientOptions = {
   referralFeeRecipient?: string
   marketplaceFee?: number
   marketplaceFeeRecipient?: string
+  normalizeRoyalties?: boolean
 }
 
 export type ReservoirClientActions = typeof actions
@@ -40,6 +41,7 @@ export class ReservoirClient {
   marketplaceFee?: number
   marketplaceFeeRecipient?: string
   automatedRoyalties?: boolean
+  normalizeRoyalties?: boolean
 
   readonly utils = { ...utils }
   readonly actions: ReservoirClientActions = actions
@@ -54,6 +56,7 @@ export class ReservoirClient {
     this.referralFeeRecipient = options.referralFeeRecipient
     this.marketplaceFee = options.marketplaceFee
     this.marketplaceFeeRecipient = options.marketplaceFeeRecipient
+    this.normalizeRoyalties = options.normalizeRoyalties
 
     if (!options.source) {
       if (typeof window !== 'undefined') {
@@ -89,6 +92,10 @@ export class ReservoirClient {
       ? options.marketplaceFeeRecipient
       : this.marketplaceFeeRecipient
     this.automatedRoyalties = options.automatedRoyalties
+    this.normalizeRoyalties =
+      options.normalizeRoyalties !== undefined
+        ? options.normalizeRoyalties
+        : this.normalizeRoyalties
   }
 }
 

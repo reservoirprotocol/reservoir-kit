@@ -105,7 +105,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
-      normalizeRoyalties
+      normalizeRoyalties,
     }
   )
   const collection = collections && collections[0] ? collections[0] : undefined
@@ -152,6 +152,10 @@ export const BuyModalRenderer: FC<Props> = ({
       options.feesOnTop = [`${referrer}:${referrerFeeBps}`]
     } else if (referrer === null && referrerFeeBps === null) {
       delete options.feesOnTop
+    }
+
+    if (normalizeRoyalties !== undefined) {
+      options.normalizeRoyalties = normalizeRoyalties
     }
 
     setBuyStep(BuyStep.Approving)
@@ -239,6 +243,7 @@ export const BuyModalRenderer: FC<Props> = ({
     collectionId,
     referrer,
     referrerFeeBps,
+    normalizeRoyalties,
     client,
     signer,
     currency,
