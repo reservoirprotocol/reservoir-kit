@@ -54,6 +54,13 @@ export async function acceptOffer(data: Data) {
       ...options,
     }
 
+    if (
+      client.normalizeRoyalties !== undefined &&
+      params.normalizeRoyalties === undefined
+    ) {
+      params.normalizeRoyalties = client.normalizeRoyalties
+    }
+
     await executeSteps(
       {
         url: `${client.apiBase}/execute/sell/v6`,
