@@ -1,8 +1,6 @@
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
-import { useContext } from 'react'
-import { ProviderOptionsContext } from '../ReservoirKitProvider'
 
 type Asks = paths['/orders/asks/v3']['get']['responses']['200']['schema']
 type AsksQuery = paths['/orders/asks/v3']['get']['parameters']['query']
@@ -12,7 +10,6 @@ export default function (
   swrOptions: SWRInfiniteConfiguration = {}
 ) {
   const client = useReservoirClient()
-  const providerOptionsContext = useContext(ProviderOptionsContext)
 
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<Asks>(
@@ -22,9 +19,9 @@ export default function (
 
         if (
           query.normalizeRoyalties === undefined &&
-          providerOptionsContext.normalizeRoyalties !== undefined
+          client?.normalizeRoyalties !== undefined
         ) {
-          query.normalizeRoyalties = providerOptionsContext.normalizeRoyalties
+          query.normalizeRoyalties = client.normalizeRoyalties
         }
 
         if (previousPageData && !previousPageData.continuation) {
