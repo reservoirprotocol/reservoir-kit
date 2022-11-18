@@ -37,6 +37,10 @@ export enum BidStep {
   Complete,
 }
 
+export type Traits =
+  | NonNullable<ReturnType<typeof useAttributes>['data']>
+  | undefined
+
 export type Trait =
   | {
       key: string
@@ -47,7 +51,7 @@ export type Trait =
 type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
-  attributes?: NonNullable<ReturnType<typeof useAttributes>['data']>
+  attributes?: Traits
   bidAmount: string
   bidData: BidData | null
   bidAmountUsd: number
@@ -113,6 +117,7 @@ export const BidModalRenderer: FC<Props> = ({
   const [bidData, setBidData] = useState<BidData | null>(null)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const [trait, setTrait] = useState<Trait>(attribute)
+  const [attributes, setAttributes] = useState<Traits>()
 
   const { data: tokens } = useTokens(
     open &&
@@ -126,7 +131,9 @@ export const BidModalRenderer: FC<Props> = ({
     }
   )
 
-  const traits = useAttributes(open && !tokenId ? collectionId : undefined)
+  const { data: traits } = useAttributes(
+    open && !tokenId ? collectionId : undefined
+  )
 
   const { data: collections } = useCollections(
     open && {
@@ -135,12 +142,6 @@ export const BidModalRenderer: FC<Props> = ({
       normalizeRoyalties,
     }
   )
-
-  const attributes = traits.data
-    ? traits.data.filter(
-        (attribute) => attribute.values && attribute.values.length > 0
-      )
-    : undefined
 
   const collection = collections && collections[0] ? collections[0] : undefined
 
@@ -199,6 +200,15 @@ export const BidModalRenderer: FC<Props> = ({
       setAmountToWrap('')
     }
   }, [bidAmount, balance, wrappedBalance])
+
+  useEffect(() => {
+    const validAttributes = traits
+      ? traits.filter(
+          (attribute) => attribute.values && attribute.values.length > 0
+        )
+      : undefined
+    setAttributes(validAttributes)
+  }, [traits])
 
   useEffect(() => {
     if (!open) {
