@@ -20,3 +20,4 @@ export { default as useListingPreapprovalCheck } from './useListingPreapprovalCh
 export { default as useWethBalance } from './useWethBalance'
 export { default as useTokenOpensea } from './useTokenOpensea'
 export { default as useFallbackState } from './useFallbackState'
+export { default as useModelViewer } from './useModelViewer'

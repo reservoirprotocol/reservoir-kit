@@ -1,3 +1,5 @@
+/// <reference path="./types/parcel.d.ts" />
+
 //Providers
 export { ReservoirKitProvider } from './ReservoirKitProvider'
 export { ReservoirClientProvider } from './ReservoirClientProvider'
@@ -34,3 +36,5 @@ export { BidStep } from './modal/bid/BidModalRenderer'
 
 export { AcceptBidModal } from './modal/acceptBid/AcceptBidModal'
 export { AcceptBidStep } from './modal/acceptBid/AcceptBidModalRenderer'
+
+export { default as TokenMedia } from './primitives/TokenMedia'
