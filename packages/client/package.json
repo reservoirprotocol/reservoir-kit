@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/reservoir-kit-client",
-    "version": "0.1.16",
+    "version": "0.1.17",
     "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
     "source": "src/index.ts",
     "main": "dist/index.js",
