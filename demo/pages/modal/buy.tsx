@@ -18,6 +18,7 @@ const BuyPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
+  const [orderId, setOrderId] = useState('')
   const [referrer, setReferrer] = useState<string | undefined>(undefined)
   const [referrerBps, setReferrerBps] = useState<number | undefined>(undefined)
   const deeplinkOpenState = useState(true)
@@ -54,6 +55,14 @@ const BuyPage: NextPage = () => {
           type="text"
           value={tokenId}
           onChange={(e) => setTokenId(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Order Id: </label>
+        <input
+          type="text"
+          value={orderId}
+          onChange={(e) => setOrderId(e.target.value)}
         />
       </div>
       <div>
@@ -106,6 +115,7 @@ const BuyPage: NextPage = () => {
         }
         collectionId={collectionId}
         tokenId={tokenId}
+        orderId={orderId}
         referrer={referrer}
         referrerFeeBps={referrerBps}
         normalizeRoyalties={normalizeRoyalties}
