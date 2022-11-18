@@ -8,8 +8,8 @@ type BidsQuery =
   paths['/orders/users/{user}/top-bids/v1']['get']['parameters']['query']
 
 export default function (
-  user: string,
-  options: BidsQuery,
+  user?: string,
+  options?: BidsQuery,
   swrOptions: SWRInfiniteConfiguration = {}
 ) {
   const client = useReservoirClient()
@@ -17,6 +17,9 @@ export default function (
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<Bids>(
       (pageIndex, previousPageData) => {
+        if (!user) {
+          return null
+        }
         const url = new URL(
           `${client?.apiBase || ''}/orders/users/${user}/top-bids/v1`
         )
@@ -26,6 +29,13 @@ export default function (
           return null
         } else if (previousPageData && pageIndex > 0) {
           query.continuation = previousPageData.continuation
+        }
+
+        if (
+          query.normalizeRoyalties === undefined &&
+          client?.normalizeRoyalties !== undefined
+        ) {
+          query.normalizeRoyalties = client.normalizeRoyalties
         }
 
         setParams(url, query)
