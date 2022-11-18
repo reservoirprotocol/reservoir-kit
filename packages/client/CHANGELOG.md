@@ -1,4 +1,11 @@
 
+## [0.1.17](https://github.com/reservoirprotocol/reservoir-kit/commit/b9238bddf38b376ae42229827f25b51b226e84c7) (2022-11-18)
+
+* Sync api [cf1154b](https://github.com/reservoirprotocol/reservoir-kit/commit/cf1154bb5f2f21f10b0a555c26a066c8d360c7fd)
+* Remove query param keys that are undefined, which caused a 400 from the api [3d00d34](https://github.com/reservoirprotocol/reservoir-kit/commit/3d00d34625cd8995fbded6c3eda2774bba89855c)
+## [0.1.16](https://github.com/reservoirprotocol/reservoir-kit/commit/75c9606a08777f879e9cb0b85811080331e7b3bb) (2022-11-16)
+
+* Sync api [dcdb95a](https://github.com/reservoirprotocol/reservoir-kit/commit/dcdb95a7e93b0e0a9d651e41a4341079c61e5915)
 ## [0.1.15](https://github.com/reservoirprotocol/reservoir-kit/commit/b88b78ab5a46938657f142646dbabfd7ed950ad0) (2022-11-15)
 
 * Merge pull request #90 from reservoirprotocol/pedro/res-967-buymodal-expected-price [848c104](https://github.com/reservoirprotocol/reservoir-kit/commit/848c10440d782667295a7d9fa990f549e8d78e6b)
