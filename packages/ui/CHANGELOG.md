@@ -1,4 +1,13 @@
 
+## [0.5.11](https://github.com/reservoirprotocol/reservoir-kit/commit/995208c2a05b5465920cfb697fbed38e95c033a1) (2022-11-18)
+
+* Merge pull request #103 from reservoirprotocol/pedro/res-1159-add-normalizedroyalties-to [ff2d479](https://github.com/reservoirprotocol/reservoir-kit/commit/ff2d4794cefe087d71dd97d88823c0d5d52976e3)
+* Support normalize royalties in useUserTopBids hook [167404f](https://github.com/reservoirprotocol/reservoir-kit/commit/167404f4cf41a9fd632d5a4a1828ef3980064c14)
+* Fix attributes recalculating on every render [aadb2f8](https://github.com/reservoirprotocol/reservoir-kit/commit/aadb2f80ec3ad6ed9b79e1f7f1dfe30240400ea4)
+## [0.5.10](https://github.com/reservoirprotocol/reservoir-kit/commit/c516cd0bcc4e7934d674003101e52727e5971c83) (2022-11-16)
+
+* Get normalizeRoyalties flag from client instead of RK ui provider [c031956](https://github.com/reservoirprotocol/reservoir-kit/commit/c03195644a33f200b972320f98905327eade45ea)
+* Support overriding normalize royalties in reservoir-kit client [b937df8](https://github.com/reservoirprotocol/reservoir-kit/commit/b937df80ba7d5c7d5108acfccca112e6a65afc86)
 ## [0.5.9](https://github.com/reservoirprotocol/reservoir-kit/commit/0438c30679229ca48191dad1dd8ac95ba5df6266) (2022-11-15)
 
 * Merge pull request #90 from reservoirprotocol/pedro/res-967-buymodal-expected-price [848c104](https://github.com/reservoirprotocol/reservoir-kit/commit/848c10440d782667295a7d9fa990f549e8d78e6b)
