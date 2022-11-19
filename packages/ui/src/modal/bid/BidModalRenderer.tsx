@@ -211,6 +211,15 @@ export const BidModalRenderer: FC<Props> = ({
   }, [traits])
 
   useEffect(() => {
+    const validAttributes = traits
+      ? traits.filter(
+          (attribute) => attribute.values && attribute.values.length > 0
+        )
+      : undefined
+    setAttributes(validAttributes)
+  }, [traits])
+
+  useEffect(() => {
     if (!open) {
       setBidStep(BidStep.SetPrice)
       setExpirationOption(expirationOptions[3])
