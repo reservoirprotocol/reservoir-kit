@@ -556,6 +556,7 @@ export const ListModalRenderer: FC<Props> = ({
     tokenId,
     expirationOption,
     currency,
+    quantity
   ])
 
   return (
