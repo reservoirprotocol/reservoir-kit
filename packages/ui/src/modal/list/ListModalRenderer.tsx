@@ -227,18 +227,24 @@ export const ListModalRenderer: FC<Props> = ({
   const usdPrice = useCoinConversion(open ? 'USD' : undefined, currency.symbol)
 
   const toggleMarketplace = (marketplace: Marketplace) => {
-    setMarketplaces(
-      marketplaces.map((market) => {
-        if (market.name == marketplace.name) {
-          return {
-            ...market,
-            isSelected: !market.isSelected,
-          }
-        } else {
-          return market
+    const updatedMarketplaces = marketplaces.map((market) => {
+      if (market.name == marketplace.name) {
+        return {
+          ...market,
+          isSelected: !market.isSelected,
         }
-      })
+      } else {
+        return market
+      }
+    })
+    const hasNonNativeMarketplace = updatedMarketplaces.find(
+      (marketplace) =>
+        marketplace.isSelected && marketplace.orderbook !== 'reservoir'
     )
+    if (hasNonNativeMarketplace) {
+      setQuantity(1)
+    }
+    setMarketplaces(updatedMarketplaces)
   }
 
   const syncMarketPrices = (
@@ -553,7 +559,7 @@ export const ListModalRenderer: FC<Props> = ({
     tokenId,
     expirationOption,
     currency,
-    quantity
+    quantity,
   ])
 
   return (

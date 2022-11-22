@@ -231,6 +231,9 @@ export function ListModal({
         const selectedMarketplaces = availableMarketplaces.filter(
           (marketplace) => marketplace.isSelected
         )
+        const onlyNativeSelected = selectedMarketplaces.every(
+          (marketplace) => marketplace.orderbook === 'reservoir'
+        )
 
         return (
           <Modal
@@ -507,7 +510,7 @@ export function ListModal({
                       </Box>
                     ))}
                     <Flex css={{ mb: '$3', mt: '$4', gap: '$2' }}>
-                      {quantityAvailable > 1 && (
+                      {quantityAvailable > 1 && onlyNativeSelected && (
                         <Box css={{ flexGrow: 1 }}>
                           <Text
                             as="div"
