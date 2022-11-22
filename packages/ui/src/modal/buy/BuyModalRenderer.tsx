@@ -122,6 +122,7 @@ export const BuyModalRenderer: FC<Props> = ({
     {
       token: `${contract}:${tokenId}`,
       ids: token?.market?.floorAsk?.id,
+      normalizeRoyalties,
     },
     {
       revalidateFirstPage: true,
