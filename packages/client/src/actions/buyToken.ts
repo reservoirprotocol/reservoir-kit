@@ -85,16 +85,6 @@ export async function buyToken(data: Data) {
       ...options,
     }
 
-    if (
-      client.referralFeeRecipient &&
-      client.referralFee &&
-      !options.feesOnTop
-    ) {
-      params.feesOnTop = [
-        `${client.referralFeeRecipient}:${client.referralFee}`,
-      ]
-    }
-
     if (tokens) {
       params.tokens = tokens?.map(
         (token) => `${token.contract}:${token.tokenId}`
