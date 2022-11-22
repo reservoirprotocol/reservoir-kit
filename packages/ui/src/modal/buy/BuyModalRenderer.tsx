@@ -125,6 +125,7 @@ export const BuyModalRenderer: FC<Props> = ({
     {
       token: `${contract}:${tokenId}`,
       ids: orderId ? orderId : token?.market?.floorAsk?.id,
+      normalizeRoyalties,
     },
     {
       revalidateFirstPage: true,
@@ -307,15 +308,14 @@ export const BuyModalRenderer: FC<Props> = ({
           floorPrice = floorPrice + fee
           setReferrerFee(fee)
         }
-        setTotalPrice(floorPrice)
+        setTotalPrice(floorPrice * quantity)
         setBuyStep(BuyStep.Checkout)
       } else {
         setBuyStep(BuyStep.Unavailable)
         setTotalPrice(0)
-        setQuantity(1)
       }
     }
-  }, [listing, referrerFeeBps, referrer, client])
+  }, [listing, referrerFeeBps, referrer, client, quantity])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({

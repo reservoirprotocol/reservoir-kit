@@ -150,7 +150,7 @@ export function BuyModal({
           executableSteps[executableSteps.length - 1]?.items || []
         let finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
-        let price = listing?.price?.amount?.decimal || 0
+        let price = (listing?.price?.amount?.decimal || 0) * quantity
 
         if (!price && token?.token?.lastSell?.value) {
           price = token?.token.lastSell.value
