@@ -53,6 +53,16 @@ const TokenMedia: FC<Props> = ({
   const media = token?.media
   const tokenPreview = token?.image
   const mediaType = extractMediaType(media)
+  const defaultStyle: CSSProperties = {
+    width: '150px',
+    height: '150px',
+    objectFit: 'cover',
+  }
+  const computedStyle = {
+    ...defaultStyle,
+    ...style,
+  }
+
   useModelViewer(
     !preview && mediaType && (mediaType === 'gltf' || mediaType === 'glb')
       ? true
@@ -79,7 +89,7 @@ const TokenMedia: FC<Props> = ({
         alt="Token Image"
         src={tokenPreview}
         style={{
-          ...style,
+          ...computedStyle,
           visibility:
             !tokenPreview || tokenPreview.length === 0 ? 'hidden' : 'visible',
         }}
@@ -93,7 +103,7 @@ const TokenMedia: FC<Props> = ({
   if (mediaType === 'mp4') {
     return (
       <video
-        style={style}
+        style={computedStyle}
         className={className}
         poster={tokenPreview}
         controls
@@ -115,7 +125,7 @@ const TokenMedia: FC<Props> = ({
   if (mediaType === 'wav' || mediaType === 'mp3') {
     return (
       <audio
-        style={style}
+        style={computedStyle}
         className={className}
         controls
         src={media}
@@ -141,7 +151,7 @@ const TokenMedia: FC<Props> = ({
         camera-controls
         enable-pan
         {...modelViewerOptions}
-        style={style}
+        style={computedStyle}
         className={className}
         onError={onErrorCb}
       ></model-viewer>
@@ -161,7 +171,7 @@ const TokenMedia: FC<Props> = ({
         src={media}
         className={className}
         style={{
-          ...style,
+          ...computedStyle,
           visibility: !media || media.length === 0 ? 'hidden' : 'visible',
         }}
         onError={onErrorCb}
@@ -177,7 +187,7 @@ const TokenMedia: FC<Props> = ({
   ) {
     return (
       <iframe
-        style={style}
+        style={computedStyle}
         className={className}
         src={media}
         sandbox="allow-scripts"
@@ -191,7 +201,7 @@ const TokenMedia: FC<Props> = ({
       alt="Token Image"
       src={tokenPreview}
       style={{
-        ...style,
+        ...computedStyle,
         visibility:
           !tokenPreview || tokenPreview.length === 0 ? 'hidden' : 'visible',
       }}

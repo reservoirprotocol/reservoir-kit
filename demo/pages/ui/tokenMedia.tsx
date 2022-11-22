@@ -15,7 +15,7 @@ const FallbackElement = () => {
         justifyContent: 'center',
         alignItems: 'center',
         border: '1px solid grey',
-        borderRadius: 4
+        borderRadius: 4,
       }}
     >
       Fallback Content
@@ -30,13 +30,12 @@ const TokenMediaPage: NextPage = () => {
   const [showGrid, setShowGrid] = useState(true)
 
   const { data: tokens } = useTokens(
-    showGrid
+    collectionId
       ? {
-          collection: collectionId,
+          collection: showGrid ? collectionId : undefined,
+          tokens: !showGrid ? [`${collectionId}:${tokenId}`] : undefined,
         }
-      : {
-          tokens: [`${collectionId}:${tokenId}`],
-        }
+      : false
   )
 
   return (
@@ -117,12 +116,7 @@ const TokenMediaPage: NextPage = () => {
           {tokens.map((token, i) => (
             <TokenMedia
               key={i}
-              style={{
-                width: '200px',
-                minHeight: '200px',
-                borderRadius: 4,
-              }}
-              token={token.token}
+              token={token?.token}
               preview={preview}
               fallback={<FallbackElement />}
             />
@@ -130,15 +124,13 @@ const TokenMediaPage: NextPage = () => {
         </div>
       ) : (
         <TokenMedia
-          style={{
-            width: 'auto',
-            minWidth: '400px',
-            minHeight: '400px',
-            borderRadius: 4,
-          }}
           token={tokens && tokens[0] ? tokens[0].token : undefined}
           preview={preview}
           fallback={<FallbackElement />}
+          style={{
+            minWidth: '400px',
+            minHeight: '400px'
+          }}
         />
       )}
     </div>
