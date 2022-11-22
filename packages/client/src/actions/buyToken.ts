@@ -103,6 +103,13 @@ export async function buyToken(data: Data) {
       params.rawOrders = rawOrders
     }
 
+    if (
+      client.normalizeRoyalties !== undefined &&
+      params.normalizeRoyalties === undefined
+    ) {
+      params.normalizeRoyalties = client.normalizeRoyalties
+    }
+
     await executeSteps(
       {
         url: `${client.apiBase}/execute/buy/v6`,

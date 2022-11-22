@@ -37,6 +37,10 @@ export enum BidStep {
   Complete,
 }
 
+export type Traits =
+  | NonNullable<ReturnType<typeof useAttributes>['data']>
+  | undefined
+
 export type Trait =
   | {
       key: string
@@ -47,7 +51,7 @@ export type Trait =
 type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
-  attributes?: NonNullable<ReturnType<typeof useAttributes>['data']>
+  attributes?: Traits
   bidAmount: string
   bidData: BidData | null
   bidAmountUsd: number
@@ -77,6 +81,7 @@ type Props = {
   tokenId?: string
   collectionId?: string
   attribute?: Trait
+  normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -95,6 +100,7 @@ export const BidModalRenderer: FC<Props> = ({
   tokenId,
   collectionId,
   attribute,
+  normalizeRoyalties,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -102,7 +108,7 @@ export const BidModalRenderer: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [bidAmount, setBidAmount] = useState<string>('')
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
-    expirationOptions[0]
+    expirationOptions[3]
   )
   const [hasEnoughEth, setHasEnoughEth] = useState(false)
   const [hasEnoughWEth, setHasEnoughWEth] = useState(false)
@@ -111,28 +117,31 @@ export const BidModalRenderer: FC<Props> = ({
   const [bidData, setBidData] = useState<BidData | null>(null)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const [trait, setTrait] = useState<Trait>(attribute)
+  const [attributes, setAttributes] = useState<Traits>()
 
   const { data: tokens } = useTokens(
     open &&
       tokenId !== undefined && {
         tokens: [`${contract}:${tokenId}`],
         includeTopBid: true,
+        normalizeRoyalties,
       },
     {
       revalidateFirstPage: true,
     }
   )
 
-  const traits = useAttributes(collectionId)
+  const { data: traits } = useAttributes(
+    open && !tokenId ? collectionId : undefined
+  )
 
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
       includeTopBid: true,
+      normalizeRoyalties,
     }
   )
-
-  const attributes = traits.data ? traits.data : undefined
 
   const collection = collections && collections[0] ? collections[0] : undefined
 
@@ -190,9 +199,18 @@ export const BidModalRenderer: FC<Props> = ({
   }, [bidAmount, balance, wethBalance])
 
   useEffect(() => {
+    const validAttributes = traits
+      ? traits.filter(
+          (attribute) => attribute.values && attribute.values.length > 0
+        )
+      : undefined
+    setAttributes(validAttributes)
+  }, [traits])
+
+  useEffect(() => {
     if (!open) {
       setBidStep(BidStep.SetPrice)
-      setExpirationOption(expirationOptions[0])
+      setExpirationOption(expirationOptions[3])
       setHasEnoughEth(false)
       setHasEnoughWEth(false)
       setEthAmountToWrap('')

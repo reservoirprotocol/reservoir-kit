@@ -71,6 +71,7 @@ type Props = {
   tokenId?: string
   collectionId?: string
   bidId?: string
+  normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -79,6 +80,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   tokenId,
   bidId,
   collectionId,
+  normalizeRoyalties,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -97,6 +99,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     open && {
       tokens: [`${collectionId}:${tokenId}`],
       includeTopBid: true,
+      normalizeRoyalties,
     },
     {
       revalidateFirstPage: true,
@@ -105,14 +108,16 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
+      normalizeRoyalties,
     }
   )
 
-  const { data: bids } = useBids(
+  const { data: bids, isValidating: isFetchingBidData } = useBids(
     {
       ids: bidId,
       status: 'active',
       includeMetadata: true,
+      normalizeRoyalties,
     },
     {
       revalidateFirstPage: true,
@@ -282,10 +287,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           price = bid.price?.netAmount?.native
         }
       }
-      setTotalPrice(price)
-      setAcceptBidStep(
-        price > 0 ? AcceptBidStep.Checkout : AcceptBidStep.Unavailable
-      )
+      if (!isFetchingBidData) {
+        setTotalPrice(price)
+        setAcceptBidStep(
+          price > 0 ? AcceptBidStep.Checkout : AcceptBidStep.Unavailable
+        )
+      }
     } else if (token) {
       let topBid = token.market?.topBid?.price?.netAmount?.native
       if (topBid) {
@@ -296,7 +303,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         setTotalPrice(0)
       }
     }
-  }, [token, client, bid])
+  }, [token, client, bid, isFetchingBidData])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({

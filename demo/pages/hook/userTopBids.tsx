@@ -2,16 +2,21 @@ import { NextPage } from 'next'
 import { useUserTopBids } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useInView } from 'react-intersection-observer'
-import { useEffect } from 'react'
+import { createRef, useEffect, useState } from 'react'
+import { useAccount } from 'wagmi'
 
 const UserTopBids: NextPage = () => {
+  const { address: userAddress } = useAccount()
+  const addressInput = createRef<HTMLInputElement | undefined>()
+  const queryTextarea = createRef<HTMLTextAreaElement | undefined>()
+  const [address, setAddress] = useState<string | undefined>()
+  const [queryParams, setQueryParams] = useState<Record<any, any>>({})
   const {
     data: bids,
     fetchNextPage,
     hasNextPage,
-    isFetchingPage,
-  } = useUserTopBids('0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00', {
-    limit: 10,
+  } = useUserTopBids(address, {
+    ...queryParams,
   })
 
   const { ref, inView } = useInView()
@@ -21,6 +26,13 @@ const UserTopBids: NextPage = () => {
       fetchNextPage()
     }
   }, [inView])
+
+  useEffect(() => {
+    if (!address || address.length === 0) {
+      setAddress(userAddress)
+      addressInput.current.value = userAddress
+    }
+  }, [userAddress])
 
   return (
     <div
@@ -35,6 +47,34 @@ const UserTopBids: NextPage = () => {
       }}
     >
       <ConnectButton />
+      <div>
+        <label>User: </label>
+        <input type="text" ref={addressInput} />
+      </div>
+      <div>
+        <label>Query Params: </label>
+        <textarea ref={queryTextarea} />
+      </div>
+      <button
+        onClick={() => {
+          setAddress(addressInput.current?.value || '')
+          try {
+            if (
+              queryTextarea.current.value &&
+              queryTextarea.current.value.length > 0
+            ) {
+              setQueryParams(JSON.parse(queryTextarea.current.value))
+            }
+          } catch (e) {
+            console.warn(
+              'An error occurred when trying to parse query params data',
+              e
+            )
+          }
+        }}
+      >
+        Search
+      </button>
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Bids</h3>
       {bids.map((bid, i) => (
         <div key={`${bid.id}:${i}`}>
