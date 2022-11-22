@@ -267,16 +267,6 @@ export const BuyModalRenderer: FC<Props> = ({
 
           floorPrice = floorPrice + fee
           setReferrerFee(fee)
-        } else if (
-          referrerFeeBps !== null &&
-          referrer !== null &&
-          client?.referralFee &&
-          client?.referralFeeRecipient
-        ) {
-          const fee = (client.referralFee / 10000) * floorPrice
-
-          floorPrice = floorPrice + fee
-          setReferrerFee(fee)
         }
         setTotalPrice(floorPrice)
         setBuyStep(BuyStep.Checkout)
