@@ -2,6 +2,8 @@ import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { getClient } from '.'
 import { executeSteps } from '../utils/executeSteps'
+import axios, { AxiosRequestHeaders } from 'axios'
+import { version } from '../../package.json'
 
 export type Token = Pick<
   NonNullable<
@@ -123,7 +125,31 @@ export async function buyToken(data: Data) {
     )
     return true
   } catch (err: any) {
-    console.error(err)
+    if (tokens) {
+      const headers: AxiosRequestHeaders = {
+        'Content-Type': 'application/json',
+        'x-rkc-version': version,
+      }
+      if (client?.apiKey) {
+        headers['x-api-key'] = client.apiKey
+      }
+      tokens.forEach((token) => {
+        const data: paths['/tokens/simulate-floor/v1']['post']['parameters']['body']['body'] =
+          {
+            router: 'v6',
+            token: `${token.contract}:${token.tokenId}`,
+          }
+
+        axios.post(
+          `${client.apiBase}/tokens/simulate-floor/v1`,
+          JSON.stringify(data),
+          {
+            method: 'POST',
+            headers,
+          }
+        )
+      })
+    }
     throw err
   }
 }
