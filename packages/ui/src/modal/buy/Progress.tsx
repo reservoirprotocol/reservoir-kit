@@ -1,7 +1,9 @@
-import { Anchor, Box, Flex, Text } from '../../primitives'
+import { Anchor, Flex, Text } from '../../primitives'
 import React, { FC } from 'react'
-import { faWallet, faCube } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// @ts-ignore
+import confirmingProgress from 'url:../../../assets/confirmingProgress.gif'
+// @ts-ignore
+import finalizingProgress from 'url:../../../assets/finalizingProgress.gif'
 
 type Props = {
   title: string
@@ -21,16 +23,10 @@ export const Progress: FC<Props> = ({ title, txHash, etherscanBaseUrl }) => {
       }}
     >
       <Text style="h6">{title}</Text>
-      <Box css={{ color: '$neutralText' }}>
-        <FontAwesomeIcon
-          icon={txHash ? faCube : faWallet}
-          style={{
-            width: '32px',
-            height: '32px',
-            marginTop: '12px 0px',
-          }}
-        />
-      </Box>
+      <img
+        style={{ height: 100 }}
+        src={txHash ? finalizingProgress : confirmingProgress}
+      />
       <Anchor
         color="primary"
         weight="medium"

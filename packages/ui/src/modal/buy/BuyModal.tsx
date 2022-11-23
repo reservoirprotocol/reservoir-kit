@@ -22,7 +22,6 @@ import {
   faCopy,
   faCircleExclamation,
   faCheckCircle,
-  faExchange,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
@@ -469,16 +468,10 @@ export function BuyModal({
                     textAlign: 'center',
                   }}
                 >
-                  <Box css={{ color: '$neutralText' }}>
-                    <FontAwesomeIcon
-                      icon={faExchange}
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        margin: '12px 0px',
-                      }}
-                    />
-                  </Box>
+                  <img
+                    src={addFundsImage}
+                    style={{ height: 100, width: 100 }}
+                  />
                   <Text style="subtitle1" css={{ my: 24 }}>
                     <Popover
                       content={

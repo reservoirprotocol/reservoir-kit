@@ -33,13 +33,13 @@ import {
   faCalendar,
   faClose,
   faChevronDown,
-  faCheckCircle,
 } from '@fortawesome/free-solid-svg-icons'
 import Flatpickr from 'react-flatpickr'
 import TransactionProgress from '../TransactionProgress'
 import ProgressBar from '../ProgressBar'
 import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
 import WethApproval from '../../img/WethApproval'
+import OfferSubmitted from '../../img/OfferSubmitted'
 import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
@@ -667,15 +667,10 @@ export function BidModal({
 
             {bidStep === BidStep.Complete && (
               <Flex direction="column" align="center" css={{ p: '$4' }}>
-                <Box css={{ color: '$successAccent', mt: 48 }}>
-                  <FontAwesomeIcon
-                    icon={faCheckCircle}
-                    style={{ width: '32px', height: '32px' }}
-                  />
-                </Box>
-                <Text style="h5" css={{ textAlign: 'center', mt: 36, mb: 80 }}>
+                <Text style="h5" css={{ textAlign: 'center', mt: 56 }}>
                   Offer Submitted!
                 </Text>
+                <OfferSubmitted style={{ marginTop: 30, marginBottom: 84 }} />
                 {onViewOffers ? (
                   <Button
                     css={{ width: '100%' }}
