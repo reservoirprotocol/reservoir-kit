@@ -1,10 +1,8 @@
-import { Anchor, Flex, Text } from '../../primitives'
+import { Anchor, Box, Flex, Text } from '../../primitives'
 import React, { FC } from 'react'
 import { AcceptBidStep, StepData } from './AcceptBidModalRenderer'
-// @ts-ignore
-import confirmingProgress from 'url:../../../assets/confirmingProgress.gif'
-// @ts-ignore
-import finalizingProgress from 'url:../../../assets/finalizingProgress.gif'
+import { faWallet, faCube } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TransactionProgress from '../TransactionProgress'
 
 type Props = {
@@ -66,14 +64,32 @@ export const Progress: FC<Props> = ({
       {acceptBidStep == AcceptBidStep.Confirming && (
         <>
           <Text style="h6">Confirm transaction in your wallet</Text>
-          <img style={{ height: 100 }} src={confirmingProgress} />
+          <Box css={{ color: '$neutralText' }}>
+            <FontAwesomeIcon
+              icon={faWallet}
+              style={{
+                width: '32px',
+                height: '32px',
+                margin: '12px 0px',
+              }}
+            />
+          </Box>
         </>
       )}
 
       {acceptBidStep == AcceptBidStep.Finalizing && (
         <>
           <Text style="h6">Finalizing on blockchain</Text>
-          <img style={{ height: 100 }} src={finalizingProgress} />
+          <Box css={{ color: '$neutralText' }}>
+            <FontAwesomeIcon
+              icon={faCube}
+              style={{
+                width: '32px',
+                height: '32px',
+                margin: '12px 0px',
+              }}
+            />
+          </Box>
           <Anchor
             color="primary"
             weight="medium"
