@@ -122,16 +122,16 @@ const TokenMedia: FC<Props> = ({
   }
 
   if (error || (!media && !tokenPreview)) {
-  let fallbackElement: ReactElement | null | undefined
-  if (fallback) {
-    fallbackElement = fallback(mediaType)
-  }
-  if (!fallbackElement) {
-  fallbackElement = (
-    <TokenFallback token={token} onRefreshClicked={onRefreshToken} />
-  )
-  }
-  return fallbackElement
+    let fallbackElement: ReactElement | null | undefined
+    if (fallback) {
+      fallbackElement = fallback(mediaType)
+    }
+    if (!fallbackElement) {
+      fallbackElement = (
+        <TokenFallback token={token} onRefreshClicked={onRefreshToken} />
+      )
+    }
+    return fallbackElement
   }
 
   const onErrorCb = (e: SyntheticEvent) => {
