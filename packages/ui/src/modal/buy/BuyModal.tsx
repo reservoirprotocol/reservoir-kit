@@ -14,8 +14,6 @@ import {
   Select,
 } from '../../primitives'
 
-// @ts-ignore
-import addFundsImage from 'url:../../../assets/transferFunds.svg'
 import { Progress } from './Progress'
 import Popover from '../../primitives/Popover'
 import { Modal } from '../Modal'
@@ -23,6 +21,7 @@ import {
   faCopy,
   faCircleExclamation,
   faCheckCircle,
+  faExchange,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
@@ -500,10 +499,16 @@ export function BuyModal({
                     textAlign: 'center',
                   }}
                 >
-                  <img
-                    src={addFundsImage}
-                    style={{ height: 100, width: 100 }}
-                  />
+                  <Box css={{ color: '$neutralText' }}>
+                    <FontAwesomeIcon
+                      icon={faExchange}
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        margin: '12px 0px',
+                      }}
+                    />
+                  </Box>
                   <Text style="subtitle1" css={{ my: 24 }}>
                     <Popover
                       content={
