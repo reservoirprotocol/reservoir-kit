@@ -24,8 +24,13 @@ type Token = NonNullable<
   NonNullable<ReturnType<typeof useTokens>['data']>['0']
 >['token']
 
+type RequiredTokenProps = Pick<
+  NonNullable<Token>,
+  'image' | 'media' | 'collection'
+>
+
 type Props = {
-  token?: Token
+  token?: RequiredTokenProps
   preview?: boolean
   style?: CSSProperties
   className?: string

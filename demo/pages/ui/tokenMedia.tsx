@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { TokenMedia, useTokens } from '@reservoir0x/reservoir-kit-ui'
-import { createRef, useState } from 'react'
+import { useState } from 'react'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -129,7 +129,7 @@ const TokenMediaPage: NextPage = () => {
           fallback={<FallbackElement />}
           style={{
             minWidth: '400px',
-            minHeight: '400px'
+            minHeight: '400px',
           }}
         />
       )}
