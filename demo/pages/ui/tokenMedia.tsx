@@ -1,27 +1,11 @@
 import { NextPage } from 'next'
 import { TokenMedia, useTokens } from '@reservoir0x/reservoir-kit-ui'
-import { createRef, useState } from 'react'
+import { useState } from 'react'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
   '0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e'
 const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '2'
-
-const FallbackElement = () => {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        border: '1px solid grey',
-        borderRadius: 4,
-      }}
-    >
-      Fallback Content
-    </div>
-  )
-}
 
 const TokenMediaPage: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
@@ -114,22 +98,21 @@ const TokenMediaPage: NextPage = () => {
           }}
         >
           {tokens.map((token, i) => (
-            <TokenMedia
-              key={i}
-              token={token?.token}
-              preview={preview}
-              fallback={<FallbackElement />}
-            />
+            <TokenMedia key={i} token={token?.token} preview={preview} onRefreshToken={() => {
+              window.alert("Token was refreshed!")
+            }} />
           ))}
         </div>
       ) : (
         <TokenMedia
           token={tokens && tokens[0] ? tokens[0].token : undefined}
           preview={preview}
-          fallback={<FallbackElement />}
           style={{
             minWidth: '400px',
-            minHeight: '400px'
+            minHeight: '400px',
+          }}
+          onRefreshToken={() => {
+            window.alert("Token was refreshed!")
           }}
         />
       )}

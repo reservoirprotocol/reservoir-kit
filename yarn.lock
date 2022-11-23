@@ -2572,6 +2572,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-hookz/deep-equal@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@react-hookz/deep-equal@npm:1.0.3"
+  checksum: d482b43746a0371094b90e1957d3e3a6aa70cbe8bd9cd88c759d8dcf21c2c1f57fbd1846b2103bccc20600e77d04d44e35c320ba9001fb5382c70a9a3385d34a
+  languageName: node
+  linkType: hard
+
+"@react-hookz/web@npm:^19.2.0":
+  version: 19.2.0
+  resolution: "@react-hookz/web@npm:19.2.0"
+  dependencies:
+    "@react-hookz/deep-equal": ^1.0.3
+  peerDependencies:
+    js-cookie: ^3.0.1
+    react: ^16.8 || ^17 || ^18
+    react-dom: ^16.8 || ^17 || ^18
+  peerDependenciesMeta:
+    js-cookie:
+      optional: true
+  checksum: 0fda3d3a0f967b6b38817f1e72d111711fc01036a8e6d0850bd4e3b3fa41af8635b260babf19e384402ac6d2dfa7db779585c0c8b16700cc0f568df9662ca517
+  languageName: node
+  linkType: hard
+
 "@reservoir0x/reservoir-kit-client@workspace:*, @reservoir0x/reservoir-kit-client@workspace:packages/client":
   version: 0.0.0-use.local
   resolution: "@reservoir0x/reservoir-kit-client@workspace:packages/client"
@@ -2597,6 +2620,7 @@ __metadata:
     "@radix-ui/react-select": 1.0.1-rc.2
     "@radix-ui/react-switch": 1.0.0
     "@radix-ui/react-toggle-group": ^1.0.0
+    "@react-hookz/web": ^19.2.0
     "@reservoir0x/reservoir-kit-client": "workspace:*"
     "@stitches/react": ^1.2.8
     dayjs: ^1.11.4
