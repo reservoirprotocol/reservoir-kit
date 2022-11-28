@@ -71,6 +71,7 @@ type Props = {
   open: boolean
   tokenId?: string
   collectionId?: string
+  orderId?: string
   referrerFeeBps?: number | null
   referrer?: string | null
   normalizeRoyalties?: boolean
@@ -81,6 +82,7 @@ export const BuyModalRenderer: FC<Props> = ({
   open,
   tokenId,
   collectionId,
+  orderId,
   referrer,
   referrerFeeBps,
   normalizeRoyalties,
@@ -123,13 +125,15 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: listings } = useListings(
     {
       token: `${contract}:${tokenId}`,
-      ids: token?.market?.floorAsk?.id,
+      ids: orderId ? orderId : token?.market?.floorAsk?.id,
       normalizeRoyalties,
     },
     {
       revalidateFirstPage: true,
     },
-    open && token?.market?.floorAsk?.id !== undefined
+    open && (token?.market?.floorAsk?.id !== undefined || orderId)
+      ? true
+      : false
   )
 
   const listing = listings && listings[0] ? listings[0] : undefined
@@ -165,7 +169,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
     const contract = collectionId?.split(':')[0]
 
-    const options: Parameters<
+    let options: Parameters<
       ReservoirClientActions['buyToken']
     >['0']['options'] = {
       currency: currency?.contract,
@@ -193,16 +197,23 @@ export const BuyModalRenderer: FC<Props> = ({
 
     setBuyStep(BuyStep.Approving)
 
-    client.actions
-      .buyToken({
-        expectedPrice: totalPrice,
-        signer,
-        tokens: [
+    let orderIds = orderId ? [orderId] : undefined
+
+    let tokens = orderId
+      ? undefined
+      : [
           {
             tokenId: tokenId,
             contract: contract,
           },
-        ],
+        ]
+
+    client.actions
+      .buyToken({
+        orderIds: orderIds,
+        expectedPrice: totalPrice,
+        signer,
+        tokens: tokens,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
             return
@@ -274,6 +285,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [
     tokenId,
     collectionId,
+    orderId,
     referrer,
     referrerFeeBps,
     quantity,

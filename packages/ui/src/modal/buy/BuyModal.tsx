@@ -40,6 +40,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
+  orderId?: string
   referrerFeeBps?: number | null
   referrer?: string | null
   normalizeRoyalties?: boolean
@@ -65,6 +66,7 @@ export function BuyModal({
   trigger,
   tokenId,
   collectionId,
+  orderId,
   referrer,
   referrerFeeBps,
   normalizeRoyalties,
@@ -84,6 +86,7 @@ export function BuyModal({
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
+      orderId={orderId}
       referrer={referrer}
       referrerFeeBps={referrerFeeBps}
       normalizeRoyalties={normalizeRoyalties}
