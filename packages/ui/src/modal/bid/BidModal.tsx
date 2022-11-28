@@ -57,6 +57,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   attribute?: Trait
+  normalizeRoyalties?: boolean
   onViewOffers?: () => void
   onClose?: () => void
   onBidComplete?: (data: any) => void
@@ -104,6 +105,7 @@ export function BidModal({
   tokenId,
   collectionId,
   attribute,
+  normalizeRoyalties,
   onViewOffers,
   onClose,
   onBidComplete,
@@ -142,6 +144,7 @@ export function BidModal({
       tokenId={tokenId}
       collectionId={collectionId}
       attribute={attribute}
+      normalizeRoyalties={normalizeRoyalties}
     >
       {({
         token,

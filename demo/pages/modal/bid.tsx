@@ -10,6 +10,9 @@ const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
   '0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e'
 const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '39'
+const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
+  ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
+  : false
 
 const BidPage: NextPage = () => {
   const router = useRouter()
@@ -21,6 +24,8 @@ const BidPage: NextPage = () => {
     useState<ComponentPropsWithoutRef<typeof BidModal>['attribute']>(undefined)
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
+  const [normalizeRoyalties, setNormalizeRoyalties] =
+    useState(NORMALIZE_ROYALTIES)
 
   const computeAttribute = () => {
     {
@@ -85,6 +90,16 @@ const BidPage: NextPage = () => {
         />
       </div>
       <DeeplinkCheckbox />
+      <div>
+        <label>Normalize Royalties: </label>
+        <input
+          type="checkbox"
+          checked={normalizeRoyalties}
+          onChange={(e) => {
+            setNormalizeRoyalties(e.target.checked)
+          }}
+        />
+      </div>
 
       <BidModal
         trigger={
@@ -107,6 +122,7 @@ const BidPage: NextPage = () => {
         collectionId={collectionId}
         tokenId={tokenId}
         attribute={attribute}
+        normalizeRoyalties={normalizeRoyalties}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onBidComplete={(data) => {
           console.log('Bid Complete', data)
