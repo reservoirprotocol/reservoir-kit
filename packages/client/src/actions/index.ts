@@ -8,10 +8,9 @@ import { version } from '../../package.json'
  * @param apiKey Reservoir API key to be applied to all api
  * @param source Used to manually override the source domain used to attribute local orders
  * @param automatedRoyalties If true, royalties will be automatically included, defaults to true. Only relevant for creating orders.
- * @param referralFee Fee in bps applied on top of an order when filling it (buying)
- * @param referralFeeRecipient Referral fee recipient
  * @param marketplaceFee Fee in bps included when creating an order (listing & bidding)
  * @param marketplaceFeeRecipient Marketplace fee recipient
+ * @param normalizeRoyalties Normalize orders that don't have royalties by apply royalties on top of them
  */
 export type ReservoirClientOptions = {
   apiBase: string
@@ -19,8 +18,6 @@ export type ReservoirClientOptions = {
   uiVersion?: string
   source?: string
   automatedRoyalties?: boolean
-  referralFee?: number
-  referralFeeRecipient?: string
   marketplaceFee?: number
   marketplaceFeeRecipient?: string
   normalizeRoyalties?: boolean
@@ -36,8 +33,6 @@ export class ReservoirClient {
   source?: string
   apiKey?: string
   uiVersion?: string
-  referralFee?: number
-  referralFeeRecipient?: string
   marketplaceFee?: number
   marketplaceFeeRecipient?: string
   automatedRoyalties?: boolean
@@ -52,8 +47,6 @@ export class ReservoirClient {
     this.uiVersion = options.uiVersion
     this.apiBase = options.apiBase
     this.automatedRoyalties = options.automatedRoyalties
-    this.referralFee = options.referralFee
-    this.referralFeeRecipient = options.referralFeeRecipient
     this.marketplaceFee = options.marketplaceFee
     this.marketplaceFeeRecipient = options.marketplaceFeeRecipient
     this.normalizeRoyalties = options.normalizeRoyalties
@@ -79,12 +72,6 @@ export class ReservoirClient {
     this.apiKey = options.apiKey ? options.apiKey : this.apiKey
     this.uiVersion = options.uiVersion ? options.uiVersion : this.uiVersion
     this.apiBase = options.apiBase ? options.apiBase : this.apiBase
-    this.referralFee = options.referralFee
-      ? options.referralFee
-      : this.referralFee
-    this.referralFeeRecipient = options.referralFeeRecipient
-      ? options.referralFeeRecipient
-      : this.referralFeeRecipient
     this.marketplaceFee = options.marketplaceFee
       ? options.marketplaceFee
       : this.marketplaceFee

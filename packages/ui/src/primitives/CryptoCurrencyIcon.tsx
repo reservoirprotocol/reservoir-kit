@@ -1,10 +1,12 @@
-import { EthLogo } from './FormatEth'
+import EthLogo from './EthLogo'
 import React, { FC } from 'react'
-import { useReservoirClient } from '../hooks/index'
+import { useReservoirClient, useChainCurrency } from '../hooks/index'
 import { constants } from 'ethers'
 import { styled } from '../../stitches.config'
 import { StyledComponent } from '@stitches/react/types/styled-component'
 import Box from './Box'
+import wrappedContracts from '../constants/wrappedContracts'
+import WEthIcon from '../img/WEthIcon'
 
 type Props = {
   address: string
@@ -17,13 +19,23 @@ const CryptoCurrencyIcon: FC<Props> = ({
   css,
 }) => {
   const client = useReservoirClient()
+  const chainCurrency = useChainCurrency()
 
-  if (constants.AddressZero === address) {
-    return (
-      <Box css={{ display: 'flex', ...css }}>
-        <EthLogo />
-      </Box>
-    )
+  if (chainCurrency.symbol === 'ETH') {
+    if (constants.AddressZero === address) {
+      return (
+        <Box css={{ display: 'flex', ...css }}>
+          <EthLogo />
+        </Box>
+      )
+    }
+    if (wrappedContracts[chainCurrency.chainId] === address) {
+      return (
+        <Box css={{ display: 'flex', ...css }}>
+          <WEthIcon />
+        </Box>
+      )
+    }
   }
 
   return (

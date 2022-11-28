@@ -14,7 +14,9 @@ import {
   Execute,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
+import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
+import { formatUnits } from 'ethers/lib/utils'
 
 export enum BuyStep {
   Checkout,
@@ -170,7 +172,13 @@ export const BuyModalRenderer: FC<Props> = ({
     }
 
     if (referrer && referrerFeeBps) {
-      options.feesOnTop = [`${referrer}:${referrerFeeBps}`]
+      const price = toFixed(totalPrice, currency?.decimals || 18)
+      const fee = utils
+        .parseUnits(`${price}`, currency?.decimals)
+        .mul(referrerFeeBps)
+        .div(10000)
+      const atomicUnitsFee = formatUnits(fee, 0)
+      options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
     } else if (referrer === null && referrerFeeBps === null) {
       delete options.feesOnTop
     }
@@ -273,6 +281,7 @@ export const BuyModalRenderer: FC<Props> = ({
     client,
     signer,
     currency,
+    totalPrice,
   ])
 
   useEffect(() => {
@@ -282,16 +291,6 @@ export const BuyModalRenderer: FC<Props> = ({
 
         if (referrerFeeBps && referrer) {
           const fee = (referrerFeeBps / 10000) * floorPrice
-
-          floorPrice = floorPrice + fee
-          setReferrerFee(fee)
-        } else if (
-          referrerFeeBps !== null &&
-          referrer !== null &&
-          client?.referralFee &&
-          client?.referralFeeRecipient
-        ) {
-          const fee = (client.referralFee / 10000) * floorPrice
 
           floorPrice = floorPrice + fee
           setReferrerFee(fee)
@@ -308,7 +307,10 @@ export const BuyModalRenderer: FC<Props> = ({
   const { address } = useAccount()
   const { data: balance } = useBalance({
     addressOrName: address,
-    token: currency?.symbol !== 'ETH' ? currency?.contract : undefined,
+    token:
+      currency?.symbol !== 'ETH'
+        ? (currency?.contract as UseBalanceToken)
+        : undefined,
     watch: open,
     formatUnits: currency?.decimals,
   })

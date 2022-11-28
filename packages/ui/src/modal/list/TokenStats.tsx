@@ -13,11 +13,11 @@ type Props = {
 const TokenStats: FC<Props> = ({ token, collection }) => {
   let attributeFloor = token?.token?.attributes
     ? Math.max(
-      ...token.token.attributes.map((attr: any) =>
-        Number(attr.floorAskPrice)
-      ),
-      0
-    )
+        ...token.token.attributes.map((attr: any) =>
+          Number(attr.floorAskPrice)
+        ),
+        0
+      )
     : 0
   return (
     <Flex
@@ -46,55 +46,55 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
           {
             id: 0,
             label: (
-                <>
-                  <Text
-                    style="subtitle2"
-                    color="subtle"
-                    css={{ minWidth: '0' }}
-                    ellipsify
-                  >
-                    Creator Royalties
-                  </Text>
-                  <InfoTooltip
-                    side="right"
-                    width={200}
-                    content={
-                      'A fee on every order that goes to the collection creator.'
-                    }
-                  />
-                </>
+              <>
+                <Text
+                  style="subtitle2"
+                  color="subtle"
+                  css={{ minWidth: '0' }}
+                  ellipsify
+                >
+                  Creator Royalties
+                </Text>
+                <InfoTooltip
+                  side="right"
+                  width={200}
+                  content={
+                    'A fee on every order that goes to the collection creator.'
+                  }
+                />
+              </>
             ),
             value: (collection?.royalties?.bps || 0) * 0.01 + '%',
           },
           {
             id: 1,
             label: (
-                <Text
-                  style="subtitle2"
-                  color="subtle"
-                  css={{ minWidth: '0' }}
-                  ellipsify
-                >
-                  Last Sale
-                </Text>
+              <Text
+                style="subtitle2"
+                color="subtle"
+                css={{ minWidth: '0' }}
+                ellipsify
+              >
+                Last Sale
+              </Text>
             ),
             value: token?.token?.lastSell?.value || null,
-            asEth: true,
+            asNative: true,
           },
           {
             id: 2,
             label: (
-                <Text
-                  style="subtitle2"
-                  color="subtle"
-                  css={{ minWidth: '0' }}
-                  ellipsify
-                >
-                  Collection Floor
-                </Text>
+              <Text
+                style="subtitle2"
+                color="subtle"
+                css={{ minWidth: '0' }}
+                ellipsify
+              >
+                Collection Floor
+              </Text>
             ),
             value: collection?.floorAsk?.price?.amount?.native || 0,
-            asEth: true,
+            asNative: true,
           },
           {
             id: 3,
@@ -121,7 +121,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
               attributeFloor ||
               collection?.floorAsk?.price?.amount?.native ||
               0,
-            asEth: true,
+            asNative: true,
           },
         ].map((stat) => (
           <Stat key={stat.id} {...stat} />
