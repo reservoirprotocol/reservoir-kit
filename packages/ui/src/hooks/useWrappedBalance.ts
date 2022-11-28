@@ -1,5 +1,6 @@
 import wrappedContracts from '../constants/wrappedContracts'
 import { useBalance, useNetwork } from 'wagmi'
+import { UseBalanceToken } from '../types/wagmi'
 
 export default function (params: Parameters<typeof useBalance>['0']) {
   const { chain: activeChain, chains } = useNetwork()
@@ -18,7 +19,7 @@ export default function (params: Parameters<typeof useBalance>['0']) {
 
   const balance = useBalance({
     ...params,
-    token: contractAddress,
+    token: contractAddress as UseBalanceToken,
   })
 
   return {

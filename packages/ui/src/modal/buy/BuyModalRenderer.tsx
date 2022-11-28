@@ -13,6 +13,7 @@ import {
   Execute,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
+import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
 import { formatUnits } from 'ethers/lib/utils'
 
@@ -280,7 +281,10 @@ export const BuyModalRenderer: FC<Props> = ({
   const { address } = useAccount()
   const { data: balance } = useBalance({
     addressOrName: address,
-    token: currency?.symbol !== 'ETH' ? currency?.contract : undefined,
+    token:
+      currency?.symbol !== 'ETH'
+        ? (currency?.contract as UseBalanceToken)
+        : undefined,
     watch: open,
     formatUnits: currency?.decimals,
   })
