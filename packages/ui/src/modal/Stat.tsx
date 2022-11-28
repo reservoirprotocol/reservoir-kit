@@ -1,18 +1,23 @@
 import React, { FC, ReactElement } from 'react'
-import { Flex, Text, FormatEth, FormatWEth } from '../primitives'
+import {
+  Flex,
+  Text,
+  FormatCryptoCurrency,
+  FormatWrappedCurrency,
+} from '../primitives'
 
 type StatProps = {
   label: string | ReactElement
   value: string | number | null
-  asEth?: boolean
-  asWeth?: boolean
+  asNative?: boolean
+  asWrapped?: boolean
 }
 
 const Stat: FC<StatProps> = ({
   label,
   value,
-  asEth = false,
-  asWeth = false,
+  asNative = false,
+  asWrapped = false,
   ...props
 }) => (
   <Flex
@@ -27,12 +32,24 @@ const Stat: FC<StatProps> = ({
     }}
     {...props}
   >
-    <Flex css={{ flex: 1, minWidth: '0', alignItems: 'center', gap: '$2', mr: '$1' }}>
+    <Flex
+      css={{
+        flex: 1,
+        minWidth: '0',
+        alignItems: 'center',
+        gap: '$2',
+        mr: '$1',
+      }}
+    >
       {label}
     </Flex>
-    {asEth && !asWeth && <FormatEth amount={value} textStyle="subtitle2" />}
-    {asWeth && !asEth && <FormatWEth amount={value} textStyle="subtitle2" />}
-    {!asEth && !asWeth && (
+    {asNative && !asWrapped && (
+      <FormatCryptoCurrency amount={value} textStyle="subtitle2" />
+    )}
+    {asWrapped && !asNative && (
+      <FormatWrappedCurrency amount={value} textStyle="subtitle2" />
+    )}
+    {!asNative && !asWrapped && (
       <Text
         style="subtitle2"
         as="p"

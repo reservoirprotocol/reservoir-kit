@@ -55,7 +55,7 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
       value: token
         ? token.market?.topBid?.price?.amount?.native || null
         : collection?.topBid?.price?.amount?.native || null,
-      asWeth: true,
+      asWrapped: true,
     }
   )
 
@@ -73,7 +73,7 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
         </Text>
       ),
       value: token.market?.floorAsk?.price?.amount?.native || null,
-      asEth: true,
+      asNative: true,
     })
   } else if (!token && collection) {
     stats.push({
@@ -89,7 +89,7 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
         </Text>
       ),
       value: collection?.floorAsk?.price?.amount?.native || null,
-      asEth: true,
+      asNative: true,
     })
   }
 
@@ -106,7 +106,14 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
       }}
     >
       <TokenStatsHeader collection={collection} token={token} />
-      <Grid css={{ flex: 1, alignContent: 'start', width: '100%', gridTemplateColumns: 'repeat(1, minmax(0, 1fr))' }}>
+      <Grid
+        css={{
+          flex: 1,
+          alignContent: 'start',
+          width: '100%',
+          gridTemplateColumns: 'repeat(1, minmax(0, 1fr))',
+        }}
+      >
         <SelectedAttribute
           attributeKey={trait?.key}
           attributeValue={trait?.value}
