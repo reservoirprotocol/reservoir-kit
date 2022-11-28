@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app'
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { darkTheme } from 'stitches.config'
 import '@rainbow-me/rainbowkit/styles.css'
 import { ThemeProvider } from 'next-themes'
@@ -88,11 +88,13 @@ const AppWrapper = ({ children }) => {
     >
       <ThemeProvider
         attribute="class"
-        defaultTheme="light"
+        defaultTheme="dark"
         value={{
           dark: darkTheme.className,
           light: 'light',
         }}
+        enableSystem={false}
+        storageKey={'demo-theme'}
       >
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>

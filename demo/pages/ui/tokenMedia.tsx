@@ -1,6 +1,7 @@
 import { NextPage } from 'next'
 import { TokenMedia, useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useState } from 'react'
+import ThemeSwitcher from 'components/ThemeSwitcher'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -98,9 +99,14 @@ const TokenMediaPage: NextPage = () => {
           }}
         >
           {tokens.map((token, i) => (
-            <TokenMedia key={i} token={token?.token} preview={preview} onRefreshToken={() => {
-              window.alert("Token was refreshed!")
-            }} />
+            <TokenMedia
+              key={i}
+              token={token?.token}
+              preview={preview}
+              onRefreshToken={() => {
+                window.alert('Token was refreshed!')
+              }}
+            />
           ))}
         </div>
       ) : (
@@ -112,10 +118,11 @@ const TokenMediaPage: NextPage = () => {
             minHeight: '400px',
           }}
           onRefreshToken={() => {
-            window.alert("Token was refreshed!")
+            window.alert('Token was refreshed!')
           }}
         />
       )}
+      <ThemeSwitcher />
     </div>
   )
 }
