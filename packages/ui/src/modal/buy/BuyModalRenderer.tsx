@@ -12,9 +12,9 @@ import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 import { BigNumber, utils } from 'ethers'
 import {
   Execute,
-  UseBalanceToken,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
+import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
 import { formatUnits } from 'ethers/lib/utils'
 
