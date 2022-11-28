@@ -1,6 +1,27 @@
 import { useContext } from 'react'
 import { ThemeSwitcherContext } from '../pages/_app'
 import { lightTheme, darkTheme } from '@reservoir0x/reservoir-kit-ui'
+import { useTheme } from 'next-themes'
+
+const getDemoThemeFromOption = (option: string) => {
+  switch (option) {
+    case 'light': {
+      return 'light'
+    }
+    case 'dark': {
+      return 'dark'
+    }
+    case 'decent': {
+      return 'light'
+    }
+    case 'reservoir': {
+      return 'light'
+    }
+    default: {
+      return 'dark'
+    }
+  }
+}
 
 const getThemeFromOption = (option: string) => {
   switch (option) {
@@ -9,11 +30,9 @@ const getThemeFromOption = (option: string) => {
         ethIcon: 'glyph',
       })
     }
-
     case 'dark': {
       return darkTheme()
     }
-
     case 'decent': {
       return lightTheme({
         font: 'ABC Monument Grotesk',
@@ -27,14 +46,12 @@ const getThemeFromOption = (option: string) => {
         overlayBackground: 'rgba(31, 41, 55, 0.75)',
       })
     }
-
     case 'reservoir': {
       return lightTheme({
         font: 'Inter',
         primaryColor: '#7000FF',
       })
     }
-
     default: {
       return darkTheme()
     }
@@ -43,6 +60,7 @@ const getThemeFromOption = (option: string) => {
 
 export default () => {
   const { setTheme } = useContext(ThemeSwitcherContext)
+  const { setTheme: setDemoTheme } = useTheme()
 
   return (
     <select
@@ -51,6 +69,8 @@ export default () => {
       }}
       onChange={(e) => {
         setTheme(getThemeFromOption(e.target.value))
+        setDemoTheme(getDemoThemeFromOption(e.target.value))
+        localStorage.removeItem('demo-theme')
       }}
       style={{ position: 'fixed', top: 16, right: 16 }}
     >

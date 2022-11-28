@@ -27,7 +27,7 @@ const TokenFallback: FC<TokenFallbackProps> = ({ token, onRefreshClicked }) => {
         />
       )}
       <Text style="body3" css={{ textAlign: 'center' }}>
-        We don't have the content <br /> for this NFT yet
+        No Content Available
       </Text>
       <Button
         color="secondary"
