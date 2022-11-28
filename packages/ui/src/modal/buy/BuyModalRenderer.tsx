@@ -332,12 +332,13 @@ export const BuyModalRenderer: FC<Props> = ({
       if (!balance.value) {
         setHasEnoughCurrency(false)
       } else if (
-        balance.value &&
         balance.value.lt(
           utils.parseUnits(`${totalPriceTruncated}`, currency?.decimals)
         )
       ) {
         setHasEnoughCurrency(false)
+      } else {
+        setHasEnoughCurrency(true)
       }
     }
   }, [totalPrice, balance, currency])
