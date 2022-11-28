@@ -1,4 +1,9 @@
 
+## [0.1.18](https://github.com/reservoirprotocol/reservoir-kit/commit/0c0ea13061abfdb1bad0f3ff5e32917823865c2f) (2022-11-28)
+
+* Merge pull request #104 from reservoirprotocol/pedro/res-1126-simulate-order-when-failing-to-buy [04e3507](https://github.com/reservoirprotocol/reservoir-kit/commit/04e350702f341f71361d38d85d69b84c3dc957f8)
+* fix: properly handle non-hash eip191 signatures [f490a9c](https://github.com/reservoirprotocol/reservoir-kit/commit/f490a9cbe22d293f2e797f38648e1b2943dc58dc)
+* Simulate floor order when failing to buy and tokens are specified [e9eba2b](https://github.com/reservoirprotocol/reservoir-kit/commit/e9eba2ba6f662913d456e72837f5922747db9a3d)
 ## [0.1.17](https://github.com/reservoirprotocol/reservoir-kit/commit/b9238bddf38b376ae42229827f25b51b226e84c7) (2022-11-18)
 
 * Sync api [cf1154b](https://github.com/reservoirprotocol/reservoir-kit/commit/cf1154bb5f2f21f10b0a555c26a066c8d360c7fd)

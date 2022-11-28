@@ -1,4 +1,6 @@
 
+## [0.5.12](https://github.com/reservoirprotocol/reservoir-kit/commit/3912d593ea7230b68ae6be7d46b2c5e2299b933a) (2022-11-28)
+
 ## [0.5.11](https://github.com/reservoirprotocol/reservoir-kit/commit/995208c2a05b5465920cfb697fbed38e95c033a1) (2022-11-18)
 
 * Merge pull request #103 from reservoirprotocol/pedro/res-1159-add-normalizedroyalties-to [ff2d479](https://github.com/reservoirprotocol/reservoir-kit/commit/ff2d4794cefe087d71dd97d88823c0d5d52976e3)
