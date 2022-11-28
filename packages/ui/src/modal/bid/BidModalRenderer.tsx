@@ -4,13 +4,13 @@ import {
   useCoinConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
-  useWethBalance,
+  useWrappedBalance,
   useCollections,
   useAttributes,
 } from '../../hooks'
-import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
+import { chainId, useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
 
-import { BigNumber, constants } from 'ethers'
+import { constants } from 'ethers'
 import {
   Execute,
   ReservoirClientActions,
@@ -37,6 +37,10 @@ export enum BidStep {
   Complete,
 }
 
+export type Traits =
+  | NonNullable<ReturnType<typeof useAttributes>['data']>
+  | undefined
+
 export type Trait =
   | {
       key: string
@@ -47,19 +51,19 @@ export type Trait =
 type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
-  attributes?: NonNullable<ReturnType<typeof useAttributes>['data']>
+  attributes?: Traits
   bidAmount: string
   bidData: BidData | null
   bidAmountUsd: number
   bidStep: BidStep
-  hasEnoughEth: boolean
+  hasEnoughNativeCurrency: boolean
   hasEnoughWEth: boolean
-  ethAmountToWrap: string
+  amountToWrap: string
   ethUsdPrice: ReturnType<typeof useCoinConversion>
   isBanned: boolean
-  balance?: BigNumber
-  wethBalance?: BigNumber
-  wethUniswapLink: string
+  balance?: ReturnType<typeof useBalance>['data']
+  wrappedBalance?: ReturnType<typeof useBalance>['data']
+  uniswapConvertLink: string
   transactionError?: Error | null
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
@@ -106,13 +110,14 @@ export const BidModalRenderer: FC<Props> = ({
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
     expirationOptions[3]
   )
-  const [hasEnoughEth, setHasEnoughEth] = useState(false)
+  const [hasEnoughNativeCurrency, setHasEnoughNativeCurrency] = useState(false)
   const [hasEnoughWEth, setHasEnoughWEth] = useState(false)
-  const [ethAmountToWrap, setEthAmountToWrap] = useState('')
+  const [amountToWrap, setAmountToWrap] = useState('')
   const [stepData, setStepData] = useState<StepData | null>(null)
   const [bidData, setBidData] = useState<BidData | null>(null)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const [trait, setTrait] = useState<Trait>(attribute)
+  const [attributes, setAttributes] = useState<Traits>()
 
   const { data: tokens } = useTokens(
     open &&
@@ -126,7 +131,9 @@ export const BidModalRenderer: FC<Props> = ({
     }
   )
 
-  const traits = useAttributes(open && !tokenId ? collectionId : undefined)
+  const { data: traits } = useAttributes(
+    open && !tokenId ? collectionId : undefined
+  )
 
   const { data: collections } = useCollections(
     open && {
@@ -135,12 +142,6 @@ export const BidModalRenderer: FC<Props> = ({
       normalizeRoyalties,
     }
   )
-
-  const attributes = traits.data
-    ? traits.data.filter(
-        (attribute) => attribute.values && attribute.values.length > 0
-      )
-    : undefined
 
   const collection = collections && collections[0] ? collections[0] : undefined
 
@@ -158,52 +159,64 @@ export const BidModalRenderer: FC<Props> = ({
   })
 
   const {
-    balance: { data: wethBalance },
+    balance: { data: wrappedBalance },
     contractAddress,
-  } = useWethBalance({
+  } = useWrappedBalance({
     addressOrName: address,
     watch: open,
   })
 
   const { chain } = useNetwork()
-  const wethUniswapLink = `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${ethAmountToWrap}&chain=${
-    chain?.network || 'mainnet'
-  }&inputCurrency=eth&outputCurrency=${contractAddress}`
+  const uniswapConvertLink =
+    chain?.id === chainId.mainnet || chain?.id === chainId.goerli
+      ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
+          chain?.network || 'mainnet'
+        }&inputCurrency=eth&outputCurrency=${contractAddress}`
+      : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
 
   useEffect(() => {
     if (bidAmount !== '') {
       const bid = parseEther(bidAmount)
 
-      if (!wethBalance?.value || wethBalance?.value.lt(bid)) {
+      if (!wrappedBalance?.value || wrappedBalance?.value.lt(bid)) {
         setHasEnoughWEth(false)
-        const wethAmount = wethBalance?.value || constants.Zero
+        const wethAmount = wrappedBalance?.value || constants.Zero
         const amountToWrap = bid.sub(wethAmount)
-        setEthAmountToWrap(formatBN(bid.sub(wethAmount), 5))
+        setAmountToWrap(formatBN(bid.sub(wethAmount), 5))
 
         if (!balance?.value || balance.value.lt(amountToWrap)) {
-          setHasEnoughEth(false)
+          setHasEnoughNativeCurrency(false)
         } else {
-          setHasEnoughEth(true)
+          setHasEnoughNativeCurrency(true)
         }
       } else {
         setHasEnoughWEth(true)
-        setHasEnoughEth(true)
-        setEthAmountToWrap('')
+        setHasEnoughNativeCurrency(true)
+        setAmountToWrap('')
       }
     } else {
-      setHasEnoughEth(true)
+      setHasEnoughNativeCurrency(true)
       setHasEnoughWEth(true)
-      setEthAmountToWrap('')
+      setAmountToWrap('')
     }
-  }, [bidAmount, balance, wethBalance])
+  }, [bidAmount, balance, wrappedBalance])
+
+  useEffect(() => {
+    const validAttributes = traits
+      ? traits.filter(
+          (attribute) => attribute.values && attribute.values.length > 0
+        )
+      : undefined
+    setAttributes(validAttributes)
+  }, [traits])
 
   useEffect(() => {
     if (!open) {
       setBidStep(BidStep.SetPrice)
       setExpirationOption(expirationOptions[3])
-      setHasEnoughEth(false)
+      setHasEnoughNativeCurrency(false)
       setHasEnoughWEth(false)
-      setEthAmountToWrap('')
+      setAmountToWrap('')
       setBidAmount('')
       setStepData(null)
       setBidData(null)
@@ -330,16 +343,16 @@ export const BidModalRenderer: FC<Props> = ({
         attributes,
         ethUsdPrice,
         isBanned,
-        balance: balance?.value,
-        wethBalance: wethBalance?.value,
-        wethUniswapLink,
+        balance,
+        wrappedBalance,
+        uniswapConvertLink,
         bidAmount,
         bidData,
         bidAmountUsd,
         bidStep,
-        hasEnoughEth,
+        hasEnoughNativeCurrency,
         hasEnoughWEth,
-        ethAmountToWrap,
+        amountToWrap,
         transactionError,
         expirationOption,
         expirationOptions,
