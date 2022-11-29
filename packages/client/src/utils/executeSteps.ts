@@ -69,7 +69,7 @@ export async function executeSteps(
       if (isSell && quote - expectedPrice < -0.00001) {
         error = {
           type: 'price mismatch',
-          message: `The quoted price of ${quote} ETH is less than the expected price of ${expectedPrice} ETH`,
+          message: `The quoted price of ${quote} is less than the expected price of ${expectedPrice}`,
         }
       }
 
@@ -77,7 +77,7 @@ export async function executeSteps(
       if (isBuy && quote - expectedPrice > 0.00001) {
         error = {
           type: 'price mismatch',
-          message: `The quoted price of ${quote} ETH is greater than the expected price of ${expectedPrice} ETH`,
+          message: `The quoted price of ${quote} is greater than the expected price of ${expectedPrice}`,
         }
       }
 
@@ -222,7 +222,12 @@ export async function executeSteps(
         if (signData) {
           // Request user signature
           if (signData.signatureKind === 'eip191') {
-            signature = await signer.signMessage(arrayify(signData.message))
+            if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
+              // If the message represents a hash, we need to convert it to raw bytes first
+              signature = await signer.signMessage(arrayify(signData.message))
+            } else {
+              signature = await signer.signMessage(signData.message)
+            }
           } else if (signData.signatureKind === 'eip712') {
             signature = await (
               signer as unknown as TypedDataSigner

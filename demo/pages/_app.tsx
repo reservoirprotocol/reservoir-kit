@@ -81,8 +81,6 @@ const AppWrapper = ({ children }) => {
         apiKey: API_KEY,
         marketplaceFee: FEE,
         marketplaceFeeRecipient: FEE_RECIPIENT,
-        referralFee: REFERRAL_FEE,
-        referralFeeRecipient: REFERRAL_FEE_RECIPIENT,
         source: SOURCE,
         normalizeRoyalties: NORMALIZE_ROYALTIES,
       }}
