@@ -20,5 +20,5 @@ export { default as useListingPreapprovalCheck } from './useListingPreapprovalCh
 export { default as useWrappedBalance } from './useWrappedBalance'
 export { default as useTokenOpensea } from './useTokenOpensea'
 export { default as useFallbackState } from './useFallbackState'
-export { default as useChainCurrency } from './useChainCurrency'
 export { default as useModelViewer } from './useModelViewer'
+export { default as useChainCurrency } from './useChainCurrency'

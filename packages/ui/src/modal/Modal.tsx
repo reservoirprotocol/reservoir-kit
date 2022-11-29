@@ -78,6 +78,8 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
             backgroundColor: '$headerBackground',
             alignItems: 'center',
             justifyContent: 'space-between',
+            borderTopRightRadius: '$borderRadius',
+            borderTopLeftRadius: '$borderRadius',
           }}
         >
           <Title css={{ alignItems: 'center', display: 'flex' }}>
@@ -117,6 +119,8 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
               backgroundColor: '$footerBackground',
               py: 10.5,
               visibility: '$poweredByReservoirVisibility',
+              borderBottomRightRadius: '$borderRadius',
+              borderBottomLeftRadius: '$borderRadius',
             }}
           >
             <Anchor href="https://reservoir.tools/" target="_blank">

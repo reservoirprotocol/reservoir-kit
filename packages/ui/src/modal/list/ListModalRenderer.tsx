@@ -14,8 +14,8 @@ import {
   useListingPreapprovalCheck,
   useCollections,
   useTokenOpensea,
-  useChainCurrency,
   useUserTokens,
+  useChainCurrency,
 } from '../../hooks'
 import { useAccount, useSigner } from 'wagmi'
 

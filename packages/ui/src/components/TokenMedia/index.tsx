@@ -84,13 +84,7 @@ const TokenMedia: FC<Props> = ({
 }) => {
   const mediaRef = useRef<HTMLAudioElement | HTMLVideoElement>(null)
   const themeContext = useContext(ThemeContext)
-  const borderRadius: string =
-    themeContext &&
-    themeContext['radii'] &&
-    (themeContext as any)['radii']['borderRadius'] &&
-    (themeContext as any)['radii']['borderRadius']['value']
-      ? (themeContext as any)['radii']['borderRadius']['value']
-      : '0'
+  let borderRadius: string = themeContext?.radii?.borderRadius?.value || '0'
   const [error, setError] = useState<SyntheticEvent | Event | null>(null)
   const media = token?.media
   const tokenPreview = token?.image
