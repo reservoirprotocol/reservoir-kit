@@ -32,7 +32,9 @@ export const {
     lineHeights: {},
     letterSpacings: {},
     sizes: {},
-    radii: {},
+    radii: {
+      borderRadius: 0,
+    },
     shadows: {},
     transitions: {},
   },

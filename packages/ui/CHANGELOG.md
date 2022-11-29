@@ -1,4 +1,9 @@
 
+* Merge branch 'pedro/res-955-rk-broken-currency-logo-on-polygon' of github.com:reservoirprotocol/reservoir-kit into pedro/res-955-rk-broken-currency-logo-on-polygon [9cef78f](https://github.com/reservoirprotocol/reservoir-kit/commit/9cef78fedd64d8425d283077de0ce79bb73b92b7)
+* Resolve conflicts [fb66b4e](https://github.com/reservoirprotocol/reservoir-kit/commit/fb66b4e3289262799f340075500d7cb1eccc14fb)
+## [0.5.12](https://github.com/reservoirprotocol/reservoir-kit/commit/3912d593ea7230b68ae6be7d46b2c5e2299b933a) (2022-11-28)
+
+* swapped illustrations for generic icons [a5cc2e5](https://github.com/reservoirprotocol/reservoir-kit/commit/a5cc2e51ff4dd8943305dd1d35dc8a10c2530905)
 ## [0.5.11](https://github.com/reservoirprotocol/reservoir-kit/commit/995208c2a05b5465920cfb697fbed38e95c033a1) (2022-11-18)
 
 * Merge pull request #103 from reservoirprotocol/pedro/res-1159-add-normalizedroyalties-to [ff2d479](https://github.com/reservoirprotocol/reservoir-kit/commit/ff2d4794cefe087d71dd97d88823c0d5d52976e3)
@@ -23,8 +28,10 @@
 * Filter out range attributes from BidModal attribute selector [c102466](https://github.com/reservoirprotocol/reservoir-kit/commit/c102466d2a746c5bd81492c9735749604aac124d)
 * Fix unnecessary call to fetch attributes when bidding on a token using the BidModal [4d255cf](https://github.com/reservoirprotocol/reservoir-kit/commit/4d255cf12d2c8fc694af46adaaf7e6f681a5fec9)
 * Improve ux when loading a bid to accept in the AcceptBidModal [71c22a2](https://github.com/reservoirprotocol/reservoir-kit/commit/71c22a253b72f48a5c17b5d9e30017ae492709ff)
+* Fix issues with wrapped contract balaance lookup in bids [d14cb9e](https://github.com/reservoirprotocol/reservoir-kit/commit/d14cb9ebdad82aab32eb8ef2da3edf51bd3b78c0)
 * Fixes RES-1028: add ability to override global normalize royalties configuration per relevant modal [c69ce46](https://github.com/reservoirprotocol/reservoir-kit/commit/c69ce46a31199a165882c024484fe79174e03a96)
 * Fixes RES-1030: Add support for global normalized royalties configuration [adb9d62](https://github.com/reservoirprotocol/reservoir-kit/commit/adb9d62ba83af5926d72302c9bb8b14fbc5dd3af)
+* Add support for polygon and refactor for generic native/wrapped currencies based on chain [822498d](https://github.com/reservoirprotocol/reservoir-kit/commit/822498df643e6df7406989d738ffe23355353c8f)
 * Improve error message for price mismatch in buy modal [4d10a02](https://github.com/reservoirprotocol/reservoir-kit/commit/4d10a02c3a4a7ff17e6f54a1746434833a358263)
 ## [0.5.7](https://github.com/reservoirprotocol/reservoir-kit/commit/31e969397c1ebdee1c888c464ad8312ef831972c) (2022-11-04)
 

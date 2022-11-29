@@ -1,4 +1,10 @@
 
+* Resolve conflicts [fb66b4e](https://github.com/reservoirprotocol/reservoir-kit/commit/fb66b4e3289262799f340075500d7cb1eccc14fb)
+## [0.1.18](https://github.com/reservoirprotocol/reservoir-kit/commit/0c0ea13061abfdb1bad0f3ff5e32917823865c2f) (2022-11-28)
+
+* Merge pull request #104 from reservoirprotocol/pedro/res-1126-simulate-order-when-failing-to-buy [04e3507](https://github.com/reservoirprotocol/reservoir-kit/commit/04e350702f341f71361d38d85d69b84c3dc957f8)
+* fix: properly handle non-hash eip191 signatures [f490a9c](https://github.com/reservoirprotocol/reservoir-kit/commit/f490a9cbe22d293f2e797f38648e1b2943dc58dc)
+* Simulate floor order when failing to buy and tokens are specified [e9eba2b](https://github.com/reservoirprotocol/reservoir-kit/commit/e9eba2ba6f662913d456e72837f5922747db9a3d)
 ## [0.1.17](https://github.com/reservoirprotocol/reservoir-kit/commit/b9238bddf38b376ae42229827f25b51b226e84c7) (2022-11-18)
 
 * Sync api [cf1154b](https://github.com/reservoirprotocol/reservoir-kit/commit/cf1154bb5f2f21f10b0a555c26a066c8d360c7fd)
@@ -15,6 +21,7 @@
 * Sync api [228769e](https://github.com/reservoirprotocol/reservoir-kit/commit/228769e82efe2d34d01f298ac3b656abc8e05c00)
 * Sync api [80d7c70](https://github.com/reservoirprotocol/reservoir-kit/commit/80d7c705b3248ed11c1feae7f098baa798953a05)
 * Sync api [a383250](https://github.com/reservoirprotocol/reservoir-kit/commit/a383250cc8f37f34f54467e9cb34369b3e2619fe)
+* Add support for polygon and refactor for generic native/wrapped currencies based on chain [822498d](https://github.com/reservoirprotocol/reservoir-kit/commit/822498df643e6df7406989d738ffe23355353c8f)
 * Fix grammer in price mismatch error [86f9b82](https://github.com/reservoirprotocol/reservoir-kit/commit/86f9b824b4fe2024a6036c792d45b23dcc642b24)
 * Improve error message for price mismatch in buy modal [4d10a02](https://github.com/reservoirprotocol/reservoir-kit/commit/4d10a02c3a4a7ff17e6f54a1746434833a358263)
 * Merge branch 'main' of github.com:reservoirprotocol/reservoir-kit [070fd55](https://github.com/reservoirprotocol/reservoir-kit/commit/070fd5510c7ae1897e8da9e0e172728870d72bba)
