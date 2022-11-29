@@ -14,9 +14,10 @@ import {
   useListingPreapprovalCheck,
   useCollections,
   useTokenOpensea,
+  useUserTokens,
   useChainCurrency,
 } from '../../hooks'
-import { useSigner } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 
 import {
   Execute,
@@ -56,6 +57,7 @@ export type StepData = {
 
 type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+  quantityAvailable: number
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listStep: ListStep
   usdPrice: ReturnType<typeof useCoinConversion>
@@ -71,12 +73,14 @@ type ChildrenProps = {
   stepData: StepData | null
   currencies: Currency[]
   currency: Currency
+  quantity: number
   setListStep: React.Dispatch<React.SetStateAction<ListStep>>
   toggleMarketplace: (marketplace: Marketplace) => void
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setSyncProfit: React.Dispatch<React.SetStateAction<boolean>>
   setMarketPrice: (price: number, market: Marketplace) => void
   setCurrency: (currency: Currency) => void
+  setQuantity: React.Dispatch<React.SetStateAction<number>>
   listToken: () => void
 }
 
@@ -143,6 +147,7 @@ export const ListModalRenderer: FC<Props> = ({
   children,
 }) => {
   const { data: signer } = useSigner()
+  const account = useAccount()
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
@@ -163,6 +168,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [currency, setCurrency] = useState<Currency>(
     currencies && currencies[0] ? currencies[0] : defaultCurrency
   )
+  const [quantity, setQuantity] = useState(1)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const {
     data: unapprovedMarketplaces,
@@ -204,22 +210,41 @@ export const ListModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
+  const is1155 = token?.token?.kind === 'erc1155'
+
+  const { data: userTokens } = useUserTokens(
+    open && is1155 ? account.address : undefined,
+    {
+      tokens: [`${contract}:${tokenId}`],
+    }
+  )
+
+  const quantityAvailable =
+    is1155 && userTokens[0]
+      ? Number(userTokens[0].ownership?.tokenCount || 1)
+      : 1
 
   const usdPrice = useCoinConversion(open ? 'USD' : undefined, currency.symbol)
 
   const toggleMarketplace = (marketplace: Marketplace) => {
-    setMarketplaces(
-      marketplaces.map((market) => {
-        if (market.name == marketplace.name) {
-          return {
-            ...market,
-            isSelected: !market.isSelected,
-          }
-        } else {
-          return market
+    const updatedMarketplaces = marketplaces.map((market) => {
+      if (market.name == marketplace.name) {
+        return {
+          ...market,
+          isSelected: !market.isSelected,
         }
-      })
+      } else {
+        return market
+      }
+    })
+    const hasNonNativeMarketplace = updatedMarketplaces.find(
+      (marketplace) =>
+        marketplace.isSelected && marketplace.orderbook !== 'reservoir'
     )
+    if (hasNonNativeMarketplace) {
+      setQuantity(1)
+    }
+    setMarketplaces(updatedMarketplaces)
   }
 
   const syncMarketPrices = (
@@ -382,6 +407,7 @@ export const ListModalRenderer: FC<Props> = ({
       setStepData(null)
       setExpirationOption(expirationOptions[5])
       setSyncProfit(true)
+      setQuantity(1)
     }
     setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
   }, [open])
@@ -430,6 +456,10 @@ export const ListModalRenderer: FC<Props> = ({
           orderbook: market.orderbook,
           //@ts-ignore
           orderKind: market.orderKind,
+        }
+
+        if (quantity > 1) {
+          listing.quantity = quantity
         }
 
         if (expirationTime) {
@@ -529,12 +559,14 @@ export const ListModalRenderer: FC<Props> = ({
     tokenId,
     expirationOption,
     currency,
+    quantity,
   ])
 
   return (
     <>
       {children({
         token,
+        quantityAvailable,
         collection,
         listStep,
         usdPrice,
@@ -550,13 +582,15 @@ export const ListModalRenderer: FC<Props> = ({
         stepData,
         currencies: currencies || [defaultCurrency],
         currency,
+        quantity,
         setListStep,
         toggleMarketplace,
         setMarketPrice,
         setCurrency,
         setSyncProfit,
-        listToken,
         setExpirationOption,
+        setQuantity,
+        listToken,
       })}
     </>
   )
