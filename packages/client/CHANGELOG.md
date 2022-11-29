@@ -1,24 +1,45 @@
 
+* Resolve conflicts [08135ca](https://github.com/reservoirprotocol/reservoir-kit/commit/08135ca4af3b4ba04eba8d7d950aae3bbb23ae57)
+## [0.2.1](https://github.com/reservoirprotocol/reservoir-kit/commit/603feaee4cd26b740ba861442d06118c57e9479b) (2022-11-29)
+
+* Sync api [9b34ff3](https://github.com/reservoirprotocol/reservoir-kit/commit/9b34ff3c0a057a793a3f7d5245aafdb47fe7d681)
+* Resolve conflicts [85aa24c](https://github.com/reservoirprotocol/reservoir-kit/commit/85aa24cc1cd332499677e6fec426d7e83f8998af)
+## [0.2.0](https://github.com/reservoirprotocol/reservoir-kit/commit/54b21a30274a9ca59ea49ee13e19daf878443925) (2022-11-28)
+
+* Merge pull request #106 from reservoirprotocol/pedro/res-1166-convert-bps-fee-to-wei-price-when-buying [ab1c907](https://github.com/reservoirprotocol/reservoir-kit/commit/ab1c9071f6be9382cf0d26777fe265f9a45db9c6)
 * Resolve conflicts [fb66b4e](https://github.com/reservoirprotocol/reservoir-kit/commit/fb66b4e3289262799f340075500d7cb1eccc14fb)
 ## [0.1.18](https://github.com/reservoirprotocol/reservoir-kit/commit/0c0ea13061abfdb1bad0f3ff5e32917823865c2f) (2022-11-28)
 
 * Merge pull request #104 from reservoirprotocol/pedro/res-1126-simulate-order-when-failing-to-buy [04e3507](https://github.com/reservoirprotocol/reservoir-kit/commit/04e350702f341f71361d38d85d69b84c3dc957f8)
 * fix: properly handle non-hash eip191 signatures [f490a9c](https://github.com/reservoirprotocol/reservoir-kit/commit/f490a9cbe22d293f2e797f38648e1b2943dc58dc)
+* Merge branch 'pedro/res-1166-convert-bps-fee-to-wei-price-when-buying' into dev [5042208](https://github.com/reservoirprotocol/reservoir-kit/commit/50422087b55b8591959b9a047e87f9454619e907)
+* Remove referrerFee from global configuration due to difficulty calculating bps to atomic unit [b97ec47](https://github.com/reservoirprotocol/reservoir-kit/commit/b97ec473860c3640d1c5999bc66d3ff4a94ae260)
+* Merge branch 'pedro/res-1126-simulate-order-when-failing-to-buy' into dev [c40a545](https://github.com/reservoirprotocol/reservoir-kit/commit/c40a545ea04443ec41c750b369884d1d22b9aca1)
 * Simulate floor order when failing to buy and tokens are specified [e9eba2b](https://github.com/reservoirprotocol/reservoir-kit/commit/e9eba2ba6f662913d456e72837f5922747db9a3d)
+* Resolve conflicts [e761aad](https://github.com/reservoirprotocol/reservoir-kit/commit/e761aad4ab447df0b0781fe642c68d665a4a1380)
 ## [0.1.17](https://github.com/reservoirprotocol/reservoir-kit/commit/b9238bddf38b376ae42229827f25b51b226e84c7) (2022-11-18)
 
 * Sync api [cf1154b](https://github.com/reservoirprotocol/reservoir-kit/commit/cf1154bb5f2f21f10b0a555c26a066c8d360c7fd)
+* Merge branch 'pedro/res-1159-add-normalizedroyalties-to' into dev [4910600](https://github.com/reservoirprotocol/reservoir-kit/commit/491060078bafa0dd5c3189379f33e41ad02e727a)
 * Remove query param keys that are undefined, which caused a 400 from the api [3d00d34](https://github.com/reservoirprotocol/reservoir-kit/commit/3d00d34625cd8995fbded6c3eda2774bba89855c)
+* Merge branch 'ted/res-1139-rk-upgrade-wagmi-to-v07x' into dev [eb98c5b](https://github.com/reservoirprotocol/reservoir-kit/commit/eb98c5b7be17314ff31b01e01176ca0e8b4fb4c2)
 ## [0.1.16](https://github.com/reservoirprotocol/reservoir-kit/commit/75c9606a08777f879e9cb0b85811080331e7b3bb) (2022-11-16)
 
+* Merge branch 'main' of https://github.com/reservoirprotocol/reservoir-kit into ted/res-1139-rk-upgrade-wagmi-to-v07x [eb879cc](https://github.com/reservoirprotocol/reservoir-kit/commit/eb879cc712acbeb8a78b4dfaf7a494739ce32c57)
+## [0.1.16](https://github.com/reservoirprotocol/reservoir-kit/commit/6f630b5c09374ee0986c3275b4047cd2575cba16) (2022-11-16)
+
+* upgraded wagmi to 0.7.4 and fixed breaking changes [3710d63](https://github.com/reservoirprotocol/reservoir-kit/commit/3710d633d30f17b72afbd8445c07eba60ffb22ba)
+* Resolve conflicts [a8efc3e](https://github.com/reservoirprotocol/reservoir-kit/commit/a8efc3e6fd21a38e4284306a8dd7c2b900df1753)
 * Sync api [dcdb95a](https://github.com/reservoirprotocol/reservoir-kit/commit/dcdb95a7e93b0e0a9d651e41a4341079c61e5915)
 ## [0.1.15](https://github.com/reservoirprotocol/reservoir-kit/commit/b88b78ab5a46938657f142646dbabfd7ed950ad0) (2022-11-15)
 
 * Merge pull request #90 from reservoirprotocol/pedro/res-967-buymodal-expected-price [848c104](https://github.com/reservoirprotocol/reservoir-kit/commit/848c10440d782667295a7d9fa990f549e8d78e6b)
 * Resolve conflicts [8d2ab48](https://github.com/reservoirprotocol/reservoir-kit/commit/8d2ab48dab8de568eca76960469d184327f2ecf1)
+* Resolve conflicts [d77337a](https://github.com/reservoirprotocol/reservoir-kit/commit/d77337ae86e52e0ec1a3e0e0ccdadb79bb3dfd18)
 ## [0.1.14](https://github.com/reservoirprotocol/reservoir-kit/commit/fec1cfcf0773abd02f58829086ba6c8af418dcb4) (2022-11-11)
 
 * Sync api [228769e](https://github.com/reservoirprotocol/reservoir-kit/commit/228769e82efe2d34d01f298ac3b656abc8e05c00)
+* resolve conflicts [e8d460b](https://github.com/reservoirprotocol/reservoir-kit/commit/e8d460bac7444829d4cd7cce9ae1b54fd1baa5c6)
 * Sync api [80d7c70](https://github.com/reservoirprotocol/reservoir-kit/commit/80d7c705b3248ed11c1feae7f098baa798953a05)
 * Sync api [a383250](https://github.com/reservoirprotocol/reservoir-kit/commit/a383250cc8f37f34f54467e9cb34369b3e2619fe)
 * Add support for polygon and refactor for generic native/wrapped currencies based on chain [822498d](https://github.com/reservoirprotocol/reservoir-kit/commit/822498df643e6df7406989d738ffe23355353c8f)
