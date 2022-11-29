@@ -58,6 +58,12 @@ const Index: NextPage = () => {
           <a>useUserTopBids</a>
         </Link>
       </nav>
+      <h2>UI Components</h2>
+      <nav style={{ display: 'flex', gap: 15 }}>
+        <Link href="/ui/tokenMedia">
+          <a>TokenMedia</a>
+        </Link>
+      </nav>
     </div>
   )
 }

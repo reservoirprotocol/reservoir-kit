@@ -38,6 +38,7 @@
     "@radix-ui/react-select": "1.0.1-rc.2",
     "@radix-ui/react-switch": "1.0.0",
     "@radix-ui/react-toggle-group": "^1.0.0",
+    "@react-hookz/web": "^19.2.0",
     "@reservoir0x/reservoir-kit-client": "workspace:*",
     "@stitches/react": "^1.2.8",
     "dayjs": "^1.11.4",

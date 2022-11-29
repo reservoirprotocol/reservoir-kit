@@ -36,6 +36,7 @@
     "stripInternal": true,
     "target": "es2018",
     "types": ["node"],
+    "module": "esnext",
     "typeRoots": ["./node_modules/@types", "./types"]
   }
 }

@@ -11,3 +11,9 @@ declare module 'url:*' {
 declare module '*.jpg'
 declare module '*.gif'
 declare module '*.css'
+
+declare module JSX {
+  interface IntrinsicElements {
+    'model-viewer': any
+  }
+}
