@@ -1,9 +1,16 @@
 
+## [0.2.1](https://github.com/reservoirprotocol/reservoir-kit/commit/603feaee4cd26b740ba861442d06118c57e9479b) (2022-11-29)
+
+* Sync api [9b34ff3](https://github.com/reservoirprotocol/reservoir-kit/commit/9b34ff3c0a057a793a3f7d5245aafdb47fe7d681)
+## [0.2.0](https://github.com/reservoirprotocol/reservoir-kit/commit/54b21a30274a9ca59ea49ee13e19daf878443925) (2022-11-28)
+
+* Merge pull request #106 from reservoirprotocol/pedro/res-1166-convert-bps-fee-to-wei-price-when-buying [ab1c907](https://github.com/reservoirprotocol/reservoir-kit/commit/ab1c9071f6be9382cf0d26777fe265f9a45db9c6)
 * Resolve conflicts [fb66b4e](https://github.com/reservoirprotocol/reservoir-kit/commit/fb66b4e3289262799f340075500d7cb1eccc14fb)
 ## [0.1.18](https://github.com/reservoirprotocol/reservoir-kit/commit/0c0ea13061abfdb1bad0f3ff5e32917823865c2f) (2022-11-28)
 
 * Merge pull request #104 from reservoirprotocol/pedro/res-1126-simulate-order-when-failing-to-buy [04e3507](https://github.com/reservoirprotocol/reservoir-kit/commit/04e350702f341f71361d38d85d69b84c3dc957f8)
 * fix: properly handle non-hash eip191 signatures [f490a9c](https://github.com/reservoirprotocol/reservoir-kit/commit/f490a9cbe22d293f2e797f38648e1b2943dc58dc)
+* Remove referrerFee from global configuration due to difficulty calculating bps to atomic unit [b97ec47](https://github.com/reservoirprotocol/reservoir-kit/commit/b97ec473860c3640d1c5999bc66d3ff4a94ae260)
 * Simulate floor order when failing to buy and tokens are specified [e9eba2b](https://github.com/reservoirprotocol/reservoir-kit/commit/e9eba2ba6f662913d456e72837f5922747db9a3d)
 ## [0.1.17](https://github.com/reservoirprotocol/reservoir-kit/commit/b9238bddf38b376ae42229827f25b51b226e84c7) (2022-11-18)
 

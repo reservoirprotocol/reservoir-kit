@@ -1,17 +1,53 @@
 
+## [0.6.2](https://github.com/reservoirprotocol/reservoir-kit/commit/d061183789efc89fd4f9aded1226d69442f99378) (2022-12-02)
+
+* Add fallback style and className to fallback component [bda79f1](https://github.com/reservoirprotocol/reservoir-kit/commit/bda79f104ea81329db1557f755f35cd7c570041c)
+## [0.6.1](https://github.com/reservoirprotocol/reservoir-kit/commit/4668c20924226a7f4f605f554162d6b0b3d39be5) (2022-11-29)
+
+* Merge pull request #98 from reservoirprotocol/pedro/res-673-support-buying-multiple-1155-tokens [14fd210](https://github.com/reservoirprotocol/reservoir-kit/commit/14fd210b2f85629b7e68e600cd74eeaab57d80df)
+* Fix balance check when total price changes not updating hasEnoughEth variable [eebf2a6](https://github.com/reservoirprotocol/reservoir-kit/commit/eebf2a6a751d3674eec4faf18f1ba329dd8ecee2)
+* Merge branch 'pedro/res-673-support-buying-multiple-1155-tokens' of github.com:reservoirprotocol/reservoir-kit into pedro/res-673-support-buying-multiple-1155-tokens [45b70dd](https://github.com/reservoirprotocol/reservoir-kit/commit/45b70ddce451eb79bb57cc901bbdaf0aba84336f)
+* Merge branch 'main' into pedro/res-673-support-buying-multiple-1155-tokens [9f86414](https://github.com/reservoirprotocol/reservoir-kit/commit/9f86414bc50c010d4ef0924903c27eb87653a20e)
+## [0.6.0](https://github.com/reservoirprotocol/reservoir-kit/commit/dabcaa32cf61017bc514b4952db26b94ac22dfd5) (2022-11-28)
+
+* Merge pull request #106 from reservoirprotocol/pedro/res-1166-convert-bps-fee-to-wei-price-when-buying [ab1c907](https://github.com/reservoirprotocol/reservoir-kit/commit/ab1c9071f6be9382cf0d26777fe265f9a45db9c6)
 * Merge branch 'pedro/res-955-rk-broken-currency-logo-on-polygon' of github.com:reservoirprotocol/reservoir-kit into pedro/res-955-rk-broken-currency-logo-on-polygon [9cef78f](https://github.com/reservoirprotocol/reservoir-kit/commit/9cef78fedd64d8425d283077de0ce79bb73b92b7)
 * Resolve conflicts [fb66b4e](https://github.com/reservoirprotocol/reservoir-kit/commit/fb66b4e3289262799f340075500d7cb1eccc14fb)
 ## [0.5.12](https://github.com/reservoirprotocol/reservoir-kit/commit/3912d593ea7230b68ae6be7d46b2c5e2299b933a) (2022-11-28)
 
+* Improve audio and video rendering, adding a default fallback [d42326b](https://github.com/reservoirprotocol/reservoir-kit/commit/d42326b9b2419dc6a7e89e32c6dcf2a7a6cc2f5b)
+* Loosen type restrictions for TokenMedia [dfa45e6](https://github.com/reservoirprotocol/reservoir-kit/commit/dfa45e6477f489996a676fbd947019cb85182df7)
 * swapped illustrations for generic icons [a5cc2e5](https://github.com/reservoirprotocol/reservoir-kit/commit/a5cc2e51ff4dd8943305dd1d35dc8a10c2530905)
+* Disable quantity selector on Listmodal if a non native marketplace is selected [9f0348e](https://github.com/reservoirprotocol/reservoir-kit/commit/9f0348efe7f041766d4ab90f2f5cbc661b62dde5)
+* Merge branch 'main' into pedro/res-672-support-listing-more-than-one-1155 [0ccfa46](https://github.com/reservoirprotocol/reservoir-kit/commit/0ccfa46db62cc74dfbdc67b7b120f8f3cada7c7f)
+* Remove referrerFee from global configuration due to difficulty calculating bps to atomic unit [b97ec47](https://github.com/reservoirprotocol/reservoir-kit/commit/b97ec473860c3640d1c5999bc66d3ff4a94ae260)
+* Default dimensions and positioning for TokenMedia [e51e548](https://github.com/reservoirprotocol/reservoir-kit/commit/e51e548fff24e44a95cea1e90e3962a448356572)
+* Add normalize royalties to useListings hook in BuyModal [d334541](https://github.com/reservoirprotocol/reservoir-kit/commit/d334541102171392820d59494c61b8327a8c4b20)
+* Calculate referral fee in lowest common denominator in BuyModal [36ec148](https://github.com/reservoirprotocol/reservoir-kit/commit/36ec1488c419dfe0c63a4cd50f495ff705442a44)
+* Fix quantity not recalculating ListToken method in ListModalRenderer [3406c6f](https://github.com/reservoirprotocol/reservoir-kit/commit/3406c6f4b3625c4a44b286f7ee714717c2ae0f34)
+* Token media renderer [800aef7](https://github.com/reservoirprotocol/reservoir-kit/commit/800aef7de62b4cba2b73a5062b597cc07486325d)
+## [0.5.11](https://github.com/reservoirprotocol/reservoir-kit/commit/8ca45dc44f4662ab12cd836c04e04f860e921a56) (2022-11-18)
+
+* Support normalize royalties in useUserTopBids hook [b30fff7](https://github.com/reservoirprotocol/reservoir-kit/commit/b30fff739b5711ed9472a86a6dc0f5a4d0aa2766)
+* Fix attributes recalculating on every render [5ff1f0a](https://github.com/reservoirprotocol/reservoir-kit/commit/5ff1f0a7149047de5bd508bd03d747d3203e2be6)
+* Multiply quantity by price when buying multiple erc1155 tokens in BuyModal [c2bc9f7](https://github.com/reservoirprotocol/reservoir-kit/commit/c2bc9f7ce0e36fab50ef4989b47bcfca01a65b8f)
+* Merge branch 'main' into pedro/res-673-support-buying-multiple-1155-tokens [624ed4e](https://github.com/reservoirprotocol/reservoir-kit/commit/624ed4e340e06c214f4bdddd0fca4ed95de994e6)
 ## [0.5.11](https://github.com/reservoirprotocol/reservoir-kit/commit/995208c2a05b5465920cfb697fbed38e95c033a1) (2022-11-18)
 
 * Merge pull request #103 from reservoirprotocol/pedro/res-1159-add-normalizedroyalties-to [ff2d479](https://github.com/reservoirprotocol/reservoir-kit/commit/ff2d4794cefe087d71dd97d88823c0d5d52976e3)
 * Support normalize royalties in useUserTopBids hook [167404f](https://github.com/reservoirprotocol/reservoir-kit/commit/167404f4cf41a9fd632d5a4a1828ef3980064c14)
 * Fix attributes recalculating on every render [aadb2f8](https://github.com/reservoirprotocol/reservoir-kit/commit/aadb2f80ec3ad6ed9b79e1f7f1dfe30240400ea4)
+* added support for buying by order id in the BuyModal [6e8bdb3](https://github.com/reservoirprotocol/reservoir-kit/commit/6e8bdb3ac759da953236fc320b65cc17291cc7d9)
+* Merge branch 'main' of https://github.com/reservoirprotocol/reservoir-kit into ted/res-1139-rk-upgrade-wagmi-to-v07x [4242e80](https://github.com/reservoirprotocol/reservoir-kit/commit/4242e80714a78c8274854894843b720cba0268b3)
+* switched wagmi to v0.7 [fd281e4](https://github.com/reservoirprotocol/reservoir-kit/commit/fd281e4c37fb7e24571f89da257e2521137bebc9)
+* Fix issues with loading listing in buy modal [ef59ae5](https://github.com/reservoirprotocol/reservoir-kit/commit/ef59ae5c5b94be3ee9fb129c93ea3fbe64963927)
 ## [0.5.10](https://github.com/reservoirprotocol/reservoir-kit/commit/c516cd0bcc4e7934d674003101e52727e5971c83) (2022-11-16)
 
 * Get normalizeRoyalties flag from client instead of RK ui provider [c031956](https://github.com/reservoirprotocol/reservoir-kit/commit/c03195644a33f200b972320f98905327eade45ea)
+* Merge branch 'main' of https://github.com/reservoirprotocol/reservoir-kit into ted/res-1139-rk-upgrade-wagmi-to-v07x [eb879cc](https://github.com/reservoirprotocol/reservoir-kit/commit/eb879cc712acbeb8a78b4dfaf7a494739ce32c57)
+## [0.5.10](https://github.com/reservoirprotocol/reservoir-kit/commit/9fefc15eb04dccb0e67e085fdb59ca2a27f47b2a) (2022-11-16)
+
+* upgraded wagmi to 0.7.4 and fixed breaking changes [3710d63](https://github.com/reservoirprotocol/reservoir-kit/commit/3710d633d30f17b72afbd8445c07eba60ffb22ba)
 * Support overriding normalize royalties in reservoir-kit client [b937df8](https://github.com/reservoirprotocol/reservoir-kit/commit/b937df80ba7d5c7d5108acfccca112e6a65afc86)
 ## [0.5.9](https://github.com/reservoirprotocol/reservoir-kit/commit/0438c30679229ca48191dad1dd8ac95ba5df6266) (2022-11-15)
 
@@ -20,7 +56,9 @@
 * Resolve conflicts [8d2ab48](https://github.com/reservoirprotocol/reservoir-kit/commit/8d2ab48dab8de568eca76960469d184327f2ecf1)
 * Merge pull request #93 from reservoirprotocol/pedro/res-1060-slow-loading-ux-bid-modal-deeplinking [af10bd4](https://github.com/reservoirprotocol/reservoir-kit/commit/af10bd424ba0e4528c85cd165175a91c572754f2)
 * Merge pull request #94 from reservoirprotocol/pedro/res-709-bidmodal-attribute-filter-doesnt-support [86c0945](https://github.com/reservoirprotocol/reservoir-kit/commit/86c094534102d2acf09e68fbfc2878b2b8375a19)
+* Support erc1155 quantity selection in BuyModal [24101fa](https://github.com/reservoirprotocol/reservoir-kit/commit/24101faea2296688741955f25476e1e3d49e1ea8)
 * update default and follow-thru on close [21a3d93](https://github.com/reservoirprotocol/reservoir-kit/commit/21a3d939c088f4c16ad2bd1b1ac5b58dda7cf1ee)
+* Support erc1155 quantity selection in ListModal [c51bffd](https://github.com/reservoirprotocol/reservoir-kit/commit/c51bffd36867178ef2f874e306608a33b010ada7)
 * bid expiry to 1mo to match listing [04f8cd7](https://github.com/reservoirprotocol/reservoir-kit/commit/04f8cd789eb11745f636b00da656257ceee8ad45)
 ## [0.5.8](https://github.com/reservoirprotocol/reservoir-kit/commit/21c03f34f8f4d54a1dfb2bd4d409b53cdffaa324) (2022-11-11)
 
