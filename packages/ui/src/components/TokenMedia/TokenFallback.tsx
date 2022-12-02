@@ -1,4 +1,4 @@
-import React, { FC, ComponentPropsWithoutRef } from 'react'
+import React, { FC, ComponentPropsWithoutRef, CSSProperties } from 'react'
 import { Button, Flex, Text } from '../../primitives'
 import TokenMedia from './index'
 import { defaultHeaders } from '../../lib/swr'
@@ -6,11 +6,18 @@ import { useReservoirClient } from '../../hooks'
 import { paths } from '@reservoir0x/reservoir-kit-client'
 
 type TokenFallbackProps = {
+  style?: CSSProperties
+  className?: string
   token: ComponentPropsWithoutRef<typeof TokenMedia>['token']
   onRefreshClicked: () => void
 }
 
-const TokenFallback: FC<TokenFallbackProps> = ({ token, onRefreshClicked }) => {
+const TokenFallback: FC<TokenFallbackProps> = ({
+  style,
+  className,
+  token,
+  onRefreshClicked,
+}) => {
   const client = useReservoirClient()
 
   return (
@@ -19,6 +26,8 @@ const TokenFallback: FC<TokenFallbackProps> = ({ token, onRefreshClicked }) => {
       align="center"
       direction="column"
       css={{ gap: '$2' }}
+      style={style}
+      className={className}
     >
       {token?.collection?.image && (
         <img

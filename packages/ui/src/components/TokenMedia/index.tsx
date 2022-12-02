@@ -122,7 +122,12 @@ const TokenMedia: FC<Props> = ({
     }
     if (!fallbackElement) {
       fallbackElement = (
-        <TokenFallback token={token} onRefreshClicked={onRefreshToken} />
+        <TokenFallback
+          style={style}
+          className={className}
+          token={token}
+          onRefreshClicked={onRefreshToken}
+        />
       )
     }
     return fallbackElement
