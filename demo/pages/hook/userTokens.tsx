@@ -2,22 +2,36 @@ import { NextPage } from 'next'
 import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useInView } from 'react-intersection-observer'
-import { useEffect } from 'react'
+import { createRef, useEffect, useState } from 'react'
+import { useAccount } from 'wagmi'
 
 const Tokens: NextPage = () => {
+  const { address: userAddress } = useAccount()
+  const { ref, inView } = useInView()
+  const addressInput = createRef<HTMLInputElement | undefined>()
+  const queryTextarea = createRef<HTMLTextAreaElement | undefined>()
+  const [address, setAddress] = useState<string | undefined>()
+  const [queryParams, setQueryParams] = useState<Record<any, any>>({})
   const {
     data: tokens,
     fetchNextPage,
     hasNextPage,
-  } = useUserTokens('0x731b0115fec5b8ee06d98565a7b4b663cad086ba')
-
-  const { ref, inView } = useInView()
+  } = useUserTokens(address, {
+    ...queryParams,
+  })
 
   useEffect(() => {
     if (inView) {
       fetchNextPage()
     }
   }, [inView])
+
+  useEffect(() => {
+    if (!address || address.length === 0) {
+      setAddress(userAddress)
+      addressInput.current.value = userAddress
+    }
+  }, [userAddress])
 
   return (
     <div
@@ -32,6 +46,34 @@ const Tokens: NextPage = () => {
       }}
     >
       <ConnectButton />
+      <div>
+        <label>User: </label>
+        <input type="text" ref={addressInput} />
+      </div>
+      <div>
+        <label>Query Params: </label>
+        <textarea ref={queryTextarea} />
+      </div>
+      <button
+        onClick={() => {
+          setAddress(addressInput.current?.value || '')
+          try {
+            if (
+              queryTextarea.current.value &&
+              queryTextarea.current.value.length > 0
+            ) {
+              setQueryParams(JSON.parse(queryTextarea.current.value))
+            }
+          } catch (e) {
+            console.warn(
+              'An error occurred when trying to parse query params data',
+              e
+            )
+          }
+        }}
+      >
+        Search
+      </button>
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tokens</h3>
       {tokens.map((token, i) => (
         <div key={`${token.token.tokenId}-${i}`}>

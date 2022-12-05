@@ -3,10 +3,10 @@ import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type UserTokenResponse =
-  paths['/users/{user}/tokens/v5']['get']['responses']['200']['schema']
+  paths['/users/{user}/tokens/v6']['get']['responses']['200']['schema']
 
 type UserTokenQuery =
-  paths['/users/{user}/tokens/v5']['get']['parameters']['query']
+  paths['/users/{user}/tokens/v6']['get']['parameters']['query']
 
 export default function (
   user?: string | undefined,
@@ -22,14 +22,21 @@ export default function (
           return null
         }
 
-        const url = new URL(`${client?.apiBase}/users/${user}/tokens/v5`)
+        const url = new URL(`${client?.apiBase}/users/${user}/tokens/v6`)
 
         let query: UserTokenQuery = { ...options }
 
-        if (previousPageData && previousPageData.tokens?.length === 0) {
+        if (previousPageData && !previousPageData.continuation) {
           return null
         } else if (previousPageData && pageIndex > 0) {
-          query.offset = (query?.limit || 20) * pageIndex
+          query.continuation = previousPageData.continuation
+        }
+
+        if (
+          query.normalizeRoyalties === undefined &&
+          client?.normalizeRoyalties !== undefined
+        ) {
+          query.normalizeRoyalties = client.normalizeRoyalties
         }
 
         setParams(url, query)
@@ -45,12 +52,11 @@ export default function (
     )
 
   const tokens = data?.flatMap((page) => page.tokens) ?? []
-  const lastPageTokenCount = data?.[size - 1]?.tokens?.length || 0
   const isFetchingInitialData = !data && !error
   const isFetchingPage =
     isFetchingInitialData ||
     (size > 0 && data && typeof data[size - 1] === 'undefined')
-  const hasNextPage = lastPageTokenCount > 0 || isFetchingPage
+  const hasNextPage = Boolean(data?.[size - 1]?.continuation)
   const fetchNextPage = () => {
     if (!isFetchingPage && hasNextPage) {
       setSize((size) => size + 1)
