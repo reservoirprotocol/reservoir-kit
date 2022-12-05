@@ -75,7 +75,7 @@ const MarketplacePriceInput = ({
           logoWidth={18}
         />
         <FormatCurrency
-          amount={profit * (usdPrice || 1000)}
+          amount={profit * (usdPrice || 0)}
           style="subtitle2"
           color="subtle"
         />
