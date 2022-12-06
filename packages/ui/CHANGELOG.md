@@ -1,4 +1,10 @@
 
+## [0.6.4](https://github.com/reservoirprotocol/reservoir-kit/commit/01fc0c106191ead35113a16766094f63ccad850d) (2022-12-06)
+
+* Upgrade to user tokens v6 endpoint [8ce46bc](https://github.com/reservoirprotocol/reservoir-kit/commit/8ce46bc1e91229cd68d2e15ddb218fa62450291b)
+## [0.6.3](https://github.com/reservoirprotocol/reservoir-kit/commit/02d316d732ec5dbd476727c31e3fd0e9ef19a3f5) (2022-12-05)
+
+* Fix usd to coin conversion falls back to 1000 instead of 0 on ListModal [addf7ca](https://github.com/reservoirprotocol/reservoir-kit/commit/addf7ca8858bcb4419b9ffcddd8357e73f542240)
 ## [0.6.2](https://github.com/reservoirprotocol/reservoir-kit/commit/d061183789efc89fd4f9aded1226d69442f99378) (2022-12-02)
 
 * Add fallback style and className to fallback component [bda79f1](https://github.com/reservoirprotocol/reservoir-kit/commit/bda79f104ea81329db1557f755f35cd7c570041c)
