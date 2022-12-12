@@ -3065,6 +3065,11 @@ export interface definitions {
   Model251: {
     /** @description Refresh the given collection. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
     collection: string;
+    /**
+     * @description If true, will only refresh the collection cache.
+     * @default false
+     */
+    cacheOnly?: boolean;
   };
   Model252: {
     /** @description Refresh tokens for the given collection. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
@@ -3535,7 +3540,13 @@ export interface definitions {
     data: definitions["source"];
   };
   Model292: definitions["Model291"][];
-  Model293: {
+  /**
+   * @description List of fees (formatted as `feeRecipient:feeAmount`) to be taken when filling.
+   * Unless overridden via the `currency` param, the currency used for any fees on top matches the buy-in currency detected by the backend.
+   * Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00:1000000000000000`
+   */
+  Model293: string[];
+  Model294: {
     orderIds?: definitions["orderIds"];
     rawOrders?: definitions["Model292"];
     tokens?: definitions["Model287"];
@@ -3553,10 +3564,10 @@ export interface definitions {
     /** @description If true, all fills will be executed through the router. */
     forceRouter?: boolean;
     /**
-     * @description Currency to buy all listings in
-     * @default 0x0000000000000000000000000000000000000000
+     * @description Currency to buy all listings in.
+     * @enum {string}
      */
-    currency?: string;
+    currency?: "0x0000000000000000000000000000000000000000";
     /** @default false */
     normalizeRoyalties?: boolean;
     /**
@@ -3566,7 +3577,7 @@ export interface definitions {
     preferredOrderSource?: string;
     /** @description Filling source used for attribution. Example: `reservoir.market` */
     source?: string;
-    feesOnTop?: definitions["Model289"];
+    feesOnTop?: definitions["Model293"];
     /**
      * @description If true, partial orders will be accepted.
      * @default false
@@ -3589,7 +3600,7 @@ export interface definitions {
     /** @description Override the X2Y2 API key used for filling. */
     x2y2ApiKey?: string;
   };
-  Model294: {
+  Model295: {
     id: string;
     action: string;
     description: string;
@@ -3597,12 +3608,12 @@ export interface definitions {
     kind: "transaction";
     items: definitions["items"];
   };
-  Model295: definitions["Model294"][];
+  Model296: definitions["Model295"][];
   getExecuteBuyV6Response: {
-    steps?: definitions["Model295"];
+    steps?: definitions["Model296"];
     path?: definitions["Model98"];
   };
-  Model296: {
+  Model297: {
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Quanity of tokens user is listing. Only compatible with ERC1155 tokens. Example: `5` */
@@ -3639,18 +3650,18 @@ export interface definitions {
     /** @default 0x0000000000000000000000000000000000000000 */
     currency?: string;
   };
-  Model297: definitions["Model296"][];
-  Model298: {
+  Model298: definitions["Model297"][];
+  Model299: {
     /** @description Address of wallet making the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     maker: string;
     /** @description Domain of the platform that created the order. Example: `chimpers.xyz` */
     source?: string;
-    params?: definitions["Model297"];
+    params?: definitions["Model298"];
   };
   getExecuteListV3Response: {
     steps?: definitions["Model280"];
   };
-  Model299: {
+  Model300: {
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Quantity of tokens user is listing. Only compatible with ERC1155 tokens. Example: `5` */
@@ -3694,18 +3705,18 @@ export interface definitions {
     /** @default 0x0000000000000000000000000000000000000000 */
     currency?: string;
   };
-  Model300: definitions["Model299"][];
-  Model301: {
+  Model301: definitions["Model300"][];
+  Model302: {
     /** @description Address of wallet making the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     maker: string;
     /** @description Domain of your app that is creating the order, e.g. `myapp.xyz`. This is used for filtering, and to attribute the "order source" of sales in on-chain analytics, to help your app get discovered. Lean more <a href='https://docs.reservoir.tools/docs/calldata-attribution'>here</a> */
     source?: string;
-    params?: definitions["Model300"];
+    params?: definitions["Model301"];
   };
   getExecuteListV4Response: {
     steps?: definitions["Model285"];
   };
-  Model302: {
+  Model303: {
     orderId?: string;
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
@@ -3725,7 +3736,7 @@ export interface definitions {
     /** @description Optional. Set custom gas price. */
     maxPriorityFeePerGas?: string;
   };
-  Model303: {
+  Model304: {
     orderId?: string;
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
@@ -3761,7 +3772,7 @@ export interface definitions {
       | "universe";
     data: definitions["source"];
   };
-  Model304: {
+  Model305: {
     orderId?: string;
     rawOrder?: definitions["rawOrder"];
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
@@ -3786,7 +3797,7 @@ export interface definitions {
     /** @description Override the X2Y2 API key used for filling. */
     x2y2ApiKey?: string;
   };
-  Model305: {
+  Model306: {
     /** @description The token to update the flag status for. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -3795,7 +3806,7 @@ export interface definitions {
      */
     flag: 0 | 1;
   };
-  Model306: {
+  Model307: {
     /** @description Refresh the given token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -3804,7 +3815,7 @@ export interface definitions {
      */
     overrideCoolDown?: boolean;
   };
-  Model307: {
+  Model308: {
     token?: string;
     /**
      * @default v5
@@ -3812,7 +3823,7 @@ export interface definitions {
      */
     router?: "v5" | "v6";
   };
-  Model308: {
+  Model309: {
     token?: string;
   };
 }
@@ -4126,6 +4137,8 @@ export interface operations {
         includeSalesCount?: boolean;
         /** If true, prices will include missing royalties to be added on-top. */
         normalizeRoyalties?: boolean;
+        /** If true, return the non flagged floor ask. (only supported when `normalizeRoyalties` is false) */
+        useNonFlaggedFloorAsk?: boolean;
         /** Order the items are returned in the response. */
         sortBy?:
           | "1DayVolume"
@@ -6015,7 +6028,7 @@ export interface operations {
       query: {
         /** Array of users addresses. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         users: string[];
-        collection?: string;
+        collection?: string[];
         /** Filter to a particular collection set. */
         collectionsSetId?: string;
         /** Filter to a particular community. Example: `artblocks` */
@@ -6405,6 +6418,8 @@ export interface operations {
         eip3668Calldata?: string;
         collection?: string;
         token?: string;
+        /** If true, will use the collection non flagged floor ask events. */
+        useNonFlaggedFloorAsk?: boolean;
       };
     };
     responses: {
@@ -6883,6 +6898,8 @@ export interface operations {
         limit?: number;
         /** If true, top bid will be returned in the response. */
         includeTopBid?: boolean;
+        /** If true, will return the collection non flagged floor ask. */
+        useNonFlaggedFloorAsk?: boolean;
       };
     };
     responses: {
@@ -7125,6 +7142,8 @@ export interface operations {
         includeCriteriaMetadata?: boolean;
         /** If true, prices will include missing royalties to be added on-top. */
         normalizeRoyalties?: boolean;
+        /** If true, will return the collection non flagged floor ask events. */
+        useNonFlaggedFloorAsk?: boolean;
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         /** Order of the items are returned in the response. */
@@ -7794,7 +7813,7 @@ export interface operations {
   postExecuteBuyV6: {
     parameters: {
       body: {
-        body?: definitions["Model293"];
+        body?: definitions["Model294"];
       };
     };
     responses: {
@@ -7808,7 +7827,7 @@ export interface operations {
   postExecuteListV3: {
     parameters: {
       body: {
-        body?: definitions["Model298"];
+        body?: definitions["Model299"];
       };
     };
     responses: {
@@ -7822,7 +7841,7 @@ export interface operations {
   postExecuteListV4: {
     parameters: {
       body: {
-        body?: definitions["Model301"];
+        body?: definitions["Model302"];
       };
     };
     responses: {
@@ -7835,7 +7854,7 @@ export interface operations {
   postExecuteSellV4: {
     parameters: {
       body: {
-        body?: definitions["Model302"];
+        body?: definitions["Model303"];
       };
     };
     responses: {
@@ -7848,7 +7867,7 @@ export interface operations {
   postExecuteSellV5: {
     parameters: {
       body: {
-        body?: definitions["Model303"];
+        body?: definitions["Model304"];
       };
     };
     responses: {
@@ -7861,7 +7880,7 @@ export interface operations {
   postExecuteSellV6: {
     parameters: {
       body: {
-        body?: definitions["Model304"];
+        body?: definitions["Model305"];
       };
     };
     responses: {
@@ -7874,7 +7893,7 @@ export interface operations {
   postTokensFlagV1: {
     parameters: {
       body: {
-        body?: definitions["Model305"];
+        body?: definitions["Model306"];
       };
     };
     responses: {
@@ -7887,7 +7906,7 @@ export interface operations {
   postTokensRefreshV1: {
     parameters: {
       body: {
-        body?: definitions["Model306"];
+        body?: definitions["Model307"];
       };
     };
     responses: {
@@ -7900,7 +7919,7 @@ export interface operations {
   postTokensSimulatefloorV1: {
     parameters: {
       body: {
-        body?: definitions["Model307"];
+        body?: definitions["Model308"];
       };
     };
     responses: {
@@ -7913,7 +7932,7 @@ export interface operations {
   postTokensSimulatetopbidV1: {
     parameters: {
       body: {
-        body?: definitions["Model308"];
+        body?: definitions["Model309"];
       };
     };
     responses: {
