@@ -25,7 +25,6 @@ type Data = {
 export async function cancelOrder(data: Data) {
   const { id, signer, onProgress } = data
   const client = getClient()
-  const maker = await signer.getAddress()
   const options = data.options || {}
 
   if (!client.apiBase) {
@@ -33,7 +32,7 @@ export async function cancelOrder(data: Data) {
   }
 
   try {
-    const params: CancelOrderPathParameters = { id, maker, ...options }
+    const params: CancelOrderPathParameters = { id, ...options }
 
     await executeSteps(
       {
