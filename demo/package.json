@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@radix-ui/colors": "^0.1.8",
-    "@rainbow-me/rainbowkit": "^0.4.1",
+    "@rainbow-me/rainbowkit": "^0.8.1",
     "@reservoir0x/reservoir-kit-ui": "workspace:*",
     "@stitches/react": "^1.2.8",
     "ethers": "^5.6.9",
@@ -24,7 +24,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-intersection-observer": "^9.4.0",
-    "wagmi": "^0.7.4"
+    "wagmi": "^0.9"
   },
   "devDependencies": {
     "@types/node": "^12.12.21",

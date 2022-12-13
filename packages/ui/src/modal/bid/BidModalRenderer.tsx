@@ -8,7 +8,8 @@ import {
   useCollections,
   useAttributes,
 } from '../../hooks'
-import { chainId, useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
+import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
+import { mainnet, goerli } from 'wagmi/chains'
 
 import { constants } from 'ethers'
 import {
@@ -154,7 +155,7 @@ export const BidModalRenderer: FC<Props> = ({
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
-    addressOrName: address,
+    address: address,
     watch: open,
   })
 
@@ -162,13 +163,13 @@ export const BidModalRenderer: FC<Props> = ({
     balance: { data: wrappedBalance },
     contractAddress,
   } = useWrappedBalance({
-    addressOrName: address,
+    address: address,
     watch: open,
   })
 
   const { chain } = useNetwork()
   const uniswapConvertLink =
-    chain?.id === chainId.mainnet || chain?.id === chainId.goerli
+    chain?.id === mainnet.id || chain?.id === goerli.id
       ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
           chain?.network || 'mainnet'
         }&inputCurrency=eth&outputCurrency=${contractAddress}`

@@ -241,8 +241,7 @@ const TokenMedia: FC<Props> = ({
     mediaType === 'png' ||
     mediaType === 'jpeg' ||
     mediaType === 'jpg' ||
-    mediaType === 'gif' ||
-    mediaType === 'svg'
+    mediaType === 'gif'
   ) {
     return (
       <img
@@ -263,7 +262,8 @@ const TokenMedia: FC<Props> = ({
     mediaType === 'html' ||
     mediaType === null ||
     mediaType === undefined ||
-    mediaType === 'other'
+    mediaType === 'other' ||
+    mediaType === 'svg'
   ) {
     return (
       <iframe

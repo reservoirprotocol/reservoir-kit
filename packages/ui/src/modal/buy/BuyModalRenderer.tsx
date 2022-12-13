@@ -172,7 +172,7 @@ export const BuyModalRenderer: FC<Props> = ({
     let options: Parameters<
       ReservoirClientActions['buyToken']
     >['0']['options'] = {
-      currency: currency?.contract,
+      currency: currency?.contract as any,
     }
 
     if (referrer && referrerFeeBps) {
@@ -317,7 +317,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
-    addressOrName: address,
+    address: address,
     token:
       currency?.symbol !== 'ETH'
         ? (currency?.contract as UseBalanceToken)
