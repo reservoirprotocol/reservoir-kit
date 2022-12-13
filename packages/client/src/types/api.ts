@@ -3818,7 +3818,7 @@ export interface definitions {
   Model308: {
     token?: string;
     /**
-     * @default v5
+     * @default v6
      * @enum {string}
      */
     router?: "v5" | "v6";

@@ -307,7 +307,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
-    addressOrName: address,
+    address: address,
     watch: open,
   })
 
