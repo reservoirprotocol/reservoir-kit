@@ -4,13 +4,8 @@ import { darkTheme } from 'stitches.config'
 import '@rainbow-me/rainbowkit/styles.css'
 import { ThemeProvider } from 'next-themes'
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
-import {
-  WagmiConfig,
-  createClient,
-  configureChains,
-  chain,
-  allChains,
-} from 'wagmi'
+import { WagmiConfig, createClient, configureChains } from 'wagmi'
+import * as allChains from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import '../fonts.css'
@@ -38,10 +33,12 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   : false
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || undefined
 
-const envChain = allChains.find((chain) => chain.id === +CHAIN_ID)
+const envChain = Object.values(allChains).find(
+  (chain) => chain.id === +CHAIN_ID
+)
 
 const { chains, provider } = configureChains(
-  [envChain || chain.mainnet],
+  [envChain || allChains.mainnet],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
 
