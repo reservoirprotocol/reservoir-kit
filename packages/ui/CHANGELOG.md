@@ -1,4 +1,12 @@
 
+## [0.7.0](https://github.com/reservoirprotocol/reservoir-kit/commit/02c7ff0b6c0878d5df78a0a5eb9aba3ffe55bba2) (2022-12-13)
+
+* Upgrade wagmi to 0.9, fix issues when migrating to esmodules and dropping commonjs modules [30ea0f5](https://github.com/reservoirprotocol/reservoir-kit/commit/30ea0f5123b4e762bbdbdbc3288c14793108019e)
+## [0.6.6](https://github.com/reservoirprotocol/reservoir-kit/commit/dcc88bd541428d70e0421b0cee52c5b7936f79f5) (2022-12-12)
+
+* switch to iframe for rendering svgs [765f86d](https://github.com/reservoirprotocol/reservoir-kit/commit/765f86dba10dfc8bab780961e826275e9809dac2)
+## [0.6.5](https://github.com/reservoirprotocol/reservoir-kit/commit/95ac21ebb98b687a55cbca69968e3a79955db0b8) (2022-12-06)
+
 ## [0.6.4](https://github.com/reservoirprotocol/reservoir-kit/commit/01fc0c106191ead35113a16766094f63ccad850d) (2022-12-06)
 
 * Upgrade to user tokens v6 endpoint [8ce46bc](https://github.com/reservoirprotocol/reservoir-kit/commit/8ce46bc1e91229cd68d2e15ddb218fa62450291b)

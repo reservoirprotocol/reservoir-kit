@@ -1,4 +1,14 @@
 
+## [0.2.5](https://github.com/reservoirprotocol/reservoir-kit/commit/739195929d6bce6951b1898c607d04f0dee61fdd) (2022-12-13)
+
+* Upgrade wagmi to 0.9, fix issues when migrating to esmodules and dropping commonjs modules [30ea0f5](https://github.com/reservoirprotocol/reservoir-kit/commit/30ea0f5123b4e762bbdbdbc3288c14793108019e)
+## [0.2.4](https://github.com/reservoirprotocol/reservoir-kit/commit/aa355e112f79efa5519983cb923adb323737f9e5) (2022-12-12)
+
+* Sync api [446462c](https://github.com/reservoirprotocol/reservoir-kit/commit/446462c4a1db9eb28321305aa3ba3dbcf8c847a5)
+* Fix cancel order typescript error [cbb2b24](https://github.com/reservoirprotocol/reservoir-kit/commit/cbb2b24639d854fa4e69839069b8c5757ac04e21)
+## [0.2.3](https://github.com/reservoirprotocol/reservoir-kit/commit/04d7fc05b449297502c521e07b9be9717d5b86a4) (2022-12-06)
+
+* Sync api [a115016](https://github.com/reservoirprotocol/reservoir-kit/commit/a115016281089e1ca39f3ccd0d2f8e3c0818c6b7)
 ## [0.2.2](https://github.com/reservoirprotocol/reservoir-kit/commit/f9f2817ad7aedaeed5f2f943da5bf135de0c9dca) (2022-12-06)
 
 * Sync api [766fa1e](https://github.com/reservoirprotocol/reservoir-kit/commit/766fa1ee89da30e30036a7f409b6399251d64dd5)
