@@ -16,7 +16,7 @@ import {
 } from '@reservoir0x/reservoir-kit-client'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
-import { formatUnits } from 'ethers/lib/utils'
+import { formatUnits } from 'ethers/lib/utils.js'
 
 export enum BuyStep {
   Checkout,

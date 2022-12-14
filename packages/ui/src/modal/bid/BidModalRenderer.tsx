@@ -19,7 +19,7 @@ import {
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
-import { parseEther } from 'ethers/lib/utils'
+import { parseEther } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 
 const expirationOptions = [

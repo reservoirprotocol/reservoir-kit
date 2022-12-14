@@ -4,7 +4,7 @@ import TokenStatsHeader from './TokenStatsHeader'
 import { useTokens, useCollections } from '../../hooks'
 import { BidData } from './BidModalRenderer'
 import { useTimeSince } from '../../hooks'
-import { formatEther } from 'ethers/lib/utils'
+import { formatEther } from 'ethers/lib/utils.js'
 import SelectedAttribute from './SelectedAttribute'
 
 type Props = {

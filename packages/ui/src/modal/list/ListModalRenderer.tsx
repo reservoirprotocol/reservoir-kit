@@ -24,7 +24,7 @@ import {
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-kit-client'
 import debounce from '../../lib/debounce'
-import { parseUnits } from 'ethers/lib/utils'
+import { parseUnits } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
