@@ -18,7 +18,9 @@ const Index: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
-  const [currencies, setCurrencies] = useState([
+  const [currencies, setCurrencies] = useState<
+    { contract: string; symbol: string }[] | undefined
+  >([
     { contract: '0x0000000000000000000000000000000000000000', symbol: 'ETH' },
     { contract: '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557', symbol: 'USDC' },
   ])
