@@ -16,3 +16,4 @@ yarn add wagmi ethers react react-dom
 ```
 
 Head over to our [docs](https://docs.reservoir.tools/docs/reservoir-kit) to learn more.
+Running into installation issues? Check out our [troubleshooting guide](https://docs.reservoir.tools/docs/rk-ui-troubleshooting).
