@@ -37,6 +37,9 @@ export { BidStep } from './modal/bid/BidModalRenderer'
 export { AcceptBidModal } from './modal/acceptBid/AcceptBidModal'
 export { AcceptBidStep } from './modal/acceptBid/AcceptBidModalRenderer'
 
+export { CancelBidModal } from './modal/cancelBid/CancelBidModal'
+export { CancelStep } from './modal/cancelBid/CancelBidModalRenderer'
+
 export {
   default as TokenMedia,
   extractMediaType,
