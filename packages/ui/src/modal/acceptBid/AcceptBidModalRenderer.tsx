@@ -94,10 +94,11 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const { chain: activeChain } = useNetwork()
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+  const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
   const { data: tokens } = useTokens(
     open && {
-      tokens: [`${collectionId}:${tokenId}`],
+      tokens: [`${contract}:${tokenId}`],
       includeTopBid: true,
       normalizeRoyalties,
     },
@@ -184,6 +185,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    const contract = collectionId.split(':')[0]
+
     type AcceptOfferOptions = Parameters<
       typeof client.actions.acceptOffer
     >['0']['options']
@@ -204,7 +207,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         signer,
         token: {
           tokenId: tokenId,
-          contract: collectionId,
+          contract,
         },
         onProgress: (steps: Execute['steps']) => {
           if (!steps) return
