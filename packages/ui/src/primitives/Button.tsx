@@ -38,6 +38,7 @@ const Button = styled('button', {
         color: '$buttonTextColor',
         '&:hover': {
           backgroundColor: '$accentSolidHover',
+          color: '$buttonTextHoverColor',
         },
       },
       secondary: {
