@@ -30,7 +30,7 @@ export enum AcceptBidStep {
 export type StepData = {
   totalSteps: number
   currentStep: Execute['steps'][0]
-  currentStepItem: NonNullable<Execute['steps'][0]['items']>[0]
+  currentStepItem?: NonNullable<Execute['steps'][0]['items']>[0]
 }
 
 type OrderSource = NonNullable<
@@ -211,7 +211,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         },
         onProgress: (steps: Execute['steps']) => {
           if (!steps) return
-
           const executableSteps = steps.filter(
             (step) => step.items && step.items.length > 0
           )
@@ -222,7 +221,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             | NonNullable<Execute['steps'][0]['items']>[0]
             | undefined
           let currentStepIndex: number = 0
-          steps.find((step, index) => {
+          executableSteps.find((step, index) => {
             currentStepIndex = index
             currentStepItem = step.items?.find(
               (item) => item.status === 'incomplete'
@@ -241,7 +240,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               currentStep,
               currentStepItem,
             })
-            if (currentStepIndex !== steps.length - 1) {
+            if (currentStepIndex !== executableSteps.length - 1) {
               setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
             } else if (currentStepItem.txHash) {
               setTxHash(currentStepItem.txHash)
@@ -250,7 +249,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               setAcceptBidStep(AcceptBidStep.Confirming)
             }
           } else if (
-            steps.every(
+            executableSteps.every(
               (step) =>
                 !step.items ||
                 step.items.length == 0 ||
@@ -258,6 +257,16 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             )
           ) {
             setAcceptBidStep(AcceptBidStep.Complete)
+            const lastStepItem = currentStep.items
+              ? currentStep.items[currentStep.items?.length - 1]
+              : undefined
+            if (lastStepItem) {
+              setStepData({
+                totalSteps: stepCount,
+                currentStep,
+                currentStepItem: lastStepItem,
+              })
+            }
           }
         },
         options,
