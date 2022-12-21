@@ -77,7 +77,8 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       // component colors
       reservoirLogoColor: '#ECEDEE',
       inputBackground: '$neutralBgHover',
-      buttonTextColor: 'white',
+      buttonTextColor: overrides?.buttonTextColor || 'white',
+      buttonTextHoverColor: overrides?.buttonTextHoverColor || 'white',
       overlayBackground: overrides?.overlayBackground || '$blackA10',
       headerBackground: overrides?.headerBackground || '$neutralBgHover',
       footerBackground: overrides?.footerBackground || '$neutralBgSubtle',
