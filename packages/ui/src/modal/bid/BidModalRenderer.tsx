@@ -7,6 +7,7 @@ import {
   useWrappedBalance,
   useCollections,
   useAttributes,
+  useChainCurrency,
 } from '../../hooks'
 import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
@@ -21,6 +22,8 @@ import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
 import { parseEther } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
+import wrappedContractNames from '../../constants/wrappedContractNames'
+import wrappedContracts from '../../constants/wrappedContracts'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -58,12 +61,14 @@ type ChildrenProps = {
   bidAmountUsd: number
   bidStep: BidStep
   hasEnoughNativeCurrency: boolean
-  hasEnoughWEth: boolean
+  hasEnoughWrappedCurrency: boolean
   amountToWrap: string
-  ethUsdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: ReturnType<typeof useCoinConversion>
   isBanned: boolean
   balance?: ReturnType<typeof useBalance>['data']
   wrappedBalance?: ReturnType<typeof useBalance>['data']
+  wrappedContractName: string
+  wrappedContractAddress: string
   uniswapConvertLink: string
   transactionError?: Error | null
   expirationOptions: ExpirationOption[]
@@ -112,13 +117,23 @@ export const BidModalRenderer: FC<Props> = ({
     expirationOptions[3]
   )
   const [hasEnoughNativeCurrency, setHasEnoughNativeCurrency] = useState(false)
-  const [hasEnoughWEth, setHasEnoughWEth] = useState(false)
+  const [hasEnoughWrappedCurrency, setHasEnoughWrappedCurrency] =
+    useState(false)
   const [amountToWrap, setAmountToWrap] = useState('')
   const [stepData, setStepData] = useState<StepData | null>(null)
   const [bidData, setBidData] = useState<BidData | null>(null)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
+  const chainCurrency = useChainCurrency()
+  const wrappedContractAddress =
+    chainCurrency.chainId in wrappedContracts
+      ? wrappedContracts[chainCurrency.chainId]
+      : wrappedContracts[1]
+  const wrappedContractName =
+    chainCurrency.chainId in wrappedContractNames
+      ? wrappedContractNames[chainCurrency.chainId]
+      : wrappedContractNames[1]
 
   const { data: tokens } = useTokens(
     open &&
@@ -147,9 +162,11 @@ export const BidModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
-
-  const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
-  const bidAmountUsd = +bidAmount * (ethUsdPrice || 0)
+  const usdPrice = useCoinConversion(
+    open ? 'USD' : undefined,
+    wrappedContractName
+  )
+  const bidAmountUsd = +bidAmount * (usdPrice || 0)
 
   const client = useReservoirClient()
 
@@ -180,10 +197,10 @@ export const BidModalRenderer: FC<Props> = ({
       const bid = parseEther(bidAmount)
 
       if (!wrappedBalance?.value || wrappedBalance?.value.lt(bid)) {
-        setHasEnoughWEth(false)
-        const wethAmount = wrappedBalance?.value || constants.Zero
-        const amountToWrap = bid.sub(wethAmount)
-        setAmountToWrap(formatBN(bid.sub(wethAmount), 5))
+        setHasEnoughWrappedCurrency(false)
+        const wrappedAmount = wrappedBalance?.value || constants.Zero
+        const amountToWrap = bid.sub(wrappedAmount)
+        setAmountToWrap(formatBN(bid.sub(wrappedAmount), 5))
 
         if (!balance?.value || balance.value.lt(amountToWrap)) {
           setHasEnoughNativeCurrency(false)
@@ -191,13 +208,13 @@ export const BidModalRenderer: FC<Props> = ({
           setHasEnoughNativeCurrency(true)
         }
       } else {
-        setHasEnoughWEth(true)
+        setHasEnoughWrappedCurrency(true)
         setHasEnoughNativeCurrency(true)
         setAmountToWrap('')
       }
     } else {
       setHasEnoughNativeCurrency(true)
-      setHasEnoughWEth(true)
+      setHasEnoughWrappedCurrency(true)
       setAmountToWrap('')
     }
   }, [bidAmount, balance, wrappedBalance])
@@ -216,7 +233,7 @@ export const BidModalRenderer: FC<Props> = ({
       setBidStep(BidStep.SetPrice)
       setExpirationOption(expirationOptions[3])
       setHasEnoughNativeCurrency(false)
-      setHasEnoughWEth(false)
+      setHasEnoughWrappedCurrency(false)
       setAmountToWrap('')
       setBidAmount('')
       setStepData(null)
@@ -342,17 +359,19 @@ export const BidModalRenderer: FC<Props> = ({
         token,
         collection,
         attributes,
-        ethUsdPrice,
+        usdPrice,
         isBanned,
         balance,
         wrappedBalance,
+        wrappedContractName,
+        wrappedContractAddress,
         uniswapConvertLink,
         bidAmount,
         bidData,
         bidAmountUsd,
         bidStep,
         hasEnoughNativeCurrency,
-        hasEnoughWEth,
+        hasEnoughWrappedCurrency,
         amountToWrap,
         transactionError,
         expirationOption,

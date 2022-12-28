@@ -57,7 +57,7 @@ type ChildrenProps = {
   transactionError?: Error | null
   txHash: string | null
   totalUsd: number
-  ethUsdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: ReturnType<typeof useCoinConversion>
   address?: string
   etherscanBaseUrl: string
   stepData: StepData | null
@@ -129,10 +129,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
-  const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
-
-  const totalUsd = totalPrice * (ethUsdPrice || 0)
-
   const client = useReservoirClient()
 
   let feeBreakdown
@@ -158,6 +154,13 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       ? bid?.feeBreakdown
       : token?.market?.topBid?.feeBreakdown
   }
+
+  const usdPrice = useCoinConversion(
+    open && bidAmountCurrency ? 'USD' : undefined,
+    bidAmountCurrency?.symbol
+  )
+
+  const totalUsd = totalPrice * (usdPrice || 0)
 
   const fees = {
     creatorRoyalties: collection?.royalties?.bps || 0,
@@ -343,7 +346,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         transactionError,
         txHash,
         totalUsd,
-        ethUsdPrice,
+        usdPrice,
         address,
         etherscanBaseUrl,
         acceptBid,

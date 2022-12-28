@@ -95,7 +95,7 @@ export function AcceptBidModal({
         transactionError,
         txHash,
         totalUsd,
-        ethUsdPrice,
+        usdPrice,
         address,
         etherscanBaseUrl,
         stepData,
@@ -169,7 +169,7 @@ export function AcceptBidModal({
                 <TokenLineItem
                   tokenDetails={token}
                   collection={collection}
-                  usdConversion={ethUsdPrice || 0}
+                  usdConversion={usdPrice || 0}
                   isUnavailable={true}
                   price={bidAmount}
                   warning={warning}
@@ -209,7 +209,7 @@ export function AcceptBidModal({
                 <TokenLineItem
                   tokenDetails={token}
                   collection={collection}
-                  usdConversion={ethUsdPrice || 0}
+                  usdConversion={usdPrice || 0}
                   price={bidAmount}
                   warning={warning}
                   currency={bidAmountCurrency}
@@ -264,7 +264,7 @@ export function AcceptBidModal({
                   <TokenLineItem
                     tokenDetails={token}
                     collection={collection}
-                    usdConversion={ethUsdPrice || 0}
+                    usdConversion={usdPrice || 0}
                     price={bidAmount}
                     warning={warning}
                     currency={bidAmountCurrency}
