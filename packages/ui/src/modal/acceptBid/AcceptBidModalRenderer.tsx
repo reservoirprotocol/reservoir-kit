@@ -13,8 +13,7 @@ import {
   useCollections,
   useBids,
 } from '../../hooks'
-import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
-import { utils } from 'ethers'
+import { useAccount, useSigner, useNetwork } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-kit-client'
 import Fees from './Fees'
 
@@ -321,21 +320,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   }, [token, client, bid, isFetchingBidData])
 
   const { address } = useAccount()
-  const { data: balance } = useBalance({
-    address: address,
-    watch: open,
-  })
-
-  useEffect(() => {
-    if (balance) {
-      if (!balance.value) {
-      } else if (
-        balance.value &&
-        balance.value.lt(utils.parseEther(`${totalPrice}`))
-      ) {
-      }
-    }
-  }, [totalPrice, balance])
 
   useEffect(() => {
     if (!open) {
@@ -363,7 +347,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         txHash,
         totalUsd,
         usdPrice,
-        address: address,
+        address,
         etherscanBaseUrl,
         acceptBid,
         setAcceptBidStep,

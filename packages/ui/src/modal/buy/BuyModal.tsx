@@ -80,7 +80,6 @@ export function BuyModal({
     openState
   )
   const { copy: copyToClipboard, copied } = useCopyToClipboard()
-
   return (
     <BuyModalRenderer
       open={open}
