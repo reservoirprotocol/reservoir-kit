@@ -17,6 +17,7 @@ import {
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
 import { formatUnits } from 'ethers/lib/utils.js'
+import { constants } from 'ethers'
 
 export enum BuyStep {
   Checkout,
@@ -77,6 +78,8 @@ type Props = {
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
+
+const CHAIN_ID = process.env.CHAIN_ID ? +process.env.CHAIN_ID : 1
 
 export const BuyModalRenderer: FC<Props> = ({
   open,
@@ -320,9 +323,11 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: balance } = useBalance({
     address: address,
     token:
-      currency?.symbol !== 'ETH'
+      currency?.contract !== constants.AddressZero
         ? (currency?.contract as UseBalanceToken)
         : undefined,
+    chainId:
+      currency?.contract === constants.AddressZero ? CHAIN_ID : undefined,
     watch: open,
     formatUnits: currency?.decimals,
   })
