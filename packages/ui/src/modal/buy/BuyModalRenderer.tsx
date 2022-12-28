@@ -10,10 +10,7 @@ import {
 import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 
 import { BigNumber, utils } from 'ethers'
-import {
-  Execute,
-  ReservoirClientActions,
-} from '@reservoir0x/reservoir-kit-client'
+import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
 import { formatUnits } from 'ethers/lib/utils.js'

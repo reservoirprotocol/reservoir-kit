@@ -3,7 +3,7 @@ import {
   ReservoirClientOptions,
   ReservoirClient,
   createClient,
-} from '@reservoir0x/reservoir-kit-client'
+} from '@reservoir0x/reservoir-sdk'
 import { version } from '../package.json'
 export interface ReservoirClientProviderProps {
   children: ReactNode

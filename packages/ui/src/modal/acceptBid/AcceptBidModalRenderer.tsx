@@ -14,7 +14,7 @@ import {
   useBids,
 } from '../../hooks'
 import { useAccount, useSigner, useNetwork } from 'wagmi'
-import { Execute } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-sdk'
 import Fees from './Fees'
 
 export enum AcceptBidStep {

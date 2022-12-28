@@ -1,6 +1,6 @@
 import useListings from './useListings'
 import { useAccount } from 'wagmi'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 import { SWRConfiguration } from 'swr'
 
 export default function (

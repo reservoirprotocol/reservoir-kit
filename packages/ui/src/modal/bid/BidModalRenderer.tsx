@@ -13,10 +13,7 @@ import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 
 import { constants } from 'ethers'
-import {
-  Execute,
-  ReservoirClientActions,
-} from '@reservoir0x/reservoir-kit-client'
+import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
