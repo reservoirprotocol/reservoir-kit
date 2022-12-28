@@ -79,7 +79,7 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
 }
 
-const CHAIN_ID = process.env.CHAIN_ID ? +process.env.CHAIN_ID : 1
+const CHAIN_ID = process.env.CHAIN_ID ? Number(process.env.CHAIN_ID) : 1
 
 export const BuyModalRenderer: FC<Props> = ({
   open,
@@ -326,8 +326,7 @@ export const BuyModalRenderer: FC<Props> = ({
       currency?.contract !== constants.AddressZero
         ? (currency?.contract as UseBalanceToken)
         : undefined,
-    chainId:
-      currency?.contract === constants.AddressZero ? CHAIN_ID : undefined,
+    chainId: CHAIN_ID,
     watch: open,
     formatUnits: currency?.decimals,
   })
