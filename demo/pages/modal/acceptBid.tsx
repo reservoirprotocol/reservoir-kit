@@ -114,6 +114,9 @@ const AcceptBidPage: NextPage = () => {
         onBidAcceptError={(error, data) => {
           console.log('Bid Accept Error', error, data)
         }}
+        onCurrentStepUpdate={(data) => {
+          console.log('Current Step Updated', data)
+        }}
         onClose={() => {
           console.log('AcceptBidModal Closed')
         }}

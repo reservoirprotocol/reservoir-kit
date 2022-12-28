@@ -1,4 +1,4 @@
-import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
+import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 

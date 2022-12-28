@@ -24,7 +24,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep } from './BuyModalRenderer'
-import { Execute } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 
 type PurchaseData = {
@@ -78,7 +78,6 @@ export function BuyModal({
     openState
   )
   const { copy: copyToClipboard, copied } = useCopyToClipboard()
-
   return (
     <BuyModalRenderer
       open={open}

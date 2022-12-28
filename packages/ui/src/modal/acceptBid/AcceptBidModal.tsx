@@ -19,7 +19,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
-import { AcceptBidStep, AcceptBidModalRenderer } from './AcceptBidModalRenderer'
+import {
+  AcceptBidStep,
+  AcceptBidModalRenderer,
+  StepData,
+} from './AcceptBidModalRenderer'
 import Fees from './Fees'
 import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
 
@@ -39,6 +43,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onBidAccepted?: (data: BidData) => void
   onClose?: () => void
   onBidAcceptError?: (error: Error, data: BidData) => void
+  onCurrentStepUpdate?: (data: StepData) => void
 }
 
 function titleForStep(step: AcceptBidStep) {
@@ -60,6 +65,7 @@ export function AcceptBidModal({
   onBidAccepted,
   onClose,
   onBidAcceptError,
+  onCurrentStepUpdate,
 }: Props): ReactElement {
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
@@ -89,7 +95,7 @@ export function AcceptBidModal({
         transactionError,
         txHash,
         totalUsd,
-        ethUsdPrice,
+        usdPrice,
         address,
         etherscanBaseUrl,
         stepData,
@@ -121,6 +127,12 @@ export function AcceptBidModal({
             onBidAcceptError(transactionError, data)
           }
         }, [transactionError])
+
+        useEffect(() => {
+          if (stepData && onCurrentStepUpdate) {
+            onCurrentStepUpdate(stepData)
+          }
+        }, [stepData])
 
         const floorPrice = token?.market?.floorAsk?.price?.amount?.native
 
@@ -157,7 +169,7 @@ export function AcceptBidModal({
                 <TokenLineItem
                   tokenDetails={token}
                   collection={collection}
-                  usdConversion={ethUsdPrice || 0}
+                  usdConversion={usdPrice || 0}
                   isUnavailable={true}
                   price={bidAmount}
                   warning={warning}
@@ -197,7 +209,7 @@ export function AcceptBidModal({
                 <TokenLineItem
                   tokenDetails={token}
                   collection={collection}
-                  usdConversion={ethUsdPrice || 0}
+                  usdConversion={usdPrice || 0}
                   price={bidAmount}
                   warning={warning}
                   currency={bidAmountCurrency}
@@ -252,7 +264,7 @@ export function AcceptBidModal({
                   <TokenLineItem
                     tokenDetails={token}
                     collection={collection}
-                    usdConversion={ethUsdPrice || 0}
+                    usdConversion={usdPrice || 0}
                     price={bidAmount}
                     warning={warning}
                     currency={bidAmountCurrency}

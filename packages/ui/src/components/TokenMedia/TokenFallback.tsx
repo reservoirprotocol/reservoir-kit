@@ -3,7 +3,7 @@ import { Button, Flex, Text } from '../../primitives'
 import TokenMedia from './index'
 import { defaultHeaders } from '../../lib/swr'
 import { useReservoirClient } from '../../hooks'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 
 type TokenFallbackProps = {
   style?: CSSProperties

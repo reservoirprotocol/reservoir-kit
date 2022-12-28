@@ -1,7 +1,7 @@
 {
-    "name": "@reservoir0x/reservoir-kit-client",
-    "version": "0.2.5",
-    "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
+    "name": "@reservoir0x/reservoir-sdk",
+    "version": "0.2.6",
+    "description": "An SDK that can be used in any javascript/typescript context to easily interact with Reservoir liquidity APIs",
     "source": "src/index.ts",
     "main": "dist/index.js",
     "module": "dist/index.module.js",
@@ -27,6 +27,7 @@
     "keywords": [
         "nft",
         "reservoir",
+        "reservoir-sdk",
         "reservoirkit",
         "protocol",
         "sdk"

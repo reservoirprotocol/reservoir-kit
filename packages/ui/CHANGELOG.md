@@ -1,4 +1,23 @@
 
+## [0.7.4](https://github.com/reservoirprotocol/reservoir-kit/commit/c19e0aca0221265e93ef37a272b027c10c8e3682) (2022-12-28)
+
+* Always pass chain id with useBalance hook [78648f7](https://github.com/reservoirprotocol/reservoir-kit/commit/78648f741b9ed40d20756f0815ce91a5cea6ffcf)
+* Resolve conflicts [fd07f9c](https://github.com/reservoirprotocol/reservoir-kit/commit/fd07f9ccd5b12acc5ac8f8960a4ef489284ee4b3)
+* Support different chains and tokens when checking balance [8c313a1](https://github.com/reservoirprotocol/reservoir-kit/commit/8c313a1f389185c1009e737a3e0f2998d5b5434c)
+* Add lowest value to formatCurrency, fix wrapped contract price display when accepting a bid [5c8a6e2](https://github.com/reservoirprotocol/reservoir-kit/commit/5c8a6e26fe452fea436180ea32354eebc81317fe)
+* Fix USD price to use wrapped contract symbol for BidModal [b67fff2](https://github.com/reservoirprotocol/reservoir-kit/commit/b67fff2c281a665a7503f1a785d26006824f595c)
+## [0.7.3](https://github.com/reservoirprotocol/reservoir-kit/commit/8784098b7ed7e841a707d3fe25be7c5ebc8dd7f3) (2022-12-21)
+
+* Merge pull request #113 from reservoirprotocol/pedro/res-1642-add-oncurrentstepupdate-hook-to [6fe4a9a](https://github.com/reservoirprotocol/reservoir-kit/commit/6fe4a9a20cd86ff8fdd48fc09adcd86bfdd23fbe)
+* Allow for configuring button text color [76c322f](https://github.com/reservoirprotocol/reservoir-kit/commit/76c322f3766887f413efe4f1bc482736351dbecb)
+* Accept bid onCurrentStepUpdate [847d29d](https://github.com/reservoirprotocol/reservoir-kit/commit/847d29d032770aa50c299147865d3957949d6f84)
+## [0.7.2](https://github.com/reservoirprotocol/reservoir-kit/commit/09f88cfc9102ff0aee5eb5bab858aa1db3ce7604) (2022-12-19)
+
+* Better support for contract ranges when accepting a bid [f7ee8b8](https://github.com/reservoirprotocol/reservoir-kit/commit/f7ee8b88dcf45d12468cd455ddeae276b02641c9)
+* fix: wrong git repo link [d7c77bf](https://github.com/reservoirprotocol/reservoir-kit/commit/d7c77bfc9ba2e62f2830dd0d04c3d1e8d31a057a)
+## [0.7.1](https://github.com/reservoirprotocol/reservoir-kit/commit/d6c1d19339f915d7d19f45163793503cb7b49ecf) (2022-12-14)
+
+* Add file extensions to js imports [97b4c8a](https://github.com/reservoirprotocol/reservoir-kit/commit/97b4c8a99225d8b1e1b0469f665ec40e022d8161)
 ## [0.7.0](https://github.com/reservoirprotocol/reservoir-kit/commit/02c7ff0b6c0878d5df78a0a5eb9aba3ffe55bba2) (2022-12-13)
 
 * Upgrade wagmi to 0.9, fix issues when migrating to esmodules and dropping commonjs modules [30ea0f5](https://github.com/reservoirprotocol/reservoir-kit/commit/30ea0f5123b4e762bbdbdbc3288c14793108019e)
