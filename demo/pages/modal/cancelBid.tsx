@@ -83,13 +83,13 @@ const CancelBidPage: NextPage = () => {
         bidId={bidId}
         normalizeRoyalties={normalizeRoyalties}
         onCancelComplete={(data: any) => {
-          console.log('Bid Accepted', data)
+          console.log('Bid Canceled', data)
         }}
         onCancelError={(error: any, data: any) => {
-          console.log('Bid Accept Error', error, data)
+          console.log('Bid Cancel Error', error, data)
         }}
         onClose={() => {
-          console.log('AcceptBidModal Closed')
+          console.log('CancelBidModal Closed')
         }}
       />
       <ThemeSwitcher />
