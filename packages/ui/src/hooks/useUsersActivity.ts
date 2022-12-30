@@ -3,10 +3,10 @@ import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type UsersActivityResponse =
-  paths['/users/activity/v4']['get']['responses']['200']['schema']
+  paths['/users/activity/v5']['get']['responses']['200']['schema']
 
 type UsersActivityBaseQuery =
-  paths['/users/activity/v4']['get']['parameters']['query']
+  paths['/users/activity/v5']['get']['parameters']['query']
 
 type UsersQuery = UsersActivityBaseQuery['users'] | undefined
 type UsersActivityQuery = Omit<UsersActivityBaseQuery, 'users'>
@@ -25,7 +25,7 @@ export default function (
           return null
         }
 
-        const url = new URL(`${client?.apiBase}/users/activity/v4`)
+        const url = new URL(`${client?.apiBase}/users/activity/v5`)
 
         let query: UsersActivityBaseQuery = { ...options, users }
 

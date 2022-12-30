@@ -56,7 +56,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
     {
       ids: bidId,
       normalizeRoyalties,
-      includeMetadata: true,
+      includeCriteriaMetadata: true,
     },
     {
       revalidateFirstPage: true,
@@ -176,7 +176,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
 
   let tokenId = undefined
 
-  if (bid?.metadata?.kind === 'token') {
+  if (bid?.criteria?.kind === 'token') {
     tokenId = bid?.tokenSetId?.split(':')[2]
   }
 

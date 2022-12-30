@@ -3,9 +3,9 @@ import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type Bids =
-  paths['/orders/users/{user}/top-bids/v1']['get']['responses']['200']['schema']
+  paths['/orders/users/{user}/top-bids/v2']['get']['responses']['200']['schema']
 type BidsQuery =
-  paths['/orders/users/{user}/top-bids/v1']['get']['parameters']['query']
+  paths['/orders/users/{user}/top-bids/v2']['get']['parameters']['query']
 
 export default function (
   user?: string,
@@ -21,7 +21,7 @@ export default function (
           return null
         }
         const url = new URL(
-          `${client?.apiBase || ''}/orders/users/${user}/top-bids/v1`
+          `${client?.apiBase || ''}/orders/users/${user}/top-bids/v2`
         )
         let query: BidsQuery = options || {}
 

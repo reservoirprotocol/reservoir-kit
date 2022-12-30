@@ -116,7 +116,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     {
       ids: bidId,
       status: 'active',
-      includeMetadata: true,
+      includeCriteriaMetadata: true,
       normalizeRoyalties,
     },
     {
@@ -289,9 +289,9 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         bid &&
         bid.status === 'active' &&
         bid.price?.netAmount?.native &&
-        bid.metadata?.data?.collectionId === collectionId
+        bid.criteria?.data?.collection?.id === collectionId
       ) {
-        if (bid.metadata?.kind === 'token') {
+        if (bid.criteria?.kind === 'token') {
           const tokenSetPieces = bid.tokenSetId.split(':')
           const bidTokenId = tokenSetPieces[tokenSetPieces.length - 1]
           if (tokenId === bidTokenId) {

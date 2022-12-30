@@ -2,8 +2,8 @@ import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
-type Asks = paths['/orders/asks/v3']['get']['responses']['200']['schema']
-type AsksQuery = paths['/orders/asks/v3']['get']['parameters']['query']
+type Asks = paths['/orders/asks/v4']['get']['responses']['200']['schema']
+type AsksQuery = paths['/orders/asks/v4']['get']['parameters']['query']
 
 export default function (
   options: AsksQuery,
@@ -19,7 +19,7 @@ export default function (
           return null
         }
 
-        const url = new URL(`${client?.apiBase || ''}/orders/asks/v3`)
+        const url = new URL(`${client?.apiBase || ''}/orders/asks/v4`)
         let query: AsksQuery = options || {}
 
         if (
