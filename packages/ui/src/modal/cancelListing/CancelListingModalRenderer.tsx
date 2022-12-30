@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
-import { useCoinConversion, useReservoirClient, useBids } from '../../hooks'
+import { useCoinConversion, useReservoirClient, useListings } from '../../hooks'
 import { useSigner, useNetwork } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 
@@ -18,8 +18,9 @@ export type StepData = {
 
 type ChildrenProps = {
   loading: boolean
-  bid?: NonNullable<ReturnType<typeof useBids>['data']>[0]
+  listing?: NonNullable<ReturnType<typeof useListings>['data']>[0]
   tokenId?: string
+  contract?: string
   cancelStep: CancelStep
   transactionError?: Error | null
   totalUsd: number
@@ -33,14 +34,14 @@ type ChildrenProps = {
 
 type Props = {
   open: boolean
-  bidId?: string
+  listingId?: string
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
-export const CancelBidModalRenderer: FC<Props> = ({
+export const CancelListingModalRenderer: FC<Props> = ({
   open,
-  bidId,
+  listingId,
   normalizeRoyalties,
   children,
 }) => {
@@ -53,30 +54,30 @@ export const CancelBidModalRenderer: FC<Props> = ({
   const blockExplorerBaseUrl =
     activeChain?.blockExplorers?.default.url || 'https://etherscan.io'
 
-  const { data: bids, isFetchingPage } = useBids(
+  const { data: listings, isFetchingPage } = useListings(
     {
-      ids: bidId,
+      ids: listingId,
       normalizeRoyalties,
       includeMetadata: true,
     },
     {
       revalidateFirstPage: true,
     },
-    open && bidId ? true : false
+    open && listingId ? true : false
   )
 
-  const bid = bids && bids[0] ? bids[0] : undefined
-  const currency = bid?.price?.currency
+  const listing = listings && listings[0] ? listings[0] : undefined
+  const currency = listing?.price?.currency
 
   const coinConversion = useCoinConversion(
-    open && bid ? 'USD' : undefined,
+    open && listing ? 'USD' : undefined,
     currency?.symbol
   )
   const usdPrice =
     coinConversion !== undefined && coinConversion !== null
       ? Number(coinConversion)
       : 0
-  const totalUsd = usdPrice * (bid?.price?.amount?.decimal || 0)
+  const totalUsd = usdPrice * (listing?.price?.amount?.decimal || 0)
 
   const client = useReservoirClient()
 
@@ -87,8 +88,8 @@ export const CancelBidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (!bidId) {
-      const error = new Error('Missing bid id to cancel')
+    if (!listingId) {
+      const error = new Error('Missing list id to cancel')
       setTransactionError(error)
       throw error
     }
@@ -103,7 +104,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
 
     client.actions
       .cancelOrder({
-        id: bidId,
+        id: listingId,
         signer,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
@@ -164,7 +165,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
         setSteps(null)
         console.log(error)
       })
-  }, [bidId, client, signer])
+  }, [listingId, client, signer])
 
   useEffect(() => {
     if (!open) {
@@ -175,18 +176,16 @@ export const CancelBidModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  let tokenId = undefined
-
-  if (bid?.metadata?.kind === 'token') {
-    tokenId = bid?.tokenSetId?.split(':')[2]
-  }
+  const tokenId = listing?.tokenSetId?.split(':')[2]
+  const contract = listing?.tokenSetId?.split(':')[1]
 
   return (
     <>
       {children({
         loading: isFetchingPage !== undefined ? isFetchingPage : true,
-        bid,
+        listing,
         tokenId,
+        contract,
         cancelStep,
         transactionError,
         usdPrice,
