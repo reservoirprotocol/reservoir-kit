@@ -56,7 +56,7 @@ type ChildrenProps = {
   isBanned: boolean
   balance?: BigNumber
   address?: string
-  etherscanBaseUrl: string
+  blockExplorerBaseUrl: string
   steps: Execute['steps'] | null
   stepData: StepData | null
   quantity: number
@@ -98,8 +98,8 @@ export const BuyModalRenderer: FC<Props> = ({
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [quantity, setQuantity] = useState(1)
   const { chain: activeChain } = useNetwork()
-  const etherscanBaseUrl =
-    activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+  const blockExplorerBaseUrl =
+    activeChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
@@ -376,7 +376,7 @@ export const BuyModalRenderer: FC<Props> = ({
         isBanned,
         balance: balance?.value,
         address: address,
-        etherscanBaseUrl,
+        blockExplorerBaseUrl,
         steps,
         stepData,
         quantity,

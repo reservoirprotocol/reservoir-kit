@@ -11,14 +11,13 @@ import {
 
 type Props = {
   img?: string
-  name: string
+  name?: string
   collection: string
   currencyContract?: string
   currencyDecimals?: number
   source?: string
   price?: number
   usdPrice?: number | string
-  royalty?: number
   expires?: string
   warning?: string
   isOffer?: boolean
@@ -36,7 +35,6 @@ const TokenPrimitive: FC<Props> = ({
   collection,
   currencyContract,
   currencyDecimals,
-  royalty,
   expires,
   warning,
   isOffer,
@@ -53,7 +51,7 @@ const TokenPrimitive: FC<Props> = ({
           color="subtle"
           css={{ mb: 10, display: 'block' }}
         >
-          Item
+          {name ? 'Item' : 'Collection'}
         </Text>
         {isOffer && (
           <Text
@@ -84,11 +82,13 @@ const TokenPrimitive: FC<Props> = ({
               ellipsify
               color={isUnavailable ? 'subtle' : 'base'}
             >
-              {name}
+              {name ? name : collection}
             </Text>
-            <Text style="body2" color={isUnavailable ? 'subtle' : 'base'}>
-              {collection}
-            </Text>
+            {name && (
+              <Text style="body2" color={isUnavailable ? 'subtle' : 'base'}>
+                {collection}
+              </Text>
+            )}
             {!!expires && <Text style="tiny">Expires {expires}</Text>}
           </Grid>
         </Flex>

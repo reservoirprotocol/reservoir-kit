@@ -18,7 +18,6 @@ type TokenLineItemProps = {
     decimals?: number
   }
   expires?: string
-  hideRoyalty?: boolean
   isOffer?: boolean
   sourceImg?: string
 }
@@ -33,7 +32,6 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   warning,
   currency,
   expires,
-  hideRoyalty,
   isOffer,
   sourceImg,
 }) => {
@@ -50,13 +48,6 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   const img = tokenDetails?.token?.image
     ? tokenDetails.token.image
     : (collection?.image as string)
-  let royalty: number | undefined = hideRoyalty
-    ? undefined
-    : collection?.royalties?.bps
-
-  if (royalty) {
-    royalty = royalty * 0.01
-  }
 
   return (
     <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
@@ -68,7 +59,6 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         collection={collectionName}
         currencyContract={currency?.contract}
         currencyDecimals={currency?.decimals}
-        royalty={royalty}
         expires={expires}
         warning={warning}
         source={sourceImg || ''}

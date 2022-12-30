@@ -1,4 +1,4 @@
-import { Anchor, Box, Flex, Text } from '../../primitives'
+import { Anchor, Box, Flex, Text } from '../primitives'
 import React, { FC } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCube, faWallet } from '@fortawesome/free-solid-svg-icons'
@@ -6,10 +6,10 @@ import { faCube, faWallet } from '@fortawesome/free-solid-svg-icons'
 type Props = {
   title: string
   txHash?: string
-  etherscanBaseUrl?: string
+  blockExplorerBaseUrl?: string
 }
 
-export const Progress: FC<Props> = ({ title, txHash, etherscanBaseUrl }) => {
+const Progress: FC<Props> = ({ title, txHash, blockExplorerBaseUrl }) => {
   return (
     <Flex
       direction="column"
@@ -38,7 +38,7 @@ export const Progress: FC<Props> = ({ title, txHash, etherscanBaseUrl }) => {
           fontSize: 12,
           visibility: txHash ? 'visible' : 'hidden',
         }}
-        href={etherscanBaseUrl}
+        href={blockExplorerBaseUrl}
         target="_blank"
       >
         View on Etherscan
@@ -46,3 +46,5 @@ export const Progress: FC<Props> = ({ title, txHash, etherscanBaseUrl }) => {
     </Flex>
   )
 }
+
+export default Progress
