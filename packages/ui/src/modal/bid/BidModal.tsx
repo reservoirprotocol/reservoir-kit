@@ -406,8 +406,6 @@ export function BidModal({
                                       <FontAwesomeIcon
                                         style={{
                                           cursor: 'pointer',
-                                          margin: '-16px -16px -16px 0',
-                                          padding: '16px 16px 16px 8px',
                                         }}
                                         onClick={(e) => {
                                           e.preventDefault()
