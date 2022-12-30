@@ -9,9 +9,10 @@ import { version } from '../../package.json'
  * @returns `true` If the token is banned on OpenSea. `false` otherwise.
  */
 export async function isOpenSeaBanned(
-  contract: string,
+  collectionId: string,
   tokenId: number | string
 ) {
+  const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const base = 'https://api.opensea.io'
   const url = new URL(`/api/v1/asset/${contract}/${tokenId}`, base)
 
