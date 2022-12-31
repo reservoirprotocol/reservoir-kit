@@ -38,7 +38,10 @@ export { AcceptBidModal } from './modal/acceptBid/AcceptBidModal'
 export { AcceptBidStep } from './modal/acceptBid/AcceptBidModalRenderer'
 
 export { CancelBidModal } from './modal/cancelBid/CancelBidModal'
-export { CancelStep } from './modal/cancelBid/CancelBidModalRenderer'
+export { CancelStep as CancelBidStep } from './modal/cancelBid/CancelBidModalRenderer'
+
+export { CancelListingModal } from './modal/cancelListing/CancelListingModal'
+export { CancelStep as CancelListingStep } from './modal/cancelListing/CancelListingModalRenderer'
 
 export {
   default as TokenMedia,
