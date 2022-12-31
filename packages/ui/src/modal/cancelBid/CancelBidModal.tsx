@@ -52,11 +52,11 @@ export function CancelBidModal({
         cancelOrder,
       }) => {
         const expires = useTimeSince(bid?.expiration)
-        const collectionId = bid?.metadata?.data?.collectionId
+        const collectionId = bid?.criteria?.data?.collection?.id
         const bidImg = tokenId
           ? `${client?.apiBase}/redirect/tokens/${collectionId}:${tokenId}/image/v1`
           : `${client?.apiBase}/redirect/collections/${collectionId}/image/v1`
-        const isAttributeOffer = (bid?.metadata?.kind as any) === 'attribute'
+        const isAttributeOffer = (bid?.criteria?.kind as any) === 'attribute'
 
         useEffect(() => {
           if (cancelStep === CancelStep.Complete && onCancelComplete) {
@@ -129,10 +129,10 @@ export function CancelBidModal({
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
                     img={bidImg}
-                    name={bid?.metadata?.data?.tokenName}
+                    name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
                     usdPrice={totalUsd}
-                    collection={bid?.metadata?.data?.collectionName || ''}
+                    collection={bid?.criteria?.data?.collection?.name || ''}
                     currencyContract={bid?.price?.currency?.contract}
                     currencyDecimals={bid?.price?.currency?.decimals}
                     expires={expires}
@@ -158,10 +158,10 @@ export function CancelBidModal({
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
                     img={bidImg}
-                    name={bid?.metadata?.data?.tokenName}
+                    name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
                     usdPrice={totalUsd}
-                    collection={bid?.metadata?.data?.collectionName || ''}
+                    collection={bid?.criteria?.data?.collection?.name || ''}
                     currencyContract={bid?.price?.currency?.contract}
                     currencyDecimals={bid?.price?.currency?.decimals}
                     expires={expires}
@@ -225,8 +225,8 @@ export function CancelBidModal({
                       </Text>{' '}
                       offer for{' '}
                       <Text style="body3" color="accent">
-                        {bid?.metadata?.data?.tokenName ||
-                          bid?.metadata?.data?.collectionName}{' '}
+                        {bid?.criteria?.data?.token?.name ||
+                          bid?.criteria?.data?.collection?.name}{' '}
                       </Text>
                       at {bid?.price?.amount?.decimal}{' '}
                       {bid?.price?.currency?.symbol} has been canceled.
