@@ -4217,7 +4217,7 @@ export interface operations {
         collectionsSetId?: string;
         /** Filter to a particular community. Example: `artblocks` */
         community?: string;
-        contract?: [string] | string;
+        contract?: string[] | string;
         /** Search for collections that match a string. Example: `bored` */
         name?: string;
         /** Filter to a particular collection slug. Example: `boredapeyachtclub` */
@@ -4251,7 +4251,7 @@ export interface operations {
         collectionsSetId?: string;
         /** Filter to a particular community. Example: `artblocks` */
         community?: string;
-        contract?: [string] | string;
+        contract?: string[] | string;
         /** Search for collections that match a string. Example: `bored` */
         name?: string;
         /** If true, top bid will be returned in the response. */
@@ -4416,7 +4416,7 @@ export interface operations {
   getSalesV3: {
     parameters: {
       query: {
-        contract?: [string] | string;
+        contract?: string[] | string;
         /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
         token?: string;
         /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
@@ -4446,7 +4446,7 @@ export interface operations {
   getSalesV4: {
     parameters: {
       query: {
-        contract?: [string] | string;
+        contract?: string[] | string;
         /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
         token?: string;
         /** If enabled, also include token metadata in the response. */
@@ -4576,7 +4576,7 @@ export interface operations {
         /** Filter to a particular contract, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contract?: string;
         /** Filter to one or more tokens, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
-        tokens?: [string] | string;
+        tokens?: string[] | string;
         /** Filter to a particular set, e.g. `contract:0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         tokenSetId?: string;
         /** Filter to a particular attribute, e.g. `attributes[Type]=Original` */
@@ -4602,7 +4602,7 @@ export interface operations {
         /** Filter to a particular contract. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contract?: string;
         /** Array of tokens. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
-        tokens?: [string] | string;
+        tokens?: string[] | string;
         /** Filter to a particular token set. Example: token:0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270:129000685 */
         tokenSetId?: string;
         /** Filter to a particular attribute. Example: `attributes[Type]=Original` */
@@ -4642,7 +4642,7 @@ export interface operations {
         /** Filter to a particular contract. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contract?: string;
         /** Array of tokens. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
-        tokens?: [string] | string;
+        tokens?: string[] | string;
         /** Filter to a particular token set. `Example: token:0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270:129000685` */
         tokenSetId?: string;
         /** Filter to a particular attribute. Example: `attributes[Type]=Original` */
@@ -5424,7 +5424,7 @@ export interface operations {
         token?: string;
         /** Filter to a particular user. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
         maker?: string;
-        contracts?: [string] | string;
+        contracts?: string[] | string;
         /**
          * active = currently valid, inactive = temporarily invalid
          *
@@ -5459,7 +5459,7 @@ export interface operations {
         maker?: string;
         /** Filter to a particular community. Example: `artblocks` */
         community?: string;
-        contracts?: [string] | string;
+        contracts?: string[] | string;
         /**
          * active = currently valid
          * inactive = temporarily invalid
@@ -5468,7 +5468,7 @@ export interface operations {
          * Available when filtering by maker, otherwise only valid orders will be returned
          */
         status?: string;
-        source?: [string] | string;
+        source?: string[] | string;
         /** If true, results will filter only Reservoir orders. */
         native?: boolean;
         /** If true, private orders are included in the response. */
@@ -5502,14 +5502,14 @@ export interface operations {
   getOrdersAsksV4: {
     parameters: {
       query: {
-        ids?: [string] | string;
+        ids?: string[] | string;
         /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
         token?: string;
         /** Filter to a particular user. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
         maker?: string;
         /** Filter to a particular community. Example: `artblocks` */
         community?: string;
-        contracts?: [string] | string;
+        contracts?: string[] | string;
         /**
          * active = currently valid
          * inactive = temporarily invalid
@@ -5588,7 +5588,7 @@ export interface operations {
         /** Filter to a particular user. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
         maker?: string;
         /** Filter to an array of contracts. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        contracts?: [string] | string;
+        contracts?: string[] | string;
         /**
          * active = currently valid, inactive = temporarily invalid, expired = permanently invalid
          *
@@ -5622,7 +5622,7 @@ export interface operations {
         /** Filter to a particular user. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
         maker?: string;
         /** Filter to an array of contracts. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        contracts?: [string] | string;
+        contracts?: string[] | string;
         /**
          * active = currently valid, inactive = temporarily invalid, expired = permanently invalid
          *
@@ -5670,7 +5670,7 @@ export interface operations {
         /** Filter to a particular attribute within a collection. Example: `attribute[Mouth]=Bored` (Collection must be passed as well when filtering by attribute) */
         attribute?: string;
         /** Filter to an array of contracts. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        contracts?: [string] | string;
+        contracts?: string[] | string;
         /**
          * active = currently valid
          * inactive = temporarily invalid
@@ -5708,7 +5708,7 @@ export interface operations {
   getOrdersBidsV5: {
     parameters: {
       query: {
-        ids?: [string] | string;
+        ids?: string[] | string;
         /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
         token?: string;
         /** Filter to a particular set. Example: `contract:0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` or `token:0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:1` */
@@ -5722,7 +5722,7 @@ export interface operations {
         /** Filter to a particular attribute within a collection. Example: `attribute[Mouth]=Bored` (Collection must be passed as well when filtering by attribute) */
         attribute?: string;
         /** Filter to an array of contracts. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        contracts?: [string] | string;
+        contracts?: string[] | string;
         /**
          * active = currently valid
          * inactive = temporarily invalid
@@ -5763,7 +5763,7 @@ export interface operations {
   getOrdersExecutedV1: {
     parameters: {
       query: {
-        ids: [string] | string;
+        ids: string[] | string;
       };
     };
     responses: {
@@ -5778,7 +5778,7 @@ export interface operations {
     parameters: {
       query: {
         /** Array of owner addresses. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        owners: [string] | string;
+        owners: string[] | string;
         /** Amount of collections returned in response. */
         limit?: number;
       };
@@ -5795,7 +5795,7 @@ export interface operations {
     parameters: {
       query: {
         /** Filter to one or more collections. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collections: [string] | string;
+        collections: string[] | string;
         /** Amount of owners returned in response. */
         limit?: number;
       };
@@ -5938,7 +5938,7 @@ export interface operations {
         /** Filter to a particular contract, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contract?: string;
         /** Filter to one or more tokens, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
-        tokens?: [string] | string;
+        tokens?: string[] | string;
         /** Filter to a particular set, e.g. `contract:0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         tokenSetId?: string;
         /** Filter to a particular attribute, e.g. `attributes[Type]=Original` */
@@ -5966,7 +5966,7 @@ export interface operations {
         /** Filter to a particular contract. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contract?: string;
         /** Array of tokens. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
-        tokens?: [string] | string;
+        tokens?: string[] | string;
         /** Filter to a particular token set. `Example: token:0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270:129000685` */
         tokenSetId?: string;
         /** Filter to a particular attribute. Example: `attributes[Type]=Original` */
@@ -6067,7 +6067,7 @@ export interface operations {
     parameters: {
       query: {
         /** Array of users addresses. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        users: [string] | string;
+        users: string[] | string;
         /** Amount of items returned in response. */
         limit?: number;
         /** Use continuation token to request next offset of items. */
@@ -6095,7 +6095,7 @@ export interface operations {
     parameters: {
       query: {
         /** Array of users addresses. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        users: [string] | string;
+        users: string[] | string;
         /** Amount of items returned in response. */
         limit?: number;
         /** Order the items are returned in the response, eventTimestamp = The blockchain event time, createdAt - The time in which event was recorded */
@@ -6125,7 +6125,7 @@ export interface operations {
     parameters: {
       query: {
         /** Array of users addresses. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        users: [string] | string;
+        users: string[] | string;
         collection?: string;
         /** Filter to a particular collection set. */
         collectionsSetId?: string;
@@ -6162,8 +6162,8 @@ export interface operations {
     parameters: {
       query: {
         /** Array of users addresses. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        users: [string] | string;
-        collection?: [string] | string;
+        users: string[] | string;
+        collection?: string[] | string;
         /** Filter to a particular collection set. */
         collectionsSetId?: string;
         /** Filter to a particular contracts set. */
@@ -6775,7 +6775,7 @@ export interface operations {
         /** Filter to a particular contract, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contract?: string;
         /** Array of tokens. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
-        tokens?: [string] | string;
+        tokens?: string[] | string;
         /** If true, prices will include missing royalties to be added on-top. */
         normalizeRoyalties?: boolean;
         /** Order the items are returned in the response. */
@@ -7049,7 +7049,7 @@ export interface operations {
         /** Filter to a particular contract, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contract?: string;
         /** Array of tokens. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
-        tokens?: [string] | string;
+        tokens?: string[] | string;
         /** If true, prices will include missing royalties to be added on-top. */
         normalizeRoyalties?: boolean;
         /** Order the items are returned in the response. */

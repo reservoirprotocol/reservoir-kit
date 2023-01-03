@@ -14,7 +14,7 @@ const generateTypes = async () => {
                   .map((enumItem) => `"${enumItem}"`)
                   .join(' | ')
               }
-              return `[${alternative.items.type}]`
+              return `${alternative.items.type}[]`
             }
             return alternative.type
           })
