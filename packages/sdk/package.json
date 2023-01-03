@@ -16,7 +16,7 @@
         "version": "yarn version",
         "version:package": "sh ../../scripts/package-version.sh",
         "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release client package v$PACKAGE_VERSION\"; git push",
-        "syncApi": "npx openapi-typescript https://api.reservoir.tools/swagger.json --output ./src/types/api.ts",
+        "syncApi": "node ./sync-api.mjs",
         "changelog": "node ../../scripts/generate-changelog.js package=client"
     },
     "repository": {
