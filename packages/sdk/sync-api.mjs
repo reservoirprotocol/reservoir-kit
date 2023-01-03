@@ -10,9 +10,9 @@ const generateTypes = async () => {
           .map((alternative) => {
             if (alternative.type === 'array' && alternative.items) {
               if (alternative.items.enum) {
-                return alternative.items.enum
+                return `(${alternative.items.enum
                   .map((enumItem) => `"${enumItem}"`)
-                  .join(' | ')
+                  .join(' | ')})[]`
               }
               return `${alternative.items.type}[]`
             }

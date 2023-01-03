@@ -4742,13 +4742,15 @@ export interface operations {
         /** If true, metadata is included in the response. */
         includeMetadata?: boolean;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -4778,13 +4780,15 @@ export interface operations {
         /** If true, metadata is included in the response. */
         includeMetadata?: boolean;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6073,13 +6077,15 @@ export interface operations {
         /** Use continuation token to request next offset of items. */
         continuation?: number;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6103,13 +6109,15 @@ export interface operations {
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6140,13 +6148,15 @@ export interface operations {
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6179,13 +6189,15 @@ export interface operations {
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6233,13 +6245,15 @@ export interface operations {
         /** If true, metadata is included in the response. */
         includeMetadata?: boolean;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6263,13 +6277,15 @@ export interface operations {
         /** Use continuation token to request next offset of items. */
         continuation?: number;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6297,13 +6313,15 @@ export interface operations {
         /** If true, metadata is included in the response. */
         includeMetadata?: boolean;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6631,13 +6649,15 @@ export interface operations {
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6663,13 +6683,15 @@ export interface operations {
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6693,13 +6715,15 @@ export interface operations {
         /** Use continuation token to request next offset of items. */
         continuation?: number;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6727,13 +6751,15 @@ export interface operations {
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
@@ -6895,13 +6921,15 @@ export interface operations {
         /** Use continuation token to request next offset of items. */
         continuation?: number;
         types?:
-          | "sale"
-          | "ask"
-          | "transfer"
-          | "mint"
-          | "bid"
-          | "bid_cancel"
-          | "ask_cancel"
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
           | string;
       };
     };
