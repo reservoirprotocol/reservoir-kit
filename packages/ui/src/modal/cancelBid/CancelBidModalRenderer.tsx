@@ -175,7 +175,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  let tokenId = undefined
+  let tokenId
 
   if (bid?.criteria?.kind === 'token') {
     tokenId = bid?.tokenSetId?.split(':')[2]

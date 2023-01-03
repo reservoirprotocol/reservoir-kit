@@ -131,10 +131,10 @@ export function CancelListingModal({
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
                     img={listingImg}
-                    name={listing.metadata?.data?.tokenName}
+                    name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
                     usdPrice={totalUsd}
-                    collection={listing.metadata?.data?.collectionName || ''}
+                    collection={listing.criteria?.data?.collection?.name || ''}
                     currencyContract={listing.price?.currency?.contract}
                     currencyDecimals={listing?.price?.currency?.decimals}
                     expires={expires}
@@ -159,10 +159,10 @@ export function CancelListingModal({
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
                     img={listingImg}
-                    name={listing?.metadata?.data?.tokenName}
+                    name={listing?.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
                     usdPrice={totalUsd}
-                    collection={listing?.metadata?.data?.collectionName || ''}
+                    collection={listing?.criteria?.data?.collection?.name || ''}
                     currencyContract={listing?.price?.currency?.contract}
                     currencyDecimals={listing?.price?.currency?.decimals}
                     expires={expires}
@@ -213,8 +213,8 @@ export function CancelListingModal({
                       </Text>{' '}
                       listing for{' '}
                       <Text style="body3" color="accent">
-                        {listing?.metadata?.data?.tokenName ||
-                          listing?.metadata?.data?.collectionName}{' '}
+                        {listing?.criteria?.data?.token?.name ||
+                          listing?.criteria?.data?.collection?.name}{' '}
                       </Text>
                       at {listing?.price?.amount?.decimal}{' '}
                       {listing?.price?.currency?.symbol} has been canceled.

@@ -58,7 +58,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
     {
       ids: listingId,
       normalizeRoyalties,
-      includeMetadata: true,
+      includeCriteriaMetadata: true,
     },
     {
       revalidateFirstPage: true,

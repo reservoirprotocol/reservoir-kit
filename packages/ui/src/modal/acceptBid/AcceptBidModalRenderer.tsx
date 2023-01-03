@@ -132,11 +132,11 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
 
   let feeBreakdown
-  let source = undefined
-  let expiration = undefined
+  let source
+  let expiration
   let bidAmount = 0
-  let bidAmountCurrency = undefined
-  let ethBidAmount = undefined
+  let bidAmountCurrency
+  let ethBidAmount
 
   if (acceptBidStep !== AcceptBidStep.Unavailable) {
     source = bidId ? bid?.source : token?.market?.topBid?.source
