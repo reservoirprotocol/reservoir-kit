@@ -2,6 +2,7 @@ import { Anchor, Box, Flex, Text } from '../primitives'
 import React, { FC } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCube, faWallet } from '@fortawesome/free-solid-svg-icons'
+import { useNetwork } from 'wagmi'
 
 type Props = {
   title: string
@@ -10,6 +11,8 @@ type Props = {
 }
 
 const Progress: FC<Props> = ({ title, txHash, blockExplorerBaseUrl }) => {
+  const { chain: activeChain } = useNetwork()
+
   return (
     <Flex
       direction="column"
@@ -41,7 +44,7 @@ const Progress: FC<Props> = ({ title, txHash, blockExplorerBaseUrl }) => {
         href={blockExplorerBaseUrl}
         target="_blank"
       >
-        View on Etherscan
+        View on {activeChain?.blockExplorers?.default.name || 'Etherscan'}
       </Anchor>
     </Flex>
   )

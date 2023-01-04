@@ -26,6 +26,7 @@ import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
+import { useNetwork } from 'wagmi'
 
 type PurchaseData = {
   tokenId?: string
@@ -78,6 +79,8 @@ export function BuyModal({
     openState
   )
   const { copy: copyToClipboard, copied } = useCopyToClipboard()
+  const { chain: activeChain } = useNetwork()
+
   return (
     <BuyModalRenderer
       open={open}
@@ -427,7 +430,8 @@ export function BuyModal({
                     href={`${blockExplorerBaseUrl}/tx/${finalTxHash}`}
                     target="_blank"
                   >
-                    View on Etherscan
+                    View on{' '}
+                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
                   </Anchor>
                 </Flex>
                 <Flex

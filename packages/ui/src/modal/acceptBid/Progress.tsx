@@ -5,6 +5,7 @@ import { AcceptBidStep, StepData } from './AcceptBidModalRenderer'
 import TransactionProgress from '../TransactionProgress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCube, faWallet } from '@fortawesome/free-solid-svg-icons'
+import { useNetwork } from 'wagmi'
 
 type Props = {
   acceptBidStep: AcceptBidStep
@@ -24,6 +25,8 @@ export const Progress: FC<Props> = ({
   tokenImage,
   stepData,
 }) => {
+  const { chain: activeChain } = useNetwork()
+
   return (
     <Flex
       direction="column"
@@ -100,7 +103,7 @@ export const Progress: FC<Props> = ({
             href={etherscanBaseUrl}
             target="_blank"
           >
-            View on Etherscan
+            View on {activeChain?.blockExplorers?.default.name || 'Etherscan'}
           </Anchor>
         </>
       )}
