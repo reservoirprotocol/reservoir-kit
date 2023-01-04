@@ -49,12 +49,11 @@ export default function (
     )
 
   const activities = data?.flatMap((page) => page.activities) ?? []
-  const lastPageTokenCount = data?.[size - 1]?.activities?.length || 0
   const isFetchingInitialData = !data && !error
   const isFetchingPage =
     isFetchingInitialData ||
     (size > 0 && data && typeof data[size - 1] === 'undefined')
-  const hasNextPage = lastPageTokenCount > 0 || isFetchingPage
+  const hasNextPage = Boolean(data?.[size - 1]?.continuation)
   const fetchNextPage = () => {
     if (!isFetchingPage && hasNextPage) {
       setSize((size) => size + 1)
