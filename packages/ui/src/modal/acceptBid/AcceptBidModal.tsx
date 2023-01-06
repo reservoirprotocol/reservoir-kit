@@ -26,6 +26,7 @@ import {
 } from './AcceptBidModalRenderer'
 import Fees from './Fees'
 import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
+import { useNetwork } from 'wagmi'
 
 type BidData = {
   tokenId?: string
@@ -72,6 +73,7 @@ export function AcceptBidModal({
     openState
   )
   const client = useReservoirClient()
+  const { chain: activeChain } = useNetwork()
 
   return (
     <AcceptBidModalRenderer
@@ -345,7 +347,8 @@ export function AcceptBidModal({
                     href={`${etherscanBaseUrl}/tx/${txHash}`}
                     target="_blank"
                   >
-                    View on Etherscan
+                    View on{' '}
+                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
                   </Anchor>
                 </Flex>
                 <Flex
