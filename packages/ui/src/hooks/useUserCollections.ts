@@ -14,7 +14,7 @@ export default function (
 ) {
   const client = useReservoirClient()
 
-  let pageLimit = 20
+  let defaultLimit = 20
 
   const { data, mutate, error, isValidating, size, setSize } =
     useSWRInfinite<UserCollections>(
@@ -27,12 +27,10 @@ export default function (
         )
         let query: UserCollectionsQuery = 
         {
-          offset: pageIndex * pageLimit, 
-          limit: pageLimit,
+          offset: pageIndex * (options?.limit || defaultLimit), 
+          limit: options?.limit || defaultLimit,
           ...options
         }
-
-        pageLimit = query.limit as number
 
         if (previousPageData?.collections && previousPageData?.collections?.length === 0) {
           return null
@@ -50,7 +48,7 @@ export default function (
     )
 
   const collections = data?.flatMap((page) => page.collections) ?? []
-  const hasNextPage = Boolean(data?.[size - 1]?.collections?.length === pageLimit)
+  const hasNextPage = Boolean(data?.[size - 1]?.collections?.length === (options?.limit || defaultLimit))
   const isFetchingInitialData = !data && !error
   const isFetchingPage =
     isFetchingInitialData ||
