@@ -25,9 +25,8 @@ export default function (
         )
         let query: UserCollectionsQuery = 
         {
-          offset: pageIndex * 20, 
-          includeTopBid: true,
-          limit: 20,
+          offset: pageIndex * 100, 
+          limit: 100,
           ...options
         }
 
@@ -47,7 +46,7 @@ export default function (
     )
 
   const collections = data?.flatMap((page) => page.collections) ?? []
-  const hasNextPage = Boolean(data?.[size - 1]?.collections?.length === 20)
+  const hasNextPage = Boolean(data?.[size - 1]?.collections?.length === 100)
   const isFetchingInitialData = !data && !error
   const isFetchingPage =
     isFetchingInitialData ||
