@@ -280,7 +280,6 @@ export const BuyModalRenderer: FC<Props> = ({
         setBuyStep(BuyStep.Checkout)
         setStepData(null)
         setSteps(null)
-        console.log(error)
       })
   }, [
     tokenId,

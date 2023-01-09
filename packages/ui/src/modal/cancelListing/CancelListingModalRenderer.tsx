@@ -163,7 +163,6 @@ export const CancelListingModalRenderer: FC<Props> = ({
         setCancelStep(CancelStep.Cancel)
         setStepData(null)
         setSteps(null)
-        console.log(error)
       })
   }, [listingId, client, signer])
 

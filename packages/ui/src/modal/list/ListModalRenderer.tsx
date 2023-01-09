@@ -546,7 +546,6 @@ export const ListModalRenderer: FC<Props> = ({
           cause: error,
         })
         setTransactionError(transactionError)
-        console.log(error)
       })
   }, [
     client,

@@ -278,7 +278,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         setTransactionError(error)
         setAcceptBidStep(AcceptBidStep.Checkout)
         setStepData(null)
-        console.log(error)
       })
   }, [tokenId, collectionId, client, signer, totalPrice])
 

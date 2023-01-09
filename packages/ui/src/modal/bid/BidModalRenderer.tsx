@@ -338,7 +338,6 @@ export const BidModalRenderer: FC<Props> = ({
           cause: e,
         })
         setTransactionError(transactionError)
-        console.log(e)
       })
   }, [
     tokenId,

@@ -162,7 +162,6 @@ export const CancelBidModalRenderer: FC<Props> = ({
         setCancelStep(CancelStep.Cancel)
         setStepData(null)
         setSteps(null)
-        console.log(error)
       })
   }, [bidId, client, signer])
 
