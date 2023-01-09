@@ -18,6 +18,7 @@ export {
   useBids,
   useUserTokens,
   useUserTopBids,
+  useUserCollections
 } from './hooks'
 
 // Themes
