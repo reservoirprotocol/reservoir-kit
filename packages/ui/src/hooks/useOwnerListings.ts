@@ -17,5 +17,5 @@ export default function (
       ...query,
     }
   }
-  return useListings(queryOptions, swrOptions)
+  return useListings(queryOptions, swrOptions, address !== undefined)
 }
