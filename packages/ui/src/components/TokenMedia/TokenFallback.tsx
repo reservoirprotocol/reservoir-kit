@@ -25,8 +25,7 @@ const TokenFallback: FC<TokenFallbackProps> = ({
       justify="center"
       align="center"
       direction="column"
-      css={{ gap: '$2' }}
-      style={style}
+      css={{ gap: '$2', aspectRatio: '1/1', p: '$2', ...style }}
       className={className}
     >
       {token?.collection?.image && (
