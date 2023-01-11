@@ -74,12 +74,13 @@ export async function acceptOffer(data: Data) {
     )
     return true
   } catch (err: any) {
-    console.error(err)
-    const data: paths['/tokens/simulate-top-bid/v1']['post']['parameters']['body']['body'] =
-      { token: `${token.contract}:${token.tokenId}` }
+    const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
+      {
+        token: `${token.contract}:${token.tokenId}`,
+      }
     request({
       method: 'POST',
-      url: `${client.apiBase}/tokens/simulate-top-bid/v1`,
+      url: `${client.apiBase}/tokens/refresh/v1`,
       data: JSON.stringify(data),
     })
     throw err
