@@ -115,14 +115,13 @@ export async function buyToken(data: Data) {
   } catch (err: any) {
     if (tokens) {
       tokens.forEach((token) => {
-        const data: paths['/tokens/simulate-floor/v1']['post']['parameters']['body']['body'] =
+        const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
           {
-            router: 'v6',
             token: `${token.contract}:${token.tokenId}`,
           }
         request({
           method: 'POST',
-          url: `${client.apiBase}/tokens/simulate-floor/v1`,
+          url: `${client.apiBase}/tokens/refresh/v1`,
           data: JSON.stringify(data),
         })
       })
