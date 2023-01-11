@@ -448,7 +448,10 @@ export const ListModalRenderer: FC<Props> = ({
       if (market.isSelected) {
         const listing: Listings[0] = {
           token: `${contract}:${tokenId}`,
-          weiPrice: parseUnits(`${market.price}`, currency.decimals).toString(),
+          weiPrice: parseUnits(
+            `${+market.price * quantity}`,
+            currency.decimals
+          ).toString(),
           //@ts-ignore
           orderbook: market.orderbook,
           //@ts-ignore

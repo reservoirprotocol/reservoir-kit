@@ -17,6 +17,7 @@ type MarketPlaceInputProps = {
   marketplace: Marketplace
   currency: Currency
   usdPrice?: number | null
+  quantity?: number
   onChange: (e: any) => void
   onBlur: (e: any) => void
 }
@@ -25,12 +26,13 @@ const MarketplacePriceInput = ({
   marketplace,
   currency,
   usdPrice,
+  quantity = 1,
   onChange,
   onBlur,
   ...props
 }: MarketPlaceInputProps) => {
   let profit =
-    (1 - (marketplace.fee?.percent || 0) / 100) * Number(marketplace.truePrice)
+    ((1 - (marketplace.fee?.percent || 0) / 100) * Number(marketplace.truePrice)) * quantity
 
   return (
     <Flex {...props} align="center">
