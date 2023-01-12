@@ -112,7 +112,7 @@ const AttributeSelector: FC<Props> = ({
                     }}
                     as="button"
                     onClick={() => {
-                      setTrait({ key, value })
+                      setTrait({ key, value, floorAskPrice })
                       setOpen(false)
                     }}
                   >

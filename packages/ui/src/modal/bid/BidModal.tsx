@@ -393,16 +393,15 @@ export function BidModal({
                                         gap: '$2',
                                       }}
                                     >
-                                      <Box css={{ flex: 'none' }}>
-                                        <FormatCryptoCurrency
-                                          amount={
-                                            collection?.floorAsk?.price?.amount
-                                              ?.native
-                                          }
-                                          maximumFractionDigits={2}
-                                          logoWidth={11}
-                                        />
-                                      </Box>
+                                      {trait?.floorAskPrice && (
+                                        <Box css={{ flex: 'none' }}>
+                                          <FormatCryptoCurrency
+                                            amount={trait?.floorAskPrice}
+                                            maximumFractionDigits={2}
+                                            logoWidth={11}
+                                          />
+                                        </Box>
+                                      )}
                                       <FontAwesomeIcon
                                         style={{
                                           cursor: 'pointer',
