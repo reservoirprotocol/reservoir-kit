@@ -3,7 +3,7 @@ import { Button, Flex, Text } from '../../primitives'
 import TokenMedia from './index'
 import { defaultHeaders } from '../../lib/swr'
 import { useReservoirClient } from '../../hooks'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 
 type TokenFallbackProps = {
   style?: CSSProperties
@@ -25,8 +25,7 @@ const TokenFallback: FC<TokenFallbackProps> = ({
       justify="center"
       align="center"
       direction="column"
-      css={{ gap: '$2' }}
-      style={style}
+      css={{ gap: '$2', aspectRatio: '1/1', p: '$2', ...style }}
       className={className}
     >
       {token?.collection?.image && (

@@ -42,9 +42,7 @@ import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
-import { useChainCurrency, useFallbackState } from '../../hooks'
-import wrappedContracts from '../../constants/wrappedContracts'
-import wrappedContractNames from '../../constants/wrappedContractNames'
+import { useFallbackState } from '../../hooks'
 
 type BidCallbackData = {
   tokenId?: string
@@ -128,16 +126,6 @@ export function BidModal({
   }, [])
   const [attributeSelectorOpen, setAttributeSelectorOpen] = useState(false)
 
-  const chainCurrency = useChainCurrency()
-  const wrappedContractAddress =
-    chainCurrency.chainId in wrappedContracts
-      ? wrappedContracts[chainCurrency.chainId]
-      : wrappedContracts[1]
-  const wrappedContractName =
-    chainCurrency.chainId in wrappedContractNames
-      ? wrappedContractNames[chainCurrency.chainId]
-      : wrappedContractNames[1]
-
   return (
     <BidModalRenderer
       open={open}
@@ -154,10 +142,12 @@ export function BidModal({
         expirationOption,
         expirationOptions,
         wrappedBalance,
+        wrappedContractName,
+        wrappedContractAddress,
         bidAmount,
         bidAmountUsd,
         hasEnoughNativeCurrency,
-        hasEnoughWEth,
+        hasEnoughWrappedCurrency,
         amountToWrap,
         balance,
         uniswapConvertLink,
@@ -416,8 +406,6 @@ export function BidModal({
                                       <FontAwesomeIcon
                                         style={{
                                           cursor: 'pointer',
-                                          margin: '-16px -16px -16px 0',
-                                          padding: '16px 16px 16px 8px',
                                         }}
                                         onClick={(e) => {
                                           e.preventDefault()
@@ -538,7 +526,7 @@ export function BidModal({
                     </Button>
                   )}
 
-                  {bidAmount !== '' && hasEnoughWEth && (
+                  {bidAmount !== '' && hasEnoughWrappedCurrency && (
                     <Button
                       onClick={placeBid}
                       css={{ width: '100%', mt: 'auto' }}
@@ -551,7 +539,7 @@ export function BidModal({
                     </Button>
                   )}
 
-                  {bidAmount !== '' && !hasEnoughWEth && (
+                  {bidAmount !== '' && !hasEnoughWrappedCurrency && (
                     <Box css={{ width: '100%', mt: 'auto' }}>
                       {!hasEnoughNativeCurrency && (
                         <Flex css={{ gap: '$2', mt: 10 }} justify="center">

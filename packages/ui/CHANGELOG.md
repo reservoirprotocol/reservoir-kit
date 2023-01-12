@@ -1,4 +1,64 @@
 
+## [0.8.5](https://github.com/reservoirprotocol/reservoir-kit/commit/8bbe6e912eb7f4e08cf40518dff264e44ecd606d) (2023-01-09)
+
+* Merge pull request #128 from reservoirprotocol/feature/use-user-collections-hook [273d7fa](https://github.com/reservoirprotocol/reservoir-kit/commit/273d7fafdf7ee9c4536ae70f1602880f94ffb584)
+* Updated limit variable name and logic [a81dcc6](https://github.com/reservoirprotocol/reservoir-kit/commit/a81dcc6d9a96934bc934a0404654c108afb665cd)
+* Added dynamic pageLimit variable and updated default limit [f68bdb4](https://github.com/reservoirprotocol/reservoir-kit/commit/f68bdb457d77c41818153642682fb0f37171c6d1)
+* Updated default limit and offset size for useUserCollections [56af4de](https://github.com/reservoirprotocol/reservoir-kit/commit/56af4de0c96603539f8e5c4aa0ffb31b02bc8bbb)
+* Add useUserCollections hook [d9af588](https://github.com/reservoirprotocol/reservoir-kit/commit/d9af5888ff109c166edb7a4f35ec2863a8767073)
+## [0.8.4](https://github.com/reservoirprotocol/reservoir-kit/commit/3773ef2af129451a86c98cc15131158539b1b6c0) (2023-01-06)
+
+* Merge pull request #126 from reservoirprotocol/pedro/res-1606-update-copy-on-rk-for-polygon [2683361](https://github.com/reservoirprotocol/reservoir-kit/commit/26833612b002d2b2122223e4e0b2ec494f198ebc)
+* Upgrade useCollections hook to a paginated hook [7768490](https://github.com/reservoirprotocol/reservoir-kit/commit/776849090548752561cbd9327c7bf56bd681ab77)
+* Make etherscan text dynamic based on current chain [67a8824](https://github.com/reservoirprotocol/reservoir-kit/commit/67a8824d5af82e1ffb853cd03e63598855b25fc2)
+## [0.8.3](https://github.com/reservoirprotocol/reservoir-kit/commit/4d3c1fcce11f34d3efb24633414da8a46b2d324d) (2023-01-04)
+
+* Update hasNextPage logic for activity hooks [61e75c1](https://github.com/reservoirprotocol/reservoir-kit/commit/61e75c116a25bae726ea1e8f8b641655fe2993ae)
+## [0.8.2](https://github.com/reservoirprotocol/reservoir-kit/commit/4592b2d3fc7c0cf2354b14d1eba812b002e9c7a0) (2023-01-03)
+
+## [0.8.1](https://github.com/reservoirprotocol/reservoir-kit/commit/c73cfe8acfa3a4e684bf1ddf757f587d43c2d59f) (2023-01-03)
+
+## [0.8.0](https://github.com/reservoirprotocol/reservoir-kit/commit/94aa4da3d6baf90aff853bf23fafcc88a154af8d) (2023-01-03)
+
+* Fix type errors when migrating to asks hook and bids hook [f57b5d3](https://github.com/reservoirprotocol/reservoir-kit/commit/f57b5d32ac40945fa37682ee255e49f6dccc5680)
+* Merge pull request #123 from reservoirprotocol/pedro/res-1595-update-rk-hooks-to-use-latest-apis [f65aa84](https://github.com/reservoirprotocol/reservoir-kit/commit/f65aa84145191a5942a97cefd11c055b9ce2045a)
+* Updated deprecated apis used in hooks/modals [14dd5c3](https://github.com/reservoirprotocol/reservoir-kit/commit/14dd5c39394063d767be11666e31f367e9c38ce8)
+* Add cancel listing modal [c815fe5](https://github.com/reservoirprotocol/reservoir-kit/commit/c815fe5da7ffca83126174389f9d08e499f7aee2)
+* Fix list modal button close color [c0233b4](https://github.com/reservoirprotocol/reservoir-kit/commit/c0233b4c5a2a6ed63f093ce793e0ef6bedfe9574)
+* Completes RES-1512 [20f54d4](https://github.com/reservoirprotocol/reservoir-kit/commit/20f54d4cf0c4263cb62683105495172ee5d9516a)
+* CancelBid modal [ff7b989](https://github.com/reservoirprotocol/reservoir-kit/commit/ff7b9897a731f5ddfad2e8866e8efbfbbbb854d3)
+* Merge branch 'main' into pedro/res-1350-rk-cancel-offers [067279f](https://github.com/reservoirprotocol/reservoir-kit/commit/067279f76c7ebc6f384659624579ab1b37a04db9)
+## [0.7.5](https://github.com/reservoirprotocol/reservoir-kit/commit/ba97b3c4b2540b9353228f1011c001279b595308) (2022-12-28)
+
+* Rename reservoir-kit-client to reservoir-sdk [5591309](https://github.com/reservoirprotocol/reservoir-kit/commit/5591309a87948588f0d379133be0a5669855f2f3)
+## [0.7.4](https://github.com/reservoirprotocol/reservoir-kit/commit/c19e0aca0221265e93ef37a272b027c10c8e3682) (2022-12-28)
+
+* Always pass chain id with useBalance hook [78648f7](https://github.com/reservoirprotocol/reservoir-kit/commit/78648f741b9ed40d20756f0815ce91a5cea6ffcf)
+* Resolve conflicts [fd07f9c](https://github.com/reservoirprotocol/reservoir-kit/commit/fd07f9ccd5b12acc5ac8f8960a4ef489284ee4b3)
+* Support different chains and tokens when checking balance [8c313a1](https://github.com/reservoirprotocol/reservoir-kit/commit/8c313a1f389185c1009e737a3e0f2998d5b5434c)
+* Add lowest value to formatCurrency, fix wrapped contract price display when accepting a bid [5c8a6e2](https://github.com/reservoirprotocol/reservoir-kit/commit/5c8a6e26fe452fea436180ea32354eebc81317fe)
+* Fix USD price to use wrapped contract symbol for BidModal [b67fff2](https://github.com/reservoirprotocol/reservoir-kit/commit/b67fff2c281a665a7503f1a785d26006824f595c)
+## [0.7.3](https://github.com/reservoirprotocol/reservoir-kit/commit/8784098b7ed7e841a707d3fe25be7c5ebc8dd7f3) (2022-12-21)
+
+* Merge pull request #113 from reservoirprotocol/pedro/res-1642-add-oncurrentstepupdate-hook-to [6fe4a9a](https://github.com/reservoirprotocol/reservoir-kit/commit/6fe4a9a20cd86ff8fdd48fc09adcd86bfdd23fbe)
+* Allow for configuring button text color [76c322f](https://github.com/reservoirprotocol/reservoir-kit/commit/76c322f3766887f413efe4f1bc482736351dbecb)
+* Accept bid onCurrentStepUpdate [847d29d](https://github.com/reservoirprotocol/reservoir-kit/commit/847d29d032770aa50c299147865d3957949d6f84)
+## [0.7.2](https://github.com/reservoirprotocol/reservoir-kit/commit/09f88cfc9102ff0aee5eb5bab858aa1db3ce7604) (2022-12-19)
+
+* Better support for contract ranges when accepting a bid [f7ee8b8](https://github.com/reservoirprotocol/reservoir-kit/commit/f7ee8b88dcf45d12468cd455ddeae276b02641c9)
+* Cancel offer modal [f13ade4](https://github.com/reservoirprotocol/reservoir-kit/commit/f13ade456d6d317314c6cc299008ce77ab512ba7)
+* fix: wrong git repo link [d7c77bf](https://github.com/reservoirprotocol/reservoir-kit/commit/d7c77bfc9ba2e62f2830dd0d04c3d1e8d31a057a)
+## [0.7.1](https://github.com/reservoirprotocol/reservoir-kit/commit/d6c1d19339f915d7d19f45163793503cb7b49ecf) (2022-12-14)
+
+* Add file extensions to js imports [97b4c8a](https://github.com/reservoirprotocol/reservoir-kit/commit/97b4c8a99225d8b1e1b0469f665ec40e022d8161)
+## [0.7.0](https://github.com/reservoirprotocol/reservoir-kit/commit/02c7ff0b6c0878d5df78a0a5eb9aba3ffe55bba2) (2022-12-13)
+
+* Upgrade wagmi to 0.9, fix issues when migrating to esmodules and dropping commonjs modules [30ea0f5](https://github.com/reservoirprotocol/reservoir-kit/commit/30ea0f5123b4e762bbdbdbc3288c14793108019e)
+## [0.6.6](https://github.com/reservoirprotocol/reservoir-kit/commit/dcc88bd541428d70e0421b0cee52c5b7936f79f5) (2022-12-12)
+
+* switch to iframe for rendering svgs [765f86d](https://github.com/reservoirprotocol/reservoir-kit/commit/765f86dba10dfc8bab780961e826275e9809dac2)
+## [0.6.5](https://github.com/reservoirprotocol/reservoir-kit/commit/95ac21ebb98b687a55cbca69968e3a79955db0b8) (2022-12-06)
+
 ## [0.6.4](https://github.com/reservoirprotocol/reservoir-kit/commit/01fc0c106191ead35113a16766094f63ccad850d) (2022-12-06)
 
 * Upgrade to user tokens v6 endpoint [8ce46bc](https://github.com/reservoirprotocol/reservoir-kit/commit/8ce46bc1e91229cd68d2e15ddb218fa62450291b)

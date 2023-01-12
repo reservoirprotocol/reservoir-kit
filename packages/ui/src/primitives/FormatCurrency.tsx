@@ -17,11 +17,16 @@ const FormatCurrency: FC<ComponentPropsWithoutRef<typeof Text> & Props> = ({
 
   useEffect(() => {
     if (amount) {
+      const lowestValue = Number(
+        `0.${new Array(maximumFractionDigits).join('0')}1`
+      )
+      const tooLow = +amount < lowestValue
+
       const formatted = new Intl.NumberFormat(undefined, {
         style: 'currency',
         currency: currency,
-      }).format(+amount)
-      setFormattedValue(formatted)
+      }).format(tooLow ? lowestValue : +amount)
+      setFormattedValue(tooLow ? `< ${formatted}` : formatted)
     } else {
       setFormattedValue('')
     }

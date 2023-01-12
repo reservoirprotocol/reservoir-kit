@@ -36,10 +36,10 @@ const Tokens: NextPage = () => {
       <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tokens</h3>
       {tokens.map((token) => (
-        <div key={token.token.tokenId}>
-          <div>Id: {token.token.tokenId}</div>
-          <div>Name: {token.token.name}</div>
-          <div>Price: {token.market.floorAsk?.price?.amount?.native}</div>
+        <div key={token?.token?.tokenId}>
+          <div>Id: {token?.token?.tokenId}</div>
+          <div>Name: {token?.token?.name}</div>
+          <div>Price: {token?.market?.floorAsk?.price?.amount?.native}</div>
         </div>
       ))}
       {hasNextPage ? (

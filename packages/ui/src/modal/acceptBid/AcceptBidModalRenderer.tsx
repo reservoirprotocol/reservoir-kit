@@ -13,9 +13,8 @@ import {
   useCollections,
   useBids,
 } from '../../hooks'
-import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
-import { utils } from 'ethers'
-import { Execute } from '@reservoir0x/reservoir-kit-client'
+import { useAccount, useSigner, useNetwork } from 'wagmi'
+import { Execute } from '@reservoir0x/reservoir-sdk'
 import Fees from './Fees'
 
 export enum AcceptBidStep {
@@ -30,7 +29,7 @@ export enum AcceptBidStep {
 export type StepData = {
   totalSteps: number
   currentStep: Execute['steps'][0]
-  currentStepItem: NonNullable<Execute['steps'][0]['items']>[0]
+  currentStepItem?: NonNullable<Execute['steps'][0]['items']>[0]
 }
 
 type OrderSource = NonNullable<
@@ -58,7 +57,7 @@ type ChildrenProps = {
   transactionError?: Error | null
   txHash: string | null
   totalUsd: number
-  ethUsdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: ReturnType<typeof useCoinConversion>
   address?: string
   etherscanBaseUrl: string
   stepData: StepData | null
@@ -94,10 +93,11 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const { chain: activeChain } = useNetwork()
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+  const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
   const { data: tokens } = useTokens(
     open && {
-      tokens: [`${collectionId}:${tokenId}`],
+      tokens: [`${contract}:${tokenId}`],
       includeTopBid: true,
       normalizeRoyalties,
     },
@@ -116,7 +116,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     {
       ids: bidId,
       status: 'active',
-      includeMetadata: true,
+      includeCriteriaMetadata: true,
       normalizeRoyalties,
     },
     {
@@ -129,18 +129,14 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
-  const ethUsdPrice = useCoinConversion(open ? 'USD' : undefined)
-
-  const totalUsd = totalPrice * (ethUsdPrice || 0)
-
   const client = useReservoirClient()
 
   let feeBreakdown
-  let source = undefined
-  let expiration = undefined
+  let source
+  let expiration
   let bidAmount = 0
-  let bidAmountCurrency = undefined
-  let ethBidAmount = undefined
+  let bidAmountCurrency
+  let ethBidAmount
 
   if (acceptBidStep !== AcceptBidStep.Unavailable) {
     source = bidId ? bid?.source : token?.market?.topBid?.source
@@ -158,6 +154,13 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       ? bid?.feeBreakdown
       : token?.market?.topBid?.feeBreakdown
   }
+
+  const usdPrice = useCoinConversion(
+    open && bidAmountCurrency ? 'USD' : undefined,
+    bidAmountCurrency?.symbol
+  )
+
+  const totalUsd = totalPrice * (usdPrice || 0)
 
   const fees = {
     creatorRoyalties: collection?.royalties?.bps || 0,
@@ -184,6 +187,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    const contract = collectionId.split(':')[0]
+
     type AcceptOfferOptions = Parameters<
       typeof client.actions.acceptOffer
     >['0']['options']
@@ -204,11 +209,10 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         signer,
         token: {
           tokenId: tokenId,
-          contract: collectionId,
+          contract,
         },
         onProgress: (steps: Execute['steps']) => {
           if (!steps) return
-
           const executableSteps = steps.filter(
             (step) => step.items && step.items.length > 0
           )
@@ -219,7 +223,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             | NonNullable<Execute['steps'][0]['items']>[0]
             | undefined
           let currentStepIndex: number = 0
-          steps.find((step, index) => {
+          executableSteps.find((step, index) => {
             currentStepIndex = index
             currentStepItem = step.items?.find(
               (item) => item.status === 'incomplete'
@@ -238,7 +242,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               currentStep,
               currentStepItem,
             })
-            if (currentStepIndex !== steps.length - 1) {
+            if (currentStepIndex !== executableSteps.length - 1) {
               setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
             } else if (currentStepItem.txHash) {
               setTxHash(currentStepItem.txHash)
@@ -247,7 +251,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               setAcceptBidStep(AcceptBidStep.Confirming)
             }
           } else if (
-            steps.every(
+            executableSteps.every(
               (step) =>
                 !step.items ||
                 step.items.length == 0 ||
@@ -255,6 +259,16 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             )
           ) {
             setAcceptBidStep(AcceptBidStep.Complete)
+            const lastStepItem = currentStep.items
+              ? currentStep.items[currentStep.items?.length - 1]
+              : undefined
+            if (lastStepItem) {
+              setStepData({
+                totalSteps: stepCount,
+                currentStep,
+                currentStepItem: lastStepItem,
+              })
+            }
           }
         },
         options,
@@ -264,7 +278,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         setTransactionError(error)
         setAcceptBidStep(AcceptBidStep.Checkout)
         setStepData(null)
-        console.log(error)
       })
   }, [tokenId, collectionId, client, signer, totalPrice])
 
@@ -275,9 +288,9 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         bid &&
         bid.status === 'active' &&
         bid.price?.netAmount?.native &&
-        bid.metadata?.data?.collectionId === collectionId
+        bid.criteria?.data?.collection?.id === collectionId
       ) {
-        if (bid.metadata?.kind === 'token') {
+        if (bid.criteria?.kind === 'token') {
           const tokenSetPieces = bid.tokenSetId.split(':')
           const bidTokenId = tokenSetPieces[tokenSetPieces.length - 1]
           if (tokenId === bidTokenId) {
@@ -306,21 +319,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   }, [token, client, bid, isFetchingBidData])
 
   const { address } = useAccount()
-  const { data: balance } = useBalance({
-    address: address,
-    watch: open,
-  })
-
-  useEffect(() => {
-    if (balance) {
-      if (!balance.value) {
-      } else if (
-        balance.value &&
-        balance.value.lt(utils.parseEther(`${totalPrice}`))
-      ) {
-      }
-    }
-  }, [totalPrice, balance])
 
   useEffect(() => {
     if (!open) {
@@ -347,8 +345,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         transactionError,
         txHash,
         totalUsd,
-        ethUsdPrice,
-        address: address,
+        usdPrice,
+        address,
         etherscanBaseUrl,
         acceptBid,
         setAcceptBidStep,

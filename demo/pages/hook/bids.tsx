@@ -36,10 +36,10 @@ const Bids: NextPage = () => {
       <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Bids</h3>
       {bids.map((bid) => (
-        <div key={bid.id}>
-          <div>Id: {bid.id}</div>
-          <div>Price: {bid.price.amount.native}</div>
-          <div>Source: {bid.source.name as string}</div>
+        <div key={bid?.id}>
+          <div>Id: {bid?.id}</div>
+          <div>Price: {bid?.price?.amount?.native}</div>
+          <div>Source: {bid?.source?.name as string}</div>
         </div>
       ))}
       {hasNextPage ? (

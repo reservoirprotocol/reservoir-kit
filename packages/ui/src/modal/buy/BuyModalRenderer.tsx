@@ -10,13 +10,11 @@ import {
 import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 
 import { BigNumber, utils } from 'ethers'
-import {
-  Execute,
-  ReservoirClientActions,
-} from '@reservoir0x/reservoir-kit-client'
+import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
-import { formatUnits } from 'ethers/lib/utils'
+import { formatUnits } from 'ethers/lib/utils.js'
+import { constants } from 'ethers'
 
 export enum BuyStep {
   Checkout,
@@ -58,7 +56,7 @@ type ChildrenProps = {
   isBanned: boolean
   balance?: BigNumber
   address?: string
-  etherscanBaseUrl: string
+  blockExplorerBaseUrl: string
   steps: Execute['steps'] | null
   stepData: StepData | null
   quantity: number
@@ -77,6 +75,8 @@ type Props = {
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
+
+const CHAIN_ID = process.env.CHAIN_ID ? Number(process.env.CHAIN_ID) : 1
 
 export const BuyModalRenderer: FC<Props> = ({
   open,
@@ -98,8 +98,8 @@ export const BuyModalRenderer: FC<Props> = ({
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [quantity, setQuantity] = useState(1)
   const { chain: activeChain } = useNetwork()
-  const etherscanBaseUrl =
-    activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+  const blockExplorerBaseUrl =
+    activeChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
@@ -280,7 +280,6 @@ export const BuyModalRenderer: FC<Props> = ({
         setBuyStep(BuyStep.Checkout)
         setStepData(null)
         setSteps(null)
-        console.log(error)
       })
   }, [
     tokenId,
@@ -319,9 +318,10 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: balance } = useBalance({
     address: address,
     token:
-      currency?.symbol !== 'ETH'
+      currency?.contract !== constants.AddressZero
         ? (currency?.contract as UseBalanceToken)
         : undefined,
+    chainId: CHAIN_ID,
     watch: open,
     formatUnits: currency?.decimals,
   })
@@ -374,7 +374,7 @@ export const BuyModalRenderer: FC<Props> = ({
         isBanned,
         balance: balance?.value,
         address: address,
-        etherscanBaseUrl,
+        blockExplorerBaseUrl,
         steps,
         stepData,
         quantity,

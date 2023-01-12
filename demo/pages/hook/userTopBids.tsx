@@ -30,7 +30,9 @@ const UserTopBids: NextPage = () => {
   useEffect(() => {
     if (!address || address.length === 0) {
       setAddress(userAddress)
-      addressInput.current.value = userAddress
+      if (addressInput?.current?.value) {
+        addressInput.current.value = userAddress as string
+      }
     }
   }, [userAddress])
 
@@ -49,18 +51,18 @@ const UserTopBids: NextPage = () => {
       <ConnectButton />
       <div>
         <label>User: </label>
-        <input type="text" ref={addressInput} />
+        <input type="text" ref={addressInput as any} />
       </div>
       <div>
         <label>Query Params: </label>
-        <textarea ref={queryTextarea} />
+        <textarea ref={queryTextarea as any} />
       </div>
       <button
         onClick={() => {
           setAddress(addressInput.current?.value || '')
           try {
             if (
-              queryTextarea.current.value &&
+              queryTextarea?.current?.value &&
               queryTextarea.current.value.length > 0
             ) {
               setQueryParams(JSON.parse(queryTextarea.current.value))
@@ -77,10 +79,10 @@ const UserTopBids: NextPage = () => {
       </button>
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Bids</h3>
       {bids.map((bid, i) => (
-        <div key={`${bid.id}:${i}`}>
-          <div>Id: {bid.id}</div>
-          <div>Price: {bid.price}</div>
-          <div>Source: {bid.source.name as string}</div>
+        <div key={`${bid?.id}:${i}`}>
+          <div>Id: {bid?.id}</div>
+          <div>Price: {bid?.price}</div>
+          <div>Source: {bid?.source?.name as string}</div>
         </div>
       ))}
       {hasNextPage ? (

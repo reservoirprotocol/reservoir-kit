@@ -2595,17 +2595,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reservoir0x/reservoir-kit-client@workspace:*, @reservoir0x/reservoir-kit-client@workspace:packages/client":
-  version: 0.0.0-use.local
-  resolution: "@reservoir0x/reservoir-kit-client@workspace:packages/client"
-  dependencies:
-    axios: ^0.27.2
-    openapi-typescript: ^5.4.1
-  peerDependencies:
-    ethers: ^5.6.1
-  languageName: unknown
-  linkType: soft
-
 "@reservoir0x/reservoir-kit-ui@workspace:*, @reservoir0x/reservoir-kit-ui@workspace:packages/ui":
   version: 0.0.0-use.local
   resolution: "@reservoir0x/reservoir-kit-ui@workspace:packages/ui"
@@ -2621,7 +2610,7 @@ __metadata:
     "@radix-ui/react-switch": 1.0.0
     "@radix-ui/react-toggle-group": ^1.0.0
     "@react-hookz/web": ^19.2.0
-    "@reservoir0x/reservoir-kit-client": "workspace:*"
+    "@reservoir0x/reservoir-sdk": "workspace:*"
     "@stitches/react": ^1.2.8
     dayjs: ^1.11.4
     flatpickr: ^4.6.13
@@ -2633,6 +2622,17 @@ __metadata:
     react: ^18.0
     react-dom: ^18.0
     wagmi: ^0.9
+  languageName: unknown
+  linkType: soft
+
+"@reservoir0x/reservoir-sdk@workspace:*, @reservoir0x/reservoir-sdk@workspace:packages/sdk":
+  version: 0.0.0-use.local
+  resolution: "@reservoir0x/reservoir-sdk@workspace:packages/sdk"
+  dependencies:
+    axios: ^0.27.2
+    openapi-typescript: ^5.4.1
+  peerDependencies:
+    ethers: ^5.6.1
   languageName: unknown
   linkType: soft
 

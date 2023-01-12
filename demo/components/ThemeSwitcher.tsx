@@ -68,7 +68,9 @@ export default () => {
         e.stopPropagation()
       }}
       onChange={(e) => {
-        setTheme(getThemeFromOption(e.target.value))
+        if (setTheme) {
+          setTheme(getThemeFromOption(e.target.value))
+        }
         setDemoTheme(getDemoThemeFromOption(e.target.value))
         localStorage.removeItem('demo-theme')
       }}

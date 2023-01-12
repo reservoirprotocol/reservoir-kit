@@ -1,7 +1,7 @@
 {
-    "name": "@reservoir0x/reservoir-kit-client",
-    "version": "0.2.4",
-    "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
+    "name": "@reservoir0x/reservoir-sdk",
+    "version": "0.3.2",
+    "description": "An SDK that can be used in any javascript/typescript context to easily interact with Reservoir liquidity APIs",
     "source": "src/index.ts",
     "main": "dist/index.js",
     "module": "dist/index.module.js",
@@ -16,7 +16,7 @@
         "version": "yarn version",
         "version:package": "sh ../../scripts/package-version.sh",
         "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release client package v$PACKAGE_VERSION\"; git push",
-        "syncApi": "npx openapi-typescript https://api-goerli.reservoir.tools/swagger.json --output ./src/types/api.ts",
+        "syncApi": "node ./sync-api.mjs",
         "changelog": "node ../../scripts/generate-changelog.js package=client"
     },
     "repository": {
@@ -27,6 +27,7 @@
     "keywords": [
         "nft",
         "reservoir",
+        "reservoir-sdk",
         "reservoirkit",
         "protocol",
         "sdk"

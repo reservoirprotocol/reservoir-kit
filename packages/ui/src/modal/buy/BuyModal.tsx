@@ -1,6 +1,5 @@
 import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
 import { useCopyToClipboard, useFallbackState } from '../../hooks'
-
 import {
   Flex,
   Box,
@@ -13,8 +12,7 @@ import {
   Loader,
   Select,
 } from '../../primitives'
-
-import { Progress } from './Progress'
+import Progress from '../Progress'
 import Popover from '../../primitives/Popover'
 import { Modal } from '../Modal'
 import {
@@ -26,8 +24,9 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep } from './BuyModalRenderer'
-import { Execute } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
+import { useNetwork } from 'wagmi'
 
 type PurchaseData = {
   tokenId?: string
@@ -80,6 +79,7 @@ export function BuyModal({
     openState
   )
   const { copy: copyToClipboard, copied } = useCopyToClipboard()
+  const { chain: activeChain } = useNetwork()
 
   return (
     <BuyModalRenderer
@@ -111,7 +111,7 @@ export function BuyModal({
         isBanned,
         balance,
         address,
-        etherscanBaseUrl,
+        blockExplorerBaseUrl,
         setQuantity,
         setBuyStep,
         buyToken,
@@ -360,7 +360,7 @@ export function BuyModal({
                   <Progress
                     title={stepData?.currentStep.action || ''}
                     txHash={stepData?.currentStepItem.txHash}
-                    etherscanBaseUrl={`${etherscanBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
+                    blockExplorerBaseUrl={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
                   />
                 )}
                 <Button disabled={true} css={{ m: '$4' }}>
@@ -427,10 +427,11 @@ export function BuyModal({
                     color="primary"
                     weight="medium"
                     css={{ fontSize: 12 }}
-                    href={`${etherscanBaseUrl}/tx/${finalTxHash}`}
+                    href={`${blockExplorerBaseUrl}/tx/${finalTxHash}`}
                     target="_blank"
                   >
-                    View on Etherscan
+                    View on{' '}
+                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
                   </Anchor>
                 </Flex>
                 <Flex

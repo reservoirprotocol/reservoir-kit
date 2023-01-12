@@ -68,6 +68,7 @@ export interface ReservoirKitThemeColors {
   reservoirLogoColor: string
   inputBackground: string
   buttonTextColor: string
+  buttonTextHoverColor: string
   overlayBackground: string
   headerBackground: string
   footerBackground: string
@@ -80,6 +81,8 @@ export type ReservoirKitOverrides = {
   borderRadius?: string
   font?: string
   buttonFont?: string
+  buttonTextColor?: string
+  buttonTextHoverColor?: string
   headlineFont?: string
   primaryColor?: string
   primaryHoverColor?: string

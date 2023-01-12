@@ -1,5 +1,12 @@
 import type { AppProps } from 'next/app'
-import React, { useState, useContext, useEffect } from 'react'
+import React, {
+  useState,
+  useContext,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+  FC,
+} from 'react'
 import { darkTheme } from 'stitches.config'
 import '@rainbow-me/rainbowkit/styles.css'
 import { ThemeProvider } from 'next-themes'
@@ -12,6 +19,7 @@ import '../fonts.css'
 import {
   ReservoirKitProvider,
   darkTheme as defaultTheme,
+  ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const API_BASE =
@@ -23,15 +31,10 @@ const FEE = process.env.NEXT_PUBLIC_MARKETPLACE_FEE
   : undefined
 const FEE_RECIPIENT =
   process.env.NEXT_PUBLIC_MARKETPLACE_FEE_RECIPIENT || undefined
-const REFERRAL_FEE = process.env.NEXT_PUBLIC_REFERRAL_FEE
-  ? +process.env.NEXT_PUBLIC_REFERRAL_FEE
-  : undefined
-const REFERRAL_FEE_RECIPIENT =
-  process.env.NEXT_PUBLIC_REFERRAL_FEE_RECIPIENT || undefined
 const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
-const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || undefined
+const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 
 const envChain = Object.values(allChains).find(
   (chain) => chain.id === +CHAIN_ID
@@ -53,12 +56,15 @@ const wagmiClient = createClient({
   provider,
 })
 
-export const ThemeSwitcherContext = React.createContext({
+export const ThemeSwitcherContext = React.createContext<{
+  theme: ReservoirKitTheme
+  setTheme: Dispatch<SetStateAction<ReservoirKitTheme>> | null
+}>({
   theme: defaultTheme(),
   setTheme: null,
 })
 
-const ThemeSwitcher = ({ children }) => {
+const ThemeSwitcher: FC<any> = ({ children }) => {
   const [theme, setTheme] = useState(defaultTheme())
 
   return (
@@ -68,7 +74,11 @@ const ThemeSwitcher = ({ children }) => {
   )
 }
 
-const AppWrapper = ({ children }) => {
+type AppWrapperProps = {
+  children: ReactNode
+}
+
+const AppWrapper: FC<any> = ({ children }) => {
   const { theme } = useContext(ThemeSwitcherContext)
 
   return (

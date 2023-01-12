@@ -33,9 +33,18 @@ const Index: NextPage = () => {
         <Link href="/modal/acceptBid">
           <a>AcceptBidModal</a>
         </Link>
+        <Link href="/modal/cancelBid">
+          <a>CancelBidModal</a>
+        </Link>
+        <Link href="/modal/cancelListing">
+          <a>CancelListingModal</a>
+        </Link>
       </nav>
       <h2>Hooks</h2>
       <nav style={{ display: 'flex', gap: 15 }}>
+        <Link href="/hook/collections">
+          <a>useCollections</a>
+        </Link>
         <Link href="/hook/bids">
           <a>useBids</a>
         </Link>
@@ -56,6 +65,9 @@ const Index: NextPage = () => {
         </Link>
         <Link href="/hook/userTopBids">
           <a>useUserTopBids</a>
+        </Link>
+        <Link href="/hook/userCollections">
+          <a>useUserCollections</a>
         </Link>
       </nav>
       <h2>UI Components</h2>

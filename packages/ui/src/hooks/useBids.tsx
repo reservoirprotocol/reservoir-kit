@@ -1,9 +1,9 @@
-import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
+import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import useReservoirClient from './useReservoirClient'
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 
-type Bids = paths['/orders/bids/v4']['get']['responses']['200']['schema']
-type BidsQuery = paths['/orders/bids/v4']['get']['parameters']['query']
+type Bids = paths['/orders/bids/v5']['get']['responses']['200']['schema']
+type BidsQuery = paths['/orders/bids/v5']['get']['parameters']['query']
 
 export default function (
   options: BidsQuery,
@@ -19,7 +19,7 @@ export default function (
           return null
         }
 
-        const url = new URL(`${client?.apiBase || ''}/orders/bids/v4`)
+        const url = new URL(`${client?.apiBase || ''}/orders/bids/v5`)
         let query = options || {}
 
         if (

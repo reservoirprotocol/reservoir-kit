@@ -29,7 +29,9 @@ const Tokens: NextPage = () => {
   useEffect(() => {
     if (!address || address.length === 0) {
       setAddress(userAddress)
-      addressInput.current.value = userAddress
+      if (addressInput?.current?.value) {
+        addressInput.current.value = userAddress as string
+      }
     }
   }, [userAddress])
 
@@ -48,18 +50,18 @@ const Tokens: NextPage = () => {
       <ConnectButton />
       <div>
         <label>User: </label>
-        <input type="text" ref={addressInput} />
+        <input type="text" ref={addressInput as any} />
       </div>
       <div>
         <label>Query Params: </label>
-        <textarea ref={queryTextarea} />
+        <textarea ref={queryTextarea as any} />
       </div>
       <button
         onClick={() => {
           setAddress(addressInput.current?.value || '')
           try {
             if (
-              queryTextarea.current.value &&
+              queryTextarea?.current?.value &&
               queryTextarea.current.value.length > 0
             ) {
               setQueryParams(JSON.parse(queryTextarea.current.value))
@@ -76,9 +78,9 @@ const Tokens: NextPage = () => {
       </button>
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tokens</h3>
       {tokens.map((token, i) => (
-        <div key={`${token.token.tokenId}-${i}`}>
-          <div>Id: {token.token.tokenId}</div>
-          <div>Name: {token.token.name}</div>
+        <div key={`${token?.token?.tokenId}-${i}`}>
+          <div>Id: {token?.token?.tokenId}</div>
+          <div>Name: {token?.token?.name}</div>
         </div>
       ))}
       {hasNextPage ? (

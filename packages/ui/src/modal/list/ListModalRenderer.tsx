@@ -19,12 +19,9 @@ import {
 } from '../../hooks'
 import { useAccount, useSigner } from 'wagmi'
 
-import {
-  Execute,
-  ReservoirClientActions,
-} from '@reservoir0x/reservoir-kit-client'
+import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import debounce from '../../lib/debounce'
-import { parseUnits } from 'ethers/lib/utils'
+import { parseUnits } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
@@ -549,7 +546,6 @@ export const ListModalRenderer: FC<Props> = ({
           cause: error,
         })
         setTransactionError(transactionError)
-        console.log(error)
       })
   }, [
     client,

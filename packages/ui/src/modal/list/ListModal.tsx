@@ -740,7 +740,7 @@ export function ListModal({
                             }
                           }}
                           css={{ flex: 1 }}
-                          color="ghost"
+                          color="secondary"
                         >
                           Close
                         </Button>

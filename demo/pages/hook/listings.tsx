@@ -41,10 +41,10 @@ const Listings: NextPage = () => {
       <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Listings</h3>
       {listings.map((listing) => (
-        <div key={listing.id}>
-          <div>Id: {listing.id}</div>
-          <div>Price: {listing.price.amount.native}</div>
-          <div>Source: {listing.source.name as string}</div>
+        <div key={listing?.id}>
+          <div>Id: {listing?.id}</div>
+          <div>Price: {listing?.price?.amount?.native}</div>
+          <div>Source: {listing?.source?.name as string}</div>
         </div>
       ))}
       {hasNextPage ? (
