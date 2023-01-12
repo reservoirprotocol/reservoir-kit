@@ -92,6 +92,7 @@ export function BuyModal({
       normalizeRoyalties={normalizeRoyalties}
     >
       {({
+        loading,
         token,
         collection,
         listing,
@@ -174,9 +175,9 @@ export function BuyModal({
             onOpenChange={(open) => {
               setOpen(open)
             }}
-            loading={!token}
+            loading={loading}
           >
-            {buyStep === BuyStep.Unavailable && token && (
+            {buyStep === BuyStep.Unavailable && !loading && (
               <Flex direction="column">
                 <TokenLineItem
                   tokenDetails={token}
@@ -199,7 +200,7 @@ export function BuyModal({
               </Flex>
             )}
 
-            {buyStep === BuyStep.Checkout && token && (
+            {buyStep === BuyStep.Checkout && !loading && (
               <Flex direction="column">
                 {transactionError && (
                   <Flex
