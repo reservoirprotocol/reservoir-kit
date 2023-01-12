@@ -41,6 +41,7 @@ type OrderSource = NonNullable<
 >['source']
 
 type ChildrenProps = {
+  loading: boolean
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   source?: OrderSource
@@ -95,7 +96,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
-  const { data: tokens } = useTokens(
+  const { data: tokens, mutate: mutateTokens } = useTokens(
     open && {
       tokens: [`${contract}:${tokenId}`],
       includeTopBid: true,
@@ -105,14 +106,18 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       revalidateFirstPage: true,
     }
   )
-  const { data: collections } = useCollections(
+  const { data: collections, mutate: mutateCollection } = useCollections(
     open && {
       id: collectionId,
       normalizeRoyalties,
     }
   )
 
-  const { data: bids, isValidating: isFetchingBidData } = useBids(
+  const {
+    data: bids,
+    isValidating: isFetchingBidData,
+    mutate: mutateBids,
+  } = useBids(
     {
       ids: bidId,
       status: 'active',
@@ -275,11 +280,33 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       })
       .catch((e: any) => {
         const error = e as Error
-        setTransactionError(error)
+        const errorType = (error as any)?.type
+        let message = 'Oops, something went wrong. Please try again.'
+        if (errorType && errorType === 'price mismatch') {
+          message = error.message
+        }
+        const transactionError = new Error(message, {
+          cause: error,
+        })
+        setTransactionError(transactionError)
         setAcceptBidStep(AcceptBidStep.Checkout)
         setStepData(null)
+        if (bidId) {
+          mutateBids()
+        }
+        mutateCollection()
+        mutateTokens()
       })
-  }, [tokenId, collectionId, client, signer, totalPrice])
+  }, [
+    tokenId,
+    collectionId,
+    client,
+    signer,
+    totalPrice,
+    mutateTokens,
+    mutateCollection,
+    mutateBids,
+  ])
 
   useEffect(() => {
     if (bidId) {
@@ -332,6 +359,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
+        loading: bidId ? isFetchingBidData || !token : !token,
         token,
         collection,
         source,

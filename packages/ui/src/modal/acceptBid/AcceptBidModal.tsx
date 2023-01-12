@@ -84,6 +84,7 @@ export function AcceptBidModal({
       normalizeRoyalties={normalizeRoyalties}
     >
       {({
+        loading,
         token,
         collection,
         source,
@@ -164,9 +165,9 @@ export function AcceptBidModal({
             title={title}
             open={open}
             onOpenChange={(open) => setOpen(open)}
-            loading={!token}
+            loading={loading}
           >
-            {acceptBidStep === AcceptBidStep.Unavailable && token && (
+            {acceptBidStep === AcceptBidStep.Unavailable && !loading && (
               <Flex direction="column">
                 <TokenLineItem
                   tokenDetails={token}
@@ -186,7 +187,7 @@ export function AcceptBidModal({
               </Flex>
             )}
 
-            {acceptBidStep === AcceptBidStep.Checkout && token && (
+            {acceptBidStep === AcceptBidStep.Checkout && !loading && (
               <Flex direction="column">
                 {transactionError && (
                   <Flex
@@ -204,7 +205,7 @@ export function AcceptBidModal({
                       height={16}
                     />
                     <Text style="body2" color="errorLight">
-                      Oops, something went wrong. Please try again.
+                      {transactionError.message}
                     </Text>
                   </Flex>
                 )}
