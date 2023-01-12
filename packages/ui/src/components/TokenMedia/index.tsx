@@ -1,13 +1,15 @@
 import React, {
   CSSProperties,
   FC,
-  HTMLAttributes,
   ReactElement,
   SyntheticEvent,
   useContext,
   useState,
   useRef,
   LegacyRef,
+  VideoHTMLAttributes,
+  AudioHTMLAttributes,
+  IframeHTMLAttributes,
 } from 'react'
 import { useTokens } from '../../hooks'
 import { useModelViewer } from '../../hooks'
@@ -61,9 +63,9 @@ type Props = {
   style?: CSSProperties
   className?: string
   modelViewerOptions?: any
-  videoOptions?: HTMLAttributes<HTMLVideoElement>
-  audioOptions?: HTMLAttributes<HTMLAudioElement>
-  iframeOptions?: HTMLAttributes<HTMLIFrameElement>
+  videoOptions?: VideoHTMLAttributes<HTMLVideoElement>
+  audioOptions?: AudioHTMLAttributes<HTMLAudioElement>
+  iframeOptions?: IframeHTMLAttributes<HTMLIFrameElement>
   fallback?: (mediaType: MediaType | null) => ReactElement | null
   onError?: (e: Event) => void
   onRefreshToken?: () => void
