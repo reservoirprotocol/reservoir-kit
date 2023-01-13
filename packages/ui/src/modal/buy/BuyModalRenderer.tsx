@@ -132,6 +132,7 @@ export const BuyModalRenderer: FC<Props> = ({
       token: `${contract}:${tokenId}`,
       ids: orderId ? orderId : token?.market?.floorAsk?.id,
       normalizeRoyalties,
+      status: 'active',
     },
     {
       revalidateFirstPage: true,
@@ -141,7 +142,10 @@ export const BuyModalRenderer: FC<Props> = ({
       : false
   )
 
-  const listing = listings && listings[0] ? listings[0] : undefined
+  const listing =
+    listings && listings[0] && listings[0].status === 'active'
+      ? listings[0]
+      : undefined
   const currency = listing?.price?.currency
 
   const usdPrice = useCoinConversion(
