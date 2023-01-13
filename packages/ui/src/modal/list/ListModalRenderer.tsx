@@ -1,11 +1,4 @@
-import React, {
-  FC,
-  useState,
-  useMemo,
-  ReactNode,
-  useCallback,
-  useEffect,
-} from 'react'
+import React, { FC, useState, ReactNode, useCallback, useEffect } from 'react'
 import {
   useTokens,
   useCoinConversion,
@@ -20,7 +13,6 @@ import {
 import { useAccount, useSigner } from 'wagmi'
 
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
-import debounce from '../../lib/debounce'
 import { parseUnits } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
@@ -64,7 +56,6 @@ type ChildrenProps = {
   unapprovedMarketplaces: Marketplace[]
   isFetchingUnapprovedMarketplaces: boolean
   localMarketplace: Marketplace | null
-  syncProfit: boolean
   listingData: ListingData[]
   transactionError?: Error | null
   stepData: StepData | null
@@ -74,7 +65,6 @@ type ChildrenProps = {
   setListStep: React.Dispatch<React.SetStateAction<ListStep>>
   toggleMarketplace: (marketplace: Marketplace) => void
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
-  setSyncProfit: React.Dispatch<React.SetStateAction<boolean>>
   setMarketPrice: (price: number, market: Marketplace) => void
   setCurrency: (currency: Currency) => void
   setQuantity: React.Dispatch<React.SetStateAction<number>>
@@ -115,26 +105,6 @@ const isCurrencyAllowed = (
   return false
 }
 
-const startingPrice = (
-  currency: Currency,
-  token: ReturnType<typeof useTokens>['data'][0],
-  collection?: NonNullable<ReturnType<typeof useCollections>['data']>['0']
-) => {
-  let startingPrice: number | string = ''
-  if (currency.contract === constants.AddressZero) {
-    startingPrice =
-      Math.max(
-        ...(token?.token?.attributes?.map((attr: any) =>
-          Number(attr?.floorAskPrice || 0)
-        ) || []),
-        0
-      ) ||
-      collection?.floorAsk?.price?.amount?.native ||
-      0
-  }
-  return startingPrice
-}
-
 export const ListModalRenderer: FC<Props> = ({
   open,
   tokenId,
@@ -151,7 +121,6 @@ export const ListModalRenderer: FC<Props> = ({
   const [allMarketplaces] = useMarketplaces(true)
   const [marketplaces, setMarketplaces] = useMarketplaces(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
-  const [syncProfit, setSyncProfit] = useState(true)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<StepData | null>(null)
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
@@ -244,29 +213,6 @@ export const ListModalRenderer: FC<Props> = ({
     setMarketplaces(updatedMarketplaces)
   }
 
-  const syncMarketPrices = (
-    updatingMarket: Marketplace,
-    marketplaces: Marketplace[]
-  ) => {
-    let syncedMarketplaces = marketplaces.slice()
-    if (syncProfit) {
-      let profit =
-        (1 - (updatingMarket.fee?.percent || 0) / 100) *
-        Number(updatingMarket.price)
-
-      syncedMarketplaces = syncedMarketplaces.map((marketplace) => {
-        let truePrice = profit / (1 - (marketplace?.fee?.percent || 0) / 100)
-
-        return {
-          ...marketplace,
-          price: Math.round(truePrice * 10000) / 10000,
-          truePrice: truePrice,
-        }
-      })
-    }
-    return syncedMarketplaces
-  }
-
   const setMarketPrice = (price: number | string, market: Marketplace) => {
     let updatedMarketplaces = marketplaces.map((marketplace) => {
       if (marketplace.name == market.name) {
@@ -279,29 +225,7 @@ export const ListModalRenderer: FC<Props> = ({
       return marketplace
     })
     setMarketplaces(updatedMarketplaces)
-    if (price !== '') {
-      const updatedMarketplace = updatedMarketplaces.find(
-        (marketplace) => market.name == marketplace.name
-      )
-      debouncedUpdateMarkets(updatedMarketplace, updatedMarketplaces)
-    }
   }
-
-  let debouncedUpdateMarkets = useMemo(
-    () =>
-      debounce(
-        (
-          updatedMarketplace: Marketplace,
-          updatedMarketplaces: Marketplace[]
-        ) => {
-          setMarketplaces(
-            syncMarketPrices(updatedMarketplace, updatedMarketplaces)
-          )
-        },
-        800
-      ),
-    [syncProfit]
-  )
 
   useEffect(() => {
     if (
@@ -311,7 +235,6 @@ export const ListModalRenderer: FC<Props> = ({
       !loadedInitalPrice &&
       allMarketplaces.length > 0
     ) {
-      const price = startingPrice(currency, token, collection)
       let updatedMarketplaces = allMarketplaces.map(
         (marketplace): Marketplace => {
           const listingEnabled = isCurrencyAllowed(
@@ -321,33 +244,20 @@ export const ListModalRenderer: FC<Props> = ({
           )
           return {
             ...marketplace,
-            price: price,
-            truePrice: price,
+            price: '',
+            truePrice: '',
             listingEnabled,
             isSelected: listingEnabled ? marketplace.isSelected : false,
           }
         }
       )
-      if (price !== '') {
-        updatedMarketplaces = syncMarketPrices(
-          updatedMarketplaces[0],
-          updatedMarketplaces
-        )
-      }
       setMarketplaces(updatedMarketplaces)
       setLoadedInitalPrice(true)
     }
   }, [token, collection, loadedInitalPrice, open, marketplaces.length])
 
   useEffect(() => {
-    if (open && syncProfit && loadedInitalPrice && localMarketplace) {
-      setMarketplaces(syncMarketPrices(localMarketplace, marketplaces))
-    }
-  }, [open, syncProfit])
-
-  useEffect(() => {
     if (open && loadedInitalPrice) {
-      const price = startingPrice(currency, token, collection)
       let updatedMarketplaces = allMarketplaces.map(
         (marketplace): Marketplace => {
           const listingEnabled = isCurrencyAllowed(
@@ -357,19 +267,11 @@ export const ListModalRenderer: FC<Props> = ({
           )
           return {
             ...marketplace,
-            price: price,
-            truePrice: price,
             listingEnabled,
             isSelected: listingEnabled ? marketplace.isSelected : false,
           }
         }
       )
-      if (price !== '') {
-        updatedMarketplaces = syncMarketPrices(
-          updatedMarketplaces[0],
-          updatedMarketplaces
-        )
-      }
       setMarketplaces(updatedMarketplaces)
     }
   }, [open, currency, paymentTokens])
@@ -403,7 +305,6 @@ export const ListModalRenderer: FC<Props> = ({
       setLoadedInitalPrice(false)
       setStepData(null)
       setExpirationOption(expirationOptions[5])
-      setSyncProfit(true)
       setQuantity(1)
     }
     setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
@@ -575,7 +476,6 @@ export const ListModalRenderer: FC<Props> = ({
         unapprovedMarketplaces,
         isFetchingUnapprovedMarketplaces,
         localMarketplace,
-        syncProfit,
         listingData,
         transactionError,
         stepData,
@@ -586,7 +486,6 @@ export const ListModalRenderer: FC<Props> = ({
         toggleMarketplace,
         setMarketPrice,
         setCurrency,
-        setSyncProfit,
         setExpirationOption,
         setQuantity,
         listToken,

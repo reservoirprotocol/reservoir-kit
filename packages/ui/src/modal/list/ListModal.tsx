@@ -12,8 +12,6 @@ import {
   Box,
   Text,
   Button,
-  ToggleGroup,
-  ToggleGroupButton,
   Loader,
   Select,
   ErrorWell,
@@ -123,7 +121,6 @@ export function ListModal({
         marketplaces,
         unapprovedMarketplaces,
         localMarketplace,
-        syncProfit,
         listingData,
         transactionError,
         stepData,
@@ -135,7 +132,6 @@ export function ListModal({
         setMarketPrice,
         setCurrency,
         toggleMarketplace,
-        setSyncProfit,
         setExpirationOption,
         setQuantity,
       }) => {
@@ -436,24 +432,6 @@ export function ListModal({
                         Set Your Price
                       </Text>
                     </Flex>
-                    {selectedMarketplaces.length > 1 && (
-                      <Flex align="center" css={{ mb: '$4' }} justify="center">
-                        <ToggleGroup
-                          type="single"
-                          value={syncProfit ? 'sync' : 'custom'}
-                          onValueChange={(value) =>
-                            setSyncProfit(value === 'sync')
-                          }
-                        >
-                          <ToggleGroupButton value="sync">
-                            <Text style="subtitle2">Same Profit</Text>
-                          </ToggleGroupButton>
-                          <ToggleGroupButton value="custom">
-                            <Text style="subtitle2">Custom</Text>
-                          </ToggleGroupButton>
-                        </ToggleGroup>
-                      </Flex>
-                    )}
                     {quantityAvailable > 1 && quantitySelectionAvailable && (
                       <>
                         <Box css={{ mb: '$2' }}>
@@ -577,8 +555,9 @@ export function ListModal({
                     </Box>
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
-                    {marketplaces.some(
-                      (marketplace) => marketplace.price === ''
+                    {selectedMarketplaces.some(
+                      (marketplace) =>
+                        marketplace.price === '' || marketplace.price === 0
                     ) ? (
                       <Button disabled={true} css={{ width: '100%' }}>
                         Set your price
