@@ -180,9 +180,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
     let options: Parameters<
       ReservoirClientActions['buyToken']
-    >['0']['options'] = {
-      currency: currency?.contract as any,
-    }
+    >['0']['options'] = {}
 
     if (referrer && referrerFeeBps) {
       const price = toFixed(totalPrice, currency?.decimals || 18)
