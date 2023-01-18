@@ -52,7 +52,7 @@ function titleForStep(step: AcceptBidStep) {
     case AcceptBidStep.Unavailable:
       return 'Selected item is no longer available'
     default:
-      return 'Accept Bid'
+      return 'Accept Offer'
   }
 }
 
