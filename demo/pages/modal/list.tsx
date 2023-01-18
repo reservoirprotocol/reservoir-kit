@@ -13,6 +13,21 @@ const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '39'
 const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
+const chainId: number = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
+
+let mainnetSymbol = 'ETH'
+
+switch (chainId) {
+  case 1:
+  case 5: {
+    mainnetSymbol = 'ETH'
+    break
+  }
+  case 137: {
+    mainnetSymbol = 'MATIC'
+    break
+  }
+}
 
 const Index: NextPage = () => {
   const router = useRouter()
@@ -21,7 +36,10 @@ const Index: NextPage = () => {
   const [currencies, setCurrencies] = useState<
     { contract: string; symbol: string }[] | undefined
   >([
-    { contract: '0x0000000000000000000000000000000000000000', symbol: 'ETH' },
+    {
+      contract: '0x0000000000000000000000000000000000000000',
+      symbol: mainnetSymbol,
+    },
     { contract: '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557', symbol: 'USDC' },
   ])
   const deeplinkOpenState = useState(true)
