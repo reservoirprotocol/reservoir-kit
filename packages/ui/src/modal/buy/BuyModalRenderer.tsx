@@ -34,6 +34,7 @@ export type StepData = {
 type Token = NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
 
 type ChildrenProps = {
+  loading: boolean
   token?: Token
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listing?: NonNullable<ReturnType<typeof useListings>['data']>[0]
@@ -103,7 +104,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
-  const { data: tokens } = useTokens(
+  const { data: tokens, mutate: mutateTokens } = useTokens(
     open && {
       tokens: [`${contract}:${tokenId}`],
       normalizeRoyalties,
@@ -112,7 +113,7 @@ export const BuyModalRenderer: FC<Props> = ({
       revalidateFirstPage: true,
     }
   )
-  const { data: collections } = useCollections(
+  const { data: collections, mutate: mutateCollection } = useCollections(
     open && {
       id: collectionId,
       normalizeRoyalties,
@@ -122,11 +123,16 @@ export const BuyModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
-  const { data: listings } = useListings(
+  const {
+    data: listings,
+    mutate: mutateListings,
+    isValidating: isValidatingListing,
+  } = useListings(
     {
       token: `${contract}:${tokenId}`,
       ids: orderId ? orderId : token?.market?.floorAsk?.id,
       normalizeRoyalties,
+      status: 'active',
     },
     {
       revalidateFirstPage: true,
@@ -136,7 +142,10 @@ export const BuyModalRenderer: FC<Props> = ({
       : false
   )
 
-  const listing = listings && listings[0] ? listings[0] : undefined
+  const listing =
+    listings && listings[0] && listings[0].status === 'active'
+      ? listings[0]
+      : undefined
   const currency = listing?.price?.currency
 
   const usdPrice = useCoinConversion(
@@ -262,7 +271,7 @@ export const BuyModalRenderer: FC<Props> = ({
       })
       .catch((e: any) => {
         const error = e as Error
-        if (error && error?.message.includes('ETH balance')) {
+        if (error && error?.message && error?.message.includes('ETH balance')) {
           setHasEnoughCurrency(false)
         } else {
           const errorType = (error as any)?.type
@@ -274,6 +283,11 @@ export const BuyModalRenderer: FC<Props> = ({
             cause: error,
           })
           setTransactionError(transactionError)
+          if (orderId) {
+            mutateListings()
+          }
+          mutateCollection()
+          mutateTokens()
         }
         setBuyStep(BuyStep.Checkout)
         setStepData(null)
@@ -291,6 +305,9 @@ export const BuyModalRenderer: FC<Props> = ({
     signer,
     currency,
     totalPrice,
+    mutateListings,
+    mutateTokens,
+    mutateCollection,
   ])
 
   useEffect(() => {
@@ -310,8 +327,19 @@ export const BuyModalRenderer: FC<Props> = ({
         setBuyStep(BuyStep.Unavailable)
         setTotalPrice(0)
       }
+    } else if (!listing && !isValidatingListing && token) {
+      setBuyStep(BuyStep.Unavailable)
+      setTotalPrice(0)
     }
-  }, [listing, referrerFeeBps, referrer, client, quantity])
+  }, [
+    listing,
+    isValidatingListing,
+    referrerFeeBps,
+    referrer,
+    client,
+    quantity,
+    token,
+  ])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -357,6 +385,7 @@ export const BuyModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
+        loading: (!listing && isValidatingListing) || !token,
         token,
         collection,
         listing,
