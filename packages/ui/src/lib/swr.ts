@@ -18,10 +18,17 @@ export const defaultHeaders = (
   return headers
 }
 
-export const defaultFetcher = (params: string[]) => {
-  const resource = params[0]
-  const apiKey = params[1]
-  const clientVersion = params[2]
+export const defaultFetcher = (params: string[] | string) => {
+  let resource
+  let apiKey
+  let clientVersion
+  if (Array.isArray(params)) {
+    resource = params[0]
+    apiKey = params[1]
+    clientVersion = params[2]
+  } else {
+    resource = params
+  }
   const headers = defaultHeaders(apiKey, clientVersion)
   return fetch(resource, {
     headers,
