@@ -1,4 +1,26 @@
 
+## [0.8.7](https://github.com/reservoirprotocol/reservoir-kit/commit/6daa7a0babde75c34f53b26c9f52988194a118ea) (2023-01-20)
+
+* Merge pull request #132 from reservoirprotocol/pedro/grwth-1668-improvement-for-listing-1155-in-quantity [e3c135d](https://github.com/reservoirprotocol/reservoir-kit/commit/e3c135d6cd15f69e346435d5ceb591a115276c7e)
+* fix: prevent 0 pricing when listing [ba92d2f](https://github.com/reservoirprotocol/reservoir-kit/commit/ba92d2fbe258a8a846908a2226a796f9906f6e1e)
+* Merge pull request #133 from reservoirprotocol/pedro/grwth-1679-update-single-token-purchase-price [1faf587](https://github.com/reservoirprotocol/reservoir-kit/commit/1faf58741fc9853149a5e33cd12617c96436d9d8)
+* Merge pull request #136 from reservoirprotocol/pedro/grwth-1678-acceptbid-modal-price-change-update [0c71239](https://github.com/reservoirprotocol/reservoir-kit/commit/0c712394a59bd2e4113bd1143eae41ef9210b11b)
+* Merge pull request #135 from reservoirprotocol/pedro/grwth-1743-bidmodal-displays-collection-floor-ask [cfbd8a3](https://github.com/reservoirprotocol/reservoir-kit/commit/cfbd8a39fa786172f64338a3caa47a6e085e0d8a)
+* Merge pull request #137 from reservoirprotocol/pedro/grwth-1519-client-passes-currency-when-filling [b624149](https://github.com/reservoirprotocol/reservoir-kit/commit/b6241494b00ebf0c0eda662929e9d6f93955c376)
+* Update AcceptBidModal title [dcf3050](https://github.com/reservoirprotocol/reservoir-kit/commit/dcf30500b7c3580ad0e9f0dae8aee5d7171b277b)
+* Remove currency from params when buying a listing, handled automatically on the backend [17804be](https://github.com/reservoirprotocol/reservoir-kit/commit/17804be10337eb604b124e678cb71e6d11d42502)
+* BuyModal: ignore listings that are not active [f5bbb78](https://github.com/reservoirprotocol/reservoir-kit/commit/f5bbb7859c27d9ecf5c5e615e25e6a3d1bec963d)
+* ListModal remove sync logic and toggle, remove prepopulated price, improve ux when price is 0 [410ba82](https://github.com/reservoirprotocol/reservoir-kit/commit/410ba8230dd7f03ee93d536712a1dd51096349c2)
+## [0.8.6](https://github.com/reservoirprotocol/reservoir-kit/commit/9ddaf5de3534753a4b1f97b6c77d549bec14d0af) (2023-01-12)
+
+* Improve accept bid modal loading ux and improve price mismatch ux [93f5a84](https://github.com/reservoirprotocol/reservoir-kit/commit/93f5a84458541c318707f7842e713f3c5fc0b8cb)
+* Fix floor ask price for trait selector in the BidModal [8fe3c64](https://github.com/reservoirprotocol/reservoir-kit/commit/8fe3c64eb83b6d0334bb8c99c101b30b4c9d86c7)
+* Updated token media prop types [65a54e0](https://github.com/reservoirprotocol/reservoir-kit/commit/65a54e0c2748bcb1db271be2282198a168d04455)
+* Improve loading ux and refresh data if an error occurs whenn trying to buy [7cd3749](https://github.com/reservoirprotocol/reservoir-kit/commit/7cd3749e5ab155b443232edb5bfdab0385322fb2)
+* Improve 1155 listing ux, unblock opensea 1155 quantity listing [0d22cac](https://github.com/reservoirprotocol/reservoir-kit/commit/0d22cac16467e4f91692aea4380fc1e7e4092ae1)
+* Merge pull request #129 from reservoirprotocol/pedro/grwth-1294-useownerlistings-hook-firing-when-not [7170a45](https://github.com/reservoirprotocol/reservoir-kit/commit/7170a45c94a4d68c6435a89ba25b5133d92bd70a)
+* Add padding to TokenMedia and aspect ratio [07efc9c](https://github.com/reservoirprotocol/reservoir-kit/commit/07efc9cf1fed40adfb0827c01403814cc82a370a)
+* Prevent useOwnerListings hook from firing if user is not connected [6b2e7f3](https://github.com/reservoirprotocol/reservoir-kit/commit/6b2e7f34e3e9282f83c405b43531186aeab5a55d)
 ## [0.8.5](https://github.com/reservoirprotocol/reservoir-kit/commit/8bbe6e912eb7f4e08cf40518dff264e44ecd606d) (2023-01-09)
 
 * Merge pull request #128 from reservoirprotocol/feature/use-user-collections-hook [273d7fa](https://github.com/reservoirprotocol/reservoir-kit/commit/273d7fafdf7ee9c4536ae70f1602880f94ffb584)
