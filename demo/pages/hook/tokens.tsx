@@ -9,6 +9,9 @@ const Tokens: NextPage = () => {
     data: tokens,
     fetchNextPage,
     hasNextPage,
+    isFetchingInitialData,
+    isFetchingPage,
+    resetCache,
   } = useTokens({
     collection: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
   })
@@ -35,6 +38,16 @@ const Tokens: NextPage = () => {
     >
       <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tokens</h3>
+      Fetching Initial: {isFetchingInitialData ? 'Fetching' : '...'}
+      <br />
+      Fetching: {isFetchingPage ? 'Fetching' : '...'}
+      <button
+        onClick={() => {
+          resetCache()
+        }}
+      >
+        Restart page
+      </button>
       {tokens.map((token) => (
         <div key={token?.token?.tokenId}>
           <div>Id: {token?.token?.tokenId}</div>
