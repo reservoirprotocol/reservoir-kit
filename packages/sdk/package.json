@@ -17,7 +17,7 @@
         "version:package": "sh ../../scripts/package-version.sh",
         "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release client package v$PACKAGE_VERSION\"; git push",
         "syncApi": "node ./sync-api.mjs",
-        "changelog": "node ../../scripts/generate-changelog.js package=client"
+        "changelog": "node ../../scripts/generate-changelog.js package=sdk"
     },
     "repository": {
         "type": "git",
