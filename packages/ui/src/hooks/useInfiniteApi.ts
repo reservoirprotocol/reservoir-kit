@@ -7,7 +7,8 @@ type SWRInfiniteParams = Parameters<typeof useSWRInfinite>
 
 export default function <ResponseType>(
   getKey: SWRInfiniteParams['0'],
-  options: SWRInfiniteConfiguration
+  options: SWRInfiniteConfiguration,
+  limit?: number
 ) {
   const { mutate: globalMutate } = useSWRConfig()
   const [keys, setKeys] = useState<string[]>([])
@@ -26,7 +27,13 @@ export default function <ResponseType>(
 
   const { size, error, setSize, mutate } = response
   const data = response.data as any
-  const hasNextPage = size === 0 || Boolean(data?.[size - 1]?.continuation)
+  let hasNextPage: boolean
+  if (limit !== undefined) {
+    hasNextPage =
+      size === 0 || Boolean(data?.[size - 1]?.collections?.length === limit)
+  } else {
+    hasNextPage = size === 0 || Boolean(data?.[size - 1]?.continuation)
+  }
   const isFetchingInitialData = !data && !error && size > 0
   const isFetchingPage =
     size > 0 &&

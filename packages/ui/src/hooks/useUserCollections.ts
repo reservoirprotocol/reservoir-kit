@@ -44,18 +44,14 @@ export default function (
       revalidateOnMount: true,
       revalidateFirstPage: false,
       ...swrOptions,
-    }
+    },
+    options?.limit || defaultLimit
   )
 
   const collections = response.data?.flatMap((page) => page.collections) ?? []
-  const hasNextPage = Boolean(
-    response.data?.[response.size - 1]?.collections?.length ===
-      (options?.limit || defaultLimit)
-  )
 
   return {
     ...response,
     data: collections,
-    hasNextPage,
   }
 }
