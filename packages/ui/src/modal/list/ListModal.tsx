@@ -12,8 +12,6 @@ import {
   Box,
   Text,
   Button,
-  ToggleGroup,
-  ToggleGroupButton,
   Loader,
   Select,
   ErrorWell,
@@ -123,7 +121,6 @@ export function ListModal({
         marketplaces,
         unapprovedMarketplaces,
         localMarketplace,
-        syncProfit,
         listingData,
         transactionError,
         stepData,
@@ -135,7 +132,6 @@ export function ListModal({
         setMarketPrice,
         setCurrency,
         toggleMarketplace,
-        setSyncProfit,
         setExpirationOption,
         setQuantity,
       }) => {
@@ -231,8 +227,10 @@ export function ListModal({
         const selectedMarketplaces = availableMarketplaces.filter(
           (marketplace) => marketplace.isSelected
         )
-        const onlyNativeSelected = selectedMarketplaces.every(
-          (marketplace) => marketplace.orderbook === 'reservoir'
+        const quantitySelectionAvailable = selectedMarketplaces.every(
+          (marketplace) =>
+            marketplace.orderbook === 'reservoir' ||
+            marketplace.orderbook === 'opensea'
         )
 
         return (
@@ -434,31 +432,49 @@ export function ListModal({
                         Set Your Price
                       </Text>
                     </Flex>
-                    {selectedMarketplaces.length > 1 && (
-                      <Flex align="center" css={{ mb: '$4' }} justify="center">
-                        <ToggleGroup
-                          type="single"
-                          value={syncProfit ? 'sync' : 'custom'}
-                          onValueChange={(value) =>
-                            setSyncProfit(value === 'sync')
-                          }
+                    {quantityAvailable > 1 && quantitySelectionAvailable && (
+                      <>
+                        <Box css={{ mb: '$2' }}>
+                          <Text
+                            as="div"
+                            css={{ mb: '$2' }}
+                            style="subtitle2"
+                            color="subtle"
+                          >
+                            Quantity
+                          </Text>
+                          <Select
+                            value={`${quantity}`}
+                            onValueChange={(value: string) => {
+                              setQuantity(Number(value))
+                            }}
+                          >
+                            {[...Array(quantityAvailable)].map((_a, i) => (
+                              <Select.Item key={i} value={`${i + 1}`}>
+                                <Select.ItemText>{i + 1}</Select.ItemText>
+                              </Select.Item>
+                            ))}
+                          </Select>
+                        </Box>
+                        <Text
+                          style="body2"
+                          css={{ mb: 24, display: 'inline-block' }}
                         >
-                          <ToggleGroupButton value="sync">
-                            <Text style="subtitle2">Same Profit</Text>
-                          </ToggleGroupButton>
-                          <ToggleGroupButton value="custom">
-                            <Text style="subtitle2">Custom</Text>
-                          </ToggleGroupButton>
-                        </ToggleGroup>
-                      </Flex>
+                          {quantityAvailable} items available
+                        </Text>
+                      </>
                     )}
                     <Flex css={{ mb: '$2' }} justify="between">
                       <Text style="subtitle2" color="subtle" as="p">
-                        List Price
+                        {quantityAvailable > 1 && quantitySelectionAvailable
+                          ? 'Unit Price'
+                          : 'Price'}
                       </Text>
                       <Flex css={{ alignItems: 'center', gap: 8 }}>
                         <Text style="subtitle2" color="subtle" as="p">
-                          Profit
+                          {quantityAvailable > 1 && quantitySelectionAvailable
+                            ? 'Total Profit'
+                            : 'Profit'}
                         </Text>
                         <InfoTooltip
                           side="left"
@@ -474,6 +490,7 @@ export function ListModal({
                           marketplace={marketplace}
                           currency={currency}
                           usdPrice={usdPrice}
+                          quantity={quantity}
                           onChange={(e) => {
                             setMarketPrice(e.target.value, marketplace)
                           }}
@@ -509,63 +526,38 @@ export function ListModal({
                           )}
                       </Box>
                     ))}
-                    <Flex css={{ mb: '$3', mt: '$4', gap: '$2' }}>
-                      {quantityAvailable > 1 && onlyNativeSelected && (
-                        <Box css={{ flexGrow: 1 }}>
-                          <Text
-                            as="div"
-                            css={{ mb: '$2' }}
-                            style="subtitle2"
-                            color="subtle"
-                          >
-                            Quantity
-                          </Text>
-                          <Select
-                            value={`${quantity}`}
-                            onValueChange={(value: string) => {
-                              setQuantity(Number(value))
-                            }}
-                          >
-                            {[...Array(quantityAvailable)].map((_a, i) => (
-                              <Select.Item value={`${i + 1}`}>
-                                <Select.ItemText>{i + 1}</Select.ItemText>
-                              </Select.Item>
-                            ))}
-                          </Select>
-                        </Box>
-                      )}
-                      <Box css={{ flexGrow: 1 }}>
-                        <Text
-                          as="div"
-                          css={{ mb: '$2' }}
-                          style="subtitle2"
-                          color="subtle"
-                        >
-                          Expiration Date
-                        </Text>
-                        <Select
-                          value={expirationOption?.text || ''}
-                          onValueChange={(value: string) => {
-                            const option = expirationOptions.find(
-                              (option) => option.value == value
-                            )
-                            if (option) {
-                              setExpirationOption(option)
-                            }
-                          }}
-                        >
-                          {expirationOptions.map((option) => (
-                            <Select.Item key={option.text} value={option.value}>
-                              <Select.ItemText>{option.text}</Select.ItemText>
-                            </Select.Item>
-                          ))}
-                        </Select>
-                      </Box>
-                    </Flex>
+                    <Box css={{ mb: '$3', mt: '$4' }}>
+                      <Text
+                        as="div"
+                        css={{ mb: '$2' }}
+                        style="subtitle2"
+                        color="subtle"
+                      >
+                        Expiration Date
+                      </Text>
+                      <Select
+                        value={expirationOption?.text || ''}
+                        onValueChange={(value: string) => {
+                          const option = expirationOptions.find(
+                            (option) => option.value == value
+                          )
+                          if (option) {
+                            setExpirationOption(option)
+                          }
+                        }}
+                      >
+                        {expirationOptions.map((option) => (
+                          <Select.Item key={option.text} value={option.value}>
+                            <Select.ItemText>{option.text}</Select.ItemText>
+                          </Select.Item>
+                        ))}
+                      </Select>
+                    </Box>
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
-                    {marketplaces.some(
-                      (marketplace) => marketplace.price === ''
+                    {selectedMarketplaces.some(
+                      (marketplace) =>
+                        marketplace.price === '' || marketplace.price == 0
                     ) ? (
                       <Button disabled={true} css={{ width: '100%' }}>
                         Set your price
