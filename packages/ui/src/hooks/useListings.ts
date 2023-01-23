@@ -1,6 +1,7 @@
 import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import useReservoirClient from './useReservoirClient'
-import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
+import { SWRInfiniteConfiguration } from 'swr/infinite'
+import useInfiniteApi from './useInfiniteApi'
 
 type Asks = paths['/orders/asks/v4']['get']['responses']['200']['schema']
 type AsksQuery = paths['/orders/asks/v4']['get']['parameters']['query']
@@ -12,62 +13,42 @@ export default function (
 ) {
   const client = useReservoirClient()
 
-  const { data, mutate, error, isValidating, size, setSize } =
-    useSWRInfinite<Asks>(
-      (pageIndex, previousPageData) => {
-        if (!enabled) {
-          return null
-        }
-
-        const url = new URL(`${client?.apiBase || ''}/orders/asks/v4`)
-        let query: AsksQuery = options || {}
-
-        if (
-          query.normalizeRoyalties === undefined &&
-          client?.normalizeRoyalties !== undefined
-        ) {
-          query.normalizeRoyalties = client.normalizeRoyalties
-        }
-
-        if (previousPageData && !previousPageData.continuation) {
-          return null
-        } else if (previousPageData && pageIndex > 0) {
-          query.continuation = previousPageData.continuation
-        }
-
-        setParams(url, query)
-        return [url.href, client?.apiKey, client?.version]
-      },
-      null,
-      {
-        revalidateOnMount: true,
-        revalidateFirstPage: false,
-        ...swrOptions,
+  const response = useInfiniteApi<Asks>(
+    (pageIndex, previousPageData) => {
+      if (!enabled) {
+        return null
       }
-    )
 
-  const listings = data?.flatMap((page) => page.orders) ?? []
-  const hasNextPage = Boolean(data?.[size - 1]?.continuation)
-  const isFetchingInitialData = !data && !error
-  const isFetchingPage =
-    isFetchingInitialData ||
-    (size > 0 && data && typeof data[size - 1] === 'undefined')
-  const fetchNextPage = () => {
-    if (!isFetchingPage && hasNextPage) {
-      setSize((size) => size + 1)
+      const url = new URL(`${client?.apiBase || ''}/orders/asks/v4`)
+      let query: AsksQuery = options || {}
+
+      if (
+        query.normalizeRoyalties === undefined &&
+        client?.normalizeRoyalties !== undefined
+      ) {
+        query.normalizeRoyalties = client.normalizeRoyalties
+      }
+
+      if (previousPageData && !previousPageData.continuation) {
+        return null
+      } else if (previousPageData && pageIndex > 0) {
+        query.continuation = previousPageData.continuation
+      }
+
+      setParams(url, query)
+      return [url.href, client?.apiKey, client?.version]
+    },
+    {
+      revalidateOnMount: true,
+      revalidateFirstPage: false,
+      ...swrOptions,
     }
-  }
+  )
+
+  const listings = response.data?.flatMap((page) => page.orders) ?? []
 
   return {
-    response: data,
+    ...response,
     data: listings,
-    hasNextPage,
-    isFetchingInitialData,
-    isFetchingPage,
-    fetchNextPage,
-    setSize,
-    mutate,
-    error,
-    isValidating,
   }
 }

@@ -23,7 +23,7 @@ export default function (
 
   const { data, mutate, error, isValidating } = useSWR<OpenSeaTokenResponse>(
     contract && tokenId ? [path.href] : null,
-    (resource) => {
+    (resource: string) => {
       return fetch(resource)
         .then((res) => res.json())
         .catch((e) => {
