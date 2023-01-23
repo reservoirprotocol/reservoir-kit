@@ -557,7 +557,7 @@ export function ListModal({
                   <Box css={{ p: '$4', width: '100%' }}>
                     {selectedMarketplaces.some(
                       (marketplace) =>
-                        marketplace.price === '' || marketplace.price === 0
+                        marketplace.price === '' || marketplace.price == 0
                     ) ? (
                       <Button disabled={true} css={{ width: '100%' }}>
                         Set your price

@@ -1,6 +1,6 @@
 import { paths, setParams } from '@reservoir0x/reservoir-sdk'
-import useReservoirClient from './useReservoirClient'
-import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
+import {useReservoirClient, useInfiniteApi} from './'
+import { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type UserTokenResponse =
   paths['/users/{user}/tokens/v6']['get']['responses']['200']['schema']
@@ -15,8 +15,8 @@ export default function (
 ) {
   const client = useReservoirClient()
 
-  const { data, mutate, error, isValidating, size, setSize } =
-    useSWRInfinite<UserTokenResponse>(
+  const response =
+  useInfiniteApi<UserTokenResponse>(
       (pageIndex, previousPageData) => {
         if (!user) {
           return null
@@ -43,7 +43,6 @@ export default function (
 
         return [url.href, client?.apiKey, client?.version]
       },
-      null,
       {
         revalidateOnMount: true,
         revalidateFirstPage: false,
@@ -51,28 +50,10 @@ export default function (
       }
     )
 
-  const tokens = data?.flatMap((page) => page.tokens) ?? []
-  const isFetchingInitialData = !data && !error
-  const isFetchingPage =
-    isFetchingInitialData ||
-    (size > 0 && data && typeof data[size - 1] === 'undefined')
-  const hasNextPage = Boolean(data?.[size - 1]?.continuation)
-  const fetchNextPage = () => {
-    if (!isFetchingPage && hasNextPage) {
-      setSize((size) => size + 1)
-    }
-  }
+  const tokens = response.data?.flatMap((page) => page.tokens) ?? []
 
   return {
-    response: data,
+...response,
     data: tokens,
-    hasNextPage,
-    isFetchingInitialData,
-    isFetchingPage,
-    fetchNextPage,
-    setSize,
-    mutate,
-    error,
-    isValidating,
   }
 }
