@@ -488,6 +488,7 @@ export function ListModal({
                       <Box key={marketplace.name} css={{ mb: '$3' }}>
                         <MarketplacePriceInput
                           marketplace={marketplace}
+                          collection={collection}
                           currency={currency}
                           usdPrice={usdPrice}
                           quantity={quantity}
