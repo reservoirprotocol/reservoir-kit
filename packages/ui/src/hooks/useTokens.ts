@@ -1,15 +1,29 @@
 import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import { SWRInfiniteConfiguration } from 'swr/infinite'
+import useSWR from 'swr'
 import { useInfiniteApi, useReservoirClient } from './'
+import { useEffect } from 'react'
 
 type TokenDetailsResponse =
   paths['/tokens/v5']['get']['responses']['200']['schema']
 
 type TokensQuery = paths['/tokens/v5']['get']['parameters']['query']
 
+type TokenEventsResponse =
+  paths['/events/tokens/floor-ask/v3']['get']['responses']['200']['schema']
+
+type TokenEventsQuery =
+  paths['/events/tokens/floor-ask/v3']['get']['parameters']['query']
+
+type TokenDetailsFloorAsk = NonNullable<NonNullable<paths['/tokens/v5']['get']['responses']['200']['schema']['tokens']>[0]['market']>['floorAsk']
+
+type TokenEventsFloorAsk = NonNullable<paths['/events/tokens/floor-ask/v3']['get']['responses']['200']['schema']['events']>[0]['floorAsk']
+
+
 export default function (
   options?: TokensQuery | false,
-  swrOptions: SWRInfiniteConfiguration = {}
+  swrOptions: SWRInfiniteConfiguration = {},
+  realtime?: Boolean
 ) {
   const client = useReservoirClient()
 
@@ -47,8 +61,42 @@ export default function (
 
   const tokens = response.data?.flatMap((page) => page.tokens) ?? []
 
+    // If Realtime is enabled, every time the best price of a token changes (i.e. the 'floor ask'), an event is generated 
+  // and the data is updated
+  if(realtime && options) {
+    const path = new URL(`${client?.apiBase}/events/tokens/floor-ask/v3`)
+
+    const query: TokenEventsQuery = {contract: options?.collection}
+    setParams(path, query)
+
+    const { data } = useSWR<TokenEventsResponse>(
+      path ? [path.href, client?.apiKey, client?.version] : null,
+      null,
+      { refreshInterval: 1000 }
+    )
+
+    const updatedTokens = data?.events?.map((event) => {
+      
+      // if(response?.data && response?.data[0].tokens) {
+      //   return response.data[0].tokens.filter((token) => token.token?.tokenId == event.token?.tokenId)
+      // }
+    })
+
+    useEffect(() => {
+      console.log(updatedTokens)
+        response.mutate(undefined, 
+        {
+          rollbackOnError: true,
+          populateCache: true,
+          revalidate: false
+        }
+    )
+    }, [data])
+  }
+
   return {
     ...response,
     data: tokens,
   }
 }
+

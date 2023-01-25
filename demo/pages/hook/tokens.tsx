@@ -12,9 +12,15 @@ const Tokens: NextPage = () => {
     isFetchingInitialData,
     isFetchingPage,
     resetCache,
-  } = useTokens({
-    collection: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
-  })
+  } = useTokens(
+    {
+      collection: '0x764aeebcf425d56800ef2c84f2578689415a2daa',
+      sortBy: 'floorAskPrice',
+      includeTopBid: true,
+    },
+    {},
+    true
+  )
 
   const { ref, inView } = useInView()
 
