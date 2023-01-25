@@ -23,7 +23,7 @@ type TokenEventsFloorAsk = NonNullable<paths['/events/tokens/floor-ask/v3']['get
 export default function (
   options?: TokensQuery | false,
   swrOptions: SWRInfiniteConfiguration = {},
-  realtime?: Boolean
+  realtime?: boolean
 ) {
   const client = useReservoirClient()
 
@@ -61,29 +61,27 @@ export default function (
 
   const tokens = response.data?.flatMap((page) => page.tokens) ?? []
 
-    // If Realtime is enabled, every time the best price of a token changes (i.e. the 'floor ask'), an event is generated 
-  // and the data is updated
+  // If Realtime is enabled, every time the best price of a token changes (i.e. the 'floor ask'), an
+  // event is generated and the data is updated
   if(realtime && options) {
     const path = new URL(`${client?.apiBase}/events/tokens/floor-ask/v3`)
 
     const query: TokenEventsQuery = {contract: options?.collection}
     setParams(path, query)
 
-    const { data } = useSWR<TokenEventsResponse>(
+    const { data: eventData } = useSWR<TokenEventsResponse>(
       path ? [path.href, client?.apiKey, client?.version] : null,
       null,
       { refreshInterval: 1000 }
     )
 
-    const updatedTokens = data?.events?.map((event) => {
+    // const updatedTokens = 
+    //  tokens.filter((token) => {
+    //   eventData.events?.includes(token?.token?.tokenId)
+    //  })
       
-      // if(response?.data && response?.data[0].tokens) {
-      //   return response.data[0].tokens.filter((token) => token.token?.tokenId == event.token?.tokenId)
-      // }
-    })
 
     useEffect(() => {
-      console.log(updatedTokens)
         response.mutate(undefined, 
         {
           rollbackOnError: true,
@@ -91,7 +89,7 @@ export default function (
           revalidate: false
         }
     )
-    }, [data])
+    }, [eventData])
   }
 
   return {
