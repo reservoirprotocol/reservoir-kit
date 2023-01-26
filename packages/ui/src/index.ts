@@ -18,7 +18,8 @@ export {
   useBids,
   useUserTokens,
   useUserTopBids,
-  useUserCollections
+  useUserCollections,
+  useCart,
 } from './hooks'
 
 // Themes
@@ -48,3 +49,7 @@ export {
   default as TokenMedia,
   extractMediaType,
 } from './components/TokenMedia'
+
+export { default as CartPopover } from './components/cart/CartPopover'
+export { CartProvider } from './context/CartProvider'
+export type { Cart } from './context/CartProvider'

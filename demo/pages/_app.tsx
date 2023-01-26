@@ -20,6 +20,7 @@ import {
   ReservoirKitProvider,
   darkTheme as defaultTheme,
   ReservoirKitTheme,
+  CartProvider,
 } from '@reservoir0x/reservoir-kit-ui'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const API_BASE =
@@ -93,20 +94,22 @@ const AppWrapper: FC<any> = ({ children }) => {
       }}
       theme={theme}
     >
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        value={{
-          dark: darkTheme.className,
-          light: 'light',
-        }}
-        enableSystem={false}
-        storageKey={'demo-theme'}
-      >
-        <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
-        </WagmiConfig>
-      </ThemeProvider>
+      <CartProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          value={{
+            dark: darkTheme.className,
+            light: 'light',
+          }}
+          enableSystem={false}
+          storageKey={'demo-theme'}
+        >
+          <WagmiConfig client={wagmiClient}>
+            <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
+          </WagmiConfig>
+        </ThemeProvider>
+      </CartProvider>
     </ReservoirKitProvider>
   )
 }
