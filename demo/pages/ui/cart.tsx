@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { CartPopover, useTokens } from '@reservoir0x/reservoir-kit-ui'
+import { CartPopover, useCart, useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useState } from 'react'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 
@@ -17,6 +17,7 @@ const CartPage: NextPage = () => {
         }
       : false
   )
+  const { add, remove, data: items } = useCart((store) => store.items)
 
   return (
     <div
@@ -43,8 +44,40 @@ const CartPage: NextPage = () => {
         />
       </div>
       {tokens.map((token) => {
+        const checked = items.some((item) => {
+          const { token: cartToken, collection } = item
+          return (
+            collection.id == token?.token?.collection?.id &&
+            cartToken.id == token?.token?.tokenId
+          )
+        })
         return (
           <div>
+            <input
+              type="checkbox"
+              checked={checked}
+              onClick={(e) => {
+                if (!token?.token || !token.token.collection?.id) {
+                  return
+                }
+
+                if (checked) {
+                  remove(token.token.tokenId, token.token.collection.id)
+                } else {
+                  add({
+                    token: {
+                      id: token.token.tokenId,
+                      name: token.token.name || `#${token.token.tokenId}`,
+                    },
+                    collection: {
+                      id: token.token.collection.id,
+                      name: token.token.collection.name || '',
+                    },
+                    price: token.market?.floorAsk?.price,
+                  })
+                }
+              }}
+            />
             {token?.token?.name} - {token?.token?.tokenId}
           </div>
         )

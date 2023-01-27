@@ -3,13 +3,25 @@ import { useContext, useSyncExternalStore } from 'react'
 
 export default function useCart<SelectorOutput>(
   selector: (store: Cart) => SelectorOutput
-): [SelectorOutput, (value: Partial<Cart>) => void] {
+) {
   const cart = useContext(CartContext)
   if (!cart) {
     throw new Error('Cart not found')
   }
 
-  const state = useSyncExternalStore(cart.subscribe, () => selector(cart.get()))
+  const data = useSyncExternalStore(
+    cart.subscribe,
+    () => selector(cart.get()),
+    () => selector(cart.get())
+  )
+  const { clear, remove, add, validate } = cart
 
-  return [state, cart.set]
+  return {
+    data,
+    clear,
+    remove,
+    add,
+    validate,
+    set: cart.set,
+  }
 }

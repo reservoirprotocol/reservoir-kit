@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
-import { useReservoirClient, useTokens } from '../../hooks'
+import { useCart, useReservoirClient } from '../../hooks'
 import {
-  Box,
   Button,
   Flex,
   FormatCryptoCurrency,
@@ -11,21 +10,11 @@ import {
 import { styled } from '../../../stitches.config'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose } from '@fortawesome/free-solid-svg-icons'
-
-type Token = NonNullable<ReturnType<typeof useTokens>['data'][0]>
-type FloorAsk = NonNullable<NonNullable<Token['market']>['floorAsk']>
-type CartItemPrice = NonNullable<FloorAsk['price']>
+import { Cart } from '../../context/CartProvider'
+import InfoTooltip from '../../primitives/InfoTooltip'
 
 type Props = {
-  token: {
-    name: string
-    id: number
-  }
-  collection: {
-    id: string
-    name: string
-  }
-  price: CartItemPrice
+  item: Cart['items'][0]
   usdConversion: number
 }
 
@@ -36,65 +25,99 @@ const CartItemImage = styled('img', {
   objectFit: 'cover',
 })
 
-const CartItem: FC<Props> = ({ token, collection, price, usdConversion }) => {
+const CloseButton = styled(Button, {
+  position: 'absolute',
+  width: 24,
+  height: 24,
+  top: -8,
+  right: -8,
+  flexShrink: 0,
+  defaultVariants: {
+    size: 'none',
+    corners: 'circle',
+  },
+})
+
+const CartItem: FC<Props> = ({ item, usdConversion }) => {
+  const { token, collection, price, isBannedOnOpensea } = item
   const client = useReservoirClient()
-  const usdPrice = (usdConversion || 0) * (price.amount?.decimal || 0)
+  const usdPrice = (usdConversion || 0) * (price?.amount?.decimal || 0)
+  const { remove } = useCart(() => null)
 
   return (
-    <Flex css={{ width: '100%' }}>
-      <Box css={{ position: 'relative', minWidth: 0 }}>
+    <Flex
+      css={{
+        width: '100%',
+        px: 24,
+        py: 8,
+        transition: 'background-color 0.25s ease-in-out',
+        '&:hover': {
+          backgroundColor: '$neutralBgHover',
+          [`& ${CloseButton}`]: {
+            background: '$accentSolid',
+          },
+        },
+      }}
+    >
+      <Flex css={{ position: 'relative', minWidth: 0 }}>
         <CartItemImage
           src={`${client?.apiBase}/redirect/tokens/${collection.id}:${token.id}/image/v1`}
+          css={!price ? { filter: 'grayscale(1)' } : {}}
         />
-        <Button
-          size="none"
-          corners="circle"
-          css={{
-            position: 'absolute',
-            width: 24,
-            height: 24,
-            background: '$neutralSolid',
-            top: -8,
-            right: -8,
-            '&:hover': {
-              backgroundColor: '$neutralSolidHover',
-            },
-          }}
+        <CloseButton
+          css={{ background: '$neutralSolid' }}
           onClick={() => {
-            //remove item
+            remove(token.id, collection.id)
           }}
         >
           <FontAwesomeIcon icon={faClose} width="16" height="16" />
-        </Button>
-      </Box>
+        </CloseButton>
+      </Flex>
       <Flex
         direction="column"
         justify="center"
         css={{ gap: 2, ml: '$2', minWidth: 0 }}
       >
-        <Text style="h6" ellipsify>
-          {token.name}
-        </Text>
+        <Flex align="center" css={{ gap: '$1' }}>
+          <Text style="h6" color={price ? undefined : 'subtle'} ellipsify>
+            {token.name}
+          </Text>
+          {isBannedOnOpensea && (
+            <InfoTooltip
+              side="bottom"
+              width={200}
+              content={'Item not tradeable on OpenSea'}
+              kind="error"
+            />
+          )}
+        </Flex>
         <Text style="body2" color="subtle" ellipsify>
           {collection.name}
         </Text>
-      </Flex>
-      <Flex
-        direction="column"
-        justify="center"
-        css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
-      >
-        <FormatCryptoCurrency
-          textStyle="subtitle2"
-          amount={price.amount?.decimal}
-          address={price.currency?.contract}
-          decimals={price.currency?.decimals}
-          logoWidth={12}
-        />
-        {usdPrice && (
-          <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
+        {!price && (
+          <Text style="body2" color="errorLight">
+            Item no longer available
+          </Text>
         )}
       </Flex>
+      {price && (
+        <Flex
+          direction="column"
+          justify="center"
+          css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
+        >
+          <FormatCryptoCurrency
+            textStyle="subtitle2"
+            amount={price.amount?.decimal}
+            address={price.currency?.contract}
+            decimals={price.currency?.decimals}
+            logoWidth={12}
+          />
+          {usdPrice && (
+            <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
+          )}
+        </Flex>
+      )}
     </Flex>
   )
 }

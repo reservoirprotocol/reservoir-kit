@@ -1,4 +1,4 @@
-import { useCoinConversion, useFallbackState } from '../../hooks'
+import { useCoinConversion, useFallbackState, useCart } from '../../hooks'
 import { keyframes, styled } from '../../../stitches.config'
 import {
   Box,
@@ -8,6 +8,7 @@ import {
   Anchor,
   FormatCryptoCurrency,
   FormatCurrency,
+  Loader,
 } from '../../primitives'
 import Popover from '../../primitives/Popover'
 import React, {
@@ -17,12 +18,14 @@ import React, {
   ReactNode,
   SetStateAction,
   useContext,
+  useEffect,
 } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import ReservoirLogoWhiteText from '../../img/ReservoirLogoWhiteText'
 import CartItem from './CartItem'
+import CartToast from './CartToast'
 
 type Props = {
   trigger: ReactNode
@@ -52,9 +55,26 @@ const CartPopover: FC<Props> = ({ trigger, side, openState }) => {
     openState
   )
   const providerOptionsContext = useContext(ProviderOptionsContext)
+  const { data: items, clear, validate } = useCart((cart) => cart.items)
+  const { data: isValidating } = useCart((cart) => cart.isValidating)
+  const currency =
+    items.length > 0 && items[0].price?.currency
+      ? items[0].price.currency
+      : undefined
   const usdConversion = useCoinConversion(
-    open ? 'USD' : undefined
-    // currency?.symbol
+    open ? 'USD' : undefined,
+    currency?.symbol
+  )
+
+  useEffect(() => {
+    if (open) {
+      validate()
+    }
+  }, [open])
+
+  const totalPrice = items.reduce(
+    (total, { price }) => (total += price?.amount?.decimal || 0),
+    0
   )
 
   return (
@@ -87,32 +107,48 @@ const CartPopover: FC<Props> = ({ trigger, side, openState }) => {
           }}
           direction="column"
         >
+          {isValidating && (
+            <Loader
+              css={{
+                backgroundColor: '$contentBackground',
+                position: 'absolute',
+                inset: 0,
+                opacity: 0.6,
+                zIndex: 10000,
+              }}
+            />
+          )}
           <Flex align="center" css={{ mb: '$4' }}>
             <Text style="h6">Cart</Text>
-            <Flex
-              align="center"
-              justify="center"
-              css={{
-                background: '$accentBgActive',
-                height: 20,
-                width: 20,
-                borderRadius: '99999px',
-                ml: '$2',
-              }}
-            >
-              <Text style="subtitle2">2</Text>
-            </Flex>
-            <Text
-              style="subtitle2"
-              color="accent"
-              css={{
-                cursor: 'pointer',
-                ml: 24,
-                '&:hover': { color: '$accentSolidHover' },
-              }}
-            >
-              Clear All
-            </Text>
+            {items.length > 0 && (
+              <Flex
+                align="center"
+                justify="center"
+                css={{
+                  background: '$accentBgActive',
+                  height: 20,
+                  width: 20,
+                  borderRadius: '99999px',
+                  ml: '$2',
+                }}
+              >
+                <Text style="subtitle2">{items.length}</Text>
+              </Flex>
+            )}
+            {items.length > 0 && (
+              <Text
+                style="subtitle2"
+                color="accent"
+                css={{
+                  cursor: 'pointer',
+                  ml: 24,
+                  '&:hover': { color: '$accentSolidHover' },
+                }}
+                onClick={clear}
+              >
+                Clear All
+              </Text>
+            )}
             <Button
               size="none"
               color="ghost"
@@ -121,114 +157,25 @@ const CartPopover: FC<Props> = ({ trigger, side, openState }) => {
                 setOpen(false)
               }}
             >
-              <FontAwesomeIcon icon={faClose} />
+              <FontAwesomeIcon icon={faClose} width="16" height="16" />
             </Button>
           </Flex>
-          <Flex direction="column" css={{ gap: '$4', mt: '$2', overflowY: 'scroll' }}>
-            <CartItem
-              token={{ name: '6142', id: 6142 }}
-              collection={{
-                id: '0xba30e5f9bb24caa003e9f2f0497ad287fdf95623',
-                name: 'Bored Ape Kennel Club',
-              }}
-              price={{
-                amount: {
-                  decimal: 1.77,
-                },
-              }}
-              usdConversion={usdConversion}
-            />
-            <CartItem
-              token={{ name: '6142', id: 6142 }}
-              collection={{
-                id: '0xba30e5f9bb24caa003e9f2f0497ad287fdf95623',
-                name: 'Bored Ape Kennel Club',
-              }}
-              price={{
-                amount: {
-                  decimal: 1.77,
-                },
-              }}
-              usdConversion={usdConversion}
-            />
-            <CartItem
-              token={{ name: '6142', id: 6142 }}
-              collection={{
-                id: '0xba30e5f9bb24caa003e9f2f0497ad287fdf95623',
-                name: 'Bored Ape Kennel Club',
-              }}
-              price={{
-                amount: {
-                  decimal: 1.77,
-                },
-              }}
-              usdConversion={usdConversion}
-            />
-            <CartItem
-              token={{ name: '6142', id: 6142 }}
-              collection={{
-                id: '0xba30e5f9bb24caa003e9f2f0497ad287fdf95623',
-                name: 'Bored Ape Kennel Club',
-              }}
-              price={{
-                amount: {
-                  decimal: 1.77,
-                },
-              }}
-              usdConversion={usdConversion}
-            />
-            <CartItem
-              token={{ name: '6142', id: 6142 }}
-              collection={{
-                id: '0xba30e5f9bb24caa003e9f2f0497ad287fdf95623',
-                name: 'Bored Ape Kennel Club',
-              }}
-              price={{
-                amount: {
-                  decimal: 1.77,
-                },
-              }}
-              usdConversion={usdConversion}
-            />
-            <CartItem
-              token={{ name: '6142', id: 6142 }}
-              collection={{
-                id: '0xba30e5f9bb24caa003e9f2f0497ad287fdf95623',
-                name: 'Bored Ape Kennel Club',
-              }}
-              price={{
-                amount: {
-                  decimal: 1.77,
-                },
-              }}
-              usdConversion={usdConversion}
-            />
-            <CartItem
-              token={{ name: '6142', id: 6142 }}
-              collection={{
-                id: '0xba30e5f9bb24caa003e9f2f0497ad287fdf95623',
-                name: 'Bored Ape Kennel Club',
-              }}
-              price={{
-                amount: {
-                  decimal: 1.77,
-                },
-              }}
-              usdConversion={usdConversion}
-            />
-            <CartItem
-              token={{ name: '6142', id: 6142 }}
-              collection={{
-                id: '0xba30e5f9bb24caa003e9f2f0497ad287fdf95623',
-                name: 'Bored Ape Kennel Club',
-              }}
-              price={{
-                amount: {
-                  decimal: 1.77,
-                },
-              }}
-              usdConversion={usdConversion}
-            />
+          {/* <CartToast
+            kind="error"
+            message="Transaction failed, items no longer available"
+            link={{ text: 'Test', url: 'https://google.com' }}
+          /> */}
+          <Flex
+            direction="column"
+            css={{ gap: '$4', mb: '$4', overflowY: 'auto', mx: -24 }}
+          >
+            {items.map((item) => (
+              <CartItem
+                key={`${item.collection.id}:${item.token.id}`}
+                item={item}
+                usdConversion={usdConversion}
+              />
+            ))}
           </Flex>
           <Flex direction="column" css={{ mt: 'auto', pb: 10 }}>
             <Flex css={{ mb: 28 }}>
@@ -240,14 +187,14 @@ const CartPopover: FC<Props> = ({ trigger, side, openState }) => {
               >
                 <FormatCryptoCurrency
                   textStyle="h6"
-                  amount={20.5}
-                  // address={price.currency?.contract}
-                  // decimals={price.currency?.decimals}
+                  amount={totalPrice}
+                  address={currency?.contract}
+                  decimals={currency?.decimals}
                   logoWidth={18}
                 />
                 {usdConversion && (
                   <FormatCurrency
-                    amount={usdConversion * 20.5}
+                    amount={usdConversion * totalPrice}
                     style="subtitle2"
                     color="subtle"
                   />

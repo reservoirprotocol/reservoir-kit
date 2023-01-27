@@ -66,7 +66,7 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       focusColor: '$neutralTextContrast',
       errorText: '$red12',
       errorAccent: '$red10',
-      successAccent: '#4CC38A',
+      successAccent: '$green10',
 
       // component colors
       reservoirLogoColor: '#11181C',

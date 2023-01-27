@@ -3,7 +3,7 @@ import { Flex, Box, Grid, Text } from '../../primitives'
 import TokenStatsHeader from './TokenStatsHeader'
 import Stat from '../Stat'
 import { useTokens, useCollections } from '../../hooks'
-import InfoTooltip from '../InfoTooltip'
+import InfoTooltip from '../../primitives/InfoTooltip'
 import { Trait } from './BidModalRenderer'
 import SelectedAttribute from './SelectedAttribute'
 
