@@ -3,46 +3,57 @@ import { getClient } from '../actions'
 import { version } from '../../package.json'
 
 /**
- * Check if a token is banned on OpenSea
- * @param contract Contract address of the NFT collection
- * @param tokenId Token ID to be checked
- * @returns `true` If the token is banned on OpenSea. `false` otherwise.
+ * Check if tokens are banned on OpenSea
+ * @param tokens An array of token ids (e.g. ["123:0xabc123"])
+ * @returns `{tokenId: true}` A dictionary of token banned status from OpenSea.
  */
-export async function isOpenSeaBanned(
-  collectionId: string,
-  tokenId: number | string
-) {
-  const contract = collectionId ? collectionId?.split(':')[0] : undefined
-  const base = 'https://api.opensea.io'
-  const url = new URL(`/api/v1/asset/${contract}/${tokenId}`, base)
+export async function isOpenSeaBanned(ids: string[]) {
+  let url = 'https://api.opensea.io/api/v1/assets'
+  ids.forEach((id, i) => {
+    const contract = id.split(':')[0]
+    const tokenId = id.split(':')[1]
+    const prefix = i === 0 ? '?' : '&'
+    url = `${url}${prefix}token_ids=${tokenId}&asset_contract_addresses=${contract}`
+  })
 
-  const res = await axios.get(url.href)
+  const res = await axios.get(url)
   const json = res.data
   const client = getClient()
   const apiBase = client?.apiBase
+  const statuses: Record<string, boolean> = json.assets.reduce(
+    (statuses: Record<string, boolean>, asset: any) => {
+      statuses[`${asset.asset_contract.address}:${asset.token_id}`] =
+        !asset.supports_wyvern
+      return statuses
+    },
+    {} as Record<string, boolean>
+  )
   if (res.status === 200 && apiBase) {
     const apiKey = client?.apiKey
     const headers: AxiosRequestHeaders = {
       'Content-Type': 'application/json',
       'x-rkc-version': version,
     }
-    const body = {
-      token: `${contract}:${tokenId}`,
-      flag: !json?.supports_wyvern ? 1 : 0,
-    }
+    Object.keys(statuses).forEach((token) => {
+      const status = statuses[token]
+      const body = {
+        token,
+        flag: status ? 1 : 0,
+      }
 
-    if (apiKey) {
-      headers['x-api-key'] = apiKey
-    }
-    if (client?.uiVersion) {
-      headers['x-rkui-version'] = client.uiVersion
-    }
-    axios
-      .post(`${apiBase}/tokens/flag/v1`, JSON.stringify(body), {
-        headers,
-      })
-      .catch(() => {})
+      if (apiKey) {
+        headers['x-api-key'] = apiKey
+      }
+      if (client?.uiVersion) {
+        headers['x-rkui-version'] = client.uiVersion
+      }
+      axios
+        .post(`${apiBase}/tokens/flag/v1`, JSON.stringify(body), {
+          headers,
+        })
+        .catch(() => {})
+    })
   }
 
-  return !json?.supports_wyvern
+  return statuses
 }
