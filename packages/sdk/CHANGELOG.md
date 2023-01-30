@@ -1,4 +1,6 @@
 
+* 🎉 Release client package v0.3.5 [9621708](https://github.com/reservoirprotocol/reservoir-kit/commit/9621708517e0b2043515510137f2584931eada51)
+* Sync api [6863447](https://github.com/reservoirprotocol/reservoir-kit/commit/6863447142a5f24a046d93432e0c1b4de7d1f138)
 * 🎉 Release client package v0.3.4 [a1aa27c](https://github.com/reservoirprotocol/reservoir-kit/commit/a1aa27c0ffbd2b950028e46e383b14d2fe0791c5)
 * Merge pull request #136 from reservoirprotocol/pedro/grwth-1678-acceptbid-modal-price-change-update [0c71239](https://github.com/reservoirprotocol/reservoir-kit/commit/0c712394a59bd2e4113bd1143eae41ef9210b11b)
 * update price mismatch copy [84a04e9](https://github.com/reservoirprotocol/reservoir-kit/commit/84a04e94abcc84a527b39dba9932e96d2b76048e)

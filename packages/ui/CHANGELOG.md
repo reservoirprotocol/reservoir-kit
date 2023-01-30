@@ -1,4 +1,22 @@
 
+## [0.8.9](https://github.com/reservoirprotocol/reservoir-kit/commit/f3b46d50e620dbb34561e367ef2276c9f63a4045) (2023-01-30)
+
+* Merge pull request #141 from reservoirprotocol/pedro/grwth-1831-fix-safari-rounding-issue-in-v16 [1667052](https://github.com/reservoirprotocol/reservoir-kit/commit/16670524cb72e54be1f9d61d0803f03ef27bce49)
+* Merge pull request #142 from reservoirprotocol/ted/grwth-1912-listmodal-profit-doesnt-deduct-royalties [30d827e](https://github.com/reservoirprotocol/reservoir-kit/commit/30d827e2350ca13e476031c6d86734d43fd9ba68)
+* Merge pull request #143 from reservoirprotocol/ted/grwth-1893-listing-modal-copy-suggestion [453e9f2](https://github.com/reservoirprotocol/reservoir-kit/commit/453e9f21eebe7ad6caa75970076041a68eb565d5)
+* fixed Big Number conversion for weiPrice in List Modal [947547d](https://github.com/reservoirprotocol/reservoir-kit/commit/947547df01102eb33521edf9dbab76f5ce9e7718)
+* Updated list modal's button copy [813f863](https://github.com/reservoirprotocol/reservoir-kit/commit/813f863e773d1938bab0a05508a60b0fae975ba0)
+* Fix: deduct royalties from profit in list modal [7f42c59](https://github.com/reservoirprotocol/reservoir-kit/commit/7f42c5957f252378924fd1e7bf7f2a7da6d3eb71)
+## [0.8.8](https://github.com/reservoirprotocol/reservoir-kit/commit/7c02a38d9a93b8eeffc06c041bf9ec77c7a8bd0b) (2023-01-23)
+
+* Fix safari rounding issues when using Intl.NumberFormat [2afb52a](https://github.com/reservoirprotocol/reservoir-kit/commit/2afb52a8cf2a524543fda849492f464f597ddf7e)
+* Merge pull request #140 from reservoirprotocol/pedro/grwth-1914-not-getting-updated-balance-for-custom [1667272](https://github.com/reservoirprotocol/reservoir-kit/commit/166727269aa05ca3af18b9057e8b009598270a9a)
+* Merge pull request #139 from reservoirprotocol/pedro/grwth-1849-upgrade-swr-to-v2 [a38820d](https://github.com/reservoirprotocol/reservoir-kit/commit/a38820d32025c0c1f17af3c6ae792b5251d42794)
+* Remove chain_id configuration from useBalance check [3818d73](https://github.com/reservoirprotocol/reservoir-kit/commit/3818d7337febcedd476af09be1b76d23c74cd4c7)
+* Fix hasNextPage when using an offset [7358721](https://github.com/reservoirprotocol/reservoir-kit/commit/73587210b0872c043dbdad8c7590c5db931b6959)
+* fix swr migration issue when passing string vs array to fetcher [14fc230](https://github.com/reservoirprotocol/reservoir-kit/commit/14fc2302e204fc8058a31924c700a983445e142b)
+* Fix useCollections hook not passing api key or version [1829507](https://github.com/reservoirprotocol/reservoir-kit/commit/18295079e3d5c12001f4b284db8d5fc3d7795c94)
+* Normalize hook responses and add resetCache function to hook response [d4a99ea](https://github.com/reservoirprotocol/reservoir-kit/commit/d4a99eac8c7149f079e30cc8eaa6177ababbc187)
 ## [0.8.7](https://github.com/reservoirprotocol/reservoir-kit/commit/6daa7a0babde75c34f53b26c9f52988194a118ea) (2023-01-20)
 
 * Merge pull request #132 from reservoirprotocol/pedro/grwth-1668-improvement-for-listing-1155-in-quantity [e3c135d](https://github.com/reservoirprotocol/reservoir-kit/commit/e3c135d6cd15f69e346435d5ceb591a115276c7e)
