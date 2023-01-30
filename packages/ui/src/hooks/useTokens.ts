@@ -15,11 +15,6 @@ type TokenEventsResponse =
 type TokenEventsQuery =
   paths['/events/tokens/floor-ask/v3']['get']['parameters']['query']
 
-type TokenDetailsFloorAsk = NonNullable<NonNullable<paths['/tokens/v5']['get']['responses']['200']['schema']['tokens']>[0]['market']>['floorAsk']
-
-type TokenEventsFloorAsk = NonNullable<paths['/events/tokens/floor-ask/v3']['get']['responses']['200']['schema']['events']>[0]['floorAsk']
-
-
 export default function (
   options?: TokensQuery | false,
   swrOptions: SWRInfiniteConfiguration = {},
@@ -61,12 +56,12 @@ export default function (
 
   const tokens = response.data?.flatMap((page) => page.tokens) ?? []
 
-  // If Realtime is enabled, every time the best price of a token changes (i.e. the 'floor ask'), an
+  // If realtime is enabled, every time the best price of a token changes (i.e. the 'floor ask'), an
   // event is generated and the data is updated
-  if(realtime && options) {
+  if(realtime && options && options.collection) {
     const path = new URL(`${client?.apiBase}/events/tokens/floor-ask/v3`)
 
-    const query: TokenEventsQuery = {contract: options?.collection}
+    const query: TokenEventsQuery = {contract: options.collection}
     setParams(path, query)
 
     const { data: eventData } = useSWR<TokenEventsResponse>(
@@ -75,26 +70,44 @@ export default function (
       { refreshInterval: 1000 }
     )
 
-    // const updatedTokens = 
-    //  tokens.filter((token) => {
-    //   eventData.events?.includes(token?.token?.tokenId)
-    //  })
-      
+    let updatedTokens = tokens.map(token => {
+      const event = eventData?.events?.find(event => event.token?.tokenId == token?.token?.tokenId) 
+      let tokenFloorAsk = token?.market?.floorAsk
 
-    useEffect(() => {
-        response.mutate(undefined, 
+      if(event && tokenFloorAsk) {
+        tokenFloorAsk.id = event.floorAsk?.orderId || tokenFloorAsk.id
+        tokenFloorAsk.price = event.floorAsk?.price || tokenFloorAsk.price
+        tokenFloorAsk.validFrom = event.floorAsk?.validFrom || tokenFloorAsk.validFrom
+        tokenFloorAsk.validUntil = event.floorAsk?.validUntil || tokenFloorAsk.validUntil
+      }
+
+      return token
+    })
+
+    const updatedResponse = response.data
+
+    if(updatedResponse) {
+      //@ts-ignore
+      updatedResponse.data?.[0].tokens = updatedTokens
+      response.mutate(response.data, 
         {
+          optimisticData: updatedResponse,
           rollbackOnError: true,
           populateCache: true,
           revalidate: false
         }
-    )
-    }, [eventData])
-  }
+      )
+    }
 
-  return {
-    ...response,
-    data: tokens,
+    return {
+      ...response,
+      data: updatedTokens
+    }
   }
+  else 
+    return {
+      ...response,
+      data: tokens,
+    }
 }
 

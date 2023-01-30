@@ -14,7 +14,7 @@ const Tokens: NextPage = () => {
     resetCache,
   } = useTokens(
     {
-      collection: '0x764aeebcf425d56800ef2c84f2578689415a2daa',
+      collection: '0x932ca55b9ef0b3094e8fa82435b3b4c50d713043',
       sortBy: 'floorAskPrice',
       includeTopBid: true,
     },
@@ -59,6 +59,9 @@ const Tokens: NextPage = () => {
           <div>Id: {token?.token?.tokenId}</div>
           <div>Name: {token?.token?.name}</div>
           <div>Price: {token?.market?.floorAsk?.price?.amount?.native}</div>
+          <div>Ask Id: {token?.market?.floorAsk?.id}</div>
+          <div>Valid From: {token?.market?.floorAsk?.validFrom}</div>
+          <div>Valid Until: {token?.market?.floorAsk?.validUntil}</div>
         </div>
       ))}
       {hasNextPage ? (
