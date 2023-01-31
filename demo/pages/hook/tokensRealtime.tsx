@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
-  '0x932ca55b9ef0b3094e8fa82435b3b4c50d713043'
+  '0x34d85c9cdeb23fa97cb08333b511ac86e1c4e258'
 
 const Tokens: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
