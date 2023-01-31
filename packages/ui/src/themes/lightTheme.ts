@@ -1,4 +1,12 @@
-import { red, indigo, indigoA, gray, whiteA, blackA } from '@radix-ui/colors'
+import {
+  red,
+  indigo,
+  indigoA,
+  gray,
+  whiteA,
+  blackA,
+  green,
+} from '@radix-ui/colors'
 import {
   sharedThemeConfig,
   ReservoirKitTheme,
@@ -16,6 +24,7 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       ...gray,
       ...blackA,
       ...whiteA,
+      ...green,
 
       // accent colors
       accentBase: '$indigo1',

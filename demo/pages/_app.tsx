@@ -83,34 +83,34 @@ const AppWrapper: FC<any> = ({ children }) => {
   const { theme } = useContext(ThemeSwitcherContext)
 
   return (
-    <ReservoirKitProvider
-      options={{
-        apiBase: API_BASE,
-        apiKey: API_KEY,
-        marketplaceFee: FEE,
-        marketplaceFeeRecipient: FEE_RECIPIENT,
-        source: SOURCE,
-        normalizeRoyalties: NORMALIZE_ROYALTIES,
-      }}
-      theme={theme}
-    >
-      <CartProvider>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          value={{
-            dark: darkTheme.className,
-            light: 'light',
-          }}
-          enableSystem={false}
-          storageKey={'demo-theme'}
-        >
-          <WagmiConfig client={wagmiClient}>
+    <WagmiConfig client={wagmiClient}>
+      <ReservoirKitProvider
+        options={{
+          apiBase: API_BASE,
+          apiKey: API_KEY,
+          marketplaceFee: FEE,
+          marketplaceFeeRecipient: FEE_RECIPIENT,
+          source: SOURCE,
+          normalizeRoyalties: NORMALIZE_ROYALTIES,
+        }}
+        theme={theme}
+      >
+        <CartProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            value={{
+              dark: darkTheme.className,
+              light: 'light',
+            }}
+            enableSystem={false}
+            storageKey={'demo-theme'}
+          >
             <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
-          </WagmiConfig>
-        </ThemeProvider>
-      </CartProvider>
-    </ReservoirKitProvider>
+          </ThemeProvider>
+        </CartProvider>
+      </ReservoirKitProvider>
+    </WagmiConfig>
   )
 }
 

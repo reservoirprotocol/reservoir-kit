@@ -1,20 +1,18 @@
-import React, { FC } from 'react'
-import { Anchor, Flex, Text } from '../../primitives'
+import React, { FC, ReactNode } from 'react'
+import { Flex, Text } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCircleCheck,
+  faCircleInfo,
   faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons'
 
-export type CartToastKind = 'success' | 'error'
+export type CartToastKind = 'success' | 'error' | 'warning'
 
 type Props = {
   kind?: CartToastKind
   message: string
-  link?: {
-    text: string
-    url: string
-  }
+  link?: ReactNode
 }
 
 const CartToast: FC<Props> = ({ kind = 'success', message, link }) => {
@@ -42,20 +40,15 @@ const CartToast: FC<Props> = ({ kind = 'success', message, link }) => {
           />
         </Text>
       )}
+      {kind === 'warning' && (
+        <Text color="error">
+          <FontAwesomeIcon icon={faCircleInfo} width="16" height="16" />
+        </Text>
+      )}
       <Text css={{ ml: '$1', mt: 3 }} style="body2">
         {message}
       </Text>
-      {link && (
-        <Anchor
-          color="primary"
-          weight="medium"
-          css={{ fontSize: 12, ml: 'auto', mt: 3 }}
-          href={link.url}
-          target="_blank"
-        >
-          {link.text}
-        </Anchor>
-      )}
+      {link}
     </Flex>
   )
 }

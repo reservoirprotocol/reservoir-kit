@@ -52,4 +52,8 @@ export {
 
 export { default as CartPopover } from './components/cart/CartPopover'
 export { CartProvider } from './context/CartProvider'
-export type { Cart, CartItem } from './context/CartProvider'
+export type {
+  Cart,
+  CheckoutStatus,
+  CheckoutTransactionError,
+} from './context/CartProvider'

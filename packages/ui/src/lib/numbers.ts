@@ -36,14 +36,7 @@ const truncateFractionAndFormat = (
       }
 
       let formattedValue = ''
-      for (
-        let idx = 0, counter = 0;
-        idx < value.length && counter < digits;
-        idx++
-      ) {
-        if (value[idx] !== '0') {
-          counter++
-        }
+      for (let idx = 0; idx < value.length && idx < digits; idx++) {
         formattedValue += value[idx]
       }
       return formattedValue

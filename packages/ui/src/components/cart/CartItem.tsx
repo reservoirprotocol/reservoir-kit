@@ -9,9 +9,14 @@ import {
 } from '../../primitives'
 import { styled } from '../../../stitches.config'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClose } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowDown,
+  faArrowUp,
+  faClose,
+} from '@fortawesome/free-solid-svg-icons'
 import { Cart } from '../../context/CartProvider'
 import InfoTooltip from '../../primitives/InfoTooltip'
+import { formatNumber } from '../../lib/numbers'
 
 type Props = {
   item: Cart['items'][0]
@@ -39,10 +44,27 @@ const CloseButton = styled(Button, {
 })
 
 const CartItem: FC<Props> = ({ item, usdConversion }) => {
-  const { token, collection, price, isBannedOnOpensea } = item
+  const { token, collection, isBannedOnOpensea } = item
   const client = useReservoirClient()
-  const usdPrice = (usdConversion || 0) * (price?.amount?.decimal || 0)
-  const { remove } = useCart(() => null)
+  const { remove, data: cartCurrency } = useCart((cart) => cart.currency)
+
+  let price =
+    item.price?.currency?.contract !== cartCurrency?.contract
+      ? item.price?.amount?.native
+      : item.price?.amount?.decimal
+  let previousPrice =
+    item.previousPrice?.currency?.contract !== cartCurrency?.contract
+      ? item.previousPrice?.amount?.native
+      : item.previousPrice?.amount?.decimal
+  let priceDiff = 0
+  let priceIncrease = false
+  let priceDecrease = false
+  if (price !== undefined && previousPrice !== undefined) {
+    priceDiff = Math.abs(((price - previousPrice) / price) * 100)
+    priceIncrease = price > previousPrice
+    priceDecrease = price < previousPrice
+  }
+  const usdPrice = (usdConversion || 0) * (price || 0)
 
   return (
     <Flex
@@ -54,7 +76,7 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
         '&:hover': {
           backgroundColor: '$neutralBgHover',
           [`& ${CloseButton}`]: {
-            background: '$accentSolid',
+            background: '$errorAccent',
           },
         },
       }}
@@ -65,9 +87,14 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
           css={!price ? { filter: 'grayscale(1)' } : {}}
         />
         <CloseButton
-          css={{ background: '$neutralSolid' }}
+          css={{
+            background:
+              item.isBannedOnOpensea || !item.price
+                ? '$errorAccent'
+                : '$neutralSolid',
+          }}
           onClick={() => {
-            remove(token.id, collection.id)
+            remove([{ tokenId: token.id, collectionId: collection.id }])
           }}
         >
           <FontAwesomeIcon icon={faClose} width="16" height="16" />
@@ -95,9 +122,25 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
           {collection.name}
         </Text>
         {!price && (
-          <Text style="body2" color="errorLight">
+          <Text style="body2" color="error">
             Item no longer available
           </Text>
+        )}
+        {priceIncrease && (
+          <Flex css={{ gap: '$1', color: '$accentSolidHover' }} align="center">
+            <FontAwesomeIcon width="11" icon={faArrowUp} />
+            <Text style="body2" color="accent">
+              Price has gone up {formatNumber(priceDiff)}%
+            </Text>
+          </Flex>
+        )}
+        {priceDecrease && (
+          <Flex css={{ gap: '$1', color: '$accentSolidHover' }} align="center">
+            <FontAwesomeIcon width="11" icon={faArrowDown} />
+            <Text style="body2" color="accent">
+              Price went down {formatNumber(priceDiff)}%
+            </Text>
+          </Flex>
         )}
       </Flex>
       {price && (
@@ -108,13 +151,18 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
         >
           <FormatCryptoCurrency
             textStyle="subtitle2"
-            amount={price.amount?.decimal}
-            address={price.currency?.contract}
-            decimals={price.currency?.decimals}
+            amount={price}
+            address={cartCurrency?.contract}
+            decimals={cartCurrency?.decimals}
             logoWidth={12}
           />
-          {usdPrice && (
-            <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
+          {usdPrice && usdPrice > 0 && (
+            <FormatCurrency
+              amount={usdPrice}
+              style="tiny"
+              color="subtle"
+              css={{ textAlign: 'end' }}
+            />
           )}
         </Flex>
       )}

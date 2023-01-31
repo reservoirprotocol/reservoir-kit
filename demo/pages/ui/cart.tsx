@@ -10,15 +10,16 @@ const DEFAULT_COLLECTION_ID =
 const CartPage: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
 
-  const { data: tokens } = useTokens(
+  const { data: tokens, isValidating } = useTokens(
     collectionId
       ? {
           collection: collectionId,
+          limit: 100,
         }
       : false
   )
-  const { add, remove, data: items } = useCart((store) => store.items)
 
+  const { add, remove, data: items } = useCart((store) => store.items)
   return (
     <div
       style={{
@@ -52,29 +53,37 @@ const CartPage: NextPage = () => {
           )
         })
         return (
-          <div>
+          <div key={token?.token?.tokenId}>
             <input
               type="checkbox"
               checked={checked}
+              onChange={() => {}}
               onClick={(e) => {
                 if (!token?.token || !token.token.collection?.id) {
                   return
                 }
 
                 if (checked) {
-                  remove(token.token.tokenId, token.token.collection.id)
+                  remove([
+                    {
+                      tokenId: token.token.tokenId,
+                      collectionId: token.token.collection.id,
+                    },
+                  ])
                 } else {
-                  add({
-                    token: {
-                      id: token.token.tokenId,
-                      name: token.token.name || `#${token.token.tokenId}`,
+                  add([
+                    {
+                      token: {
+                        id: token.token.tokenId,
+                        name: token.token.name || `#${token.token.tokenId}`,
+                      },
+                      collection: {
+                        id: token.token.collection.id,
+                        name: token.token.collection.name || '',
+                      },
+                      price: token.market?.floorAsk?.price,
                     },
-                    collection: {
-                      id: token.token.collection.id,
-                      name: token.token.collection.name || '',
-                    },
-                    price: token.market?.floorAsk?.price,
-                  })
+                  ])
                 }
               }}
             />
