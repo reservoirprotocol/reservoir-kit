@@ -2,7 +2,7 @@ import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import { SWRInfiniteConfiguration } from 'swr/infinite'
 import useSWR from 'swr'
 import { useInfiniteApi, useReservoirClient } from './'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 type TokenDetailsResponse =
   paths['/tokens/v5']['get']['responses']['200']['schema']
@@ -22,7 +22,7 @@ export default function (
 ) {
   const client = useReservoirClient()
 
-  const response = useInfiniteApi<TokenDetailsResponse>(
+  const tokenResponse = useInfiniteApi<TokenDetailsResponse>(
     (pageIndex, previousPageData) => {
       if (!options) {
         return null
@@ -54,14 +54,14 @@ export default function (
     }
   )
 
-  const tokens = response.data?.flatMap((page) => page.tokens) ?? []
+  const tokens = tokenResponse.data?.flatMap((page) => page.tokens) ?? []
 
   // If realtime is enabled, every time the best price of a token changes (i.e. the 'floor ask'), an
   // event is generated and the data is updated
-  if(realtime && options && options.collection) {
+  if (realtime && options && options.collection) {
     const path = new URL(`${client?.apiBase}/events/tokens/floor-ask/v3`)
 
-    const query: TokenEventsQuery = {contract: options.collection}
+    const query: TokenEventsQuery = { contract: options.collection }
     setParams(path, query)
 
     const { data: eventData } = useSWR<TokenEventsResponse>(
@@ -70,44 +70,78 @@ export default function (
       { refreshInterval: 1000 }
     )
 
-    let updatedTokens = tokens.map(token => {
-      const event = eventData?.events?.find(event => event.token?.tokenId == token?.token?.tokenId) 
-      let tokenFloorAsk = token?.market?.floorAsk
+    // Sync token data with the event data
+    let tokenData = tokenResponse.data
 
-      if(event && tokenFloorAsk) {
-        tokenFloorAsk.id = event.floorAsk?.orderId || tokenFloorAsk.id
-        tokenFloorAsk.price = event.floorAsk?.price || tokenFloorAsk.price
-        tokenFloorAsk.validFrom = event.floorAsk?.validFrom || tokenFloorAsk.validFrom
-        tokenFloorAsk.validUntil = event.floorAsk?.validUntil || tokenFloorAsk.validUntil
+    const [realtimeTokens, setRealtimeTokens] = useState<
+      NonNullable<TokenDetailsResponse['tokens']>
+    >([])
+
+    useEffect(() => {
+      let updatedTokens =
+        (tokenData
+          ?.flatMap((page) => page.tokens)
+          ?.map((token) => {
+            let prevTokenFloorAsk = token?.market?.floorAsk
+            const newTokenFloorAsk = eventData?.events?.find(
+              (event) => event.token?.tokenId == token?.token?.tokenId
+            )?.floorAsk
+
+            if (prevTokenFloorAsk?.id == newTokenFloorAsk?.orderId) {
+              return token
+            } else if (token?.market && newTokenFloorAsk) {
+              token.market.floorAsk = {
+                ...prevTokenFloorAsk,
+                id: newTokenFloorAsk?.orderId,
+                maker: newTokenFloorAsk?.maker,
+                price: newTokenFloorAsk?.price,
+                validFrom: newTokenFloorAsk?.validFrom,
+                validUntil: newTokenFloorAsk?.validUntil,
+              }
+            }
+
+            return token
+          }) as NonNullable<TokenDetailsResponse['tokens']>) ?? []
+
+      // Sort tokens
+      if (options.sortBy == 'floorAskPrice' || options.sortBy == undefined) {
+        updatedTokens?.sort((a, b) => {
+          let priceA = a?.market?.floorAsk?.price?.amount?.native
+          let priceB = b?.market?.floorAsk?.price?.amount?.native
+
+          if (!priceA || !priceB) {
+            return 0
+          } else if (
+            options.sortDirection == 'asc' ||
+            options.sortDirection == null
+          ) {
+            return priceA - priceB
+          } else {
+            return priceB - priceA
+          }
+        })
       }
 
-      return token
-    })
+      setRealtimeTokens(updatedTokens)
 
-    const updatedResponse = response.data
-
-    if(updatedResponse) {
-      //@ts-ignore
-      updatedResponse.data?.[0].tokens = updatedTokens
-      response.mutate(response.data, 
-        {
-          optimisticData: updatedResponse,
+      if (!tokenResponse.isFetchingPage) {
+        tokenResponse.mutate(tokenResponse.data, {
+          optimisticData: tokenData,
           rollbackOnError: true,
           populateCache: true,
-          revalidate: false
-        }
-      )
-    }
+          revalidate: false,
+        })
+      }
+    }, [eventData, tokenResponse.isFetchingPage])
 
     return {
-      ...response,
-      data: updatedTokens
+      ...tokenResponse,
+      data: realtimeTokens,
     }
-  }
-  else 
+  } else {
     return {
-      ...response,
+      ...tokenResponse,
       data: tokens,
     }
+  }
 }
-

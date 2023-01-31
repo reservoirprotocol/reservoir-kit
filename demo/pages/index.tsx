@@ -57,6 +57,9 @@ const Index: NextPage = () => {
         <Link href="/hook/tokens">
           <a>useTokens</a>
         </Link>
+        <Link href="/hook/tokensRealtime">
+          <a>useTokens(Realtime)</a>
+        </Link>
         <Link href="/hook/userActivity">
           <a>useUserActivity</a>
         </Link>

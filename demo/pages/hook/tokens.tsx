@@ -18,8 +18,7 @@ const Tokens: NextPage = () => {
       sortBy: 'floorAskPrice',
       includeTopBid: true,
     },
-    {},
-    true
+    {}
   )
 
   const { ref, inView } = useInView()
