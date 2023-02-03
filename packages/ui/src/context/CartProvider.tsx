@@ -63,6 +63,7 @@ export type Cart = {
   currency?: NonNullable<CartItemPrice>['currency']
   referrer?: string
   referrerFeeBps?: number
+  referrerFee?: number
   items: CartItem[]
   isValidating: boolean
   chain?: Chain
@@ -95,6 +96,7 @@ function cartStore({
   const chainCurrency = useChainCurrency()
   const cartData = useRef<Cart>({
     totalPrice: 0,
+    referrerFee: 0,
     items: [],
     isValidating: false,
     transaction: null,
@@ -113,7 +115,7 @@ function cartStore({
           (chain) => rehydratedCart.chain?.id === chain.id
         )
         const currency = getCartCurrency(cartData.current.items)
-        const totalPrice = calculateTotal(
+        const { totalPrice, referrerFee } = calculatePricing(
           cartData.current.items,
           currency,
           cartData.current.referrerFeeBps
@@ -123,6 +125,7 @@ function cartStore({
           chain: chain || cartData.current.chain,
           items: rehydratedCart.items,
           totalPrice,
+          referrerFee,
           currency,
         }
         subscribers.current.forEach((callback) => callback())
@@ -141,10 +144,15 @@ function cartStore({
         ? referrer
         : undefined
     const currency = getCartCurrency(cartData.current.items)
-    const totalPrice = calculateTotal(cartData.current.items, currency, feeBps)
+    const { totalPrice, referrerFee } = calculatePricing(
+      cartData.current.items,
+      currency,
+      feeBps
+    )
     cartData.current = {
       ...cartData.current,
       totalPrice,
+      referrerFee,
       currency,
       referrer: referrerAddress,
       referrerFeeBps: feeBps,
@@ -187,8 +195,9 @@ function cartStore({
     }
   }, [persist])
 
-  const calculateTotal = useCallback(
+  const calculatePricing = useCallback(
     (items: CartItem[], currency?: Currency, referrerFeeBps?: number) => {
+      let referrerFee = 0
       let subtotal = items.reduce((total, { price }) => {
         let amount = price?.amount?.decimal
         if (price?.currency?.contract !== currency?.contract) {
@@ -197,11 +206,22 @@ function cartStore({
         return (total += amount || 0)
       }, 0)
       if (referrerFeeBps) {
-        const fee = (referrerFeeBps / 10000) * subtotal
-
-        subtotal = subtotal + fee
+        referrerFee = calculateReferrerFee(subtotal, referrerFeeBps) || 0
+        subtotal = subtotal + referrerFee
       }
-      return subtotal
+      return {
+        totalPrice: subtotal,
+        referrerFee,
+      }
+    },
+    []
+  )
+
+  const calculateReferrerFee = useCallback(
+    (price: number, referrerFeeBps: number) => {
+      if (referrerFeeBps) {
+        return (referrerFeeBps / 10000) * price
+      }
     },
     []
   )
@@ -255,7 +275,7 @@ function cartStore({
       }
     })
     const currency = getCartCurrency(updatedItems)
-    const totalPrice = calculateTotal(
+    const { totalPrice, referrerFee } = calculatePricing(
       updatedItems,
       currency,
       cartData.current.referrerFeeBps
@@ -264,6 +284,7 @@ function cartStore({
       ...cartData.current,
       items: updatedItems,
       totalPrice,
+      referrerFee,
       currency,
     }
     commit()
@@ -279,7 +300,7 @@ function cartStore({
         }
       )
       const currency = getCartCurrency(updatedItems)
-      const totalPrice = calculateTotal(
+      const { totalPrice, referrerFee } = calculatePricing(
         updatedItems,
         currency,
         cartData.current.referrerFeeBps
@@ -288,6 +309,7 @@ function cartStore({
         ...cartData.current,
         items: updatedItems,
         totalPrice,
+        referrerFee,
         currency,
       }
       commit()
@@ -364,7 +386,7 @@ function cartStore({
       return item
     })
     const currency = getCartCurrency(items)
-    const totalPrice = calculateTotal(
+    const { totalPrice, referrerFee } = calculatePricing(
       items,
       currency,
       cartData.current.referrerFeeBps
@@ -374,6 +396,7 @@ function cartStore({
       items,
       isValidating: false,
       totalPrice,
+      referrerFee,
       currency,
     }
     commit()
@@ -542,7 +565,7 @@ function cartStore({
             ) {
               const items = [...cartData.current.transaction.items]
               const currency = getCartCurrency(items)
-              const totalPrice = calculateTotal(
+              const { totalPrice, referrerFee } = calculatePricing(
                 items,
                 currency,
                 cartData.current.referrerFeeBps
@@ -550,6 +573,7 @@ function cartStore({
               cartData.current.items = items
               cartData.current.currency = currency
               cartData.current.totalPrice = totalPrice
+              cartData.current.referrerFee = referrerFee
             }
             commit()
             validate()

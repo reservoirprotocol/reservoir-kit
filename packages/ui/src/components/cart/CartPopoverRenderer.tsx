@@ -14,6 +14,7 @@ type ChildrenProps = {
   loading: boolean
   currency?: NonNullable<Cart['items'][0]['price']>['currency']
   totalPrice: number
+  referrerFee?: number
   usdPrice: ReturnType<typeof useCoinConversion>
   balance?: BigNumber
   hasEnoughCurrency: boolean
@@ -40,7 +41,14 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const { data, clear, clearTransaction, validate, remove, add, checkout } =
     useCart((cart) => cart)
-  const { isValidating, totalPrice, items, currency, transaction } = data
+  const {
+    isValidating,
+    totalPrice,
+    items,
+    currency,
+    transaction,
+    referrerFee,
+  } = data
   const usdPrice = useCoinConversion(
     open ? 'USD' : undefined,
     currency?.symbol || chainCurrency.name
@@ -124,6 +132,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         priceChangeItems,
         currency,
         totalPrice,
+        referrerFee,
         usdPrice,
         hasEnoughCurrency,
         balance: balance?.value,

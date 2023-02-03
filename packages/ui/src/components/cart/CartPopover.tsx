@@ -85,6 +85,7 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
         unavailableItems,
         priceChangeItems,
         totalPrice,
+        referrerFee,
         usdPrice,
         hasEnoughCurrency,
         balance,
@@ -329,6 +330,32 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                     </Flex>
                   )}
                 <Flex direction="column" css={{ mt: 'auto', pb: 10 }}>
+                  {!isCartEmpty && referrerFee ? (
+                    <Flex css={{ mb: '$4' }}>
+                      <Text style="subtitle2">Referrer Fee</Text>
+                      <Flex
+                        direction="column"
+                        justify="center"
+                        css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
+                      >
+                        <FormatCryptoCurrency
+                          textStyle="subtitle2"
+                          amount={referrerFee}
+                          address={currency?.contract}
+                          decimals={currency?.decimals}
+                          logoWidth={12}
+                        />
+                        {usdPrice && (
+                          <FormatCurrency
+                            amount={usdPrice * referrerFee}
+                            style="subtitle2"
+                            color="subtle"
+                            css={{ textAlign: 'end' }}
+                          />
+                        )}
+                      </Flex>
+                    </Flex>
+                  ) : null}
                   {!isCartEmpty && (
                     <Flex css={{ mb: 28 }}>
                       <Text style="h6">Total</Text>
