@@ -81,7 +81,7 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
         },
       }}
     >
-      <Flex css={{ position: 'relative', minWidth: 0 }}>
+      <Flex css={{ position: 'relative', minWidth: 0, flexShrink: 0 }}>
         <CartItemImage
           src={`${client?.apiBase}/redirect/tokens/${collection.id}:${token.id}/image/v1`}
           css={!price ? { filter: 'grayscale(1)' } : {}}
@@ -147,7 +147,12 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
         <Flex
           direction="column"
           justify="center"
-          css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
+          css={{
+            ml: 'auto',
+            flexShrink: 0,
+            gap: '$1',
+            '> div': { ml: 'auto' },
+          }}
         >
           <FormatCryptoCurrency
             textStyle="subtitle2"
