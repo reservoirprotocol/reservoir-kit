@@ -3,7 +3,7 @@ import { Flex, Box, Text } from '../../primitives'
 import Token from './Token'
 import Stat from '../Stat'
 import { useTokens, useCollections } from '../../hooks'
-import InfoTooltip from '../InfoTooltip'
+import InfoTooltip from '../../primitives/InfoTooltip'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']

@@ -1,6 +1,11 @@
 import { utils } from 'ethers'
 import { BigNumberish } from '@ethersproject/bignumber'
 
+const isSafariBrowser = () =>
+  typeof window !== 'undefined' &&
+  navigator.userAgent.indexOf('Safari') > -1 &&
+  navigator.userAgent.indexOf('Chrome') <= -1
+
 function toFixed(num: number, fixed: number) {
   const re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?')
   const fixedNum = num.toString().match(re)
@@ -20,7 +25,7 @@ function formatNumber(
   return format(amount)
 }
 
-const trauncateFractionAndFormat = (
+const truncateFractionAndFormat = (
   parts: Intl.NumberFormatPart[],
   digits: number
 ) => {
@@ -31,14 +36,7 @@ const trauncateFractionAndFormat = (
       }
 
       let formattedValue = ''
-      for (
-        let idx = 0, counter = 0;
-        idx < value.length && counter < digits;
-        idx++
-      ) {
-        if (value[idx] !== '0') {
-          counter++
-        }
+      for (let idx = 0; idx < value.length && idx < digits; idx++) {
         formattedValue += value[idx]
       }
       return formattedValue
@@ -62,15 +60,86 @@ function formatBN(
   const amountToFormat =
     typeof amount === 'number' ? amount : +utils.formatUnits(amount, decimals)
 
-  const parts = new Intl.NumberFormat('en-US', {
+  const amountFraction = `${amount}`.split('.')[1]
+  const isSafari = isSafariBrowser()
+  const formatOptions: Intl.NumberFormatOptions = {
     minimumFractionDigits: 0,
     maximumFractionDigits: 20,
+    useGrouping: true,
     notation: 'compact',
     compactDisplay: 'short',
-  }).formatToParts(amountToFormat)
+  }
+
+  // New issue introduced in Safari v16 causes a regression and now need lessPrecision flagged in format options
+  if (isSafari) {
+    //@ts-ignore
+    formatOptions.roundingPriority = 'lessPrecision'
+  }
+
+  const parts = new Intl.NumberFormat('en-US', formatOptions).formatToParts(
+    amountToFormat
+  )
+
+  // Safari has a few bugs with the fraction part of formatToParts, sometimes rounding when unnecessary and
+  // when amount is in the thousands not properly representing the value in compact display. Until the bug is fixed
+  // this workaround should help. bugzilla bug report: https://bugs.webkit.org/show_bug.cgi?id=249231
+  // Update: this has been fixed, but still applied for >v15.3 and <v16
+
+  if (isSafari) {
+    const partTypes = parts.map((part) => part.type)
+    const partsIncludesFraction = partTypes.includes('fraction')
+    const partsIncludeCompactIdentifier = partTypes.includes('compact')
+    if (amountFraction) {
+      if (!partsIncludesFraction && !partsIncludeCompactIdentifier) {
+        const integerIndex = parts.findIndex((part) => part.type === 'integer')
+        parts.splice(
+          integerIndex + 1,
+          0,
+          {
+            type: 'decimal',
+            value: '.',
+          },
+          {
+            type: 'fraction',
+            value: amountFraction,
+          }
+        )
+      }
+    } else if (!partsIncludesFraction && partsIncludeCompactIdentifier) {
+      const compactIdentifier = parts.find((part) => part.type === 'compact')
+      const integerIndex = parts.findIndex((part) => part.type === 'integer')
+      const integer = parts[integerIndex]
+      if (compactIdentifier?.value === 'K' && integer) {
+        const fraction = `${amount}`.replace(integer.value, '')[0]
+        if (fraction && Number(fraction) > 0) {
+          parts.splice(
+            integerIndex + 1,
+            0,
+            {
+              type: 'decimal',
+              value: '.',
+            },
+            {
+              type: 'fraction',
+              value: fraction,
+            }
+          )
+        }
+      }
+    }
+  }
 
   if (parts && parts.length > 0) {
-    return trauncateFractionAndFormat(parts, maximumFractionDigits)
+    const lowestValue = Number(
+      `0.${new Array(maximumFractionDigits).join('0')}1`
+    )
+    if (amountToFormat > 1000) {
+      return truncateFractionAndFormat(parts, 1)
+    } else if (amountToFormat < 1 && amountToFormat < lowestValue) {
+      return `< ${lowestValue}`
+    } else {
+      return truncateFractionAndFormat(parts, maximumFractionDigits)
+    }
   } else {
     return typeof amount === 'string' || typeof amount === 'number'
       ? `${amount}`

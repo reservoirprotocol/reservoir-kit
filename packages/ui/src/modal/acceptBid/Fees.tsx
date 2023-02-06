@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Flex, Text } from '../../primitives'
-import InfoTooltip from '../InfoTooltip'
+import InfoTooltip from '../../primitives/InfoTooltip'
 
 type Props = {
   fees: {

@@ -1,6 +1,5 @@
 import { constants } from 'ethers'
-import { useNetwork } from 'wagmi'
-import { mainnet, goerli } from 'wagmi/chains'
+import { goerli, mainnet, useNetwork } from 'wagmi'
 
 export default function () {
   const { chain: activeChain, chains } = useNetwork()

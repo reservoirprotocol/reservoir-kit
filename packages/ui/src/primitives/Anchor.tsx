@@ -29,6 +29,9 @@ export const StyledAnchor = styled('a', {
           color: '$accentText',
         },
       },
+      error: {
+        color: '$errorAccent',
+      },
     },
     weight: {
       heavy: {

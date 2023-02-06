@@ -30,7 +30,7 @@ import TokenListingDetails from './TokenListingDetails'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import TransactionProgress from '../../modal/TransactionProgress'
 import ProgressBar from '../../modal/ProgressBar'
-import InfoTooltip from '../InfoTooltip'
+import InfoTooltip from '../../primitives/InfoTooltip'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { Currency } from '../../types/Currency'
 import { constants } from 'ethers'
@@ -403,7 +403,7 @@ export function ListModal({
                       onClick={() => setListStep(ListStep.SetPrice)}
                       css={{ width: '100%' }}
                     >
-                      Next
+                      Set your price
                     </Button>
                   </Box>
                 </MainContainer>
@@ -488,6 +488,7 @@ export function ListModal({
                       <Box key={marketplace.name} css={{ mb: '$3' }}>
                         <MarketplacePriceInput
                           marketplace={marketplace}
+                          collection={collection}
                           currency={currency}
                           usdPrice={usdPrice}
                           quantity={quantity}
@@ -555,18 +556,16 @@ export function ListModal({
                     </Box>
                   </Box>
                   <Box css={{ p: '$4', width: '100%' }}>
-                    {selectedMarketplaces.some(
-                      (marketplace) =>
-                        marketplace.price === '' || marketplace.price == 0
-                    ) ? (
-                      <Button disabled={true} css={{ width: '100%' }}>
-                        Set your price
-                      </Button>
-                    ) : (
-                      <Button onClick={listToken} css={{ width: '100%' }}>
-                        Next
-                      </Button>
-                    )}
+                    <Button
+                      disabled={selectedMarketplaces.some(
+                        (marketplace) =>
+                          marketplace.price === '' || marketplace.price == 0
+                      )}
+                      onClick={listToken}
+                      css={{ width: '100%' }}
+                    >
+                      List for sale
+                    </Button>
                   </Box>
                 </MainContainer>
               </ContentContainer>

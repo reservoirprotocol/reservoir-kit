@@ -75,6 +75,9 @@ const Index: NextPage = () => {
         <Link href="/ui/tokenMedia">
           <a>TokenMedia</a>
         </Link>
+        <Link href="/ui/cart">
+          <a>Cart</a>
+        </Link>
       </nav>
     </div>
   )

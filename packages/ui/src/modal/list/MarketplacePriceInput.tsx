@@ -12,9 +12,11 @@ import {
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { Currency } from '../../types/Currency'
 import { CryptoCurrencyIcon } from '../../primitives'
+import { useCollections } from '../../hooks'
 
 type MarketPlaceInputProps = {
   marketplace: Marketplace
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   currency: Currency
   usdPrice?: number | null
   quantity?: number
@@ -24,6 +26,7 @@ type MarketPlaceInputProps = {
 
 const MarketplacePriceInput = ({
   marketplace,
+  collection,
   currency,
   usdPrice,
   quantity = 1,
@@ -32,7 +35,12 @@ const MarketplacePriceInput = ({
   ...props
 }: MarketPlaceInputProps) => {
   let profit =
-    ((1 - (marketplace.fee?.percent || 0) / 100) * Number(marketplace.truePrice)) * quantity
+    (1 -
+      (marketplace.fee?.percent || 0) / 100 -
+      (collection?.royalties?.bps || 0) * 0.0001) *
+    Number(marketplace.truePrice) *
+    quantity
+  100
 
   return (
     <Flex {...props} align="center">
