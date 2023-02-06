@@ -15,7 +15,7 @@ import React, {
   useEffect,
   FC,
 } from 'react'
-import { Chain, useSigner } from 'wagmi'
+import { Chain, useNetwork, useSigner } from 'wagmi'
 import * as allChains from 'wagmi/chains'
 import { constants, utils } from 'ethers'
 import { toFixed } from '../lib/numbers'
@@ -93,6 +93,7 @@ function cartStore({
   referrerFeeBps,
   persist = true,
 }: CartStoreProps) {
+  const { chain: activeChain } = useNetwork()
   const chainCurrency = useChainCurrency()
   const cartData = useRef<Cart>({
     totalPrice: 0,
@@ -160,19 +161,28 @@ function cartStore({
     commit()
   }, [referrer, referrerFeeBps])
 
-  //todo if the chain changes we need to clear the cart
   useEffect(() => {
-    const currency = getCartCurrency(cartData.current.items)
-    const chain = Object.values(allChains).find(
-      (chain) => chain.id === chainCurrency.chainId
-    )
-    cartData.current = {
-      ...cartData.current,
-      currency: currency,
-      chain,
+    if (
+      cartData.current.items.length > 0 &&
+      (!activeChain || activeChain.id !== cartData.current.chain?.id)
+    ) {
+      cartData.current = {
+        ...cartData.current,
+        currency: chainCurrency,
+        chain: activeChain,
+        items: [],
+        totalPrice: 0,
+        referrerFee: 0,
+      }
+    } else {
+      cartData.current = {
+        ...cartData.current,
+        currency: chainCurrency,
+        chain: activeChain,
+      }
     }
     commit()
-  }, [chainCurrency])
+  }, [activeChain])
 
   const get = useCallback(() => cartData.current, [])
   const set = useCallback((value: Partial<Cart>) => {
@@ -250,7 +260,12 @@ function cartStore({
   )
 
   const clear = useCallback(() => {
-    cartData.current = { ...cartData.current, items: [], totalPrice: 0 }
+    cartData.current = {
+      ...cartData.current,
+      items: [],
+      totalPrice: 0,
+      referrerFee: 0,
+    }
     commit()
   }, [])
 
@@ -263,7 +278,10 @@ function cartStore({
     commit()
   }, [])
 
-  const add = useCallback((items: CartItem[]) => {
+  const add = useCallback((items: CartItem[], chainId: number) => {
+    if (chainId != cartData.current.chain?.id) {
+      throw `ChainId: ${chainId}, is different than the currently connected chainId (${cartData.current.chain?.id})`
+    }
     const updatedItems = [...cartData.current.items]
     items.forEach((item) => {
       const isDuplicate = cartData.current.items.some(
