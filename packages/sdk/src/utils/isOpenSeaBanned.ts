@@ -10,8 +10,7 @@ import { version } from '../../package.json'
 export async function isOpenSeaBanned(ids: string[]) {
   let url = 'https://api.opensea.io/api/v1/assets'
   ids.forEach((id, i) => {
-    const contract = id.split(':')[0]
-    const tokenId = id.split(':')[1]
+    const [contract, tokenId] = id.split(':')[0]
     const prefix = i === 0 ? '?' : '&'
     url = `${url}${prefix}token_ids=${tokenId}&asset_contract_addresses=${contract}`
   })
