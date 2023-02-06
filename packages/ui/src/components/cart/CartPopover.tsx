@@ -155,18 +155,16 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                 boxShadow: 'box-shadow: 0px 2px 16px $$shadowColor',
                 border: '1px solid $borderColor',
                 p: 24,
-                height: '100%',
+                minHeight: 500,
                 width: 395,
                 maxHeight: `calc(100vh - ${
                   triggerBottom || 0
                 }px - (25px * 2) - 10px)`,
                 backgroundColor: '$contentBackground',
                 '@media(max-width: 520px)': {
-                  maxHeight: `calc(100vh - ${
-                    triggerBottom || 0
-                  }px - (25px * 2))`,
+                  height: `calc(100vh - ${triggerBottom || 0}px - (25px * 2))`,
                   width: 'calc(100vw - (25px * 2))',
-                  height: 'auto',
+                  minHeight: '100%',
                 },
               }}
             >
