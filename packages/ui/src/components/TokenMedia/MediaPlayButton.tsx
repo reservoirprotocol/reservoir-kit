@@ -48,7 +48,8 @@ const MediaPlayButton: FC<MediaPlayButtonProps> = ({ mediaRef }) => {
           background: 'rgba(105, 113, 119, 0.7)',
         },
       }}
-      onClick={() => {
+      onClick={(e) => {
+        e.preventDefault()
         if (mediaRef.current) {
           if (mediaRef.current.paused) {
             mediaRef.current.play()
