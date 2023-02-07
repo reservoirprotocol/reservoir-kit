@@ -15,9 +15,8 @@ export type Token = Pick<
 type AcceptOfferBodyParameters =
   paths['/execute/sell/v6']['post']['parameters']['body']['body']
 
-export type AcceptOfferOptions = Omit<
-  AcceptOfferBodyParameters,
-  'token' | 'taker'
+export type AcceptOfferOptions = Partial<
+  Omit<AcceptOfferBodyParameters, 'token'>
 >
 
 type Data = {
