@@ -60,9 +60,6 @@ type CartItem = {
   isBannedOnOpensea?: boolean
 }
 
-//whenever we update the items pricing, we need to check the pools and update that as well
-//if an item is a from a pool, we override the price to be whatever the pool curve is
-
 export type Cart = {
   totalPrice: number
   currency?: NonNullable<CartItemPrice>['currency']
@@ -218,7 +215,6 @@ function cartStore({
   }, [persist])
 
   const calculatePools = useCallback((items: CartItem[]) => {
-    debugger
     const pools: Record<
       string,
       { prices: CartItemPrice[]; itemCount: number }
@@ -399,7 +395,7 @@ function cartStore({
         items.forEach((item) => {
           const token = item as Token
           const asyncToken = item as AsyncAddToCartToken
-          if (token) {
+          if (token.token) {
             if (
               !currentIds.includes(
                 `${token.token?.collection?.id}:${token.token?.tokenId}`
@@ -407,7 +403,11 @@ function cartStore({
             ) {
               tokens.push(token)
             }
-          } else if (asyncToken && !currentIds.includes(asyncToken.id)) {
+          } else if (
+            asyncToken &&
+            asyncToken.id &&
+            !currentIds.includes(asyncToken.id)
+          ) {
             tokensToFetch.push(asyncToken.id)
           }
         })
@@ -450,6 +450,7 @@ function cartStore({
 
         cartData.current = {
           ...cartData.current,
+          isValidating: false,
           items: updatedItems,
           totalPrice,
           referrerFee,
@@ -486,7 +487,7 @@ function cartStore({
       currency,
       cartData.current.referrerFeeBps
     )
-    //recalculate pools and pricing
+
     cartData.current = {
       ...cartData.current,
       items: updatedItems,
