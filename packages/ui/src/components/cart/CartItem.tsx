@@ -94,7 +94,7 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
                 : '$neutralSolid',
           }}
           onClick={() => {
-            remove([{ tokenId: token.id, collectionId: collection.id }])
+            remove([`${collection.id}:${token.id}`])
           }}
         >
           <FontAwesomeIcon icon={faClose} width="16" height="16" />

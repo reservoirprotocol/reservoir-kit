@@ -12,12 +12,12 @@ const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const CartPage: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
-  const { chain } = useNetwork()
-  const { data: tokens, isValidating } = useTokens(
+  const { data: tokens } = useTokens(
     collectionId
       ? {
           collection: collectionId,
           limit: 100,
+          includeDynamicPricing: true,
         }
       : false
   )
@@ -69,28 +69,10 @@ const CartPage: NextPage = () => {
 
                 if (checked) {
                   remove([
-                    {
-                      tokenId: token.token.tokenId,
-                      collectionId: token.token.collection.id,
-                    },
+                    `${token.token.collection.id}:${token.token.tokenId}`,
                   ])
                 } else {
-                  add(
-                    [
-                      {
-                        token: {
-                          id: token.token.tokenId,
-                          name: token.token.name || `#${token.token.tokenId}`,
-                        },
-                        collection: {
-                          id: token.token.collection.id,
-                          name: token.token.collection.name || '',
-                        },
-                        price: token.market?.floorAsk?.price,
-                      },
-                    ],
-                    Number(CHAIN_ID)
-                  )
+                  add([token], Number(CHAIN_ID))
                 }
               }}
             />

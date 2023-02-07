@@ -233,12 +233,9 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                       onClick={(e) => {
                         e.preventDefault()
                         remove(
-                          flaggedItems.map((item) => {
-                            return {
-                              tokenId: item.token.id,
-                              collectionId: item.collection.id,
-                            }
-                          })
+                          flaggedItems.map(
+                            (item) => `${item.collection.id}:${item.token.id}`
+                          )
                         )
                       }}
                     >
@@ -259,12 +256,9 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                       onClick={(e) => {
                         e.preventDefault()
                         remove(
-                          unavailableItems.map((item) => {
-                            return {
-                              tokenId: item.token.id,
-                              collectionId: item.collection.id,
-                            }
-                          })
+                          unavailableItems.map(
+                            (item) => `${item.collection.id}:${item.token.id}`
+                          )
                         )
                       }}
                     >
