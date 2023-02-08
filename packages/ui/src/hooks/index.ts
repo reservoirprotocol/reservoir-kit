@@ -13,6 +13,7 @@ export { default as useUserTokens } from './useUserTokens'
 export { default as useUserTopBids } from './useUserTopBids'
 export { default as useUserCollections } from './useUserCollections'
 export { default as useCart } from './useCart'
+export { default as useDynamicTokens } from './useDynamicTokens'
 
 export { default as useCopyToClipboard } from './useCopyToClipboard'
 export { default as useMediaQuery } from './useMediaQuery'

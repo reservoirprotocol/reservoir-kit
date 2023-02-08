@@ -1,8 +1,7 @@
 import { NextPage } from 'next'
-import { CartPopover, useCart, useTokens } from '@reservoir0x/reservoir-kit-ui'
+import { CartPopover, useDynamicTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useState } from 'react'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { useNetwork } from 'wagmi'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -12,7 +11,11 @@ const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const CartPage: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
-  const { data: tokens } = useTokens(
+  const {
+    data: tokens,
+    remove,
+    add,
+  } = useDynamicTokens(
     collectionId
       ? {
           collection: collectionId,
@@ -22,7 +25,6 @@ const CartPage: NextPage = () => {
       : false
   )
 
-  const { add, remove, data: items } = useCart((store) => store.items)
   return (
     <div
       style={{
@@ -48,26 +50,18 @@ const CartPage: NextPage = () => {
         />
       </div>
       {tokens.map((token) => {
-        const checked = items.some((item) => {
-          const { token: cartToken, collection } = item
-          return (
-            collection.id == token?.token?.collection?.id &&
-            cartToken.id == token?.token?.tokenId
-          )
-        })
-
         return (
-          <div key={token?.token?.tokenId}>
+          <div key={token?.token?.tokenId} style={{ display: 'flex', gap: 12 }}>
             <input
               type="checkbox"
-              checked={checked}
+              checked={token.isInCart}
               onChange={() => {}}
-              onClick={(e) => {
+              onClick={() => {
                 if (!token?.token || !token.token.collection?.id || !CHAIN_ID) {
                   return
                 }
 
-                if (checked) {
+                if (token.isInCart) {
                   remove([
                     `${token.token.collection.id}:${token.token.tokenId}`,
                   ])
@@ -76,7 +70,12 @@ const CartPage: NextPage = () => {
                 }
               }}
             />
-            {token?.token?.name} - {token?.token?.tokenId}
+            <div>
+              <div>
+                Name: {token?.token?.name} - {token?.token?.tokenId}
+              </div>
+              <div>Price: {token.market?.floorAsk?.price?.amount?.decimal}</div>
+            </div>
           </div>
         )
       })}
