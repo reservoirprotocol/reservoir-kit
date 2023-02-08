@@ -45,6 +45,7 @@ const CloseButton = styled(Button, {
 
 const CartItem: FC<Props> = ({ item, usdConversion }) => {
   const { token, collection, isBannedOnOpensea } = item
+  const contract = collection.id.split(':')[0]
   const client = useReservoirClient()
   const { remove, data: cartCurrency } = useCart((cart) => cart.currency)
 
@@ -83,7 +84,7 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
     >
       <Flex css={{ position: 'relative', minWidth: 0, flexShrink: 0 }}>
         <CartItemImage
-          src={`${client?.apiBase}/redirect/tokens/${collection.id}:${token.id}/image/v1`}
+          src={`${client?.apiBase}/redirect/tokens/${contract}:${token.id}/image/v1`}
           css={!price ? { filter: 'grayscale(1)' } : {}}
         />
         <CloseButton

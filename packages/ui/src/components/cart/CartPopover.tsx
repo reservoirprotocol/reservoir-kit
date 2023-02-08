@@ -26,6 +26,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faClose,
   faCube,
+  faRefresh,
   faShoppingCart,
 } from '@fortawesome/free-solid-svg-icons'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
@@ -452,6 +453,7 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                       clear()
                     }}
                   >
+                    <FontAwesomeIcon icon={faRefresh} width="16" height="16" />
                     Refresh Cart
                   </Button>
                 )}
