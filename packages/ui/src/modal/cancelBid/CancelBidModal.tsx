@@ -91,6 +91,11 @@ export function CancelBidModal({
             onOpenChange={(open) => {
               setOpen(open)
             }}
+            onPointerDownOutside={() => {
+              if (cancelStep === CancelStep.Complete && onClose) {
+                onClose()
+              }
+            }}
             loading={loading}
           >
             {!isBidAvailable && !loading && (

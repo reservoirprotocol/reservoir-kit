@@ -93,6 +93,11 @@ export function CancelListingModal({
             onOpenChange={(open) => {
               setOpen(open)
             }}
+            onPointerDownOutside={() => {
+              if (cancelStep === CancelStep.Complete && onClose) {
+                onClose()
+              }
+            }}
             loading={loading}
           >
             {!isListingAvailable && !loading && (

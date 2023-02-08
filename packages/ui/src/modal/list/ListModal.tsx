@@ -243,6 +243,11 @@ export function ListModal({
               setOpen(open)
             }}
             loading={!token}
+            onPointerDownOutside={() => {
+              if (token && listStep == ListStep.Complete && onClose) {
+                onClose()
+              }
+            }}
           >
             {token && listStep == ListStep.SelectMarkets && (
               <ContentContainer>

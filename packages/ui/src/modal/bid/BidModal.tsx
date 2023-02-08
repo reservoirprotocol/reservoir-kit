@@ -269,6 +269,9 @@ export function BidModal({
               ) {
                 e.preventDefault()
               }
+              if (bidStep === BidStep.Complete && onClose) {
+                onClose()
+              }
             }}
             onFocusCapture={(e) => {
               e.stopPropagation()

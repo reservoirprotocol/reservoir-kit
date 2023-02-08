@@ -175,6 +175,11 @@ export function BuyModal({
             onOpenChange={(open) => {
               setOpen(open)
             }}
+            onPointerDownOutside={() => {
+              if (token && buyStep === BuyStep.Complete && onClose) {
+                onClose()
+              }
+            }}
             loading={loading}
           >
             {buyStep === BuyStep.Unavailable && !loading && (

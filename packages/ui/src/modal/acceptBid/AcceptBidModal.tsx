@@ -165,6 +165,15 @@ export function AcceptBidModal({
             title={title}
             open={open}
             onOpenChange={(open) => setOpen(open)}
+            onPointerDownOutside={() => {
+              if (
+                token &&
+                acceptBidStep === AcceptBidStep.Complete &&
+                onClose
+              ) {
+                onClose()
+              }
+            }}
             loading={loading}
           >
             {acceptBidStep === AcceptBidStep.Unavailable && !loading && (
