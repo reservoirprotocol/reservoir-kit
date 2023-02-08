@@ -498,6 +498,8 @@ export function ListModal({
                           onBlur={() => {
                             if (marketplace.price === '') {
                               setMarketPrice(0, marketplace)
+                            } else if (Number(marketplace.price) < 0.000001) {
+                              setMarketPrice(0.000001, marketplace)
                             }
                           }}
                         />
@@ -507,7 +509,7 @@ export function ListModal({
                           marketplace.truePrice !== '' &&
                           marketplace.truePrice !== null &&
                           currency.contract === constants.AddressZero &&
-                          marketplace.truePrice <
+                          Number(marketplace.truePrice) <
                             collection?.floorAsk?.price.amount.native && (
                             <Box>
                               <Text style="body2" color="error">
