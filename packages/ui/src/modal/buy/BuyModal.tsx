@@ -23,7 +23,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
-import { BuyModalRenderer, BuyStep } from './BuyModalRenderer'
+import { BuyModalRenderer, BuyStep, StepData } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import { useNetwork } from 'wagmi'
@@ -46,7 +46,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
   onPurchaseError?: (error: Error, data: PurchaseData) => void
-  onClose?: () => void
+  onClose?: (data: PurchaseData, stepData: StepData | null) => void
 }
 
 function titleForStep(step: BuyStep) {
@@ -173,12 +173,15 @@ export function BuyModal({
             }
             open={open}
             onOpenChange={(open) => {
-              setOpen(open)
-            }}
-            onPointerDownOutside={() => {
-              if (token && buyStep === BuyStep.Complete && onClose) {
-                onClose()
+              if (!open && onClose) {
+                const data: PurchaseData = {
+                  tokenId: tokenId,
+                  collectionId: collectionId,
+                  maker: address,
+                }
+                onClose(data, stepData)
               }
+              setOpen(open)
             }}
             loading={loading}
           >
@@ -455,9 +458,6 @@ export function BuyModal({
                       <Button
                         onClick={() => {
                           setOpen(false)
-                          if (onClose) {
-                            onClose()
-                          }
                         }}
                         css={{ flex: 1 }}
                         color="ghost"
@@ -469,9 +469,6 @@ export function BuyModal({
                         color="primary"
                         onClick={() => {
                           onGoToToken()
-                          if (onClose) {
-                            onClose()
-                          }
                         }}
                       >
                         Go to Token
@@ -481,9 +478,6 @@ export function BuyModal({
                     <Button
                       onClick={() => {
                         setOpen(false)
-                        if (onClose) {
-                          onClose()
-                        }
                       }}
                       style={{ flex: 1 }}
                       color="primary"

@@ -42,7 +42,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   bidId?: string
   normalizeRoyalties?: boolean
   onBidAccepted?: (data: BidData) => void
-  onClose?: () => void
+  onClose?: (data: BidData, stepData: StepData | null) => void
   onBidAcceptError?: (error: Error, data: BidData) => void
   onCurrentStepUpdate?: (data: StepData) => void
 }
@@ -164,15 +164,16 @@ export function AcceptBidModal({
             trigger={trigger}
             title={title}
             open={open}
-            onOpenChange={(open) => setOpen(open)}
-            onPointerDownOutside={() => {
-              if (
-                token &&
-                acceptBidStep === AcceptBidStep.Complete &&
-                onClose
-              ) {
-                onClose()
+            onOpenChange={(open) => {
+              if (!open && onClose) {
+                const data: BidData = {
+                  tokenId: tokenId,
+                  collectionId: collectionId,
+                  maker: address,
+                }
+                onClose(data, stepData)
               }
+              setOpen(open)
             }}
             loading={loading}
           >
@@ -375,7 +376,6 @@ export function AcceptBidModal({
                     css={{ width: '100%' }}
                     onClick={() => {
                       setOpen(false)
-                      if (onClose) onClose()
                     }}
                   >
                     Done
