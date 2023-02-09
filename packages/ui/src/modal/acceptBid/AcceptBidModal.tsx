@@ -42,7 +42,11 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   bidId?: string
   normalizeRoyalties?: boolean
   onBidAccepted?: (data: BidData) => void
-  onClose?: (data: BidData, stepData: StepData | null) => void
+  onClose?: (
+    data: BidData,
+    stepData: StepData | null,
+    currentStep: AcceptBidStep
+  ) => void
   onBidAcceptError?: (error: Error, data: BidData) => void
   onCurrentStepUpdate?: (data: StepData) => void
 }
@@ -171,7 +175,7 @@ export function AcceptBidModal({
                   collectionId: collectionId,
                   maker: address,
                 }
-                onClose(data, stepData)
+                onClose(data, stepData, acceptBidStep)
               }
               setOpen(open)
             }}

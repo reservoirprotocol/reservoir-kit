@@ -16,7 +16,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   listingId?: string
   normalizeRoyalties?: boolean
-  onClose?: (data: any) => void
+  onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
 }
@@ -96,7 +96,7 @@ export function CancelListingModal({
                   listing,
                   stepData: stepData,
                 }
-                onClose(data)
+                onClose(data, cancelStep)
               }
               setOpen(open)
             }}

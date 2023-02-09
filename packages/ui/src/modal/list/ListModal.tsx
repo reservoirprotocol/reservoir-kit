@@ -56,7 +56,11 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
-  onClose?: (data: ListingCallbackData, stepData: StepData | null) => void
+  onClose?: (
+    data: ListingCallbackData,
+    stepData: StepData | null,
+    currentStep: ListStep
+  ) => void
 }
 
 const Image = styled('img', {})
@@ -251,7 +255,7 @@ export function ListModal({
                   collectionId: collectionId,
                   listings: listingData,
                 }
-                onClose(data, stepData)
+                onClose(data, stepData, listStep)
               }
 
               setOpen(open)

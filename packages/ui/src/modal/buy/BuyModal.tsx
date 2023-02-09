@@ -46,7 +46,11 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
   onPurchaseError?: (error: Error, data: PurchaseData) => void
-  onClose?: (data: PurchaseData, stepData: StepData | null) => void
+  onClose?: (
+    data: PurchaseData,
+    stepData: StepData | null,
+    currentStep: BuyStep
+  ) => void
 }
 
 function titleForStep(step: BuyStep) {
@@ -179,7 +183,7 @@ export function BuyModal({
                   collectionId: collectionId,
                   maker: address,
                 }
-                onClose(data, stepData)
+                onClose(data, stepData, buyStep)
               }
               setOpen(open)
             }}

@@ -63,7 +63,11 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   attribute?: Trait
   normalizeRoyalties?: boolean
   onViewOffers?: () => void
-  onClose?: (data: BidCallbackData, stepData: StepData | null) => void
+  onClose?: (
+    data: BidCallbackData,
+    stepData: StepData | null,
+    currentStep: BidStep
+  ) => void
   onBidComplete?: (data: any) => void
   onBidError?: (error: Error, data: any) => void
 }
@@ -268,7 +272,7 @@ export function BidModal({
                   collectionId: collectionId,
                   bidData,
                 }
-                onClose(data, stepData)
+                onClose(data, stepData, bidStep)
               }
 
               setOpen(open)
