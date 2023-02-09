@@ -9,8 +9,14 @@ import {
   useAttributes,
   useChainCurrency,
 } from '../../hooks'
-import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
-import { mainnet, goerli } from 'wagmi/chains'
+import {
+  useAccount,
+  useBalance,
+  useNetwork,
+  useSigner,
+  mainnet,
+  goerli,
+} from 'wagmi'
 
 import { constants } from 'ethers'
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'

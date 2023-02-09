@@ -24,7 +24,8 @@ gitlogPromise(options)
       if (
         !commit.subject ||
         commit.subject.includes('changelog:') ||
-        commit.subject.includes('chore:')
+        commit.subject.includes('chore:') ||
+        commit.subject.includes('wip:')
       ) {
         return changelog
       }

@@ -1,14 +1,15 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import { Box, Popover, Text } from '../primitives'
+import { Box, Popover, Text } from '.'
 type Props = {
   side: string
   content: string
   width: number
+  kind?: 'info' | 'error'
 }
 
-const InfoTooltip = ({ side, content, width }: Props) => {
+const InfoTooltip = ({ side, content, width, kind = 'info' }: Props) => {
   return (
     <Popover
       side={side}
@@ -19,7 +20,7 @@ const InfoTooltip = ({ side, content, width }: Props) => {
         </Text>
       }
     >
-      <Box css={{ color: '$neutralText' }}>
+      <Box css={{ color: kind === 'error' ? '$errorAccent' : '$neutralText' }}>
         <FontAwesomeIcon icon={faInfoCircle} />
       </Box>
     </Popover>

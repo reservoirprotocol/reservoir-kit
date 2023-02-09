@@ -1,14 +1,15 @@
 import { isOpenSeaBanned } from '@reservoir0x/reservoir-sdk'
 import { useEffect, useState } from 'react'
 
-export default function (contract?: string, token?: number | string) {
+export default function (contract?: string, tokenId?: number | string) {
   const [isBanned, setIsBanned] = useState<boolean>(false)
 
   useEffect(() => {
-    if (contract && token) {
-      isOpenSeaBanned(contract, token)
-        .then((isBanned) => {
-          setIsBanned(isBanned)
+    if (contract && tokenId) {
+      const token = `${contract}:${tokenId}`
+      isOpenSeaBanned([token])
+        .then((statuses) => {
+          setIsBanned(statuses[token])
         })
         .catch((e) => {
           console.error(e)
@@ -17,7 +18,7 @@ export default function (contract?: string, token?: number | string) {
     } else {
       setIsBanned(false)
     }
-  }, [contract, token])
+  }, [contract, tokenId])
 
   return isBanned
 }
