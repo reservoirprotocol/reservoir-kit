@@ -24,7 +24,13 @@ import {
 } from '../../primitives'
 
 import { Modal, ModalSize } from '../Modal'
-import { BidModalRenderer, BidStep, BidData, Trait } from './BidModalRenderer'
+import {
+  BidModalRenderer,
+  BidStep,
+  BidData,
+  Trait,
+  StepData,
+} from './BidModalRenderer'
 import TokenStats from './TokenStats'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -57,7 +63,11 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   attribute?: Trait
   normalizeRoyalties?: boolean
   onViewOffers?: () => void
-  onClose?: () => void
+  onClose?: (
+    data: BidCallbackData,
+    stepData: StepData | null,
+    currentStep: BidStep
+  ) => void
   onBidComplete?: (data: any) => void
   onBidError?: (error: Error, data: any) => void
 }
@@ -256,6 +266,15 @@ export function BidModal({
             title={titleForStep(bidStep)}
             open={open}
             onOpenChange={(open) => {
+              if (!open && onClose) {
+                const data: BidCallbackData = {
+                  tokenId: tokenId,
+                  collectionId: collectionId,
+                  bidData,
+                }
+                onClose(data, stepData, bidStep)
+              }
+
               setOpen(open)
             }}
             loading={!collection}
@@ -690,9 +709,6 @@ export function BidModal({
                     css={{ width: '100%' }}
                     onClick={() => {
                       onViewOffers()
-                      if (onClose) {
-                        onClose()
-                      }
                     }}
                   >
                     View Offers
@@ -702,9 +718,6 @@ export function BidModal({
                     css={{ width: '100%' }}
                     onClick={() => {
                       setOpen(false)
-                      if (onClose) {
-                        onClose()
-                      }
                     }}
                   >
                     Close

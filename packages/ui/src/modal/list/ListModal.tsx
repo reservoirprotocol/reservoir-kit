@@ -20,7 +20,12 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from '../Modal'
-import { ListingData, ListModalRenderer, ListStep } from './ListModalRenderer'
+import {
+  ListingData,
+  ListModalRenderer,
+  ListStep,
+  StepData,
+} from './ListModalRenderer'
 import { ModalSize } from '../Modal'
 import { faChevronLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import TokenStats from './TokenStats'
@@ -51,7 +56,11 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
-  onClose?: () => void
+  onClose?: (
+    data: ListingCallbackData,
+    stepData: StepData | null,
+    currentStep: ListStep
+  ) => void
 }
 
 const Image = styled('img', {})
@@ -240,6 +249,15 @@ export function ListModal({
             title="List Item for sale"
             open={open}
             onOpenChange={(open) => {
+              if (!open && onClose) {
+                const data: ListingCallbackData = {
+                  tokenId: tokenId,
+                  collectionId: collectionId,
+                  listings: listingData,
+                }
+                onClose(data, stepData, listStep)
+              }
+
               setOpen(open)
             }}
             loading={!token}
@@ -726,9 +744,6 @@ export function ListModal({
                         <Button
                           onClick={() => {
                             setOpen(false)
-                            if (onClose) {
-                              onClose()
-                            }
                           }}
                           css={{ flex: 1 }}
                           color="secondary"
@@ -740,9 +755,6 @@ export function ListModal({
                           color="primary"
                           onClick={() => {
                             onGoToToken()
-                            if (onClose) {
-                              onClose()
-                            }
                           }}
                         >
                           Go to Token
@@ -752,9 +764,6 @@ export function ListModal({
                       <Button
                         onClick={() => {
                           setOpen(false)
-                          if (onClose) {
-                            onClose()
-                          }
                         }}
                         style={{ flex: 1 }}
                         color="primary"
