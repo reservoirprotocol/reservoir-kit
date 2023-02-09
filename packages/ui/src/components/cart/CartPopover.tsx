@@ -128,16 +128,7 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
 
         return (
           <Popover.Root modal={true} open={open} onOpenChange={setOpen}>
-            <Popover.Trigger
-              asChild
-              style={{
-                backgroundColor: 'transparent',
-                borderWidth: 0,
-                cursor: 'pointer',
-                padding: 0,
-              }}
-              ref={setPopoverTrigger}
-            >
+            <Popover.Trigger asChild ref={setPopoverTrigger}>
               {trigger}
             </Popover.Trigger>
             <Popover.Content
