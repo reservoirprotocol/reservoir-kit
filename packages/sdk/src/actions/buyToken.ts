@@ -16,9 +16,8 @@ type BuyTokenBodyParameters = NonNullable<
   paths['/execute/buy/v6']['post']['parameters']['body']['body']
 >
 
-export type BuyTokenOptions = Omit<
-  BuyTokenBodyParameters,
-  'taker' | 'source' | 'tokens' | 'orderIds' | 'rawOrders'
+export type BuyTokenOptions = Partial<
+  Omit<BuyTokenBodyParameters, 'source' | 'tokens' | 'orderIds' | 'rawOrders'>
 >
 export type BuyTokenRequiredOptions = Pick<
   BuyTokenBodyParameters,
