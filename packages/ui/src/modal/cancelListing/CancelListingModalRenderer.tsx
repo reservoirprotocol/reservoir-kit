@@ -156,6 +156,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
       .catch((e: any) => {
         const error = e as Error
         const message = 'Oops, something went wrong. Please try again.'
+        //@ts-ignore: Should be fixed in an update to typescript
         const transactionError = new Error(message, {
           cause: error,
         })

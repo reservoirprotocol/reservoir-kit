@@ -731,6 +731,8 @@ function cartStore({
               errorType = CheckoutTransactionError.PiceMismatch
               message = error.message
             }
+
+            //@ts-ignore: Should be fixed in an update to typescript
             error = new Error(message, {
               cause: error,
             })

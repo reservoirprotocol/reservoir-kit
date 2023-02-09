@@ -122,7 +122,7 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
         const unavailableItemsSubject =
           unavailableItems.length > 1 ? 'items' : 'item'
         const priceChangeItemsSubject =
-          priceChangeItems.length > 1 ? 'items' : 'item'
+          priceChangeItems.length > 1 ? 'items prices' : 'item price'
         const isCartEmpty = items.length === 0
         const hasValidItems = items.length > unavailableItems.length
 
@@ -271,7 +271,7 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
               {priceChangeItems.length > 0 && (
                 <CartToast
                   kind="warning"
-                  message={`${priceChangeItems.length} ${priceChangeItemsSubject} prices updated`}
+                  message={`${priceChangeItems.length} ${priceChangeItemsSubject} updated`}
                 />
               )}
               {transaction?.error &&
