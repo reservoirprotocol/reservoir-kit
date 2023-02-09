@@ -4,10 +4,16 @@ import { SWRInfiniteConfiguration } from 'swr/infinite'
 import { Cart } from './../context/CartProvider'
 
 export default function (
-  options?: Parameters<typeof useTokens>['0'],
+  options: Parameters<typeof useTokens>['0'] = {},
   swrOptions: SWRInfiniteConfiguration = {}
 ) {
-  const tokensResponse = useTokens(options, swrOptions)
+  const tokensResponse = useTokens(
+    {
+      includeDynamicPricing: true,
+      ...options,
+    },
+    swrOptions
+  )
   const { data: cartItems, ...cartActions } = useCart((cart) => cart.items)
   const { data: cartPools } = useCart((cart) => cart.pools)
 
