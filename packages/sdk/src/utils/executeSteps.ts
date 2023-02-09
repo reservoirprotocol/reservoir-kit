@@ -169,7 +169,6 @@ export async function executeSteps(
         if (client?.uiVersion) {
           request.headers['x-rkui-version'] = client.uiVersion
         }
-
         await pollUntilOk(
           {
             url: confirmationUrl.href,
