@@ -21,6 +21,7 @@ import { formatNumber } from '../../lib/numbers'
 type Props = {
   item: Cart['items'][0]
   usdConversion: number
+  tokenUrl?: string
 }
 
 const CartItemImage = styled('img', {
@@ -43,7 +44,7 @@ const CloseButton = styled(Button, {
   },
 })
 
-const CartItem: FC<Props> = ({ item, usdConversion }) => {
+const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
   const { token, collection, isBannedOnOpensea } = item
   const contract = collection.id.split(':')[0]
   const client = useReservoirClient()
