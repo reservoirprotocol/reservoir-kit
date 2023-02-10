@@ -38,7 +38,7 @@ const CartPage: NextPage = () => {
         boxSizing: 'border-box',
       }}
     >
-      <CartPopover trigger={<button>Cart</button>}></CartPopover>
+      <CartPopover trigger={<button>Cart</button>} />
       <div>
         <label>Collection Id: </label>
         <input

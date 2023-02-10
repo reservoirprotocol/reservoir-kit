@@ -17,6 +17,7 @@ import {
 import { Cart } from '../../context/CartProvider'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { formatNumber } from '../../lib/numbers'
+import { mainnet } from 'wagmi'
 
 type Props = {
   item: Cart['items'][0]
@@ -49,6 +50,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
   const contract = collection.id.split(':')[0]
   const client = useReservoirClient()
   const { remove, data: cartCurrency } = useCart((cart) => cart.currency)
+  const { data: cartChain } = useCart((cart) => cart.chain)
 
   let price =
     item.price?.currency?.contract !== cartCurrency?.contract
@@ -70,11 +72,34 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
 
   return (
     <Flex
+      onClick={() => {
+        let url: string | undefined = tokenUrl
+        if (!url && cartChain) {
+          let tokenMetaKey: string | null = null
+          if (cartChain.id === mainnet.id) {
+            tokenMetaKey = 'reservoir:token-url-mainnet'
+          } else {
+            tokenMetaKey = `reservoir:token-url-${cartChain.name.toLowerCase()}`
+          }
+          const tokenMetaTag = document.querySelector(
+            `meta[property='${tokenMetaKey}']`
+          )
+          if (tokenMetaTag) {
+            url = tokenMetaTag.getAttribute('content') || undefined
+          }
+        }
+        if (url) {
+          window.location.href = url
+            .replace('${contract}', contract)
+            .replace('${tokenId}', token.id)
+        }
+      }}
       css={{
         width: '100%',
         px: 24,
         py: 8,
         transition: 'background-color 0.25s ease-in-out',
+        cursor: 'pointer',
         '&:hover': {
           backgroundColor: '$neutralBgHover',
           [`& ${CloseButton}`]: {
@@ -95,7 +120,9 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
                 ? '$errorAccent'
                 : '$neutralSolid',
           }}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
             remove([`${collection.id}:${token.id}`])
           }}
         >
@@ -109,7 +136,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
       >
         <Flex align="center" css={{ gap: '$1' }}>
           <Text style="h6" color={price ? undefined : 'subtle'} ellipsify>
-            {token.name}
+            {token.name ? token.name : `#${token.id}`}
           </Text>
           {isBannedOnOpensea && (
             <InfoTooltip
