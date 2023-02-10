@@ -158,6 +158,7 @@ export function CartPopover({
                   triggerBottom || 0
                 }px - (25px * 2) - 10px)`,
                 backgroundColor: '$contentBackground',
+                boxSizing: 'border-box',
                 '@media(max-width: 520px)': {
                   height: `calc(100vh - ${triggerBottom || 0}px - (25px * 2))`,
                   width: '100vw',
