@@ -59,12 +59,17 @@ type Props = {
   trigger: ReactNode
   side?: ComponentPropsWithRef<typeof Popover>['side']
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
-  //token url: direct user to a particular token page on your app, default to meta tag but allow overriding
+  tokenUrl?: string
 }
 
 const CONTENT_OFFSET = 8
 
-export function CartPopover({ trigger, side, openState }: Props): ReactElement {
+export function CartPopover({
+  trigger,
+  side,
+  openState,
+  tokenUrl,
+}: Props): ReactElement {
   const [popoverTrigger, setPopoverTrigger] =
     useState<HTMLButtonElement | null>(null)
   const [open, setOpen] = useFallbackState(
@@ -153,9 +158,10 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                   triggerBottom || 0
                 }px - (25px * 2) - 10px)`,
                 backgroundColor: '$contentBackground',
+                boxSizing: 'border-box',
                 '@media(max-width: 520px)': {
                   height: `calc(100vh - ${triggerBottom || 0}px - (25px * 2))`,
-                  width: 'calc(100vw - (25px * 2))',
+                  width: '100vw',
                   minHeight: '100%',
                 },
               }}
@@ -296,6 +302,7 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                       key={`${item.collection.id}:${item.token.id}`}
                       item={item}
                       usdConversion={usdPrice}
+                      tokenUrl={tokenUrl}
                     />
                   ))}
                 </Flex>

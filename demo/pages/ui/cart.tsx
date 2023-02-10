@@ -29,16 +29,16 @@ const CartPage: NextPage = () => {
     <div
       style={{
         display: 'flex',
-        height: 50,
+        height: '100%',
         width: '100%',
         gap: 12,
         padding: 24,
         flexDirection: 'column',
-        alignItems: 'center',
-        paddingTop: 150,
+        alignItems: 'flex-start',
+        boxSizing: 'border-box',
       }}
     >
-      <CartPopover trigger={<button>Cart</button>}></CartPopover>
+      <CartPopover trigger={<button>Cart</button>} />
       <div>
         <label>Collection Id: </label>
         <input
