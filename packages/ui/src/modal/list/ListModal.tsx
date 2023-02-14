@@ -79,6 +79,8 @@ const MainContainer = styled(Flex, {
   },
 })
 
+const MINIMUM_AMOUNT = 0.000001
+
 export function ListModal({
   openState,
   trigger,
@@ -498,16 +500,26 @@ export function ListModal({
                           onBlur={() => {
                             if (marketplace.price === '') {
                               setMarketPrice(0, marketplace)
-                            } else if (Number(marketplace.price) < 0.000001) {
-                              setMarketPrice(0.000001, marketplace)
                             }
                           }}
                         />
+                        {marketplace.truePrice !== '' &&
+                          marketplace.truePrice !== null &&
+                          Number(marketplace.truePrice) !== 0 &&
+                          Number(marketplace.truePrice) < MINIMUM_AMOUNT && (
+                            <Box>
+                              <Text style="body2" color="error">
+                                Amount must be higher than {MINIMUM_AMOUNT}
+                              </Text>
+                            </Box>
+                          )}
                         {collection &&
                           collection?.floorAsk?.price?.amount?.native !==
                             undefined &&
                           marketplace.truePrice !== '' &&
                           marketplace.truePrice !== null &&
+                          Number(marketplace.truePrice) !== 0 &&
+                          Number(marketplace.truePrice) >= MINIMUM_AMOUNT &&
                           currency.contract === constants.AddressZero &&
                           Number(marketplace.truePrice) <
                             collection?.floorAsk?.price.amount.native && (
@@ -561,7 +573,9 @@ export function ListModal({
                     <Button
                       disabled={selectedMarketplaces.some(
                         (marketplace) =>
-                          marketplace.price === '' || marketplace.price == 0
+                          marketplace.price === '' ||
+                          marketplace.price == 0 ||
+                          Number(marketplace.price) < MINIMUM_AMOUNT
                       )}
                       onClick={listToken}
                       css={{ width: '100%' }}
