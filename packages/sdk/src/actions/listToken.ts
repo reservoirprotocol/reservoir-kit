@@ -30,9 +30,10 @@ export async function listToken(
   const { listings, signer, onProgress = () => {}, precheck } = data
   const client = getClient()
   const maker = await signer.getAddress()
+  const baseApiUrl = client.currentChain()?.baseApiUrl
 
-  if (!client.apiBase) {
-    throw new ReferenceError('ReservoirClient missing configuration')
+  if (!baseApiUrl) {
+    throw new ReferenceError('ReservoirClient missing chain configuration')
   }
 
   try {
@@ -64,7 +65,7 @@ export async function listToken(
     data.params = listings
 
     const request: AxiosRequestConfig = {
-      url: `${client.apiBase}/execute/list/v4`,
+      url: `${baseApiUrl}/execute/list/v4`,
       method: 'post',
       data,
       headers: {
@@ -73,8 +74,9 @@ export async function listToken(
     }
 
     if (precheck) {
-      if (client?.apiKey && request.headers) {
-        request.headers['x-api-key'] = client.apiKey
+      const apiKey = client.currentChain()?.apiKey
+      if (apiKey && request.headers) {
+        request.headers['x-api-key'] = apiKey
       }
       if (client?.uiVersion && request.headers) {
         request.headers['x-rkui-version'] = client.uiVersion

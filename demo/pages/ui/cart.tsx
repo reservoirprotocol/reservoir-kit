@@ -7,10 +7,13 @@ const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
   '0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e'
 
-const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
+// const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
+const CHAIN_ID = 1
 
 const CartPage: NextPage = () => {
-  const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
+  const [collectionId, setCollectionId] = useState(
+    '0xaabc3aef1ce0d23eeaabfc7c6cd9043fcebf7400'
+  )
   const {
     data: tokens,
     remove,

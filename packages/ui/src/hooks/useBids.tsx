@@ -8,7 +8,8 @@ type BidsQuery = paths['/orders/bids/v5']['get']['parameters']['query']
 export default function (
   options: BidsQuery,
   swrOptions: SWRInfiniteConfiguration = {},
-  enabled: boolean = true
+  enabled: boolean = true,
+  chainId?: number
 ) {
   const client = useReservoirClient()
 
@@ -18,7 +19,12 @@ export default function (
         return null
       }
 
-      const url = new URL(`${client?.apiBase || ''}/orders/bids/v5`)
+      const chain =
+        chainId !== undefined
+          ? client?.chains.find((chain) => chain.id === chainId)
+          : client?.currentChain()
+
+      const url = new URL(`${chain?.baseApiUrl || ''}/orders/bids/v5`)
       let query = options || {}
 
       if (
@@ -35,7 +41,7 @@ export default function (
       }
 
       setParams(url, query)
-      return [url.href, client?.apiKey, client?.version]
+      return [url.href, chain?.apiKey, client?.version]
     },
     {
       revalidateOnMount: true,

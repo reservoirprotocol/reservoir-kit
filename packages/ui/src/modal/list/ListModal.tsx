@@ -107,6 +107,7 @@ export function ListModal({
   )
   const [stepTitle, setStepTitle] = useState('')
   const client = useReservoirClient()
+  const reservoirChain = client?.currentChain()
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
     Marketplace[]
   >([])
@@ -525,7 +526,7 @@ export function ListModal({
                           marketplace.truePrice !== '' &&
                           marketplace.truePrice !== null &&
                           currency.contract === constants.AddressZero &&
-                          marketplace.truePrice <
+                          Number(marketplace.truePrice) <
                             collection?.floorAsk?.price.amount.native && (
                             <Box>
                               <Text style="body2" color="error">
@@ -718,7 +719,7 @@ export function ListModal({
                           <a
                             key={data.listing.orderbook}
                             target="_blank"
-                            href={`${client?.apiBase}/redirect/sources/${source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                            href={`${reservoirChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
                           >
                             <Image
                               css={{ width: 24 }}

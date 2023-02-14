@@ -2,6 +2,13 @@ import actions from './actions'
 import * as utils from '../utils'
 import { version } from '../../package.json'
 
+export type ReservoirChain = {
+  id: number
+  baseApiUrl: string
+  default: boolean
+  apiKey?: string
+}
+
 /**
  * ReservoirClient Configuration Options
  * @param apiBase Base api for all reservoir apis, e.g. 'https://api.reservoir.tools'
@@ -13,8 +20,7 @@ import { version } from '../../package.json'
  * @param normalizeRoyalties Normalize orders that don't have royalties by apply royalties on top of them
  */
 export type ReservoirClientOptions = {
-  apiBase: string
-  apiKey?: string
+  chains: ReservoirChain[]
   uiVersion?: string
   source?: string
   automatedRoyalties?: boolean
@@ -29,9 +35,8 @@ let _client: ReservoirClient
 
 export class ReservoirClient {
   version: string
-  apiBase: string
+  chains: ReservoirChain[]
   source?: string
-  apiKey?: string
   uiVersion?: string
   marketplaceFee?: number
   marketplaceFeeRecipient?: string
@@ -43,9 +48,8 @@ export class ReservoirClient {
 
   constructor(options: ReservoirClientOptions) {
     this.version = version
-    this.apiKey = options.apiKey
+    this.chains = options.chains
     this.uiVersion = options.uiVersion
-    this.apiBase = options.apiBase
     this.automatedRoyalties = options.automatedRoyalties
     this.marketplaceFee = options.marketplaceFee
     this.marketplaceFeeRecipient = options.marketplaceFeeRecipient
@@ -69,9 +73,8 @@ export class ReservoirClient {
 
   configure(options: ReservoirClientOptions) {
     this.source = options.source ? options.source : this.source
-    this.apiKey = options.apiKey ? options.apiKey : this.apiKey
     this.uiVersion = options.uiVersion ? options.uiVersion : this.uiVersion
-    this.apiBase = options.apiBase ? options.apiBase : this.apiBase
+    this.chains = options.chains ? options.chains : this.chains
     this.marketplaceFee = options.marketplaceFee
       ? options.marketplaceFee
       : this.marketplaceFee
@@ -83,6 +86,17 @@ export class ReservoirClient {
       options.normalizeRoyalties !== undefined
         ? options.normalizeRoyalties
         : this.normalizeRoyalties
+  }
+
+  currentChain() {
+    if (this.chains && this.chains.length > 0) {
+      const defaultChain = this.chains.find((chain) => chain.default)
+      if (defaultChain) {
+        return defaultChain
+      }
+      return this.chains[0]
+    }
+    return null
   }
 }
 

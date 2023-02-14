@@ -5,7 +5,8 @@ import { SWRConfiguration } from 'swr'
 
 export default function (
   query?: paths['/orders/asks/v4']['get']['parameters']['query'] | false,
-  swrOptions?: SWRConfiguration
+  swrOptions?: SWRConfiguration,
+  chainId?: number
 ) {
   const { address } = useAccount()
   let queryOptions = {
@@ -17,5 +18,5 @@ export default function (
       ...query,
     }
   }
-  return useListings(queryOptions, swrOptions, address !== undefined)
+  return useListings(queryOptions, swrOptions, address !== undefined, chainId)
 }

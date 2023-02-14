@@ -9,6 +9,7 @@ type TokenFallbackProps = {
   style?: CSSProperties
   className?: string
   token: ComponentPropsWithoutRef<typeof TokenMedia>['token']
+  chainId?: number
   onRefreshClicked: () => void
 }
 
@@ -16,9 +17,13 @@ const TokenFallback: FC<TokenFallbackProps> = ({
   style,
   className,
   token,
+  chainId,
   onRefreshClicked,
 }) => {
   const client = useReservoirClient()
+  const reservoirChain = chainId
+    ? client?.chains.find((chain) => chain.id === chainId)
+    : client?.currentChain()
 
   return (
     <Flex
@@ -40,14 +45,17 @@ const TokenFallback: FC<TokenFallbackProps> = ({
       <Button
         color="secondary"
         onClick={() => {
+          if (!reservoirChain) {
+            throw 'ReservoirClient missing chain configuration'
+          }
           onRefreshClicked()
-          const url = `${client?.apiBase}/tokens/refresh/v1`
+          const url = `${reservoirChain?.baseApiUrl}/tokens/refresh/v1`
           const body: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
             {
               token: `${token?.collection?.id}:${token?.tokenId}`,
             }
           const headers = {
-            ...defaultHeaders(client?.apiKey, client?.version),
+            ...defaultHeaders(reservoirChain?.apiKey, client?.version),
             'Content-Type': 'application/json',
           }
           fetch(url, {

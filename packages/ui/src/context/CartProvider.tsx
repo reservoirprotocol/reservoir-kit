@@ -1,11 +1,13 @@
 import {
   Execute,
+  ReservoirChain,
   ReservoirClientActions,
   isOpenSeaBanned,
   paths,
   setParams,
 } from '@reservoir0x/reservoir-sdk'
-import { useReservoirClient, useTokens, useChainCurrency } from '../hooks'
+import { useReservoirClient, useTokens } from '../hooks'
+import { getChainCurrency } from '../hooks/useChainCurrency'
 import { defaultFetcher } from '../lib/swr'
 import React, {
   createContext,
@@ -15,12 +17,12 @@ import React, {
   useEffect,
   FC,
 } from 'react'
-import { Chain, useNetwork, useSigner } from 'wagmi'
-import * as allChains from 'wagmi/chains'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 import { constants, utils } from 'ethers'
 import { toFixed } from '../lib/numbers'
 import { formatUnits } from 'ethers/lib/utils.js'
 import { version } from '../../package.json'
+import { fetchSigner, getNetwork } from 'wagmi/actions'
 
 type Token = NonNullable<ReturnType<typeof useTokens>['data'][0]>
 type FloorAsk = NonNullable<NonNullable<Token['market']>['floorAsk']>
@@ -69,12 +71,12 @@ export type Cart = {
   items: CartItem[]
   pools: Record<string, { prices: CartItemPrice[]; itemCount: number }>
   isValidating: boolean
-  chain?: Chain
+  chain?: ReservoirChain
   pendingTransactionId?: string
   transaction: {
     id?: string
     txHash?: string
-    chain: Chain
+    chain: ReservoirChain
     items: CartItem[]
     error?: Error
     errorType?: CheckoutTransactionError
@@ -96,8 +98,8 @@ function cartStore({
   referrerFeeBps,
   persist = true,
 }: CartStoreProps) {
-  const { chain: activeChain } = useNetwork()
-  const chainCurrency = useChainCurrency()
+  const { chains } = useNetwork()
+  const { switchNetworkAsync } = useSwitchNetwork()
   const cartData = useRef<Cart>({
     totalPrice: 0,
     referrerFee: 0,
@@ -109,17 +111,16 @@ function cartStore({
 
   const subscribers = useRef(new Set<() => void>())
   const client = useReservoirClient()
-  const { data: signer } = useSigner()
 
   useEffect(() => {
     if (persist && typeof window !== 'undefined' && window.localStorage) {
       const storedCart = window.localStorage.getItem(CartStorageKey)
       if (storedCart) {
         const rehydratedCart: Cart = JSON.parse(storedCart)
-        const chain = Object.values(allChains).find(
-          (chain) => rehydratedCart.chain?.id === chain.id
+        const currency = getCartCurrency(
+          rehydratedCart.items,
+          rehydratedCart.chain?.id || 1
         )
-        const currency = getCartCurrency(rehydratedCart.items)
         const pools = calculatePools(rehydratedCart.items)
         const { totalPrice, referrerFee } = calculatePricing(
           rehydratedCart.items,
@@ -128,7 +129,8 @@ function cartStore({
         )
         cartData.current = {
           ...cartData.current,
-          chain: chain || cartData.current.chain,
+          chain:
+            rehydratedCart.items.length > 0 ? rehydratedCart.chain : undefined,
           items: rehydratedCart.items,
           pools,
           totalPrice,
@@ -150,7 +152,10 @@ function cartStore({
       referrer !== undefined && referrerFeeBps !== undefined
         ? referrer
         : undefined
-    const currency = getCartCurrency(cartData.current.items)
+    const currency = getCartCurrency(
+      cartData.current.items,
+      cartData.current.chain?.id || 1
+    )
     const pools = calculatePools(cartData.current.items)
     const { totalPrice, referrerFee } = calculatePricing(
       cartData.current.items,
@@ -168,30 +173,6 @@ function cartStore({
     }
     commit()
   }, [referrer, referrerFeeBps])
-
-  useEffect(() => {
-    if (
-      cartData.current.items.length > 0 &&
-      (!activeChain || activeChain.id !== cartData.current.chain?.id)
-    ) {
-      cartData.current = {
-        ...cartData.current,
-        currency: chainCurrency,
-        chain: activeChain,
-        items: [],
-        totalPrice: 0,
-        pools: {},
-        referrerFee: 0,
-      }
-    } else {
-      cartData.current = {
-        ...cartData.current,
-        currency: chainCurrency,
-        chain: activeChain,
-      }
-    }
-    commit()
-  }, [activeChain])
 
   const get = useCallback(() => cartData.current, [])
   const set = useCallback((value: Partial<Cart>) => {
@@ -260,7 +241,7 @@ function cartStore({
   )
 
   const getCartCurrency = useCallback(
-    (items: CartItem[]): Currency | undefined => {
+    (items: CartItem[], chainId: number): Currency | undefined => {
       let currencies = new Set<string>()
       let currenciesData: Record<string, Currency> = {}
       for (let i = 0; i < items.length; i++) {
@@ -274,12 +255,12 @@ function cartStore({
         }
       }
       if (currencies.size > 1) {
-        return chainCurrency
+        return getChainCurrency(chains, chainId)
       } else if (currencies.size > 0) {
         return Object.values(currenciesData)[0]
       }
     },
-    [chainCurrency]
+    [chains]
   )
 
   const fetchTokens = useCallback(
@@ -287,7 +268,10 @@ function cartStore({
       if (!tokenIds || tokenIds.length === 0) {
         return { tokens: [], flaggedStatuses: {} }
       }
-      const url = new URL(`${client?.apiBase}/tokens/v5`)
+      const reservoirChain = client?.chains.find(
+        (chain) => chain.id === cartData.current.chain?.id
+      )
+      const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v5`)
       const query: paths['/tokens/v5']['get']['parameters']['query'] = {
         tokens: tokenIds,
         limit: 100,
@@ -298,8 +282,8 @@ function cartStore({
       }
       setParams(url, query)
       const params = [url.href]
-      if (client?.apiKey) {
-        params.push(client.apiKey)
+      if (reservoirChain?.apiKey) {
+        params.push(reservoirChain.apiKey)
       }
       if (client?.version) {
         params.push(client.version)
@@ -360,6 +344,7 @@ function cartStore({
       pools: {},
       totalPrice: 0,
       referrerFee: 0,
+      chain: undefined,
     }
     commit()
   }, [commit])
@@ -379,8 +364,8 @@ function cartStore({
   const add = useCallback(
     async (items: AddToCartToken[], chainId: number) => {
       try {
-        if (chainId != cartData.current.chain?.id) {
-          throw `ChainId: ${chainId}, is different than the currently connected chainId (${cartData.current.chain?.id})`
+        if (cartData.current.chain && chainId != cartData.current.chain?.id) {
+          throw `ChainId: ${chainId}, is different than the cart chainId (${cartData.current.chain?.id})`
         }
         if (cartData.current.isValidating) {
           throw 'Currently validating, adding items temporarily disabled'
@@ -441,7 +426,7 @@ function cartStore({
         }
 
         const pools = calculatePools(updatedItems)
-        const currency = getCartCurrency(updatedItems)
+        const currency = getCartCurrency(updatedItems, chainId)
         const { totalPrice, referrerFee } = calculatePricing(
           updatedItems,
           currency,
@@ -456,6 +441,13 @@ function cartStore({
           referrerFee,
           currency,
           pools,
+        }
+
+        if (!cartData.current.chain) {
+          cartData.current.chain =
+            client?.chains.find((chain) => chain.id === chainId) ||
+            client?.currentChain() ||
+            undefined
         }
         commit()
       } catch (e) {
@@ -481,7 +473,10 @@ function cartStore({
       }
     )
     const pools = calculatePools(updatedItems)
-    const currency = getCartCurrency(updatedItems)
+    const currency = getCartCurrency(
+      updatedItems,
+      cartData.current.chain?.id || 1
+    )
     const { totalPrice, referrerFee } = calculatePricing(
       updatedItems,
       currency,
@@ -495,6 +490,9 @@ function cartStore({
       totalPrice,
       referrerFee,
       currency,
+    }
+    if (updatedItems.length === 0) {
+      cartData.current.chain = undefined
     }
     commit()
   }, [])
@@ -556,7 +554,7 @@ function cartStore({
         return item
       })
       const pools = calculatePools(items)
-      const currency = getCartCurrency(items)
+      const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
       const { totalPrice, referrerFee } = calculatePricing(
         items,
         currency,
@@ -588,6 +586,22 @@ function cartStore({
         throw 'Reservoir SDK not initialized'
       }
 
+      const { chain: activeChain } = await getNetwork()
+
+      if (
+        cartData.current.chain &&
+        cartData.current.chain?.id !== activeChain?.id
+      ) {
+        const chain = await switchNetworkAsync?.(cartData.current.chain.id)
+        if (chain?.id !== cartData.current.chain.id) {
+          throw 'Active chain does not match cart chain'
+        }
+      }
+
+      const signer = await fetchSigner({
+        chainId: cartData.current.chain?.id,
+      })
+
       if (!signer) {
         throw 'Signer not available'
       }
@@ -612,8 +626,11 @@ function cartStore({
       if (!tokens || tokens.length === 0) {
         throw 'Cart is empty'
       }
-
-      const currencyChain = Object.values(allChains).find(
+      const chainCurrency = getChainCurrency(
+        chains,
+        cartData.current.chain?.id || 1
+      )
+      const currencyChain = client.chains.find(
         (chain) => (chainCurrency.chainId = chain.id)
       )
       const expectedPrice = cartData.current.totalPrice
@@ -645,7 +662,7 @@ function cartStore({
         pendingTransactionId: transactionId,
         transaction: {
           id: transactionId,
-          chain: cartData.current.chain || currencyChain || allChains.mainnet,
+          chain: cartData.current.chain || currencyChain || client.chains[0],
           items: cartData.current.items,
           status: CheckoutStatus.Approving,
         },
@@ -692,6 +709,7 @@ function cartStore({
                   cartData.current.pools = {}
                   cartData.current.totalPrice = 0
                   cartData.current.currency = undefined
+                  cartData.current.chain = undefined
                 }
               }
             } else if (
@@ -703,6 +721,18 @@ function cartStore({
               )
             ) {
               status = CheckoutStatus.Complete
+            }
+
+            if (
+              cartData.current.transaction?.status != status &&
+              (status === CheckoutStatus.Finalizing ||
+                status === CheckoutStatus.Complete)
+            ) {
+              cartData.current.items = []
+              cartData.current.pools = {}
+              cartData.current.totalPrice = 0
+              cartData.current.currency = undefined
+              cartData.current.chain = undefined
             }
 
             if (cartData.current.transaction) {
@@ -747,7 +777,10 @@ function cartStore({
             ) {
               const items = [...cartData.current.transaction.items]
               const pools = calculatePools(items)
-              const currency = getCartCurrency(items)
+              const currency = getCartCurrency(
+                items,
+                cartData.current.transaction.chain.id
+              )
               const { totalPrice, referrerFee } = calculatePricing(
                 items,
                 currency,
@@ -758,13 +791,14 @@ function cartStore({
               cartData.current.currency = currency
               cartData.current.totalPrice = totalPrice
               cartData.current.referrerFee = referrerFee
+              cartData.current.chain = cartData.current.transaction.chain
             }
             commit()
             validate()
           }
         })
     },
-    [client, signer]
+    [client, switchNetworkAsync]
   )
 
   return {
