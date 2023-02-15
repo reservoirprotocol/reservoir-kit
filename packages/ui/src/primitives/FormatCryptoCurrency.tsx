@@ -6,6 +6,7 @@ import CryptoCurrencyIcon from './CryptoCurrencyIcon'
 type FormatCryptoCurrencyProps = {
   logoWidth?: number
   address?: string
+  chainId?: number
 }
 
 type Props = ComponentProps<typeof FormatCrypto> & FormatCryptoCurrencyProps
@@ -19,6 +20,7 @@ const FormatCryptoCurrency: FC<Props> = ({
   css,
   textColor,
   decimals,
+  chainId,
 }) => {
   return (
     <FormatCrypto
@@ -29,7 +31,11 @@ const FormatCryptoCurrency: FC<Props> = ({
       maximumFractionDigits={maximumFractionDigits}
       decimals={decimals}
     >
-      <CryptoCurrencyIcon css={{ height: logoWidth }} address={address} />
+      <CryptoCurrencyIcon
+        css={{ height: logoWidth }}
+        address={address}
+        chainId={chainId}
+      />
     </FormatCrypto>
   )
 }

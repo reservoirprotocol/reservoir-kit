@@ -10,16 +10,21 @@ import WEthIcon from '../img/WEthIcon'
 
 type Props = {
   address: string
+  chainId?: number
 } & Parameters<StyledComponent>['0']
 
 const StyledImg = styled('img', {})
 
 const CryptoCurrencyIcon: FC<Props> = ({
   address = constants.AddressZero,
+  chainId,
   css,
 }) => {
   const client = useReservoirClient()
-  const chainCurrency = useChainCurrency()
+  const chainCurrency = useChainCurrency(chainId)
+  const chain = client?.chains.find(
+    (chain) => chain.id === chainCurrency.chainId
+  )
 
   if (chainCurrency.symbol === 'ETH') {
     if (constants.AddressZero === address) {
@@ -40,7 +45,7 @@ const CryptoCurrencyIcon: FC<Props> = ({
 
   return (
     <StyledImg
-      src={`${client?.apiBase}/redirect/currency/${address}/icon/v1`}
+      src={`${chain?.baseApiUrl}/redirect/currency/${address}/icon/v1`}
       css={css}
     />
   )

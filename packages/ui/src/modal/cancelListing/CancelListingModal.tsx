@@ -36,6 +36,7 @@ export function CancelListingModal({
   )
   const client = useReservoirClient()
   const { chain: activeChain } = useNetwork()
+  const reservoirChain = client?.currentChain()
 
   return (
     <CancelListingModalRenderer
@@ -57,8 +58,8 @@ export function CancelListingModal({
       }) => {
         const expires = useTimeSince(listing?.expiration)
         const listingImg = tokenId
-          ? `${client?.apiBase}/redirect/tokens/${contract}:${tokenId}/image/v1`
-          : `${client?.apiBase}/redirect/collections/${contract}/image/v1`
+          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${tokenId}/image/v1`
+          : `${reservoirChain?.baseApiUrl}/redirect/collections/${contract}/image/v1`
 
         useEffect(() => {
           if (cancelStep === CancelStep.Complete && onCancelComplete) {

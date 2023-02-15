@@ -13,15 +13,20 @@ export type Marketplace = NonNullable<
 }
 
 export default function (
-  listingEnabledOnly?: boolean
+  listingEnabledOnly?: boolean,
+  chainId?: number
 ): [Marketplace[], React.Dispatch<React.SetStateAction<Marketplace[]>>] {
   const [marketplaces, setMarketplaces] = useState<Marketplace[]>([])
   const client = useReservoirClient()
-  const path = new URL(`${client?.apiBase}/admin/get-marketplaces`)
+  const chain =
+    chainId !== undefined
+      ? client?.chains.find((chain) => chain.id === chainId)
+      : client?.currentChain()
+  const path = new URL(`${chain?.baseApiUrl}/admin/get-marketplaces`)
 
   const { data } = useSWRImmutable<
     paths['/admin/get-marketplaces']['get']['responses']['200']['schema']
-  >([path.href, client?.apiKey, client?.version], null)
+  >([path.href, chain?.apiKey, client?.version], null)
 
   useEffect(() => {
     if (data && data.marketplaces) {

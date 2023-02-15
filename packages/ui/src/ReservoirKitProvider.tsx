@@ -33,8 +33,7 @@ export const ProviderOptionsContext =
   createContext<ReservoirKitProviderOptions>({})
 
 const defaultOptions = {
-  apiBase: 'https://api.reservoir.tools',
-  apiKey: '',
+  chains: [{ baseApiUrl: 'https://api.reservoir.tools', id: 1, default: true }],
 }
 
 const classNameObserverOptions = {

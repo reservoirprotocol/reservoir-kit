@@ -9,9 +9,14 @@ type AsksQuery = paths['/orders/asks/v4']['get']['parameters']['query']
 export default function (
   options: AsksQuery,
   swrOptions: SWRInfiniteConfiguration = {},
-  enabled: boolean = true
+  enabled: boolean = true,
+  chainId?: number
 ) {
   const client = useReservoirClient()
+  const chain =
+    chainId !== undefined
+      ? client?.chains.find((chain) => chain.id === chainId)
+      : client?.currentChain()
 
   const response = useInfiniteApi<Asks>(
     (pageIndex, previousPageData) => {
@@ -19,7 +24,7 @@ export default function (
         return null
       }
 
-      const url = new URL(`${client?.apiBase || ''}/orders/asks/v4`)
+      const url = new URL(`${chain?.baseApiUrl || ''}/orders/asks/v4`)
       let query: AsksQuery = options || {}
 
       if (
@@ -36,7 +41,7 @@ export default function (
       }
 
       setParams(url, query)
-      return [url.href, client?.apiKey, client?.version]
+      return [url.href, chain?.apiKey, client?.version]
     },
     {
       revalidateOnMount: true,

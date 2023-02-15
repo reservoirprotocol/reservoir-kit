@@ -38,6 +38,7 @@ import {
   CheckoutStatus,
   CheckoutTransactionError,
 } from '../../context/CartProvider'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 const scaleUp = keyframes({
   '0%': { opacity: 0, transform: 'scale(0.9) translateY(-10px)' },
@@ -80,6 +81,8 @@ export function CartPopover({
   const [displayPendingTransaction, setDisplayPendingTransaction] =
     useState(false)
   const [purchaseComplete, setPurchaseComplete] = useState(false)
+  const { switchNetworkAsync } = useSwitchNetwork()
+  const { chain: activeChain } = useNetwork()
 
   useEffect(() => {
     if (!open) {
@@ -112,6 +115,7 @@ export function CartPopover({
         currency,
         transaction,
         blockExplorerBaseUrl,
+        cartChain,
         remove,
         clear,
         checkout,
@@ -365,6 +369,7 @@ export function CartPopover({
                         address={currency?.contract}
                         decimals={currency?.decimals}
                         logoWidth={12}
+                        chainId={cartChain?.id}
                       />
                       {usdPrice && (
                         <FormatCurrency
@@ -391,6 +396,7 @@ export function CartPopover({
                         address={currency?.contract}
                         decimals={currency?.decimals}
                         logoWidth={18}
+                        chainId={cartChain?.id}
                       />
                       {usdPrice && (
                         <FormatCurrency
@@ -441,9 +447,15 @@ export function CartPopover({
                     !displayPendingTransaction) && (
                     <Button
                       disabled={!hasEnoughCurrency}
-                      onClick={() => {
+                      onClick={async () => {
                         checkout()
-                        setDisplayPendingTransaction(true)
+                          .then(() => {
+                            setDisplayPendingTransaction(true)
+                          })
+                          .catch((e) => {
+                            console.error(e)
+                            setDisplayPendingTransaction(false)
+                          })
                       }}
                     >
                       {hasEnoughCurrency ? 'Purchase' : 'Add Funds to Purchase'}

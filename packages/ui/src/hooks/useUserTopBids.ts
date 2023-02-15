@@ -10,9 +10,14 @@ type BidsQuery =
 export default function (
   user?: string,
   options?: BidsQuery,
-  swrOptions: SWRInfiniteConfiguration = {}
+  swrOptions: SWRInfiniteConfiguration = {},
+  chainId?: number
 ) {
   const client = useReservoirClient()
+  const chain =
+    chainId !== undefined
+      ? client?.chains.find((chain) => chain.id === chainId)
+      : client?.currentChain()
 
   const response = useInfiniteApi<Bids>(
     (pageIndex, previousPageData) => {
@@ -20,7 +25,7 @@ export default function (
         return null
       }
       const url = new URL(
-        `${client?.apiBase || ''}/orders/users/${user}/top-bids/v2`
+        `${chain?.baseApiUrl || ''}/orders/users/${user}/top-bids/v2`
       )
       let query: BidsQuery = options || {}
 
@@ -38,7 +43,7 @@ export default function (
       }
 
       setParams(url, query)
-      return [url.href, client?.apiKey, client?.version]
+      return [url.href, chain?.apiKey, client?.version]
     },
     {
       revalidateOnMount: true,

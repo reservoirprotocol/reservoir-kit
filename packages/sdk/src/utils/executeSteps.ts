@@ -36,8 +36,12 @@ export async function executeSteps(
     }
 
     const client = getClient()
-    if (client?.apiKey) {
-      request.headers['x-api-key'] = client.apiKey
+    const currentReservoirChain = client?.currentChain()
+    if (currentReservoirChain?.baseApiUrl) {
+      request.baseURL = currentReservoirChain.baseApiUrl
+    }
+    if (currentReservoirChain?.apiKey) {
+      request.headers['x-api-key'] = currentReservoirChain.apiKey
     }
     if (client?.uiVersion) {
       request.headers['x-rkui-version'] = client.uiVersion
@@ -156,14 +160,14 @@ export async function executeSteps(
 
         //Implicitly poll the confirmation url to confirm the transaction went through
         const confirmationUrl = new URL(
-          `${client.apiBase}/transactions/${tx.hash}/synced/v1`
+          `${request.baseURL}/transactions/${tx.hash}/synced/v1`
         )
         const headers: AxiosRequestHeaders = {
           'x-rkc-version': version,
         }
 
-        if (client?.apiKey) {
-          headers['x-api-key'] = client.apiKey
+        if (request.headers && request.headers['x-api-key']) {
+          headers['x-api-key'] = request.headers['x-api-key']
         }
 
         if (client?.uiVersion) {
@@ -185,7 +189,9 @@ export async function executeSteps(
         ) {
           //Confirm that on-chain tx has been picked up by the indexer for the last transaction
           if (stepItem.txHash && (isSell || isBuy)) {
-            const indexerConfirmationUrl = new URL(`${client.apiBase}/sales/v3`)
+            const indexerConfirmationUrl = new URL(
+              `${request.baseURL}/sales/v3`
+            )
             const queryParams: paths['/sales/v3']['get']['parameters']['query'] =
               {
                 txHash: stepItem.txHash,
@@ -242,7 +248,7 @@ export async function executeSteps(
         }
 
         if (postData) {
-          const postOrderUrl = new URL(`${client.apiBase}${postData.endpoint}`)
+          const postOrderUrl = new URL(`${request.baseURL}${postData.endpoint}`)
 
           try {
             const getData = async function () {
@@ -250,8 +256,8 @@ export async function executeSteps(
                 'Content-Type': 'application/json',
                 'x-rkc-version': version,
               }
-              if (client?.apiKey) {
-                headers['x-api-key'] = client.apiKey
+              if (request.headers && request.headers['x-api-key']) {
+                headers['x-api-key'] = request.headers['x-api-key']
               }
 
               let response = await axios.post(

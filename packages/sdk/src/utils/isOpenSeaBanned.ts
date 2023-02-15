@@ -18,7 +18,8 @@ export async function isOpenSeaBanned(ids: string[]) {
   const res = await axios.get(url)
   const json = res.data
   const client = getClient()
-  const apiBase = client?.apiBase
+  const currentReservoirChain = client?.currentChain()
+  const baseApiUrl = currentReservoirChain?.apiKey
   const statuses: Record<string, boolean> = json.assets.reduce(
     (statuses: Record<string, boolean>, asset: any) => {
       statuses[`${asset.asset_contract.address}:${asset.token_id}`] =
@@ -27,8 +28,8 @@ export async function isOpenSeaBanned(ids: string[]) {
     },
     {} as Record<string, boolean>
   )
-  if (res.status === 200 && apiBase) {
-    const apiKey = client?.apiKey
+  if (res.status === 200 && baseApiUrl) {
+    const apiKey = currentReservoirChain.apiKey
     const headers: AxiosRequestHeaders = {
       'Content-Type': 'application/json',
       'x-rkc-version': version,
@@ -47,7 +48,7 @@ export async function isOpenSeaBanned(ids: string[]) {
         headers['x-rkui-version'] = client.uiVersion
       }
       axios
-        .post(`${apiBase}/tokens/flag/v1`, JSON.stringify(body), {
+        .post(`${baseApiUrl}/tokens/flag/v1`, JSON.stringify(body), {
           headers,
         })
         .catch(() => {})

@@ -33,6 +33,7 @@ export function CancelBidModal({
   )
   const client = useReservoirClient()
   const { chain: activeChain } = useNetwork()
+  const reservoirChain = client?.currentChain()
 
   return (
     <CancelBidModalRenderer
@@ -54,8 +55,8 @@ export function CancelBidModal({
         const expires = useTimeSince(bid?.expiration)
         const collectionId = bid?.criteria?.data?.collection?.id
         const bidImg = tokenId
-          ? `${client?.apiBase}/redirect/tokens/${collectionId}:${tokenId}/image/v1`
-          : `${client?.apiBase}/redirect/collections/${collectionId}/image/v1`
+          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${collectionId}:${tokenId}/image/v1`
+          : `${reservoirChain?.baseApiUrl}/redirect/collections/${collectionId}/image/v1`
         const isAttributeOffer = (bid?.criteria?.kind as any) === 'attribute'
 
         useEffect(() => {

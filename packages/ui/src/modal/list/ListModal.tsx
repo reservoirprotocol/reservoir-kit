@@ -109,6 +109,7 @@ export function ListModal({
   )
   const [stepTitle, setStepTitle] = useState('')
   const client = useReservoirClient()
+  const reservoirChain = client?.currentChain()
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
     Marketplace[]
   >([])
@@ -734,7 +735,7 @@ export function ListModal({
                           <a
                             key={data.listing.orderbook}
                             target="_blank"
-                            href={`${client?.apiBase}/redirect/sources/${source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                            href={`${reservoirChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
                           >
                             <Image
                               css={{ width: 24 }}

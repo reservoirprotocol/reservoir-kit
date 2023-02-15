@@ -26,9 +26,10 @@ export async function cancelOrder(data: Data) {
   const { id, signer, onProgress } = data
   const client = getClient()
   const options = data.options || {}
+  const baseApiUrl = client.currentChain()?.baseApiUrl
 
-  if (!client.apiBase) {
-    throw new ReferenceError('ReservoirClient missing configuration')
+  if (!baseApiUrl) {
+    throw new ReferenceError('ReservoirClient missing chain configuration')
   }
 
   try {
@@ -36,7 +37,7 @@ export async function cancelOrder(data: Data) {
 
     await executeSteps(
       {
-        url: `${client.apiBase}/execute/cancel/v2`,
+        url: `${baseApiUrl}/execute/cancel/v2`,
         params: params,
       },
       signer,
