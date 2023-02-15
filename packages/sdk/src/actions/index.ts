@@ -11,8 +11,7 @@ export type ReservoirChain = {
 
 /**
  * ReservoirClient Configuration Options
- * @param apiBase Base api for all reservoir apis, e.g. 'https://api.reservoir.tools'
- * @param apiKey Reservoir API key to be applied to all api
+ * @param chains List of chain objects with configuration (id, baseApiUrl, apiKey and if it's the default)
  * @param source Used to manually override the source domain used to attribute local orders
  * @param automatedRoyalties If true, royalties will be automatically included, defaults to true. Only relevant for creating orders.
  * @param marketplaceFee Fee in bps included when creating an order (listing & bidding)
