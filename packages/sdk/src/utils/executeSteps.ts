@@ -69,7 +69,7 @@ export async function executeSteps(
       if (isSell && quote - expectedPrice < -0.00001) {
         error = {
           type: 'price mismatch',
-          message: `Attention: the price of this token is now ${quote}`,
+          message: `Attention: the offer price of this token is now ${quote}`,
         }
       }
 

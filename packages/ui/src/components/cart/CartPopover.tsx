@@ -318,8 +318,13 @@ export function CartPopover({
                     justify="center"
                     css={{ color: '$neutralBorderHover', flex: 1, gap: '$5' }}
                   >
-                    <FontAwesomeIcon icon={faShoppingCart} width="27" />
-                    <Text style="body2" color="subtle">
+                    <FontAwesomeIcon
+                      icon={faShoppingCart}
+                      width="30"
+                      height="30"
+                      style={{ height: 30 }}
+                    />
+                    <Text style="body3" color="subtle">
                       No items in your cart
                     </Text>
                   </Flex>
