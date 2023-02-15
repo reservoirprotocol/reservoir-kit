@@ -81,6 +81,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
       items.filter(
         ({ previousPrice, price }) =>
           previousPrice &&
+          price?.amount?.decimal !== undefined &&
           previousPrice.amount?.decimal !== price?.amount?.decimal
       ),
     [items]
