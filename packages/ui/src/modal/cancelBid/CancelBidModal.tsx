@@ -13,7 +13,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   bidId?: string
   normalizeRoyalties?: boolean
-  onClose?: () => void
+  onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
 }
@@ -89,6 +89,13 @@ export function CancelBidModal({
             title="Cancel Offer"
             open={open}
             onOpenChange={(open) => {
+              if (!open && onClose) {
+                const data = {
+                  bid,
+                  stepData: stepData,
+                }
+                onClose(data, cancelStep)
+              }
               setOpen(open)
             }}
             loading={loading}
@@ -247,9 +254,6 @@ export function CancelBidModal({
                 <Button
                   onClick={() => {
                     setOpen(false)
-                    if (onClose) {
-                      onClose()
-                    }
                   }}
                   css={{ m: '$4' }}
                 >

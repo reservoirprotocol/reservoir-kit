@@ -34,10 +34,10 @@ const expirationOptions: ExpirationOption[] = [
     relativeTimeUnit: 'M',
   },
   {
-    text: 'None',
-    value: 'never',
-    relativeTime: null,
-    relativeTimeUnit: null,
+    text: '6 Months',
+    value: '6 months',
+    relativeTime: 6,
+    relativeTimeUnit: 'M',
   },
 ]
 

@@ -65,7 +65,7 @@ export async function executeSteps(
       }, 0)
 
       // Check if the user is selling
-      let error = null
+      let error: null | Error | { type: string; message: string } = null
       if (isSell && quote - expectedPrice < -0.00001) {
         error = {
           type: 'price mismatch',
@@ -169,7 +169,6 @@ export async function executeSteps(
         if (client?.uiVersion) {
           request.headers['x-rkui-version'] = client.uiVersion
         }
-
         await pollUntilOk(
           {
             url: confirmationUrl.href,

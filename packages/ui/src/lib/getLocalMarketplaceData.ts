@@ -5,7 +5,7 @@ export default () => {
   let reservoirTitleEl = document.querySelector(
     "meta[property='reservoir:title']"
   )
-  let title = null
+  let title: null | string = null
   if (reservoirTitleEl) {
     title = reservoirTitleEl.getAttribute('content')
   }
@@ -19,7 +19,7 @@ export default () => {
   const reservoirIconEl = document.querySelector(
     "meta[property='reservoir:icon']"
   )
-  let icon = null
+  let icon: null | string = null
   if (reservoirIconEl) {
     icon = reservoirIconEl.getAttribute('content')
   }

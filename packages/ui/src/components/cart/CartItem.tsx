@@ -17,10 +17,12 @@ import {
 import { Cart } from '../../context/CartProvider'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { formatNumber } from '../../lib/numbers'
+import { mainnet } from 'wagmi'
 
 type Props = {
   item: Cart['items'][0]
   usdConversion: number
+  tokenUrl?: string
 }
 
 const CartItemImage = styled('img', {
@@ -43,10 +45,12 @@ const CloseButton = styled(Button, {
   },
 })
 
-const CartItem: FC<Props> = ({ item, usdConversion }) => {
+const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
   const { token, collection, isBannedOnOpensea } = item
+  const contract = collection.id.split(':')[0]
   const client = useReservoirClient()
   const { remove, data: cartCurrency } = useCart((cart) => cart.currency)
+  const { data: cartChain } = useCart((cart) => cart.chain)
 
   let price =
     item.price?.currency?.contract !== cartCurrency?.contract
@@ -68,11 +72,34 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
 
   return (
     <Flex
+      onClick={() => {
+        let url: string | undefined = tokenUrl
+        if (!url && cartChain) {
+          let tokenMetaKey: string | null = null
+          if (cartChain.id === mainnet.id) {
+            tokenMetaKey = 'reservoir:token-url-mainnet'
+          } else {
+            tokenMetaKey = `reservoir:token-url-${cartChain.name.toLowerCase()}`
+          }
+          const tokenMetaTag = document.querySelector(
+            `meta[property='${tokenMetaKey}']`
+          )
+          if (tokenMetaTag) {
+            url = tokenMetaTag.getAttribute('content') || undefined
+          }
+        }
+        if (url) {
+          window.location.href = url
+            .replace('${contract}', contract)
+            .replace('${tokenId}', token.id)
+        }
+      }}
       css={{
         width: '100%',
         px: 24,
         py: 8,
         transition: 'background-color 0.25s ease-in-out',
+        cursor: 'pointer',
         '&:hover': {
           backgroundColor: '$neutralBgHover',
           [`& ${CloseButton}`]: {
@@ -83,7 +110,7 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
     >
       <Flex css={{ position: 'relative', minWidth: 0, flexShrink: 0 }}>
         <CartItemImage
-          src={`${client?.apiBase}/redirect/tokens/${collection.id}:${token.id}/image/v1`}
+          src={`${client?.apiBase}/redirect/tokens/${contract}:${token.id}/image/v1`}
           css={!price ? { filter: 'grayscale(1)' } : {}}
         />
         <CloseButton
@@ -93,8 +120,10 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
                 ? '$errorAccent'
                 : '$neutralSolid',
           }}
-          onClick={() => {
-            remove([{ tokenId: token.id, collectionId: collection.id }])
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            remove([`${collection.id}:${token.id}`])
           }}
         >
           <FontAwesomeIcon icon={faClose} width="16" height="16" />
@@ -107,7 +136,7 @@ const CartItem: FC<Props> = ({ item, usdConversion }) => {
       >
         <Flex align="center" css={{ gap: '$1' }}>
           <Text style="h6" color={price ? undefined : 'subtle'} ellipsify>
-            {token.name}
+            {token.name ? token.name : `#${token.id}`}
           </Text>
           {isBannedOnOpensea && (
             <InfoTooltip

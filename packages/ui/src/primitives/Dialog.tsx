@@ -138,7 +138,7 @@ const Dialog = forwardRef<
     const [dialogOpen, setDialogOpen] = useState(false)
 
     useEffect(() => {
-      if (open !== undefined) {
+      if (open !== undefined && open !== dialogOpen) {
         setDialogOpen(open)
         if (onOpenChange) {
           onOpenChange(open)

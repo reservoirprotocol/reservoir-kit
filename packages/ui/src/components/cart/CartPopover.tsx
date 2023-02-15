@@ -26,6 +26,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faClose,
   faCube,
+  faRefresh,
   faShoppingCart,
 } from '@fortawesome/free-solid-svg-icons'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
@@ -58,12 +59,17 @@ type Props = {
   trigger: ReactNode
   side?: ComponentPropsWithRef<typeof Popover>['side']
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
-  //token url: direct user to a particular token page on your app, default to meta tag but allow overriding
+  tokenUrl?: string
 }
 
 const CONTENT_OFFSET = 8
 
-export function CartPopover({ trigger, side, openState }: Props): ReactElement {
+export function CartPopover({
+  trigger,
+  side,
+  openState,
+  tokenUrl,
+}: Props): ReactElement {
   const [popoverTrigger, setPopoverTrigger] =
     useState<HTMLButtonElement | null>(null)
   const [open, setOpen] = useFallbackState(
@@ -121,22 +127,13 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
         const unavailableItemsSubject =
           unavailableItems.length > 1 ? 'items' : 'item'
         const priceChangeItemsSubject =
-          priceChangeItems.length > 1 ? 'items' : 'item'
+          priceChangeItems.length > 1 ? 'items prices' : 'item price'
         const isCartEmpty = items.length === 0
         const hasValidItems = items.length > unavailableItems.length
 
         return (
           <Popover.Root modal={true} open={open} onOpenChange={setOpen}>
-            <Popover.Trigger
-              asChild
-              style={{
-                backgroundColor: 'transparent',
-                borderWidth: 0,
-                cursor: 'pointer',
-                padding: 0,
-              }}
-              ref={setPopoverTrigger}
-            >
+            <Popover.Trigger asChild ref={setPopoverTrigger}>
               {trigger}
             </Popover.Trigger>
             <Popover.Content
@@ -161,9 +158,10 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                   triggerBottom || 0
                 }px - (25px * 2) - 10px)`,
                 backgroundColor: '$contentBackground',
+                boxSizing: 'border-box',
                 '@media(max-width: 520px)': {
                   height: `calc(100vh - ${triggerBottom || 0}px - (25px * 2))`,
-                  width: 'calc(100vw - (25px * 2))',
+                  width: '100vw',
                   minHeight: '100%',
                 },
               }}
@@ -233,12 +231,9 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                       onClick={(e) => {
                         e.preventDefault()
                         remove(
-                          flaggedItems.map((item) => {
-                            return {
-                              tokenId: item.token.id,
-                              collectionId: item.collection.id,
-                            }
-                          })
+                          flaggedItems.map(
+                            (item) => `${item.collection.id}:${item.token.id}`
+                          )
                         )
                       }}
                     >
@@ -259,12 +254,9 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                       onClick={(e) => {
                         e.preventDefault()
                         remove(
-                          unavailableItems.map((item) => {
-                            return {
-                              tokenId: item.token.id,
-                              collectionId: item.collection.id,
-                            }
-                          })
+                          unavailableItems.map(
+                            (item) => `${item.collection.id}:${item.token.id}`
+                          )
                         )
                       }}
                     >
@@ -276,7 +268,7 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
               {priceChangeItems.length > 0 && (
                 <CartToast
                   kind="warning"
-                  message={`${priceChangeItems.length} ${priceChangeItemsSubject} prices updated`}
+                  message={`${priceChangeItems.length} ${priceChangeItemsSubject} updated`}
                 />
               )}
               {transaction?.error &&
@@ -310,6 +302,7 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                       key={`${item.collection.id}:${item.token.id}`}
                       item={item}
                       usdConversion={usdPrice}
+                      tokenUrl={tokenUrl}
                     />
                   ))}
                 </Flex>
@@ -458,6 +451,7 @@ export function CartPopover({ trigger, side, openState }: Props): ReactElement {
                       clear()
                     }}
                   >
+                    <FontAwesomeIcon icon={faRefresh} width="16" height="16" />
                     Refresh Cart
                   </Button>
                 )}

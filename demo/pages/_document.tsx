@@ -21,6 +21,18 @@ class MyDocument extends Document {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta property="reservoir:title" content="Demo Marketplace" />
         <meta
+          property="reservoir:token-url-mainnet"
+          content="https://marketplace.reservoir.tools/collection/ethereum/${contract}/${tokenId}"
+        />
+        <meta
+          property="reservoir:token-url-goerli"
+          content="https://marketplace.reservoir.tools/collection/goerli/${contract}/${tokenId}"
+        />
+        <meta
+          property="reservoir:token-url-polygon"
+          content="https://marketplace.reservoir.tools/collection/polygon/${contract}/${tokenId}"
+        />
+        <meta
           property="reservoir:icon"
           content="https://api.reservoir.tools/redirect/sources/reservoir/logo/v2"
         />
