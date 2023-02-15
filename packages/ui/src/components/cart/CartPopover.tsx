@@ -38,7 +38,6 @@ import {
   CheckoutStatus,
   CheckoutTransactionError,
 } from '../../context/CartProvider'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 const scaleUp = keyframes({
   '0%': { opacity: 0, transform: 'scale(0.9) translateY(-10px)' },
@@ -81,8 +80,6 @@ export function CartPopover({
   const [displayPendingTransaction, setDisplayPendingTransaction] =
     useState(false)
   const [purchaseComplete, setPurchaseComplete] = useState(false)
-  const { switchNetworkAsync } = useSwitchNetwork()
-  const { chain: activeChain } = useNetwork()
 
   useEffect(() => {
     if (!open) {
