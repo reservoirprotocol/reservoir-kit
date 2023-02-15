@@ -682,7 +682,7 @@ export function BidModal({
                         css={{ flex: 1 }}
                         onClick={() => setBidStep(BidStep.SetPrice)}
                       >
-                        Edit Bid
+                        Edit Offer
                       </Button>
                       <Button css={{ flex: 1 }} onClick={placeBid}>
                         Retry
