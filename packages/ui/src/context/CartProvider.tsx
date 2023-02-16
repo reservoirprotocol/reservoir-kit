@@ -17,7 +17,7 @@ import React, {
   useEffect,
   FC,
 } from 'react'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import { constants, utils } from 'ethers'
 import { toFixed } from '../lib/numbers'
 import { formatUnits } from 'ethers/lib/utils.js'
@@ -98,6 +98,7 @@ function cartStore({
   referrerFeeBps,
   persist = true,
 }: CartStoreProps) {
+  const { address } = useAccount()
   const { chains } = useNetwork()
   const { switchNetworkAsync } = useSwitchNetwork()
   const cartData = useRef<Cart>({
@@ -418,9 +419,15 @@ function cartStore({
 
         if (tokens.length > 0) {
           tokens.forEach((token) => {
-            const item = convertTokenToItem(token)
-            if (item) {
-              updatedItems.push(item)
+            if (
+              token.market?.floorAsk?.maker?.toLowerCase() !==
+                address?.toLowerCase() &&
+              token.token?.owner?.toLowerCase() !== address?.toLowerCase()
+            ) {
+              const item = convertTokenToItem(token)
+              if (item) {
+                updatedItems.push(item)
+              }
             }
           })
         }
@@ -458,7 +465,7 @@ function cartStore({
         throw e
       }
     },
-    [fetchTokens, commit]
+    [fetchTokens, commit, address]
   )
 
   const remove = useCallback((ids: string[]) => {
@@ -519,40 +526,49 @@ function cartStore({
           }
           return tokens
         }, {} as Record<string, NonNullable<Token>>) || {}
-      const items = cartData.current.items.map((item) => {
-        const token = tokenMap[`${item.collection.id}:${item.token.id}`]
-        const flaggedStatus = flaggedStatuses
-          ? flaggedStatuses[`${item.collection.id}:${item.token.id}`]
-          : undefined
+      const items = cartData.current.items
+        .filter((item) => {
+          const token = tokenMap[`${item.collection.id}:${item.token.id}`]
+          return (
+            token.token?.owner?.toLowerCase() !== address?.toLowerCase() &&
+            token.market?.floorAsk?.maker?.toLowerCase() !==
+              address?.toLowerCase()
+          )
+        })
+        .map((item) => {
+          const token = tokenMap[`${item.collection.id}:${item.token.id}`]
+          const flaggedStatus = flaggedStatuses
+            ? flaggedStatuses[`${item.collection.id}:${item.token.id}`]
+            : undefined
 
-        if (token) {
-          const dynamicPricing = token.market?.floorAsk?.dynamicPricing
-          const updatedItem = {
-            ...item,
-            previousPrice: item.price,
-            price: token.market?.floorAsk?.price,
-            poolId:
-              dynamicPricing?.kind === 'pool'
-                ? (dynamicPricing.data?.pool as string)
-                : undefined,
-            poolPrices:
-              dynamicPricing?.kind === 'pool'
-                ? (dynamicPricing.data?.prices as CartItemPrice[])
-                : undefined,
+          if (token) {
+            const dynamicPricing = token.market?.floorAsk?.dynamicPricing
+            const updatedItem = {
+              ...item,
+              previousPrice: item.price,
+              price: token.market?.floorAsk?.price,
+              poolId:
+                dynamicPricing?.kind === 'pool'
+                  ? (dynamicPricing.data?.pool as string)
+                  : undefined,
+              poolPrices:
+                dynamicPricing?.kind === 'pool'
+                  ? (dynamicPricing.data?.prices as CartItemPrice[])
+                  : undefined,
+            }
+            if (token.token?.name) {
+              updatedItem.token.name = token.token.name
+            }
+            if (token.token?.collection?.name) {
+              updatedItem.collection.name = token.token.collection.name
+            }
+            if (flaggedStatus !== undefined) {
+              updatedItem.isBannedOnOpensea = flaggedStatus
+            }
+            return updatedItem
           }
-          if (token.token?.name) {
-            updatedItem.token.name = token.token.name
-          }
-          if (token.token?.collection?.name) {
-            updatedItem.collection.name = token.token.collection.name
-          }
-          if (flaggedStatus !== undefined) {
-            updatedItem.isBannedOnOpensea = flaggedStatus
-          }
-          return updatedItem
-        }
-        return item
-      })
+          return item
+        })
       const pools = calculatePools(items)
       const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
       const { totalPrice, referrerFee } = calculatePricing(
@@ -578,7 +594,7 @@ function cartStore({
       }
       throw e
     }
-  }, [fetchTokens])
+  }, [fetchTokens, address])
 
   const checkout = useCallback(
     async (options: BuyTokenOptions = {}) => {
