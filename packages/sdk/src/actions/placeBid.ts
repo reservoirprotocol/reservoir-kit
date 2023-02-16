@@ -22,8 +22,9 @@ type Data = {
 export async function placeBid({ bids, signer, onProgress }: Data) {
   const client = getClient()
   const maker = await signer.getAddress()
+  const baseApiUrl = client.currentChain()?.baseApiUrl
 
-  if (!client.apiBase) {
+  if (!baseApiUrl) {
     throw new ReferenceError('ReservoirClient missing configuration')
   }
 
@@ -64,7 +65,7 @@ export async function placeBid({ bids, signer, onProgress }: Data) {
     data.params = bids
 
     await executeSteps(
-      { url: `${client.apiBase}/execute/bid/v4`, method: 'post', data },
+      { url: `${baseApiUrl}/execute/bid/v4`, method: 'post', data },
       signer,
       onProgress
     )

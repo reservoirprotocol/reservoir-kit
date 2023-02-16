@@ -7,16 +7,21 @@ type AttributesResponse =
 
 export default function (
   collection?: string | undefined,
+  chainId?: number,
   swrOptions: SWRConfiguration = {}
 ) {
   const client = useReservoirClient()
+  const chain =
+    chainId !== undefined
+      ? client?.chains.find((chain) => chain.id === chainId)
+      : client?.currentChain()
 
-  const pathname = `${client?.apiBase}/collections/${collection}/attributes/all/v2`
+  const pathname = `${chain?.baseApiUrl}/collections/${collection}/attributes/all/v2`
 
   const path = collection ? new URL(pathname) : null
 
   const { data, mutate, error, isValidating } = useSWR<AttributesResponse>(
-    path ? [path.href, client?.apiKey, client?.version] : null,
+    path ? [path.href, chain?.apiKey, client?.version] : null,
     null,
     {
       revalidateOnMount: true,

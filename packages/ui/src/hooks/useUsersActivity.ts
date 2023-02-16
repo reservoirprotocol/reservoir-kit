@@ -14,9 +14,14 @@ type UsersActivityQuery = Omit<UsersActivityBaseQuery, 'users'>
 export default function (
   users?: UsersQuery,
   options?: UsersActivityQuery | false,
-  swrOptions: SWRInfiniteConfiguration = {}
+  swrOptions: SWRInfiniteConfiguration = {},
+  chainId?: number
 ) {
   const client = useReservoirClient()
+  const chain =
+    chainId !== undefined
+      ? client?.chains.find((chain) => chain.id === chainId)
+      : client?.currentChain()
 
   const response = useInfiniteApi<UsersActivityResponse>(
     (pageIndex, previousPageData) => {
@@ -24,7 +29,7 @@ export default function (
         return null
       }
 
-      const url = new URL(`${client?.apiBase}/users/activity/v5`)
+      const url = new URL(`${chain?.baseApiUrl}/users/activity/v5`)
 
       let query: UsersActivityBaseQuery = { ...options, users }
 
@@ -36,7 +41,7 @@ export default function (
 
       setParams(url, query)
 
-      return [url.href, client?.apiKey, client?.version]
+      return [url.href, chain?.apiKey, client?.version]
     },
     {
       revalidateOnMount: true,

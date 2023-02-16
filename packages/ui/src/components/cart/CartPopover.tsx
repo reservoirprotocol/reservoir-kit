@@ -112,6 +112,7 @@ export function CartPopover({
         currency,
         transaction,
         blockExplorerBaseUrl,
+        cartChain,
         remove,
         clear,
         checkout,
@@ -318,8 +319,13 @@ export function CartPopover({
                     justify="center"
                     css={{ color: '$neutralBorderHover', flex: 1, gap: '$5' }}
                   >
-                    <FontAwesomeIcon icon={faShoppingCart} width="27" />
-                    <Text style="body2" color="subtle">
+                    <FontAwesomeIcon
+                      icon={faShoppingCart}
+                      width="30"
+                      height="30"
+                      style={{ height: 30 }}
+                    />
+                    <Text style="body3" color="subtle">
                       No items in your cart
                     </Text>
                   </Flex>
@@ -360,6 +366,7 @@ export function CartPopover({
                         address={currency?.contract}
                         decimals={currency?.decimals}
                         logoWidth={12}
+                        chainId={cartChain?.id}
                       />
                       {usdPrice && (
                         <FormatCurrency
@@ -386,6 +393,7 @@ export function CartPopover({
                         address={currency?.contract}
                         decimals={currency?.decimals}
                         logoWidth={18}
+                        chainId={cartChain?.id}
                       />
                       {usdPrice && (
                         <FormatCurrency
@@ -436,9 +444,15 @@ export function CartPopover({
                     !displayPendingTransaction) && (
                     <Button
                       disabled={!hasEnoughCurrency}
-                      onClick={() => {
+                      onClick={async () => {
                         checkout()
-                        setDisplayPendingTransaction(true)
+                          .then(() => {
+                            setDisplayPendingTransaction(true)
+                          })
+                          .catch((e) => {
+                            console.error(e)
+                            setDisplayPendingTransaction(false)
+                          })
                       }}
                     >
                       {hasEnoughCurrency ? 'Purchase' : 'Add Funds to Purchase'}

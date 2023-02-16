@@ -48,9 +48,10 @@ export async function buyToken(data: Data) {
   const taker = await signer.getAddress()
   const client = getClient()
   const options = data.options || {}
+  const baseApiUrl = client.currentChain()?.baseApiUrl
 
-  if (!client.apiBase) {
-    throw new ReferenceError('ReservoirClient missing configuration')
+  if (!baseApiUrl) {
+    throw new ReferenceError('ReservoirClient missing chain configuration')
   }
 
   if (
@@ -101,7 +102,7 @@ export async function buyToken(data: Data) {
 
     await executeSteps(
       {
-        url: `${client.apiBase}/execute/buy/v6`,
+        url: `${baseApiUrl}/execute/buy/v6`,
         method: 'post',
         data: params,
       },
@@ -120,7 +121,7 @@ export async function buyToken(data: Data) {
           }
         request({
           method: 'POST',
-          url: `${client.apiBase}/tokens/refresh/v1`,
+          url: `${baseApiUrl}/tokens/refresh/v1`,
           data: JSON.stringify(data),
         })
       })

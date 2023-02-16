@@ -1,15 +1,22 @@
+import { getClient } from '@reservoir0x/reservoir-sdk'
 import { constants } from 'ethers'
-import { goerli, mainnet, useNetwork } from 'wagmi'
+import { Chain, goerli, mainnet, useNetwork } from 'wagmi'
 
-export default function () {
-  const { chain: activeChain, chains } = useNetwork()
+export default function (chainId?: number) {
+  const { chains } = useNetwork()
+  return getChainCurrency(chains, chainId)
+}
 
-  let chain = chains.find((chain) => activeChain?.id === chain.id)
+export const getChainCurrency = (chains: Chain[], chainId?: number) => {
+  const client = getClient()
+  const reservoirChain = chainId
+    ? client.chains.find((chain) => chain.id === chainId)
+    : client.currentChain()
+
+  let chain = chains.find((chain) => reservoirChain?.id === chain.id)
 
   if (!chain && chains.length > 0) {
     chain = chains[0]
-  } else {
-    chain = activeChain
   }
 
   const ETHChains: number[] = [mainnet.id, goerli.id]

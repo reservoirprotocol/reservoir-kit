@@ -78,6 +78,7 @@ export function AcceptBidModal({
   )
   const client = useReservoirClient()
   const { chain: activeChain } = useNetwork()
+  const reservoirChain = client?.currentChain()
 
   return (
     <AcceptBidModalRenderer
@@ -345,7 +346,7 @@ export function AcceptBidModal({
                         color="primary"
                         weight="medium"
                         css={{ fontSize: 12 }}
-                        href={`${client?.apiBase}/redirect/sources/${client?.source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                        href={`${reservoirChain?.baseApiUrl}/redirect/sources/${client?.source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
                         target="_blank"
                       >
                         {token?.token?.name

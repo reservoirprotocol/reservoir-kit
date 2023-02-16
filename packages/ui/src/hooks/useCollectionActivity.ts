@@ -10,9 +10,14 @@ type CollectionActivityQuery =
 
 export default function (
   options?: CollectionActivityQuery | false,
-  swrOptions: SWRInfiniteConfiguration = {}
+  swrOptions: SWRInfiniteConfiguration = {},
+  chainId?: number
 ) {
   const client = useReservoirClient()
+  const chain =
+    chainId !== undefined
+      ? client?.chains.find((chain) => chain.id === chainId)
+      : client?.currentChain()
 
   const response = useInfiniteApi<CollectionActivityResponse>(
     (pageIndex, previousPageData) => {
@@ -23,7 +28,7 @@ export default function (
         return null
       }
 
-      const url = new URL(`${client?.apiBase}/collections/activity/v5`)
+      const url = new URL(`${chain?.baseApiUrl}/collections/activity/v5`)
 
       let query: CollectionActivityQuery = { ...options }
 
@@ -35,7 +40,7 @@ export default function (
 
       setParams(url, query)
 
-      return [url.href, client?.apiKey, client?.version]
+      return [url.href, chain?.apiKey, client?.version]
     },
     {
       revalidateOnMount: true,

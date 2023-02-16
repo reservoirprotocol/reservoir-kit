@@ -18,6 +18,7 @@ import { Cart } from '../../context/CartProvider'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { formatNumber } from '../../lib/numbers'
 import { mainnet } from 'wagmi'
+import * as allChains from 'wagmi/chains'
 
 type Props = {
   item: Cart['items'][0]
@@ -69,17 +70,23 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
     priceDecrease = price < previousPrice
   }
   const usdPrice = (usdConversion || 0) * (price || 0)
+  const reservoirChain = client?.chains.find(
+    (chain) => cartChain?.id === chain.id
+  )
 
   return (
     <Flex
       onClick={() => {
+        const chain = Object.values(allChains).find(
+          (chain) => cartChain?.id === chain.id
+        )
         let url: string | undefined = tokenUrl
         if (!url && cartChain) {
           let tokenMetaKey: string | null = null
           if (cartChain.id === mainnet.id) {
             tokenMetaKey = 'reservoir:token-url-mainnet'
           } else {
-            tokenMetaKey = `reservoir:token-url-${cartChain.name.toLowerCase()}`
+            tokenMetaKey = `reservoir:token-url-${chain?.name.toLowerCase()}`
           }
           const tokenMetaTag = document.querySelector(
             `meta[property='${tokenMetaKey}']`
@@ -110,7 +117,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
     >
       <Flex css={{ position: 'relative', minWidth: 0, flexShrink: 0 }}>
         <CartItemImage
-          src={`${client?.apiBase}/redirect/tokens/${contract}:${token.id}/image/v1`}
+          src={`${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1`}
           css={!price ? { filter: 'grayscale(1)' } : {}}
         />
         <CloseButton
@@ -189,6 +196,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             address={cartCurrency?.contract}
             decimals={cartCurrency?.decimals}
             logoWidth={12}
+            chainId={cartChain?.id}
           />
           {usdPrice && usdPrice > 0 && (
             <FormatCurrency

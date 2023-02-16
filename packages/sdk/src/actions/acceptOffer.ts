@@ -40,9 +40,10 @@ export async function acceptOffer(data: Data) {
   const taker = await signer.getAddress()
   const client = getClient()
   const options = data.options || {}
+  const baseApiUrl = client.currentChain()?.baseApiUrl
 
-  if (!client.apiBase) {
-    throw new ReferenceError('ReservoirClient missing configuration')
+  if (!client.currentChain()) {
+    throw new ReferenceError('ReservoirClient missing chain configuration')
   }
 
   try {
@@ -62,7 +63,7 @@ export async function acceptOffer(data: Data) {
 
     await executeSteps(
       {
-        url: `${client.apiBase}/execute/sell/v6`,
+        url: `${baseApiUrl}/execute/sell/v6`,
         method: 'post',
         data: params,
       },
@@ -79,7 +80,7 @@ export async function acceptOffer(data: Data) {
       }
     request({
       method: 'POST',
-      url: `${client.apiBase}/tokens/refresh/v1`,
+      url: `${baseApiUrl}/tokens/refresh/v1`,
       data: JSON.stringify(data),
     })
     throw err

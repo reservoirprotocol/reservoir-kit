@@ -1,4 +1,4 @@
-import { useCoinConversion, useCart, useChainCurrency } from '../../hooks'
+import { useCoinConversion, useCart, useReservoirClient } from '../../hooks'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
 import { BigNumber, constants, utils } from 'ethers'
@@ -24,6 +24,7 @@ type ChildrenProps = {
   priceChangeItems: Cart['items']
   transaction?: Cart['transaction']
   blockExplorerBaseUrl: string
+  cartChain: Cart['chain']
   checkout: ReturnType<typeof useCart>['checkout']
   clear: ReturnType<typeof useCart>['clear']
   remove: ReturnType<typeof useCart>['remove']
@@ -37,7 +38,7 @@ type Props = {
 }
 
 export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
-  const chainCurrency = useChainCurrency()
+  const client = useReservoirClient()
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const { data, clear, clearTransaction, validate, remove, add, checkout } =
     useCart((cart) => cart)
@@ -48,14 +49,17 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     currency,
     transaction,
     referrerFee,
+    chain: cartChain,
   } = data
   const usdPrice = useCoinConversion(
     open ? 'USD' : undefined,
-    currency?.symbol || chainCurrency.name
+    currency?.symbol || currency?.name
   )
-  const { chain: activeChain } = useNetwork()
+
+  const { chains } = useNetwork()
+  const chain = chains.find((chain) => chain.id === transaction?.chain.id)
   const blockExplorerBaseUrl =
-    activeChain?.blockExplorers?.default?.url || 'https://etherscan.io'
+    chain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   useEffect(() => {
     if (open) {
@@ -81,12 +85,14 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
       items.filter(
         ({ previousPrice, price }) =>
           previousPrice &&
+          price?.amount?.decimal !== undefined &&
           previousPrice.amount?.decimal !== price?.amount?.decimal
       ),
     [items]
   )
   const { address } = useAccount()
   const { data: balance } = useBalance({
+    chainId: cartChain?.id || client?.currentChain()?.id,
     address: address,
     token:
       currency?.contract !== constants.AddressZero
@@ -138,6 +144,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         balance: balance?.value,
         transaction,
         blockExplorerBaseUrl,
+        cartChain,
         checkout,
         clear,
         remove,

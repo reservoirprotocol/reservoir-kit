@@ -1,21 +1,16 @@
 import wrappedContracts from '../constants/wrappedContracts'
-import { useBalance, useNetwork } from 'wagmi'
+import { mainnet, useBalance } from 'wagmi'
 import { UseBalanceToken } from '../types/wagmi'
+import { useReservoirClient } from './'
 
 export default function (params: Parameters<typeof useBalance>['0']) {
-  const { chain: activeChain, chains } = useNetwork()
-  let chain = chains.find((chain) => activeChain?.id === chain.id)
-
-  if (!chain && chains.length > 0) {
-    chain = chains[0]
-  } else {
-    chain = activeChain
-  }
+  const client = useReservoirClient()
+  const chain = client?.currentChain()
 
   const contractAddress =
     chain?.id !== undefined && chain.id in wrappedContracts
       ? wrappedContracts[chain.id]
-      : wrappedContracts[1]
+      : wrappedContracts[mainnet.id]
 
   const balance = useBalance({
     ...params,

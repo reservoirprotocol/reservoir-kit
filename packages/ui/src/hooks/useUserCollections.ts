@@ -10,9 +10,14 @@ type UserCollectionsQuery =
 export default function (
   user?: string,
   options?: UserCollectionsQuery,
-  swrOptions: SWRInfiniteConfiguration = {}
+  swrOptions: SWRInfiniteConfiguration = {},
+  chainId?: number
 ) {
   const client = useReservoirClient()
+  const chain =
+    chainId !== undefined
+      ? client?.chains.find((chain) => chain.id === chainId)
+      : client?.currentChain()
 
   let defaultLimit = 20
 
@@ -22,7 +27,7 @@ export default function (
         return null
       }
       const url = new URL(
-        `${client?.apiBase || ''}/users/${user}/collections/v2`
+        `${chain?.baseApiUrl || ''}/users/${user}/collections/v2`
       )
       let query: UserCollectionsQuery = {
         offset: pageIndex * (options?.limit || defaultLimit),
@@ -38,7 +43,7 @@ export default function (
       }
 
       setParams(url, query)
-      return [url.href, client?.apiKey, client?.version]
+      return [url.href, chain?.apiKey, client?.version]
     },
     {
       revalidateOnMount: true,

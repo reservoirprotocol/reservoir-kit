@@ -88,6 +88,8 @@ const MainContainer = styled(Flex, {
   },
 })
 
+const MINIMUM_AMOUNT = 0.000001
+
 export function ListModal({
   openState,
   trigger,
@@ -107,6 +109,7 @@ export function ListModal({
   )
   const [stepTitle, setStepTitle] = useState('')
   const client = useReservoirClient()
+  const reservoirChain = client?.currentChain()
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
     Marketplace[]
   >([])
@@ -519,13 +522,25 @@ export function ListModal({
                             }
                           }}
                         />
+                        {marketplace.truePrice !== '' &&
+                          marketplace.truePrice !== null &&
+                          Number(marketplace.truePrice) !== 0 &&
+                          Number(marketplace.truePrice) < MINIMUM_AMOUNT && (
+                            <Box>
+                              <Text style="body2" color="error">
+                                Amount must be higher than {MINIMUM_AMOUNT}
+                              </Text>
+                            </Box>
+                          )}
                         {collection &&
                           collection?.floorAsk?.price?.amount?.native !==
                             undefined &&
                           marketplace.truePrice !== '' &&
                           marketplace.truePrice !== null &&
+                          Number(marketplace.truePrice) !== 0 &&
+                          Number(marketplace.truePrice) >= MINIMUM_AMOUNT &&
                           currency.contract === constants.AddressZero &&
-                          marketplace.truePrice <
+                          Number(marketplace.truePrice) <
                             collection?.floorAsk?.price.amount.native && (
                             <Box>
                               <Text style="body2" color="error">
@@ -577,7 +592,9 @@ export function ListModal({
                     <Button
                       disabled={selectedMarketplaces.some(
                         (marketplace) =>
-                          marketplace.price === '' || marketplace.price == 0
+                          marketplace.price === '' ||
+                          marketplace.price == 0 ||
+                          Number(marketplace.price) < MINIMUM_AMOUNT
                       )}
                       onClick={listToken}
                       css={{ width: '100%' }}
@@ -718,7 +735,7 @@ export function ListModal({
                           <a
                             key={data.listing.orderbook}
                             target="_blank"
-                            href={`${client?.apiBase}/redirect/sources/${source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                            href={`${reservoirChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
                           >
                             <Image
                               css={{ width: 24 }}

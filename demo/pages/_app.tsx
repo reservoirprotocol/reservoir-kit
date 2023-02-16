@@ -23,9 +23,7 @@ import {
   CartProvider,
 } from '@reservoir0x/reservoir-kit-ui'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE || 'https://api.reservoir.tools'
-const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID || 1
+const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
 const SOURCE = process.env.NEXT_PUBLIC_SOURCE || 'reservoirkit.demo'
 const FEE = process.env.NEXT_PUBLIC_MARKETPLACE_FEE
   ? +process.env.NEXT_PUBLIC_MARKETPLACE_FEE
@@ -37,12 +35,8 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   : false
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 
-const envChain = Object.values(allChains).find(
-  (chain) => chain.id === +CHAIN_ID
-)
-
 const { chains, provider } = configureChains(
-  [envChain || allChains.mainnet],
+  [allChains.mainnet, allChains.goerli, allChains.polygon],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
 
@@ -86,8 +80,26 @@ const AppWrapper: FC<any> = ({ children }) => {
     <WagmiConfig client={wagmiClient}>
       <ReservoirKitProvider
         options={{
-          apiBase: API_BASE,
-          apiKey: API_KEY,
+          chains: [
+            {
+              baseApiUrl: 'https://api.reservoir.tools',
+              id: allChains.mainnet.id,
+              default: CHAIN_ID === allChains.mainnet.id,
+              apiKey: API_KEY,
+            },
+            {
+              baseApiUrl: 'https://api-goerli.reservoir.tools',
+              id: allChains.goerli.id,
+              default: CHAIN_ID === allChains.goerli.id,
+              apiKey: API_KEY,
+            },
+            {
+              baseApiUrl: 'https://api-polygon.reservoir.tools',
+              id: allChains.polygon.id,
+              default: CHAIN_ID === allChains.polygon.id,
+              apiKey: API_KEY,
+            },
+          ],
           marketplaceFee: FEE,
           marketplaceFeeRecipient: FEE_RECIPIENT,
           source: SOURCE,
