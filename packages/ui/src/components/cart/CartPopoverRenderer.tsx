@@ -13,6 +13,7 @@ import {
 type ChildrenProps = {
   loading: boolean
   currency?: NonNullable<Cart['items'][0]['price']>['currency']
+  cartCurrencyConverted?: Boolean
   totalPrice: number
   referrerFee?: number
   usdPrice: ReturnType<typeof useCoinConversion>
@@ -60,6 +61,9 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
   const chain = chains.find((chain) => chain.id === transaction?.chain.id)
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
+  const cartCurrencyConverted = items.some(
+    (item) => item.price?.currency?.contract !== currency?.contract
+  )
 
   useEffect(() => {
     if (open) {
@@ -137,6 +141,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         unavailableItems,
         priceChangeItems,
         currency,
+        cartCurrencyConverted,
         totalPrice,
         referrerFee,
         usdPrice,
