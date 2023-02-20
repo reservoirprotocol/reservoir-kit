@@ -2,6 +2,7 @@ import { NextPage } from 'next'
 import { CartPopover, useDynamicTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useState } from 'react'
 import ThemeSwitcher from 'components/ThemeSwitcher'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -10,6 +11,7 @@ const DEFAULT_COLLECTION_ID =
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const CartPage: NextPage = () => {
+  const { openConnectModal } = useConnectModal()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const {
     data: tokens,
@@ -38,7 +40,12 @@ const CartPage: NextPage = () => {
         boxSizing: 'border-box',
       }}
     >
-      <CartPopover trigger={<button>Cart</button>} />
+      <CartPopover
+        trigger={<button>Cart</button>}
+        onConnectWallet={() => {
+          openConnectModal?.()
+        }}
+      />
       <div>
         <label>Collection Id: </label>
         <input

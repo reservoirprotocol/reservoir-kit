@@ -53,10 +53,11 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
   const { remove, data: cartCurrency } = useCart((cart) => cart.currency)
   const { data: cartChain } = useCart((cart) => cart.chain)
 
-  let price =
-    item.price?.currency?.contract !== cartCurrency?.contract
-      ? item.price?.amount?.native
-      : item.price?.amount?.decimal
+  const currencyConverted =
+    item.price && item.price?.currency?.contract !== cartCurrency?.contract
+  let price = currencyConverted
+    ? item.price?.amount?.native
+    : item.price?.amount?.decimal
   let previousPrice =
     item.previousPrice?.currency?.contract !== cartCurrency?.contract
       ? item.previousPrice?.amount?.native
@@ -162,6 +163,13 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             Item no longer available
           </Text>
         )}
+        {!priceIncrease && !priceDecrease && currencyConverted && (
+          <Flex css={{ gap: '$1', color: '$accentSolidHover' }} align="center">
+            <Text style="body2" color="accent">
+              Currency converted
+            </Text>
+          </Flex>
+        )}
         {priceIncrease && (
           <Flex css={{ gap: '$1', color: '$accentSolidHover' }} align="center">
             <FontAwesomeIcon width="11" icon={faArrowUp} />
@@ -198,14 +206,14 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             logoWidth={12}
             chainId={cartChain?.id}
           />
-          {usdPrice && usdPrice > 0 && (
+          {usdPrice && usdPrice > 0 ? (
             <FormatCurrency
               amount={usdPrice}
               style="tiny"
               color="subtle"
               css={{ textAlign: 'end' }}
             />
-          )}
+          ) : null}
         </Flex>
       )}
     </Flex>
