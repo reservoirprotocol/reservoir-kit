@@ -62,6 +62,7 @@ type ChildrenProps = {
   currencies: Currency[]
   currency: Currency
   quantity: number
+  royaltyBps?: number
   setListStep: React.Dispatch<React.SetStateAction<ListStep>>
   toggleMarketplace: (marketplace: Marketplace) => void
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
@@ -119,7 +120,6 @@ export const ListModalRenderer: FC<Props> = ({
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
   const [allMarketplaces] = useMarketplaces(true)
-  const [marketplaces, setMarketplaces] = useMarketplaces(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<StepData | null>(null)
@@ -136,6 +136,15 @@ export const ListModalRenderer: FC<Props> = ({
   )
   const [quantity, setQuantity] = useState(1)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
+  const { data: collections } = useCollections(
+    open && {
+      id: collectionId,
+      normalizeRoyalties,
+    }
+  )
+  const collection = collections && collections[0] ? collections[0] : undefined
+  const royaltyBps = collection?.royalties?.bps
+  const [marketplaces, setMarketplaces] = useMarketplaces(true, royaltyBps)
   const {
     data: unapprovedMarketplaces,
     isFetching: isFetchingUnapprovedMarketplaces,
@@ -159,12 +168,6 @@ export const ListModalRenderer: FC<Props> = ({
       revalidateFirstPage: true,
     }
   )
-  const { data: collections } = useCollections(
-    open && {
-      id: collectionId,
-      normalizeRoyalties,
-    }
-  )
 
   const { response: openSeaToken } = useTokenOpensea(
     open ? contract : undefined,
@@ -172,8 +175,6 @@ export const ListModalRenderer: FC<Props> = ({
   )
 
   const paymentTokens = openSeaToken?.collection?.payment_tokens
-
-  const collection = collections && collections[0] ? collections[0] : undefined
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
   const is1155 = token?.token?.kind === 'erc1155'
@@ -481,6 +482,7 @@ export const ListModalRenderer: FC<Props> = ({
         currencies: currencies || [defaultCurrency],
         currency,
         quantity,
+        royaltyBps,
         setListStep,
         toggleMarketplace,
         setMarketPrice,
