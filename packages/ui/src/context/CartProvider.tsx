@@ -466,12 +466,16 @@ function cartStore({
       console.warn('Currently validating, removing items temporarily disabled')
       return
     }
-    const updatedItems = cartData.current.items.filter(
-      ({ token, collection }) => {
-        const key = `${collection.id}:${token.id}`
-        return !ids.includes(key)
+    const updatedItems: CartItem[] = []
+    const removedItems: CartItem[] = []
+    cartData.current.items.forEach((item) => {
+      const key = `${item.collection.id}:${item.token.id}`
+      if (ids.includes(key)) {
+        removedItems.push(item)
+      } else {
+        updatedItems.push(item)
       }
-    )
+    })
     const pools = calculatePools(updatedItems)
     const currency = getCartCurrency(
       updatedItems,
@@ -482,6 +486,20 @@ function cartStore({
       currency,
       cartData.current.referrerFeeBps
     )
+
+    //Suppress pool price changes if the removed item was from the pool
+    const removedPoolIds = removedItems.reduce((poolIds, item) => {
+      if (item.poolId) {
+        poolIds.push(item.poolId)
+      }
+      return poolIds
+    }, [] as string[])
+
+    updatedItems.forEach((item) => {
+      if (item.poolId && removedPoolIds.includes(item.poolId)) {
+        item.previousPrice = item.price
+      }
+    })
 
     cartData.current = {
       ...cartData.current,
