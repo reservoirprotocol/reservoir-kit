@@ -228,7 +228,7 @@ export function CartPopover({
               {cartCurrencyConverted && (
                 <CartToast
                   kind="warning"
-                  message={`Mixed currencies item are only available to checkout with ${currency?.symbol}`}
+                  message={`Mixed currency items are only available to be checked out with ${currency?.symbol}`}
                 />
               )}
               {flaggedItems.length > 0 && (
