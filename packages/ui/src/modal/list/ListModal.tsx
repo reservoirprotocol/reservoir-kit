@@ -53,6 +53,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   currencies?: Currency[]
   nativeOnly?: boolean
   normalizeRoyalties?: boolean
+  enableOnChainRoyalties: boolean
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
@@ -98,6 +99,7 @@ export function ListModal({
   currencies,
   nativeOnly,
   normalizeRoyalties,
+  enableOnChainRoyalties = false,
   onGoToToken,
   onListingComplete,
   onListingError,
@@ -121,6 +123,7 @@ export function ListModal({
       collectionId={collectionId}
       currencies={currencies}
       normalizeRoyalties={normalizeRoyalties}
+      enableOnChainRoyalties={enableOnChainRoyalties}
     >
       {({
         token,
@@ -139,6 +142,7 @@ export function ListModal({
         currencies,
         currency,
         quantity,
+        royaltyBps,
         setListStep,
         listToken,
         setMarketPrice,
@@ -267,7 +271,11 @@ export function ListModal({
           >
             {token && listStep == ListStep.SelectMarkets && (
               <ContentContainer>
-                <TokenStats token={token} collection={collection} />
+                <TokenStats
+                  token={token}
+                  collection={collection}
+                  royaltyBps={royaltyBps}
+                />
 
                 <MainContainer>
                   <Box css={{ p: '$4', flex: 1 }}>
@@ -432,7 +440,11 @@ export function ListModal({
             )}
             {token && listStep == ListStep.SetPrice && (
               <ContentContainer>
-                <TokenStats token={token} collection={collection} />
+                <TokenStats
+                  token={token}
+                  collection={collection}
+                  royaltyBps={royaltyBps}
+                />
 
                 <MainContainer>
                   <Box css={{ p: '$4', flex: 1 }}>

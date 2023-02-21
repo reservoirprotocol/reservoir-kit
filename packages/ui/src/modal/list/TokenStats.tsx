@@ -8,9 +8,10 @@ import InfoTooltip from '../../primitives/InfoTooltip'
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  royaltyBps?: number
 }
 
-const TokenStats: FC<Props> = ({ token, collection }) => {
+const TokenStats: FC<Props> = ({ token, collection, royaltyBps = 0 }) => {
   let attributeFloor = token?.token?.attributes
     ? Math.max(
         ...token.token.attributes.map((attr: any) =>
@@ -64,7 +65,7 @@ const TokenStats: FC<Props> = ({ token, collection }) => {
                 />
               </>
             ),
-            value: (collection?.royalties?.bps || 0) * 0.01 + '%',
+            value: `${royaltyBps * 0.01}%`,
           },
           {
             id: 1,

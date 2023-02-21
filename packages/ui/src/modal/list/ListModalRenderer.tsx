@@ -1,4 +1,11 @@
-import React, { FC, useState, ReactNode, useCallback, useEffect } from 'react'
+import React, {
+  FC,
+  useState,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react'
 import {
   useTokens,
   useCoinConversion,
@@ -9,11 +16,12 @@ import {
   useTokenOpensea,
   useUserTokens,
   useChainCurrency,
+  useOnChainRoyalties,
 } from '../../hooks'
 import { useAccount, useSigner } from 'wagmi'
 
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
-import { parseUnits } from 'ethers/lib/utils.js'
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
@@ -62,6 +70,7 @@ type ChildrenProps = {
   currencies: Currency[]
   currency: Currency
   quantity: number
+  royaltyBps?: number
   setListStep: React.Dispatch<React.SetStateAction<ListStep>>
   toggleMarketplace: (marketplace: Marketplace) => void
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
@@ -77,6 +86,7 @@ type Props = {
   collectionId?: string
   currencies?: Currency[]
   normalizeRoyalties?: boolean
+  enableOnChainRoyalties: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -111,6 +121,7 @@ export const ListModalRenderer: FC<Props> = ({
   collectionId,
   currencies,
   normalizeRoyalties,
+  enableOnChainRoyalties = false,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -119,7 +130,6 @@ export const ListModalRenderer: FC<Props> = ({
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
   const [allMarketplaces] = useMarketplaces(true)
-  const [marketplaces, setMarketplaces] = useMarketplaces(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<StepData | null>(null)
@@ -136,6 +146,43 @@ export const ListModalRenderer: FC<Props> = ({
   )
   const [quantity, setQuantity] = useState(1)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
+  const { data: collections } = useCollections(
+    open && {
+      id: collectionId,
+      normalizeRoyalties,
+    }
+  )
+  const collection = collections && collections[0] ? collections[0] : undefined
+
+  const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
+    expirationOptions[5]
+  )
+
+  const { data: onChainRoyalties } = useOnChainRoyalties({
+    contract,
+    tokenId,
+    chainId: chainCurrency.chainId,
+    enabled: enableOnChainRoyalties && open,
+  })
+
+  let royaltyBps = collection?.royalties?.bps
+
+  const onChainRoyaltyBps = useMemo(() => {
+    const totalRoyalty = onChainRoyalties?.[1].reduce((total, royalty) => {
+      total += parseFloat(formatUnits(royalty, currency.decimals))
+      return total
+    }, 0)
+    if (totalRoyalty) {
+      return (totalRoyalty / 1) * 10000
+    }
+    return 0
+  }, [onChainRoyalties, chainCurrency])
+
+  if (enableOnChainRoyalties && onChainRoyaltyBps) {
+    royaltyBps = onChainRoyaltyBps
+  }
+
+  const [marketplaces, setMarketplaces] = useMarketplaces(true, royaltyBps)
   const {
     data: unapprovedMarketplaces,
     isFetching: isFetchingUnapprovedMarketplaces,
@@ -143,10 +190,6 @@ export const ListModalRenderer: FC<Props> = ({
     marketplaces,
     open ? tokenId : undefined,
     open ? contract : undefined
-  )
-
-  const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
-    expirationOptions[5]
   )
 
   const { data: tokens } = useTokens(
@@ -159,12 +202,6 @@ export const ListModalRenderer: FC<Props> = ({
       revalidateFirstPage: true,
     }
   )
-  const { data: collections } = useCollections(
-    open && {
-      id: collectionId,
-      normalizeRoyalties,
-    }
-  )
 
   const { response: openSeaToken } = useTokenOpensea(
     open ? contract : undefined,
@@ -172,8 +209,6 @@ export const ListModalRenderer: FC<Props> = ({
   )
 
   const paymentTokens = openSeaToken?.collection?.payment_tokens
-
-  const collection = collections && collections[0] ? collections[0] : undefined
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
   const is1155 = token?.token?.kind === 'erc1155'
@@ -318,7 +353,7 @@ export const ListModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
-  const listToken = useCallback(() => {
+  const listToken = useCallback(async () => {
     if (!signer) {
       const error = new Error('Missing a signer')
       setTransactionError(error)
@@ -343,8 +378,6 @@ export const ListModalRenderer: FC<Props> = ({
         .toString()
     }
 
-    const contract = collectionId ? collectionId?.split(':')[0] : undefined
-
     marketplaces.forEach((market) => {
       if (market.isSelected) {
         const listing: Listings[0] = {
@@ -356,6 +389,25 @@ export const ListModalRenderer: FC<Props> = ({
           orderbook: market.orderbook,
           //@ts-ignore
           orderKind: market.orderKind,
+        }
+
+        if (enableOnChainRoyalties && onChainRoyalties) {
+          const royalties = onChainRoyalties.recipients.map((recipient, i) => {
+            const bps =
+              (parseFloat(
+                formatUnits(onChainRoyalties.amounts[i], currency.decimals)
+              ) /
+                1) *
+              10000
+            return `${recipient}:${bps}`
+          })
+          listing.automatedRoyalties = false
+          listing.fees = [...royalties]
+          if (client.marketplaceFee && client.marketplaceFeeRecipient) {
+            listing.fees.push(
+              `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`
+            )
+          }
         }
 
         if (quantity > 1) {
@@ -459,6 +511,8 @@ export const ListModalRenderer: FC<Props> = ({
     expirationOption,
     currency,
     quantity,
+    enableOnChainRoyalties,
+    onChainRoyalties,
   ])
 
   return (
@@ -481,6 +535,7 @@ export const ListModalRenderer: FC<Props> = ({
         currencies: currencies || [defaultCurrency],
         currency,
         quantity,
+        royaltyBps,
         setListStep,
         toggleMarketplace,
         setMarketPrice,
