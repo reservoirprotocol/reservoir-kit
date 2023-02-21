@@ -353,7 +353,7 @@ export const ListModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
-  const listToken = useCallback(async () => {
+  const listToken = useCallback(() => {
     if (!signer) {
       const error = new Error('Missing a signer')
       setTransactionError(error)
