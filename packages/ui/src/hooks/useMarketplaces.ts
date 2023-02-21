@@ -56,7 +56,7 @@ export default function (
         }
         if (marketplace.orderbook === 'opensea') {
           const osFee =
-            royaltyBps && royaltyBps > 50 ? 0 : 50 - (royaltyBps || 0)
+            royaltyBps && royaltyBps >= 50 ? 0 : 50 - (royaltyBps || 0)
           marketplace.fee = {
             bps: osFee,
             percent: osFee / 100,
