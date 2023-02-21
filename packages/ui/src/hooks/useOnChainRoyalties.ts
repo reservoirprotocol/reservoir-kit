@@ -1,5 +1,5 @@
 import { goerli, mainnet, useContractRead } from 'wagmi'
-import allChains from 'wagmi/chains'
+import * as allChains from 'wagmi/chains'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils.js'
 import useChainCurrency from '../hooks/useChainCurrency'
