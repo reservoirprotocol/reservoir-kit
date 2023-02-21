@@ -14,6 +14,7 @@ export type Marketplace = NonNullable<
 
 export default function (
   listingEnabledOnly?: boolean,
+  royaltyBps?: number,
   chainId?: number
 ): [Marketplace[], React.Dispatch<React.SetStateAction<Marketplace[]>>] {
   const [marketplaces, setMarketplaces] = useState<Marketplace[]>([])
@@ -53,6 +54,15 @@ export default function (
             marketplace.imageUrl = data.icon
           }
         }
+        if (marketplace.orderbook === 'opensea') {
+          const osFee =
+            royaltyBps && royaltyBps >= 50 ? 0 : 50 - (royaltyBps || 0)
+          marketplace.fee = {
+            bps: osFee,
+            percent: osFee / 100,
+          }
+          marketplace.feeBps = osFee
+        }
         marketplace.price = 0
         marketplace.truePrice = 0
         marketplace.isSelected =
@@ -60,7 +70,7 @@ export default function (
       })
       setMarketplaces(updatedMarketplaces)
     }
-  }, [data, listingEnabledOnly])
+  }, [data, listingEnabledOnly, royaltyBps])
 
   return [marketplaces, setMarketplaces]
 }

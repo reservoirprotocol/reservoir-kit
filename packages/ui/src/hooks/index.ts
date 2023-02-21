@@ -1,3 +1,4 @@
+//Public
 export { default as useCollections } from './useCollections'
 export { default as useCollectionActivity } from './useCollectionActivity'
 export { default as useUsersActivity } from './useUsersActivity'
@@ -15,6 +16,7 @@ export { default as useUserCollections } from './useUserCollections'
 export { default as useCart } from './useCart'
 export { default as useDynamicTokens } from './useDynamicTokens'
 
+//Internal
 export { default as useCopyToClipboard } from './useCopyToClipboard'
 export { default as useMediaQuery } from './useMediaQuery'
 export { default as useTimeSince } from './useTimeSince'
@@ -26,3 +28,4 @@ export { default as useFallbackState } from './useFallbackState'
 export { default as useModelViewer } from './useModelViewer'
 export { default as useChainCurrency } from './useChainCurrency'
 export { default as useInfiniteApi } from './useInfiniteApi'
+export { default as useOnChainRoyalties } from './useOnChainRoyalties'
