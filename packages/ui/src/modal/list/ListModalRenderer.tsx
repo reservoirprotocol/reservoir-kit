@@ -391,7 +391,11 @@ export const ListModalRenderer: FC<Props> = ({
           orderKind: market.orderKind,
         }
 
-        if (enableOnChainRoyalties && onChainRoyalties) {
+        if (
+          enableOnChainRoyalties &&
+          onChainRoyalties &&
+          listing.orderKind === 'seaport'
+        ) {
           const royalties = onChainRoyalties.recipients.map((recipient, i) => {
             const bps =
               (parseFloat(
@@ -403,7 +407,11 @@ export const ListModalRenderer: FC<Props> = ({
           })
           listing.automatedRoyalties = false
           listing.fees = [...royalties]
-          if (client.marketplaceFee && client.marketplaceFeeRecipient) {
+          if (
+            client.marketplaceFee &&
+            client.marketplaceFeeRecipient &&
+            listing.orderbook === 'reservoir'
+          ) {
             listing.fees.push(
               `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`
             )
