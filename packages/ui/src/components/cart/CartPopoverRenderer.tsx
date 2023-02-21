@@ -62,7 +62,8 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
   const cartCurrencyConverted = items.some(
-    (item) => item.price?.currency?.contract !== currency?.contract
+    (item) =>
+      item.price && item.price?.currency?.contract !== currency?.contract
   )
 
   useEffect(() => {
