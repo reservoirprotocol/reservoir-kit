@@ -1,5 +1,5 @@
 import { goerli, mainnet, useContractRead } from 'wagmi'
-import { polygon } from 'wagmi/chains'
+import allChains from 'wagmi/chains'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils.js'
 import useChainCurrency from '../hooks/useChainCurrency'
@@ -49,20 +49,6 @@ const MANIFOLD_ABI = [
   },
 ] as const
 
-const manifoldContractForChain = (chainId: number = mainnet.id) => {
-  switch (chainId) {
-    case mainnet.id: {
-      return '0x0385603ab55642cb4dd5de3ae9e306809991804f'
-    }
-    case goerli.id: {
-      return '0xe7c9Cb6D966f76f3B5142167088927Bf34966a1f'
-    }
-    case polygon.id: {
-      return '0x28EdFcF0Be7E86b07493466e7631a213bDe8eEF2'
-    }
-  }
-}
-
 export default function ({
   contract,
   tokenId,
@@ -70,7 +56,21 @@ export default function ({
   enabled,
   chainId = mainnet.id,
 }: Props) {
-  const manifoldContract = manifoldContractForChain(chainId)
+  let manifoldContract = ''
+  switch (chainId) {
+    case mainnet.id: {
+      manifoldContract = '0x0385603ab55642cb4dd5de3ae9e306809991804f'
+      break
+    }
+    case goerli.id: {
+      manifoldContract = '0xe7c9Cb6D966f76f3B5142167088927Bf34966a1f'
+      break
+    }
+    case allChains.polygon.id: {
+      manifoldContract = '0x28EdFcF0Be7E86b07493466e7631a213bDe8eEF2'
+      break
+    }
+  }
   const currency = useChainCurrency(chainId)
   const amount = value ? value : parseUnits('1', currency.decimals)
 
