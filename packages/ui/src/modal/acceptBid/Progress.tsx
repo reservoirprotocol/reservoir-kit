@@ -54,7 +54,7 @@ export const Progress: FC<Props> = ({
           >
             <TransactionProgress
               fromImg={tokenImage || ''}
-              toImg={marketplace?.image}
+              toImgs={[marketplace?.image]}
             />
           </Flex>
           <Text style="subtitle2" css={{ mx: 56, textAlign: 'center' }}>
