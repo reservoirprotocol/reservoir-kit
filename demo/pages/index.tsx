@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { ConnectKitButton } from 'connectkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import Link from 'next/link'
 
@@ -16,7 +16,7 @@ const Index: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectButton />
+      <ConnectKitButton mode="dark" />
       <ThemeSwitcher />
 
       <h2>Modals</h2>

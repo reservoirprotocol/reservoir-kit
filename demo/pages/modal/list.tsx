@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { ListModal } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { ConnectKitButton } from 'connectkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
@@ -62,7 +62,7 @@ const Index: NextPage = () => {
         paddingTop: 150,
       }}
     >
-      <ConnectButton />
+      <ConnectKitButton />
 
       <div>
         <label>Collection Id: </label>
