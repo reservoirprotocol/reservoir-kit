@@ -53,7 +53,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   currencies?: Currency[]
   nativeOnly?: boolean
   normalizeRoyalties?: boolean
-  enableOnChainRoyalties: boolean
+  enableOnChainRoyalties?: boolean
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void

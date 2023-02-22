@@ -120,6 +120,12 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
         <CartItemImage
           src={`${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1`}
           css={!price ? { filter: 'grayscale(1)' } : {}}
+          onError={({ currentTarget }) => {
+            const collectionImage = `${reservoirChain?.baseApiUrl}/redirect/collections/${collection.id}/image/v1`
+            if (currentTarget.src != collectionImage) {
+              currentTarget.src = collectionImage
+            }
+          }}
         />
         <CloseButton
           css={{
