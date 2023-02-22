@@ -1,5 +1,4 @@
 import { goerli, mainnet, useContractRead } from 'wagmi'
-import * as allChains from 'wagmi/chains'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils.js'
 import useChainCurrency from '../hooks/useChainCurrency'
@@ -66,7 +65,7 @@ export default function ({
       manifoldContract = '0xe7c9Cb6D966f76f3B5142167088927Bf34966a1f'
       break
     }
-    case allChains.polygon.id: {
+    case 137: {
       manifoldContract = '0x28EdFcF0Be7E86b07493466e7631a213bDe8eEF2'
       break
     }
