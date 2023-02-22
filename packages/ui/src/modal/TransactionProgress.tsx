@@ -4,7 +4,7 @@ import { styled, keyframes } from '../../stitches.config'
 
 type Props = {
   fromImg: string
-  toImg: string
+  toImgs: string[]
 } & ComponentPropsWithoutRef<typeof Flex>
 
 const Img = styled('img', {
@@ -12,6 +12,9 @@ const Img = styled('img', {
   height: 56,
   borderRadius: 4,
   objectFit: 'cover',
+  '& + img': {
+    ml: -20,
+  },
 })
 
 const ProgressDot = styled(Box, {
@@ -40,7 +43,7 @@ const loadingEnd = keyframes({
   '100%': { transform: 'scale(0.8)', backgroundColor: '$neutralSolid' },
 })
 
-const TransactionProgress: FC<Props> = ({ fromImg, toImg, ...props }) => {
+const TransactionProgress: FC<Props> = ({ fromImg, toImgs, ...props }) => {
   return (
     <Flex {...props} align="center">
       <Img src={fromImg} />
@@ -55,7 +58,9 @@ const TransactionProgress: FC<Props> = ({ fromImg, toImg, ...props }) => {
           css={{ animation: `${loadingEnd} 1s ease-in-out infinite` }}
         />
       </Flex>
-      <Img src={toImg} />
+      {toImgs.map((src, i) => (
+        <Img key={i} src={src} />
+      ))}
     </Flex>
   )
 }

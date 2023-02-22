@@ -18,7 +18,7 @@ export type Execute = {
       data?: any
       txHash?: string
       orderId?: string
-      orderIndex?: number
+      orderIndexes?: number[]
     }[]
   }[]
 }

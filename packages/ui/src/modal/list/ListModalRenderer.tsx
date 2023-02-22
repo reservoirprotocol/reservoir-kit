@@ -49,7 +49,7 @@ export type StepData = {
   totalSteps: number
   stepProgress: number
   currentStep: Execute['steps'][0]
-  listingData: ListingData
+  listingData: ListingData[]
 }
 
 type ChildrenProps = {
@@ -476,14 +476,17 @@ export const ListModalRenderer: FC<Props> = ({
               ? currentStep.items[currentStep.items.length]
               : null
             setListStep(ListStep.Complete)
+            const listings =
+              currentStepItem && currentStepItem.orderIndexes !== undefined
+                ? listingData.filter((_, i) =>
+                    currentStepItem.orderIndexes?.includes(i)
+                  )
+                : [listingData[listingData.length - 1]]
             setStepData({
               totalSteps: stepCount,
               stepProgress: stepCount,
               currentStep,
-              listingData:
-                currentStepItem && currentStepItem.orderIndex !== undefined
-                  ? listingData[currentStepItem.orderIndex]
-                  : listingData[listingData.length - 1],
+              listingData: listings,
             })
           } else {
             const currentStep = executableSteps[incompleteStepIndex]
@@ -491,9 +494,12 @@ export const ListModalRenderer: FC<Props> = ({
               ? currentStep.items[incompleteStepItemIndex]
               : null
             const listings =
-              currentStepItem?.orderIndex !== undefined
-                ? listingData[currentStepItem.orderIndex]
-                : listingData[listingData.length - 1]
+              currentStepItem && currentStepItem.orderIndexes !== undefined
+                ? listingData.filter((_, i) =>
+                    currentStepItem.orderIndexes?.includes(i)
+                  )
+                : [listingData[listingData.length - 1]]
+
             setStepData({
               totalSteps: stepCount,
               stepProgress: incompleteStepIndex,
