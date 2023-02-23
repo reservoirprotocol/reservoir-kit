@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { useTokens } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { ConnectKitButton } from 'connectkit'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
 
@@ -36,7 +36,7 @@ const Tokens: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectButton />
+      <ConnectKitButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tokens</h3>
       Fetching Initial: {isFetchingInitialData ? 'Fetching' : '...'}
       <br />

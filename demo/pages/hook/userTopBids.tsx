@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { useUserTopBids } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { ConnectKitButton } from 'connectkit'
 import { useInView } from 'react-intersection-observer'
 import { createRef, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
@@ -48,7 +48,7 @@ const UserTopBids: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectButton />
+      <ConnectKitButton />
       <div>
         <label>User: </label>
         <input type="text" ref={addressInput as any} />
