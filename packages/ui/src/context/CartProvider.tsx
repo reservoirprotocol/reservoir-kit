@@ -645,7 +645,9 @@ function cartStore({
         (items, { token, collection, price }) => {
           if (price) {
             const contract = collection.id.split(':')[0]
-            items?.push({ tokenId: token.id, contract })
+            items?.push({
+              token: `${contract}:${token.id}`,
+            })
             if (
               price.currency?.contract != cartData.current.currency?.contract
             ) {
@@ -654,7 +656,7 @@ function cartStore({
           }
           return items
         },
-        [] as Parameters<ReservoirClientActions['buyToken']>['0']['tokens']
+        [] as Parameters<ReservoirClientActions['buyToken']>['0']['items']
       )
 
       if (!tokens || tokens.length === 0) {
@@ -707,7 +709,7 @@ function cartStore({
         .buyToken({
           expectedPrice,
           signer,
-          tokens: tokens,
+          items: tokens,
           options,
           onProgress: (steps: Execute['steps']) => {
             if (!steps) {
