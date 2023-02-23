@@ -38,28 +38,6 @@ export async function buyToken(data: Data) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
   }
 
-  // if (
-  //   (!tokens || !tokens.length) &&
-  //   (!data.orderIds || !data.orderIds.length) &&
-  //   !data.rawOrders
-  // ) {
-  //   console.debug(data)
-  //   throw new ReferenceError(
-  //     'ReservoirClient missing data: At least one of the following is required, tokens, orderIds or rawOrders'
-  //   )
-  // }
-
-  // if (
-  //   (tokens && (orderIds || rawOrders)) ||
-  //   (orderIds && (tokens || rawOrders)) ||
-  //   (rawOrders && (orderIds || tokens))
-  // ) {
-  //   console.debug(data)
-  //   throw new ReferenceError(
-  //     'ReservoirClient conflicting data: tokens, orderIds and rawOrders are mutually exclusive'
-  //   )
-  // }
-
   try {
     const params: BuyTokenBodyParameters = {
       items,
@@ -67,14 +45,6 @@ export async function buyToken(data: Data) {
       source: client.source || '',
       ...options,
     }
-
-    // if (tokens) {
-    //   params.tokens = tokens?.map(
-    //     (token) => `${token.contract}:${token.tokenId}`
-    //   )
-    // }
-
-    // items.forEach()
 
     if (
       client.normalizeRoyalties !== undefined &&
