@@ -53,7 +53,8 @@ export default function (
     options?.limit || defaultLimit
   )
 
-  const collections = response.data?.flatMap((page) => page.collections) ?? []
+  const collections =
+    response.data?.flatMap((page) => page.collections || []) ?? []
 
   return {
     ...response,
