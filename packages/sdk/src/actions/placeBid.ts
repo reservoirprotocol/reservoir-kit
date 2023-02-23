@@ -4,7 +4,7 @@ import { executeSteps } from '../utils'
 import { getClient } from '.'
 
 type PlaceBidBody = NonNullable<
-  paths['/execute/bid/v4']['post']['parameters']['body']['body']
+  paths['/execute/bid/v5']['post']['parameters']['body']['body']
 >
 
 type Data = {
@@ -65,7 +65,7 @@ export async function placeBid({ bids, signer, onProgress }: Data) {
     data.params = bids
 
     await executeSteps(
-      { url: `${baseApiUrl}/execute/bid/v4`, method: 'post', data },
+      { url: `${baseApiUrl}/execute/bid/v5`, method: 'post', data },
       signer,
       onProgress
     )

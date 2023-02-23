@@ -54,11 +54,15 @@ export default function (
               approvalStep.items.reduce((unapproved, item) => {
                 if (
                   item.status === 'incomplete' &&
-                  item.orderIndex !== undefined
+                  item.orderIndexes !== undefined
                 ) {
-                  const listing = listings[item.orderIndex]
+                  const listingOrderKinds = listings
+                    .filter((_, i) => item.orderIndexes?.includes(i))
+                    .map((listing) => listing.orderKind)
                   marketplaces.forEach((marketplace) => {
-                    if (marketplace.orderKind === listing.orderKind) {
+                    if (
+                      listingOrderKinds.includes(marketplace.orderKind as any)
+                    ) {
                       unapproved.push(marketplace)
                     }
                   })

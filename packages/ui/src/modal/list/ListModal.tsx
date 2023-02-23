@@ -158,25 +158,23 @@ export function ListModal({
 
         useEffect(() => {
           if (stepData) {
-            const isNativeOrder =
-              stepData.listingData.marketplace.orderbook === 'reservoir'
-            const isSeaportOrder =
-              stepData.listingData.marketplace.orderKind === 'seaport'
-            const marketplaceName =
-              isNativeOrder && isSeaportOrder
-                ? `${stepData.listingData.marketplace.name} (on Seaport)`
-                : stepData.listingData.marketplace.name
-
+            const orderKind =
+              stepData.listingData[0].listing.orderKind || 'exchange'
+            const marketplaceNames = stepData.listingData
+              .map((listing) => listing.marketplace.name)
+              .join(', ')
             switch (stepData.currentStep.kind) {
               case 'transaction': {
                 setStepTitle(
-                  `Approve ${marketplaceName} to access item\nin your wallet`
+                  `Approve ${
+                    orderKind?.[0].toUpperCase() + orderKind?.slice(1)
+                  } to access item\nin your wallet`
                 )
                 break
               }
               case 'signature': {
                 setStepTitle(
-                  `Confirm listing on ${marketplaceName}\nin your wallet`
+                  `Confirm listing on ${marketplaceNames}\nin your wallet`
                 )
                 break
               }
@@ -642,7 +640,9 @@ export function ListModal({
                       <TransactionProgress
                         justify="center"
                         fromImg={tokenImage}
-                        toImg={stepData?.listingData.marketplace.imageUrl || ''}
+                        toImgs={stepData?.listingData.map(
+                          (listing) => listing.marketplace.imageUrl || ''
+                        )}
                       />
                       <Text
                         css={{

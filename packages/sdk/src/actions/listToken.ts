@@ -6,7 +6,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { version } from '../../package.json'
 
 type ListTokenBody = NonNullable<
-  paths['/execute/list/v4']['post']['parameters']['body']['body']
+  paths['/execute/list/v5']['post']['parameters']['body']['body']
 >
 
 type Data = {
@@ -65,7 +65,7 @@ export async function listToken(
     data.params = listings
 
     const request: AxiosRequestConfig = {
-      url: `${baseApiUrl}/execute/list/v4`,
+      url: `${baseApiUrl}/execute/list/v5`,
       method: 'post',
       data,
       headers: {

@@ -629,7 +629,7 @@ export function BidModal({
                         <TransactionProgress
                           justify="center"
                           fromImg={itemImage || ''}
-                          toImg={localMarketplace?.icon || ''}
+                          toImgs={[localMarketplace?.icon || '']}
                         />
                       )}
                       {stepData.currentStep.kind !== 'signature' && (
