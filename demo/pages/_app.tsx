@@ -101,7 +101,7 @@ const AppWrapper: FC<any> = ({ children }) => {
           ],
           marketplaceFee: FEE,
           marketplaceFeeRecipient: FEE_RECIPIENT,
-          source: SOURCE,
+          // source: SOURCE,
           normalizeRoyalties: NORMALIZE_ROYALTIES,
         }}
         theme={theme}
