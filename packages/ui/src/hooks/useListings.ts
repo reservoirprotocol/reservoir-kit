@@ -50,7 +50,7 @@ export default function (
     }
   )
 
-  const listings = response.data?.flatMap((page) => page.orders) ?? []
+  const listings = response.data?.flatMap((page) => page.orders || []) ?? []
 
   return {
     ...response,

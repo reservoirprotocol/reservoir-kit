@@ -54,7 +54,7 @@ export default function (
     }
   )
 
-  const tokens = response.data?.flatMap((page) => page.tokens) ?? []
+  const tokens = response.data?.flatMap((page) => page.tokens || []) ?? []
 
   return {
     ...response,
