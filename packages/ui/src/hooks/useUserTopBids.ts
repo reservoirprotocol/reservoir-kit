@@ -52,7 +52,7 @@ export default function (
     }
   )
 
-  const bids = response.data?.flatMap((page) => page.topBids) ?? []
+  const bids = response.data?.flatMap((page) => page.topBids || []) ?? []
 
   return {
     ...response,
