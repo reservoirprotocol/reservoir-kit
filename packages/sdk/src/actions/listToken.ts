@@ -39,7 +39,7 @@ export async function listToken(
   try {
     const data: ListTokenBody = {
       maker,
-      source: client.source || '',
+      source: client.source || undefined,
     }
 
     listings.forEach((listing) => {

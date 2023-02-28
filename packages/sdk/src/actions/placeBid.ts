@@ -31,7 +31,7 @@ export async function placeBid({ bids, signer, onProgress }: Data) {
   try {
     const data: PlaceBidBody = {
       maker,
-      source: client.source || '',
+      source: client.source || undefined,
     }
 
     bids.forEach((bid) => {
