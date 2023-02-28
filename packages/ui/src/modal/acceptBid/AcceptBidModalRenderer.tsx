@@ -314,17 +314,17 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       if (
         bid &&
         bid.status === 'active' &&
-        bid.price?.netAmount?.native &&
+        bid.price?.netAmount?.decimal !== undefined &&
         bid.criteria?.data?.collection?.id === collectionId
       ) {
         if (bid.criteria?.kind === 'token') {
           const tokenSetPieces = bid.tokenSetId.split(':')
           const bidTokenId = tokenSetPieces[tokenSetPieces.length - 1]
           if (tokenId === bidTokenId) {
-            price = bid.price?.netAmount?.native
+            price = bid.price?.netAmount?.decimal
           }
         } else {
-          price = bid.price?.netAmount?.native
+          price = bid.price?.netAmount?.decimal
         }
       }
       if (!isFetchingBidData) {
@@ -334,8 +334,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         )
       }
     } else if (token) {
-      let topBid = token.market?.topBid?.price?.netAmount?.native
-      if (topBid) {
+      let topBid = token.market?.topBid?.price?.netAmount?.decimal
+      if (topBid !== undefined) {
         setTotalPrice(topBid)
         setAcceptBidStep(AcceptBidStep.Checkout)
       } else {
