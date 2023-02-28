@@ -192,33 +192,31 @@ export const BuyModalRenderer: FC<Props> = ({
       delete options.feesOnTop
     }
 
-    if (quantity > 1) {
-      options.quantity = quantity
-    }
-
     if (normalizeRoyalties !== undefined) {
       options.normalizeRoyalties = normalizeRoyalties
     }
 
     setBuyStep(BuyStep.Approving)
 
-    let orderIds = orderId ? [orderId] : undefined
+    const item: Parameters<
+      ReservoirClientActions['buyToken']
+    >['0']['items'][0] = {
+      token: `${contract}:${tokenId}`,
+    }
 
-    let tokens = orderId
-      ? undefined
-      : [
-          {
-            tokenId: tokenId,
-            contract: contract,
-          },
-        ]
+    if (quantity > 1) {
+      item.quantity = quantity
+    }
+
+    if (orderId) {
+      item.orderId = orderId
+    }
 
     client.actions
       .buyToken({
-        orderIds: orderIds,
+        items: [item],
         expectedPrice: totalPrice,
         signer,
-        tokens: tokens,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
             return

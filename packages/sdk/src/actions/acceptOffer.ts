@@ -3,25 +3,17 @@ import { getClient } from '.'
 import { Execute, paths } from '../types'
 import { executeSteps, request } from '../utils'
 
-export type Token = Pick<
-  NonNullable<
-    NonNullable<
-      paths['/tokens/v5']['get']['responses']['200']['schema']['tokens']
-    >[0]['token']
-  >,
-  'tokenId' | 'contract'
->
-
 type AcceptOfferBodyParameters =
-  paths['/execute/sell/v6']['post']['parameters']['body']['body']
+  paths['/execute/sell/v7']['post']['parameters']['body']['body']
 
-export type AcceptOfferOptions = Partial<
-  Omit<AcceptOfferBodyParameters, 'token'>
+export type AcceptOfferOptions = Omit<
+  NonNullable<AcceptOfferBodyParameters>,
+  'items'
 >
 
 type Data = {
-  token: Token
-  options?: AcceptOfferOptions
+  items: NonNullable<AcceptOfferBodyParameters>['items']
+  options?: Partial<AcceptOfferOptions>
   expectedPrice?: number
   signer: Signer
   onProgress: (steps: Execute['steps']) => any
@@ -36,7 +28,7 @@ type Data = {
  * @param data.onProgress Callback to update UI state as execution progresses
  */
 export async function acceptOffer(data: Data) {
-  const { token, expectedPrice, signer, onProgress } = data
+  const { items, expectedPrice, signer, onProgress } = data
   const taker = await signer.getAddress()
   const client = getClient()
   const options = data.options || {}
@@ -48,8 +40,8 @@ export async function acceptOffer(data: Data) {
 
   try {
     const params: AcceptOfferBodyParameters = {
+      items,
       taker: taker,
-      token: `${token.contract}:${token.tokenId}`,
       source: client.source || '',
       ...options,
     }
@@ -63,7 +55,7 @@ export async function acceptOffer(data: Data) {
 
     await executeSteps(
       {
-        url: `${baseApiUrl}/execute/sell/v6`,
+        url: `${baseApiUrl}/execute/sell/v7`,
         method: 'post',
         data: params,
       },
@@ -74,14 +66,16 @@ export async function acceptOffer(data: Data) {
     )
     return true
   } catch (err: any) {
-    const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
-      {
-        token: `${token.contract}:${token.tokenId}`,
-      }
-    request({
-      method: 'POST',
-      url: `${baseApiUrl}/tokens/refresh/v1`,
-      data: JSON.stringify(data),
+    items.forEach(({ token }) => {
+      const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
+        {
+          token: token,
+        }
+      request({
+        method: 'POST',
+        url: `${baseApiUrl}/tokens/refresh/v1`,
+        data: JSON.stringify(data),
+      }).catch(() => {})
     })
     throw err
   }

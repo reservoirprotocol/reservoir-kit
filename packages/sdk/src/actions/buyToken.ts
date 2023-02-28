@@ -3,29 +3,16 @@ import { Signer } from 'ethers'
 import { getClient } from '.'
 import { executeSteps, request } from '../utils'
 
-export type Token = Pick<
-  NonNullable<
-    NonNullable<
-      paths['/tokens/v5']['get']['responses']['200']['schema']['tokens']
-    >[0]['token']
-  >,
-  'tokenId' | 'contract'
->
-
 type BuyTokenBodyParameters = NonNullable<
-  paths['/execute/buy/v6']['post']['parameters']['body']['body']
+  paths['/execute/buy/v7']['post']['parameters']['body']['body']
 >
 
 export type BuyTokenOptions = Partial<
-  Omit<BuyTokenBodyParameters, 'source' | 'tokens' | 'orderIds' | 'rawOrders'>
->
-export type BuyTokenRequiredOptions = Pick<
-  BuyTokenBodyParameters,
-  'orderIds' | 'rawOrders'
+  Omit<BuyTokenBodyParameters, 'source' | 'items'>
 >
 
-type Data = BuyTokenRequiredOptions & {
-  tokens?: Token[]
+type Data = {
+  items: BuyTokenBodyParameters['items']
   expectedPrice?: number
   options?: BuyTokenOptions
   signer: Signer
@@ -34,17 +21,14 @@ type Data = BuyTokenRequiredOptions & {
 
 /**
  * Instantly buy a token
- * @param data.tokens Tokens to be purchased (mutually exclusive with rawOrders and orderIds)
- * @param data.orderIds OrderIds to be purchased (mutually exclusive with tokens and rawOrders)
- * @param data.rawOrders RawOrders to be purchased (mutually exclusive with tokens and orderIds)
- * @param data.expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
+ * @param data.items Array of tokens to be purchased, can also supply an order id or rawOrders to execute
+ * @param data.expectedPrice Total price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
  * @param data.options Additional options to pass into the buy request
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.onProgress Callback to update UI state as execution progresses
  */
 export async function buyToken(data: Data) {
-  const { tokens, orderIds, rawOrders, expectedPrice, signer, onProgress } =
-    data
+  const { items, expectedPrice, signer, onProgress } = data
   const taker = await signer.getAddress()
   const client = getClient()
   const options = data.options || {}
@@ -54,43 +38,12 @@ export async function buyToken(data: Data) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
   }
 
-  if (
-    (!tokens || !tokens.length) &&
-    (!data.orderIds || !data.orderIds.length) &&
-    !data.rawOrders
-  ) {
-    console.debug(data)
-    throw new ReferenceError(
-      'ReservoirClient missing data: At least one of the following is required, tokens, orderIds or rawOrders'
-    )
-  }
-
-  if (
-    (tokens && (orderIds || rawOrders)) ||
-    (orderIds && (tokens || rawOrders)) ||
-    (rawOrders && (orderIds || tokens))
-  ) {
-    console.debug(data)
-    throw new ReferenceError(
-      'ReservoirClient conflicting data: tokens, orderIds and rawOrders are mutually exclusive'
-    )
-  }
-
   try {
     const params: BuyTokenBodyParameters = {
+      items,
       taker: taker,
       source: client.source || '',
       ...options,
-    }
-
-    if (tokens) {
-      params.tokens = tokens?.map(
-        (token) => `${token.contract}:${token.tokenId}`
-      )
-    } else if (orderIds) {
-      params.orderIds = orderIds
-    } else if (rawOrders) {
-      params.rawOrders = rawOrders
     }
 
     if (
@@ -100,9 +53,9 @@ export async function buyToken(data: Data) {
       params.normalizeRoyalties = client.normalizeRoyalties
     }
 
-    await executeSteps(
+    return executeSteps(
       {
-        url: `${baseApiUrl}/execute/buy/v6`,
+        url: `${baseApiUrl}/execute/buy/v7`,
         method: 'post',
         data: params,
       },
@@ -111,21 +64,18 @@ export async function buyToken(data: Data) {
       undefined,
       expectedPrice
     )
-    return true
   } catch (err: any) {
-    if (tokens) {
-      tokens.forEach((token) => {
-        const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
-          {
-            token: `${token.contract}:${token.tokenId}`,
-          }
-        request({
-          method: 'POST',
-          url: `${baseApiUrl}/tokens/refresh/v1`,
-          data: JSON.stringify(data),
-        })
-      })
-    }
+    items.forEach(({ token }) => {
+      const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
+        {
+          token,
+        }
+      request({
+        method: 'POST',
+        url: `${baseApiUrl}/tokens/refresh/v1`,
+        data: JSON.stringify(data),
+      }).catch(() => {})
+    })
     throw err
   }
 }

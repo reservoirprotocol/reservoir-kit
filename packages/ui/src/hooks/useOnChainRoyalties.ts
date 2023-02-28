@@ -75,7 +75,7 @@ export default function ({
 
   return useContractRead({
     chainId: chainId,
-    address: manifoldContract,
+    address: manifoldContract as any,
     abi: MANIFOLD_ABI,
     args: [contract as any, tokenId as any, amount],
     functionName: 'getRoyaltyView',
