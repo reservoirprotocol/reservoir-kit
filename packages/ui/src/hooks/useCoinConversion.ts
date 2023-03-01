@@ -1,6 +1,12 @@
 import useSWR from 'swr'
+import useReservoirClient from './useReservoirClient'
 
 export default function (vs_currency?: string, symbols: string = 'eth') {
+
+  const client = useReservoirClient();
+
+  console.log(client);
+
   const { data } = useSWR(
     vs_currency
       ? `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vs_currency}&symbols=${symbols}`

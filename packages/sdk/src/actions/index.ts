@@ -9,6 +9,12 @@ export type ReservoirChain = {
   apiKey?: string
 }
 
+export type CoinGecko = {
+  proxyUrl: string;
+  apiKey: string;
+  id: string;
+}
+
 /**
  * ReservoirClient Configuration Options
  * @param chains List of chain objects with configuration (id, baseApiUrl, apiKey and if it's the default)
@@ -26,6 +32,7 @@ export type ReservoirClientOptions = {
   marketplaceFee?: number
   marketplaceFeeRecipient?: string
   normalizeRoyalties?: boolean
+  coinGecko?: CoinGecko;
 }
 
 export type ReservoirClientActions = typeof actions
