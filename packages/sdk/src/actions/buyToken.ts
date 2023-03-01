@@ -66,15 +66,17 @@ export async function buyToken(data: Data) {
     )
   } catch (err: any) {
     items.forEach(({ token }) => {
-      const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
-        {
-          token,
-        }
-      request({
-        method: 'POST',
-        url: `${baseApiUrl}/tokens/refresh/v1`,
-        data: JSON.stringify(data),
-      }).catch(() => {})
+      if (token) {
+        const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
+          {
+            token,
+          }
+        request({
+          method: 'POST',
+          url: `${baseApiUrl}/tokens/refresh/v1`,
+          data: JSON.stringify(data),
+        }).catch(() => {})
+      }
     })
     throw err
   }
