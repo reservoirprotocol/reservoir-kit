@@ -13,7 +13,7 @@ import { ReservoirKitTheme, darkTheme } from './themes'
 import { ReservoirClientProvider } from './ReservoirClientProvider'
 import { SWRConfig } from 'swr'
 
-type CoinGecko = {
+export type CoinGecko = {
   apiKey: string;
   proxyUrl: string;
 }
