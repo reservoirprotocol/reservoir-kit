@@ -1,11 +1,14 @@
+import { useContext } from 'react'
 import useSWR from 'swr'
-import useReservoirClient from './useReservoirClient'
+import { ProviderOptionsContext } from '../ReservoirKitProvider'
 
 export default function (vs_currency?: string, symbols: string = 'eth') {
 
-  const client = useReservoirClient();
+  const  providerOptionsContext = useContext(ProviderOptionsContext);
 
-  console.log(client);
+  
+
+
 
   const { data } = useSWR(
     vs_currency
