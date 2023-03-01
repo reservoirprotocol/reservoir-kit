@@ -200,9 +200,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
     const item: Parameters<
       ReservoirClientActions['buyToken']
-    >['0']['items'][0] = {
-      token: `${contract}:${tokenId}`,
-    }
+    >['0']['items'][0] = {}
 
     if (quantity > 1) {
       item.quantity = quantity
@@ -210,6 +208,8 @@ export const BuyModalRenderer: FC<Props> = ({
 
     if (orderId) {
       item.orderId = orderId
+    } else {
+      item.token = `${contract}:${tokenId}`
     }
 
     client.actions

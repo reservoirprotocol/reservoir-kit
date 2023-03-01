@@ -3541,7 +3541,7 @@ export interface definitions {
       | "looks-rare"
       | "zeroex-v4"
       | "seaport"
-      | "seaport-v1.2"
+      | "seaport-v1.4"
       | "x2y2"
       | "universe"
       | "forward"
@@ -3555,7 +3555,7 @@ export interface definitions {
   };
   bulkData: {
     /** @enum {string} */
-    kind?: "seaport-v1.2";
+    kind?: "seaport-v1.4";
     data?: definitions["Model302"];
   };
   Model303: {
@@ -3593,11 +3593,13 @@ export interface definitions {
       | "zeroex-v4"
       | "x2y2"
       | "seaport"
+      | "seaport-v1.4"
       | "element"
       | "blur"
       | "rarible"
       | "manifold"
-      | "infinity";
+      | "infinity"
+      | "flow";
     data: definitions["source"];
   };
   Model307: definitions["Model306"][];
@@ -3747,13 +3749,13 @@ export interface definitions {
     weiPrice: string;
     /**
      * @description Exchange protocol used to create order. Example: `seaport`
-     * @default seaport-v1.2
+     * @default seaport-v1.4
      * @enum {string}
      */
     orderKind?:
       | "zeroex-v4"
       | "seaport"
-      | "seaport-v1.2"
+      | "seaport-v1.4"
       | "looks-rare"
       | "x2y2"
       | "universe"
@@ -4052,7 +4054,7 @@ export interface definitions {
   };
   Model338: {
     /** @description Token to buy. */
-    token: string;
+    token?: string;
     /**
      * @description Quantity of tokens to buy.
      * @default 1
@@ -4260,15 +4262,15 @@ export interface definitions {
     /** @description Amount seller is willing to sell for in wei. Example: `1000000000000000000` */
     weiPrice: string;
     /**
-     * @description Exchange protocol used to create order. Example: `seaport-v1.2`
-     * @default seaport-v1.2
+     * @description Exchange protocol used to create order. Example: `seaport-v1.4`
+     * @default seaport-v1.4
      * @enum {string}
      */
     orderKind?:
       | "looks-rare"
       | "zeroex-v4"
       | "seaport"
-      | "seaport-v1.2"
+      | "seaport-v1.4"
       | "x2y2"
       | "universe"
       | "infinity"
@@ -5236,6 +5238,8 @@ export interface operations {
         attributes?: string;
         /** Domain of the order source. Example `opensea.io` (Only listed tokens are returned when filtering by source) */
         source?: string;
+        /** Domain of the order source. Example `www.apecoinmarketplace.com`. For a native marketplace, return all tokens listed on this marketplace, even if better prices are available on other marketplaces. */
+        nativeSource?: string;
         /** Get tokens with a min rarity rank (inclusive) */
         minRarityRank?: number;
         /** Get tokens with a max rarity rank (inclusive) */
