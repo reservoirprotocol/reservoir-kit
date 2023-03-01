@@ -57,6 +57,8 @@ function formatBN(
 ) {
   if (typeof amount === 'undefined' || amount === null) return '-'
 
+  if (amount === 0) return '0'
+
   const amountToFormat =
     typeof amount === 'number' ? amount : +utils.formatUnits(amount, decimals)
 

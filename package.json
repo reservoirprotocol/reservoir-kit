@@ -51,7 +51,7 @@
     "node": ">=12",
     "yarn": ">=2"
   },
-  "packageManager": "yarn@3.2.3",
+  "packageManager": "yarn@3.4.1",
   "dependencies": {
     "@types/react-flatpickr": "^3.8.7",
     "next-remote-watch": "^1.0.0"
