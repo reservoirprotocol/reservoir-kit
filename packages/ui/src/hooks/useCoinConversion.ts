@@ -3,9 +3,13 @@ import useSWR from 'swr'
 import { CoinGecko, ProviderOptionsContext } from '../ReservoirKitProvider'
 
 const createBaseUrl = (config: CoinGecko | undefined): string => {
-  if (config?.apiKey)
+  if (config?.proxyUrl) {
+    return `${config.proxyUrl}?`
+  }
+
+  if (config?.apiKey) {
     return `https://pro-api.coingecko.com/api/v3/coins/markets?x_cg_pro_api_key={${config.apiKey}}&`
-  if (config?.proxyUrl) return `${config.proxyUrl}?`
+  }
 
   return `https://api.coingecko.com/api/v3/coins/markets?`
 }
