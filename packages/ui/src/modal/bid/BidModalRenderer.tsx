@@ -27,6 +27,7 @@ import { parseEther } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
+import { Currency } from '../../types/Currency'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -92,6 +93,7 @@ type Props = {
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
+  currency?: Currency
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -111,6 +113,7 @@ export const BidModalRenderer: FC<Props> = ({
   collectionId,
   attribute,
   normalizeRoyalties,
+  currency,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -130,14 +133,23 @@ export const BidModalRenderer: FC<Props> = ({
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
   const chainCurrency = useChainCurrency()
-  const wrappedContractAddress =
-    chainCurrency.chainId in wrappedContracts
-      ? wrappedContracts[chainCurrency.chainId]
-      : wrappedContracts[1]
-  const wrappedContractName =
-    chainCurrency.chainId in wrappedContractNames
-      ? wrappedContractNames[chainCurrency.chainId]
-      : wrappedContractNames[1]
+
+  let wrappedContractAddress = ''
+  let wrappedContractName = ''
+
+  if (currency) {
+    wrappedContractAddress = currency.contract
+    wrappedContractName = currency.symbol
+  } else {
+    wrappedContractAddress =
+      chainCurrency.chainId in wrappedContracts
+        ? wrappedContracts[chainCurrency.chainId]
+        : wrappedContracts[1]
+    wrappedContractName =
+      chainCurrency.chainId in wrappedContractNames
+        ? wrappedContractNames[chainCurrency.chainId]
+        : wrappedContractNames[1]
+  }
 
   const { data: tokens } = useTokens(
     open &&
@@ -178,14 +190,17 @@ export const BidModalRenderer: FC<Props> = ({
   const { data: balance } = useBalance({
     address: address,
     watch: open,
+    chainId: client?.currentChain()?.id,
   })
 
   const {
     balance: { data: wrappedBalance },
     contractAddress,
   } = useWrappedBalance({
+    token: wrappedContractAddress as any,
     address: address,
     watch: open,
+    chainId: client?.currentChain()?.id,
   })
 
   const { chain } = useNetwork()
@@ -282,6 +297,10 @@ export const BidModalRenderer: FC<Props> = ({
       attributeValue: trait?.value,
     }
 
+    if (currency) {
+      bid.currency = currency.contract
+    }
+
     if (tokenId && collectionId) {
       const contract = collectionId ? collectionId?.split(':')[0] : undefined
       bid.token = `${contract}:${tokenId}`
@@ -349,6 +368,7 @@ export const BidModalRenderer: FC<Props> = ({
   }, [
     tokenId,
     collectionId,
+    currency,
     client,
     signer,
     bidAmount,

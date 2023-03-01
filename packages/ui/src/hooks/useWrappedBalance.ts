@@ -13,8 +13,8 @@ export default function (params: Parameters<typeof useBalance>['0']) {
       : wrappedContracts[mainnet.id]
 
   const balance = useBalance({
-    ...params,
     token: contractAddress as UseBalanceToken,
+    ...params,
   })
 
   return {

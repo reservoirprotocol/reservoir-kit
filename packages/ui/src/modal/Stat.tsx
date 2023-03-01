@@ -11,6 +11,7 @@ type StatProps = {
   value: string | number | null
   asNative?: boolean
   asWrapped?: boolean
+  address?: string
 }
 
 const Stat: FC<StatProps> = ({
@@ -18,6 +19,7 @@ const Stat: FC<StatProps> = ({
   value,
   asNative = false,
   asWrapped = false,
+  address,
   ...props
 }) => (
   <Flex
@@ -47,7 +49,11 @@ const Stat: FC<StatProps> = ({
       <FormatCryptoCurrency amount={value} textStyle="subtitle2" />
     )}
     {asWrapped && !asNative && (
-      <FormatWrappedCurrency amount={value} textStyle="subtitle2" />
+      <FormatWrappedCurrency
+        amount={value}
+        address={address}
+        textStyle="subtitle2"
+      />
     )}
     {!asNative && !asWrapped && (
       <Text

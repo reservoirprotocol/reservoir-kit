@@ -49,6 +49,7 @@ import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
 import { useFallbackState } from '../../hooks'
+import { Currency } from '../../types/Currency'
 
 type BidCallbackData = {
   tokenId?: string
@@ -62,6 +63,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
+  currency?: Currency
   onViewOffers?: () => void
   onClose?: (
     data: BidCallbackData,
@@ -114,6 +116,7 @@ export function BidModal({
   collectionId,
   attribute,
   normalizeRoyalties,
+  currency,
   onViewOffers,
   onClose,
   onBidComplete,
@@ -143,6 +146,7 @@ export function BidModal({
       collectionId={collectionId}
       attribute={attribute}
       normalizeRoyalties={normalizeRoyalties}
+      currency={currency}
     >
       {({
         token,
@@ -320,6 +324,7 @@ export function BidModal({
                         logoWidth={10}
                         textStyle="tiny"
                         amount={wrappedBalance?.value}
+                        address={wrappedContractAddress}
                       />{' '}
                     </Text>
                   </Flex>
