@@ -16,9 +16,9 @@ export default function (
   symbols: string = 'eth',
   id: string = ''
 ) {
-  const client = useContext(ProviderOptionsContext)
+  const providerOptionsContext = useContext(ProviderOptionsContext)
 
-  const baseUrl = createBaseUrl(client?.coinGecko)
+  const baseUrl = createBaseUrl(providerOptionsContext?.coinGecko)
 
   const { data } = useSWR(
     vs_currency
