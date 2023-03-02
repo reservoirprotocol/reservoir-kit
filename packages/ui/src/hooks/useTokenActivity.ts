@@ -10,7 +10,7 @@ type TokenActivityResponse =
 
 export default function (
   token: string,
-  options: TokenActivityQuery | false,
+  options?: TokenActivityQuery | false,
   swrOptions: SWRInfiniteConfiguration = {},
   chainId?: number
 ) {
