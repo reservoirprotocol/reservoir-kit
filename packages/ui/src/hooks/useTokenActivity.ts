@@ -22,6 +22,10 @@ export default function (
 
   const response = useInfiniteApi<TokenActivityResponse>(
     (pageIndex, previousPageData) => {
+      if (!token) {
+        return null
+      }
+
       const url = new URL(`${chain?.baseApiUrl}/tokens/${token}/activity/v4`)
 
       let query: TokenActivityQuery = { ...options }
