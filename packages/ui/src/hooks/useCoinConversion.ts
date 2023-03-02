@@ -14,14 +14,14 @@ const createBaseUrl = (config: CoinGecko | undefined): string => {
   return `https://api.coingecko.com/api/v3/coins/markets?`
 }
 
-export default function (vs_currency?: string, symbols: string = 'eth') {
+export default function (vs_currency?: string, symbols: string = 'eth', id: string = '') {
   const { coinGecko } = useContext(ProviderOptionsContext)
 
   const baseUrl = createBaseUrl(coinGecko)
 
   const { data } = useSWR(
     vs_currency
-      ? `${baseUrl}vs_currency=${vs_currency}&symbols=${symbols}`
+      ? `${baseUrl}vs_currency=${vs_currency}&symbols=${symbols}&ids=${id}`
       : null,
     null,
     {

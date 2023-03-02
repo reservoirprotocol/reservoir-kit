@@ -225,7 +225,7 @@ export const ListModalRenderer: FC<Props> = ({
       ? Number(userTokens[0].ownership?.tokenCount || 1)
       : 1
 
-  const usdPrice = useCoinConversion(open ? 'USD' : undefined, currency.symbol)
+  const usdPrice = useCoinConversion(open ? 'USD' : undefined, currency.symbol, currency.coinGeckoId)
 
   const toggleMarketplace = (marketplace: Marketplace) => {
     const updatedMarketplaces = marketplaces.map((market) => {
