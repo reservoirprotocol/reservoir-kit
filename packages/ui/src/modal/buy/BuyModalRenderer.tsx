@@ -192,33 +192,31 @@ export const BuyModalRenderer: FC<Props> = ({
       delete options.feesOnTop
     }
 
-    if (quantity > 1) {
-      options.quantity = quantity
-    }
-
     if (normalizeRoyalties !== undefined) {
       options.normalizeRoyalties = normalizeRoyalties
     }
 
     setBuyStep(BuyStep.Approving)
 
-    let orderIds = orderId ? [orderId] : undefined
+    const item: Parameters<
+      ReservoirClientActions['buyToken']
+    >['0']['items'][0] = {}
 
-    let tokens = orderId
-      ? undefined
-      : [
-          {
-            tokenId: tokenId,
-            contract: contract,
-          },
-        ]
+    if (quantity > 1) {
+      item.quantity = quantity
+    }
+
+    if (orderId) {
+      item.orderId = orderId
+    } else {
+      item.token = `${contract}:${tokenId}`
+    }
 
     client.actions
       .buyToken({
-        orderIds: orderIds,
+        items: [item],
         expectedPrice: totalPrice,
         signer,
-        tokens: tokens,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
             return
@@ -277,6 +275,7 @@ export const BuyModalRenderer: FC<Props> = ({
           if (errorType && errorType === 'price mismatch') {
             message = error.message
           }
+          //@ts-ignore: Should be fixed in an update to typescript
           const transactionError = new Error(message, {
             cause: error,
           })
