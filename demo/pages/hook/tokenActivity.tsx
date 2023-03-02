@@ -8,15 +8,12 @@ import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
 
 const Activity: NextPage = () => {
-  const { data: test } = useCollectionActivity({
-    collection: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b:1271',
-  })
 
   const {
     data: activity,
     fetchNextPage,
     hasNextPage,
-  } = useTokenActivity('0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b:1271', {})
+  } = useTokenActivity('0x744df993f93c89801cadbea8a4a3fd2b4a443d2c:1793s', {})
 
   const { ref, inView } = useInView()
 
