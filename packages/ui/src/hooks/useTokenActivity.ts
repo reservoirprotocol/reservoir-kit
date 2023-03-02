@@ -9,6 +9,8 @@ type TokenActivityResponse =
   paths['/tokens/{token}/activity/v4']['get']['responses']['200']['schema']
 
 export default function (
+  contract: string,
+  tokenId: number | string,
   options: TokenActivityQuery | false,
   swrOptions: SWRInfiniteConfiguration = {},
   chainId?: number
@@ -21,14 +23,18 @@ export default function (
 
   const response = useInfiniteApi<TokenActivityResponse>(
     (pageIndex, previousPageData) => {
-      if (
+      /** if (
         !options ||
-        (!options.collection && !options.collectionsSetId && !options.community)
+        (!options. && !options.collectionsSetId && !options.community)
       ) {
         return null
-      }
+      } **/
 
-      const url = new URL(`${chain?.baseApiUrl}/collections/activity/v5`)
+      // https://api.reservoir.tools/tokens/{token}/activity/v4
+
+      const url = new URL(
+        `${chain?.baseApiUrl}/tokens/${contract}:${tokenId}/activity/v`
+      )
 
       let query: TokenActivityQuery = { ...options }
 
