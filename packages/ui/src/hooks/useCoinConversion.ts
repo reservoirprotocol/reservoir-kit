@@ -1,9 +1,27 @@
+import { useContext } from 'react'
 import useSWR from 'swr'
+import { CoinGecko, ProviderOptionsContext } from '../ReservoirKitProvider'
+
+const createBaseUrl = (config: CoinGecko | undefined): string => {
+  if (config?.proxyUrl) {
+    return `${config.proxyUrl}?`
+  }
+
+  if (config?.apiKey) {
+    return `https://pro-api.coingecko.com/api/v3/coins/markets?x_cg_pro_api_key={${config.apiKey}}&`
+  }
+
+  return `https://api.coingecko.com/api/v3/coins/markets?`
+}
 
 export default function (vs_currency?: string, symbols: string = 'eth', id: string = '') {
+  const { coinGecko } = useContext(ProviderOptionsContext)
+
+  const baseUrl = createBaseUrl(coinGecko)
+
   const { data } = useSWR(
     vs_currency
-      ? `https://api.coingecko.com/api/v3/coins/markets?ids=${id}&vs_currency=${vs_currency}&symbols=${symbols}`
+      ? `${baseUrl}vs_currency=${vs_currency}&symbols=${symbols}&ids=${id}`
       : null,
     null,
     {

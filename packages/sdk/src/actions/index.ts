@@ -53,21 +53,7 @@ export class ReservoirClient {
     this.marketplaceFee = options.marketplaceFee
     this.marketplaceFeeRecipient = options.marketplaceFeeRecipient
     this.normalizeRoyalties = options.normalizeRoyalties
-
-    if (!options.source) {
-      if (typeof window !== 'undefined') {
-        let host = location.hostname
-        if (host.indexOf('www.') === 0) {
-          host = host.replace('www.', '')
-        }
-        this.source = host
-        console.warn(
-          'ReservoirKit automatically generated a source based on the url, we recommend providing a source when initializing ReservoirKit. Refer to our docs for steps on how to do this: http://docs.reservoir.tools'
-        )
-      }
-    } else {
-      this.source = options.source
-    }
+    this.source = options.source
   }
 
   configure(options: ReservoirClientOptions) {

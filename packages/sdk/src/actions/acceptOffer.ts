@@ -50,7 +50,7 @@ export async function acceptOffer(data: Data) {
     const params: AcceptOfferBodyParameters = {
       taker: taker,
       token: `${token.contract}:${token.tokenId}`,
-      source: client.source || '',
+      source: client.source || undefined,
       ...options,
     }
 
