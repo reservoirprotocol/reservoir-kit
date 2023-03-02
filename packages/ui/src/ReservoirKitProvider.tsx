@@ -13,8 +13,14 @@ import { ReservoirKitTheme, darkTheme } from './themes'
 import { ReservoirClientProvider } from './ReservoirClientProvider'
 import { SWRConfig } from 'swr'
 
+export type CoinGecko = {
+  proxy: string
+  apiKey: string
+}
+
 type ReservoirKitProviderOptions = {
   disablePoweredByReservoir?: boolean
+  coinGecko?: CoinGecko
 }
 export interface ReservoirKitProviderProps {
   children: ReactNode
