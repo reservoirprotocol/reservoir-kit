@@ -14,8 +14,8 @@ import { ReservoirClientProvider } from './ReservoirClientProvider'
 import { SWRConfig } from 'swr'
 
 export type CoinGecko = {
-  proxy: string
-  apiKey: string
+  proxy?: string
+  apiKey?: string
 }
 
 type ReservoirKitProviderOptions = {
