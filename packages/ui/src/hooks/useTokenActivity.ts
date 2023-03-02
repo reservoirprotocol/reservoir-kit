@@ -22,13 +22,7 @@ export default function (
 
   const response = useInfiniteApi<TokenActivityResponse>(
     (pageIndex, previousPageData) => {
-      /** if (
-        !options ||
-        (!options. && !options.collectionsSetId && !options.community)
-      ) {
-        return null
-      } **/
-
+        if (!token) return null;
 
       const url = new URL(`${chain?.baseApiUrl}/tokens/${token}/activity/v4`)
 
