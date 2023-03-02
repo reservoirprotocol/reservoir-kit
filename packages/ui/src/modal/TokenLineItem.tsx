@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { Box, ErrorWell } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 import { useCollections, useTokens } from '../hooks'
+import { CSSProperties } from '@stitches/react'
 
 type TokenLineItemProps = {
   tokenDetails?: NonNullable<
@@ -20,6 +21,7 @@ type TokenLineItemProps = {
   expires?: string
   isOffer?: boolean
   sourceImg?: string
+  css?: CSSProperties
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
@@ -34,6 +36,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   expires,
   isOffer,
   sourceImg,
+  css,
 }) => {
   if (!tokenDetails) {
     return null
@@ -50,7 +53,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
     : (collection?.image as string)
 
   return (
-    <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
+    <Box css={{ p: '$4', borderBottom: '1px solid $borderColor', ...css }}>
       <TokenPrimitive
         img={img}
         name={name}

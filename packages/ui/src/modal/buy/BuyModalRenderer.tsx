@@ -39,6 +39,7 @@ type ChildrenProps = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listing?: NonNullable<ReturnType<typeof useListings>['data']>[0]
   quantityAvailable: number
+  averageUnitPrice: number
   currency?: NonNullable<
     NonNullable<
       NonNullable<
@@ -131,6 +132,7 @@ export const BuyModalRenderer: FC<Props> = ({
       ids: orderId ? orderId : token?.market?.floorAsk?.id,
       normalizeRoyalties,
       status: 'active',
+      limit: 1000,
     },
     {
       revalidateFirstPage: true,
@@ -144,6 +146,13 @@ export const BuyModalRenderer: FC<Props> = ({
     listings && listings[0] && listings[0].status === 'active'
       ? listings[0]
       : undefined
+  const quantityRemaining =
+    listings.length > 1
+      ? listings.reduce(
+          (total, listing) => total + (listing.quantityRemaining || 0),
+          0
+        )
+      : listing?.quantityRemaining
   const currency = listing?.price?.currency
 
   const usdPrice = useCoinConversion(
@@ -385,7 +394,8 @@ export const BuyModalRenderer: FC<Props> = ({
         token,
         collection,
         listing,
-        quantityAvailable: listing?.quantityRemaining || 1,
+        averageUnitPrice: 0,
+        quantityAvailable: quantityRemaining || 1,
         currency,
         totalPrice,
         referrerFee,

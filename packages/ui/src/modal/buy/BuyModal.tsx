@@ -10,7 +10,6 @@ import {
   FormatCurrency,
   FormatCryptoCurrency,
   Loader,
-  Select,
 } from '../../primitives'
 import Progress from '../Progress'
 import Popover from '../../primitives/Popover'
@@ -27,6 +26,7 @@ import { BuyModalRenderer, BuyStep, StepData } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import { useNetwork } from 'wagmi'
+import QuantitySelector from './QuantitySelector'
 
 type PurchaseData = {
   tokenId?: string
@@ -242,31 +242,24 @@ export function BuyModal({
                   price={price}
                   currency={currency}
                   sourceImg={sourceImg}
+                  css={{ border: 0 }}
                 />
-                {quantityAvailable > 1 && (
-                  <Flex
-                    css={{ pt: '$4', px: '$4' }}
-                    align="center"
-                    justify="between"
-                  >
+                <Flex css={{ p: '$4' }} justify="between">
+                  <Flex direction="column" css={{ gap: '$1' }}>
+                    <Text style="body2">Quantity</Text>
                     <Text style="body2" color="subtle">
-                      {quantityAvailable} listings are available at this price
+                      {quantityAvailable} items available
                     </Text>
-                    <Select
-                      css={{ minWidth: 77, width: 'auto', flexGrow: 0 }}
-                      value={`${quantity}`}
-                      onValueChange={(value: string) => {
-                        setQuantity(Number(value))
-                      }}
-                    >
-                      {[...Array(quantityAvailable)].map((_a, i) => (
-                        <Select.Item key={i} value={`${i + 1}`}>
-                          <Select.ItemText>{i + 1}</Select.ItemText>
-                        </Select.Item>
-                      ))}
-                    </Select>
                   </Flex>
-                )}
+                  <QuantitySelector
+                    min={1}
+                    max={100}
+                    quantity={quantity}
+                    increment={() => {}}
+                    decrement={() => {}}
+                    setQuantity={() => {}}
+                  />
+                </Flex>
                 {referrerFee > 0 && (
                   <>
                     <Flex
