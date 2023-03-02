@@ -9,8 +9,7 @@ type TokenActivityResponse =
   paths['/tokens/{token}/activity/v4']['get']['responses']['200']['schema']
 
 export default function (
-  contract: string,
-  tokenId: number | string,
+  token: string,
   options: TokenActivityQuery | false,
   swrOptions: SWRInfiniteConfiguration = {},
   chainId?: number
@@ -32,9 +31,7 @@ export default function (
 
       // https://api.reservoir.tools/tokens/{token}/activity/v4
 
-      const url = new URL(
-        `${chain?.baseApiUrl}/tokens/${contract}:${tokenId}/activity/v`
-      )
+      const url = new URL(`${chain?.baseApiUrl}/tokens/${token}/activity/v4`)
 
       let query: TokenActivityQuery = { ...options }
 

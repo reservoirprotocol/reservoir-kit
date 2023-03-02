@@ -1,19 +1,22 @@
 import { NextPage } from 'next'
-import { useCollectionActivity, useTokenActivity } from '@reservoir0x/reservoir-kit-ui'
+import {
+  useCollectionActivity,
+  useTokenActivity,
+} from '@reservoir0x/reservoir-kit-ui'
 import { ConnectKitButton } from 'connectkit'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
 
 const Activity: NextPage = () => {
+  const { data: test } = useCollectionActivity({
+    collection: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b:1271',
+  })
+
   const {
     data: activity,
     fetchNextPage,
     hasNextPage,
-  } = useCollectionActivity({
-    collection: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
-  })
-
-  
+  } = useTokenActivity('0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b:1271', {})
 
   const { ref, inView } = useInView()
 
