@@ -21,7 +21,7 @@ type Data = {
 
 /**
  * Accept an offer to buy your token
- * @param data.token Token being accepted
+ * @param data.items Items being accepted
  * @param data.expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.options Additional options to pass into the accept request

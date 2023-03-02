@@ -44,7 +44,8 @@ const TokenFallback: FC<TokenFallbackProps> = ({
       </Text>
       <Button
         color="secondary"
-        onClick={() => {
+        onClick={(e) => {
+          e.preventDefault()
           if (!reservoirChain) {
             throw 'ReservoirClient missing chain configuration'
           }

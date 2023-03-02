@@ -50,7 +50,8 @@ export default function (
     }
   )
 
-  const activities = response.data?.flatMap((page) => page.activities) ?? []
+  const activities =
+    response.data?.flatMap((page) => page.activities || []) ?? []
 
   return {
     ...response,
