@@ -29,7 +29,6 @@ export default function (
         return null
       } **/
 
-      // https://api.reservoir.tools/tokens/{token}/activity/v4
 
       const url = new URL(`${chain?.baseApiUrl}/tokens/${token}/activity/v4`)
 

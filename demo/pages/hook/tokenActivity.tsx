@@ -9,7 +9,7 @@ const Activity: NextPage = () => {
     data: activity,
     fetchNextPage,
     hasNextPage,
-  } = useTokenActivity('0x744df993f93c89801cadbea8a4a3fd2b4a443d2c:1793s', {})
+  } = useTokenActivity('0x744df993f93c89801cadbea8a4a3fd2b4a443d2c:1793', {})
 
   const { ref, inView } = useInView()
 
