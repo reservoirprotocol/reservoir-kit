@@ -78,6 +78,8 @@ const QuantitySelector: FC<Props> = ({ max, min, quantity, setQuantity }) => {
         onBlur={(e) => {
           if (e.target.value === '') {
             setQuantity(min)
+          } else if (Number(e.target.value) > max) {
+            setQuantity(max)
           }
         }}
       />

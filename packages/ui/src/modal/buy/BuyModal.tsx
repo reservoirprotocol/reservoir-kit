@@ -103,6 +103,7 @@ export function BuyModal({
         listing,
         quantityAvailable,
         quantity,
+        averageUnitPrice,
         currency,
         totalPrice,
         referrerFee,
@@ -155,15 +156,11 @@ export function BuyModal({
           executableSteps[executableSteps.length - 1]?.items || []
         let finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
-        let price = (listing?.price?.amount?.decimal || 0) * quantity
+        let price = listing?.price?.amount?.decimal || 0
 
         if (!price && token?.token?.lastSell?.value) {
           price = token?.token.lastSell.value
         }
-
-        const sourceImg = listing?.source
-          ? (listing?.source['icon'] as string)
-          : undefined
 
         return (
           <Modal
@@ -198,9 +195,9 @@ export function BuyModal({
                   isSuspicious={isBanned}
                   usdConversion={usdPrice || 0}
                   isUnavailable={true}
-                  price={price}
+                  price={quantity > 1 ? averageUnitPrice : price}
                   currency={currency}
-                  sourceImg={sourceImg}
+                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
                 />
                 <Button
                   onClick={() => {
@@ -240,13 +237,16 @@ export function BuyModal({
                   collection={collection}
                   usdConversion={usdPrice || 0}
                   isSuspicious={isBanned}
-                  price={price}
+                  price={quantity > 1 ? averageUnitPrice : price}
                   currency={currency}
-                  sourceImg={sourceImg}
                   css={{ border: 0 }}
+                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
                 />
                 {quantityAvailable > 1 && (
-                  <Flex css={{ p: '$4' }} justify="between">
+                  <Flex
+                    css={{ p: '$4', borderBottom: '1px solid $borderColor' }}
+                    justify="between"
+                  >
                     <Flex direction="column" css={{ gap: '$1' }}>
                       <Text style="body2">Quantity</Text>
                       <Text style="body2" color="subtle">
@@ -353,9 +353,9 @@ export function BuyModal({
                   collection={collection}
                   usdConversion={usdPrice || 0}
                   isSuspicious={isBanned}
-                  price={price}
+                  price={quantity > 1 ? averageUnitPrice : price}
                   currency={currency}
-                  sourceImg={sourceImg}
+                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
                 />
                 {stepData && stepData.totalSteps > 1 && (
                   <ProgressBar

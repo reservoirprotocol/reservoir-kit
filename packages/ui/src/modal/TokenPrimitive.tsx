@@ -22,6 +22,7 @@ type Props = {
   warning?: string
   isOffer?: boolean
   isUnavailable?: boolean
+  priceSubtitle?: string
 }
 
 const Img = styled('img', {
@@ -37,11 +38,11 @@ const TokenPrimitive: FC<Props> = ({
   currencyDecimals,
   expires,
   warning,
-  isOffer,
   source,
   usdPrice,
   price,
   isUnavailable,
+  priceSubtitle,
 }) => {
   return (
     <Box>
@@ -53,17 +54,17 @@ const TokenPrimitive: FC<Props> = ({
         >
           {name ? 'Item' : 'Collection'}
         </Text>
-        {isOffer && (
+        {priceSubtitle && (
           <Text
             style="subtitle2"
             color="subtle"
             css={{ mb: 10, display: 'block' }}
           >
-            Offer
+            {priceSubtitle}
           </Text>
         )}
       </Flex>
-      <Flex css={{ justifyContent: 'space-between' }}>
+      <Flex justify="between" align="center">
         <Flex css={{ alignItems: 'center', gap: 8 }}>
           <Img
             src={img}

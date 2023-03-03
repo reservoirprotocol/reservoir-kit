@@ -14,12 +14,12 @@ type TokenLineItemProps = {
   isUnavailable?: boolean
   warning?: string
   price: number
+  priceSubtitle?: string
   currency?: {
     contract?: string
     decimals?: number
   }
   expires?: string
-  isOffer?: boolean
   sourceImg?: string
   css?: CSSProperties
 }
@@ -31,10 +31,10 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   isSuspicious,
   isUnavailable,
   price,
+  priceSubtitle,
   warning,
   currency,
   expires,
-  isOffer,
   sourceImg,
   css,
 }) => {
@@ -66,7 +66,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         warning={warning}
         source={sourceImg || ''}
         isUnavailable={isUnavailable}
-        isOffer={isOffer}
+        priceSubtitle={priceSubtitle}
       />
       {!!isSuspicious && (
         <ErrorWell
