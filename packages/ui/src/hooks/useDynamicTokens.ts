@@ -77,7 +77,10 @@ export default function (
         const nextPoolCartIndex = cartPools[poolId]
           ? cartPools[poolId].itemCount
           : 0
-        if (poolPrices && poolPrices[nextPoolCartIndex]) {
+
+        if (nextPoolCartIndex >= poolPrices.length) {
+          dynamicTokenData.market.floorAsk.price = undefined
+        } else if (poolPrices && poolPrices[nextPoolCartIndex]) {
           dynamicTokenData.market.floorAsk.price = poolPrices[nextPoolCartIndex]
         }
       }
@@ -89,16 +92,19 @@ export default function (
       (!options || !options.sortBy || options.sortBy === 'floorAskPrice')
     ) {
       dynamicTokens.sort((a, b) => {
-        const aPrice = a.market?.floorAsk?.price?.amount?.decimal || 0
-        const bPrice = b.market?.floorAsk?.price?.amount?.decimal || 0
-        if (
+        const aPrice = a.market?.floorAsk?.price?.amount?.decimal
+        const bPrice = b.market?.floorAsk?.price?.amount?.decimal
+
+        if (aPrice === undefined || bPrice === undefined) {
+          return 1
+        } else if (
           !options ||
           !options.sortDirection ||
           options.sortDirection === 'asc'
         ) {
           return aPrice - bPrice
         } else {
-          return aPrice + bPrice
+          return bPrice - aPrice
         }
       })
     }
