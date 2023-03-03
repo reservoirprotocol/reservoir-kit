@@ -95,8 +95,10 @@ export default function (
         const aPrice = a.market?.floorAsk?.price?.amount?.decimal
         const bPrice = b.market?.floorAsk?.price?.amount?.decimal
 
-        if (aPrice === undefined || bPrice === undefined) {
+        if (aPrice === undefined) {
           return 1
+        } else if (bPrice === undefined) {
+          return -1
         } else if (
           !options ||
           !options.sortDirection ||
