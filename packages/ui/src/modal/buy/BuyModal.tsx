@@ -27,6 +27,7 @@ import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import { useNetwork } from 'wagmi'
 import QuantitySelector from './QuantitySelector'
+import { formatNumber } from '../../lib/numbers'
 
 type PurchaseData = {
   tokenId?: string
@@ -244,22 +245,24 @@ export function BuyModal({
                   sourceImg={sourceImg}
                   css={{ border: 0 }}
                 />
-                <Flex css={{ p: '$4' }} justify="between">
-                  <Flex direction="column" css={{ gap: '$1' }}>
-                    <Text style="body2">Quantity</Text>
-                    <Text style="body2" color="subtle">
-                      {quantityAvailable} items available
-                    </Text>
+                {quantityAvailable > 1 && (
+                  <Flex css={{ p: '$4' }} justify="between">
+                    <Flex direction="column" css={{ gap: '$1' }}>
+                      <Text style="body2">Quantity</Text>
+                      <Text style="body2" color="subtle">
+                        {formatNumber(quantityAvailable)} items available
+                      </Text>
+                    </Flex>
+                    <QuantitySelector
+                      min={1}
+                      max={quantityAvailable}
+                      quantity={quantity}
+                      setQuantity={(quantity) => {
+                        setQuantity(quantity)
+                      }}
+                    />
                   </Flex>
-                  <QuantitySelector
-                    min={1}
-                    max={100}
-                    quantity={quantity}
-                    increment={() => {}}
-                    decrement={() => {}}
-                    setQuantity={() => {}}
-                  />
-                </Flex>
+                )}
                 {referrerFee > 0 && (
                   <>
                     <Flex

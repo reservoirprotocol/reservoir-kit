@@ -318,6 +318,10 @@ export const BuyModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (listing) {
+      //quantity is greater than 1, find listings that supply the quantity
+      // for each of these listings sum up the price and find the average (divide by total units)
+      // save the total and save the average unit price
+
       if (listing.price?.amount?.decimal) {
         let floorPrice = listing.price?.amount?.decimal
 
