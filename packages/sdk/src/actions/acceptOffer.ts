@@ -42,7 +42,7 @@ export async function acceptOffer(data: Data) {
     const params: AcceptOfferBodyParameters = {
       items,
       taker: taker,
-      source: client.source || '',
+      source: client.source || undefined,
       ...options,
     }
 
