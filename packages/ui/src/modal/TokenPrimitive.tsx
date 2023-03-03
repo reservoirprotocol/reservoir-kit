@@ -64,7 +64,7 @@ const TokenPrimitive: FC<Props> = ({
           </Text>
         )}
       </Flex>
-      <Flex justify="between" align="center">
+      <Flex justify="between">
         <Flex css={{ alignItems: 'center', gap: 8 }}>
           <Img
             src={img}
