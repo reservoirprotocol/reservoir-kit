@@ -70,7 +70,7 @@ export async function executeSteps(
 
       // Check if the user is selling
       let error: null | Error | { type: string; message: string } = null
-      if (isSell && quote - expectedPrice < -0.00001) {
+      if (isSell && Number((quote - expectedPrice).toFixed(6)) < -0.00001) {
         error = {
           type: 'price mismatch',
           message: `Attention: the offer price of this token is now ${quote}`,
@@ -78,7 +78,7 @@ export async function executeSteps(
       }
 
       // Check if the user is buying
-      if (isBuy && quote - expectedPrice > 0.00001) {
+      if (isBuy && Number((quote - expectedPrice).toFixed(6)) > 0.00001) {
         error = {
           type: 'price mismatch',
           message: `Attention: the price of this token is now ${quote}`,

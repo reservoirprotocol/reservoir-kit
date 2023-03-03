@@ -4,7 +4,7 @@ import TokenPrimitive from './TokenPrimitive'
 import { useCollections, useTokens } from '../hooks'
 
 type TokenLineItemProps = {
-  tokenDetails: NonNullable<
+  tokenDetails?: NonNullable<
     NonNullable<ReturnType<typeof useTokens>>['data']
   >[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]

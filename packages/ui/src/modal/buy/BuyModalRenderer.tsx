@@ -275,6 +275,7 @@ export const BuyModalRenderer: FC<Props> = ({
           if (errorType && errorType === 'price mismatch') {
             message = error.message
           }
+          //@ts-ignore: Should be fixed in an update to typescript
           const transactionError = new Error(message, {
             cause: error,
           })
