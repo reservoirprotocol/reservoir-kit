@@ -8,6 +8,7 @@ import {
   FormatCurrency,
   FormatCryptoCurrency,
 } from '../primitives'
+import InfoTooltip from '../primitives/InfoTooltip'
 
 type Props = {
   img?: string
@@ -22,6 +23,9 @@ type Props = {
   warning?: string
   isOffer?: boolean
   isUnavailable?: boolean
+  priceSubtitle?: string
+  royaltiesBps?: number
+  quantity?: number
 }
 
 const Img = styled('img', {
@@ -37,12 +41,16 @@ const TokenPrimitive: FC<Props> = ({
   currencyDecimals,
   expires,
   warning,
-  isOffer,
   source,
   usdPrice,
   price,
   isUnavailable,
+  priceSubtitle,
+  royaltiesBps,
+  quantity,
 }) => {
+  const royaltyPercent = royaltiesBps ? royaltiesBps / 100 : royaltiesBps
+
   return (
     <Box>
       <Flex css={{ justifyContent: 'space-between', alignItems: 'center' }}>
@@ -53,17 +61,17 @@ const TokenPrimitive: FC<Props> = ({
         >
           {name ? 'Item' : 'Collection'}
         </Text>
-        {isOffer && (
+        {priceSubtitle && (
           <Text
             style="subtitle2"
             color="subtle"
             css={{ mb: 10, display: 'block' }}
           >
-            Offer
+            {priceSubtitle}
           </Text>
         )}
       </Flex>
-      <Flex css={{ justifyContent: 'space-between' }}>
+      <Flex justify="between">
         <Flex css={{ alignItems: 'center', gap: 8 }}>
           <Img
             src={img}
@@ -90,6 +98,34 @@ const TokenPrimitive: FC<Props> = ({
               </Text>
             )}
             {!!expires && <Text style="tiny">Expires {expires}</Text>}
+            {!expires && quantity && quantity > 1 ? (
+              <Flex
+                css={{
+                  p: '$1 ',
+                  background: '$neutralBgHover',
+                  borderRadius: 4,
+                  mr: 'auto',
+                }}
+              >
+                <Text style="tiny" color="base">
+                  {quantity} {quantity > 1 ? 'items' : 'item'}
+                </Text>
+              </Flex>
+            ) : null}
+            {!expires && !quantity && royaltiesBps ? (
+              <Text
+                style="body2"
+                color="subtle"
+                css={{ display: 'flex', gap: '$1' }}
+              >
+                Creator Royalties: {royaltyPercent}
+                <InfoTooltip
+                  side="right"
+                  width={200}
+                  content="A fee on every order that goes to the collection creator."
+                />
+              </Text>
+            ) : null}
           </Grid>
         </Flex>
         <Grid css={{ justifyItems: 'end', alignContent: 'start', rowGap: 4 }}>

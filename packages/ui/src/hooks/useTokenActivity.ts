@@ -1,19 +1,16 @@
 import { paths, setParams } from '@reservoir0x/reservoir-sdk'
-import { useReservoirClient, useInfiniteApi } from './'
 import { SWRInfiniteConfiguration } from 'swr/infinite'
+import { useInfiniteApi, useReservoirClient } from './'
 
-type UsersActivityResponse =
-  paths['/users/activity/v5']['get']['responses']['200']['schema']
+type TokenActivityQuery =
+  paths['/tokens/{token}/activity/v4']['get']['parameters']['query']
 
-type UsersActivityBaseQuery =
-  paths['/users/activity/v5']['get']['parameters']['query']
-
-type UsersQuery = UsersActivityBaseQuery['users'] | undefined
-type UsersActivityQuery = Omit<UsersActivityBaseQuery, 'users'>
+type TokenActivityResponse =
+  paths['/tokens/{token}/activity/v4']['get']['responses']['200']['schema']
 
 export default function (
-  users?: UsersQuery,
-  options?: UsersActivityQuery | false,
+  token: string,
+  options?: TokenActivityQuery | false,
   swrOptions: SWRInfiniteConfiguration = {},
   chainId?: number
 ) {
@@ -23,15 +20,15 @@ export default function (
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
 
-  const response = useInfiniteApi<UsersActivityResponse>(
+  const response = useInfiniteApi<TokenActivityResponse>(
     (pageIndex, previousPageData) => {
-      if (!users) {
+      if (!token) {
         return null
       }
 
-      const url = new URL(`${chain?.baseApiUrl}/users/activity/v5`)
+      const url = new URL(`${chain?.baseApiUrl}/tokens/${token}/activity/v4`)
 
-      let query: UsersActivityBaseQuery = { ...options, users }
+      let query: TokenActivityQuery = { ...options }
 
       if (previousPageData && !previousPageData.continuation) {
         return null

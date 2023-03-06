@@ -2,9 +2,10 @@ import React, { FC } from 'react'
 import { Box, ErrorWell } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 import { useCollections, useTokens } from '../hooks'
+import { CSSProperties } from '@stitches/react'
 
 type TokenLineItemProps = {
-  tokenDetails: NonNullable<
+  tokenDetails?: NonNullable<
     NonNullable<ReturnType<typeof useTokens>>['data']
   >[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
@@ -13,13 +14,16 @@ type TokenLineItemProps = {
   isUnavailable?: boolean
   warning?: string
   price: number
+  priceSubtitle?: string
   currency?: {
     contract?: string
     decimals?: number
   }
   expires?: string
-  isOffer?: boolean
   sourceImg?: string
+  css?: CSSProperties
+  showRoyalties?: boolean
+  quantity?: number
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
@@ -29,11 +33,14 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   isSuspicious,
   isUnavailable,
   price,
+  priceSubtitle,
   warning,
   currency,
   expires,
-  isOffer,
   sourceImg,
+  css,
+  showRoyalties,
+  quantity,
 }) => {
   if (!tokenDetails) {
     return null
@@ -49,8 +56,13 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
     ? tokenDetails.token.image
     : (collection?.image as string)
 
+  const royaltiesBps =
+    showRoyalties && collection?.royalties
+      ? collection.royalties.bps
+      : undefined
+
   return (
-    <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
+    <Box css={{ p: '$4', borderBottom: '1px solid $borderColor', ...css }}>
       <TokenPrimitive
         img={img}
         name={name}
@@ -63,7 +75,9 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         warning={warning}
         source={sourceImg || ''}
         isUnavailable={isUnavailable}
-        isOffer={isOffer}
+        priceSubtitle={priceSubtitle}
+        royaltiesBps={royaltiesBps}
+        quantity={quantity}
       />
       {!!isSuspicious && (
         <ErrorWell

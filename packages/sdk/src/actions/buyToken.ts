@@ -42,7 +42,7 @@ export async function buyToken(data: Data) {
     const params: BuyTokenBodyParameters = {
       items,
       taker: taker,
-      source: client.source || '',
+      source: client.source || undefined,
       ...options,
     }
 
