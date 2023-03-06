@@ -105,6 +105,7 @@ export function BuyModal({
         quantity,
         averageUnitPrice,
         currency,
+        mixedCurrencies,
         totalPrice,
         referrerFee,
         buyStep,
@@ -198,6 +199,7 @@ export function BuyModal({
                   price={quantity > 1 ? averageUnitPrice : price}
                   currency={currency}
                   priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
+                  showRoyalties={true}
                 />
                 <Button
                   onClick={() => {
@@ -232,6 +234,27 @@ export function BuyModal({
                     </Text>
                   </Flex>
                 )}
+                {mixedCurrencies && (
+                  <Flex
+                    css={{
+                      color: '$errorAccent',
+                      p: '$4',
+                      gap: '$2',
+                      background: '$wellBackground',
+                    }}
+                    align="center"
+                  >
+                    <FontAwesomeIcon
+                      icon={faCircleExclamation}
+                      width={16}
+                      height={16}
+                    />
+                    <Text style="body2" color="errorLight">
+                      Mixed currencies listings are only available to checkout
+                      with {currency?.symbol || 'ETH'}.
+                    </Text>
+                  </Flex>
+                )}
                 <TokenLineItem
                   tokenDetails={token}
                   collection={collection}
@@ -241,6 +264,7 @@ export function BuyModal({
                   currency={currency}
                   css={{ border: 0 }}
                   priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
+                  showRoyalties={true}
                 />
                 {quantityAvailable > 1 && (
                   <Flex
@@ -356,6 +380,7 @@ export function BuyModal({
                   price={quantity > 1 ? averageUnitPrice : price}
                   currency={currency}
                   priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
+                  quantity={quantity}
                 />
                 {stepData && stepData.totalSteps > 1 && (
                   <ProgressBar

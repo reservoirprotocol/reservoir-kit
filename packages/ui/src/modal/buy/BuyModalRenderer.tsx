@@ -56,6 +56,7 @@ type ChildrenProps = {
       >['price']
     >['currency']
   >
+  mixedCurrencies: boolean
   totalPrice: number
   referrerFee: number
   buyStep: BuyStep
@@ -102,6 +103,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const [totalPrice, setTotalPrice] = useState(0)
   const [listingsToBuy, setListingsToBuy] = useState<Record<string, number>>({})
   const [currency, setCurrency] = useState<undefined | Currency>()
+  const [mixedCurrencies, setMixedCurrencies] = useState(false)
   const [referrerFee, setReferrerFee] = useState(0)
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -246,7 +248,9 @@ export const BuyModalRenderer: FC<Props> = ({
         })
       })
     } else {
-      const item: Item = {}
+      const item: Item = {
+        quantity: 1,
+      }
 
       if (orderId) {
         item.orderId = orderId
@@ -399,17 +403,19 @@ export const BuyModalRenderer: FC<Props> = ({
         setListingsToBuy(orders)
         setCurrency(
           mixedCurrencies
-            ? (listing.price?.currency as any)
-            : {
+            ? {
                 contract: chainCurrency.address,
                 symbol: chainCurrency.symbol,
                 decimals: chainCurrency.decimals,
                 name: chainCurrency.name,
               }
+            : (listing.price?.currency as any)
         )
+        setMixedCurrencies(mixedCurrencies)
       } else if (listing.price?.amount?.decimal) {
         total = listing.price.amount.decimal
         setCurrency(listing.price.currency as any)
+        setMixedCurrencies(false)
       }
 
       if (total > 0) {
@@ -425,12 +431,14 @@ export const BuyModalRenderer: FC<Props> = ({
         setTotalPrice(0)
         setListingsToBuy({})
         setCurrency(undefined)
+        setMixedCurrencies(false)
       }
     } else if (!listing && !isValidatingListing && token) {
       setBuyStep(BuyStep.Unavailable)
       setTotalPrice(0)
       setListingsToBuy({})
       setCurrency(undefined)
+      setMixedCurrencies(false)
     }
   }, [
     listing,
@@ -482,6 +490,7 @@ export const BuyModalRenderer: FC<Props> = ({
         averageUnitPrice: totalPrice / quantity,
         quantityAvailable: quantityRemaining || 1,
         currency,
+        mixedCurrencies,
         totalPrice,
         referrerFee,
         buyStep,

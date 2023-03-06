@@ -22,6 +22,8 @@ type TokenLineItemProps = {
   expires?: string
   sourceImg?: string
   css?: CSSProperties
+  showRoyalties?: boolean
+  quantity?: number
 }
 
 const TokenLineItem: FC<TokenLineItemProps> = ({
@@ -37,6 +39,8 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   expires,
   sourceImg,
   css,
+  showRoyalties,
+  quantity,
 }) => {
   if (!tokenDetails) {
     return null
@@ -51,6 +55,11 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   const img = tokenDetails?.token?.image
     ? tokenDetails.token.image
     : (collection?.image as string)
+
+  const royaltiesBps =
+    showRoyalties && collection?.royalties
+      ? collection.royalties.bps
+      : undefined
 
   return (
     <Box css={{ p: '$4', borderBottom: '1px solid $borderColor', ...css }}>
@@ -67,6 +76,8 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         source={sourceImg || ''}
         isUnavailable={isUnavailable}
         priceSubtitle={priceSubtitle}
+        royaltiesBps={royaltiesBps}
+        quantity={quantity}
       />
       {!!isSuspicious && (
         <ErrorWell
