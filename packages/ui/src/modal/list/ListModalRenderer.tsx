@@ -87,6 +87,7 @@ type Props = {
   currencies?: Currency[]
   normalizeRoyalties?: boolean
   enableOnChainRoyalties: boolean
+  oracleEnabled: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -122,6 +123,7 @@ export const ListModalRenderer: FC<Props> = ({
   currencies,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
+  oracleEnabled = false,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -432,6 +434,14 @@ export const ListModalRenderer: FC<Props> = ({
 
         if (currency && currency.contract != constants.AddressZero) {
           listing.currency = currency.contract
+        }
+
+        if (oracleEnabled) {
+          listing.options = {
+            'seaport-v1.4': {
+              useOffChainCancellation: true,
+            },
+          }
         }
 
         listingData.push({
