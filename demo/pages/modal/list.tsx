@@ -48,6 +48,7 @@ const Index: NextPage = () => {
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
   const [enableOnChainRoyalties, setEnableOnChainRoyalties] = useState(false)
+  const [oracleEnabled, setOracleEnabled] = useState(false)
 
   return (
     <div
@@ -132,6 +133,16 @@ const Index: NextPage = () => {
           }}
         />
       </div>
+      <div>
+        <label>Oracle Enabled: </label>
+        <input
+          type="checkbox"
+          checked={oracleEnabled}
+          onChange={(e) => {
+            setOracleEnabled(e.target.checked)
+          }}
+        />
+      </div>
 
       <ListModal
         trigger={
@@ -157,6 +168,7 @@ const Index: NextPage = () => {
         currencies={currencies}
         normalizeRoyalties={normalizeRoyalties}
         enableOnChainRoyalties={enableOnChainRoyalties}
+        oracleEnabled={oracleEnabled}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onGoToToken={() => console.log('Awesome!')}
         onListingComplete={(data) => {
