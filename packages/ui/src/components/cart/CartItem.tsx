@@ -193,7 +193,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
           </Flex>
         )}
       </Flex>
-      {price && (
+      {price ? (
         <Flex
           direction="column"
           justify="center"
@@ -221,7 +221,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             />
           ) : null}
         </Flex>
-      )}
+      ) : null}
     </Flex>
   )
 }
