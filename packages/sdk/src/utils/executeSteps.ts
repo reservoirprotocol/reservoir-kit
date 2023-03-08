@@ -49,13 +49,11 @@ export async function executeSteps(
     request.headers['x-rkc-version'] = version
 
     if (!json) {
-      client.log(
-        ['Execute Steps: JSON missing, requesting data.', request],
-        LogLevel.Warn
-      )
+      client.log(['Execute Steps: Fetching Steps', request], LogLevel.Verbose)
       const res = await axios.request(request)
       json = res.data as Execute
       if (res.status !== 200) throw json
+      client.log(['Execute Steps: Steps retrieved', json], LogLevel.Verbose)
     }
 
     // Handle errors
