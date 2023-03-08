@@ -1,6 +1,7 @@
 import actions from './actions'
 import * as utils from '../utils'
 import { version } from '../../package.json'
+import { LogLevel, log as logUtil } from '../utils/logger'
 
 export type ReservoirChain = {
   id: number
@@ -26,6 +27,7 @@ export type ReservoirClientOptions = {
   marketplaceFee?: number
   marketplaceFeeRecipient?: string
   normalizeRoyalties?: boolean
+  logLevel?: LogLevel
 }
 
 export type ReservoirClientActions = typeof actions
@@ -41,6 +43,13 @@ export class ReservoirClient {
   marketplaceFeeRecipient?: string
   automatedRoyalties?: boolean
   normalizeRoyalties?: boolean
+  logLevel: LogLevel
+  log(
+    message: Parameters<typeof logUtil>['0'],
+    level: LogLevel = LogLevel.Info
+  ) {
+    return logUtil(message, level, this.logLevel)
+  }
 
   readonly utils = { ...utils }
   readonly actions: ReservoirClientActions = actions
@@ -54,6 +63,8 @@ export class ReservoirClient {
     this.marketplaceFeeRecipient = options.marketplaceFeeRecipient
     this.normalizeRoyalties = options.normalizeRoyalties
     this.source = options.source
+    this.logLevel =
+      options.logLevel !== undefined ? options.logLevel : LogLevel.None
   }
 
   configure(options: ReservoirClientOptions) {
@@ -71,6 +82,8 @@ export class ReservoirClient {
       options.normalizeRoyalties !== undefined
         ? options.normalizeRoyalties
         : this.normalizeRoyalties
+    this.logLevel =
+      options.logLevel !== undefined ? options.logLevel : LogLevel.None
   }
 
   currentChain() {
