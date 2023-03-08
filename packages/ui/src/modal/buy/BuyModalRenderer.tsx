@@ -164,6 +164,7 @@ export const BuyModalRenderer: FC<Props> = ({
       normalizeRoyalties,
       status: 'active',
       limit: 1000,
+      sortBy: 'price',
     },
     {
       revalidateFirstPage: true,
