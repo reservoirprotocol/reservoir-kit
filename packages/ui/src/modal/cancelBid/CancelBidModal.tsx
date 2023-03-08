@@ -7,12 +7,16 @@ import TokenPrimitive from '../../modal/TokenPrimitive'
 import Progress from '../Progress'
 import { useNetwork } from 'wagmi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCircleExclamation,
+  faGasPump,
+} from '@fortawesome/free-solid-svg-icons'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   bidId?: string
   normalizeRoyalties?: boolean
+  oracleEnabled?: boolean
   onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
@@ -23,6 +27,7 @@ export function CancelBidModal({
   bidId,
   trigger,
   normalizeRoyalties,
+  oracleEnabled = false,
   onClose,
   onCancelComplete,
   onCancelError,
@@ -153,12 +158,20 @@ export function CancelBidModal({
                   color="subtle"
                   css={{ mt: '$3', mr: '$3', ml: '$3', textAlign: 'center' }}
                 >
-                  This will cancel your offer. You will be asked to confirm this
-                  cancelation from your wallet.
+                  {!oracleEnabled
+                    ? 'This action will cancel your offer. You will be prompted to confirm this cancellation from your wallet. A gas fee is required.'
+                    : 'This will cancel your offer for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
-                <Button onClick={cancelOrder} css={{ m: '$4' }}>
-                  Continue to Cancel
-                </Button>
+                {!oracleEnabled ? (
+                  <Button onClick={cancelOrder} css={{ m: '$4' }}>
+                    <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
+                    Continue to Cancel
+                  </Button>
+                ) : (
+                  <Button onClick={cancelOrder} css={{ m: '$4' }}>
+                    Continue to Cancel
+                  </Button>
+                )}
               </Flex>
             )}
             {cancelStep === CancelStep.Approving && (
