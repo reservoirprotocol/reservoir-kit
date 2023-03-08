@@ -147,8 +147,11 @@ export const BuyModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
   const is1155 = token?.token?.kind === 'erc1155'
-  const listingOrderId =
-    orderId || !is1155 ? token?.market?.floorAsk?.id : undefined
+  let listingOrderId = orderId
+
+  if (!listingOrderId && !is1155) {
+    listingOrderId = token?.market?.floorAsk?.id
+  }
 
   const {
     data: listingsData,
