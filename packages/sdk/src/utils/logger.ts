@@ -6,24 +6,27 @@ export enum LogLevel {
   None = 0,
 }
 
-export const log = (
-  params: Parameters<typeof console.log>,
-  level: LogLevel,
-  currentLevel: LogLevel
-) => {
+export const log = (params: any[], level: LogLevel, currentLevel: LogLevel) => {
   if (currentLevel >= level) {
+    const data = params.reduce((params, param, i) => {
+      if ((i + 1) % 2) {
+        params.push('\n')
+      }
+      params.push(param)
+      return params
+    }, [])
     switch (level) {
       case LogLevel.Info:
-        console.info(...params)
+        console.info(...data)
         break
       case LogLevel.Error:
-        console.error(...params)
+        console.error(...data)
         break
       case LogLevel.Warn:
-        console.warn(...params)
+        console.warn(...data)
         break
       default:
-        console.log(...params)
+        console.log(...data)
         break
     }
   }
