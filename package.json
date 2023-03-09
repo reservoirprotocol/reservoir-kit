@@ -15,7 +15,7 @@
     "dev": "parcel watch 'packages/*' --no-cache",
     "clean": "yarn workspaces foreach --exclude primitives --exclude ssr-testing run clean",
     "types:check": "tsc --skipLibCheck --noEmit",
-    "build": "yarn build:config && yarn build:packages && yarn build:cleanup && yarn types:check",
+    "build": "yarn build:config && yarn build:packages && yarn build:cleanup",
     "build:config": "mv tsconfig.json tsconfig.tmp.json && mv tsconfig.production.json tsconfig.json",
     "build:packages": "parcel build 'packages/*' --no-cache && yarn build:fix-type-defs",
     "build:fix-type-defs": "node ./scripts/fix-type-defs-imports",
