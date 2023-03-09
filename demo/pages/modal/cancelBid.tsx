@@ -15,7 +15,6 @@ const CancelBidPage: NextPage = () => {
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [bidId, setBidId] = useState('')
-  const [oracleEnabled, setOracleEnabled] = useState(false)
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
 
@@ -61,16 +60,7 @@ const CancelBidPage: NextPage = () => {
           }}
         />
       </div>
-      <div>
-        <label>Oracle Enabled: </label>
-        <input
-          type="checkbox"
-          checked={oracleEnabled}
-          onChange={(e) => {
-            setOracleEnabled(e.target.checked)
-          }}
-        />
-      </div>
+
       <CancelBidModal
         trigger={
           <button
@@ -90,7 +80,6 @@ const CancelBidPage: NextPage = () => {
           </button>
         }
         openState={hasDeeplink ? deeplinkOpenState : undefined}
-        oracleEnabled={oracleEnabled}
         bidId={bidId}
         normalizeRoyalties={normalizeRoyalties}
         onCancelComplete={(data: any) => {
