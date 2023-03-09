@@ -58,6 +58,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
       ids: bidId,
       normalizeRoyalties,
       includeCriteriaMetadata: true,
+      includeRawData: true,
     },
     {
       revalidateFirstPage: true,

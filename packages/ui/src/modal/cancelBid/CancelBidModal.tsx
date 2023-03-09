@@ -16,7 +16,6 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   bidId?: string
   normalizeRoyalties?: boolean
-  oracleEnabled?: boolean
   onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
@@ -27,7 +26,6 @@ export function CancelBidModal({
   bidId,
   trigger,
   normalizeRoyalties,
-  oracleEnabled = false,
   onClose,
   onCancelComplete,
   onCancelError,
@@ -88,6 +86,11 @@ export function CancelBidModal({
           bid &&
           (bid.status === 'active' || bid.status === 'inactive') &&
           !loading
+
+        const isOracleOrder =
+          bid &&
+          bid.kind === 'seaport-v1.4' &&
+          bid.rawData?.zone === '0xe1066481cc3b038badd0c68dfa5c8f163c3ff192'
 
         return (
           <Modal
@@ -158,11 +161,11 @@ export function CancelBidModal({
                   color="subtle"
                   css={{ mt: '$3', mr: '$3', ml: '$3', textAlign: 'center' }}
                 >
-                  {!oracleEnabled
+                  {!isOracleOrder
                     ? 'This action will cancel your offer. You will be prompted to confirm this cancellation from your wallet. A gas fee is required.'
                     : 'This will cancel your offer for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
-                {!oracleEnabled ? (
+                {!isOracleOrder ? (
                   <Button onClick={cancelOrder} css={{ m: '$4' }}>
                     <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
                     Continue to Cancel

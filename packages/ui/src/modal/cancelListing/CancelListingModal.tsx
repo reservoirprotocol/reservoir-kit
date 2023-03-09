@@ -19,7 +19,6 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   listingId?: string
   normalizeRoyalties?: boolean
-  oracleEnabled?: boolean
   onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
@@ -30,7 +29,6 @@ export function CancelListingModal({
   listingId,
   trigger,
   normalizeRoyalties,
-  oracleEnabled = false,
   onClose,
   onCancelComplete,
   onCancelError,
@@ -90,6 +88,11 @@ export function CancelListingModal({
           listing &&
           (listing.status === 'active' || listing.status === 'inactive') &&
           !loading
+
+        const isOracleOrder =
+          listing &&
+          listing.kind === 'seaport-v1.4' &&
+          listing.rawData?.zone === '0xe1066481cc3b038badd0c68dfa5c8f163c3ff192'
 
         return (
           <Modal
@@ -159,11 +162,11 @@ export function CancelListingModal({
                   color="subtle"
                   css={{ mt: '$3', mr: '$3', ml: '$3', textAlign: 'center' }}
                 >
-                  {!oracleEnabled
+                  {!isOracleOrder
                     ? 'This action will cancel your listing. You will be prompted to confirm this cancellation from your wallet. A gas fee is required.'
                     : 'This will cancel your listing for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
-                {!oracleEnabled ? (
+                {!isOracleOrder ? (
                   <Button onClick={cancelOrder} css={{ m: '$4' }}>
                     <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
                     Continue to Cancel
