@@ -170,6 +170,7 @@ export function CancelListingModal({
                   {!isOracleOrder && (
                     <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
                   )}
+                  Continue to Cancel
                 </Button>
               </Flex>
             )}
