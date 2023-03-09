@@ -29,7 +29,7 @@ import {
   BidStep,
   BidData,
   Trait,
-  StepData,
+  BidModalStepData,
 } from './BidModalRenderer'
 import TokenStats from './TokenStats'
 import dayjs from 'dayjs'
@@ -65,7 +65,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onViewOffers?: () => void
   onClose?: (
     data: BidCallbackData,
-    stepData: StepData | null,
+    stepData: BidModalStepData | null,
     currentStep: BidStep
   ) => void
   onBidComplete?: (data: any) => void
