@@ -15,7 +15,6 @@ const CancelListingPage: NextPage = () => {
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [listingId, setListingId] = useState('')
-  const [oracleEnabled, setOracleEnabled] = useState(false)
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
 
@@ -61,16 +60,7 @@ const CancelListingPage: NextPage = () => {
           }}
         />
       </div>
-      <div>
-        <label>Oracle Enabled: </label>
-        <input
-          type="checkbox"
-          checked={oracleEnabled}
-          onChange={(e) => {
-            setOracleEnabled(e.target.checked)
-          }}
-        />
-      </div>
+
       <CancelListingModal
         trigger={
           <button
@@ -89,7 +79,6 @@ const CancelListingPage: NextPage = () => {
             Cancel Listing
           </button>
         }
-        oracleEnabled={oracleEnabled}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         listingId={listingId}
         normalizeRoyalties={normalizeRoyalties}
