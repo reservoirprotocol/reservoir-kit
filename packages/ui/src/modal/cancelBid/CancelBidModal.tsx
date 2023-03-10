@@ -21,6 +21,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onCancelError?: (error: Error, data: any) => void
 }
 
+const oracleZoneAddress = '0xe1066481cc3b038badd0c68dfa5c8f163c3ff192'
+
 export function CancelBidModal({
   openState,
   bidId,
@@ -90,7 +92,7 @@ export function CancelBidModal({
         const isOracleOrder =
           bid &&
           bid.kind === 'seaport-v1.4' &&
-          bid.rawData?.zone === '0xe1066481cc3b038badd0c68dfa5c8f163c3ff192'
+          bid.rawData?.zone === oracleZoneAddress
 
         return (
           <Modal
