@@ -24,7 +24,10 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onCancelError?: (error: Error, data: any) => void
 }
 
-const oracleZoneAddress = '0xe1066481cc3b038badd0c68dfa5c8f163c3ff192'
+const zoneAddresses = [
+  '0xe1066481cc3b038badd0c68dfa5c8f163c3ff192', // Ethereum - 0xe1...92
+  '0x49b91d1d7b9896d28d370b75b92c2c78c1ac984a', // Goerli Address - 0x49...4a
+]
 
 export function CancelListingModal({
   openState,
@@ -91,10 +94,12 @@ export function CancelListingModal({
           (listing.status === 'active' || listing.status === 'inactive') &&
           !loading
 
+        const orderZone = listing?.rawData?.zone
+        const orderKind = listing?.kind
+
         const isOracleOrder =
-          listing &&
-          listing.kind === 'seaport-v1.4' &&
-          listing.rawData?.zone === oracleZoneAddress
+          orderKind === 'seaport-v1.4' &&
+          zoneAddresses.includes(orderZone as string)
 
         return (
           <Modal
