@@ -9,12 +9,13 @@ import React, {
 } from 'react'
 import { darkTheme } from 'stitches.config'
 import { ThemeProvider } from 'next-themes'
-import { ConnectKitProvider, getDefaultClient } from 'connectkit'
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { WagmiConfig, createClient, configureChains } from 'wagmi'
 import * as allChains from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import '../fonts.css'
+import '@rainbow-me/rainbowkit/styles.css'
 import {
   ReservoirKitProvider,
   darkTheme as defaultTheme,
@@ -39,7 +40,7 @@ const { chains, provider } = configureChains(
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
 
-const { connectors } = getDefaultClient({
+const { connectors } = getDefaultWallets({
   appName: 'Reservoir Kit',
   chains,
 })
@@ -117,7 +118,7 @@ const AppWrapper: FC<any> = ({ children }) => {
             enableSystem={false}
             storageKey={'demo-theme'}
           >
-            <ConnectKitProvider>{children}</ConnectKitProvider>
+            <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
           </ThemeProvider>
         </CartProvider>
       </ReservoirKitProvider>
