@@ -9,7 +9,7 @@ export enum CancelStep {
   Complete,
 }
 
-export type StepData = {
+export type CancelListingStepData = {
   totalSteps: number
   stepProgress: number
   currentStep: Execute['steps'][0]
@@ -27,7 +27,7 @@ type ChildrenProps = {
   usdPrice: ReturnType<typeof useCoinConversion>
   blockExplorerBaseUrl: string
   steps: Execute['steps'] | null
-  stepData: StepData | null
+  stepData: CancelListingStepData | null
   setCancelStep: React.Dispatch<React.SetStateAction<CancelStep>>
   cancelOrder: () => void
 }
@@ -48,7 +48,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
   const { data: signer } = useSigner()
   const [cancelStep, setCancelStep] = useState<CancelStep>(CancelStep.Cancel)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [stepData, setStepData] = useState<StepData | null>(null)
+  const [stepData, setStepData] = useState<CancelListingStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const { chain: activeChain } = useNetwork()
   const blockExplorerBaseUrl =

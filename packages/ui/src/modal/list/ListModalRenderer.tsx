@@ -45,7 +45,7 @@ export type ListingData = {
   marketplace: Marketplace
 }
 
-export type StepData = {
+export type ListModalStepData = {
   totalSteps: number
   stepProgress: number
   currentStep: Execute['steps'][0]
@@ -66,7 +66,7 @@ type ChildrenProps = {
   localMarketplace: Marketplace | null
   listingData: ListingData[]
   transactionError?: Error | null
-  stepData: StepData | null
+  stepData: ListModalStepData | null
   currencies: Currency[]
   currency: Currency
   quantity: number
@@ -134,7 +134,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [allMarketplaces] = useMarketplaces(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [stepData, setStepData] = useState<StepData | null>(null)
+  const [stepData, setStepData] = useState<ListModalStepData | null>(null)
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
     null
   )
