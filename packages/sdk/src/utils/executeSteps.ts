@@ -139,9 +139,11 @@ export async function executeSteps(
         !items ||
         !items[incompleteStepItemIndex] ||
         !items[incompleteStepItemIndex].data
-      )
+      ) {
         throw json
+      }
       stepItem = items[incompleteStepItemIndex]
+      setState([...json?.steps])
     }
 
     const stepData = stepItem.data

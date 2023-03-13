@@ -22,7 +22,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
-import { BuyModalRenderer, BuyStep, StepData } from './BuyModalRenderer'
+import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import { useNetwork } from 'wagmi'
@@ -49,7 +49,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onPurchaseError?: (error: Error, data: PurchaseData) => void
   onClose?: (
     data: PurchaseData,
-    stepData: StepData | null,
+    stepData: BuyModalStepData | null,
     currentStep: BuyStep
   ) => void
 }

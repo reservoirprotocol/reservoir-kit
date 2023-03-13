@@ -33,7 +33,7 @@ export enum BuyStep {
   Unavailable,
 }
 
-export type StepData = {
+export type BuyModalStepData = {
   totalSteps: number
   stepProgress: number
   currentStep: Execute['steps'][0]
@@ -70,7 +70,7 @@ type ChildrenProps = {
   address?: string
   blockExplorerBaseUrl: string
   steps: Execute['steps'] | null
-  stepData: StepData | null
+  stepData: BuyModalStepData | null
   quantity: number
   listingsToBuy: Record<string, number>
   setBuyStep: React.Dispatch<React.SetStateAction<BuyStep>>
@@ -108,7 +108,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
-  const [stepData, setStepData] = useState<StepData | null>(null)
+  const [stepData, setStepData] = useState<BuyModalStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [quantity, setQuantity] = useState(1)
   const { chain: activeChain } = useNetwork()

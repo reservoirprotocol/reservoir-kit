@@ -24,7 +24,7 @@ import {
   ListingData,
   ListModalRenderer,
   ListStep,
-  StepData,
+  ListModalStepData,
 } from './ListModalRenderer'
 import { ModalSize } from '../Modal'
 import { faChevronLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
@@ -54,12 +54,13 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   nativeOnly?: boolean
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
+  oracleEnabled?: boolean
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
   onClose?: (
     data: ListingCallbackData,
-    stepData: StepData | null,
+    stepData: ListModalStepData | null,
     currentStep: ListStep
   ) => void
 }
@@ -100,6 +101,7 @@ export function ListModal({
   nativeOnly,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
+  oracleEnabled = false,
   onGoToToken,
   onListingComplete,
   onListingError,
@@ -116,6 +118,10 @@ export function ListModal({
     Marketplace[]
   >([])
 
+  if (oracleEnabled) {
+    nativeOnly = true
+  }
+
   return (
     <ListModalRenderer
       open={open}
@@ -124,6 +130,7 @@ export function ListModal({
       currencies={currencies}
       normalizeRoyalties={normalizeRoyalties}
       enableOnChainRoyalties={enableOnChainRoyalties}
+      oracleEnabled={oracleEnabled}
     >
       {({
         token,
@@ -424,6 +431,21 @@ export function ListModal({
                         {`Additional Gas fee required to approve listing (${marketplacesToApprove
                           .map((marketplace) => marketplace.name)
                           .join(', ')})`}
+                      </Text>
+                    )}
+                    {oracleEnabled && (
+                      <Text
+                        style="body3"
+                        color="subtle"
+                        css={{
+                          mb: 10,
+                          textAlign: 'center',
+                          width: '100%',
+                          display: 'block',
+                        }}
+                      >
+                        You can change or cancel your listing for free on{' '}
+                        {localMarketplace?.name}.
                       </Text>
                     )}
                     <Button
