@@ -6,7 +6,7 @@ import {
   paths,
   setParams,
 } from '@reservoir0x/reservoir-sdk'
-import { useReservoirClient, useTokens } from '../hooks'
+import { useListings, useReservoirClient, useTokens } from '../hooks'
 import { getChainCurrency } from '../hooks/useChainCurrency'
 import { defaultFetcher } from '../lib/swr'
 import React, {
@@ -24,6 +24,7 @@ import { formatUnits } from 'ethers/lib/utils.js'
 import { version } from '../../package.json'
 import { fetchSigner, getNetwork } from 'wagmi/actions'
 
+type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type Token = NonNullable<ReturnType<typeof useTokens>['data'][0]>
 type FloorAsk = NonNullable<NonNullable<Token['market']>['floorAsk']>
 type CartItemPrice = FloorAsk['price']
@@ -55,6 +56,15 @@ type CartItem = {
     id: string
     name: string
   }
+  order:
+    | {
+        id: string
+        price: CartItemPrice
+        quantityRemaining: number
+        quantity: number
+        maker: string
+      }
+    | undefined
   price: CartItemPrice
   poolId?: string
   poolPrices?: CartItemPrice[]
@@ -222,10 +232,14 @@ function cartStore({
       referrerFeeBps?: Cart['referrerFeeBps']
     ) => {
       let referrerFee = 0
-      let subtotal = items.reduce((total, { price }) => {
+      let subtotal = items.reduce((total, { price, order }) => {
         let amount = price?.amount?.decimal
         if (price?.currency?.contract !== currency?.contract) {
           amount = price?.amount?.native
+        }
+        // Test this
+        if (order?.price?.amount?.decimal && order?.quantity) {
+          amount = order?.price?.amount?.decimal * order?.quantity
         }
         return (total += amount || 0)
       }, 0)
@@ -272,7 +286,8 @@ function cartStore({
       const reservoirChain = client?.chains.find(
         (chain) => chain.id === cartData.current.chain?.id
       )
-      const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v5`)
+      // const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v5`) TODO: switch back
+      const url = new URL(`https://api-polygon.reservoir.tools/tokens/v5`)
       const query: paths['/tokens/v5']['get']['parameters']['query'] = {
         tokens: tokenIds,
         limit: 100,
@@ -305,14 +320,73 @@ function cartStore({
     [client]
   )
 
+  const fetchOrders = useCallback(
+    async (orderIds: string[]) => {
+      if (!orderIds || orderIds.length === 0) {
+        return { orders: [], flaggedStatuses: {} }
+      }
+      const reservoirChain = client?.chains.find(
+        (chain) => chain.id === cartData.current.chain?.id
+      )
+      // const url = new URL(`${reservoirChain?.baseApiUrl}/orders/asks/v4`) TODO: switch back
+      const url = new URL(`https://api-polygon.reservoir.tools/orders/asks/v4`)
+      const query: paths['/orders/asks/v4']['get']['parameters']['query'] = {
+        ids: orderIds,
+        limit: 1000,
+        includeCriteriaMetadata: true,
+      }
+      if (client?.normalizeRoyalties !== undefined) {
+        query.normalizeRoyalties = client?.normalizeRoyalties
+      }
+      setParams(url, query)
+      const params = [url.href]
+      if (reservoirChain?.apiKey) {
+        params.push(reservoirChain.apiKey)
+      }
+      if (client?.version) {
+        params.push(client.version)
+      }
+      type OrdersSchema =
+        paths['/orders/asks/v4']['get']['responses']['200']['schema']
+
+      const response: OrdersSchema = await defaultFetcher(params)
+
+      const tokenIds = response?.orders?.map(
+        ({ criteria }) =>
+          `${criteria?.data?.collection?.id}:${criteria?.data?.token?.tokenId}`
+      )
+
+      let flaggedStatuses = undefined
+      if (tokenIds) {
+        flaggedStatuses = (await isOpenSeaBanned(tokenIds)) || {}
+      }
+
+      return { orders: response.orders, flaggedStatuses }
+    },
+    [client]
+  )
+
   const convertTokenToItem = useCallback(
     (tokenData: Token): CartItem | undefined => {
       const token = tokenData.token
       const market = tokenData.market
+
       if (!token?.tokenId || !token.collection?.id) {
         return
       }
       const dynamicPricing = market?.floorAsk?.dynamicPricing
+
+      let order = undefined
+      if (token.kind === 'erc1155' && market?.floorAsk) {
+        order = {
+          id: market?.floorAsk?.id || '',
+          price: market?.floorAsk?.price,
+          quantityRemaining: market?.floorAsk?.quantityRemaining || 1,
+          quantity: market?.floorAsk?.quantityRemaining || 1,
+          maker: market?.floorAsk?.maker || '',
+        }
+      }
+
       return {
         token: {
           id: token.tokenId,
@@ -322,6 +396,7 @@ function cartStore({
           id: token.collection.id,
           name: token.collection.name || '',
         },
+        order: order,
         price:
           dynamicPricing?.kind === 'pool' ? undefined : market?.floorAsk?.price,
         poolId:
@@ -333,6 +408,37 @@ function cartStore({
             ? (dynamicPricing.data?.prices as CartItemPrice[])
             : undefined,
         isBannedOnOpensea: token.isFlagged,
+      }
+    },
+    []
+  )
+
+  const convertOrderToItem = useCallback(
+    (orderData: Order): CartItem | undefined => {
+      let criteria = orderData.criteria?.data
+      if (!criteria?.token?.tokenId || !criteria.collection?.id) {
+        return
+      }
+      return {
+        token: {
+          id: criteria.token.tokenId,
+          name: criteria.token.name || '',
+        },
+        collection: {
+          id: criteria.collection.id,
+          name: criteria.collection.name || '',
+        },
+        order: {
+          id: orderData.id,
+          price: orderData.price,
+          quantityRemaining: orderData.quantityRemaining || 1,
+          quantity: orderData.quantityRemaining || 1, //update
+          maker: orderData.maker,
+        },
+        price: orderData.price,
+        poolId: undefined,
+        poolPrices: undefined,
+        isBannedOnOpensea: undefined,
       }
     },
     []
@@ -359,8 +465,42 @@ function cartStore({
     commit()
   }, [commit])
 
+  const setQuantity = useCallback(
+    (orderId: string, quantity: number) => {
+      const updatedItems = [...cartData.current.items]
+      let item = updatedItems.find((item) => item.order?.id === orderId)
+      if (item?.order) {
+        item.order = {
+          ...item.order,
+          quantity: quantity,
+        }
+      }
+      const currency = getCartCurrency(
+        updatedItems,
+        cartData.current.chain?.id || 1
+      )
+      const { totalPrice, referrerFee } = calculatePricing(
+        updatedItems,
+        currency,
+        cartData.current.referrerFeeBps
+      )
+
+      cartData.current = {
+        ...cartData.current,
+        items: updatedItems,
+        totalPrice,
+        referrerFee,
+        currency,
+      }
+
+      commit()
+    },
+    [commit]
+  )
+
+  type AsyncAddToCartOrder = { orderId: string }
   type AsyncAddToCartToken = { id: string }
-  type AddToCartToken = AsyncAddToCartToken | Token
+  type AddToCartToken = AsyncAddToCartToken | AsyncAddToCartOrder | Token
 
   const add = useCallback(
     async (items: AddToCartToken[], chainId: number) => {
@@ -376,11 +516,18 @@ function cartStore({
         const currentIds = cartData.current.items.map(
           (item) => `${item.collection.id}:${item.token.id}`
         )
+        const currentOrderIds = cartData.current.items.map(
+          (item) => item.order?.id
+        )
+
         const tokensToFetch: string[] = []
         const tokens: Token[] = []
+        const ordersToFetch: string[] = []
+
         items.forEach((item) => {
           const token = item as Token
           const asyncToken = item as AsyncAddToCartToken
+          const asyncOrder = item as AsyncAddToCartOrder
           if (token.token) {
             if (
               !currentIds.includes(
@@ -395,26 +542,64 @@ function cartStore({
             !currentIds.includes(asyncToken.id)
           ) {
             tokensToFetch.push(asyncToken.id)
+          } else if (
+            asyncOrder &&
+            asyncOrder.orderId &&
+            !currentOrderIds.includes(asyncOrder.orderId)
+          ) {
+            ordersToFetch.push(asyncOrder.orderId)
           }
         })
 
+        const promises: Promise<void>[] = []
+
         if (tokensToFetch.length > 0) {
+          promises.push(
+            new Promise(async (resolve) => {
+              const { tokens: fetchedTokens, flaggedStatuses } =
+                await fetchTokens(tokensToFetch)
+              fetchedTokens?.forEach((tokenData) => {
+                const item = convertTokenToItem(tokenData)
+                if (item) {
+                  const id = `${item.collection.id}:${item.token.id}`
+                  item.isBannedOnOpensea = flaggedStatuses[id]
+                    ? flaggedStatuses[id]
+                    : item.isBannedOnOpensea
+                  updatedItems.push(item)
+                }
+              })
+
+              resolve()
+            })
+          )
+        }
+
+        if (ordersToFetch.length > 0) {
+          promises.push(
+            new Promise(async (resolve) => {
+              const { orders: fetchedOrders, flaggedStatuses } =
+                await fetchOrders(ordersToFetch)
+              fetchedOrders?.forEach((orderData) => {
+                const item = convertOrderToItem(orderData)
+                if (item) {
+                  const id = `${item.collection.id}:${item.token.id}`
+                  item.isBannedOnOpensea = flaggedStatuses?.[id]
+                    ? flaggedStatuses[id]
+                    : item.isBannedOnOpensea
+                  updatedItems.push(item)
+                }
+              })
+
+              resolve()
+            })
+          )
+        }
+
+        if (promises.length > 0) {
           cartData.current.isValidating = true
           subscribers.current.forEach((callback) => callback())
 
-          const { tokens: fetchedTokens, flaggedStatuses } = await fetchTokens(
-            tokensToFetch
-          )
-          fetchedTokens?.forEach((tokenData) => {
-            const item = convertTokenToItem(tokenData)
-            if (item) {
-              const id = `${item.collection.id}:${item.token.id}`
-              item.isBannedOnOpensea = flaggedStatuses[id]
-                ? flaggedStatuses[id]
-                : item.isBannedOnOpensea
-              updatedItems.push(item)
-            }
-          })
+          await Promise.all(promises)
         }
 
         if (tokens.length > 0) {
@@ -468,6 +653,10 @@ function cartStore({
     [fetchTokens, commit, address]
   )
 
+  /**
+   * @param ids An array of order ids or token keys in the format `collection:token`
+   */
+
   const remove = useCallback((ids: string[]) => {
     if (cartData.current.isValidating) {
       console.warn('Currently validating, removing items temporarily disabled')
@@ -477,7 +666,11 @@ function cartStore({
     const removedItems: CartItem[] = []
     cartData.current.items.forEach((item) => {
       const key = `${item.collection.id}:${item.token.id}`
-      if (ids.includes(key)) {
+      const orderId = item.order?.id
+      if (orderId && ids.includes(orderId)) {
+        removedItems.push(item)
+      } else if (ids.includes(key)) {
+        // maybe also make sure the item doesn't have an orderId
         removedItems.push(item)
       } else {
         updatedItems.push(item)
@@ -841,6 +1034,7 @@ function cartStore({
     get,
     set,
     subscribe,
+    setQuantity,
     add,
     remove,
     clear,
