@@ -65,7 +65,7 @@ const CartPage: NextPage = () => {
         />
       </div>
       <div>
-        <label>Add by OrderId: </label>
+        <label>Add by Order Id: </label>
         <input
           placeholder="Order Id"
           type="text"
@@ -77,7 +77,6 @@ const CartPage: NextPage = () => {
           style={{ marginLeft: 10 }}
           onClick={() => {
             console.log(orderId)
-            // debugger
             add([{ orderId: orderId }], Number(CHAIN_ID))
           }}
         >

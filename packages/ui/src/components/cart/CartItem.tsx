@@ -75,10 +75,15 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
     priceIncrease = price > previousPrice
     priceDecrease = price < previousPrice
   }
-  const usdPrice = (usdConversion || 0) * (price || 0)
+  let usdPrice = (usdConversion || 0) * (price || 0)
   const reservoirChain = client?.chains.find(
     (chain) => cartChain?.id === chain.id
   )
+
+  if (price && order?.quantity) {
+    price = price * order.quantity
+    usdPrice = usdPrice * order.quantity
+  }
 
   return (
     <Flex
@@ -87,9 +92,6 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
         transition: 'background-color 0.25s ease-in-out',
         '&:hover': {
           backgroundColor: '$neutralBgHover',
-          // [`& ${CloseButton}`]: {
-          //   background: '$errorAccent',
-          // },
         },
       }}
     >
@@ -181,16 +183,16 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
           <Text style="body2" color="subtle" ellipsify>
             {collection.name}
           </Text>
-          {!price && (
+          {!price && !order?.id && (
             <Text style="body2" color="error">
               Item no longer available
             </Text>
           )}
-          {/* {!order?.id && (
+          {!price && order?.id && (
             <Text style="body2" color="error">
               Listing no longer available
             </Text>
-          )} */}
+          )}
           {!priceIncrease && !priceDecrease && currencyConverted && (
             <Flex
               css={{ gap: '$1', color: '$accentSolidHover' }}
@@ -254,7 +256,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
           </Flex>
         ) : null}
       </Flex>
-      {order && order?.quantityRemaining > 1 && order?.price !== undefined ? (
+      {order && order?.quantityRemaining > 1 && price ? (
         <Flex
           justify="between"
           align="center"
