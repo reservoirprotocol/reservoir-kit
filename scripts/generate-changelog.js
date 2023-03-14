@@ -71,32 +71,3 @@ const options = {
     })
     .catch((err) => console.log('\x1b[31m%s\x1b[0m', err))
 })()
-
-/* 
-
-  .then((tags) => {
-    const changelog = ''
-    tags.forEach((tag) => {
-      const version = tag.name
-      const commitLink = `https://github.com/reservoirprotocol/reservoir-kit/commit/${tag.hash}`
-
-      let commit
-      for (let i = 0; i < commitList.length; i++) {
-        if (commitList[i].hash === tag.hash) {
-          commit = commitList[i]
-          return
-        }
-      }
-      console.log(commit)
-
-      if (commit) {
-        changelog += `\n## [${version}](${commitLink}) (${
-          commit.authorDate.split(' ')[0]
-        })\n`
-      } else {
-        changelog += `\n* ${commit.subject} [${commit.abbrevHash}](${commitLink})`
-      }
-    })
-
-    console.log(changelog)
-  }) */
