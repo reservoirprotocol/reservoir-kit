@@ -63,6 +63,7 @@ type ChildrenProps = {
   marketplaces: Marketplace[]
   unapprovedMarketplaces: Marketplace[]
   isFetchingUnapprovedMarketplaces: boolean
+  isFetchingOnChainRoyalties: boolean
   localMarketplace: Marketplace | null
   listingData: ListingData[]
   transactionError?: Error | null
@@ -160,12 +161,13 @@ export const ListModalRenderer: FC<Props> = ({
     expirationOptions[5]
   )
 
-  const { data: onChainRoyalties } = useOnChainRoyalties({
-    contract,
-    tokenId,
-    chainId: chainCurrency.chainId,
-    enabled: enableOnChainRoyalties && open,
-  })
+  const { data: onChainRoyalties, isFetching: isFetchingOnChainRoyalties } =
+    useOnChainRoyalties({
+      contract,
+      tokenId,
+      chainId: chainCurrency.chainId,
+      enabled: enableOnChainRoyalties && open,
+    })
 
   let royaltyBps = collection?.royalties?.bps
 
@@ -556,6 +558,7 @@ export const ListModalRenderer: FC<Props> = ({
         marketplaces,
         unapprovedMarketplaces,
         isFetchingUnapprovedMarketplaces,
+        isFetchingOnChainRoyalties,
         localMarketplace,
         listingData,
         transactionError,
