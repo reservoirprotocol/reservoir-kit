@@ -1,47 +1,47 @@
 {
-    "name": "@reservoir0x/reservoir-sdk",
-    "version": "0.6.3",
-    "description": "An SDK that can be used in any javascript/typescript context to easily interact with Reservoir liquidity APIs",
-    "source": "src/index.ts",
-    "main": "dist/index.js",
-    "module": "dist/index.module.js",
-    "types": "dist/index.d.ts",
-    "author": "Reservoir Protocol",
-    "license": "MIT",
-    "files": [
-        "dist"
-    ],
-    "scripts": {
-        "clean": "rm -rf dist",
-        "version": "yarn version",
-        "version:package": "sh ../../scripts/package-version.sh",
-        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release client package v$PACKAGE_VERSION\"; git push",
-        "syncApi": "node ./sync-api.mjs",
-        "changelog": "node ../../scripts/generate-changelog.js package=sdk"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/reservoirprotocol/reservoir-kit"
-    },
-    "sideEffects": false,
-    "keywords": [
-        "nft",
-        "reservoir",
-        "reservoir-sdk",
-        "reservoirkit",
-        "protocol",
-        "sdk"
-    ],
-    "peerDependencies": {
-        "ethers": "^5.6.1"
-    },
-    "dependencies": {
-        "axios": "^0.27.2"
-    },
-    "publishConfig": {
-        "access": "public"
-    },
-    "devDependencies": {
-        "openapi-typescript": "^5.4.1"
-    }
+  "name": "@reservoir0x/reservoir-sdk",
+  "version": "0.6.3",
+  "description": "An SDK that can be used in any javascript/typescript context to easily interact with Reservoir liquidity APIs",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "types": "dist/index.d.ts",
+  "author": "Reservoir Protocol",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "version": "yarn version",
+    "version:package": "sh ../../scripts/package-version.sh",
+    "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release client package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-SDK; git push --tags;",
+    "syncApi": "node ./sync-api.mjs",
+    "changelog": "node ../../scripts/generate-changelog.js package=sdk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reservoirprotocol/reservoir-kit"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "nft",
+    "reservoir",
+    "reservoir-sdk",
+    "reservoirkit",
+    "protocol",
+    "sdk"
+  ],
+  "peerDependencies": {
+    "ethers": "^5.6.1"
+  },
+  "dependencies": {
+    "axios": "^0.27.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^5.4.1"
+  }
 }

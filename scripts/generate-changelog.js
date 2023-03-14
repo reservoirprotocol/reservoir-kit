@@ -57,9 +57,8 @@ const options = {
 
         return `${changelog}`
       }, '')
-      console.log(changelog)
 
-      /* const data = new Uint8Array(Buffer.from(commits))
+      const data = new Uint8Array(Buffer.from(commits))
       fs.writeFile(repo + '/CHANGELOG.md', changelog, function (err) {
         if (err) {
           return console.log(err)
@@ -68,7 +67,7 @@ const options = {
           '\x1b[32m%s\x1b[0m',
           `Changelog was generated from ${commits.length} commits`
         )
-      }) */
+      })
     })
     .catch((err) => console.log('\x1b[31m%s\x1b[0m', err))
 })()

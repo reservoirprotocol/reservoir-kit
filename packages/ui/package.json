@@ -24,8 +24,8 @@
     "clean": "rm -rf dist",
     "version": "yarn version",
     "version:package": "sh ../../scripts/package-version.sh",
-    "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release ui package v$PACKAGE_VERSION\"; git push",
-    "version:prerelease": "yarn version prerelease; RC_VERSION=$(yarn version:package); git add -A; git commit -m \"✨ Prerelease ui package v$RC_VERSION\"; git push;",
+    "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release ui package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-UI; git push --tags;",
+    "version:prerelease": "yarn version prerelease; RC_VERSION=$(yarn version:package); git add -A; git commit -m \"✨ Prerelease ui package v$RC_VERSION\"; git tag v${RC_VERSION}-UI; git push --tags;",
     "changelog": "node ../../scripts/generate-changelog.js package=ui"
   },
   "dependencies": {
