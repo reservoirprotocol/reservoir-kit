@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const gitlog = require('gitlog').default
+const { gitlogPromise } = require('gitlog')
+const gitlog = require('git-log-nodejs')
 
 let package = process.argv.find((arg) => arg.includes('package='))
 if (package) {
@@ -16,59 +17,87 @@ const options = {
   file: repo,
 }
 
-const { gitlogPromise } = require('gitlog')
+;(async () => {
+  const tags = await gitlog.tags()
 
-gitlogPromise(options)
-  .then((commits) => {
-    const changelog = commits.reduce((changelog, commit) => {
-      if (
-        !commit.subject ||
-        commit.subject.includes('changelog:') ||
-        commit.subject.includes('chore:') ||
-        commit.subject.includes('wip:')
-      ) {
-        return changelog
-      }
-
-      let version = null
-      const commitLink = `https://github.com/reservoirprotocol/reservoir-kit/commit/${commit.hash}`
-
-      if (package === 'ui') {
-        if (commit.subject.includes('Prerelease ui package')) {
-          version = commit.subject.replace('✨ Prerelease ui package v', '')
-        } else if (commit.subject.includes('Release ui package')) {
-          version = commit.subject.replace('🎉 Release ui package v', '')
-        } else if (commit.subject.includes('🎉 ui v')) {
-          version = commit.subject.replace('🎉 ui v', '')
-        } else if (commit.subject.includes('v0.0.')) {
-          version = commit.subject.replace('v0.0.', '')
+  gitlogPromise(options)
+    .then((commits) => {
+      const changelog = commits.reduce((changelog, commit) => {
+        if (
+          !commit.subject ||
+          commit.subject.includes('changelog:') ||
+          commit.subject.includes('chore:') ||
+          commit.subject.includes('wip:')
+        ) {
+          return changelog
         }
-      } else if (package === 'client') {
-        if (commit.subject.includes('🎉 Release client package v')) {
-          version = commit.subject.replace('🎉 Release client package v', '')
+
+        let version = null
+        const commitLink = `https://github.com/reservoirprotocol/reservoir-kit/commit/${commit.hash}`
+
+        if (package === 'ui') {
+          const i = tags.findIndex((tag) => tag.hash === commit.hash)
+          if (i > -1) {
+            version = tags[i].name
+          }
+        } else if (package === 'sdk') {
+          const i = tags.findIndex((tag) => tag.hash === commit.hash)
+          if (i > -1) {
+            version = tags[i].name
+          }
+        }
+
+        if (version !== null) {
+          changelog += `\n## [${version}](${commitLink}) (${
+            commit.authorDate.split(' ')[0]
+          })\n`
+        } else {
+          changelog += `\n* ${commit.subject} [${commit.abbrevHash}](${commitLink})`
+        }
+
+        return `${changelog}`
+      }, '')
+      console.log(changelog)
+
+      /* const data = new Uint8Array(Buffer.from(commits))
+      fs.writeFile(repo + '/CHANGELOG.md', changelog, function (err) {
+        if (err) {
+          return console.log(err)
+        }
+        console.log(
+          '\x1b[32m%s\x1b[0m',
+          `Changelog was generated from ${commits.length} commits`
+        )
+      }) */
+    })
+    .catch((err) => console.log('\x1b[31m%s\x1b[0m', err))
+})()
+
+/* 
+
+  .then((tags) => {
+    const changelog = ''
+    tags.forEach((tag) => {
+      const version = tag.name
+      const commitLink = `https://github.com/reservoirprotocol/reservoir-kit/commit/${tag.hash}`
+
+      let commit
+      for (let i = 0; i < commitList.length; i++) {
+        if (commitList[i].hash === tag.hash) {
+          commit = commitList[i]
+          return
         }
       }
+      console.log(commit)
 
-      if (version !== null) {
+      if (commit) {
         changelog += `\n## [${version}](${commitLink}) (${
           commit.authorDate.split(' ')[0]
         })\n`
       } else {
         changelog += `\n* ${commit.subject} [${commit.abbrevHash}](${commitLink})`
       }
-
-      return `${changelog}`
-    }, '')
-
-    const data = new Uint8Array(Buffer.from(commits))
-    fs.writeFile(repo + '/CHANGELOG.md', changelog, function (err) {
-      if (err) {
-        return console.log(err)
-      }
-      console.log(
-        '\x1b[32m%s\x1b[0m',
-        `Changelog was generated from ${commits.length} commits`
-      )
     })
-  })
-  .catch((err) => console.log('\x1b[31m%s\x1b[0m', err))
+
+    console.log(changelog)
+  }) */
