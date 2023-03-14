@@ -26,7 +26,7 @@ export enum AcceptBidStep {
   Unavailable,
 }
 
-export type StepData = {
+export type AcceptBidStepData = {
   totalSteps: number
   currentStep: Execute['steps'][0]
   currentStepItem?: NonNullable<Execute['steps'][0]['items']>[0]
@@ -61,7 +61,7 @@ type ChildrenProps = {
   usdPrice: ReturnType<typeof useCoinConversion>
   address?: string
   etherscanBaseUrl: string
-  stepData: StepData | null
+  stepData: AcceptBidStepData | null
   acceptBid: () => void
   setAcceptBidStep: React.Dispatch<React.SetStateAction<AcceptBidStep>>
 }
@@ -84,7 +84,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   children,
 }) => {
   const { data: signer } = useSigner()
-  const [stepData, setStepData] = useState<StepData | null>(null)
+  const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [totalPrice, setTotalPrice] = useState(0)
   const [acceptBidStep, setAcceptBidStep] = useState<AcceptBidStep>(
     AcceptBidStep.Checkout

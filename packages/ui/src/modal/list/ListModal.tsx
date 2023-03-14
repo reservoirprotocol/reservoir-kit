@@ -24,7 +24,7 @@ import {
   ListingData,
   ListModalRenderer,
   ListStep,
-  StepData,
+  ListModalStepData,
 } from './ListModalRenderer'
 import { ModalSize } from '../Modal'
 import { faChevronLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
@@ -60,7 +60,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onListingError?: (error: Error, data: ListingCallbackData) => void
   onClose?: (
     data: ListingCallbackData,
-    stepData: StepData | null,
+    stepData: ListModalStepData | null,
     currentStep: ListStep
   ) => void
 }

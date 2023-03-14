@@ -77,7 +77,7 @@ type ChildrenProps = {
   transactionError?: Error | null
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
-  stepData: StepData | null
+  stepData: BidModalStepData | null
   setBidStep: React.Dispatch<React.SetStateAction<BidStep>>
   setBidAmount: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
@@ -99,7 +99,7 @@ export type BidData = Parameters<
   ReservoirClientActions['placeBid']
 >['0']['bids'][0]
 
-export type StepData = {
+export type BidModalStepData = {
   totalSteps: number
   stepProgress: number
   currentStep: Execute['steps'][0]
@@ -124,7 +124,7 @@ export const BidModalRenderer: FC<Props> = ({
   const [hasEnoughWrappedCurrency, setHasEnoughWrappedCurrency] =
     useState(false)
   const [amountToWrap, setAmountToWrap] = useState('')
-  const [stepData, setStepData] = useState<StepData | null>(null)
+  const [stepData, setStepData] = useState<BidModalStepData | null>(null)
   const [bidData, setBidData] = useState<BidData | null>(null)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const [trait, setTrait] = useState<Trait>(attribute)
