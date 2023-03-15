@@ -193,7 +193,7 @@ export function AcceptBidModal({
                   warning={warning}
                   currency={bidAmountCurrency}
                   expires={expires}
-                  isOffer={true}
+                  priceSubtitle="Offer"
                   sourceImg={source?.icon ? (source.icon as string) : undefined}
                 />
                 <Button onClick={() => setOpen(false)} css={{ m: '$4' }}>
@@ -232,7 +232,7 @@ export function AcceptBidModal({
                   warning={warning}
                   currency={bidAmountCurrency}
                   expires={expires}
-                  isOffer={true}
+                  priceSubtitle="Offer"
                   sourceImg={source?.icon ? (source.icon as string) : undefined}
                 />
                 <Fees fees={fees} marketplace={marketplace.name} />
@@ -287,7 +287,7 @@ export function AcceptBidModal({
                     warning={warning}
                     currency={bidAmountCurrency}
                     expires={expires}
-                    isOffer={true}
+                    priceSubtitle="Offer"
                     sourceImg={
                       source?.icon ? (source.icon as string) : undefined
                     }
