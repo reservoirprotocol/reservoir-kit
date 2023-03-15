@@ -285,8 +285,8 @@ function cartStore({
       const reservoirChain = client?.chains.find(
         (chain) => chain.id === cartData.current.chain?.id
       )
-      // const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v5`) TODO: switch back
-      const url = new URL(`https://api-polygon.reservoir.tools/tokens/v5`)
+      // const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v5`) //TODO: switch back
+      const url = new URL(`https://api-goerli.reservoir.tools/tokens/v5`)
       const query: paths['/tokens/v5']['get']['parameters']['query'] = {
         tokens: tokenIds,
         limit: 100,
@@ -327,8 +327,8 @@ function cartStore({
       const reservoirChain = client?.chains.find(
         (chain) => chain.id === cartData.current.chain?.id
       )
-      // const url = new URL(`${reservoirChain?.baseApiUrl}/orders/asks/v4`) TODO: switch back
-      const url = new URL(`https://api-polygon.reservoir.tools/orders/asks/v4`)
+      // const url = new URL(`${reservoirChain?.baseApiUrl}/orders/asks/v4`) //TODO: switch back
+      const url = new URL(`https://api-goerli.reservoir.tools/orders/asks/v4`)
       const query: paths['/orders/asks/v4']['get']['parameters']['query'] = {
         ids: orderIds,
         limit: 1000,
@@ -466,8 +466,7 @@ function cartStore({
     (orderId: string, quantity: number) => {
       const updatedItems = [...cartData.current.items]
       let item = updatedItems.find((item) => item.order?.id === orderId)
-      if (item?.order) {
-        // TODO: make sure quantity is not negative or undefined
+      if (item?.order && quantity > 0) {
         item.order = {
           ...item.order,
           quantity: quantity,
@@ -597,7 +596,7 @@ function cartStore({
           cartData.current.isValidating = true
           subscribers.current.forEach((callback) => callback())
 
-          await Promise.all(promises) // TODO: update to allSettled
+          await Promise.allSettled(promises)
         }
 
         if (tokens.length > 0) {
@@ -668,7 +667,6 @@ function cartStore({
       if (orderId && ids.includes(orderId)) {
         removedItems.push(item)
       } else if (ids.includes(key)) {
-        // maybe also make sure the item doesn't have an orderId
         removedItems.push(item)
       } else {
         updatedItems.push(item)
@@ -721,11 +719,24 @@ function cartStore({
       cartData.current = { ...cartData.current, isValidating: true }
       commit()
 
-      const updatedItems: CartItem[] = []
+      const items = [...cartData.current.items]
+
+      const positionMap =
+        cartData.current.items.reduce((items, item, index) => {
+          if (item.order?.id) {
+            items[`${item.order.id}`] = index
+          } else if (item.collection.id && item.token?.id) {
+            items[`${item.collection.id}:${item.token.id}`] = index
+          }
+          return items
+        }, {} as Record<string, number>) || {}
+
+      console.log(positionMap)
 
       const tokensToFetch: string[] = []
       const ordersToFetch: string[] = []
 
+      //find tokens and order ids to fetch
       cartData.current.items.map((item) => {
         if (item.order?.id) {
           ordersToFetch.push(item.order.id)
@@ -735,132 +746,138 @@ function cartStore({
         }
       })
 
-      const promises: Promise<void>[] = []
+      //fetch in tandem
+      const promises: (
+        | ReturnType<typeof fetchOrders>
+        | ReturnType<typeof fetchTokens>
+      )[] = []
 
       if (ordersToFetch.length > 0) {
-        promises.push(
-          new Promise(async (resolve) => {
-            const { orders, flaggedStatuses } = await fetchOrders(ordersToFetch)
-            const filteredOrders = orders?.filter(
-              (order) => order.maker.toLowerCase() !== address?.toLowerCase()
-            )
-            filteredOrders?.map((order) => {
-              let item = cartData.current.items.find(
-                (item) => item.order?.id === order.id
-              )
-
-              if (item) {
-                const updatedItem = {
-                  ...item,
-                  previousPrice: item?.price,
-                  price: order?.price,
-                  poolId: undefined,
-                  poolPrices: undefined,
-                }
-                // if (order?.criteria?.data?.token?.name) {
-                //   updatedItem.token.name = order?.criteria?.data?.token?.name
-                // }
-                // if (token.token?.collection?.name) {
-                //   updatedItem.collection.name = token.token.collection.name
-                // }
-
-                const flaggedStatus = flaggedStatuses
-                  ? flaggedStatuses[
-                      `${order?.criteria?.data?.collection?.id}:${order?.criteria?.data?.token?.tokenId}`
-                    ]
-                  : undefined
-
-                if (flaggedStatus !== undefined) {
-                  updatedItem.isBannedOnOpensea = flaggedStatus
-                }
-                console.log(updatedItem)
-                updatedItems.push(updatedItem)
-              }
-              // return updatedItem
-            })
-            resolve()
-          })
-        )
+        promises.push(fetchOrders(ordersToFetch))
       }
 
       if (tokensToFetch.length > 0) {
-        promises.push(
-          new Promise(async (resolve) => {
-            const { tokens, flaggedStatuses } = await fetchTokens(tokensToFetch)
-            const tokenMap =
-              tokens?.reduce((tokens, token) => {
-                if (token.token?.tokenId && token.token.collection?.id) {
-                  tokens[
-                    `${token.token.collection.id}:${token.token.tokenId}`
-                  ] = token
-                }
-                return tokens
-              }, {} as Record<string, NonNullable<Token>>) || {}
-
-            cartData.current.items
-              .filter((item) => {
-                const token = tokenMap[`${item.collection.id}:${item.token.id}`]
-                return (
-                  token.token?.owner?.toLowerCase() !==
-                    address?.toLowerCase() &&
-                  token.market?.floorAsk?.maker?.toLowerCase() !==
-                    address?.toLowerCase()
-                )
-              })
-              .map((item) => {
-                const token = tokenMap[`${item.collection.id}:${item.token.id}`]
-                const flaggedStatus = flaggedStatuses
-                  ? flaggedStatuses[`${item.collection.id}:${item.token.id}`]
-                  : undefined
-
-                if (token) {
-                  const dynamicPricing = token.market?.floorAsk?.dynamicPricing
-                  const updatedItem = {
-                    ...item,
-                    previousPrice: item.price,
-                    price: token.market?.floorAsk?.price,
-                    poolId:
-                      dynamicPricing?.kind === 'pool'
-                        ? (dynamicPricing.data?.pool as string)
-                        : undefined,
-                    poolPrices:
-                      dynamicPricing?.kind === 'pool'
-                        ? (dynamicPricing.data?.prices as CartItemPrice[])
-                        : undefined,
-                  }
-                  if (token.token?.name) {
-                    updatedItem.token.name = token.token.name
-                  }
-                  if (token.token?.collection?.name) {
-                    updatedItem.collection.name = token.token.collection.name
-                  }
-                  if (flaggedStatus !== undefined) {
-                    updatedItem.isBannedOnOpensea = flaggedStatus
-                  }
-                  return updatedItem
-                }
-                updatedItems.push(item)
-              })
-            resolve()
-          })
-        )
+        promises.push(fetchTokens(tokensToFetch))
       }
 
-      await Promise.all(promises) //Update
+      const responses = await Promise.allSettled(promises)
 
-      const pools = calculatePools(updatedItems)
-      const currency = getCartCurrency(
-        updatedItems,
-        cartData.current.chain?.id || 1
-      )
+      // hashmap { orderId/tokenId: item index }
+      // const itemsToRemove = {"0xabc": 1, "0x123:1": 0}
+      let itemsToRemove: Record<string, number> = {}
+
+      responses.forEach((response) => {
+        if (response.status === 'fulfilled') {
+          // TODO: fix typescript errors
+          if (response.value.orders) {
+            response.value.orders.map((order) => {
+              let index = positionMap[order.id]
+              if (
+                address &&
+                order.maker.toLowerCase() === address?.toLowerCase()
+              ) {
+                itemsToRemove[order.id] = index
+              } else if (order.status !== 'active') {
+                const flaggedStatuses = response.value.flaggedStatuses
+                const criteria = order.criteria.data
+
+                const flaggedStatus = flaggedStatuses
+                  ? flaggedStatuses[
+                      `${criteria.collection.id}:${criteria.token.tokenId}`
+                    ]
+                  : undefined
+
+                items[index] = {
+                  ...items[index],
+                  price: undefined,
+                }
+                if (flaggedStatus !== undefined) {
+                  items[index].isBannedOnOpensea = flaggedStatus
+                }
+              }
+            })
+          } else if (response.value.tokens) {
+            response.value.tokens.map(({ token, market }) => {
+              const index =
+                positionMap[`${token.collection.id}:${token.tokenId}`]
+
+              if (
+                address &&
+                (token?.owner?.toLowerCase() === address?.toLowerCase() ||
+                  token.market?.floorAsk?.maker?.toLowerCase() ===
+                    address?.toLowerCase())
+              ) {
+                console.log(
+                  token?.owner?.toLowerCase(),
+                  address?.toLowerCase(),
+                  token.market?.floorAsk?.maker?.toLowerCase()
+                )
+                itemsToRemove[`${token.collection.id}:${token.tokenId}`] = index
+              } else {
+                const dynamicPricing = market?.floorAsk?.dynamicPricing
+
+                const flaggedStatuses = response.value.flaggedStatuses
+
+                const flaggedStatus = flaggedStatuses
+                  ? flaggedStatuses[`${token.collection.id}:${token.tokenId}`]
+                  : undefined
+
+                items[index] = {
+                  ...items[index],
+                  previousPrice: items[index].price,
+                  price: market?.floorAsk?.price,
+                  poolId:
+                    dynamicPricing?.kind === 'pool'
+                      ? (dynamicPricing.data?.pool as string)
+                      : undefined,
+                  poolPrices:
+                    dynamicPricing?.kind === 'pool'
+                      ? (dynamicPricing.data?.prices as CartItemPrice[])
+                      : undefined,
+                }
+                if (token?.name) {
+                  items[index].token.name = token.name
+                }
+                if (token?.collection?.name) {
+                  items[index].collection.name = token.collection.name
+                }
+                if (flaggedStatus !== undefined) {
+                  items[index].isBannedOnOpensea = flaggedStatus
+                }
+              }
+            })
+          }
+        }
+      })
+
+      //process token response
+      //IF maker is the same => add to itemsToRemove if we should eventually remove them
+      //iterate the items, find the tokens, ignore the orders and update/validate the data
+
+      //process orders response
+      //IF maker is the same => add to itemsToRemove if we should eventually remove them
+      //ELSE: iterate the items, find the orders, ignore the tokens, and update/validate the data
+      //status === 'active'
+      //flag status check
+
+      // Iterate over items to remove and remove them from items
+      if (Object.values(itemsToRemove).length > 0) {
+        Object.values(itemsToRemove).map((index) => {
+          console.log('splicing', index)
+          items.splice(index, 1)
+        })
+      }
+
+      const pools = calculatePools(items)
+      const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
       const { totalPrice, referrerFee } = calculatePricing(
-        updatedItems,
+        items,
         currency,
         cartData.current.referrerFeeBps
       )
       cartData.current = {
         ...cartData.current,
-        items: updatedItems,
+        items: items,
         pools,
         isValidating: false,
         totalPrice,
@@ -877,7 +894,7 @@ function cartStore({
       }
       throw e
     }
-  }, [fetchTokens, address])
+  }, [fetchTokens, fetchOrders, address])
 
   const checkout = useCallback(
     async (options: BuyTokenOptions = {}) => {
