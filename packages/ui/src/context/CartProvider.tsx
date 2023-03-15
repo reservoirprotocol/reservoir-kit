@@ -920,7 +920,7 @@ function cartStore({
           if (price) {
             const contract = collection.id.split(':')[0]
             items?.push({
-              token: `${contract}:${token.id}`,
+              token: order?.id ? undefined : `${contract}:${token.id}`,
               orderId: order?.id,
               quantity: order?.quantity,
             })
