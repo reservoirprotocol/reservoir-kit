@@ -25,7 +25,10 @@ import { version } from '../../package.json'
 import { fetchSigner, getNetwork } from 'wagmi/actions'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
+type OrdersSchema =
+  paths['/orders/asks/v4']['get']['responses']['200']['schema']
 type Token = NonNullable<ReturnType<typeof useTokens>['data'][0]>
+type TokensSchema = paths['/tokens/v5']['get']['responses']['200']['schema']
 type FloorAsk = NonNullable<NonNullable<Token['market']>['floorAsk']>
 type CartItemPrice = FloorAsk['price']
 type Currency = NonNullable<NonNullable<CartItemPrice>['currency']>
@@ -303,8 +306,7 @@ function cartStore({
       if (client?.version) {
         params.push(client.version)
       }
-      type TokensSchema =
-        paths['/tokens/v5']['get']['responses']['200']['schema']
+
       const promises = await Promise.allSettled([
         defaultFetcher(params),
         isOpenSeaBanned(tokenIds),
@@ -345,8 +347,6 @@ function cartStore({
       if (client?.version) {
         params.push(client.version)
       }
-      type OrdersSchema =
-        paths['/orders/asks/v4']['get']['responses']['200']['schema']
 
       const response: OrdersSchema = await defaultFetcher(params)
 
@@ -731,8 +731,6 @@ function cartStore({
           return items
         }, {} as Record<string, number>) || {}
 
-      console.log(positionMap)
-
       const tokensToFetch: string[] = []
       const ordersToFetch: string[] = []
 
@@ -746,7 +744,7 @@ function cartStore({
         }
       })
 
-      //fetch in tandem
+      //fetch tokens and orders in tandem
       const promises: (
         | ReturnType<typeof fetchOrders>
         | ReturnType<typeof fetchTokens>
@@ -762,15 +760,17 @@ function cartStore({
 
       const responses = await Promise.allSettled(promises)
 
-      // hashmap { orderId/tokenId: item index }
-      // const itemsToRemove = {"0xabc": 1, "0x123:1": 0}
+      // hashmap of items to remove { orderId/tokenId: item index }
       let itemsToRemove: Record<string, number> = {}
 
       responses.forEach((response) => {
         if (response.status === 'fulfilled') {
-          // TODO: fix typescript errors
-          if (response.value.orders) {
-            response.value.orders.map((order) => {
+          const ordersResponse = response.value as OrdersSchema
+          const tokensResponse = response.value as TokensSchema
+
+          if (ordersResponse && ordersResponse.orders) {
+            // process orders response
+            ordersResponse.orders.map((order) => {
               let index = positionMap[order.id]
               if (
                 address &&
@@ -779,11 +779,11 @@ function cartStore({
                 itemsToRemove[order.id] = index
               } else if (order.status !== 'active') {
                 const flaggedStatuses = response.value.flaggedStatuses
-                const criteria = order.criteria.data
+                const criteria = order?.criteria?.data
 
                 const flaggedStatus = flaggedStatuses
                   ? flaggedStatuses[
-                      `${criteria.collection.id}:${criteria.token.tokenId}`
+                      `${criteria?.collection?.id}:${criteria?.token?.tokenId}`
                     ]
                   : undefined
 
@@ -796,30 +796,31 @@ function cartStore({
                 }
               }
             })
-          } else if (response.value.tokens) {
-            response.value.tokens.map(({ token, market }) => {
+          } else if (tokensResponse && tokensResponse.tokens) {
+            // process tokens response
+            tokensResponse.tokens.map(({ token, market }) => {
               const index =
-                positionMap[`${token.collection.id}:${token.tokenId}`]
+                positionMap[`${token?.collection?.id}:${token?.tokenId}`]
 
               if (
                 address &&
                 (token?.owner?.toLowerCase() === address?.toLowerCase() ||
-                  token.market?.floorAsk?.maker?.toLowerCase() ===
+                  market?.floorAsk?.maker?.toLowerCase() ===
                     address?.toLowerCase())
               ) {
-                console.log(
-                  token?.owner?.toLowerCase(),
-                  address?.toLowerCase(),
-                  token.market?.floorAsk?.maker?.toLowerCase()
-                )
-                itemsToRemove[`${token.collection.id}:${token.tokenId}`] = index
+                if (token?.collection?.id && token?.tokenId) {
+                  itemsToRemove[`${token.collection.id}:${token.tokenId}`] =
+                    index
+                }
               } else {
                 const dynamicPricing = market?.floorAsk?.dynamicPricing
 
                 const flaggedStatuses = response.value.flaggedStatuses
 
                 const flaggedStatus = flaggedStatuses
-                  ? flaggedStatuses[`${token.collection.id}:${token.tokenId}`]
+                  ? flaggedStatuses[
+                      `${token?.collection?.id}:${token?.tokenId}`
+                    ]
                   : undefined
 
                 items[index] = {
@@ -850,17 +851,7 @@ function cartStore({
         }
       })
 
-      //process token response
-      //IF maker is the same => add to itemsToRemove if we should eventually remove them
-      //iterate the items, find the tokens, ignore the orders and update/validate the data
-
-      //process orders response
-      //IF maker is the same => add to itemsToRemove if we should eventually remove them
-      //ELSE: iterate the items, find the orders, ignore the tokens, and update/validate the data
-      //status === 'active'
-      //flag status check
-
-      // Iterate over items to remove and remove them from items
+      // Remove all items in itemsToRemove
       if (Object.values(itemsToRemove).length > 0) {
         Object.values(itemsToRemove).map((index) => {
           console.log('splicing', index)

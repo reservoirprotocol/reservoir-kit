@@ -68,7 +68,6 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
 
   useEffect(() => {
     if (open) {
-      debugger
       validate()
     } else if (
       transaction?.status === CheckoutStatus.Complete ||
