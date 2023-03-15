@@ -18,7 +18,6 @@ const CartPage: NextPage = () => {
   const { setOpen } = useModal()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [orderId, setOrderId] = useState('')
-  const client = useReservoirClient()
 
   const {
     data: tokens,
