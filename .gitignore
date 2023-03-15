@@ -3,6 +3,7 @@ node_modules
 dist
 .parcel-cache
 demo/.env
+.env
 
 #yarn
 .pnp.*
@@ -12,4 +13,3 @@ demo/.env
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
