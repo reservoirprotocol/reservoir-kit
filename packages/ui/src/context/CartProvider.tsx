@@ -285,11 +285,12 @@ function cartStore({
       if (!tokenIds || tokenIds.length === 0) {
         return { tokens: [], flaggedStatuses: {} }
       }
+
       const reservoirChain = client?.chains.find(
         (chain) => chain.id === cartData.current.chain?.id
       )
-      // const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v5`) //TODO: switch back
-      const url = new URL(`https://api-goerli.reservoir.tools/tokens/v5`)
+      const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v5`)
+
       const query: paths['/tokens/v5']['get']['parameters']['query'] = {
         tokens: tokenIds,
         limit: 100,
@@ -329,8 +330,9 @@ function cartStore({
       const reservoirChain = client?.chains.find(
         (chain) => chain.id === cartData.current.chain?.id
       )
-      // const url = new URL(`${reservoirChain?.baseApiUrl}/orders/asks/v4`) //TODO: switch back
-      const url = new URL(`https://api-goerli.reservoir.tools/orders/asks/v4`)
+
+      const url = new URL(`${reservoirChain?.baseApiUrl}/orders/asks/v4`)
+
       const query: paths['/orders/asks/v4']['get']['parameters']['query'] = {
         ids: orderIds,
         limit: 1000,
@@ -854,7 +856,6 @@ function cartStore({
       // Remove all items in itemsToRemove
       if (Object.values(itemsToRemove).length > 0) {
         Object.values(itemsToRemove).map((index) => {
-          console.log('splicing', index)
           items.splice(index, 1)
         })
       }

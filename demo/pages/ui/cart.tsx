@@ -76,7 +76,6 @@ const CartPage: NextPage = () => {
         <button
           style={{ marginLeft: 10 }}
           onClick={() => {
-            console.log(orderId)
             add([{ orderId: orderId }], Number(CHAIN_ID))
           }}
         >
