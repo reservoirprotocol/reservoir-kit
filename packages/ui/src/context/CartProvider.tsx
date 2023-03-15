@@ -921,6 +921,8 @@ function cartStore({
             const contract = collection.id.split(':')[0]
             items?.push({
               token: `${contract}:${token.id}`,
+              orderId: order?.id,
+              quantity: order?.quantity,
             })
             if (
               price.currency?.contract != cartData.current.currency?.contract
