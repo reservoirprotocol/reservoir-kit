@@ -250,7 +250,7 @@ export function BuyModal({
                       height={16}
                     />
                     <Text style="body2" color="errorLight">
-                      Mixed currencies listings are only available to checkout
+                      Mixed currency listings are only available to checkout
                       with {currency?.symbol || 'ETH'}.
                     </Text>
                   </Flex>
