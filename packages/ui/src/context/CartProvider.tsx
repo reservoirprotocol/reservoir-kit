@@ -281,13 +281,13 @@ function cartStore({
   )
 
   const fetchTokens = useCallback(
-    async (tokenIds: string[]) => {
+    async (tokenIds: string[], chainId: number) => {
       if (!tokenIds || tokenIds.length === 0) {
         return { tokens: [], flaggedStatuses: {} }
       }
 
       const reservoirChain = client?.chains.find(
-        (chain) => chain.id === cartData.current.chain?.id
+        (chain) => chain.id === chainId
       )
       const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v5`)
 
@@ -323,12 +323,13 @@ function cartStore({
   )
 
   const fetchOrders = useCallback(
-    async (orderIds: string[]) => {
+    async (orderIds: string[], chainId: number) => {
       if (!orderIds || orderIds.length === 0) {
         return { orders: [], flaggedStatuses: {} }
       }
+
       const reservoirChain = client?.chains.find(
-        (chain) => chain.id === cartData.current.chain?.id
+        (chain) => chain.id === chainId
       )
 
       const url = new URL(`${reservoirChain?.baseApiUrl}/orders/asks/v4`)
@@ -556,7 +557,7 @@ function cartStore({
           promises.push(
             new Promise(async (resolve) => {
               const { tokens: fetchedTokens, flaggedStatuses } =
-                await fetchTokens(tokensToFetch)
+                await fetchTokens(tokensToFetch, chainId)
               fetchedTokens?.forEach((tokenData) => {
                 const item = convertTokenToItem(tokenData)
                 if (item) {
@@ -577,7 +578,7 @@ function cartStore({
           promises.push(
             new Promise(async (resolve) => {
               const { orders: fetchedOrders, flaggedStatuses } =
-                await fetchOrders(ordersToFetch)
+                await fetchOrders(ordersToFetch, chainId)
               fetchedOrders?.forEach((orderData) => {
                 const item = convertOrderToItem(orderData)
                 if (item) {
@@ -753,11 +754,15 @@ function cartStore({
       )[] = []
 
       if (ordersToFetch.length > 0) {
-        promises.push(fetchOrders(ordersToFetch))
+        promises.push(
+          fetchOrders(ordersToFetch, cartData.current.chain?.id as number)
+        )
       }
 
       if (tokensToFetch.length > 0) {
-        promises.push(fetchTokens(tokensToFetch))
+        promises.push(
+          fetchTokens(tokensToFetch, cartData.current.chain?.id as number)
+        )
       }
 
       const responses = await Promise.allSettled(promises)
