@@ -26,7 +26,7 @@ import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import { useNetwork } from 'wagmi'
-import QuantitySelector from './QuantitySelector'
+import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 
 type PurchaseData = {
