@@ -147,6 +147,7 @@ export function EditListingModal({
                     img={listingImg}
                     name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
+                    priceSubtitle="Price"
                     usdPrice={totalUsd}
                     collection={listing.criteria?.data?.collection?.name || ''}
                     currencyContract={listing.price?.currency?.contract}
