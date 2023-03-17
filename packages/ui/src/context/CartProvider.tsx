@@ -59,14 +59,12 @@ type CartItem = {
     id: string
     name: string
   }
-  order:
-    | {
-        id: string
-        quantityRemaining: number
-        quantity: number
-        maker: string
-      }
-    | undefined
+  order?: {
+    id: string
+    quantityRemaining: number
+    quantity: number
+    maker: string
+  }
   price: CartItemPrice
   poolId?: string
   poolPrices?: CartItemPrice[]
@@ -470,9 +468,14 @@ function cartStore({
       const updatedItems = [...cartData.current.items]
       let item = updatedItems.find((item) => item.order?.id === orderId)
       if (item?.order && quantity > 0) {
-        item.order = {
-          ...item.order,
-          quantity: quantity,
+        if (quantity > item?.order?.quantityRemaining) {
+          quantity = item?.order?.quantityRemaining
+        }
+        {
+          item.order = {
+            ...item.order,
+            quantity: quantity,
+          }
         }
       }
       const currency = getCartCurrency(
@@ -874,7 +877,7 @@ function cartStore({
       )
       cartData.current = {
         ...cartData.current,
-        items: items,
+        items,
         pools,
         isValidating: false,
         totalPrice,
