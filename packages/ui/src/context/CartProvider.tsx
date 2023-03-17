@@ -467,7 +467,7 @@ function cartStore({
     (orderId: string, quantity: number) => {
       const updatedItems = [...cartData.current.items]
       let item = updatedItems.find((item) => item.order?.id === orderId)
-      if (item?.order && quantity > 0) {
+      if (item?.order && (quantity > 0 || quantity == -1)) {
         if (quantity > item?.order?.quantityRemaining) {
           quantity = item?.order?.quantityRemaining
         }
@@ -478,22 +478,30 @@ function cartStore({
           }
         }
       }
-      const currency = getCartCurrency(
-        updatedItems,
-        cartData.current.chain?.id || 1
-      )
-      const { totalPrice, referrerFee } = calculatePricing(
-        updatedItems,
-        currency,
-        cartData.current.referrerFeeBps
-      )
 
-      cartData.current = {
-        ...cartData.current,
-        items: updatedItems,
-        totalPrice,
-        referrerFee,
-        currency,
+      if (quantity == -1) {
+        cartData.current = {
+          ...cartData.current,
+          items: updatedItems,
+        }
+      } else {
+        const currency = getCartCurrency(
+          updatedItems,
+          cartData.current.chain?.id || 1
+        )
+        const { totalPrice, referrerFee } = calculatePricing(
+          updatedItems,
+          currency,
+          cartData.current.referrerFeeBps
+        )
+
+        cartData.current = {
+          ...cartData.current,
+          items: updatedItems,
+          totalPrice,
+          referrerFee,
+          currency,
+        }
       }
 
       commit()
