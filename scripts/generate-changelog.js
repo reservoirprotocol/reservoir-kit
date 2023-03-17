@@ -13,7 +13,7 @@ const options = {
   repo: repo,
   number: -1000000000000000000000000,
   execOptions: { maxBuffer: 1000 * 1024 },
-  fields: ['subject', 'hash', 'abbrevHash', 'authorDate'],
+  fields: ['subject', 'hash', 'abbrevHash', 'authorDate', 'tag'],
   file: repo,
 }
 
