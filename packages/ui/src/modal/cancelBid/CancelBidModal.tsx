@@ -160,7 +160,7 @@ export function CancelBidModal({
                     currencyDecimals={bid?.price?.currency?.decimals}
                     expires={expires}
                     source={(bid?.source?.icon as string) || ''}
-                    isOffer={true}
+                    priceSubtitle="Offer"
                   />
                 </Box>
                 <Text
@@ -193,7 +193,7 @@ export function CancelBidModal({
                     currencyDecimals={bid?.price?.currency?.decimals}
                     expires={expires}
                     source={(bid?.source?.icon as string) || ''}
-                    isOffer={true}
+                    priceSubtitle="Offer"
                   />
                 </Box>
                 {!stepData && <Loader css={{ height: 206 }} />}
