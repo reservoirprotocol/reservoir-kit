@@ -6205,6 +6205,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"git-log-nodejs@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "git-log-nodejs@npm:0.5.0"
+  checksum: e91f40b8fe1775a04855335db0527bc702b1d510a77f86be5f21e59fd365d134baa8a267ab6e113714c9f55f405ed66a99e3e275b0e1529a8e3952ea9598e95d
+  languageName: node
+  linkType: hard
+
 "gitlog@npm:^4.0.4":
   version: 4.0.4
   resolution: "gitlog@npm:4.0.4"
@@ -8735,6 +8742,7 @@ __metadata:
     "@types/react-flatpickr": ^3.8.7
     buffer: ^6.0.3
     ethers: ^5.6.9
+    git-log-nodejs: ^0.5.0
     gitlog: ^4.0.4
     next-remote-watch: ^1.0.0
     parcel: ^2.6.2
