@@ -10,19 +10,23 @@
 ## [v0.11.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/629535bafe3c9d33b4875ff1a6fede86b871ea9c) (2023-03-10)
 
 - Added check for collection and fetchingOnChainRoyalties to list modal's loading status [45c5190](https://github.com/reservoirprotocol/reservoir-kit/commit/45c51902c8a399d7a1b90a8b52cd458598620066)
-- Merge branch 'main' into armando/grwth-2224-oracle-order-cancel-modal-changes [7157843](https://github.com/reservoirprotocol/reservoir-kit/commit/715784387a6f5dead57475d063dd3a9b30152b8f)
 - patch: Simplify operator note [69113fe](https://github.com/reservoirprotocol/reservoir-kit/commit/69113fedaab490b1a1222e0ec78e2cb124210b2c)
 - fix: typescript errors [b10b85f](https://github.com/reservoirprotocol/reservoir-kit/commit/b10b85f1e5bdfbac9f34d5a933d089d469a674ad)
 - patch: Determine oracle order from raw zone address [de81526](https://github.com/reservoirprotocol/reservoir-kit/commit/de81526a609316352618bcd840104ae3c4d4e68e)
 - Rename StepData type to prevent issues when automatically exporting StepData [bff1a53](https://github.com/reservoirprotocol/reservoir-kit/commit/bff1a5376f1e553881d018bd1002aaae50f10e52)
+- fix bug with 1155 order id being an empty string [fe9c172](https://github.com/reservoirprotocol/reservoir-kit/commit/fe9c17270bc8a4c1af136f66c8b86548b0a786f6)
 - patch: Update cancels for oracle offers [2adcbc9](https://github.com/reservoirprotocol/reservoir-kit/commit/2adcbc917469f04539f7e0245be015ff0c2731cb)
 - patch: Update cancels for oracle listings [e543af9](https://github.com/reservoirprotocol/reservoir-kit/commit/e543af94722ff25d183a673cf92654aacec29ad8)
 
 ## [v0.11.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d2c5954b4e48c8d7d1104e31eea55b7e461a174d) (2023-03-08)
 
+- fix: sort buy modal listings by price [c07e13c](https://github.com/reservoirprotocol/reservoir-kit/commit/c07e13c52ec225b058e127ca2cd341e95a754293)
+- fix: purchasing 1155 by order id [f26e346](https://github.com/reservoirprotocol/reservoir-kit/commit/f26e346a14887b03fdcf52fb87f3363eafb1b5cb)
 - Merge pull request #182 from reservoirprotocol/ted/grwth-2226-oracle-order-allow-passing-oracle [83768fc](https://github.com/reservoirprotocol/reservoir-kit/commit/83768fc8055089edace29bf77aec3b3fed03c703)
 - Add oracle support to list modal [cd3e456](https://github.com/reservoirprotocol/reservoir-kit/commit/cd3e456e96bf8a1a61cc84e1c0b301813b6e4134)
 - Fixed bug with 0 showing in cart item when missing price [2cad038](https://github.com/reservoirprotocol/reservoir-kit/commit/2cad03825c7966892ec55c56b05a99f5439f772b)
+- 1155 sweeping via the buy modal [229ea54](https://github.com/reservoirprotocol/reservoir-kit/commit/229ea5469695b827dca88c9ab2fe68aeefbe50b4)
+- Logic for 1155 sweeping in the buymodal [16d6592](https://github.com/reservoirprotocol/reservoir-kit/commit/16d6592c5b31342fa2b70eb2dee9d328f83317cf)
 - Updated sorting of undefined [04de2d6](https://github.com/reservoirprotocol/reservoir-kit/commit/04de2d64e81387ebfaecad9b966b07d60e3918a1)
 - Add support for dynamic pricing for contingent orders [1cb4eb0](https://github.com/reservoirprotocol/reservoir-kit/commit/1cb4eb029622a2af4f80fd747d86f530b91a2bca)
 
@@ -65,7 +69,6 @@
 - Merge branch 'main' of github.com:reservoirprotocol/reservoir-kit [4199118](https://github.com/reservoirprotocol/reservoir-kit/commit/419911817664d97e8031baf818d3ddf4c8f7b218)
 - Fix BidModal net amount not in the same currency as bid amount [3dad8df](https://github.com/reservoirprotocol/reservoir-kit/commit/3dad8dfae6e59f66b4007042a168d13438f90ace)
 - Fixed hooks including undefined values in data array [ee40262](https://github.com/reservoirprotocol/reservoir-kit/commit/ee40262981bfead396e56a89c3e8a36ab57066a4)
-- Merge branch 'main' into pedro/grwth-2038-upgrade-executebuy-and-executesell-to-v7 [dd22a42](https://github.com/reservoirprotocol/reservoir-kit/commit/dd22a42f62ef1c9e4b7f5fcb916c8bf7a2f0070b)
 - fix: type error [bc2e87b](https://github.com/reservoirprotocol/reservoir-kit/commit/bc2e87bf013e0224bd018d242164c85587c97da8)
 
 ## [v0.10.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/85f5c52206c15fa6a0b6edb827c6ab8ac9587219) (2023-02-23)
@@ -233,7 +236,6 @@
 - Fix list modal button close color [c0233b4](https://github.com/reservoirprotocol/reservoir-kit/commit/c0233b4c5a2a6ed63f093ce793e0ef6bedfe9574)
 - Completes RES-1512 [20f54d4](https://github.com/reservoirprotocol/reservoir-kit/commit/20f54d4cf0c4263cb62683105495172ee5d9516a)
 - CancelBid modal [ff7b989](https://github.com/reservoirprotocol/reservoir-kit/commit/ff7b9897a731f5ddfad2e8866e8efbfbbbb854d3)
-- Merge branch 'main' into pedro/res-1350-rk-cancel-offers [067279f](https://github.com/reservoirprotocol/reservoir-kit/commit/067279f76c7ebc6f384659624579ab1b37a04db9)
 
 ## [v0.7.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/ba97b3c4b2540b9353228f1011c001279b595308) (2022-12-28)
 
@@ -290,7 +292,6 @@
 - Merge pull request #98 from reservoirprotocol/pedro/res-673-support-buying-multiple-1155-tokens [14fd210](https://github.com/reservoirprotocol/reservoir-kit/commit/14fd210b2f85629b7e68e600cd74eeaab57d80df)
 - Fix balance check when total price changes not updating hasEnoughEth variable [eebf2a6](https://github.com/reservoirprotocol/reservoir-kit/commit/eebf2a6a751d3674eec4faf18f1ba329dd8ecee2)
 - Merge branch 'pedro/res-673-support-buying-multiple-1155-tokens' of github.com:reservoirprotocol/reservoir-kit into pedro/res-673-support-buying-multiple-1155-tokens [45b70dd](https://github.com/reservoirprotocol/reservoir-kit/commit/45b70ddce451eb79bb57cc901bbdaf0aba84336f)
-- Merge branch 'main' into pedro/res-673-support-buying-multiple-1155-tokens [9f86414](https://github.com/reservoirprotocol/reservoir-kit/commit/9f86414bc50c010d4ef0924903c27eb87653a20e)
 
 ## [v0.6.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/dabcaa32cf61017bc514b4952db26b94ac22dfd5) (2022-11-28)
 
@@ -304,7 +305,6 @@
 - Loosen type restrictions for TokenMedia [dfa45e6](https://github.com/reservoirprotocol/reservoir-kit/commit/dfa45e6477f489996a676fbd947019cb85182df7)
 - swapped illustrations for generic icons [a5cc2e5](https://github.com/reservoirprotocol/reservoir-kit/commit/a5cc2e51ff4dd8943305dd1d35dc8a10c2530905)
 - Disable quantity selector on Listmodal if a non native marketplace is selected [9f0348e](https://github.com/reservoirprotocol/reservoir-kit/commit/9f0348efe7f041766d4ab90f2f5cbc661b62dde5)
-- Merge branch 'main' into pedro/res-672-support-listing-more-than-one-1155 [0ccfa46](https://github.com/reservoirprotocol/reservoir-kit/commit/0ccfa46db62cc74dfbdc67b7b120f8f3cada7c7f)
 - Remove referrerFee from global configuration due to difficulty calculating bps to atomic unit [b97ec47](https://github.com/reservoirprotocol/reservoir-kit/commit/b97ec473860c3640d1c5999bc66d3ff4a94ae260)
 - Default dimensions and positioning for TokenMedia [e51e548](https://github.com/reservoirprotocol/reservoir-kit/commit/e51e548fff24e44a95cea1e90e3962a448356572)
 - Add normalize royalties to useListings hook in BuyModal [d334541](https://github.com/reservoirprotocol/reservoir-kit/commit/d334541102171392820d59494c61b8327a8c4b20)
@@ -317,7 +317,6 @@
 - Support normalize royalties in useUserTopBids hook [b30fff7](https://github.com/reservoirprotocol/reservoir-kit/commit/b30fff739b5711ed9472a86a6dc0f5a4d0aa2766)
 - Fix attributes recalculating on every render [5ff1f0a](https://github.com/reservoirprotocol/reservoir-kit/commit/5ff1f0a7149047de5bd508bd03d747d3203e2be6)
 - Multiply quantity by price when buying multiple erc1155 tokens in BuyModal [c2bc9f7](https://github.com/reservoirprotocol/reservoir-kit/commit/c2bc9f7ce0e36fab50ef4989b47bcfca01a65b8f)
-- Merge branch 'main' into pedro/res-673-support-buying-multiple-1155-tokens [624ed4e](https://github.com/reservoirprotocol/reservoir-kit/commit/624ed4e340e06c214f4bdddd0fca4ed95de994e6)
 - 🎉 Release ui package v0.5.11 [995208c](https://github.com/reservoirprotocol/reservoir-kit/commit/995208c2a05b5465920cfb697fbed38e95c033a1)
 - Merge pull request #103 from reservoirprotocol/pedro/res-1159-add-normalizedroyalties-to [ff2d479](https://github.com/reservoirprotocol/reservoir-kit/commit/ff2d4794cefe087d71dd97d88823c0d5d52976e3)
 - Support normalize royalties in useUserTopBids hook [167404f](https://github.com/reservoirprotocol/reservoir-kit/commit/167404f4cf41a9fd632d5a4a1828ef3980064c14)
@@ -372,7 +371,6 @@
 
 - Merge pull request #84 from reservoirprotocol/fix/list-modal-text-overflow [5ea641d](https://github.com/reservoirprotocol/reservoir-kit/commit/5ea641d6955691b0347ec2c45aaf0a26404e7188)
 - Fix issue with attribute prop after opening [94515f0](https://github.com/reservoirprotocol/reservoir-kit/commit/94515f08553d4c60aebc43dd01d22410bf954c37)
-- Merge branch 'main' into pedro/res-520-support-for-opening-modals [4b5db7d](https://github.com/reservoirprotocol/reservoir-kit/commit/4b5db7d77a39173e77f9c9197ef40894d27254bc)
 - Add ListModal toggle for nativeOnly to remove all non native marketplaces [cef9531](https://github.com/reservoirprotocol/reservoir-kit/commit/cef9531924f9d43870818c8cabe26d5bbe161670)
 
 ## [v0.5.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/712425aaf48570da98c7df2d0a39a85f6fd6f524) (2022-10-24)
@@ -389,7 +387,6 @@
 ## [v0.5.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d6ed02c3356e447cd44e452a54da97cf4333f174) (2022-10-20)
 
 - Upgrade useCollectionActivity to v4 [be913c1](https://github.com/reservoirprotocol/reservoir-kit/commit/be913c15b52631a99c684430846e0a1cf4785789)
-- Merge branch 'main' into fix/list-modal-text-overflow [a57a94c](https://github.com/reservoirprotocol/reservoir-kit/commit/a57a94c6f98947ca19114c365d8a4b70cba91632)
 - added truncation support to all labels on the list and bid modals [6aa5da0](https://github.com/reservoirprotocol/reservoir-kit/commit/6aa5da09cb4a61be16f7c8f6dd93a9338450ce9b)
 - Fix typescript error in useUserActivity [9e63f50](https://github.com/reservoirprotocol/reservoir-kit/commit/9e63f50685ff553f4eb1c2ff834a69f348300510)
 
@@ -435,7 +432,6 @@
 ## [v0.4.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d2358e67d6cf43ec118c637de3a2becdb29d279f) (2022-10-04)
 
 - Merge pull request #78 from reservoirprotocol/collection-activity [736d4d7](https://github.com/reservoirprotocol/reservoir-kit/commit/736d4d71026f715ef69db4aef3826c47e2133681)
-- Merge branch 'main' into attribute-selector-floor-prices [3d01b6e](https://github.com/reservoirprotocol/reservoir-kit/commit/3d01b6e5ef20c22bc2275b944022f1d5880b0afc)
 - fixed demo [90732ef](https://github.com/reservoirprotocol/reservoir-kit/commit/90732ef653987ac55c399ff30c501423507799a8)
 - add export [f3d1787](https://github.com/reservoirprotocol/reservoir-kit/commit/f3d17876cbf26e5e23dfd6702b903032c89ed49b)
 - added `collectionActivity` endpoint hook [a34b586](https://github.com/reservoirprotocol/reservoir-kit/commit/a34b586328c4759e5b621b6bcc2234a4cbec03e3)
@@ -474,7 +470,6 @@
 
 ## [v0.4.0-rc.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/ce968895fddca38536387e0502ce95cc4aa56457) (2022-09-23)
 
-- Merge branch 'main' into trait-offer [ad53da4](https://github.com/reservoirprotocol/reservoir-kit/commit/ad53da4ddcc69814d0cbe354797db4c10d6d97c7)
 - added `floorPrice` [2e20373](https://github.com/reservoirprotocol/reservoir-kit/commit/2e20373e158f2e5ca2e48581072e98018bbf2a50)
 - export `useAttributes` [41e8d78](https://github.com/reservoirprotocol/reservoir-kit/commit/41e8d7874d3432c7d7ab2f143e8da45efa051d8d)
 - simplified scrollarea [3eb7402](https://github.com/reservoirprotocol/reservoir-kit/commit/3eb7402dda962981dd67ce33cad31bcb28bd4afa)
@@ -492,7 +487,6 @@
 - misc changes [dd365a9](https://github.com/reservoirprotocol/reservoir-kit/commit/dd365a91dcc6d7955403aba9b9ab5b278007aadc)
 - changed spacing [5034a7e](https://github.com/reservoirprotocol/reservoir-kit/commit/5034a7e9b5c4f9e7ff2a1a62977cd63e53566607)
 - Support ERC20 on the ListModal [f373897](https://github.com/reservoirprotocol/reservoir-kit/commit/f373897988597efb7f4d3769a134f413ee022fa0)
-- Merge branch 'main' into trait-offer [6893113](https://github.com/reservoirprotocol/reservoir-kit/commit/6893113595b945803a7a401b84958c596d053f85)
 - mobile support [9e4065e](https://github.com/reservoirprotocol/reservoir-kit/commit/9e4065e300fd6aa9ef0abeea38c04e6484c7e373)
 
 ## [v0.4.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/04d58f181669b7426466bdbb57f51763550de3fb) (2022-09-20)
@@ -523,7 +517,6 @@
 - Fix rounding display error when formatting crypto [79701e0](https://github.com/reservoirprotocol/reservoir-kit/commit/79701e0c90027f4a17615a5134a8c4a2d4a29786)
 - Completes RES-300: strip www from local marketplace fallback name [35bc9da](https://github.com/reservoirprotocol/reservoir-kit/commit/35bc9dae35e787352eea757da72063ecc8a69587)
 - PR feedback for REST-304 [2a3d2dc](https://github.com/reservoirprotocol/reservoir-kit/commit/2a3d2dc689368beb9482d606a477528159978974)
-- Merge branch 'main' into pedro/res-304-prevent-rk-theme-body-tag-removal [4cab9f1](https://github.com/reservoirprotocol/reservoir-kit/commit/4cab9f159b46bb82cf2077e28014afdf57a1c01c)
 - Add version headers for rk ui [9fef72b](https://github.com/reservoirprotocol/reservoir-kit/commit/9fef72be3dfd82d9634e82c147bb0ed97a24f1d8)
 - Add check for unsupported MutationObserver browsers [e34382b](https://github.com/reservoirprotocol/reservoir-kit/commit/e34382b60890c4a4594c05095ff03143d36cb099)
 - Completes RES-304: ensure rk theme class is always present on the body tag [10220f3](https://github.com/reservoirprotocol/reservoir-kit/commit/10220f324f5d8f58212468be89856df57e004b0c)
@@ -533,14 +526,12 @@
 - Add tooltip info copy [1c04aed](https://github.com/reservoirprotocol/reservoir-kit/commit/1c04aed0c91e0cc7d0fa182b7d875635d711fde4)
 - removed `onGoToToken` [0dec17a](https://github.com/reservoirprotocol/reservoir-kit/commit/0dec17a6da5ec86c0a320d0e568669dbd269eac1)
 - moved expires to prop [2fc975d](https://github.com/reservoirprotocol/reservoir-kit/commit/2fc975d4b95fa1b77616ff08a9ec0ce7265c5e2b)
-- Merge branch 'main' into accept-bid [4a6ae1a](https://github.com/reservoirprotocol/reservoir-kit/commit/4a6ae1a8cb32b3715dde5618df1d48ce54519099)
 - fixed progress indicator [b61983d](https://github.com/reservoirprotocol/reservoir-kit/commit/b61983d41928b265c841c0820eee827a67b93954)
 - Remove reset css file in demo and apply mini resets in each rk component [947dba0](https://github.com/reservoirprotocol/reservoir-kit/commit/947dba0d3024b9459fe2de937e5ed866641ce649)
 - misc fixes [23a9073](https://github.com/reservoirprotocol/reservoir-kit/commit/23a90735f5fe68867481cdc72210a883b0695053)
 
 ## [v0.3.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/ea9ca4be73f1c4ab2120b93d2e2da670194ab9d9) (2022-09-12)
 
-- Merge branch 'main' into accept-bid [f1bc67f](https://github.com/reservoirprotocol/reservoir-kit/commit/f1bc67fd77f28d80b3c6d77dfe859cbe57737b7b)
 - added fees [fafaffe](https://github.com/reservoirprotocol/reservoir-kit/commit/fafaffed5ee1ca4d2b8215cf82fd30f36b3c3907)
 
 ## [v0.3.4-rc.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/675064b91a5cd8485e08db711405f384cb4ccf5d) (2022-09-09)
@@ -590,7 +581,6 @@
 - misc fixes [b887938](https://github.com/reservoirprotocol/reservoir-kit/commit/b8879386191cf0c184130d444b881dc1c21f2e40)
 - Merge branch 'feature/bid-modal-transaction' into feature/bid-modal-success [c87ad71](https://github.com/reservoirprotocol/reservoir-kit/commit/c87ad71dfb6fb2713623c0525890f06977cdaf90)
 - Merge branch 'bid-modal' into feature/bid-modal-transaction [52cb363](https://github.com/reservoirprotocol/reservoir-kit/commit/52cb36377002f0b014f2cb12754e6b43af1a1841)
-- Merge branch 'main' into bid-modal [9bcab07](https://github.com/reservoirprotocol/reservoir-kit/commit/9bcab07114fb87f4a0e8511d28e9342534707013)
 
 ## [v0.1.14-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/cf32637670de204e1993c1063d20d7a131dff7f0) (2022-08-26)
 
@@ -600,7 +590,6 @@
 - added colors [dc5717a](https://github.com/reservoirprotocol/reservoir-kit/commit/dc5717afac87af07c85e40f8e163b56c162468f4)
 - Set Price and uniswap converting [8490adc](https://github.com/reservoirprotocol/reservoir-kit/commit/8490adc248895f662850b8bf295c4a253f972dc1)
 - Resolve conflicts [9885e23](https://github.com/reservoirprotocol/reservoir-kit/commit/9885e232d11d7405a7bff9a7665d523112a020d0)
-- Merge branch 'main' into bid-modal [beb2f91](https://github.com/reservoirprotocol/reservoir-kit/commit/beb2f913e4e82e6a55bd4381e6f53684ee3bd224)
 - Remove unnecessary dependency [eb101a3](https://github.com/reservoirprotocol/reservoir-kit/commit/eb101a3ecd9ff39b39a7d90b86168a426324006a)
 
 ## [v0.1.13-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3579b3a4e3ff018a71207db3264782781caa973c) (2022-08-24)
@@ -609,7 +598,6 @@
 - Merge pull request #45 from reservoirprotocol/feature/approval-updates [9773c13](https://github.com/reservoirprotocol/reservoir-kit/commit/9773c131238a7a289fc092c9eb229fbe3ffa2387)
 - Fix minor issue when checking if fee exists [26a88e3](https://github.com/reservoirprotocol/reservoir-kit/commit/26a88e3187de6c3d9397c2e9732ba3230180f748)
 - Address pr feedback [0ad234a](https://github.com/reservoirprotocol/reservoir-kit/commit/0ad234af512d7b96f2d019991e1322144aca1902)
-- Merge branch 'main' into feature/set-bid-price [600bccf](https://github.com/reservoirprotocol/reservoir-kit/commit/600bccfe5236258e5ac81c2c2db6023e385aa395)
 - Fix a few issues [807d214](https://github.com/reservoirprotocol/reservoir-kit/commit/807d214caf14be1b83f0e6aaa0cff86456bacec6)
 - Fix bps fee for listing and buying [43d99c7](https://github.com/reservoirprotocol/reservoir-kit/commit/43d99c7126d5e75ab84e93bff7e60292305e6279)
 - Upgrade radix switch and popover, fix a bug when an unavailable item is selected an then an available item is selected with the same buy modal [f73b5d7](https://github.com/reservoirprotocol/reservoir-kit/commit/f73b5d72e79704b0c70b2c79ae9d239134f72f82)
@@ -705,7 +693,6 @@
 - Remove unnecessary code [9ff03ca](https://github.com/reservoirprotocol/reservoir-kit/commit/9ff03cac018a278ae53f4c8713aefc08332fdace)
 - Add preapproval check [131b29f](https://github.com/reservoirprotocol/reservoir-kit/commit/131b29f6afad56a393cc1aad1b8a213abdd188d9)
 - Add price warning and fix royalty calc [93bb863](https://github.com/reservoirprotocol/reservoir-kit/commit/93bb86326b1927f3bd17778cadcec585857589e5)
-- Merge branch 'main' into listing-ui [c96a764](https://github.com/reservoirprotocol/reservoir-kit/commit/c96a7643609a6da8de6c31e29170f72561d1c87c)
 
 ## [v0.0.12-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/332a8ef3231df4a8008924eef81df16b4f486939) (2022-08-03)
 
@@ -729,14 +716,12 @@
 - switch back to default step [d90e500](https://github.com/reservoirprotocol/reservoir-kit/commit/d90e50045776debf706f1fdf2bbfcc8578716bbf)
 - add listing modal confirmation screen [849bd70](https://github.com/reservoirprotocol/reservoir-kit/commit/849bd703c68c307f588664a3f042cc6c05d9e398)
 - Upgrade all execute steps to use new step -> items structure [8e3d3a7](https://github.com/reservoirprotocol/reservoir-kit/commit/8e3d3a76bc9562ba2a32f5563717337a147a69a6)
-- Merge branch 'main' into feature/batch-listing-api [cacbdd3](https://github.com/reservoirprotocol/reservoir-kit/commit/cacbdd3927d2379dd76bcc52e4b66248c63d1fa4)
 
 ## [v0.0.10-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/8efb1abed7cc352916ec9535d92245f5f29046f9) (2022-07-27)
 
 - Specify wagmi minimum, fix balance polling to only run when open [1b208b1](https://github.com/reservoirprotocol/reservoir-kit/commit/1b208b1b82fb63ae49de399458f0d6497454e63e)
 - Merge branch 'listing-ui' into feature/batch-listing-api [cd4b27c](https://github.com/reservoirprotocol/reservoir-kit/commit/cd4b27c3e506708c56c431094afd74548244405e)
 - Resolve conflicts [833f23a](https://github.com/reservoirprotocol/reservoir-kit/commit/833f23ae96ba39e1e7d0b8ade40da22d06c8caaa)
-- Merge branch 'main' into feature/listing-ui-transaction [13470e5](https://github.com/reservoirprotocol/reservoir-kit/commit/13470e5d3b96845be2d7bd5cbcf301a897eda2b6)
 - Resolve conflicts [ab0bf7b](https://github.com/reservoirprotocol/reservoir-kit/commit/ab0bf7b620d943b14f6c4ca34268af93b9328b65)
 
 ## [v0.0.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/0180173b9936fa49547e83a689d80d18dd64888c) (2022-07-27)
@@ -822,13 +807,11 @@
 - resolve conflicts [d6663a6](https://github.com/reservoirprotocol/reservoir-kit/commit/d6663a6070a023b499bd54504549b246a925b82f)
 - stop infinite loop [11090c7](https://github.com/reservoirprotocol/reservoir-kit/commit/11090c78baa0fa5db7834a713345ee10588c5d45)
 - Resolve conflicts [9d80087](https://github.com/reservoirprotocol/reservoir-kit/commit/9d800872678f75e5be9e0af55f06d74b2b32de91)
-- Merge branch 'main' into feature/error-ui [873caaa](https://github.com/reservoirprotocol/reservoir-kit/commit/873caaae47b6cca09a36c32c38f7f7bf7e2e6376)
 - Update progress step gifs [d97c82d](https://github.com/reservoirprotocol/reservoir-kit/commit/d97c82dd4c2fab2814f1753fb16de494d8c2e894)
 - fix merge conflict [947b629](https://github.com/reservoirprotocol/reservoir-kit/commit/947b6295842e7cc93a6674356c2c0b4384f25b58)
 - add sus token ui [9c569b9](https://github.com/reservoirprotocol/reservoir-kit/commit/9c569b9847f902ab592d8cc481c82d40e26bbcff)
 - Buymodal transaction progress [7ada667](https://github.com/reservoirprotocol/reservoir-kit/commit/7ada667c9b2d33575391d3282ee7b743187fab8b)
 - Add modal loader, clean up states and referrer fee [acef798](https://github.com/reservoirprotocol/reservoir-kit/commit/acef798e6309c1ef5bcd47be2002cd09c9cb6759)
-- Merge branch 'main' into feature/loader [3fa0f33](https://github.com/reservoirprotocol/reservoir-kit/commit/3fa0f33370b673419561eb3647d427cb6050902c)
 - Resolve conflicts [691eb70](https://github.com/reservoirprotocol/reservoir-kit/commit/691eb7088535d07d283081a76f6dad408e2966a1)
 - Resolve conflicts [79587f6](https://github.com/reservoirprotocol/reservoir-kit/commit/79587f6b2fe176956e9d027babd665877182e419)
 - ui fixes and loading state [69e76a9](https://github.com/reservoirprotocol/reservoir-kit/commit/69e76a97cc810f1e75219ad6c0c18990e5cf40da)
