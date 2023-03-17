@@ -21,10 +21,18 @@ fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
   if (err) {
     return console.log(err)
   }
-
-  const latestCommitHashIndex =
-    data.indexOf('https://github.com/reservoirprotocol/reservoir-kit/commit/') +
-    58
+  let latestCommitHashIndex
+  if (package === 'ui') {
+    latestCommitHashIndex =
+      data.indexOf(
+        '-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/'
+      ) + 63
+  } else if (package === 'sdk') {
+    latestCommitHashIndex =
+      data.indexOf(
+        '-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/'
+      ) + 64
+  }
   const latestCommitHash = data.slice(
     latestCommitHashIndex,
     latestCommitHashIndex + 40
@@ -83,7 +91,9 @@ fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
         return `${changelog}`
       }, '')
 
-      const newChangelog = changelog + '\n' + data
+      const oldChangelog = data.slice(data.indexOf('##'))
+
+      const newChangelog = changelog + '\n' + oldChangelog
 
       fs.writeFile(repo + '/CHANGELOG.md', newChangelog, function (err) {
         if (err) {
