@@ -25,7 +25,7 @@ export default function (
   const { data: cartPools } = useCart((cart) => cart.pools)
   const { data: cartChain } = useCart((cart) => cart.chain)
   const cartRequiresReordering = useMemo(
-    () => Object.values(cartPools).some((pool) => pool.itemCount > 1),
+    () => Object.values(cartPools).some((pool) => pool.itemCount > 0),
     [cartPools]
   )
   const itemsMap = useMemo(() => {
@@ -111,7 +111,20 @@ export default function (
       })
     }
   } else {
-    dynamicTokens = tokensResponse.data as DynamicTokens
+    dynamicTokens = tokensResponse.data.map((tokenData) => {
+      const floorAsk = tokenData?.market?.floorAsk
+      const isInPool = floorAsk?.dynamicPricing?.kind === 'pool'
+      const poolPrices = isInPool
+        ? (floorAsk?.dynamicPricing?.data
+            ?.prices as Cart['items'][0]['poolPrices'])
+        : undefined
+
+      if (tokenData.market?.floorAsk && poolPrices && poolPrices[0]) {
+        tokenData.market.floorAsk.price = poolPrices[0]
+      }
+
+      return tokenData
+    })
   }
 
   return {
