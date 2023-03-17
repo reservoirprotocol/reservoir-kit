@@ -25,7 +25,10 @@ fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
   const latestCommitHashIndex =
     data.indexOf('https://github.com/reservoirprotocol/reservoir-kit/commit/') +
     58
-  const latestCommitHash = data.slice(latestCommitHashIndex, latestCommitHashIndex + 40)
+  const latestCommitHash = data.slice(
+    latestCommitHashIndex,
+    latestCommitHashIndex + 40
+  )
 
   const tags = await gitlog.tags()
 
@@ -42,6 +45,7 @@ fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
       }
 
       const newCommits = commits.slice(0, latestCommitIndex)
+      console.log(commits[0])
 
       const changelog = newCommits.reduce((changelog, commit) => {
         if (
