@@ -1,4 +1,3 @@
-
 * feat: adding logic to add git tags on version release and receive tag info in changelog generator [74fcca9](https://github.com/reservoirprotocol/reservoir-kit/commit/74fcca9783f7a3de7c6a7d84fa5aed7cf9c10fff)
 * Merge pull request #187 from reservoirprotocol/ted/grwth-2245-os-price-textfield-disappears-in-rk [537bf91](https://github.com/reservoirprotocol/reservoir-kit/commit/537bf9108d2ddcfe6d895cf2f1c88b153fc9c30e)
 ## [v0.11.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/629535bafe3c9d33b4875ff1a6fede86b871ea9c) (2023-03-10)

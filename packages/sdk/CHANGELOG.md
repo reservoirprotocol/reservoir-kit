@@ -1,4 +1,3 @@
-
 * feat: adding logic to add git tags on version release and receive tag info in changelog generator [74fcca9](https://github.com/reservoirprotocol/reservoir-kit/commit/74fcca9783f7a3de7c6a7d84fa5aed7cf9c10fff)
 ## [v0.6.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/56ccb67aeaea5cff1ade7e16b8e98b27a7308184) (2023-03-10)
 
