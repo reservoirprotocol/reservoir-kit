@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
-import { Button } from '../../primitives'
-import PseudoInput from '../../primitives/PseudoInput'
-import { styled } from '../../../stitches.config'
+import React, { CSSProperties, FC } from 'react'
+import { Button } from '../primitives'
+import PseudoInput from '../primitives/PseudoInput'
+import { styled } from '../../stitches.config'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 
@@ -10,6 +10,7 @@ type Props = {
   min: number
   quantity: number
   setQuantity: (quantity: number) => void
+  css?: CSSProperties
 }
 
 const QuantityButton = styled(Button, {
@@ -35,7 +36,13 @@ const QuantityInput = styled('input', {
   textAlign: 'center',
 })
 
-const QuantitySelector: FC<Props> = ({ max, min, quantity, setQuantity }) => {
+const QuantitySelector: FC<Props> = ({
+  max,
+  min,
+  quantity,
+  setQuantity,
+  css,
+}) => {
   return (
     <PseudoInput
       css={{
@@ -44,6 +51,7 @@ const QuantitySelector: FC<Props> = ({ max, min, quantity, setQuantity }) => {
         display: 'flex',
         alignItems: 'center',
         p: 0,
+        ...css,
       }}
     >
       <QuantityButton

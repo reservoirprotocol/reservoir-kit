@@ -101,6 +101,7 @@ export const BuyModalRenderer: FC<Props> = ({
 }) => {
   const { data: signer } = useSigner()
   const [totalPrice, setTotalPrice] = useState(0)
+  const [averageUnitPrice, setAverageUnitPrice] = useState(0)
   const [listingsToBuy, setListingsToBuy] = useState<Record<string, number>>({})
   const [currency, setCurrency] = useState<undefined | Currency>()
   const [mixedCurrencies, setMixedCurrencies] = useState(false)
@@ -428,10 +429,12 @@ export const BuyModalRenderer: FC<Props> = ({
           setReferrerFee(fee)
         }
         setTotalPrice(total)
+        setAverageUnitPrice(total / quantity)
         setBuyStep(BuyStep.Checkout)
       } else {
         setBuyStep(BuyStep.Unavailable)
         setTotalPrice(0)
+        setAverageUnitPrice(0)
         setListingsToBuy({})
         setCurrency(undefined)
         setMixedCurrencies(false)
@@ -439,6 +442,7 @@ export const BuyModalRenderer: FC<Props> = ({
     } else if (!listing && !isValidatingListing && token) {
       setBuyStep(BuyStep.Unavailable)
       setTotalPrice(0)
+      setAverageUnitPrice(0)
       setListingsToBuy({})
       setCurrency(undefined)
       setMixedCurrencies(false)
@@ -490,11 +494,11 @@ export const BuyModalRenderer: FC<Props> = ({
         token,
         collection,
         listing,
-        averageUnitPrice: totalPrice / quantity,
         quantityAvailable: quantityRemaining || 1,
         currency,
         mixedCurrencies,
         totalPrice,
+        averageUnitPrice,
         referrerFee,
         buyStep,
         transactionError,

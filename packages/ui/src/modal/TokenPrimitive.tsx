@@ -118,7 +118,7 @@ const TokenPrimitive: FC<Props> = ({
                 color="subtle"
                 css={{ display: 'flex', gap: '$1' }}
               >
-                Creator Royalties: {royaltyPercent}
+                Creator Royalties: {royaltyPercent}%
                 <InfoTooltip
                   side="right"
                   width={200}
