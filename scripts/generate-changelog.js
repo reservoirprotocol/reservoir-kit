@@ -17,12 +17,33 @@ const options = {
   file: repo,
 }
 
-;(async () => {
+fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
+  if (err) {
+    return console.log(err)
+  }
+
+  const latestCommitHashIndex =
+    data.indexOf('https://github.com/reservoirprotocol/reservoir-kit/commit/') +
+    58
+  const latestCommitHash = data.slice(latestCommitHashIndex, latestCommitHashIndex + 40)
+
   const tags = await gitlog.tags()
 
   gitlogPromise(options)
     .then((commits) => {
-      const changelog = commits.reduce((changelog, commit) => {
+      let latestCommitIndex
+      for (let i = 0; i < commits.length; i++) {
+        if (commits[i].hash === latestCommitHash) {
+          latestCommitIndex = i
+          break
+        } else {
+          continue
+        }
+      }
+
+      const newCommits = commits.slice(0, latestCommitIndex)
+
+      const changelog = newCommits.reduce((changelog, commit) => {
         if (
           !commit.subject ||
           commit.subject.includes('changelog:') ||
@@ -58,8 +79,9 @@ const options = {
         return `${changelog}`
       }, '')
 
-      const data = new Uint8Array(Buffer.from(commits))
-      fs.writeFile(repo + '/CHANGELOG.md', changelog, function (err) {
+      const newChangelog = changelog + '\n' + data
+
+      fs.writeFile(repo + '/CHANGELOG.md', newChangelog, function (err) {
         if (err) {
           return console.log(err)
         }
@@ -70,4 +92,4 @@ const options = {
       })
     })
     .catch((err) => console.log('\x1b[31m%s\x1b[0m', err))
-})()
+})
