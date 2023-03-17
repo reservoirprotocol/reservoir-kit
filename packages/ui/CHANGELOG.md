@@ -1,3 +1,14 @@
+
+## [v0.12.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e01e871b914083b8cd90447094c93e08f30d88c3) (2023-03-17)
+
+* Merge pull request #188 from reservoirprotocol/jaden/grwth-2202-start-using-git-tags-for-rk [eeacc4e](https://github.com/reservoirprotocol/reservoir-kit/commit/eeacc4e825f7c9d056e3072ca1e402145146618e)
+* fix: removing space from top of changelog and fixing package.json version:update [de1aea7](https://github.com/reservoirprotocol/reservoir-kit/commit/de1aea7acf3fd69e762c60311513bc149aff38d4)
+* Merge branch 'main' into jaden/grwth-2202-start-using-git-tags-for-rk [cfe85ca](https://github.com/reservoirprotocol/reservoir-kit/commit/cfe85ca04ba6ebf622b21f27cb5428c915eb618e)
+* Fix dynamicPricing price not reverting when no items in cart [2e1cdbc](https://github.com/reservoirprotocol/reservoir-kit/commit/2e1cdbc098bed78f487c98ae8790c0a3a7791d8d)
+## [v0.12.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f3b1e34fd0222d421e82a69529bd4d0e54b899b7) (2023-03-15)
+
+* Fix review comments on 1155 buymodal sweeping experience [ac01564](https://github.com/reservoirprotocol/reservoir-kit/commit/ac01564b69f9d7dce2bfd649d640a0e7303acdfa)
+* Merge branch 'pedro/grwth-2270-unable-to-purchase-different-currency' into pedro/grwth-2060-1155-buymodal-sweeping [55f4918](https://github.com/reservoirprotocol/reservoir-kit/commit/55f491867a2e1afbac8313db3543b94169c6d4a1)
 * feat: adding logic to add git tags on version release and receive tag info in changelog generator [74fcca9](https://github.com/reservoirprotocol/reservoir-kit/commit/74fcca9783f7a3de7c6a7d84fa5aed7cf9c10fff)
 * Merge pull request #187 from reservoirprotocol/ted/grwth-2245-os-price-textfield-disappears-in-rk [537bf91](https://github.com/reservoirprotocol/reservoir-kit/commit/537bf9108d2ddcfe6d895cf2f1c88b153fc9c30e)
 ## [v0.11.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/629535bafe3c9d33b4875ff1a6fede86b871ea9c) (2023-03-10)
