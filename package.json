@@ -46,7 +46,8 @@
     "prettier": "^2.5.1",
     "process": "^0.11.10",
     "replace-in-files": "^3.0.0",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "git-log-nodejs": "^0.5.0"
   },
   "engines": {
     "node": ">=12",

@@ -34,13 +34,17 @@ const Index: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [currencies, setCurrencies] = useState<
-    { contract: string; symbol: string }[] | undefined
+    { contract: string; symbol: string; decimals?: number }[] | undefined
   >([
     {
       contract: '0x0000000000000000000000000000000000000000',
       symbol: mainnetSymbol,
     },
-    { contract: '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557', symbol: 'USDC' },
+    {
+      contract: '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557',
+      symbol: 'USDC',
+      decimals: 6,
+    },
   ])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined

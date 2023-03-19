@@ -95,7 +95,15 @@ export default styled('span', {
       },
     },
   },
-
+  compoundVariants: [
+    {
+      style: 'tiny',
+      color: 'base',
+      css: {
+        color: '$textColor',
+      },
+    },
+  ],
   defaultVariants: {
     style: 'body1',
     color: 'base',

@@ -62,9 +62,13 @@ export async function executeSteps(
 
     // Handle price changes to protect users from paying more
     // than expected when buying and selling for less than expected
-    if (json.path && expectedPrice) {
-      const quote = json.path.reduce((total, path) => {
-        total += path.quote || 0
+    const path = json.path as {
+      quote?: number //This is the quote, matching the order currency
+      buyInQuote?: number //This is the "Buy In" quote, when converting to a currency to buy an order in
+    }[]
+    if (path && expectedPrice) {
+      const quote = path.reduce((total: number, { quote, buyInQuote }) => {
+        total += buyInQuote || quote || 0
         return total
       }, 0)
 
@@ -139,9 +143,11 @@ export async function executeSteps(
         !items ||
         !items[incompleteStepItemIndex] ||
         !items[incompleteStepItemIndex].data
-      )
+      ) {
         throw json
+      }
       stepItem = items[incompleteStepItemIndex]
+      setState([...json?.steps])
     }
 
     const stepData = stepItem.data

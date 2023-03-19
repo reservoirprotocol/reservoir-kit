@@ -24,7 +24,7 @@ import {
   ListingData,
   ListModalRenderer,
   ListStep,
-  StepData,
+  ListModalStepData,
 } from './ListModalRenderer'
 import { ModalSize } from '../Modal'
 import { faChevronLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
@@ -60,7 +60,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onListingError?: (error: Error, data: ListingCallbackData) => void
   onClose?: (
     data: ListingCallbackData,
-    stepData: StepData | null,
+    stepData: ListModalStepData | null,
     currentStep: ListStep
   ) => void
 }
@@ -142,6 +142,7 @@ export function ListModal({
         expirationOptions,
         marketplaces,
         unapprovedMarketplaces,
+        isFetchingOnChainRoyalties,
         localMarketplace,
         listingData,
         transactionError,
@@ -254,6 +255,11 @@ export function ListModal({
             marketplace.orderbook === 'opensea'
         )
 
+        let loading =
+          !token ||
+          !collection ||
+          (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false)
+
         return (
           <Modal
             trigger={trigger}
@@ -272,9 +278,9 @@ export function ListModal({
 
               setOpen(open)
             }}
-            loading={!token}
+            loading={loading}
           >
-            {token && listStep == ListStep.SelectMarkets && (
+            {!loading && listStep == ListStep.SelectMarkets && (
               <ContentContainer>
                 <TokenStats
                   token={token}
@@ -458,7 +464,7 @@ export function ListModal({
                 </MainContainer>
               </ContentContainer>
             )}
-            {token && listStep == ListStep.SetPrice && (
+            {!loading && listStep == ListStep.SetPrice && (
               <ContentContainer>
                 <TokenStats
                   token={token}
@@ -637,7 +643,7 @@ export function ListModal({
                 </MainContainer>
               </ContentContainer>
             )}
-            {token && listStep == ListStep.ListItem && (
+            {!loading && listStep == ListStep.ListItem && (
               <ContentContainer>
                 <TokenListingDetails
                   token={token}
@@ -713,7 +719,7 @@ export function ListModal({
                 </MainContainer>
               </ContentContainer>
             )}
-            {token && listStep == ListStep.Complete && (
+            {!loading && listStep == ListStep.Complete && (
               <ContentContainer>
                 <TokenListingDetails
                   token={token}
@@ -769,7 +775,7 @@ export function ListModal({
                           <a
                             key={data.listing.orderbook}
                             target="_blank"
-                            href={`${reservoirChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                            href={`${reservoirChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
                           >
                             <Image
                               css={{ width: 24 }}

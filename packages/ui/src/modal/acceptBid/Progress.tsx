@@ -1,6 +1,6 @@
 import { Anchor, Box, Flex, Text } from '../../primitives'
 import React, { FC } from 'react'
-import { AcceptBidStep, StepData } from './AcceptBidModalRenderer'
+import { AcceptBidStep, AcceptBidStepData } from './AcceptBidModalRenderer'
 
 import TransactionProgress from '../TransactionProgress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,7 +15,7 @@ type Props = {
     image: string
   }
   tokenImage?: string
-  stepData: StepData | null
+  stepData: AcceptBidStepData | null
 }
 
 export const Progress: FC<Props> = ({

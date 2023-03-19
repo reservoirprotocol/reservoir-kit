@@ -10,7 +10,6 @@ import {
   FormatCurrency,
   FormatCryptoCurrency,
   Loader,
-  Select,
 } from '../../primitives'
 import Progress from '../Progress'
 import Popover from '../../primitives/Popover'
@@ -23,10 +22,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
-import { BuyModalRenderer, BuyStep, StepData } from './BuyModalRenderer'
+import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import { useNetwork } from 'wagmi'
+import QuantitySelector from './QuantitySelector'
+import { formatNumber } from '../../lib/numbers'
 
 type PurchaseData = {
   tokenId?: string
@@ -48,7 +49,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onPurchaseError?: (error: Error, data: PurchaseData) => void
   onClose?: (
     data: PurchaseData,
-    stepData: StepData | null,
+    stepData: BuyModalStepData | null,
     currentStep: BuyStep
   ) => void
 }
@@ -102,7 +103,9 @@ export function BuyModal({
         listing,
         quantityAvailable,
         quantity,
+        averageUnitPrice,
         currency,
+        mixedCurrencies,
         totalPrice,
         referrerFee,
         buyStep,
@@ -154,15 +157,11 @@ export function BuyModal({
           executableSteps[executableSteps.length - 1]?.items || []
         let finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
-        let price = (listing?.price?.amount?.decimal || 0) * quantity
+        let price = listing?.price?.amount?.decimal || 0
 
         if (!price && token?.token?.lastSell?.value) {
           price = token?.token.lastSell.value
         }
-
-        const sourceImg = listing?.source
-          ? (listing?.source['icon'] as string)
-          : undefined
 
         return (
           <Modal
@@ -197,9 +196,10 @@ export function BuyModal({
                   isSuspicious={isBanned}
                   usdConversion={usdPrice || 0}
                   isUnavailable={true}
-                  price={price}
+                  price={quantity > 1 ? averageUnitPrice : price}
                   currency={currency}
-                  sourceImg={sourceImg}
+                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
+                  showRoyalties={true}
                 />
                 <Button
                   onClick={() => {
@@ -234,37 +234,57 @@ export function BuyModal({
                     </Text>
                   </Flex>
                 )}
+                {mixedCurrencies && (
+                  <Flex
+                    css={{
+                      color: '$errorAccent',
+                      p: '$4',
+                      gap: '$2',
+                      background: '$wellBackground',
+                    }}
+                    align="center"
+                  >
+                    <FontAwesomeIcon
+                      icon={faCircleExclamation}
+                      width={16}
+                      height={16}
+                    />
+                    <Text style="body2" color="errorLight">
+                      Mixed currency listings are only available to checkout
+                      with {currency?.symbol || 'ETH'}.
+                    </Text>
+                  </Flex>
+                )}
                 <TokenLineItem
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
                   isSuspicious={isBanned}
-                  price={price}
+                  price={quantity > 1 ? averageUnitPrice : price}
                   currency={currency}
-                  sourceImg={sourceImg}
+                  css={{ border: 0 }}
+                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
+                  showRoyalties={true}
                 />
                 {quantityAvailable > 1 && (
                   <Flex
-                    css={{ pt: '$4', px: '$4' }}
-                    align="center"
+                    css={{ p: '$4', borderBottom: '1px solid $borderColor' }}
                     justify="between"
                   >
-                    <Text style="body2" color="subtle">
-                      {quantityAvailable} listings are available at this price
-                    </Text>
-                    <Select
-                      css={{ minWidth: 77, width: 'auto', flexGrow: 0 }}
-                      value={`${quantity}`}
-                      onValueChange={(value: string) => {
-                        setQuantity(Number(value))
+                    <Flex direction="column" css={{ gap: '$1' }}>
+                      <Text style="body2">Quantity</Text>
+                      <Text style="body2" color="subtle">
+                        {formatNumber(quantityAvailable)} items available
+                      </Text>
+                    </Flex>
+                    <QuantitySelector
+                      min={1}
+                      max={quantityAvailable}
+                      quantity={quantity}
+                      setQuantity={(quantity) => {
+                        setQuantity(quantity)
                       }}
-                    >
-                      {[...Array(quantityAvailable)].map((_a, i) => (
-                        <Select.Item key={i} value={`${i + 1}`}>
-                          <Select.ItemText>{i + 1}</Select.ItemText>
-                        </Select.Item>
-                      ))}
-                    </Select>
+                    />
                   </Flex>
                 )}
                 {referrerFee > 0 && (
@@ -357,9 +377,10 @@ export function BuyModal({
                   collection={collection}
                   usdConversion={usdPrice || 0}
                   isSuspicious={isBanned}
-                  price={price}
+                  price={quantity > 1 ? averageUnitPrice : price}
                   currency={currency}
-                  sourceImg={sourceImg}
+                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
+                  quantity={quantity}
                 />
                 {stepData && stepData.totalSteps > 1 && (
                   <ProgressBar
