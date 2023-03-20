@@ -15,6 +15,8 @@ import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   listingId?: string
+  tokenId?: string
+  collectionId?: string
   normalizeRoyalties?: boolean
   onClose?: (data: any, currentStep: EditListingStep) => void
   onCancelComplete?: (data: any) => void
@@ -24,6 +26,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 export function EditListingModal({
   openState,
   listingId,
+  tokenId,
+  collectionId,
   trigger,
   normalizeRoyalties,
   onClose,
@@ -41,6 +45,8 @@ export function EditListingModal({
   return (
     <EditListingModalRenderer
       listingId={listingId}
+      tokenId={tokenId}
+      collectionId={collectionId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
     >
@@ -49,12 +55,20 @@ export function EditListingModal({
         listing,
         tokenId,
         contract,
+        token,
+        quantityAvailable,
+        collection,
+        quantity,
+        setQuantity,
         editListingStep,
         transactionError,
-        stepData,
+        usdPrice,
         totalUsd,
         blockExplorerBaseUrl,
-        cancelOrder,
+        steps,
+        stepData,
+        setEditListingStep,
+        editListing,
       }) => {
         const expires = useTimeSince(listing?.expiration)
         const listingImg = tokenId
@@ -171,7 +185,7 @@ export function EditListingModal({
                   >
                     Close
                   </Button>
-                  <Button onClick={cancelOrder} css={{ flex: 1 }}>
+                  <Button onClick={editListing} css={{ flex: 1 }}>
                     Confirm
                   </Button>
                 </Flex>

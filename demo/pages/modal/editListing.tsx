@@ -81,6 +81,8 @@ const EditListingPage: NextPage = () => {
         }
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         listingId={listingId}
+        tokenId={'1'}
+        collectionId={'0x932ca55b9ef0b3094e8fa82435b3b4c50d713043'}
         normalizeRoyalties={normalizeRoyalties}
         onCancelComplete={(data: any) => {
           console.log('Listing updated', data)
