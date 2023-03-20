@@ -16,8 +16,8 @@ type Data = {
 }
 
 /**
- * Cancel an offer or listing
- * @param data.id Id of the order to cancel
+ * Cancel offers or listings
+ * @param data.orderIds Ids of the orders to cancel
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.options Additional options to pass into the cancel request
  * @param data.onProgress Callback to update UI state has execution progresses
