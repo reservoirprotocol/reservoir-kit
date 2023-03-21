@@ -284,6 +284,9 @@ export async function executeSteps(
             if (res.status > 299 || res.status < 200) throw res.data
 
             stepItem.orderId = res.data.orderId
+            if (res.data.crossPostingOrderId) {
+              stepItem.crossPostingOrderId = res.data.crossPostingOrderId
+            }
             setState([...json?.steps])
           } catch (err) {
             json.steps[incompleteStepIndex].error =

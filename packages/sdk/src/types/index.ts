@@ -19,6 +19,7 @@ export type Execute = {
       txHash?: string
       orderId?: string
       orderIndexes?: number[]
+      crossPostingOrderId?: number
     }[]
   }[]
 }
