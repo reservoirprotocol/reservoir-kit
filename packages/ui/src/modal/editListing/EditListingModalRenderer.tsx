@@ -13,7 +13,6 @@ import {
   useTokens,
   useUserTokens,
   useCollections,
-  useMarketplaces,
   useOnChainRoyalties,
   useChainCurrency,
 } from '../../hooks'
