@@ -85,33 +85,42 @@ const TokenPrimitive: FC<Props> = ({
             }}
           />
           <Grid css={{ rowGap: 2 }}>
-            <Text
-              style="h6"
-              ellipsify
-              color={isUnavailable ? 'subtle' : 'base'}
+            <Flex
+              align="center"
+              css={{ gap: '$2', mr: '$4', overflow: 'hidden' }}
             >
-              {name ? name : collection}
-            </Text>
+              <Text
+                style="h6"
+                ellipsify
+                color={isUnavailable ? 'subtle' : 'base'}
+              >
+                {name ? name : collection}
+              </Text>
+              {quantity && quantity > 1 ? (
+                <Flex
+                  css={{
+                    p: '$1 ',
+                    background: '$neutralBgHover',
+                    borderRadius: 4,
+                    mr: 'auto',
+                  }}
+                >
+                  <Text
+                    style="tiny"
+                    color="base"
+                    css={{ minWidth: 'max-content' }}
+                  >
+                    {quantity} items
+                  </Text>
+                </Flex>
+              ) : null}
+            </Flex>
             {name && (
               <Text style="body2" color={isUnavailable ? 'subtle' : 'base'}>
                 {collection}
               </Text>
             )}
             {!!expires && <Text style="tiny">Expires {expires}</Text>}
-            {!expires && quantity && quantity > 1 ? (
-              <Flex
-                css={{
-                  p: '$1 ',
-                  background: '$neutralBgHover',
-                  borderRadius: 4,
-                  mr: 'auto',
-                }}
-              >
-                <Text style="tiny" color="base">
-                  {quantity} {quantity > 1 ? 'items' : 'item'}
-                </Text>
-              </Flex>
-            ) : null}
             {!expires && !quantity && royaltiesBps ? (
               <Text
                 style="body2"

@@ -1,6 +1,6 @@
-import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
+import { useFallbackState, useTimeSince } from '../../hooks'
 import React, { ReactElement, Dispatch, SetStateAction, useEffect } from 'react'
-import { Flex, Text, Box, Button, Loader, Anchor } from '../../primitives'
+import { Flex, Text, Box, Button, Loader, Select } from '../../primitives'
 import {
   EditListingModalRenderer,
   EditListingStep,
@@ -8,9 +8,14 @@ import {
 import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
-import { useNetwork } from 'wagmi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCheckCircle,
+  faCircleExclamation,
+} from '@fortawesome/free-solid-svg-icons'
+import PriceInput from './PriceInput'
+import InfoTooltip from '../../primitives/InfoTooltip'
+import { constants } from 'ethers'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
@@ -18,10 +23,13 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   normalizeRoyalties?: boolean
+  enableOnChainRoyalties?: boolean
   onClose?: (data: any, currentStep: EditListingStep) => void
-  onCancelComplete?: (data: any) => void
-  onCancelError?: (error: Error, data: any) => void
+  onEditListingComplete?: (data: any) => void
+  onEditListingError?: (error: Error, data: any) => void
 }
+
+const MINIMUM_AMOUNT = 0.000001
 
 export function EditListingModal({
   openState,
@@ -30,17 +38,15 @@ export function EditListingModal({
   collectionId,
   trigger,
   normalizeRoyalties,
+  enableOnChainRoyalties = false,
   onClose,
-  onCancelComplete,
-  onCancelError,
+  onEditListingComplete,
+  onEditListingError,
 }: Props): ReactElement {
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
     openState
   )
-  const client = useReservoirClient()
-  const { chain: activeChain } = useNetwork()
-  const reservoirChain = client?.currentChain()
 
   return (
     <EditListingModalRenderer
@@ -49,52 +55,61 @@ export function EditListingModal({
       collectionId={collectionId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
+      enableOnChainRoyalties={enableOnChainRoyalties}
     >
       {({
         loading,
         listing,
-        tokenId,
-        contract,
         token,
+        price,
+        currency,
+        isOracleOrder,
         quantityAvailable,
         collection,
         quantity,
-        setQuantity,
+        expirationOption,
+        expirationOptions,
         editListingStep,
         transactionError,
         usdPrice,
         totalUsd,
-        blockExplorerBaseUrl,
-        steps,
+        royaltyBps,
         stepData,
-        setEditListingStep,
+        setPrice,
+        setQuantity,
+        setExpirationOption,
         editListing,
       }) => {
         const expires = useTimeSince(listing?.expiration)
-        const listingImg = tokenId
-          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${tokenId}/image/v1`
-          : `${reservoirChain?.baseApiUrl}/redirect/collections/${contract}/image/v1`
+
+        const profit =
+          (1 - (collection?.royalties?.bps || 0) * 0.0001) *
+          (price || 0) *
+          quantity
+        100
+
+        const updatedTotalUsd = profit * usdPrice
 
         useEffect(() => {
           if (
             editListingStep === EditListingStep.Complete &&
-            onCancelComplete
+            onEditListingComplete
           ) {
             const data = {
               listing,
               stepData: stepData,
             }
-            onCancelComplete(data)
+            onEditListingComplete(data)
           }
         }, [editListingStep])
 
         useEffect(() => {
-          if (transactionError && onCancelError) {
+          if (transactionError && onEditListingError) {
             const data = {
               listing,
               stepData: stepData,
             }
-            onCancelError(transactionError, data)
+            onEditListingError(transactionError, data)
           }
         }, [transactionError])
 
@@ -103,8 +118,8 @@ export function EditListingModal({
           (listing.status === 'active' || listing.status === 'inactive') &&
           !loading
 
-        const orderZone = listing?.rawData?.zone
-        const orderKind = listing?.kind
+        const isListingEditable =
+          listing && listing.status === 'active' && !loading && isOracleOrder
 
         return (
           <Modal
@@ -134,7 +149,18 @@ export function EditListingModal({
                 </Text>
               </Flex>
             )}
-            {isListingAvailable && editListingStep === EditListingStep.Edit && (
+            {!isListingEditable && isListingAvailable && (
+              <Flex
+                direction="column"
+                justify="center"
+                css={{ px: '$4', py: '$6' }}
+              >
+                <Text style="h6" css={{ textAlign: 'center' }}>
+                  Selected listing is not an oracle order, so cannot be edited.
+                </Text>
+              </Flex>
+            )}
+            {isListingEditable && editListingStep === EditListingStep.Edit && (
               <Flex direction="column">
                 {transactionError && (
                   <Flex
@@ -158,36 +184,178 @@ export function EditListingModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    img={listingImg}
+                    img={token?.token?.image}
                     name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
                     priceSubtitle="Price"
+                    royaltiesBps={royaltyBps}
                     usdPrice={totalUsd}
                     collection={listing.criteria?.data?.collection?.name || ''}
                     currencyContract={listing.price?.currency?.contract}
                     currencyDecimals={listing?.price?.currency?.decimals}
                     expires={expires}
                     source={(listing?.source?.icon as string) || ''}
+                    quantity={listing?.quantityRemaining}
                   />
                 </Box>
-                <Flex
-                  css={{
-                    gap: '$3',
-                    p: '$4',
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      setOpen(false)
+                <Flex direction="column" css={{ px: '$4', py: '$2' }}>
+                  {quantityAvailable > 1 && (
+                    <>
+                      <Box css={{ mb: '$2' }}>
+                        <Text
+                          as="div"
+                          css={{ mb: '$2' }}
+                          style="subtitle2"
+                          color="subtle"
+                        >
+                          Quantity
+                        </Text>
+                        <Select
+                          value={`${quantity}`}
+                          onValueChange={(value: string) => {
+                            setQuantity(Number(value))
+                          }}
+                        >
+                          {[...Array(quantityAvailable)].map((_a, i) => (
+                            <Select.Item key={i} value={`${i + 1}`}>
+                              <Select.ItemText>{i + 1}</Select.ItemText>
+                            </Select.Item>
+                          ))}
+                        </Select>
+                      </Box>
+                      <Text
+                        style="body2"
+                        css={{ mb: 24, display: 'inline-block' }}
+                      >
+                        {quantityAvailable} items available
+                      </Text>
+                    </>
+                  )}
+                  <Flex css={{ mb: '$2' }} justify="between">
+                    <Text style="subtitle2" color="subtle" as="p">
+                      Set New Price
+                    </Text>
+                    <Flex css={{ alignItems: 'center', gap: 8 }}>
+                      <Text style="subtitle2" color="subtle" as="p">
+                        You Get
+                      </Text>
+                      <InfoTooltip
+                        side="left"
+                        width={200}
+                        content={`How much ${currency?.symbol} you will receive after creator royalties are subtracted.`}
+                      />
+                    </Flex>
+                  </Flex>
+                  <Flex direction="column" css={{ gap: '$2' }}>
+                    <PriceInput
+                      price={price}
+                      collection={collection}
+                      currency={currency}
+                      usdPrice={usdPrice}
+                      quantity={quantity}
+                      onChange={(e) => {
+                        if (e.target.value === '') {
+                          setPrice(undefined)
+                        } else {
+                          setPrice(Number(e.target.value))
+                        }
+                      }}
+                      onBlur={() => {
+                        if (price === undefined) {
+                          setPrice(0)
+                        }
+                      }}
+                    />
+                    {price !== undefined &&
+                      price !== null &&
+                      price !== 0 &&
+                      price < MINIMUM_AMOUNT && (
+                        <Box>
+                          <Text style="body2" color="error">
+                            Amount must be higher than {MINIMUM_AMOUNT}
+                          </Text>
+                        </Box>
+                      )}
+                    {collection &&
+                      collection?.floorAsk?.price?.amount?.native !==
+                        undefined &&
+                      price !== undefined &&
+                      price !== null &&
+                      price !== 0 &&
+                      price >= MINIMUM_AMOUNT &&
+                      currency?.contract === constants.AddressZero &&
+                      price < collection?.floorAsk?.price.amount.native && (
+                        <Box>
+                          <Text style="body2" color="error">
+                            Price is{' '}
+                            {Math.round(
+                              ((collection.floorAsk.price.amount.native -
+                                price) /
+                                ((collection.floorAsk.price.amount.native +
+                                  price) /
+                                  2)) *
+                                100 *
+                                1000
+                            ) / 1000}
+                            % below the floor
+                          </Text>
+                        </Box>
+                      )}
+                  </Flex>
+                  <Box css={{ mb: '$3', mt: '$4' }}>
+                    <Text
+                      as="div"
+                      css={{ mb: '$2' }}
+                      style="subtitle2"
+                      color="subtle"
+                    >
+                      Expiration Date
+                    </Text>
+                    <Select
+                      value={expirationOption?.text || ''}
+                      onValueChange={(value: string) => {
+                        const option = expirationOptions.find(
+                          (option) => option.value == value
+                        )
+                        if (option) {
+                          setExpirationOption(option)
+                        }
+                      }}
+                    >
+                      {expirationOptions.map((option) => (
+                        <Select.Item key={option.text} value={option.value}>
+                          <Select.ItemText>{option.text}</Select.ItemText>
+                        </Select.Item>
+                      ))}
+                    </Select>
+                  </Box>
+                  <Flex
+                    css={{
+                      gap: '$3',
+                      py: '$3',
                     }}
-                    color="secondary"
-                    css={{ flex: 1 }}
                   >
-                    Close
-                  </Button>
-                  <Button onClick={editListing} css={{ flex: 1 }}>
-                    Confirm
-                  </Button>
+                    <Button
+                      onClick={() => {
+                        setOpen(false)
+                      }}
+                      color="secondary"
+                      css={{ flex: 1 }}
+                    >
+                      Close
+                    </Button>
+                    <Button
+                      disabled={
+                        price === undefined ||
+                        price === 0 ||
+                        price < MINIMUM_AMOUNT
+                      }
+                      onClick={editListing}
+                      css={{ flex: 1 }}
+                    >
+                      Confirm
+                    </Button>
+                  </Flex>
                 </Flex>
               </Flex>
             )}
@@ -195,15 +363,16 @@ export function EditListingModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    img={listingImg}
-                    name={listing?.criteria?.data?.token?.name}
-                    price={listing?.price?.amount?.decimal}
-                    usdPrice={totalUsd}
-                    collection={listing?.criteria?.data?.collection?.name || ''}
+                    img={token?.token?.image}
+                    name={token?.token?.name}
+                    price={profit}
+                    usdPrice={updatedTotalUsd}
+                    collection={collection?.name || ''}
                     currencyContract={listing?.price?.currency?.contract}
                     currencyDecimals={listing?.price?.currency?.decimals}
-                    expires={expires}
+                    expires={`in ${expirationOption.text.toLowerCase()}`}
                     source={(listing?.source?.icon as string) || ''}
+                    quantity={quantity}
                   />
                 </Box>
                 {!stepData && <Loader css={{ height: 206 }} />}
@@ -213,10 +382,9 @@ export function EditListingModal({
                       title={
                         stepData?.currentStepItem.txHash
                           ? 'Finalizing on blockchain'
-                          : 'Confirm update to listing in your wallet'
+                          : 'Approve Reservoir Oracle to update the listing'
                       }
                       txHash={stepData?.currentStepItem.txHash}
-                      blockExplorerBaseUrl={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
                     />
                   </>
                 )}
@@ -239,35 +407,19 @@ export function EditListingModal({
                     textAlign: 'center',
                   }}
                 >
-                  <Text style="h5" css={{ mb: '$2' }}>
+                  <Box css={{ color: '$successAccent', mb: 24 }}>
+                    <FontAwesomeIcon icon={faCheckCircle} size="3x" />
+                  </Box>
+                  <Text style="h5" css={{ mb: '$4' }}>
                     Listing Updated!
                   </Text>
                   <Text style="body3" color="subtle" css={{ mb: 24 }}>
-                    <>
-                      Your{' '}
-                      <Text style="body3" color="accent">
-                        {listing?.source?.name as string}
-                      </Text>{' '}
-                      listing for{' '}
-                      <Text style="body3" color="accent">
-                        {listing?.criteria?.data?.token?.name ||
-                          listing?.criteria?.data?.collection?.name}{' '}
-                      </Text>
-                      at {listing?.price?.amount?.decimal}{' '}
-                      {listing?.price?.currency?.symbol} has been canceled.
-                    </>
+                    Your listing for{' '}
+                    <Text style="body3" color="base">
+                      {token?.token?.name}
+                    </Text>{' '}
+                    has been updated.
                   </Text>
-
-                  <Anchor
-                    color="primary"
-                    weight="medium"
-                    css={{ fontSize: 12 }}
-                    href={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
-                    target="_blank"
-                  >
-                    View on{' '}
-                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
-                  </Anchor>
                 </Flex>
                 <Button
                   onClick={() => {

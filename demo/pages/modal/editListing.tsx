@@ -6,6 +6,10 @@ import { useState, useEffect } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 
+const DEFAULT_COLLECTION_ID =
+  process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
+  '0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e'
+const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '39'
 const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
@@ -15,6 +19,8 @@ const EditListingPage: NextPage = () => {
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [listingId, setListingId] = useState('')
+  const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
+  const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
 
@@ -49,6 +55,22 @@ const EditListingPage: NextPage = () => {
           style={{ width: 250 }}
         />
       </div>
+      <div>
+        <label>Collection Id: </label>
+        <input
+          type="text"
+          value={collectionId}
+          onChange={(e) => setCollectionId(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Token Id: </label>
+        <input
+          type="text"
+          value={tokenId}
+          onChange={(e) => setTokenId(e.target.value)}
+        />
+      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -81,13 +103,13 @@ const EditListingPage: NextPage = () => {
         }
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         listingId={listingId}
-        tokenId={'1'}
-        collectionId={'0x932ca55b9ef0b3094e8fa82435b3b4c50d713043'}
+        tokenId={tokenId}
+        collectionId={collectionId}
         normalizeRoyalties={normalizeRoyalties}
-        onCancelComplete={(data: any) => {
+        onEditListingComplete={(data: any) => {
           console.log('Listing updated', data)
         }}
-        onCancelError={(error: any, data: any) => {
+        onEditListingError={(error: any, data: any) => {
           console.log('Edit Listing Error', error, data)
         }}
         onClose={() => {

@@ -1,4 +1,11 @@
-import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
+import React, {
+  FC,
+  useEffect,
+  useState,
+  useCallback,
+  ReactNode,
+  useMemo,
+} from 'react'
 import {
   useCoinConversion,
   useReservoirClient,
@@ -7,15 +14,17 @@ import {
   useUserTokens,
   useCollections,
   useMarketplaces,
+  useOnChainRoyalties,
+  useChainCurrency,
 } from '../../hooks'
-import { useSigner, useNetwork, useAccount } from 'wagmi'
+import { useSigner, useAccount } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import { constants } from 'ethers'
 import { Listings } from '../list/ListModalRenderer'
-import { parseUnits } from 'ethers/lib/utils.js'
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
 
 export enum EditListingStep {
   Edit,
@@ -35,18 +44,27 @@ type ChildrenProps = {
   listing?: NonNullable<ReturnType<typeof useListings>['data']>[0]
   tokenId?: string
   contract?: string
+  isOracleOrder: boolean
+  price: number | undefined
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+  currency: NonNullable<
+    NonNullable<ReturnType<typeof useListings>['data']>[0]['price']
+  >['currency']
   quantityAvailable: number
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   quantity: number
-  setQuantity: React.Dispatch<React.SetStateAction<number>>
   editListingStep: EditListingStep
   transactionError?: Error | null
   totalUsd: number
+  royaltyBps?: number
+  expirationOptions: ExpirationOption[]
+  expirationOption: ExpirationOption
   usdPrice: ReturnType<typeof useCoinConversion>
-  blockExplorerBaseUrl: string
   steps: Execute['steps'] | null
   stepData: EditListingStepData | null
+  setPrice: React.Dispatch<React.SetStateAction<number | undefined>>
+  setQuantity: React.Dispatch<React.SetStateAction<number>>
+  setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setEditListingStep: React.Dispatch<React.SetStateAction<EditListingStep>>
   editListing: () => void
 }
@@ -57,8 +75,14 @@ type Props = {
   tokenId?: string
   collectionId?: string
   normalizeRoyalties?: boolean
+  enableOnChainRoyalties: boolean
   children: (props: ChildrenProps) => ReactNode
 }
+
+const zoneAddresses = [
+  '0xe1066481cc3b038badd0c68dfa5c8f163c3ff192', // Ethereum - 0xe1...92
+  '0x49b91d1d7b9896d28d370b75b92c2c78c1ac984a', // Goerli Address - 0x49...4a
+]
 
 export const EditListingModalRenderer: FC<Props> = ({
   open,
@@ -66,6 +90,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   tokenId,
   collectionId,
   normalizeRoyalties,
+  enableOnChainRoyalties = false,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -76,12 +101,10 @@ export const EditListingModalRenderer: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<EditListingStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
+  const [price, setPrice] = useState<number | undefined>(0)
   const [quantity, setQuantity] = useState(1)
-  const { chain: activeChain } = useNetwork()
-  const blockExplorerBaseUrl =
-    activeChain?.blockExplorers?.default.url || 'https://etherscan.io'
 
-  const { data: listings, isFetchingPage } = useListings(
+  const { data: listings } = useListings(
     {
       ids: listingId,
       normalizeRoyalties,
@@ -96,6 +119,18 @@ export const EditListingModalRenderer: FC<Props> = ({
 
   const listing = listings && listings[0] ? listings[0] : undefined
   const currency = listing?.price?.currency
+
+  const orderZone = listing?.rawData?.zone
+  const orderKind = listing?.kind
+
+  const isOracleOrder =
+    orderKind === 'seaport-v1.4' && zoneAddresses.includes(orderZone as string)
+
+  useEffect(() => {
+    if (listing?.price?.amount?.decimal) {
+      setPrice(listing?.price?.amount?.decimal)
+    }
+  }, [listing?.price])
 
   const coinConversion = useCoinConversion(
     open && listing ? 'USD' : undefined,
@@ -113,7 +148,6 @@ export const EditListingModalRenderer: FC<Props> = ({
     expirationOptions[5]
   )
 
-  // const contract = listing?.contract
   const contract = listing?.tokenSetId?.split(':')[1]
 
   const { data: collections } = useCollections(
@@ -123,7 +157,6 @@ export const EditListingModalRenderer: FC<Props> = ({
     }
   )
   const collection = collections && collections[0] ? collections[0] : undefined
-
   let royaltyBps = collection?.royalties?.bps
 
   const [marketplaces, setMarketplaces] = useMarketplaces(true, royaltyBps)
@@ -135,6 +168,16 @@ export const EditListingModalRenderer: FC<Props> = ({
       )
     )
   }, [marketplaces.length])
+
+  useEffect(() => {
+    if (!open) {
+      setEditListingStep(EditListingStep.Edit)
+      setTransactionError(null)
+      setStepData(null)
+      setExpirationOption(expirationOptions[5])
+      setQuantity(1)
+    }
+  }, [open])
 
   const { data: tokens } = useTokens(
     open && {
@@ -162,6 +205,30 @@ export const EditListingModalRenderer: FC<Props> = ({
       ? Number(userTokens[0].ownership?.tokenCount || 1)
       : 1
 
+  const chainCurrency = useChainCurrency()
+
+  const { data: onChainRoyalties } = useOnChainRoyalties({
+    contract,
+    tokenId,
+    chainId: chainCurrency.chainId,
+    enabled: enableOnChainRoyalties && open,
+  })
+
+  const onChainRoyaltyBps = useMemo(() => {
+    const totalRoyalty = onChainRoyalties?.[1].reduce((total, royalty) => {
+      total += parseFloat(formatUnits(royalty, currency?.decimals))
+      return total
+    }, 0)
+    if (totalRoyalty) {
+      return (totalRoyalty / 1) * 10000
+    }
+    return 0
+  }, [onChainRoyalties, chainCurrency])
+
+  if (enableOnChainRoyalties && onChainRoyaltyBps) {
+    royaltyBps = onChainRoyaltyBps
+  }
+
   const editListing = useCallback(() => {
     if (!signer) {
       const error = new Error('Missing a signer')
@@ -181,6 +248,12 @@ export const EditListingModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (!isOracleOrder) {
+      const error = new Error('Not an oracle order')
+      setTransactionError(error)
+      throw error
+    }
+
     setTransactionError(null)
 
     let expirationTime: string | null = null
@@ -192,46 +265,45 @@ export const EditListingModalRenderer: FC<Props> = ({
         .toString()
     }
 
-    let reservoirMarket = marketplaces[0]
+    let reservoir = marketplaces[0]
 
     const listing: Listings[0] = {
       token: `${contract}:${tokenId}`,
-      // weiPrice: parseUnits(`${+reservoirMarket.price}`, currency?.decimals)
-      weiPrice: parseUnits(`${300}`, currency?.decimals)
+      weiPrice: parseUnits(`${price}`, currency?.decimals)
         .mul(quantity)
         .toString(),
       //@ts-ignore
-      orderbook: reservoirMarket.orderbook,
+      orderbook: reservoir.orderbook,
       //@ts-ignore
-      orderKind: reservoirMarket.orderKind,
+      orderKind: reservoir.orderKind,
     }
 
-    // if (
-    //   enableOnChainRoyalties &&
-    //   onChainRoyalties &&
-    //   listing.orderKind === 'seaport'
-    // ) {
-    //   const royalties = onChainRoyalties.recipients.map((recipient, i) => {
-    //     const bps =
-    //       (parseFloat(
-    //         formatUnits(onChainRoyalties.amounts[i], currency.decimals)
-    //       ) /
-    //         1) *
-    //       10000
-    //     return `${recipient}:${bps}`
-    //   })
-    //   listing.automatedRoyalties = false
-    //   listing.fees = [...royalties]
-    //   if (
-    //     client.marketplaceFee &&
-    //     client.marketplaceFeeRecipient &&
-    //     listing.orderbook === 'reservoir'
-    //   ) {
-    //     listing.fees.push(
-    //       `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`
-    //     )
-    //   }
-    // }
+    if (
+      enableOnChainRoyalties &&
+      onChainRoyalties &&
+      listing.orderKind === 'seaport'
+    ) {
+      const royalties = onChainRoyalties.recipients.map((recipient, i) => {
+        const bps =
+          (parseFloat(
+            formatUnits(onChainRoyalties.amounts[i], currency?.decimals)
+          ) /
+            1) *
+          10000
+        return `${recipient}:${bps}`
+      })
+      listing.automatedRoyalties = false
+      listing.fees = [...royalties]
+      if (
+        client.marketplaceFee &&
+        client.marketplaceFeeRecipient &&
+        listing.orderbook === 'reservoir'
+      ) {
+        listing.fees.push(
+          `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`
+        )
+      }
+    }
 
     if (quantity > 1) {
       listing.quantity = quantity
@@ -245,7 +317,6 @@ export const EditListingModalRenderer: FC<Props> = ({
       listing.currency = currency.contract
     }
 
-    // Edit listing
     listing.options = {
       'seaport-v1.4': {
         useOffChainCancellation: true,
@@ -312,6 +383,9 @@ export const EditListingModalRenderer: FC<Props> = ({
           cause: error,
         })
         setTransactionError(transactionError)
+        setEditListingStep(EditListingStep.Edit)
+        setStepData(null)
+        setSteps(null)
       })
   }, [
     client,
@@ -322,95 +396,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     expirationOption,
     currency,
     quantity,
-    // enableOnChainRoyalties,
-    // onChainRoyalties,
   ])
-
-  const cancelOrder = useCallback(() => {
-    if (!signer) {
-      const error = new Error('Missing a signer')
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!listingId) {
-      const error = new Error('Missing list id to cancel')
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!client) {
-      const error = new Error('ReservoirClient was not initialized')
-      setTransactionError(error)
-      throw error
-    }
-
-    setEditListingStep(EditListingStep.Approving)
-
-    client.actions
-      .cancelOrder({
-        id: listingId,
-        signer,
-        onProgress: (steps: Execute['steps']) => {
-          if (!steps) {
-            return
-          }
-          setSteps(steps)
-
-          const executableSteps = steps.filter(
-            (step) => step.items && step.items.length > 0
-          )
-
-          let stepCount = executableSteps.length
-
-          let currentStepItem:
-            | NonNullable<Execute['steps'][0]['items']>[0]
-            | undefined
-
-          const currentStepIndex = executableSteps.findIndex((step) => {
-            currentStepItem = step.items?.find(
-              (item) => item.status === 'incomplete'
-            )
-            return currentStepItem
-          })
-
-          const currentStep =
-            currentStepIndex > -1
-              ? executableSteps[currentStepIndex]
-              : executableSteps[stepCount - 1]
-
-          if (currentStepItem) {
-            setStepData({
-              totalSteps: stepCount,
-              stepProgress: currentStepIndex,
-              currentStep,
-              currentStepItem,
-            })
-          } else if (
-            steps.every(
-              (step) =>
-                !step.items ||
-                step.items.length == 0 ||
-                step.items?.every((item) => item.status === 'complete')
-            )
-          ) {
-            setEditListingStep(EditListingStep.Complete)
-          }
-        },
-      })
-      .catch((e: any) => {
-        const error = e as Error
-        const message = 'Oops, something went wrong. Please try again.'
-        //@ts-ignore: Should be fixed in an update to typescript
-        const transactionError = new Error(message, {
-          cause: error,
-        })
-        setTransactionError(transactionError)
-        setEditListingStep(EditListingStep.Edit)
-        setStepData(null)
-        setSteps(null)
-      })
-  }, [listingId, client, signer])
 
   useEffect(() => {
     if (!open) {
@@ -424,22 +410,29 @@ export const EditListingModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
-        loading: isFetchingPage !== undefined ? isFetchingPage : true,
+        loading: !listing || !token || !collection,
         listing,
         tokenId,
         contract,
+        isOracleOrder,
+        currency,
         token,
+        price,
         quantityAvailable,
         collection,
         quantity,
-        setQuantity,
+        expirationOption,
+        expirationOptions,
         editListingStep,
         transactionError,
         usdPrice,
         totalUsd,
-        blockExplorerBaseUrl,
+        royaltyBps,
         steps,
         stepData,
+        setPrice,
+        setQuantity,
+        setExpirationOption,
         setEditListingStep,
         editListing,
       })}
