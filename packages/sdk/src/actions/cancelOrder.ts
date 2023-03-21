@@ -3,12 +3,12 @@ import { Signer } from 'ethers'
 import { executeSteps } from '../utils'
 import { getClient } from '.'
 
-type CancelOrderPathParameters =
+type CancelOrderBodyParameters =
   paths['/execute/cancel/v3']['post']['parameters']['body']
 
 export type CancelOrderOptions = Omit<
-  NonNullable<CancelOrderPathParameters['body']>,
-  'params'
+  NonNullable<CancelOrderBodyParameters['body']>,
+  'orderIds'
 >
 
 type Data = {
@@ -51,12 +51,9 @@ export async function cancelOrder(data: Data) {
         method: 'post',
         url: `${baseApiUrl}/execute/cancel/v3`,
         data: {
-          params: {
-            kind: 'orderIds',
-            data: { orderIds },
-          },
+          orderIds,
           ...options,
-        },
+        } as NonNullable<CancelOrderBodyParameters['body']>,
       },
       signer,
       onProgress
