@@ -6,7 +6,10 @@ import { getClient } from '.'
 type CancelOrdersPathParameters =
   paths['/execute/cancel/v3']['post']['parameters']['body']
 
-export type CancelOrdersOptions = Omit<NonNullable<CancelOrdersPathParameters['body']>, 'params'>
+export type CancelOrdersOptions = Omit<
+  NonNullable<CancelOrdersPathParameters['body']>,
+  'params'
+>
 
 type Data = {
   id?: string
@@ -36,9 +39,9 @@ export async function cancelOrder(data: Data) {
 
   const orderIds = id ? [...ids, id] : ids
 
-  if(orderIds.length === 0) {
+  if (orderIds.length === 0) {
     throw {
-      message: 'No order ids specified'
+      message: 'No order ids specified',
     }
   }
 
@@ -50,10 +53,10 @@ export async function cancelOrder(data: Data) {
         data: {
           params: {
             kind: 'orderIds',
-            data: { orderIds }
+            data: { orderIds },
           },
-          ...options
-        }
+          ...options,
+        },
       },
       signer,
       onProgress
