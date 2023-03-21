@@ -155,16 +155,6 @@ export const EditListingModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
   let royaltyBps = collection?.royalties?.bps
 
-  const [marketplaces, setMarketplaces] = useMarketplaces(true, royaltyBps)
-
-  useEffect(() => {
-    setMarketplaces(
-      marketplaces.filter(
-        (marketplace) => marketplace.orderbook === 'reservoir'
-      )
-    )
-  }, [marketplaces.length])
-
   useEffect(() => {
     if (!open) {
       setEditListingStep(EditListingStep.Edit)
@@ -261,44 +251,13 @@ export const EditListingModalRenderer: FC<Props> = ({
         .toString()
     }
 
-    let reservoir = marketplaces[0]
-
     const listing: Listings[0] = {
       token: `${contract}:${tokenId}`,
       weiPrice: parseUnits(`${price}`, currency?.decimals)
         .mul(quantity)
         .toString(),
-      //@ts-ignore
-      orderbook: reservoir.orderbook,
-      //@ts-ignore
-      orderKind: reservoir.orderKind,
-    }
-
-    if (
-      enableOnChainRoyalties &&
-      onChainRoyalties &&
-      listing.orderKind === 'seaport'
-    ) {
-      const royalties = onChainRoyalties.recipients.map((recipient, i) => {
-        const bps =
-          (parseFloat(
-            formatUnits(onChainRoyalties.amounts[i], currency?.decimals)
-          ) /
-            1) *
-          10000
-        return `${recipient}:${bps}`
-      })
-      listing.automatedRoyalties = false
-      listing.fees = [...royalties]
-      if (
-        client.marketplaceFee &&
-        client.marketplaceFeeRecipient &&
-        listing.orderbook === 'reservoir'
-      ) {
-        listing.fees.push(
-          `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`
-        )
-      }
+      orderbook: 'reservoir',
+      orderKind: 'seaport-v1.4',
     }
 
     if (quantity > 1) {
@@ -385,7 +344,6 @@ export const EditListingModalRenderer: FC<Props> = ({
       })
   }, [
     client,
-    marketplaces,
     signer,
     collectionId,
     tokenId,
