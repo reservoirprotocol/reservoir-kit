@@ -1,5 +1,5 @@
 import { useTokenActivity } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectKitButton } from 'connectkit'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { NextPage } from 'next'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
@@ -31,7 +31,7 @@ const Activity: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectKitButton />
+      <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Activity</h3>
       {activity.map((token, i) => (
         <pre>{JSON.stringify(token, null, 2)}</pre>

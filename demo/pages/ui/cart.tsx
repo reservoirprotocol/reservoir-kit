@@ -1,8 +1,12 @@
 import { NextPage } from 'next'
-import { CartPopover, useDynamicTokens } from '@reservoir0x/reservoir-kit-ui'
+import {
+  CartPopover,
+  useDynamicTokens,
+  useReservoirClient,
+} from '@reservoir0x/reservoir-kit-ui'
 import { useState } from 'react'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { useModal } from 'connectkit'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -11,8 +15,10 @@ const DEFAULT_COLLECTION_ID =
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const CartPage: NextPage = () => {
-  const { setOpen } = useModal()
+  const { openConnectModal } = useConnectModal()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
+  const [orderId, setOrderId] = useState('')
+
   const {
     data: tokens,
     remove,
@@ -23,6 +29,7 @@ const CartPage: NextPage = () => {
           collection: collectionId,
           limit: 100,
           includeDynamicPricing: true,
+          includeQuantity: true,
         }
       : false
   )
@@ -43,7 +50,7 @@ const CartPage: NextPage = () => {
       <CartPopover
         trigger={<button>Cart</button>}
         onConnectWallet={() => {
-          setOpen(true)
+          openConnectModal?.()
         }}
       />
       <div>
@@ -55,6 +62,24 @@ const CartPage: NextPage = () => {
           onChange={(e) => setCollectionId(e.target.value)}
           style={{ width: 250 }}
         />
+      </div>
+      <div>
+        <label>Add by Order Id: </label>
+        <input
+          placeholder="Order Id"
+          type="text"
+          value={orderId}
+          onChange={(e) => setOrderId(e.target.value)}
+          style={{ width: 250 }}
+        />
+        <button
+          style={{ marginLeft: 10 }}
+          onClick={() => {
+            add([{ orderId: orderId }], Number(CHAIN_ID))
+          }}
+        >
+          Add to cart
+        </button>
       </div>
       {tokens.map((token) => {
         return (

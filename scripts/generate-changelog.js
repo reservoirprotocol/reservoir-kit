@@ -52,7 +52,8 @@ fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
           !commit.subject ||
           commit.subject.includes('changelog:') ||
           commit.subject.includes('chore:') ||
-          commit.subject.includes('wip:')
+          commit.subject.includes('wip:') ||
+          commit.subject.includes("Merge branch 'main' into")
         ) {
           return changelog
         }
