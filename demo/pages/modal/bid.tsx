@@ -26,6 +26,7 @@ const BidPage: NextPage = () => {
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
+  const [oracleEnabled, setOracleEnabled] = useState(false)
 
   const computeAttribute = () => {
     {
@@ -100,6 +101,16 @@ const BidPage: NextPage = () => {
           }}
         />
       </div>
+      <div>
+        <label>Oracle Enabled: </label>
+        <input
+          type="checkbox"
+          checked={oracleEnabled}
+          onChange={(e) => {
+            setOracleEnabled(e.target.checked)
+          }}
+        />
+      </div>
 
       <BidModal
         trigger={
@@ -123,6 +134,7 @@ const BidPage: NextPage = () => {
         tokenId={tokenId}
         attribute={attribute}
         normalizeRoyalties={normalizeRoyalties}
+        oracleEnabled={oracleEnabled}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onBidComplete={(data) => {
           console.log('Bid Complete', data)

@@ -92,6 +92,7 @@ type Props = {
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
+  oracleEnabled: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -111,6 +112,7 @@ export const BidModalRenderer: FC<Props> = ({
   collectionId,
   attribute,
   normalizeRoyalties,
+  oracleEnabled = false,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -297,6 +299,14 @@ export const BidModalRenderer: FC<Props> = ({
           .toString()
       } else {
         bid.expirationTime = `${expirationOption.relativeTime}`
+      }
+    }
+
+    if (oracleEnabled) {
+      bid.options = {
+        'seaport-v1.4': {
+          useOffChainCancellation: true,
+        },
       }
     }
 
