@@ -3,11 +3,11 @@ import { Signer } from 'ethers'
 import { executeSteps } from '../utils'
 import { getClient } from '.'
 
-type CancelOrdersPathParameters =
+type CancelOrderPathParameters =
   paths['/execute/cancel/v3']['post']['parameters']['body']
 
-export type CancelOrdersOptions = Omit<
-  NonNullable<CancelOrdersPathParameters['body']>,
+export type CancelOrderOptions = Omit<
+  NonNullable<CancelOrderPathParameters['body']>,
   'params'
 >
 
@@ -15,7 +15,7 @@ type Data = {
   id?: string
   ids?: string[]
   signer: Signer
-  options?: CancelOrdersOptions
+  options?: CancelOrderOptions
   onProgress: (steps: Execute['steps']) => any
 }
 
