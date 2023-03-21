@@ -12,8 +12,7 @@ export type CancelOrderOptions = Omit<
 >
 
 type Data = {
-  id?: string
-  ids?: string[]
+  ids: string[]
   signer: Signer
   options?: CancelOrderOptions
   onProgress: (steps: Execute['steps']) => any
@@ -21,14 +20,13 @@ type Data = {
 
 /**
  * Cancel offers or listings
- * @param data.id Id of the order to cancel
  * @param data.ids Ids of the orders to cancel
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.options Additional options to pass into the cancel request
  * @param data.onProgress Callback to update UI state has execution progresses
  */
 export async function cancelOrder(data: Data) {
-  const { id, ids = [], signer, onProgress } = data
+  const { ids, signer, onProgress } = data
   const client = getClient()
   const options = data.options || {}
   const baseApiUrl = client.currentChain()?.baseApiUrl
@@ -37,9 +35,8 @@ export async function cancelOrder(data: Data) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
   }
 
-  const orderIds = id ? [...ids, id] : ids
 
-  if (orderIds.length === 0) {
+  if (ids.length === 0) {
     throw {
       message: 'No order ids specified',
     }
@@ -51,7 +48,7 @@ export async function cancelOrder(data: Data) {
         method: 'post',
         url: `${baseApiUrl}/execute/cancel/v3`,
         data: {
-          orderIds,
+          orderIds: ids,
           ...options,
         } as NonNullable<CancelOrderBodyParameters['body']>,
       },

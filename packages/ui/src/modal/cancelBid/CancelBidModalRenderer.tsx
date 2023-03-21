@@ -104,7 +104,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
 
     client.actions
       .cancelOrder({
-        id: bidId,
+        ids: [bidId],
         signer,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
