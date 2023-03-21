@@ -4240,8 +4240,14 @@ export interface definitions {
     items: definitions["items"];
   };
   Model358: definitions["Model357"][];
+  Model359: {
+    message?: string;
+    orderId?: number;
+  };
+  Model360: definitions["Model359"][];
   getExecuteBuyV6Response: {
     steps?: definitions["Model358"];
+    errors?: definitions["Model360"];
     path?: definitions["Model115"];
   };
   /** @description Optional raw order to fill. */
@@ -4262,7 +4268,7 @@ export interface definitions {
       | "nftx";
     data: definitions["source"];
   };
-  Model359: {
+  Model361: {
     /** @description Token to buy. */
     token?: string;
     /**
@@ -4280,9 +4286,9 @@ export interface definitions {
     preferredOrderSource?: string;
   };
   /** @description List of items to buy. */
-  Model360: definitions["Model359"][];
-  Model361: {
-    items: definitions["Model360"];
+  Model362: definitions["Model361"][];
+  Model363: {
+    items: definitions["Model362"];
     /** @description Address of wallet filling. */
     taker: string;
     /** @description Address of wallet relaying the fill transaction. */
@@ -4329,7 +4335,7 @@ export interface definitions {
     /** @description Optional X2Y2 API key used for filling. */
     x2y2ApiKey?: string;
   };
-  Model362: {
+  Model364: {
     orderId?: string;
     contract?: string;
     tokenId?: string;
@@ -4341,22 +4347,28 @@ export interface definitions {
     buyInQuote?: number;
     buyInRawQuote?: string;
   };
-  Model363: definitions["Model362"][];
+  Model365: definitions["Model364"][];
   getExecuteBuyV7Response: {
     steps?: definitions["Model358"];
-    path?: definitions["Model363"];
+    errors?: definitions["Model360"];
+    path?: definitions["Model365"];
   };
-  Model364: string[];
-  Model365: {
-    orderIds: definitions["Model364"];
-  };
-  Model366: {
-    /** @enum {string} */
-    kind?: "orderIds";
-    data?: definitions["Model365"];
-  };
+  Model366: string[];
   Model367: {
-    params?: definitions["Model366"];
+    orderIds?: definitions["Model366"];
+    maker?: string;
+    /** @enum {string} */
+    orderKind?:
+      | "seaport"
+      | "seaport-v1.4"
+      | "looks-rare"
+      | "zeroex-v4-erc721"
+      | "zeroex-v4-erc1155"
+      | "universe"
+      | "rarible"
+      | "infinity"
+      | "flow";
+    token?: string;
     /** @description Optional. Set custom gas price */
     maxFeePerGas?: string;
     /** @description Optional. Set custom gas price */
@@ -5279,14 +5291,16 @@ export interface operations {
         collection?: string;
         /** Filter to a particular attribute. Note: Our docs do not support this parameter correctly. To test, you can use the following URL in your browser. Example: `https://api.reservoir.tools/sales/v4?collection=0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63&attributes[Type]=Original` or `https://api.reservoir.tools/sales/v4?collection=0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63&attributes[Type]=Original&attributes[Type]=Sibling` */
         attributes?: string;
+        /** Order the items are returned in the response. */
+        orderBy?: "price" | "time";
+        /** Order the items are returned in the response. */
+        sortDirection?: "asc" | "desc";
         /** Filter to a particular transaction. Example: `0x04654cc4c81882ed4d20b958e0eeb107915d75730110cce65333221439de6afc` */
         txHash?: string;
         /** Get events after a particular unix timestamp (inclusive) */
         startTimestamp?: number;
         /** Get events before a particular unix timestamp (inclusive) */
         endTimestamp?: number;
-        /** Order the items are returned in the response. */
-        sortDirection?: "asc" | "desc";
         /** Amount of items returned in response. */
         limit?: number;
         /** Use continuation token to request next offset of items. */
@@ -9287,7 +9301,7 @@ export interface operations {
   postExecuteBuyV7: {
     parameters: {
       body: {
-        body?: definitions["Model361"];
+        body?: definitions["Model363"];
       };
     };
     responses: {
