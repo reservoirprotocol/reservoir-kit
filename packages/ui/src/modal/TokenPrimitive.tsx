@@ -96,7 +96,7 @@ const TokenPrimitive: FC<Props> = ({
               >
                 {name ? name : collection}
               </Text>
-              {quantity && quantity > 1 ? (
+              {expires && quantity && quantity > 1 ? (
                 <Flex
                   css={{
                     p: '$1 ',
@@ -121,6 +121,24 @@ const TokenPrimitive: FC<Props> = ({
               </Text>
             )}
             {!!expires && <Text style="tiny">Expires {expires}</Text>}
+            {!expires && quantity && quantity > 1 ? (
+              <Flex
+                css={{
+                  p: '$1 ',
+                  background: '$neutralBgHover',
+                  borderRadius: 4,
+                  mr: 'auto',
+                }}
+              >
+                <Text
+                  style="tiny"
+                  color="base"
+                  css={{ minWidth: 'max-content' }}
+                >
+                  {quantity} items
+                </Text>
+              </Flex>
+            ) : null}
             {!expires && !quantity && royaltiesBps ? (
               <Text
                 style="body2"
