@@ -66,6 +66,7 @@ type ChildrenProps = {
   wrappedBalance?: ReturnType<typeof useBalance>['data']
   wrappedContractName: string
   wrappedContractAddress: string
+  amountToWrap: string
   uniswapConvertLink: string
   royaltyBps?: number
   expirationOptions: ExpirationOption[]
@@ -254,6 +255,14 @@ export const EditBidModalRenderer: FC<Props> = ({
   }, [traits])
 
   useEffect(() => {
+    //@ts-ignore
+    if (bid?.criteria?.kind == 'attribute' && bid?.criteria?.data.attribute) {
+      //@ts-ignore
+      setTrait(bid?.criteria?.data?.attribute)
+    }
+  }, [bid])
+
+  useEffect(() => {
     if (!open) {
       setEditBidStep(EditBidStep.Edit)
       setExpirationOption(expirationOptions[3])
@@ -289,7 +298,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     }
 
     if (!isOracleOrder) {
-      const error = new Error('Not an oracle offer')
+      const error = new Error('Not an oracle powered offer')
       setTransactionError(error)
       throw error
     }
@@ -407,7 +416,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
-        loading: !bid || !token || !collection,
+        loading: !bid || !collection,
         bid,
         attributes,
         trait,
@@ -427,6 +436,7 @@ export const EditBidModalRenderer: FC<Props> = ({
         wrappedBalance,
         wrappedContractName,
         wrappedContractAddress,
+        amountToWrap,
         uniswapConvertLink,
         royaltyBps,
         expirationOptions,

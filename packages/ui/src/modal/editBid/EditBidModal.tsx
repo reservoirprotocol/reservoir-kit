@@ -20,6 +20,8 @@ import {
   Popover,
   FormatCryptoCurrency,
 } from '../../primitives'
+import PseudoInput from '../../primitives/PseudoInput'
+import AttributeSelector from '../bid/AttributeSelector'
 import { EditBidModalRenderer, EditBidStep } from './EditBidModalRenderer'
 import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
@@ -31,8 +33,6 @@ import {
   faCircleExclamation,
   faClose,
 } from '@fortawesome/free-solid-svg-icons'
-import InfoTooltip from '../../primitives/InfoTooltip'
-import { constants } from 'ethers'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
@@ -53,7 +53,6 @@ export function EditBidModal({
   collectionId,
   trigger,
   normalizeRoyalties,
-  enableOnChainRoyalties = false,
   onClose,
   onEditBidComplete,
   onEditBidError,
@@ -77,16 +76,16 @@ export function EditBidModal({
         attributes,
         trait,
         tokenId,
-        contract,
         isOracleOrder,
         bidAmount,
+        bidAmountUsd,
         token,
-        currency,
         collection,
         editBidStep,
         transactionError,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        amountToWrap,
         balance,
         wrappedBalance,
         wrappedContractName,
@@ -96,12 +95,10 @@ export function EditBidModal({
         expirationOptions,
         expirationOption,
         usdPrice,
-        steps,
         stepData,
         setTrait,
         setBidAmount,
         setExpirationOption,
-        setEditBidStep,
         editBid,
       }) => {
         const [attributeSelectorOpen, setAttributeSelectorOpen] =
@@ -111,6 +108,13 @@ export function EditBidModal({
         const tokenCount = collection?.tokenCount
           ? +collection.tokenCount
           : undefined
+
+        const itemImage =
+          token && token.token?.image
+            ? token.token?.image
+            : (collection?.image as string)
+
+        const previousBidsExpiration = useTimeSince(bid?.expiration)
 
         useEffect(() => {
           if (editBidStep === EditBidStep.Complete && onEditBidComplete) {
@@ -132,6 +136,30 @@ export function EditBidModal({
           }
         }, [transactionError])
 
+        useEffect(() => {
+          if (open && attributes && !tokenId) {
+            let attributeCount = 0
+            for (let i = 0; i < attributes.length; i++) {
+              attributeCount += attributes[i].attributeCount || 0
+              if (attributeCount >= 2000) {
+                break
+              }
+            }
+            if (attributeCount >= 2000) {
+              setAttributesSelectable(false)
+            } else {
+              setAttributesSelectable(true)
+            }
+          } else {
+            setAttributesSelectable(false)
+          }
+        }, [open, attributes])
+
+        const isBidAvailable = bid && bid.status === 'active' && !loading
+
+        const isBidEditable =
+          bid && bid.status === 'active' && !loading && isOracleOrder
+
         return (
           <Modal
             trigger={trigger}
@@ -149,7 +177,29 @@ export function EditBidModal({
             }}
             loading={loading}
           >
-            {!loading && editBidStep === EditBidStep.Edit && (
+            {!isBidAvailable && !loading && (
+              <Flex
+                direction="column"
+                justify="center"
+                css={{ px: '$4', py: '$6' }}
+              >
+                <Text style="h6" css={{ textAlign: 'center' }}>
+                  Selected offer is no longer available
+                </Text>
+              </Flex>
+            )}
+            {!isBidEditable && isBidAvailable && (
+              <Flex
+                direction="column"
+                justify="center"
+                css={{ px: '$4', py: '$6' }}
+              >
+                <Text style="h6" css={{ textAlign: 'center' }}>
+                  Selected offer is not an oracle order, so cannot be edited.
+                </Text>
+              </Flex>
+            )}
+            {isBidEditable && editBidStep === EditBidStep.Edit && (
               <Flex direction="column">
                 {transactionError && (
                   <Flex
@@ -173,18 +223,19 @@ export function EditBidModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    img={token?.token?.image}
+                    img={itemImage}
                     name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
                     priceSubtitle="Price"
                     royaltiesBps={royaltyBps}
-                    usdPrice={bid?.price?.amount?.decimal * usdPrice}
+                    usdPrice={
+                      (bid?.price?.amount?.decimal as number) * (usdPrice || 0)
+                    }
                     collection={bid?.criteria?.data?.collection?.name || ''}
                     currencyContract={bid?.price?.currency?.contract}
                     currencyDecimals={bid?.price?.currency?.decimals}
-                    // expires={expires}
+                    expires={previousBidsExpiration}
                     source={(bid?.source?.icon as string) || ''}
-                    quantity={bid?.quantityRemaining}
                   />
                 </Box>
                 <Flex direction="column" css={{ px: '$4', py: '$2' }}>
@@ -246,15 +297,19 @@ export function EditBidModal({
                       minHeight: 15,
                     }}
                     style="tiny"
-                    amount={bidAmount}
-                    // amount={bidAmountUsd}
+                    amount={bidAmountUsd}
                   />
                   {attributes &&
                     attributes.length > 0 &&
                     (attributesSelectable || trait) &&
                     !tokenId && (
-                      <>
-                        <Text as={Box} css={{ mb: '$2' }} style="tiny">
+                      <Flex direction="column" css={{ mb: '$3' }}>
+                        <Text
+                          as="div"
+                          css={{ mb: '$2' }}
+                          style="subtitle2"
+                          color="subtle"
+                        >
                           Attributes
                         </Text>
                         <Popover.Root
@@ -349,7 +404,7 @@ export function EditBidModal({
                             />
                           </Popover.Content>
                         </Popover.Root>
-                      </>
+                      </Flex>
                     )}
                   <Box css={{ mb: '$3' }}>
                     <Text
@@ -378,28 +433,75 @@ export function EditBidModal({
                       ))}
                     </Select>
                   </Box>
+
                   <Flex
                     css={{
                       gap: '$3',
                       py: '$3',
                     }}
                   >
-                    <Button
-                      onClick={() => {
-                        setOpen(false)
-                      }}
-                      color="secondary"
-                      css={{ flex: 1 }}
-                    >
-                      Close
-                    </Button>
-                    <Button
-                      disabled={bidAmount === undefined || bidAmount === '0'}
-                      onClick={editBid}
-                      css={{ flex: 1 }}
-                    >
-                      Confirm
-                    </Button>
+                    {hasEnoughWrappedCurrency ? (
+                      <>
+                        <Button
+                          onClick={() => {
+                            setOpen(false)
+                          }}
+                          color="secondary"
+                          css={{ flex: 1 }}
+                        >
+                          Close
+                        </Button>
+                        <Button
+                          disabled={bidAmount === '' || bidAmount === '0'}
+                          onClick={editBid}
+                          css={{ flex: 1 }}
+                        >
+                          Confirm
+                        </Button>
+                      </>
+                    ) : (
+                      <Box css={{ width: '100%', mt: 'auto' }}>
+                        {!hasEnoughNativeCurrency && (
+                          <Flex css={{ gap: '$2', mt: 10 }} justify="center">
+                            <Text style="body2" color="error">
+                              {balance?.symbol || 'ETH'} Balance
+                            </Text>
+                            <FormatCryptoCurrency amount={balance?.value} />
+                          </Flex>
+                        )}
+                        <Flex
+                          css={{
+                            gap: '$2',
+                            mt: 10,
+                            overflow: 'hidden',
+                            flexDirection: 'column-reverse',
+                            '@bp1': {
+                              flexDirection: 'row',
+                            },
+                          }}
+                        >
+                          <Button
+                            css={{ flex: '1 0 auto' }}
+                            color="secondary"
+                            onClick={() => {
+                              window.open(uniswapConvertLink, '_blank')
+                            }}
+                          >
+                            Convert Manually
+                          </Button>
+                          <Button
+                            css={{ flex: 1, maxHeight: 44 }}
+                            disabled={!hasEnoughNativeCurrency}
+                            onClick={editBid}
+                          >
+                            <Text style="h6" color="button" ellipsify>
+                              Convert {amountToWrap} {balance?.symbol || 'ETH'}{' '}
+                              for me
+                            </Text>
+                          </Button>
+                        </Flex>
+                      </Box>
+                    )}
                   </Flex>
                 </Flex>
               </Flex>
@@ -407,18 +509,17 @@ export function EditBidModal({
             {editBidStep === EditBidStep.Approving && (
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
-                  {/* <TokenPrimitive
-                    img={token?.token?.image}
-                    name={token?.token?.name}
-                    price={profit}
-                    usdPrice={updatedTotalUsd}
+                  <TokenPrimitive
+                    img={itemImage}
+                    name={bid?.criteria?.data?.token?.name}
+                    price={Number(bidAmount)}
+                    usdPrice={bidAmountUsd}
                     collection={collection?.name || ''}
-                    currencyContract={listing?.price?.currency?.contract}
-                    currencyDecimals={listing?.price?.currency?.decimals}
+                    currencyContract={bid?.price?.currency?.contract}
+                    currencyDecimals={bid?.price?.currency?.decimals}
                     expires={`in ${expirationOption.text.toLowerCase()}`}
-                    source={(listing?.source?.icon as string) || ''}
-                    quantity={quantity}
-                  /> */}
+                    source={(bid?.source?.icon as string) || ''}
+                  />
                 </Box>
                 {!stepData && <Loader css={{ height: 206 }} />}
                 {stepData && (
