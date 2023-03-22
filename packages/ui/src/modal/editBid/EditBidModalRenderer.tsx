@@ -288,11 +288,11 @@ export const EditBidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    // if (!isOracleOrder) {
-    //   const error = new Error('Not an oracle offer')
-    //   setTransactionError(error)
-    //   throw error
-    // }
+    if (!isOracleOrder) {
+      const error = new Error('Not an oracle offer')
+      setTransactionError(error)
+      throw error
+    }
 
     setTransactionError(null)
 
