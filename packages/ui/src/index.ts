@@ -50,6 +50,9 @@ export { CancelStep as CancelListingStep } from './modal/cancelListing/CancelLis
 export { EditBidModal } from './modal/editBid/EditBidModal'
 export { EditBidStep } from './modal/editBid/EditBidModalRenderer'
 
+export { EditListingModal } from './modal/editListing/EditListingModal'
+export { EditListingStep } from './modal/editListing/EditListingModalRenderer'
+
 export {
   default as TokenMedia,
   extractMediaType,

@@ -62,6 +62,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
+  oracleEnabled?: boolean
   onViewOffers?: () => void
   onClose?: (
     data: BidCallbackData,
@@ -114,6 +115,7 @@ export function BidModal({
   collectionId,
   attribute,
   normalizeRoyalties,
+  oracleEnabled = false,
   onViewOffers,
   onClose,
   onBidComplete,
@@ -143,6 +145,7 @@ export function BidModal({
       collectionId={collectionId}
       attribute={attribute}
       normalizeRoyalties={normalizeRoyalties}
+      oracleEnabled={oracleEnabled}
     >
       {({
         token,
@@ -538,68 +541,80 @@ export function BidModal({
                       }}
                     />
                   </Flex>
-                  {bidAmount === '' && (
-                    <Button disabled={true} css={{ width: '100%', mt: 'auto' }}>
-                      Enter a Price
-                    </Button>
-                  )}
-
-                  {bidAmount !== '' && hasEnoughWrappedCurrency && (
-                    <Button
-                      onClick={placeBid}
-                      css={{ width: '100%', mt: 'auto' }}
-                    >
-                      {token && token.token
-                        ? 'Make an Offer'
-                        : trait
-                        ? 'Make an Attribute Offer'
-                        : 'Make a Collection Offer'}
-                    </Button>
-                  )}
-
-                  {bidAmount !== '' && !hasEnoughWrappedCurrency && (
-                    <Box css={{ width: '100%', mt: 'auto' }}>
-                      {!hasEnoughNativeCurrency && (
-                        <Flex css={{ gap: '$2', mt: 10 }} justify="center">
-                          <Text style="body2" color="error">
-                            {balance?.symbol || 'ETH'} Balance
-                          </Text>
-                          <FormatCryptoCurrency amount={balance?.value} />
-                        </Flex>
-                      )}
-                      <Flex
+                  <Box css={{ width: '100%', mt: 'auto' }}>
+                    {oracleEnabled && (
+                      <Text
+                        style="body3"
+                        color="subtle"
                         css={{
-                          gap: '$2',
-                          mt: 10,
-                          overflow: 'hidden',
-                          flexDirection: 'column-reverse',
-                          '@bp1': {
-                            flexDirection: 'row',
-                          },
+                          mb: 10,
+                          textAlign: 'center',
+                          width: '100%',
+                          display: 'block',
                         }}
                       >
-                        <Button
-                          css={{ flex: '1 0 auto' }}
-                          color="secondary"
-                          onClick={() => {
-                            window.open(uniswapConvertLink, '_blank')
+                        You can change or cancel your offer for free on{' '}
+                        {localMarketplace?.title}.
+                      </Text>
+                    )}
+                    {bidAmount === '' && (
+                      <Button disabled={true} css={{ width: '100%' }}>
+                        Enter a Price
+                      </Button>
+                    )}
+                    {bidAmount !== '' && hasEnoughWrappedCurrency && (
+                      <Button onClick={placeBid} css={{ width: '100%' }}>
+                        {token && token.token
+                          ? 'Make an Offer'
+                          : trait
+                          ? 'Make an Attribute Offer'
+                          : 'Make a Collection Offer'}
+                      </Button>
+                    )}
+                    {bidAmount !== '' && !hasEnoughWrappedCurrency && (
+                      <>
+                        {!hasEnoughNativeCurrency && (
+                          <Flex css={{ gap: '$2', mt: 10 }} justify="center">
+                            <Text style="body2" color="error">
+                              {balance?.symbol || 'ETH'} Balance
+                            </Text>
+                            <FormatCryptoCurrency amount={balance?.value} />
+                          </Flex>
+                        )}
+                        <Flex
+                          css={{
+                            gap: '$2',
+                            mt: 10,
+                            overflow: 'hidden',
+                            flexDirection: 'column-reverse',
+                            '@bp1': {
+                              flexDirection: 'row',
+                            },
                           }}
                         >
-                          Convert Manually
-                        </Button>
-                        <Button
-                          css={{ flex: 1, maxHeight: 44 }}
-                          disabled={!hasEnoughNativeCurrency}
-                          onClick={placeBid}
-                        >
-                          <Text style="h6" color="button" ellipsify>
-                            Convert {amountToWrap} {balance?.symbol || 'ETH'}{' '}
-                            for me
-                          </Text>
-                        </Button>
-                      </Flex>
-                    </Box>
-                  )}
+                          <Button
+                            css={{ flex: '1 0 auto' }}
+                            color="secondary"
+                            onClick={() => {
+                              window.open(uniswapConvertLink, '_blank')
+                            }}
+                          >
+                            Convert Manually
+                          </Button>
+                          <Button
+                            css={{ flex: 1, maxHeight: 44 }}
+                            disabled={!hasEnoughNativeCurrency}
+                            onClick={placeBid}
+                          >
+                            <Text style="h6" color="button" ellipsify>
+                              Convert {amountToWrap} {balance?.symbol || 'ETH'}{' '}
+                              for me
+                            </Text>
+                          </Button>
+                        </Flex>
+                      </>
+                    )}
+                  </Box>
                 </MainContainer>
               </ContentContainer>
             )}

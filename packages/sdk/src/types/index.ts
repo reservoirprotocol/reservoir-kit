@@ -17,7 +17,11 @@ export type Execute = {
       status: 'complete' | 'incomplete'
       data?: any
       txHash?: string
-      orderId?: string
+      orderData?: {
+        crossPostingOrderId?: string
+        orderId: string
+        orderIndex: string
+      }[]
       orderIndexes?: number[]
     }[]
   }[]

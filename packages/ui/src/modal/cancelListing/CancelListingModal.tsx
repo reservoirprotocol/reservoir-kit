@@ -14,6 +14,7 @@ import {
   faCircleExclamation,
   faGasPump,
 } from '@fortawesome/free-solid-svg-icons'
+import zoneAddresses from '../../constants/zoneAddresses'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
@@ -23,11 +24,6 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
 }
-
-const zoneAddresses = [
-  '0xe1066481cc3b038badd0c68dfa5c8f163c3ff192', // Ethereum - 0xe1...92
-  '0x49b91d1d7b9896d28d370b75b92c2c78c1ac984a', // Goerli Address - 0x49...4a
-]
 
 export function CancelListingModal({
   openState,

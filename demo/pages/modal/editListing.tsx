@@ -1,8 +1,8 @@
 import { NextPage } from 'next'
-import { BidModal } from '@reservoir0x/reservoir-kit-ui'
+import { EditListingModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { ComponentPropsWithoutRef, useState } from 'react'
+import { useState, useEffect } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 
@@ -14,32 +14,22 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
 
-const BidPage: NextPage = () => {
+const EditListingPage: NextPage = () => {
   const router = useRouter()
-  const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
-  const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
-  const [attributeKey, setAttributeKey] = useState('')
-  const [attributeValue, setAttributeValue] = useState('')
-  const [attribute, setAttribute] =
-    useState<ComponentPropsWithoutRef<typeof BidModal>['attribute']>(undefined)
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
+  const [listingId, setListingId] = useState('')
+  const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
+  const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
-  const [oracleEnabled, setOracleEnabled] = useState(false)
 
-  const computeAttribute = () => {
-    {
-      if (attributeKey.length > 0 && attributeValue.length > 0) {
-        setAttribute({
-          key: attributeKey,
-          value: attributeValue,
-        })
-      } else {
-        setAttribute(undefined)
-      }
-    }
-  }
+  useEffect(() => {
+    const prefilledListingId = router.query.listingId
+      ? (router.query.listingId as string)
+      : ''
+    setListingId(prefilledListingId)
+  }, [router.query])
 
   return (
     <div
@@ -55,7 +45,16 @@ const BidPage: NextPage = () => {
       }}
     >
       <ConnectButton />
-
+      <div>
+        <label>Listing Id: </label>
+        <input
+          type="text"
+          value={listingId}
+          onChange={(e) => setListingId(e.target.value)}
+          placeholder="Enter a listing id or set a listingId query param"
+          style={{ width: 250 }}
+        />
+      </div>
       <div>
         <label>Collection Id: </label>
         <input
@@ -72,24 +71,6 @@ const BidPage: NextPage = () => {
           onChange={(e) => setTokenId(e.target.value)}
         />
       </div>
-      <div>
-        <label>Attribute Key: </label>
-        <input
-          type="text"
-          value={attributeKey}
-          onChange={(e) => setAttributeKey(e.target.value)}
-          onBlur={computeAttribute}
-        />
-      </div>
-      <div>
-        <label>Attribute Value: </label>
-        <input
-          type="text"
-          value={attributeValue}
-          onChange={(e) => setAttributeValue(e.target.value)}
-          onBlur={computeAttribute}
-        />
-      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -101,18 +82,8 @@ const BidPage: NextPage = () => {
           }}
         />
       </div>
-      <div>
-        <label>Oracle Enabled: </label>
-        <input
-          type="checkbox"
-          checked={oracleEnabled}
-          onChange={(e) => {
-            setOracleEnabled(e.target.checked)
-          }}
-        />
-      </div>
 
-      <BidModal
+      <EditListingModal
         trigger={
           <button
             style={{
@@ -127,26 +98,22 @@ const BidPage: NextPage = () => {
               cursor: 'pointer',
             }}
           >
-            Place Bid
+            Edit Listing
           </button>
         }
-        collectionId={collectionId}
-        tokenId={tokenId}
-        attribute={attribute}
-        normalizeRoyalties={normalizeRoyalties}
-        oracleEnabled={oracleEnabled}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
-        onBidComplete={(data) => {
-          console.log('Bid Complete', data)
+        listingId={listingId}
+        tokenId={tokenId}
+        collectionId={collectionId}
+        normalizeRoyalties={normalizeRoyalties}
+        onEditListingComplete={(data: any) => {
+          console.log('Listing updated', data)
         }}
-        onBidError={(error, data) => {
-          console.log('Bid Transaction Error', error, data)
+        onEditListingError={(error: any, data: any) => {
+          console.log('Edit Listing Error', error, data)
         }}
         onClose={() => {
-          console.log('BidModal Closed')
-        }}
-        onViewOffers={() => {
-          console.log('On View offers clicked')
+          console.log('EditListingModal Closed')
         }}
       />
       <ThemeSwitcher />
@@ -154,4 +121,4 @@ const BidPage: NextPage = () => {
   )
 }
 
-export default BidPage
+export default EditListingPage
