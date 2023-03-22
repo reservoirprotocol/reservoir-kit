@@ -130,12 +130,8 @@ const TokenPrimitive: FC<Props> = ({
                   mr: 'auto',
                 }}
               >
-                <Text
-                  style="tiny"
-                  color="base"
-                  css={{ minWidth: 'max-content' }}
-                >
-                  {quantity} items
+                <Text style="tiny" color="base">
+                  {quantity} {quantity > 1 ? 'items' : 'item'}
                 </Text>
               </Flex>
             ) : null}
