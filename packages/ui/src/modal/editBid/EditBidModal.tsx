@@ -6,7 +6,20 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { Flex, Text, Box, Button, Loader, Select } from '../../primitives'
+import {
+  Flex,
+  Text,
+  Box,
+  Button,
+  Loader,
+  Select,
+  CryptoCurrencyIcon,
+  Input,
+  FormatCurrency,
+  FormatWrappedCurrency,
+  Popover,
+  FormatCryptoCurrency,
+} from '../../primitives'
 import { EditBidModalRenderer, EditBidStep } from './EditBidModalRenderer'
 import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
@@ -14,9 +27,10 @@ import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
+  faChevronDown,
   faCircleExclamation,
+  faClose,
 } from '@fortawesome/free-solid-svg-icons'
-// import PriceInput from '../'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { constants } from 'ethers'
 
@@ -93,6 +107,7 @@ export function EditBidModal({
         const [attributeSelectorOpen, setAttributeSelectorOpen] =
           useState(false)
 
+        const [attributesSelectable, setAttributesSelectable] = useState(false)
         const tokenCount = collection?.tokenCount
           ? +collection.tokenCount
           : undefined
@@ -163,7 +178,7 @@ export function EditBidModal({
                     price={bid?.price?.amount?.decimal}
                     priceSubtitle="Price"
                     royaltiesBps={royaltyBps}
-                    // usdPrice={totalUsd}
+                    usdPrice={bid?.price?.amount?.decimal * usdPrice}
                     collection={bid?.criteria?.data?.collection?.name || ''}
                     currencyContract={bid?.price?.currency?.contract}
                     currencyDecimals={bid?.price?.currency?.decimals}
@@ -177,24 +192,166 @@ export function EditBidModal({
                     <Text style="subtitle2" color="subtle" as="p">
                       Set New Offer
                     </Text>
+                    {wrappedBalance?.value ? (
+                      <Text
+                        as={Flex}
+                        css={{ gap: '$1' }}
+                        align="center"
+                        style="tiny"
+                      >
+                        Balance:{' '}
+                        <FormatWrappedCurrency
+                          logoWidth={10}
+                          textStyle="tiny"
+                          amount={wrappedBalance?.value}
+                        />{' '}
+                      </Text>
+                    ) : null}
                   </Flex>
-                  <Flex direction="column" css={{ gap: '$2' }}>
-                    {/* <PriceInput
-                      price={bidAmount}
-                      collection={collection}
-                      currency={currency}
-                      usdPrice={usdPrice}
+                  <Flex css={{ gap: '$2' }}>
+                    <Text
+                      as={Flex}
+                      css={{ gap: '$2', flexShrink: 0 }}
+                      align="center"
+                      style="body1"
+                      color="subtle"
+                    >
+                      <CryptoCurrencyIcon
+                        css={{ height: 20 }}
+                        address={wrappedContractAddress}
+                      />
+                      {wrappedContractName}
+                    </Text>
+                    <Input
+                      type="number"
+                      value={bidAmount}
                       onChange={(e) => {
                         setBidAmount(e.target.value)
                       }}
-                      onBlur={() => {
-                        if (bidAmount === undefined) {
-                          setBidAmount('')
-                        }
+                      placeholder="Enter price here"
+                      containerCss={{
+                        width: '100%',
                       }}
-                    /> */}
+                      css={{
+                        color: '$neutralText',
+                        textAlign: 'left',
+                      }}
+                    />
                   </Flex>
-                  <Box css={{ mb: '$3', mt: '$4' }}>
+                  <FormatCurrency
+                    css={{
+                      marginLeft: 'auto',
+                      mt: '$2',
+                      display: 'inline-block',
+                      minHeight: 15,
+                    }}
+                    style="tiny"
+                    amount={bidAmount}
+                    // amount={bidAmountUsd}
+                  />
+                  {attributes &&
+                    attributes.length > 0 &&
+                    (attributesSelectable || trait) &&
+                    !tokenId && (
+                      <>
+                        <Text as={Box} css={{ mb: '$2' }} style="tiny">
+                          Attributes
+                        </Text>
+                        <Popover.Root
+                          open={attributeSelectorOpen}
+                          onOpenChange={
+                            attributesSelectable
+                              ? setAttributeSelectorOpen
+                              : undefined
+                          }
+                        >
+                          <Popover.Trigger asChild>
+                            <PseudoInput>
+                              <Flex
+                                justify="between"
+                                css={{
+                                  gap: '$2',
+                                  alignItems: 'center',
+                                  color: '$neutralText',
+                                }}
+                              >
+                                {trait ? (
+                                  <>
+                                    <Box
+                                      css={{
+                                        maxWidth: 385,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      <Text color="accent" style="subtitle1">
+                                        {trait?.key}:{' '}
+                                      </Text>
+                                      <Text style="subtitle1">
+                                        {trait?.value}
+                                      </Text>
+                                    </Box>
+                                    <Flex
+                                      css={{
+                                        alignItems: 'center',
+                                        gap: '$2',
+                                      }}
+                                    >
+                                      {trait?.floorAskPrice && (
+                                        <Box css={{ flex: 'none' }}>
+                                          <FormatCryptoCurrency
+                                            amount={trait?.floorAskPrice}
+                                            maximumFractionDigits={2}
+                                            logoWidth={11}
+                                          />
+                                        </Box>
+                                      )}
+                                      <FontAwesomeIcon
+                                        style={{
+                                          cursor: 'pointer',
+                                        }}
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          setTrait(undefined)
+                                        }}
+                                        icon={faClose}
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </Flex>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Text
+                                      css={{
+                                        color: '$neutralText',
+                                      }}
+                                    >
+                                      All Attributes
+                                    </Text>
+                                    <FontAwesomeIcon
+                                      icon={faChevronDown}
+                                      width={16}
+                                      height={16}
+                                    />
+                                  </>
+                                )}
+                              </Flex>
+                            </PseudoInput>
+                          </Popover.Trigger>
+                          <Popover.Content sideOffset={-50}>
+                            <AttributeSelector
+                              attributes={attributes}
+                              tokenCount={tokenCount}
+                              setTrait={setTrait}
+                              setOpen={setAttributeSelectorOpen}
+                            />
+                          </Popover.Content>
+                        </Popover.Root>
+                      </>
+                    )}
+                  <Box css={{ mb: '$3' }}>
                     <Text
                       as="div"
                       css={{ mb: '$2' }}

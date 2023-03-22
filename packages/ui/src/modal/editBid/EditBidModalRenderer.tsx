@@ -52,6 +52,7 @@ type ChildrenProps = {
   contract?: string
   isOracleOrder: boolean
   bidAmount: string
+  bidAmountUsd: number
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   currency: NonNullable<
     NonNullable<ReturnType<typeof useListings>['data']>[0]['price']
@@ -99,7 +100,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   children,
 }) => {
   const { data: signer } = useSigner()
-  const account = useAccount()
+  // const account = useAccount()
   const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<EditBidStepData | null>(null)
@@ -287,11 +288,11 @@ export const EditBidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (!isOracleOrder) {
-      const error = new Error('Not an oracle offer')
-      setTransactionError(error)
-      throw error
-    }
+    // if (!isOracleOrder) {
+    //   const error = new Error('Not an oracle offer')
+    //   setTransactionError(error)
+    //   throw error
+    // }
 
     setTransactionError(null)
 
@@ -414,6 +415,7 @@ export const EditBidModalRenderer: FC<Props> = ({
         contract,
         isOracleOrder,
         bidAmount,
+        bidAmountUsd,
         token,
         currency,
         collection,

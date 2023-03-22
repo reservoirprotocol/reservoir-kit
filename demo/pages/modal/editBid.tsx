@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { EditBidModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { ComponentPropsWithoutRef, useState } from 'react'
+import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 
