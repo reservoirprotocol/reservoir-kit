@@ -75,8 +75,8 @@ export function EditBidModal({
         bid,
         attributes,
         trait,
-        tokenId,
         isOracleOrder,
+        isTokenBid,
         bidAmount,
         bidAmountUsd,
         token,
@@ -109,10 +109,9 @@ export function EditBidModal({
           ? +collection.tokenCount
           : undefined
 
-        const itemImage =
-          token && token.token?.image
-            ? token.token?.image
-            : (collection?.image as string)
+        const itemImage = isTokenBid
+          ? bid?.criteria?.data?.token?.image || token?.token?.image
+          : bid?.criteria?.data?.collection?.image || collection?.image
 
         const previousBidsExpiration = useTimeSince(bid?.expiration)
 
@@ -137,7 +136,7 @@ export function EditBidModal({
         }, [transactionError])
 
         useEffect(() => {
-          if (open && attributes && !tokenId) {
+          if (open && attributes) {
             let attributeCount = 0
             for (let i = 0; i < attributes.length; i++) {
               attributeCount += attributes[i].attributeCount || 0
@@ -302,7 +301,7 @@ export function EditBidModal({
                   {attributes &&
                     attributes.length > 0 &&
                     (attributesSelectable || trait) &&
-                    !tokenId && (
+                    !isTokenBid && (
                       <Flex direction="column" css={{ mb: '$3' }}>
                         <Text
                           as="div"

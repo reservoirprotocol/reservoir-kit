@@ -51,6 +51,7 @@ type ChildrenProps = {
   tokenId?: string
   contract?: string
   isOracleOrder: boolean
+  isTokenBid: boolean
   bidAmount: string
   bidAmountUsd: number
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
@@ -101,7 +102,6 @@ export const EditBidModalRenderer: FC<Props> = ({
   children,
 }) => {
   const { data: signer } = useSigner()
-  // const account = useAccount()
   const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<EditBidStepData | null>(null)
@@ -191,8 +191,10 @@ export const EditBidModalRenderer: FC<Props> = ({
         }&inputCurrency=eth&outputCurrency=${contractAddress}`
       : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
 
+  const isTokenBid = bid?.criteria?.kind == 'token'
+
   const { data: traits } = useAttributes(
-    open && !tokenId ? collectionId : undefined
+    open && !isTokenBid ? collectionId : undefined
   )
 
   const { data: collections } = useCollections(
@@ -322,7 +324,7 @@ export const EditBidModalRenderer: FC<Props> = ({
       attributeValue: trait?.value,
     }
 
-    if (tokenId && collectionId) {
+    if (isTokenBid && tokenId && collectionId) {
       const contract = collectionId ? collectionId?.split(':')[0] : undefined
       bid.token = `${contract}:${tokenId}`
     } else if (collectionId) {
@@ -423,6 +425,7 @@ export const EditBidModalRenderer: FC<Props> = ({
         tokenId,
         contract,
         isOracleOrder,
+        isTokenBid,
         bidAmount,
         bidAmountUsd,
         token,
