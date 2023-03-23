@@ -22,7 +22,7 @@ import TokenLineItem from '../TokenLineItem'
 import {
   AcceptBidStep,
   AcceptBidModalRenderer,
-  StepData,
+  AcceptBidStepData,
 } from './AcceptBidModalRenderer'
 import Fees from './Fees'
 import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
@@ -44,11 +44,11 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onBidAccepted?: (data: BidData) => void
   onClose?: (
     data: BidData,
-    stepData: StepData | null,
+    stepData: AcceptBidStepData | null,
     currentStep: AcceptBidStep
   ) => void
   onBidAcceptError?: (error: Error, data: BidData) => void
-  onCurrentStepUpdate?: (data: StepData) => void
+  onCurrentStepUpdate?: (data: AcceptBidStepData) => void
 }
 
 function titleForStep(step: AcceptBidStep) {
@@ -193,7 +193,7 @@ export function AcceptBidModal({
                   warning={warning}
                   currency={bidAmountCurrency}
                   expires={expires}
-                  isOffer={true}
+                  priceSubtitle="Offer"
                   sourceImg={source?.icon ? (source.icon as string) : undefined}
                 />
                 <Button onClick={() => setOpen(false)} css={{ m: '$4' }}>
@@ -232,7 +232,7 @@ export function AcceptBidModal({
                   warning={warning}
                   currency={bidAmountCurrency}
                   expires={expires}
-                  isOffer={true}
+                  priceSubtitle="Offer"
                   sourceImg={source?.icon ? (source.icon as string) : undefined}
                 />
                 <Fees fees={fees} marketplace={marketplace.name} />
@@ -287,7 +287,7 @@ export function AcceptBidModal({
                     warning={warning}
                     currency={bidAmountCurrency}
                     expires={expires}
-                    isOffer={true}
+                    priceSubtitle="Offer"
                     sourceImg={
                       source?.icon ? (source.icon as string) : undefined
                     }

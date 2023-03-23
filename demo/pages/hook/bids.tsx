@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { useBids } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectKitButton } from 'connectkit'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
 
@@ -33,7 +33,7 @@ const Bids: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectKitButton />
+      <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Bids</h3>
       {bids.map((bid) => (
         <div key={bid?.id}>

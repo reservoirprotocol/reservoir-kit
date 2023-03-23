@@ -14,7 +14,7 @@ import {
   useBids,
 } from '../../hooks'
 import { useAccount, useSigner, useNetwork } from 'wagmi'
-import { Execute } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import Fees from './Fees'
 
 export enum AcceptBidStep {
@@ -26,7 +26,7 @@ export enum AcceptBidStep {
   Unavailable,
 }
 
-export type StepData = {
+export type AcceptBidStepData = {
   totalSteps: number
   currentStep: Execute['steps'][0]
   currentStepItem?: NonNullable<Execute['steps'][0]['items']>[0]
@@ -61,7 +61,7 @@ type ChildrenProps = {
   usdPrice: ReturnType<typeof useCoinConversion>
   address?: string
   etherscanBaseUrl: string
-  stepData: StepData | null
+  stepData: AcceptBidStepData | null
   acceptBid: () => void
   setAcceptBidStep: React.Dispatch<React.SetStateAction<AcceptBidStep>>
 }
@@ -84,7 +84,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   children,
 }) => {
   const { data: signer } = useSigner()
-  const [stepData, setStepData] = useState<StepData | null>(null)
+  const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [totalPrice, setTotalPrice] = useState(0)
   const [acceptBidStep, setAcceptBidStep] = useState<AcceptBidStep>(
     AcceptBidStep.Checkout
@@ -195,27 +195,31 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     const contract = collectionId.split(':')[0]
 
     type AcceptOfferOptions = Parameters<
-      typeof client.actions.acceptOffer
+      ReservoirClientActions['acceptOffer']
     >['0']['options']
-    let options: NonNullable<AcceptOfferOptions> = {}
+    let options: AcceptOfferOptions = {}
 
-    if (bidId) {
-      options = {
-        ...options,
-        orderId: bidId,
-      }
+    if (normalizeRoyalties !== undefined) {
+      options.normalizeRoyalties = normalizeRoyalties
     }
 
     setAcceptBidStep(AcceptBidStep.Confirming)
+
+    const item: Parameters<
+      ReservoirClientActions['acceptOffer']
+    >[0]['items'][0] = {
+      token: `${contract}:${tokenId}`,
+    }
+
+    if (bidId) {
+      item.orderId = bidId
+    }
 
     client.actions
       .acceptOffer({
         expectedPrice: totalPrice,
         signer,
-        token: {
-          tokenId: tokenId,
-          contract,
-        },
+        items: [item],
         onProgress: (steps: Execute['steps']) => {
           if (!steps) return
           const executableSteps = steps.filter(

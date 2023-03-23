@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { ConnectKitButton } from 'connectkit'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import Link from 'next/link'
 
@@ -16,7 +16,7 @@ const Index: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectKitButton mode="dark" />
+      <ConnectButton />
       <ThemeSwitcher />
 
       <h2>Modals</h2>
@@ -39,6 +39,9 @@ const Index: NextPage = () => {
         <Link href="/modal/cancelListing">
           <a>CancelListingModal</a>
         </Link>
+        <Link href="/modal/editListing">
+          <a>EditListingModal</a>
+        </Link>
       </nav>
       <h2>Hooks</h2>
       <nav style={{ display: 'flex', gap: 15 }}>
@@ -53,6 +56,9 @@ const Index: NextPage = () => {
         </Link>
         <Link href="/hook/listings">
           <a>useListings</a>
+        </Link>
+        <Link href="/hook/tokenActivity">
+          <a>useTokenActivity</a>
         </Link>
         <Link href="/hook/tokens">
           <a>useTokens</a>

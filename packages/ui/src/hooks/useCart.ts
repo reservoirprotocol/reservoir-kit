@@ -14,12 +14,21 @@ export default function useCart<SelectorOutput>(
     () => selector(cart.get()),
     () => selector(cart.get())
   )
-  const { clear, remove, add, validate, checkout, clearTransaction } = cart
+  const {
+    clear,
+    remove,
+    add,
+    validate,
+    checkout,
+    clearTransaction,
+    setQuantity,
+  } = cart
 
   return {
     data,
     clear,
     clearTransaction,
+    setQuantity,
     remove,
     add,
     validate,

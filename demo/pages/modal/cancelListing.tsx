@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { CancelListingModal } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectKitButton } from 'connectkit'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState, useEffect } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
@@ -38,7 +38,7 @@ const CancelListingPage: NextPage = () => {
         paddingTop: 150,
       }}
     >
-      <ConnectKitButton />
+      <ConnectButton />
       <div>
         <label>Listing Id: </label>
         <input

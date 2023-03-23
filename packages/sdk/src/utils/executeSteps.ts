@@ -7,6 +7,7 @@ import axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions/index'
 import { setParams } from './params'
 import { version } from '../../package.json'
+import { LogLevel } from '../utils/logger'
 
 /**
  * When attempting to perform actions, such as, selling a token or
@@ -28,14 +29,13 @@ export async function executeSteps(
   newJson?: Execute,
   expectedPrice?: number
 ) {
+  const client = getClient()
   try {
     let json = newJson
 
     if (!request.headers) {
       request.headers = {}
     }
-
-    const client = getClient()
     const currentReservoirChain = client?.currentChain()
     if (currentReservoirChain?.baseApiUrl) {
       request.baseURL = currentReservoirChain.baseApiUrl
@@ -49,9 +49,11 @@ export async function executeSteps(
     request.headers['x-rkc-version'] = version
 
     if (!json) {
+      client.log(['Execute Steps: Fetching Steps', request], LogLevel.Verbose)
       const res = await axios.request(request)
       json = res.data as Execute
       if (res.status !== 200) throw json
+      client.log(['Execute Steps: Steps retrieved', json], LogLevel.Verbose)
     }
 
     // Handle errors
@@ -62,11 +64,25 @@ export async function executeSteps(
 
     // Handle price changes to protect users from paying more
     // than expected when buying and selling for less than expected
-    if (json.path && expectedPrice) {
-      const quote = json.path.reduce((total, path) => {
-        total += path.quote || 0
+    const path = json.path as {
+      quote?: number //This is the quote, matching the order currency
+      buyInQuote?: number //This is the "Buy In" quote, when converting to a currency to buy an order in
+    }[]
+    if (path && expectedPrice) {
+      const quote = path.reduce((total: number, { quote, buyInQuote }) => {
+        total += buyInQuote || quote || 0
         return total
       }, 0)
+      client.log(
+        [
+          'Execute Steps: checking expected price',
+          'expected price',
+          expectedPrice,
+          'quote',
+          quote,
+        ],
+        LogLevel.Verbose
+      )
 
       // Check if the user is selling
       let error: null | Error | { type: string; message: string } = null
@@ -113,19 +129,36 @@ export async function executeSteps(
     })
 
     // There are no more incomplete steps
-    if (incompleteStepIndex === -1) return
+    if (incompleteStepIndex === -1) {
+      client.log(['Execute Steps: all steps complete'], LogLevel.Verbose)
+      return
+    }
 
     const step = json.steps[incompleteStepIndex]
     const stepItems = json.steps[incompleteStepIndex].items
 
-    if (!stepItems) return
+    if (!stepItems) {
+      client.log(
+        ['Execute Steps: skipping step, no items in step'],
+        LogLevel.Verbose
+      )
+      return
+    }
 
     let { kind } = step
     let stepItem = stepItems[incompleteStepItemIndex]
 
     // If step item is missing data, poll until it is ready
     if (!stepItem.data) {
+      client.log(
+        ['Execute Steps: step item data is missing, begin polling'],
+        LogLevel.Verbose
+      )
       json = (await pollUntilHasData(request, (json) => {
+        client.log(
+          ['Execute Steps: step item data is missing, polling', json],
+          LogLevel.Verbose
+        )
         const data = json as Execute
         return data?.steps?.[incompleteStepIndex].items?.[
           incompleteStepItemIndex
@@ -139,9 +172,11 @@ export async function executeSteps(
         !items ||
         !items[incompleteStepItemIndex] ||
         !items[incompleteStepItemIndex].data
-      )
+      ) {
         throw json
+      }
       stepItem = items[incompleteStepItemIndex]
+      setState([...json?.steps])
     }
 
     const stepData = stepItem.data
@@ -149,14 +184,27 @@ export async function executeSteps(
     switch (kind) {
       // Make an on-chain transaction
       case 'transaction': {
+        client.log(
+          ['Execute Steps: Begin transaction step, sending transaction'],
+          LogLevel.Verbose
+        )
         const tx = await signer.sendTransaction(stepData)
 
         if (json.steps[incompleteStepIndex].items?.[incompleteStepItemIndex]) {
           stepItem.txHash = tx.hash
         }
         setState([...json?.steps])
-
+        client.log(
+          ['Execute Steps: Transaction step, waiting on transaction'],
+          LogLevel.Verbose
+        )
         await tx.wait()
+        client.log(
+          [
+            'Execute Steps: Transaction finished, starting to poll for confirmation',
+          ],
+          LogLevel.Verbose
+        )
 
         //Implicitly poll the confirmation url to confirm the transaction went through
         const confirmationUrl = new URL(
@@ -179,7 +227,13 @@ export async function executeSteps(
             method: 'get',
             headers: headers,
           },
-          (res) => res && res.data.synced
+          (res) => {
+            client.log(
+              ['Execute Steps: Polling for confirmation', res],
+              LogLevel.Verbose
+            )
+            return res && res.data.synced
+          }
         )
 
         if (
@@ -189,6 +243,12 @@ export async function executeSteps(
         ) {
           //Confirm that on-chain tx has been picked up by the indexer for the last transaction
           if (stepItem.txHash && (isSell || isBuy)) {
+            client.log(
+              [
+                'Execute Steps: Polling sales to verify transaction was indexed',
+              ],
+              LogLevel.Verbose
+            )
             const indexerConfirmationUrl = new URL(
               `${request.baseURL}/sales/v3`
             )
@@ -204,6 +264,10 @@ export async function executeSteps(
                 headers: headers,
               },
               (res) => {
+                client.log(
+                  ['Execute Steps: Polling sales to check if indexed', res],
+                  LogLevel.Verbose
+                )
                 if (res.status === 200) {
                   const data =
                     res.data as paths['/sales/v3']['get']['responses']['200']['schema']
@@ -223,10 +287,11 @@ export async function executeSteps(
         let signature: string | undefined
         const signData = stepData['sign']
         const postData = stepData['post']
-
+        client.log(['Execute Steps: Begin signature step'], LogLevel.Verbose)
         if (signData) {
           // Request user signature
           if (signData.signatureKind === 'eip191') {
+            client.log(['Execute Steps: Signing with eip191'], LogLevel.Verbose)
             if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
               // If the message represents a hash, we need to convert it to raw bytes first
               signature = await signer.signMessage(arrayify(signData.message))
@@ -234,6 +299,7 @@ export async function executeSteps(
               signature = await signer.signMessage(signData.message)
             }
           } else if (signData.signatureKind === 'eip712') {
+            client.log(['Execute Steps: Signing with eip712'], LogLevel.Verbose)
             signature = await (
               signer as unknown as TypedDataSigner
             )._signTypedData(signData.domain, signData.types, signData.value)
@@ -248,6 +314,7 @@ export async function executeSteps(
         }
 
         if (postData) {
+          client.log(['Execute Steps: Posting order'], LogLevel.Verbose)
           const postOrderUrl = new URL(`${request.baseURL}${postData.endpoint}`)
 
           try {
@@ -277,7 +344,17 @@ export async function executeSteps(
 
             if (res.status > 299 || res.status < 200) throw res.data
 
-            stepItem.orderId = res.data.orderId
+            if (res.data.results) {
+              stepItem.orderData = res.data.results
+            } else if (res.data && res.data.orderId) {
+              stepItem.orderData = [
+                {
+                  orderId: res.data.orderId,
+                  crossPostingOrderId: res.data.crossPostingOrderId,
+                  orderIndex: res.data.orderIndex || 0,
+                },
+              ]
+            }
             setState([...json?.steps])
           } catch (err) {
             json.steps[incompleteStepIndex].error =
@@ -300,8 +377,7 @@ export async function executeSteps(
     // Recursively call executeSteps()
     await executeSteps(request, signer, setState, json)
   } catch (err: any) {
-    const error = new Error(err?.message)
-    console.error(error)
+    client.log(['Execute Steps: An error occurred', err], LogLevel.Error)
     throw err
   }
 }

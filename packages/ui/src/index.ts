@@ -11,6 +11,7 @@ export {
   useUsersActivity,
   useReservoirClient,
   useTokens,
+  useTokenActivity,
   useTokenOpenseaBanned,
   useListings,
   useOwnerListings,
@@ -45,6 +46,9 @@ export { CancelStep as CancelBidStep } from './modal/cancelBid/CancelBidModalRen
 
 export { CancelListingModal } from './modal/cancelListing/CancelListingModal'
 export { CancelStep as CancelListingStep } from './modal/cancelListing/CancelListingModalRenderer'
+
+export { EditListingModal } from './modal/editListing/EditListingModal'
+export { EditListingStep } from './modal/editListing/EditListingModalRenderer'
 
 export {
   default as TokenMedia,

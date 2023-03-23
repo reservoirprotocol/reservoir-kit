@@ -10,7 +10,11 @@ import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { useNetwork } from 'wagmi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCircleExclamation,
+  faGasPump,
+} from '@fortawesome/free-solid-svg-icons'
+import zoneAddresses from '../../constants/zoneAddresses'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
@@ -86,6 +90,13 @@ export function CancelListingModal({
           (listing.status === 'active' || listing.status === 'inactive') &&
           !loading
 
+        const orderZone = listing?.rawData?.zone
+        const orderKind = listing?.kind
+
+        const isOracleOrder =
+          orderKind === 'seaport-v1.4' &&
+          zoneAddresses.includes(orderZone as string)
+
         return (
           <Modal
             trigger={trigger}
@@ -154,10 +165,14 @@ export function CancelListingModal({
                   color="subtle"
                   css={{ mt: '$3', mr: '$3', ml: '$3', textAlign: 'center' }}
                 >
-                  This will cancel your listing. You will be asked to confirm
-                  this cancelation from your wallet.
+                  {!isOracleOrder
+                    ? 'This action will cancel your listing. You will be prompted to confirm this cancellation from your wallet. A gas fee is required.'
+                    : 'This will cancel your listing for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
                 <Button onClick={cancelOrder} css={{ m: '$4' }}>
+                  {!isOracleOrder && (
+                    <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
+                  )}
                   Continue to Cancel
                 </Button>
               </Flex>

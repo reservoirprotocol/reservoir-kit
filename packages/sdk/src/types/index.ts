@@ -4,8 +4,8 @@ export * from './api'
 export type Execute = {
   error?: string
   path:
-    | paths['/execute/buy/v3']['get']['responses']['200']['schema']['path']
-    | paths['/execute/sell/v3']['get']['responses']['200']['schema']['path']
+    | paths['/execute/buy/v7']['post']['responses']['200']['schema']['path']
+    | paths['/execute/sell/v7']['post']['responses']['200']['schema']['path']
   steps: {
     message?: string
     error?: string
@@ -17,7 +17,11 @@ export type Execute = {
       status: 'complete' | 'incomplete'
       data?: any
       txHash?: string
-      orderId?: string
+      orderData?: {
+        crossPostingOrderId?: string
+        orderId: string
+        orderIndex: string
+      }[]
       orderIndexes?: number[]
     }[]
   }[]

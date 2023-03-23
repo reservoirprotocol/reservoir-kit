@@ -7,7 +7,11 @@ import TokenPrimitive from '../../modal/TokenPrimitive'
 import Progress from '../Progress'
 import { useNetwork } from 'wagmi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCircleExclamation,
+  faGasPump,
+} from '@fortawesome/free-solid-svg-icons'
+import zoneAddresses from '../../constants/zoneAddresses'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
@@ -84,6 +88,13 @@ export function CancelBidModal({
           (bid.status === 'active' || bid.status === 'inactive') &&
           !loading
 
+        const orderZone = bid?.rawData?.zone
+        const orderKind = bid?.kind
+
+        const isOracleOrder =
+          orderKind === 'seaport-v1.4' &&
+          zoneAddresses.includes(orderZone as string)
+
         return (
           <Modal
             trigger={trigger}
@@ -145,7 +156,7 @@ export function CancelBidModal({
                     currencyDecimals={bid?.price?.currency?.decimals}
                     expires={expires}
                     source={(bid?.source?.icon as string) || ''}
-                    isOffer={true}
+                    priceSubtitle="Offer"
                   />
                 </Box>
                 <Text
@@ -153,10 +164,14 @@ export function CancelBidModal({
                   color="subtle"
                   css={{ mt: '$3', mr: '$3', ml: '$3', textAlign: 'center' }}
                 >
-                  This will cancel your offer. You will be asked to confirm this
-                  cancelation from your wallet.
+                  {!isOracleOrder
+                    ? 'This action will cancel your offer. You will be prompted to confirm this cancellation from your wallet. A gas fee is required.'
+                    : 'This will cancel your offer for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
                 <Button onClick={cancelOrder} css={{ m: '$4' }}>
+                  {!isOracleOrder && (
+                    <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
+                  )}
                   Continue to Cancel
                 </Button>
               </Flex>
@@ -174,7 +189,7 @@ export function CancelBidModal({
                     currencyDecimals={bid?.price?.currency?.decimals}
                     expires={expires}
                     source={(bid?.source?.icon as string) || ''}
-                    isOffer={true}
+                    priceSubtitle="Offer"
                   />
                 </Box>
                 {!stepData && <Loader css={{ height: 206 }} />}

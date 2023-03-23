@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/reservoir-sdk",
-    "version": "0.5.1",
+    "version": "0.6.5",
     "description": "An SDK that can be used in any javascript/typescript context to easily interact with Reservoir liquidity APIs",
     "source": "src/index.ts",
     "main": "dist/index.js",
@@ -15,7 +15,7 @@
         "clean": "rm -rf dist",
         "version": "yarn version",
         "version:package": "sh ../../scripts/package-version.sh",
-        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release client package v$PACKAGE_VERSION\"; git push",
+        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release client package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-SDK; git push --tags;",
         "syncApi": "node ./sync-api.mjs",
         "changelog": "node ../../scripts/generate-changelog.js package=sdk"
     },

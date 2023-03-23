@@ -25,7 +25,7 @@ export default function (
   const { data: cartPools } = useCart((cart) => cart.pools)
   const { data: cartChain } = useCart((cart) => cart.chain)
   const cartRequiresReordering = useMemo(
-    () => Object.values(cartPools).some((pool) => pool.itemCount > 1),
+    () => Object.values(cartPools).some((pool) => pool.itemCount > 0),
     [cartPools]
   )
   const itemsMap = useMemo(() => {
@@ -77,7 +77,10 @@ export default function (
         const nextPoolCartIndex = cartPools[poolId]
           ? cartPools[poolId].itemCount
           : 0
-        if (poolPrices && poolPrices[nextPoolCartIndex]) {
+
+        if (nextPoolCartIndex >= poolPrices.length) {
+          dynamicTokenData.market.floorAsk.price = undefined
+        } else if (poolPrices && poolPrices[nextPoolCartIndex]) {
           dynamicTokenData.market.floorAsk.price = poolPrices[nextPoolCartIndex]
         }
       }
@@ -89,21 +92,39 @@ export default function (
       (!options || !options.sortBy || options.sortBy === 'floorAskPrice')
     ) {
       dynamicTokens.sort((a, b) => {
-        const aPrice = a.market?.floorAsk?.price?.amount?.decimal || 0
-        const bPrice = b.market?.floorAsk?.price?.amount?.decimal || 0
-        if (
+        const aPrice = a.market?.floorAsk?.price?.amount?.decimal
+        const bPrice = b.market?.floorAsk?.price?.amount?.decimal
+
+        if (aPrice === undefined) {
+          return 1
+        } else if (bPrice === undefined) {
+          return -1
+        } else if (
           !options ||
           !options.sortDirection ||
           options.sortDirection === 'asc'
         ) {
           return aPrice - bPrice
         } else {
-          return aPrice + bPrice
+          return bPrice - aPrice
         }
       })
     }
   } else {
-    dynamicTokens = tokensResponse.data as DynamicTokens
+    dynamicTokens = tokensResponse.data.map((tokenData) => {
+      const floorAsk = tokenData?.market?.floorAsk
+      const isInPool = floorAsk?.dynamicPricing?.kind === 'pool'
+      const poolPrices = isInPool
+        ? (floorAsk?.dynamicPricing?.data
+            ?.prices as Cart['items'][0]['poolPrices'])
+        : undefined
+
+      if (tokenData.market?.floorAsk && poolPrices && poolPrices[0]) {
+        tokenData.market.floorAsk.price = poolPrices[0]
+      }
+
+      return tokenData
+    })
   }
 
   return {

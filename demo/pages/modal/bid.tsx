@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { BidModal } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectKitButton } from 'connectkit'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { ComponentPropsWithoutRef, PropsWithoutRef, useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
@@ -28,6 +28,7 @@ const BidPage: NextPage = () => {
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
+  const [oracleEnabled, setOracleEnabled] = useState(false)
 
   const computeAttribute = () => {
     {
@@ -55,7 +56,7 @@ const BidPage: NextPage = () => {
         paddingTop: 150,
       }}
     >
-      <ConnectKitButton />
+      <ConnectButton />
 
       <div>
         <label>Collection Id: </label>
@@ -123,6 +124,16 @@ const BidPage: NextPage = () => {
           }}
         />
       </div>
+      <div>
+        <label>Oracle Enabled: </label>
+        <input
+          type="checkbox"
+          checked={oracleEnabled}
+          onChange={(e) => {
+            setOracleEnabled(e.target.checked)
+          }}
+        />
+      </div>
 
       <BidModal
         trigger={
@@ -147,6 +158,7 @@ const BidPage: NextPage = () => {
         currency={currency ? currency : undefined}
         attribute={attribute}
         normalizeRoyalties={normalizeRoyalties}
+        oracleEnabled={oracleEnabled}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onBidComplete={(data) => {
           console.log('Bid Complete', data)

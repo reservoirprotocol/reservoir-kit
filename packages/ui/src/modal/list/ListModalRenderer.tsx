@@ -45,7 +45,7 @@ export type ListingData = {
   marketplace: Marketplace
 }
 
-export type StepData = {
+export type ListModalStepData = {
   totalSteps: number
   stepProgress: number
   currentStep: Execute['steps'][0]
@@ -63,10 +63,11 @@ type ChildrenProps = {
   marketplaces: Marketplace[]
   unapprovedMarketplaces: Marketplace[]
   isFetchingUnapprovedMarketplaces: boolean
+  isFetchingOnChainRoyalties: boolean
   localMarketplace: Marketplace | null
   listingData: ListingData[]
   transactionError?: Error | null
-  stepData: StepData | null
+  stepData: ListModalStepData | null
   currencies: Currency[]
   currency: Currency
   quantity: number
@@ -87,6 +88,7 @@ type Props = {
   currencies?: Currency[]
   normalizeRoyalties?: boolean
   enableOnChainRoyalties: boolean
+  oracleEnabled: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -122,6 +124,7 @@ export const ListModalRenderer: FC<Props> = ({
   currencies,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
+  oracleEnabled = false,
   children,
 }) => {
   const { data: signer } = useSigner()
@@ -132,7 +135,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [allMarketplaces] = useMarketplaces(true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [stepData, setStepData] = useState<StepData | null>(null)
+  const [stepData, setStepData] = useState<ListModalStepData | null>(null)
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
     null
   )
@@ -158,12 +161,13 @@ export const ListModalRenderer: FC<Props> = ({
     expirationOptions[5]
   )
 
-  const { data: onChainRoyalties } = useOnChainRoyalties({
-    contract,
-    tokenId,
-    chainId: chainCurrency.chainId,
-    enabled: enableOnChainRoyalties && open,
-  })
+  const { data: onChainRoyalties, isFetching: isFetchingOnChainRoyalties } =
+    useOnChainRoyalties({
+      contract,
+      tokenId,
+      chainId: chainCurrency.chainId,
+      enabled: enableOnChainRoyalties && open,
+    })
 
   let royaltyBps = collection?.royalties?.bps
 
@@ -225,7 +229,11 @@ export const ListModalRenderer: FC<Props> = ({
       ? Number(userTokens[0].ownership?.tokenCount || 1)
       : 1
 
-  const usdPrice = useCoinConversion(open ? 'USD' : undefined, currency.symbol)
+  const usdPrice = useCoinConversion(
+    open ? 'USD' : undefined,
+    currency.symbol,
+    currency.coinGeckoId
+  )
 
   const toggleMarketplace = (marketplace: Marketplace) => {
     const updatedMarketplaces = marketplaces.map((market) => {
@@ -430,6 +438,14 @@ export const ListModalRenderer: FC<Props> = ({
           listing.currency = currency.contract
         }
 
+        if (oracleEnabled) {
+          listing.options = {
+            'seaport-v1.4': {
+              useOffChainCancellation: true,
+            },
+          }
+        }
+
         listingData.push({
           listing,
           marketplace: market,
@@ -542,6 +558,7 @@ export const ListModalRenderer: FC<Props> = ({
         marketplaces,
         unapprovedMarketplaces,
         isFetchingUnapprovedMarketplaces,
+        isFetchingOnChainRoyalties,
         localMarketplace,
         listingData,
         transactionError,
