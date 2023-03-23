@@ -74,7 +74,8 @@ type ChildrenProps = {
   wrappedBalance?: ReturnType<typeof useBalance>['data']
   wrappedContractName: string
   wrappedContractAddress: string
-  uniswapConvertLink: string
+  canAutomaticallyConvert: boolean
+  convertLink: string
   transactionError?: Error | null
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
@@ -136,22 +137,21 @@ export const BidModalRenderer: FC<Props> = ({
   const [attributes, setAttributes] = useState<Traits>()
   const chainCurrency = useChainCurrency()
 
-  let wrappedContractAddress = ''
-  let wrappedContractName = ''
+  const nativeWrappedContractAddress =
+    chainCurrency.chainId in wrappedContracts
+      ? wrappedContracts[chainCurrency.chainId]
+      : wrappedContracts[1]
+  const nativeWrappedContractName =
+    chainCurrency.chainId in wrappedContractNames
+      ? wrappedContractNames[chainCurrency.chainId]
+      : wrappedContractNames[1]
 
-  if (currency) {
-    wrappedContractAddress = currency.contract
-    wrappedContractName = currency.symbol
-  } else {
-    wrappedContractAddress =
-      chainCurrency.chainId in wrappedContracts
-        ? wrappedContracts[chainCurrency.chainId]
-        : wrappedContracts[1]
-    wrappedContractName =
-      chainCurrency.chainId in wrappedContractNames
-        ? wrappedContractNames[chainCurrency.chainId]
-        : wrappedContractNames[1]
-  }
+  const wrappedContractAddress = currency
+    ? currency.contract
+    : nativeWrappedContractAddress
+  const wrappedContractName = currency
+    ? currency.symbol
+    : nativeWrappedContractName
 
   const { data: tokens } = useTokens(
     open &&
@@ -206,12 +206,20 @@ export const BidModalRenderer: FC<Props> = ({
   })
 
   const { chain } = useNetwork()
-  const uniswapConvertLink =
-    chain?.id === mainnet.id || chain?.id === goerli.id
-      ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
-          chain?.network || 'mainnet'
-        }&inputCurrency=eth&outputCurrency=${contractAddress}`
-      : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
+  const canAutomaticallyConvert =
+    !currency || currency.contract === nativeWrappedContractAddress
+  let convertLink: string = ''
+
+  if (canAutomaticallyConvert) {
+    convertLink =
+      chain?.id === mainnet.id || chain?.id === goerli.id
+        ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
+            chain?.network || 'mainnet'
+          }&inputCurrency=eth&outputCurrency=${contractAddress}`
+        : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
+  } else {
+    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${contractAddress}`
+  }
 
   useEffect(() => {
     if (bidAmount !== '') {
@@ -398,7 +406,8 @@ export const BidModalRenderer: FC<Props> = ({
         wrappedBalance,
         wrappedContractName,
         wrappedContractAddress,
-        uniswapConvertLink,
+        convertLink,
+        canAutomaticallyConvert,
         bidAmount,
         bidData,
         bidAmountUsd,

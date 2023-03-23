@@ -96,6 +96,7 @@ const BidPage: NextPage = () => {
         <label>Currency: </label>
         <textarea
           onChange={() => {}}
+          placeholder={`"contract": "", "symbol": ""`}
           defaultValue={JSON.stringify(currency)}
           onFocus={(e) => {
             e.target.value = JSON.stringify(currency)

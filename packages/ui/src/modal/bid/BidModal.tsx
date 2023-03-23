@@ -167,7 +167,8 @@ export function BidModal({
         hasEnoughWrappedCurrency,
         amountToWrap,
         balance,
-        uniswapConvertLink,
+        convertLink,
+        canAutomaticallyConvert,
         transactionError,
         stepData,
         bidData,
@@ -601,21 +602,23 @@ export function BidModal({
                             css={{ flex: '1 0 auto' }}
                             color="secondary"
                             onClick={() => {
-                              window.open(uniswapConvertLink, '_blank')
+                              window.open(convertLink, '_blank')
                             }}
                           >
                             Convert Manually
                           </Button>
-                          <Button
-                            css={{ flex: 1, maxHeight: 44 }}
-                            disabled={!hasEnoughNativeCurrency}
-                            onClick={placeBid}
-                          >
-                            <Text style="h6" color="button" ellipsify>
-                              Convert {amountToWrap} {balance?.symbol || 'ETH'}{' '}
-                              for me
-                            </Text>
-                          </Button>
+                          {canAutomaticallyConvert && (
+                            <Button
+                              css={{ flex: 1, maxHeight: 44 }}
+                              disabled={!hasEnoughNativeCurrency}
+                              onClick={placeBid}
+                            >
+                              <Text style="h6" color="button" ellipsify>
+                                Convert {amountToWrap}{' '}
+                                {balance?.symbol || 'ETH'} for me
+                              </Text>
+                            </Button>
+                          )}
                         </Flex>
                       </>
                     )}
