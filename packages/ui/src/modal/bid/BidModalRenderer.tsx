@@ -27,6 +27,7 @@ import { parseEther } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
+import { Currency } from '../../types/Currency'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -73,7 +74,8 @@ type ChildrenProps = {
   wrappedBalance?: ReturnType<typeof useBalance>['data']
   wrappedContractName: string
   wrappedContractAddress: string
-  uniswapConvertLink: string
+  canAutomaticallyConvert: boolean
+  convertLink: string
   transactionError?: Error | null
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
@@ -92,6 +94,7 @@ type Props = {
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
+  currency?: Currency
   oracleEnabled: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -112,6 +115,7 @@ export const BidModalRenderer: FC<Props> = ({
   collectionId,
   attribute,
   normalizeRoyalties,
+  currency,
   oracleEnabled = false,
   children,
 }) => {
@@ -132,14 +136,22 @@ export const BidModalRenderer: FC<Props> = ({
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
   const chainCurrency = useChainCurrency()
-  const wrappedContractAddress =
+
+  const nativeWrappedContractAddress =
     chainCurrency.chainId in wrappedContracts
       ? wrappedContracts[chainCurrency.chainId]
       : wrappedContracts[1]
-  const wrappedContractName =
+  const nativeWrappedContractName =
     chainCurrency.chainId in wrappedContractNames
       ? wrappedContractNames[chainCurrency.chainId]
       : wrappedContractNames[1]
+
+  const wrappedContractAddress = currency
+    ? currency.contract
+    : nativeWrappedContractAddress
+  const wrappedContractName = currency
+    ? currency.symbol
+    : nativeWrappedContractName
 
   const { data: tokens } = useTokens(
     open &&
@@ -180,23 +192,34 @@ export const BidModalRenderer: FC<Props> = ({
   const { data: balance } = useBalance({
     address: address,
     watch: open,
+    chainId: client?.currentChain()?.id,
   })
 
   const {
     balance: { data: wrappedBalance },
     contractAddress,
   } = useWrappedBalance({
+    token: wrappedContractAddress as any,
     address: address,
     watch: open,
+    chainId: client?.currentChain()?.id,
   })
 
   const { chain } = useNetwork()
-  const uniswapConvertLink =
-    chain?.id === mainnet.id || chain?.id === goerli.id
-      ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
-          chain?.network || 'mainnet'
-        }&inputCurrency=eth&outputCurrency=${contractAddress}`
-      : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
+  const canAutomaticallyConvert =
+    !currency || currency.contract === nativeWrappedContractAddress
+  let convertLink: string = ''
+
+  if (canAutomaticallyConvert) {
+    convertLink =
+      chain?.id === mainnet.id || chain?.id === goerli.id
+        ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
+            chain?.network || 'mainnet'
+          }&inputCurrency=eth&outputCurrency=${contractAddress}`
+        : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
+  } else {
+    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${contractAddress}`
+  }
 
   useEffect(() => {
     if (bidAmount !== '') {
@@ -284,6 +307,10 @@ export const BidModalRenderer: FC<Props> = ({
       attributeValue: trait?.value,
     }
 
+    if (currency) {
+      bid.currency = currency.contract
+    }
+
     if (tokenId && collectionId) {
       const contract = collectionId ? collectionId?.split(':')[0] : undefined
       bid.token = `${contract}:${tokenId}`
@@ -359,6 +386,7 @@ export const BidModalRenderer: FC<Props> = ({
   }, [
     tokenId,
     collectionId,
+    currency,
     client,
     signer,
     bidAmount,
@@ -378,7 +406,8 @@ export const BidModalRenderer: FC<Props> = ({
         wrappedBalance,
         wrappedContractName,
         wrappedContractAddress,
-        uniswapConvertLink,
+        convertLink,
+        canAutomaticallyConvert,
         bidAmount,
         bidData,
         bidAmountUsd,

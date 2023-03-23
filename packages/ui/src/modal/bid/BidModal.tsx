@@ -49,6 +49,7 @@ import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
 import { useFallbackState } from '../../hooks'
+import { Currency } from '../../types/Currency'
 
 type BidCallbackData = {
   tokenId?: string
@@ -62,6 +63,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
+  currency?: Currency
   oracleEnabled?: boolean
   onViewOffers?: () => void
   onClose?: (
@@ -115,6 +117,7 @@ export function BidModal({
   collectionId,
   attribute,
   normalizeRoyalties,
+  currency,
   oracleEnabled = false,
   onViewOffers,
   onClose,
@@ -145,6 +148,7 @@ export function BidModal({
       collectionId={collectionId}
       attribute={attribute}
       normalizeRoyalties={normalizeRoyalties}
+      currency={currency}
       oracleEnabled={oracleEnabled}
     >
       {({
@@ -163,7 +167,8 @@ export function BidModal({
         hasEnoughWrappedCurrency,
         amountToWrap,
         balance,
-        uniswapConvertLink,
+        convertLink,
+        canAutomaticallyConvert,
         transactionError,
         stepData,
         bidData,
@@ -323,6 +328,7 @@ export function BidModal({
                         logoWidth={10}
                         textStyle="tiny"
                         amount={wrappedBalance?.value}
+                        address={wrappedContractAddress}
                       />{' '}
                     </Text>
                   </Flex>
@@ -596,21 +602,23 @@ export function BidModal({
                             css={{ flex: '1 0 auto' }}
                             color="secondary"
                             onClick={() => {
-                              window.open(uniswapConvertLink, '_blank')
+                              window.open(convertLink, '_blank')
                             }}
                           >
                             Convert Manually
                           </Button>
-                          <Button
-                            css={{ flex: 1, maxHeight: 44 }}
-                            disabled={!hasEnoughNativeCurrency}
-                            onClick={placeBid}
-                          >
-                            <Text style="h6" color="button" ellipsify>
-                              Convert {amountToWrap} {balance?.symbol || 'ETH'}{' '}
-                              for me
-                            </Text>
-                          </Button>
+                          {canAutomaticallyConvert && (
+                            <Button
+                              css={{ flex: 1, maxHeight: 44 }}
+                              disabled={!hasEnoughNativeCurrency}
+                              onClick={placeBid}
+                            >
+                              <Text style="h6" color="button" ellipsify>
+                                Convert {amountToWrap}{' '}
+                                {balance?.symbol || 'ETH'} for me
+                              </Text>
+                            </Button>
+                          )}
                         </Flex>
                       </>
                     )}

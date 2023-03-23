@@ -53,8 +53,9 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
         </Text>
       ),
       value: token
-        ? token.market?.topBid?.price?.amount?.native || null
-        : collection?.topBid?.price?.amount?.native || null,
+        ? token.market?.topBid?.price?.amount?.decimal || null
+        : collection?.topBid?.price?.amount?.decimal || null,
+      address: token?.market?.topBid?.price?.currency?.contract,
       asWrapped: true,
     }
   )
@@ -72,7 +73,8 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
           List Price
         </Text>
       ),
-      value: token.market?.floorAsk?.price?.amount?.native || null,
+      value: token.market?.floorAsk?.price?.amount?.decimal || null,
+      address: token?.market?.floorAsk?.price?.currency?.contract,
       asNative: true,
     })
   } else if (!token && collection) {
@@ -88,7 +90,8 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
           Floor
         </Text>
       ),
-      value: collection?.floorAsk?.price?.amount?.native || null,
+      value: collection?.floorAsk?.price?.amount?.decimal || null,
+      address: collection?.floorAsk?.price?.currency?.contract,
       asNative: true,
     })
   }

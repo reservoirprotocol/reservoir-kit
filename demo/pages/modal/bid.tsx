@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { BidModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { ComponentPropsWithoutRef, useState } from 'react'
+import { ComponentPropsWithoutRef, PropsWithoutRef, useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 
@@ -20,6 +20,8 @@ const BidPage: NextPage = () => {
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [attributeKey, setAttributeKey] = useState('')
   const [attributeValue, setAttributeValue] = useState('')
+  const [currency, setCurrency] =
+    useState<ComponentPropsWithoutRef<typeof BidModal>['currency']>()
   const [attribute, setAttribute] =
     useState<ComponentPropsWithoutRef<typeof BidModal>['attribute']>(undefined)
   const deeplinkOpenState = useState(true)
@@ -90,6 +92,28 @@ const BidPage: NextPage = () => {
           onBlur={computeAttribute}
         />
       </div>
+      <div>
+        <label>Currency: </label>
+        <textarea
+          onChange={() => {}}
+          placeholder={`"contract": "", "symbol": ""`}
+          defaultValue={JSON.stringify(currency)}
+          onFocus={(e) => {
+            e.target.value = JSON.stringify(currency)
+          }}
+          onBlur={(e) => {
+            if (e.target.value && e.target.value.length > 0) {
+              try {
+                setCurrency(JSON.parse(e.target.value))
+              } catch (e) {
+                setCurrency(undefined)
+              }
+            } else {
+              setCurrency(undefined)
+            }
+          }}
+        />
+      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -132,6 +156,7 @@ const BidPage: NextPage = () => {
         }
         collectionId={collectionId}
         tokenId={tokenId}
+        currency={currency ? currency : undefined}
         attribute={attribute}
         normalizeRoyalties={normalizeRoyalties}
         oracleEnabled={oracleEnabled}
