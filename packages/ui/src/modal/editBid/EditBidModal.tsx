@@ -90,7 +90,8 @@ export function EditBidModal({
         wrappedBalance,
         wrappedContractName,
         wrappedContractAddress,
-        uniswapConvertLink,
+        canAutomaticallyConvert,
+        convertLink,
         royaltyBps,
         expirationOptions,
         expirationOption,
@@ -254,6 +255,7 @@ export function EditBidModal({
                           logoWidth={10}
                           textStyle="tiny"
                           amount={wrappedBalance?.value}
+                          address={wrappedContractAddress}
                         />{' '}
                       </Text>
                     ) : null}
@@ -483,21 +485,24 @@ export function EditBidModal({
                             css={{ flex: '1 0 auto' }}
                             color="secondary"
                             onClick={() => {
-                              window.open(uniswapConvertLink, '_blank')
+                              window.open(convertLink, '_blank')
                             }}
                           >
                             Convert Manually
                           </Button>
-                          <Button
-                            css={{ flex: 1, maxHeight: 44 }}
-                            disabled={!hasEnoughNativeCurrency}
-                            onClick={editBid}
-                          >
-                            <Text style="h6" color="button" ellipsify>
-                              Convert {amountToWrap} {balance?.symbol || 'ETH'}{' '}
-                              for me
-                            </Text>
-                          </Button>
+
+                          {canAutomaticallyConvert && (
+                            <Button
+                              css={{ flex: 1, maxHeight: 44 }}
+                              disabled={!hasEnoughNativeCurrency}
+                              onClick={editBid}
+                            >
+                              <Text style="h6" color="button" ellipsify>
+                                Convert {amountToWrap}{' '}
+                                {balance?.symbol || 'ETH'} for me
+                              </Text>
+                            </Button>
+                          )}
                         </Flex>
                       </Box>
                     )}
