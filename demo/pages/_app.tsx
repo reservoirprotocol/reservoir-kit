@@ -22,6 +22,7 @@ import {
   ReservoirKitTheme,
   CartProvider,
 } from '@reservoir0x/reservoir-kit-ui'
+import { LogLevel } from '@reservoir0x/reservoir-sdk'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
 const SOURCE = process.env.NEXT_PUBLIC_SOURCE || 'reservoirkit.demo'
@@ -75,7 +76,6 @@ type AppWrapperProps = {
 
 const AppWrapper: FC<any> = ({ children }) => {
   const { theme } = useContext(ThemeSwitcherContext)
-
   return (
     <WagmiConfig client={wagmiClient}>
       <ReservoirKitProvider
@@ -104,6 +104,7 @@ const AppWrapper: FC<any> = ({ children }) => {
           marketplaceFeeRecipient: FEE_RECIPIENT,
           source: SOURCE,
           normalizeRoyalties: NORMALIZE_ROYALTIES,
+          logLevel: LogLevel.Verbose,
         }}
         theme={theme}
       >

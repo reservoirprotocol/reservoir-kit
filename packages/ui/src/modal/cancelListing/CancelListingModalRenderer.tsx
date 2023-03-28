@@ -105,7 +105,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
 
     client.actions
       .cancelOrder({
-        id: listingId,
+        ids: [listingId],
         signer,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {

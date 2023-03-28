@@ -13,7 +13,7 @@ const options = {
   repo: repo,
   number: -1000000000000000000000000,
   execOptions: { maxBuffer: 1000 * 1024 },
-  fields: ['subject', 'hash', 'abbrevHash', 'authorDate'],
+  fields: ['subject', 'hash', 'abbrevHash', 'authorDate', 'tag'],
   file: repo,
 }
 
@@ -45,6 +45,7 @@ fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
       }
 
       const newCommits = commits.slice(0, latestCommitIndex)
+      console.log(commits[0])
 
       const changelog = newCommits.reduce((changelog, commit) => {
         if (

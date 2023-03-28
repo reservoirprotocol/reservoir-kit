@@ -14,14 +14,15 @@ type Props = {
 }
 
 const QuantityButton = styled(Button, {
-  color: '$neutralBorderHover',
+  color: '$neutralSolid',
+  backgroundColor: 'transparent',
   '&:disabled': {
     backgroundColor: '$transparent',
-    color: '$neutralSolid',
+    color: '$neutralBorderHover',
   },
   '&:disabled:hover': {
     backgroundColor: '$transparent',
-    color: '$neutralSolid',
+    color: '$neutralBorderHover',
   },
   defaultVariants: {
     color: 'ghost',

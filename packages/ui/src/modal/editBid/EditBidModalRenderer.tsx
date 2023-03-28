@@ -1,138 +1,120 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import {
-  useTokens,
   useCoinConversion,
   useReservoirClient,
-  useTokenOpenseaBanned,
-  useWrappedBalance,
+  useListings,
+  useTokens,
   useCollections,
-  useAttributes,
   useChainCurrency,
+  useBids,
+  useAttributes,
+  useWrappedBalance,
 } from '../../hooks'
 import {
+  useSigner,
   useAccount,
   useBalance,
   useNetwork,
-  useSigner,
   mainnet,
   goerli,
 } from 'wagmi'
-
-import { constants } from 'ethers'
-import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
+import { Execute } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
-import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
-import { formatBN } from '../../lib/numbers'
-import { parseEther } from 'ethers/lib/utils.js'
+import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
+import { constants } from 'ethers'
+import { parseEther } from 'ethers/lib/utils.js'
+import zoneAddresses from '../../constants/zoneAddresses'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
-import { Currency } from '../../types/Currency'
+import { BidData, Trait, Traits } from '../bid/BidModalRenderer'
+import { formatBN } from '../../lib/numbers'
 
-const expirationOptions = [
-  ...defaultExpirationOptions,
-  {
-    text: 'Custom',
-    value: 'custom',
-    relativeTime: null,
-    relativeTimeUnit: null,
-  },
-]
-
-export enum BidStep {
-  SetPrice,
-  Offering,
+export enum EditBidStep {
+  Edit,
+  Approving,
   Complete,
 }
 
-export type Traits =
-  | NonNullable<ReturnType<typeof useAttributes>['data']>
-  | undefined
-
-export type Trait =
-  | {
-      key: string
-      value: string
-      floorAskPrice?: number
-    }
-  | undefined
+export type EditBidStepData = {
+  totalSteps: number
+  stepProgress: number
+  currentStep: Execute['steps'][0]
+  currentStepItem: NonNullable<Execute['steps'][0]['items']>[0]
+}
 
 type ChildrenProps = {
-  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
-  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  loading: boolean
+  bid?: NonNullable<ReturnType<typeof useBids>['data']>[0]
   attributes?: Traits
+  trait: Trait
+  tokenId?: string
+  contract?: string
+  isOracleOrder: boolean
+  isTokenBid: boolean
   bidAmount: string
-  bidData: BidData | null
   bidAmountUsd: number
-  bidStep: BidStep
+  token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+  currency: NonNullable<
+    NonNullable<ReturnType<typeof useListings>['data']>[0]['price']
+  >['currency']
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  editBidStep: EditBidStep
+  transactionError?: Error | null
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
-  amountToWrap: string
-  usdPrice: ReturnType<typeof useCoinConversion>
-  isBanned: boolean
   balance?: ReturnType<typeof useBalance>['data']
   wrappedBalance?: ReturnType<typeof useBalance>['data']
   wrappedContractName: string
   wrappedContractAddress: string
+  amountToWrap: string
   canAutomaticallyConvert: boolean
   convertLink: string
-  transactionError?: Error | null
+  royaltyBps?: number
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
-  stepData: BidModalStepData | null
-  setBidStep: React.Dispatch<React.SetStateAction<BidStep>>
+  usdPrice: ReturnType<typeof useCoinConversion>
+  steps: Execute['steps'] | null
+  stepData: EditBidStepData | null
+  setTrait: React.Dispatch<React.SetStateAction<Trait>>
   setBidAmount: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
-  setTrait: React.Dispatch<React.SetStateAction<Trait>>
-  trait: Trait
-  placeBid: () => void
+  setEditBidStep: React.Dispatch<React.SetStateAction<EditBidStep>>
+  editBid: () => void
 }
 
 type Props = {
   open: boolean
+  bidId?: string
   tokenId?: string
-  collectionId?: string
   attribute?: Trait
+  collectionId?: string
   normalizeRoyalties?: boolean
-  currency?: Currency
-  oracleEnabled: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
-export type BidData = Parameters<
-  ReservoirClientActions['placeBid']
->['0']['bids'][0]
-
-export type BidModalStepData = {
-  totalSteps: number
-  stepProgress: number
-  currentStep: Execute['steps'][0]
-}
-
-export const BidModalRenderer: FC<Props> = ({
+export const EditBidModalRenderer: FC<Props> = ({
   open,
+  bidId,
   tokenId,
   collectionId,
   attribute,
   normalizeRoyalties,
-  currency,
-  oracleEnabled = false,
   children,
 }) => {
   const { data: signer } = useSigner()
-  const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
+  const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()
+  const [stepData, setStepData] = useState<EditBidStepData | null>(null)
+  const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [bidAmount, setBidAmount] = useState<string>('')
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
-    expirationOptions[3]
+    expirationOptions[5]
   )
   const [hasEnoughNativeCurrency, setHasEnoughNativeCurrency] = useState(false)
   const [hasEnoughWrappedCurrency, setHasEnoughWrappedCurrency] =
     useState(false)
   const [amountToWrap, setAmountToWrap] = useState('')
-  const [stepData, setStepData] = useState<BidModalStepData | null>(null)
-  const [bidData, setBidData] = useState<BidData | null>(null)
-  const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
   const chainCurrency = useChainCurrency()
@@ -146,44 +128,52 @@ export const BidModalRenderer: FC<Props> = ({
       ? wrappedContractNames[chainCurrency.chainId]
       : wrappedContractNames[1]
 
-  const wrappedContractAddress = currency
-    ? currency.contract
-    : nativeWrappedContractAddress
-  const wrappedContractName = currency
-    ? currency.symbol
-    : nativeWrappedContractName
-
-  const { data: tokens } = useTokens(
-    open &&
-      tokenId !== undefined && {
-        tokens: [`${contract}:${tokenId}`],
-        includeTopBid: true,
-        normalizeRoyalties,
-      },
+  const { data: bids } = useBids(
+    {
+      ids: bidId,
+      normalizeRoyalties,
+      includeCriteriaMetadata: true,
+      includeRawData: true,
+    },
     {
       revalidateFirstPage: true,
+    },
+    open && bidId ? true : false
+  )
+
+  const bid = bids && bids[0] ? bids[0] : undefined
+
+  const contract = bid?.tokenSetId?.split(':')[1]
+  const currency = bid?.price?.currency
+
+  const orderZone = bid?.rawData?.zone
+  const orderKind = bid?.kind
+
+  const isOracleOrder =
+    orderKind === 'seaport-v1.4' && zoneAddresses.includes(orderZone as string)
+
+  const wrappedContractAddress = currency
+    ? (currency.contract as string)
+    : nativeWrappedContractAddress
+  const wrappedContractName = currency
+    ? (currency.symbol as string)
+    : nativeWrappedContractName
+
+  useEffect(() => {
+    if (bid?.price?.amount?.decimal) {
+      setBidAmount(bid?.price?.amount?.decimal.toString())
     }
-  )
+  }, [bid?.price])
 
-  const { data: traits } = useAttributes(
-    open && !tokenId ? collectionId : undefined
-  )
-
-  const { data: collections } = useCollections(
-    open && {
-      id: collectionId,
-      includeTopBid: true,
-      normalizeRoyalties,
-    }
-  )
-
-  const collection = collections && collections[0] ? collections[0] : undefined
-
-  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
-  const usdPrice = useCoinConversion(
-    open ? 'USD' : undefined,
+  const coinConversion = useCoinConversion(
+    open && bid ? 'USD' : undefined,
     wrappedContractName
   )
+  const usdPrice =
+    coinConversion !== undefined && coinConversion !== null
+      ? Number(coinConversion)
+      : 0
+
   const bidAmountUsd = +bidAmount * (usdPrice || 0)
 
   const client = useReservoirClient()
@@ -192,7 +182,6 @@ export const BidModalRenderer: FC<Props> = ({
   const { data: balance } = useBalance({
     address: address,
     watch: open,
-    chainId: client?.currentChain()?.id,
   })
 
   const {
@@ -220,6 +209,35 @@ export const BidModalRenderer: FC<Props> = ({
   } else {
     convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${contractAddress}`
   }
+
+  const isTokenBid = bid?.criteria?.kind == 'token'
+
+  const { data: traits } = useAttributes(
+    open && !isTokenBid ? collectionId : undefined
+  )
+
+  const { data: collections } = useCollections(
+    open && {
+      id: collectionId,
+      includeTopBid: true,
+      normalizeRoyalties,
+    }
+  )
+  const collection = collections && collections[0] ? collections[0] : undefined
+  let royaltyBps = collection?.royalties?.bps
+
+  const { data: tokens } = useTokens(
+    open && {
+      tokens: [`${contract}:${tokenId}`],
+      includeAttributes: true,
+      normalizeRoyalties,
+    },
+    {
+      revalidateFirstPage: true,
+    }
+  )
+
+  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
   useEffect(() => {
     if (bidAmount !== '') {
@@ -258,24 +276,22 @@ export const BidModalRenderer: FC<Props> = ({
   }, [traits])
 
   useEffect(() => {
-    const validAttributes = traits
-      ? traits.filter(
-          (attribute) => attribute.values && attribute.values.length > 0
-        )
-      : undefined
-    setAttributes(validAttributes)
-  }, [traits])
+    //@ts-ignore
+    if (bid?.criteria?.kind == 'attribute' && bid?.criteria?.data.attribute) {
+      //@ts-ignore
+      setTrait(bid?.criteria?.data?.attribute)
+    }
+  }, [bid])
 
   useEffect(() => {
     if (!open) {
-      setBidStep(BidStep.SetPrice)
+      setEditBidStep(EditBidStep.Edit)
       setExpirationOption(expirationOptions[3])
       setHasEnoughNativeCurrency(false)
       setHasEnoughWrappedCurrency(false)
       setAmountToWrap('')
       setBidAmount('')
       setStepData(null)
-      setBidData(null)
       setTransactionError(null)
       setTrait(undefined)
     } else {
@@ -283,17 +299,9 @@ export const BidModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  const isBanned = useTokenOpenseaBanned(open ? contract : undefined, tokenId)
-
-  const placeBid = useCallback(() => {
+  const editBid = useCallback(() => {
     if (!signer) {
       const error = new Error('Missing a signer')
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!tokenId && !collectionId) {
-      const error = new Error('Missing tokenId and collectionId')
       setTransactionError(error)
       throw error
     }
@@ -304,136 +312,166 @@ export const BidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    setBidStep(BidStep.Offering)
+    if (!bidId) {
+      const error = new Error('Missing bid id to edit')
+      setTransactionError(error)
+      throw error
+    }
+
+    if (!isOracleOrder) {
+      const error = new Error('Not an oracle powered offer')
+      setTransactionError(error)
+      throw error
+    }
+
     setTransactionError(null)
-    setBidData(null)
+
+    let expirationTime: string | null = null
+
+    if (expirationOption.relativeTime && expirationOption.relativeTimeUnit) {
+      expirationTime = dayjs()
+        .add(expirationOption.relativeTime, expirationOption.relativeTimeUnit)
+        .unix()
+        .toString()
+    }
 
     const bid: BidData = {
       weiPrice: parseEther(`${bidAmount}`).toString(),
       orderbook: 'reservoir',
-      orderKind: 'seaport',
+      orderKind: 'seaport-v1.4',
       attributeKey: trait?.key,
       attributeValue: trait?.value,
     }
 
-    if (currency) {
-      bid.currency = currency.contract
-    }
-
-    if (tokenId && collectionId) {
+    if (isTokenBid && tokenId && collectionId) {
       const contract = collectionId ? collectionId?.split(':')[0] : undefined
       bid.token = `${contract}:${tokenId}`
     } else if (collectionId) {
       bid.collection = collectionId
     }
 
-    if (expirationOption.relativeTime) {
-      if (expirationOption.relativeTimeUnit) {
-        bid.expirationTime = dayjs()
-          .add(expirationOption.relativeTime, expirationOption.relativeTimeUnit)
-          .unix()
-          .toString()
-      } else {
-        bid.expirationTime = `${expirationOption.relativeTime}`
-      }
+    if (expirationTime) {
+      bid.expirationTime = expirationTime
     }
 
-    if (oracleEnabled) {
-      bid.options = {
-        'seaport-v1.4': {
-          useOffChainCancellation: true,
-        },
-      }
+    bid.options = {
+      'seaport-v1.4': {
+        useOffChainCancellation: true,
+        replaceOrderId: bidId,
+      },
     }
 
-    setBidData(bid)
+    setEditBidStep(EditBidStep.Approving)
 
     client.actions
       .placeBid({
-        signer,
         bids: [bid],
+        signer,
         onProgress: (steps: Execute['steps']) => {
+          if (!steps) {
+            return
+          }
+          setSteps(steps)
+
           const executableSteps = steps.filter(
             (step) => step.items && step.items.length > 0
           )
 
           let stepCount = executableSteps.length
-          let incompleteStepItemIndex: number | null = null
-          let incompleteStepIndex: number | null = null
 
-          executableSteps.find((step, i) => {
-            if (!step.items) {
-              return false
-            }
+          let currentStepItem:
+            | NonNullable<Execute['steps'][0]['items']>[0]
+            | undefined
 
-            incompleteStepItemIndex = step.items.findIndex(
-              (item) => item.status == 'incomplete'
+          const currentStepIndex = executableSteps.findIndex((step) => {
+            currentStepItem = step.items?.find(
+              (item) => item.status === 'incomplete'
             )
-            if (incompleteStepItemIndex !== -1) {
-              incompleteStepIndex = i
-              return true
-            }
+            return currentStepItem
           })
 
-          if (incompleteStepIndex !== null) {
+          const currentStep =
+            currentStepIndex > -1
+              ? executableSteps[currentStepIndex]
+              : executableSteps[stepCount - 1]
+
+          if (currentStepItem) {
             setStepData({
               totalSteps: stepCount,
-              stepProgress: incompleteStepIndex,
-              currentStep: executableSteps[incompleteStepIndex],
+              stepProgress: currentStepIndex,
+              currentStep,
+              currentStepItem,
             })
-          } else {
-            setBidStep(BidStep.Complete)
+          } else if (
+            steps.every(
+              (step) =>
+                !step.items ||
+                step.items.length == 0 ||
+                step.items?.every((item) => item.status === 'complete')
+            )
+          ) {
+            setEditBidStep(EditBidStep.Complete)
           }
         },
       })
       .catch((e: any) => {
-        const transactionError = new Error(e?.message || '', {
-          cause: e,
+        const error = e as Error
+        const transactionError = new Error(error?.message || '', {
+          cause: error,
         })
         setTransactionError(transactionError)
+        setEditBidStep(EditBidStep.Edit)
+        setStepData(null)
+        setSteps(null)
       })
   }, [
-    tokenId,
-    collectionId,
-    currency,
     client,
     signer,
-    bidAmount,
+    collectionId,
+    tokenId,
     expirationOption,
     trait,
+    bidAmount,
   ])
 
   return (
     <>
       {children({
-        token,
-        collection,
+        loading: !bid || !collection,
+        bid,
         attributes,
-        usdPrice,
-        isBanned,
+        trait,
+        tokenId,
+        contract,
+        isOracleOrder,
+        isTokenBid,
+        bidAmount,
+        bidAmountUsd,
+        token,
+        currency,
+        collection,
+        editBidStep,
+        transactionError,
+        hasEnoughNativeCurrency,
+        hasEnoughWrappedCurrency,
         balance,
         wrappedBalance,
         wrappedContractName,
         wrappedContractAddress,
+        amountToWrap,
         convertLink,
         canAutomaticallyConvert,
-        bidAmount,
-        bidData,
-        bidAmountUsd,
-        bidStep,
-        hasEnoughNativeCurrency,
-        hasEnoughWrappedCurrency,
-        amountToWrap,
-        transactionError,
-        expirationOption,
+        royaltyBps,
         expirationOptions,
+        expirationOption,
+        usdPrice,
+        steps,
         stepData,
-        setBidStep,
+        setTrait,
         setBidAmount,
         setExpirationOption,
-        setTrait,
-        trait,
-        placeBid,
+        setEditBidStep,
+        editBid,
       })}
     </>
   )
