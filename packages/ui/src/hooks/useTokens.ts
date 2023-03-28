@@ -3,9 +3,9 @@ import { SWRInfiniteConfiguration } from 'swr/infinite'
 import { useInfiniteApi, useReservoirClient } from './'
 
 type TokenDetailsResponse =
-  paths['/tokens/v5']['get']['responses']['200']['schema']
+  paths['/tokens/v6']['get']['responses']['200']['schema']
 
-type TokensQuery = paths['/tokens/v5']['get']['parameters']['query']
+type TokensQuery = paths['/tokens/v6']['get']['parameters']['query']
 
 export default function (
   options?: TokensQuery | false,
@@ -24,7 +24,7 @@ export default function (
         return null
       }
 
-      const url = new URL(`${chain?.baseApiUrl}/tokens/v5`)
+      const url = new URL(`${chain?.baseApiUrl}/tokens/v6`)
       let query: TokensQuery = { ...options }
 
       if (previousPageData && !previousPageData.continuation) {
