@@ -34,7 +34,7 @@ type ChildrenProps = {
 
 type Props = {
   open: boolean
-  listingId?: string
+  listingId?: string[]
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -105,7 +105,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
 
     client.actions
       .cancelOrder({
-        ids: [listingId],
+        ids: listingId,
         signer,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {

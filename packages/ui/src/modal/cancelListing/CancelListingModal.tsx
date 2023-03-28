@@ -18,7 +18,7 @@ import zoneAddresses from '../../constants/zoneAddresses'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
-  listingId?: string
+  listingId?: string[]
   normalizeRoyalties?: boolean
   onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
