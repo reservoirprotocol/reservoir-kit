@@ -73,17 +73,24 @@ fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
         return `${changelog}`
       }, '')
 
-      const newChangelog = changelog + '\n' + data
+      if (changelog.length > 0) {
+        const newChangelog = changelog + '\n' + data
 
-      fs.writeFile(repo + '/CHANGELOG.md', newChangelog, function (err) {
-        if (err) {
-          return console.log(err)
-        }
+        fs.writeFile(repo + '/CHANGELOG.md', newChangelog, function (err) {
+          if (err) {
+            return console.log(err)
+          }
+          console.log(
+            '\x1b[32m%s\x1b[0m',
+            `Changelog: ${newCommits.length} new commits added for ${package}`
+          )
+        })
+      } else {
         console.log(
           '\x1b[32m%s\x1b[0m',
-          `Changelog: ${newCommits.length} new commits added`
+          `Changelog: No new commits for ${package}!`
         )
-      })
+      }
     }
   )
 })
