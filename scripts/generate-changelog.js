@@ -57,8 +57,13 @@ fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
         const commitLink = `https://github.com/reservoirprotocol/reservoir-kit/commit/${hash}`
 
         if (isVersionCommit) {
-          const version = subject.replace(`🎉 Release ${package} package `, '')
-          changelog += `\n## [${version}](${commitLink}) (${
+          const packageMsg = package === 'ui' ? 'ui' : 'client'
+          const version = subject.replace(
+            `🎉 Release ${packageMsg} package `,
+            ''
+          )
+          const versionSuffix = package === 'ui' ? 'UI' : 'SDK'
+          changelog += `\n## [${version}-${versionSuffix}](${commitLink}) (${
             date.split(' ')[0]
           })\n`
         } else {
