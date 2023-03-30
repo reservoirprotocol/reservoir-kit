@@ -8,7 +8,6 @@ import {
   useChainCurrency,
   useBids,
   useAttributes,
-  useWrappedBalance,
 } from '../../hooks'
 import {
   useSigner,
@@ -184,10 +183,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     watch: open,
   })
 
-  const {
-    balance: { data: wrappedBalance },
-    contractAddress,
-  } = useWrappedBalance({
+  const { data: wrappedBalance } = useBalance({
     token: wrappedContractAddress as any,
     address: address,
     watch: open,
@@ -204,10 +200,10 @@ export const EditBidModalRenderer: FC<Props> = ({
       chain?.id === mainnet.id || chain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
             chain?.network || 'mainnet'
-          }&inputCurrency=eth&outputCurrency=${contractAddress}`
+          }&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
   } else {
-    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${contractAddress}`
+    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${wrappedContractAddress}`
   }
 
   const isTokenBid = bid?.criteria?.kind == 'token'
