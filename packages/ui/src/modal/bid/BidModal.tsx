@@ -659,7 +659,10 @@ export function BidModal({
                         // <WethApproval style={{ margin: '0 auto' }} />
                         <Flex align="center" justify="center">
                           <Flex
-                            css={{ background: '$neutalLine', borderRadius: 8 }}
+                            css={{
+                              background: '$neutralLine',
+                              borderRadius: 8,
+                            }}
                           >
                             <CryptoCurrencyIcon
                               css={{ height: 56, width: 56 }}

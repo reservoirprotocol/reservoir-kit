@@ -1,0 +1,168 @@
+import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import { useFallbackState } from '../../hooks'
+import {
+  Button,
+  Flex,
+  FormatCryptoCurrency,
+  Text,
+  Slider,
+  Input,
+  Grid,
+} from '../../primitives'
+import { Modal } from '../Modal'
+import { ItemToggle } from './ItemToggle'
+import { SweepItem } from './SweepItem'
+import { SweepModalRenderer, SweepStep } from './sweepModalRenderer'
+
+type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
+  openState?: [boolean, Dispatch<SetStateAction<boolean>>]
+  collectionId?: string
+  orderId?: string
+}
+
+export function SweepModal({
+  openState,
+  trigger,
+  collectionId,
+}: Props): ReactElement {
+  const [open, setOpen] = useFallbackState(
+    openState ? openState[0] : false,
+    openState
+  )
+
+  return (
+    <SweepModalRenderer open={open} collectionId={collectionId}>
+      {({
+        loading,
+        selectedTokens,
+        setSelectedTokens,
+        itemAmount,
+        setItemAmount,
+        ethAmount,
+        setEthAmount,
+        isItemsToggled,
+        setIsItemsToggled,
+        maxInput,
+        setMaxInput,
+        currency,
+        tokens,
+        sweepStep,
+        setSweepStep,
+        sweepTokens,
+      }) => {
+        return (
+          <Modal
+            trigger={trigger}
+            title="Sweep"
+            open={open}
+            loading={loading}
+            onOpenChange={(open) => {
+              setOpen(open)
+            }}
+          >
+            {!loading && sweepStep === SweepStep.Checkout && (
+              <Flex direction="column">
+                <Flex direction="column" css={{ px: '$4', pt: '$5', pb: '$4' }}>
+                  <Slider
+                    min={0}
+                    max={isItemsToggled ? Math.min(50, maxInput) : 100}
+                    step={isItemsToggled ? 1 : 0.1}
+                    value={isItemsToggled ? [itemAmount] : [ethAmount]}
+                    onValueChange={(value) => {
+                      if (isItemsToggled) {
+                        setItemAmount(value[0])
+                      } else {
+                        setEthAmount(value[0])
+                      }
+                    }}
+                    css={{ width: '100%', mb: '$3' }}
+                  />
+                  <Flex align="center" css={{ gap: '$3', mb: 20 }}>
+                    <Input
+                      value={isItemsToggled ? itemAmount : ethAmount}
+                      onChange={(e) => {
+                        const inputValue = Number(e.target.value)
+
+                        if (e.target.value == '') {
+                          setItemAmount(0)
+                          setEthAmount(0)
+                        } else if (isItemsToggled) {
+                          setItemAmount(inputValue)
+                        } else {
+                          setEthAmount(inputValue)
+                        }
+                      }}
+                      css={{
+                        textAlign: 'center',
+                        width: '100%',
+                        height: 44,
+                        boxSizing: 'border-box',
+                      }}
+                      containerCss={{ width: '100%' }}
+                    />
+                    <ItemToggle
+                      isItemsToggled={isItemsToggled}
+                      setIsItemsToggled={setIsItemsToggled}
+                      currency={currency}
+                    />
+                  </Flex>
+                  <Flex
+                    direction="column"
+                    css={{ height: 185, overflowY: 'auto', mb: '$4' }}
+                  >
+                    {selectedTokens && selectedTokens.length > 0 ? (
+                      <Grid
+                        css={{
+                          gridTemplateColumns: 'repeat(5,minmax(0,1fr))',
+                          '@bp1': {
+                            gridTemplateColumns: 'repeat(7,minmax(0,1fr))',
+                          },
+                          columnGap: 8,
+                        }}
+                      >
+                        {selectedTokens.map((token) => (
+                          <SweepItem
+                            name={
+                              token.token?.name || `#${token?.token?.tokenId}`
+                            }
+                            image={token.token?.image}
+                            currency={currency}
+                            amount={
+                              token?.market?.floorAsk?.price?.amount?.decimal
+                            } // TODO: decimal or native?
+                          />
+                        ))}
+                      </Grid>
+                    ) : (
+                      <Text
+                        style="body3"
+                        color="subtle"
+                        css={{ textAlign: 'center', my: 'auto' }}
+                      >
+                        Selected items will appear here
+                      </Text>
+                    )}
+                  </Flex>
+                  <Flex justify="between" align="center">
+                    <Text style="h6">Total</Text>
+                    <Flex direction="column">
+                      <FormatCryptoCurrency amount={0} />
+                    </Flex>
+                  </Flex>
+                </Flex>
+                <Button
+                  css={{ m: '$4' }}
+                  disabled={!(selectedTokens.length > 0)}
+                >
+                  {selectedTokens.length > 0 ? 'Sweep' : 'Select Items to Buy'}
+                </Button>
+              </Flex>
+            )}
+          </Modal>
+        )
+      }}
+    </SweepModalRenderer>
+  )
+}
+
+SweepModal.Custom = SweepModalRenderer
