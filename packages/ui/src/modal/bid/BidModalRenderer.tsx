@@ -22,7 +22,7 @@ import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
-import { parseEther } from 'ethers/lib/utils.js'
+import { parseUnits } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
@@ -219,7 +219,7 @@ export const BidModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (bidAmount !== '') {
-      const bid = parseEther(bidAmount)
+      const bid = parseUnits(bidAmount, wrappedBalance?.decimals)
 
       if (!wrappedBalance?.value || wrappedBalance?.value.lt(bid)) {
         setHasEnoughWrappedCurrency(false)
@@ -305,7 +305,7 @@ export const BidModalRenderer: FC<Props> = ({
     setBidData(null)
 
     const bid: BidData = {
-      weiPrice: parseEther(`${bidAmount}`).toString(),
+      weiPrice: parseUnits(`${bidAmount}`, currency?.decimals).toString(),
       orderbook: 'reservoir',
       orderKind: 'seaport',
       attributeKey: trait?.key,

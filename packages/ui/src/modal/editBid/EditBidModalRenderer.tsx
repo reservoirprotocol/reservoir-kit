@@ -22,7 +22,7 @@ import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import { constants } from 'ethers'
-import { parseEther } from 'ethers/lib/utils.js'
+import { parseUnits } from 'ethers/lib/utils.js'
 import zoneAddresses from '../../constants/zoneAddresses'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
@@ -237,7 +237,7 @@ export const EditBidModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (bidAmount !== '') {
-      const bid = parseEther(bidAmount)
+      const bid = parseUnits(bidAmount, wrappedBalance?.decimals)
 
       if (!wrappedBalance?.value || wrappedBalance?.value.lt(bid)) {
         setHasEnoughWrappedCurrency(false)
@@ -332,7 +332,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     }
 
     const bid: BidData = {
-      weiPrice: parseEther(`${bidAmount}`).toString(),
+      weiPrice: parseUnits(`${bidAmount}`, wrappedBalance?.decimals).toString(),
       orderbook: 'reservoir',
       orderKind: 'seaport-v1.4',
       attributeKey: trait?.key,
@@ -344,6 +344,10 @@ export const EditBidModalRenderer: FC<Props> = ({
       bid.token = `${contract}:${tokenId}`
     } else if (collectionId) {
       bid.collection = collectionId
+    }
+
+    if (nativeWrappedContractAddress != wrappedContractAddress) {
+      bid.currency = wrappedContractAddress
     }
 
     if (expirationTime) {
@@ -428,6 +432,9 @@ export const EditBidModalRenderer: FC<Props> = ({
     expirationOption,
     trait,
     bidAmount,
+    wrappedBalance,
+    wrappedContractAddress,
+    nativeWrappedContractAddress,
   ])
 
   return (
