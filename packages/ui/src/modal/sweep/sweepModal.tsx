@@ -1,4 +1,4 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import React, { Dispatch, ReactElement, SetStateAction } from 'react'
 import { useFallbackState } from '../../hooks'
 import {
   Button,
@@ -90,6 +90,7 @@ export function SweepModal({
                     <Input
                       value={isItemsToggled ? itemAmount : ethAmount}
                       type="number"
+                      step={isItemsToggled ? 1 : 0.1}
                       onChange={(e) => {
                         const inputValue = Number(e.target.value)
 
@@ -97,9 +98,13 @@ export function SweepModal({
                           setItemAmount(0)
                           setEthAmount(0)
                         } else if (isItemsToggled) {
-                          setItemAmount(inputValue)
+                          setItemAmount(
+                            Math.min(Math.max(inputValue, 0), maxInput) // min: 0, max: maxInput
+                          )
                         } else {
-                          setEthAmount(inputValue)
+                          setEthAmount(
+                            Math.min(Math.max(inputValue, 0), maxInput)
+                          )
                         }
                       }}
                       css={{
