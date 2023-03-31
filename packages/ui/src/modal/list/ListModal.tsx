@@ -166,24 +166,13 @@ export function ListModal({
 
         useEffect(() => {
           if (stepData) {
-            const orderKind =
-              stepData.listingData[0].listing.orderKind || 'exchange'
-            const marketplaceNames = stepData.listingData
-              .map((listing) => listing.marketplace.name)
-              .join(', ')
             switch (stepData.currentStep.kind) {
               case 'transaction': {
-                setStepTitle(
-                  `Approve ${
-                    orderKind?.[0].toUpperCase() + orderKind?.slice(1)
-                  } to access item\nin your wallet`
-                )
+                setStepTitle('Approve access to items\nin your wallet')
                 break
               }
               case 'signature': {
-                setStepTitle(
-                  `Confirm listing on ${marketplaceNames}\nin your wallet`
-                )
+                setStepTitle('Confirm listing in your wallet')
                 break
               }
             }

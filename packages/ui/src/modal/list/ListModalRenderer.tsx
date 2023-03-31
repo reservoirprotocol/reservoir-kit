@@ -506,15 +506,17 @@ export const ListModalRenderer: FC<Props> = ({
             })
           } else {
             const currentStep = executableSteps[incompleteStepIndex]
-            const currentStepItem = currentStep.items
-              ? currentStep.items[incompleteStepItemIndex]
-              : null
-            const listings =
-              currentStepItem && currentStepItem.orderIndexes !== undefined
-                ? listingData.filter((_, i) =>
-                    currentStepItem.orderIndexes?.includes(i)
-                  )
-                : [listingData[listingData.length - 1]]
+            const listingIndexes: Set<number> = new Set()
+            currentStep.items?.forEach(({ orderIndexes, status }) => {
+              if (status === 'incomplete') {
+                orderIndexes?.forEach((orderIndex) => {
+                  listingIndexes.add(orderIndex)
+                })
+              }
+            })
+            const listings = Array.from(listingIndexes).map(
+              (index) => listingData[index]
+            )
 
             setStepData({
               totalSteps: stepCount,
