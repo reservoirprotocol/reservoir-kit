@@ -9,12 +9,17 @@ import { useRouter } from 'next/router'
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
   '0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e'
+const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
+  ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
+  : false
 
 const SweepPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
+  const [normalizeRoyalties, setNormalizeRoyalties] =
+    useState(NORMALIZE_ROYALTIES)
   return (
     <div
       style={{
@@ -39,6 +44,16 @@ const SweepPage: NextPage = () => {
         />
       </div>
       <DeeplinkCheckbox />
+      <div>
+        <label>Normalize Royalties: </label>
+        <input
+          type="checkbox"
+          checked={normalizeRoyalties}
+          onChange={(e) => {
+            setNormalizeRoyalties(e.target.checked)
+          }}
+        />
+      </div>
 
       <SweepModal
         trigger={
@@ -60,6 +75,7 @@ const SweepPage: NextPage = () => {
         }
         collectionId={collectionId}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
+        normalizeRoyalties={normalizeRoyalties}
       />
       <ThemeSwitcher />
     </div>

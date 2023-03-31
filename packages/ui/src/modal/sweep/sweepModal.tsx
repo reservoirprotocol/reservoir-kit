@@ -8,22 +8,25 @@ import {
   Slider,
   Input,
   Grid,
+  FormatCurrency,
 } from '../../primitives'
 import { Modal } from '../Modal'
 import { ItemToggle } from './ItemToggle'
 import { SweepItem } from './SweepItem'
-import { SweepModalRenderer, SweepStep } from './sweepModalRenderer'
+import { SweepModalRenderer, SweepStep } from './SweepModalRenderer'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
-  orderId?: string
+  normalizeRoyalties?: boolean
+  // Todo: add callback functions
 }
 
 export function SweepModal({
   openState,
   trigger,
   collectionId,
+  normalizeRoyalties,
 }: Props): ReactElement {
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
@@ -31,7 +34,11 @@ export function SweepModal({
   )
 
   return (
-    <SweepModalRenderer open={open} collectionId={collectionId}>
+    <SweepModalRenderer
+      open={open}
+      collectionId={collectionId}
+      normalizeRoyalties={normalizeRoyalties}
+    >
       {({
         loading,
         selectedTokens,
@@ -45,6 +52,8 @@ export function SweepModal({
         maxInput,
         setMaxInput,
         currency,
+        total,
+        totalUsd,
         tokens,
         sweepStep,
         setSweepStep,
@@ -80,6 +89,7 @@ export function SweepModal({
                   <Flex align="center" css={{ gap: '$3', mb: 20 }}>
                     <Input
                       value={isItemsToggled ? itemAmount : ethAmount}
+                      type="number"
                       onChange={(e) => {
                         const inputValue = Number(e.target.value)
 
@@ -117,11 +127,12 @@ export function SweepModal({
                           '@bp1': {
                             gridTemplateColumns: 'repeat(7,minmax(0,1fr))',
                           },
-                          columnGap: 8,
+                          gap: 8,
                         }}
                       >
                         {selectedTokens.map((token) => (
                           <SweepItem
+                            key={token?.token?.tokenId}
                             name={
                               token.token?.name || `#${token?.token?.tokenId}`
                             }
@@ -143,10 +154,21 @@ export function SweepModal({
                       </Text>
                     )}
                   </Flex>
-                  <Flex justify="between" align="center">
+                  <Flex justify="between" align="start">
                     <Text style="h6">Total</Text>
                     <Flex direction="column">
-                      <FormatCryptoCurrency amount={0} />
+                      <FormatCryptoCurrency
+                        amount={total}
+                        textStyle="h6"
+                        logoWidth={10}
+                      />
+                      {totalUsd ? (
+                        <FormatCurrency
+                          amount={totalUsd}
+                          style="tiny"
+                          color="subtle"
+                        />
+                      ) : null}
                     </Flex>
                   </Flex>
                 </Flex>
