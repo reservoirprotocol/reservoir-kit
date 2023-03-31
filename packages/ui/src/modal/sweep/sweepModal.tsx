@@ -130,9 +130,9 @@ export function SweepModal({
                           gap: 8,
                         }}
                       >
-                        {selectedTokens.map((token) => (
+                        {selectedTokens.map((token, i) => (
                           <SweepItem
-                            key={token?.token?.tokenId}
+                            key={`${token?.token?.tokenId}-${i}`}
                             name={
                               token.token?.name || `#${token?.token?.tokenId}`
                             }

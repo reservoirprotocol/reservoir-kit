@@ -50,7 +50,7 @@ export { CancelStep as CancelListingStep } from './modal/cancelListing/CancelLis
 export { EditListingModal } from './modal/editListing/EditListingModal'
 export { EditListingStep } from './modal/editListing/EditListingModalRenderer'
 
-export { SweepModal } from './modal/sweep/sweepModal'
+export { SweepModal } from './modal/sweep/SweepModal'
 
 export {
   default as TokenMedia,

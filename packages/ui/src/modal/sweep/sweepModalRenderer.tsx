@@ -18,6 +18,12 @@ export enum SweepStep {
   Unavailable,
 }
 
+type FloorAskPrice = NonNullable<
+  NonNullable<
+    NonNullable<ReturnType<typeof useTokens>['data']>[0]['market']
+  >['floorAsk']
+>['price']
+
 type ChildrenProps = {
   loading: boolean
   selectedTokens: ReturnType<typeof useTokens>['data']
@@ -98,14 +104,9 @@ export const SweepModalRenderer: FC<Props> = ({
       (token) =>
         token !== undefined &&
         token?.token !== undefined &&
-        // token?.market?.floorAsk?.price?.amount?.native !== undefined &&
-        // token?.market?.floorAsk?.price?.amount?.native !== null &&
         token?.market?.floorAsk?.price?.currency?.contract ===
           constants.AddressZero &&
-        token?.token?.owner?.toLowerCase() !==
-          account?.address?.toLowerCase() &&
-        token?.market.floorAsk.dynamicPricing?.data.pool ==
-          '0x213a5df4ed3d596f2ca0c7f603a68125db7dbd9e'
+        token?.token?.owner?.toLowerCase() !== account?.address?.toLowerCase()
     )
   }, [tokens, account])
 
@@ -126,8 +127,13 @@ export const SweepModalRenderer: FC<Props> = ({
     let pools: { [poolId: string]: number } = {}
     let updatedTokens: ReturnType<typeof useTokens>['data'] = []
 
-    for (let i = 0; i < itemAmount && i < availableTokens.length; i++) {
-      const token = availableTokens[i]
+    // Create a shallow copy of the availableTokens array
+    let workingAvailableTokens = [...availableTokens]
+
+    for (let i = 0; i < itemAmount && i < workingAvailableTokens.length; i++) {
+      const token = workingAvailableTokens[i]
+
+      updatedTokens.push(token)
 
       // handle dynamic pricing
       if (
@@ -136,22 +142,37 @@ export const SweepModalRenderer: FC<Props> = ({
         token?.market?.floorAsk?.dynamicPricing?.data?.prices
       ) {
         const poolId = token.market.floorAsk.dynamicPricing.data.pool as string
-        const poolPrices = token.market.floorAsk.dynamicPricing.data.prices
+        const poolPrices = token.market.floorAsk.dynamicPricing.data
+          .prices as FloorAskPrice[]
 
-        // Update the price based on the pool position
+        // Update the pools
         if (pools[poolId] === undefined) {
-          pools[poolId] = 0
+          pools[poolId] = 1
         } else {
           pools[poolId] += 1
         }
 
-        if (pools[poolId] < poolPrices.length) {
-          token.market.floorAsk.price = poolPrices[pools[poolId]]
-        } else {
-          token.market.floorAsk.price = undefined
-        }
-        // Sort the updated tokens by price
-        updatedTokens.sort((a, b) => {
+        // Update the prices of other tokens in the same pool
+        workingAvailableTokens = workingAvailableTokens.map((otherToken) => {
+          if (
+            otherToken.market?.floorAsk?.dynamicPricing?.data?.pool ===
+              poolId &&
+            !updatedTokens.some(
+              (updatedToken) =>
+                updatedToken.token?.tokenId === otherToken.token?.tokenId
+            )
+          ) {
+            if (pools[poolId] < poolPrices.length) {
+              otherToken.market.floorAsk.price = poolPrices[pools[poolId]]
+            } else {
+              otherToken.market.floorAsk.price = undefined
+            }
+          }
+          return otherToken
+        })
+
+        // Sort the workingAvailableTokens by price after updating token price
+        workingAvailableTokens.sort((a, b) => {
           const aPrice = a.market?.floorAsk?.price?.amount?.decimal
           const bPrice = b.market?.floorAsk?.price?.amount?.decimal
 
@@ -164,30 +185,14 @@ export const SweepModalRenderer: FC<Props> = ({
           }
         })
       }
-
-      updatedTokens.push(token)
     }
-    console.log('Available tokens: ', availableTokens)
-    console.log('Pools: ', pools)
-    console.log('Updated tokens: ', updatedTokens)
 
+    console.log('Working available tokens: ', workingAvailableTokens)
+    console.log(pools)
+
+    // setSelectedTokens(workingAvailableTokens.slice(0, itemAmount))
     setSelectedTokens(updatedTokens)
   }, [itemAmount])
-
-  useEffect(() => {}, [ethAmount])
-
-  useEffect(() => {
-    setItemAmount(0)
-    setEthAmount(0)
-  }, [isItemsToggled])
-
-  // fetch more tokens if less than 50 available // todo: check if listed
-  // useEffect(() => {
-  //   if (availableTokens && availableTokens.length < 50 && hasNextPage) {
-  //     console.log(availableTokens)
-  //     fetchNextPage()
-  //   }
-  // }, [availableTokens])
 
   // reset on close
   useEffect(() => {
