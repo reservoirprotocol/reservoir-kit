@@ -255,6 +255,7 @@ export function EditBidModal({
                           logoWidth={10}
                           textStyle="tiny"
                           amount={wrappedBalance?.value}
+                          decimals={wrappedBalance?.decimals}
                           address={wrappedContractAddress}
                         />{' '}
                       </Text>

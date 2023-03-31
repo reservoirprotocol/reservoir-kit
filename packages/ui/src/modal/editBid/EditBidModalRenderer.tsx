@@ -8,7 +8,6 @@ import {
   useChainCurrency,
   useBids,
   useAttributes,
-  useWrappedBalance,
 } from '../../hooks'
 import {
   useSigner,
@@ -23,7 +22,7 @@ import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import { constants } from 'ethers'
-import { parseEther } from 'ethers/lib/utils.js'
+import { parseUnits } from 'ethers/lib/utils.js'
 import zoneAddresses from '../../constants/zoneAddresses'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
@@ -184,10 +183,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     watch: open,
   })
 
-  const {
-    balance: { data: wrappedBalance },
-    contractAddress,
-  } = useWrappedBalance({
+  const { data: wrappedBalance } = useBalance({
     token: wrappedContractAddress as any,
     address: address,
     watch: open,
@@ -204,10 +200,10 @@ export const EditBidModalRenderer: FC<Props> = ({
       chain?.id === mainnet.id || chain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
             chain?.network || 'mainnet'
-          }&inputCurrency=eth&outputCurrency=${contractAddress}`
+          }&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
   } else {
-    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${contractAddress}`
+    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${wrappedContractAddress}`
   }
 
   const isTokenBid = bid?.criteria?.kind == 'token'
@@ -241,7 +237,7 @@ export const EditBidModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (bidAmount !== '') {
-      const bid = parseEther(bidAmount)
+      const bid = parseUnits(bidAmount, wrappedBalance?.decimals)
 
       if (!wrappedBalance?.value || wrappedBalance?.value.lt(bid)) {
         setHasEnoughWrappedCurrency(false)
@@ -336,7 +332,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     }
 
     const bid: BidData = {
-      weiPrice: parseEther(`${bidAmount}`).toString(),
+      weiPrice: parseUnits(`${bidAmount}`, wrappedBalance?.decimals).toString(),
       orderbook: 'reservoir',
       orderKind: 'seaport-v1.4',
       attributeKey: trait?.key,
@@ -348,6 +344,10 @@ export const EditBidModalRenderer: FC<Props> = ({
       bid.token = `${contract}:${tokenId}`
     } else if (collectionId) {
       bid.collection = collectionId
+    }
+
+    if (nativeWrappedContractAddress != wrappedContractAddress) {
+      bid.currency = wrappedContractAddress
     }
 
     if (expirationTime) {
@@ -432,6 +432,9 @@ export const EditBidModalRenderer: FC<Props> = ({
     expirationOption,
     trait,
     bidAmount,
+    wrappedBalance,
+    wrappedContractAddress,
+    nativeWrappedContractAddress,
   ])
 
   return (
