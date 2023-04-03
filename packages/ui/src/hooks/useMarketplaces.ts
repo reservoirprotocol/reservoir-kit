@@ -68,22 +68,6 @@ export default function (
         marketplace.isSelected =
           marketplace.orderbook === 'reservoir' ? true : false
       })
-      updatedMarketplaces.push({
-        price: 0,
-        truePrice: 0,
-        isSelected: false,
-        feeBps: 0,
-        fee: {
-          bps: 0,
-          percent: 0,
-        },
-        imageUrl:
-          'https://api.reservoir.tools/redirect/sources/blur.io/logo/v2',
-        name: 'Blur',
-        orderbook: 'blur',
-        orderKind: 'blur',
-        listingEnabled: true,
-      })
       setMarketplaces(updatedMarketplaces)
     }
   }, [data, listingEnabledOnly, royaltyBps])

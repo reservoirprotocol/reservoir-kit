@@ -135,7 +135,7 @@ export async function executeSteps(
     }
 
     const step = json.steps[incompleteStepIndex]
-    const stepItems = json.steps[incompleteStepIndex].items
+    let stepItems = json.steps[incompleteStepIndex].items
 
     if (!stepItems) {
       client.log(
@@ -147,7 +147,6 @@ export async function executeSteps(
 
     let { kind } = step
     let stepItem = stepItems[incompleteStepItemIndex]
-
     // If step item is missing data, poll until it is ready
     if (!stepItem.data) {
       client.log(
@@ -175,6 +174,7 @@ export async function executeSteps(
       ) {
         throw json
       }
+      stepItems = items
       stepItem = items[incompleteStepItemIndex]
       setState([...json?.steps])
     }
@@ -183,222 +183,229 @@ export async function executeSteps(
       LogLevel.Verbose
     )
 
-    const promises = stepItems.map((stepItem) => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const stepData = stepItem.data
+    const promises = stepItems
+      .filter((stepItem) => stepItem.status === 'incomplete')
+      .map((stepItem) => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            const stepData = stepItem.data
 
-          if (!json) {
-            return
-          }
-          // Handle each step based on it's kind
-          switch (kind) {
-            // Make an on-chain transaction
-            case 'transaction': {
-              client.log(
-                [
-                  'Execute Steps: Begin transaction step for, sending transaction',
-                ],
-                LogLevel.Verbose
-              )
-              const tx = await signer.sendTransaction(stepData)
-
-              stepItem.txHash = tx.hash
-              setState([...json?.steps])
-              client.log(
-                ['Execute Steps: Transaction step, waiting on transaction'],
-                LogLevel.Verbose
-              )
-              await tx.wait()
-              client.log(
-                [
-                  'Execute Steps: Transaction finished, starting to poll for confirmation',
-                ],
-                LogLevel.Verbose
-              )
-
-              //Implicitly poll the confirmation url to confirm the transaction went through
-              const confirmationUrl = new URL(
-                `${request.baseURL}/transactions/${tx.hash}/synced/v1`
-              )
-              const headers: AxiosRequestHeaders = {
-                'x-rkc-version': version,
-              }
-
-              if (request.headers && request.headers['x-api-key']) {
-                headers['x-api-key'] = request.headers['x-api-key']
-              }
-
-              if (request.headers && client?.uiVersion) {
-                request.headers['x-rkui-version'] = client.uiVersion
-              }
-              await pollUntilOk(
-                {
-                  url: confirmationUrl.href,
-                  method: 'get',
-                  headers: headers,
-                },
-                (res) => {
-                  client.log(
-                    ['Execute Steps: Polling for confirmation', res],
-                    LogLevel.Verbose
-                  )
-                  return res && res.data.synced
-                }
-              )
-
-              //Confirm that on-chain tx has been picked up by the indexer
-              if (stepItem.txHash && (isSell || isBuy)) {
+            if (!json) {
+              return
+            }
+            // Handle each step based on it's kind
+            switch (kind) {
+              // Make an on-chain transaction
+              case 'transaction': {
                 client.log(
                   [
-                    'Execute Steps: Polling sales to verify transaction was indexed',
+                    'Execute Steps: Begin transaction step for, sending transaction',
                   ],
                   LogLevel.Verbose
                 )
-                const indexerConfirmationUrl = new URL(
-                  `${request.baseURL}/sales/v4`
+                const tx = await signer.sendTransaction(stepData)
+
+                stepItem.txHash = tx.hash
+                setState([...json?.steps])
+                client.log(
+                  ['Execute Steps: Transaction step, waiting on transaction'],
+                  LogLevel.Verbose
                 )
-                const queryParams: paths['/sales/v4']['get']['parameters']['query'] =
-                  {
-                    txHash: stepItem.txHash,
-                  }
-                setParams(indexerConfirmationUrl, queryParams)
+                await tx.wait()
+                client.log(
+                  [
+                    'Execute Steps: Transaction finished, starting to poll for confirmation',
+                  ],
+                  LogLevel.Verbose
+                )
+
+                //Implicitly poll the confirmation url to confirm the transaction went through
+                const confirmationUrl = new URL(
+                  `${request.baseURL}/transactions/${tx.hash}/synced/v1`
+                )
+                const headers: AxiosRequestHeaders = {
+                  'x-rkc-version': version,
+                }
+
+                if (request.headers && request.headers['x-api-key']) {
+                  headers['x-api-key'] = request.headers['x-api-key']
+                }
+
+                if (request.headers && client?.uiVersion) {
+                  request.headers['x-rkui-version'] = client.uiVersion
+                }
                 await pollUntilOk(
                   {
-                    url: indexerConfirmationUrl.href,
+                    url: confirmationUrl.href,
                     method: 'get',
                     headers: headers,
                   },
                   (res) => {
                     client.log(
-                      ['Execute Steps: Polling sales to check if indexed', res],
+                      ['Execute Steps: Polling for confirmation', res],
                       LogLevel.Verbose
                     )
-                    if (res.status === 200) {
-                      const data =
-                        res.data as paths['/sales/v4']['get']['responses']['200']['schema']
-                      return data.sales && data.sales.length > 0 ? true : false
-                    }
-                    return false
+                    return res && res.data.synced
                   }
                 )
-              }
 
-              break
-            }
-
-            // Sign a message
-            case 'signature': {
-              let signature: string | undefined
-              const signData = stepData['sign']
-              const postData = stepData['post']
-              client.log(
-                ['Execute Steps: Begin signature step'],
-                LogLevel.Verbose
-              )
-              if (signData) {
-                // Request user signature
-                if (signData.signatureKind === 'eip191') {
+                //Confirm that on-chain tx has been picked up by the indexer
+                if (stepItem.txHash && (isSell || isBuy)) {
                   client.log(
-                    ['Execute Steps: Signing with eip191'],
+                    [
+                      'Execute Steps: Polling sales to verify transaction was indexed',
+                    ],
                     LogLevel.Verbose
                   )
-                  if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
-                    // If the message represents a hash, we need to convert it to raw bytes first
-                    signature = await signer.signMessage(
-                      arrayify(signData.message)
-                    )
-                  } else {
-                    signature = await signer.signMessage(signData.message)
-                  }
-                } else if (signData.signatureKind === 'eip712') {
-                  client.log(
-                    ['Execute Steps: Signing with eip712'],
-                    LogLevel.Verbose
+                  const indexerConfirmationUrl = new URL(
+                    `${request.baseURL}/sales/v4`
                   )
-                  signature = await (
-                    signer as unknown as TypedDataSigner
-                  )._signTypedData(
-                    signData.domain,
-                    signData.types,
-                    signData.value
-                  )
-                }
-
-                if (signature) {
-                  request.params = {
-                    ...request.params,
-                    signature,
-                  }
-                }
-              }
-
-              if (postData) {
-                client.log(['Execute Steps: Posting order'], LogLevel.Verbose)
-                const postOrderUrl = new URL(
-                  `${request.baseURL}${postData.endpoint}`
-                )
-
-                try {
-                  const getData = async function () {
-                    const headers: AxiosRequestHeaders = {
-                      'Content-Type': 'application/json',
-                      'x-rkc-version': version,
+                  const queryParams: paths['/sales/v4']['get']['parameters']['query'] =
+                    {
+                      txHash: stepItem.txHash,
                     }
-                    if (request.headers && request.headers['x-api-key']) {
-                      headers['x-api-key'] = request.headers['x-api-key']
-                    }
-
-                    let response = await axios.post(
-                      postOrderUrl.href,
-                      JSON.stringify(postData.body),
-                      {
-                        method: postData.method,
-                        headers,
-                        params: request.params,
+                  setParams(indexerConfirmationUrl, queryParams)
+                  await pollUntilOk(
+                    {
+                      url: indexerConfirmationUrl.href,
+                      method: 'get',
+                      headers: headers,
+                    },
+                    (res) => {
+                      client.log(
+                        [
+                          'Execute Steps: Polling sales to check if indexed',
+                          res,
+                        ],
+                        LogLevel.Verbose
+                      )
+                      if (res.status === 200) {
+                        const data =
+                          res.data as paths['/sales/v4']['get']['responses']['200']['schema']
+                        return data.sales && data.sales.length > 0
+                          ? true
+                          : false
                       }
-                    )
-
-                    return response
-                  }
-
-                  const res = await getData()
-
-                  if (res.status > 299 || res.status < 200) throw res.data
-
-                  if (res.data.results) {
-                    stepItem.orderData = res.data.results
-                  } else if (res.data && res.data.orderId) {
-                    stepItem.orderData = [
-                      {
-                        orderId: res.data.orderId,
-                        crossPostingOrderId: res.data.crossPostingOrderId,
-                        orderIndex: res.data.orderIndex || 0,
-                      },
-                    ]
-                  }
-                  setState([...json?.steps])
-                } catch (err) {
-                  json.steps[incompleteStepIndex].error =
-                    'Your order could not be posted.'
-                  setState([...json?.steps])
-                  throw err
+                      return false
+                    }
+                  )
                 }
+
+                break
               }
 
-              break
-            }
+              // Sign a message
+              case 'signature': {
+                let signature: string | undefined
+                const signData = stepData['sign']
+                const postData = stepData['post']
+                client.log(
+                  ['Execute Steps: Begin signature step'],
+                  LogLevel.Verbose
+                )
+                if (signData) {
+                  // Request user signature
+                  if (signData.signatureKind === 'eip191') {
+                    client.log(
+                      ['Execute Steps: Signing with eip191'],
+                      LogLevel.Verbose
+                    )
+                    if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
+                      // If the message represents a hash, we need to convert it to raw bytes first
+                      signature = await signer.signMessage(
+                        arrayify(signData.message)
+                      )
+                    } else {
+                      signature = await signer.signMessage(signData.message)
+                    }
+                  } else if (signData.signatureKind === 'eip712') {
+                    client.log(
+                      ['Execute Steps: Signing with eip712'],
+                      LogLevel.Verbose
+                    )
+                    signature = await (
+                      signer as unknown as TypedDataSigner
+                    )._signTypedData(
+                      signData.domain,
+                      signData.types,
+                      signData.value
+                    )
+                  }
 
-            default:
-              break
+                  if (signature) {
+                    request.params = {
+                      ...request.params,
+                      signature,
+                    }
+                  }
+                }
+
+                if (postData) {
+                  client.log(['Execute Steps: Posting order'], LogLevel.Verbose)
+                  const postOrderUrl = new URL(
+                    `${request.baseURL}${postData.endpoint}`
+                  )
+
+                  try {
+                    const getData = async function () {
+                      const headers: AxiosRequestHeaders = {
+                        'Content-Type': 'application/json',
+                        'x-rkc-version': version,
+                      }
+                      if (request.headers && request.headers['x-api-key']) {
+                        headers['x-api-key'] = request.headers['x-api-key']
+                      }
+
+                      let response = await axios.post(
+                        postOrderUrl.href,
+                        JSON.stringify(postData.body),
+                        {
+                          method: postData.method,
+                          headers,
+                          params: request.params,
+                        }
+                      )
+
+                      return response
+                    }
+
+                    const res = await getData()
+
+                    if (res.status > 299 || res.status < 200) throw res.data
+
+                    if (res.data.results) {
+                      stepItem.orderData = res.data.results
+                    } else if (res.data && res.data.orderId) {
+                      stepItem.orderData = [
+                        {
+                          orderId: res.data.orderId,
+                          crossPostingOrderId: res.data.crossPostingOrderId,
+                          orderIndex: res.data.orderIndex || 0,
+                        },
+                      ]
+                    }
+                    setState([...json?.steps])
+                  } catch (err) {
+                    json.steps[incompleteStepIndex].error =
+                      'Your order could not be posted.'
+                    setState([...json?.steps])
+                    throw err
+                  }
+                }
+
+                break
+              }
+
+              default:
+                break
+            }
+            stepItem.status = 'complete'
+            resolve(stepItem)
+          } catch (e) {
+            reject(e)
           }
-          stepItem.status = 'complete'
-          resolve(stepItem)
-        } catch (e) {
-          reject(e)
-        }
+        })
       })
-    })
 
     await Promise.all(promises)
 
