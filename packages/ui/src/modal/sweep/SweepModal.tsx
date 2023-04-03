@@ -71,10 +71,14 @@ export function SweepModal({
           >
             {!loading && sweepStep === SweepStep.Checkout && (
               <Flex direction="column">
-                <Flex direction="column" css={{ px: '$4', pt: '$5', pb: '$4' }}>
+                <Flex direction="column" css={{ px: '$4', pt: '$5', pb: '$2' }}>
                   <Slider
                     min={0}
-                    max={isItemsToggled ? Math.min(50, maxInput) : 100}
+                    max={
+                      isItemsToggled
+                        ? Math.min(50, maxInput)
+                        : Math.min(100, maxInput)
+                    }
                     step={isItemsToggled ? 1 : 0.1}
                     value={isItemsToggled ? [itemAmount] : [ethAmount]}
                     onValueChange={(value) => {
@@ -159,21 +163,21 @@ export function SweepModal({
                       </Text>
                     )}
                   </Flex>
-                  <Flex justify="between" align="start">
+                  <Flex justify="between" align="start" css={{ height: 34 }}>
                     <Text style="h6">Total</Text>
-                    <Flex direction="column">
+                    <Flex direction="column" align="end" css={{ gap: '$1' }}>
                       <FormatCryptoCurrency
-                        amount={total}
                         textStyle="h6"
-                        logoWidth={10}
+                        amount={total}
+                        address={currency?.address}
+                        decimals={currency?.decimals}
+                        logoWidth={18}
                       />
-                      {totalUsd ? (
-                        <FormatCurrency
-                          amount={totalUsd}
-                          style="tiny"
-                          color="subtle"
-                        />
-                      ) : null}
+                      <FormatCurrency
+                        amount={totalUsd}
+                        style="tiny"
+                        color="subtle"
+                      />
                     </Flex>
                   </Flex>
                 </Flex>
