@@ -4,7 +4,6 @@ import {
   useCoinConversion,
   useReservoirClient,
   useTokenOpenseaBanned,
-  useWrappedBalance,
   useCollections,
   useAttributes,
   useChainCurrency,
@@ -23,7 +22,7 @@ import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
-import { parseEther } from 'ethers/lib/utils.js'
+import { parseUnits } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
@@ -195,10 +194,7 @@ export const BidModalRenderer: FC<Props> = ({
     chainId: client?.currentChain()?.id,
   })
 
-  const {
-    balance: { data: wrappedBalance },
-    contractAddress,
-  } = useWrappedBalance({
+  const { data: wrappedBalance } = useBalance({
     token: wrappedContractAddress as any,
     address: address,
     watch: open,
@@ -215,15 +211,15 @@ export const BidModalRenderer: FC<Props> = ({
       chain?.id === mainnet.id || chain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
             chain?.network || 'mainnet'
-          }&inputCurrency=eth&outputCurrency=${contractAddress}`
+          }&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
   } else {
-    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${contractAddress}`
+    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${wrappedContractAddress}`
   }
 
   useEffect(() => {
     if (bidAmount !== '') {
-      const bid = parseEther(bidAmount)
+      const bid = parseUnits(bidAmount, wrappedBalance?.decimals)
 
       if (!wrappedBalance?.value || wrappedBalance?.value.lt(bid)) {
         setHasEnoughWrappedCurrency(false)
@@ -300,7 +296,7 @@ export const BidModalRenderer: FC<Props> = ({
     setBidData(null)
 
     const bid: BidData = {
-      weiPrice: parseEther(`${bidAmount}`).toString(),
+      weiPrice: parseUnits(`${bidAmount}`, currency?.decimals).toString(),
       orderbook: 'reservoir',
       orderKind: 'seaport',
       attributeKey: trait?.key,
