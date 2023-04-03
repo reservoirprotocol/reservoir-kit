@@ -132,7 +132,7 @@ export const ListModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
-  const [allMarketplaces] = useMarketplaces(true)
+  const [allMarketplaces] = useMarketplaces(collectionId, true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<ListModalStepData | null>(null)
@@ -186,7 +186,11 @@ export const ListModalRenderer: FC<Props> = ({
     royaltyBps = onChainRoyaltyBps
   }
 
-  const [marketplaces, setMarketplaces] = useMarketplaces(true, royaltyBps)
+  const [marketplaces, setMarketplaces] = useMarketplaces(
+    collectionId,
+    true,
+    royaltyBps
+  )
   const {
     data: unapprovedMarketplaces,
     isFetching: isFetchingUnapprovedMarketplaces,
