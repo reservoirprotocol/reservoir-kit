@@ -242,7 +242,6 @@ export const SweepModalRenderer: FC<Props> = ({
       }
     }
 
-    console.log(updatedTokens)
     setSelectedTokens(updatedTokens)
   }, [ethAmount])
 
