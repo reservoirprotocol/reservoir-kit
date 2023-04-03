@@ -159,8 +159,8 @@ export function BuyModal({
 
         let price = listing?.price?.amount?.decimal || 0
 
-        if (!price && token?.token?.lastSell?.value) {
-          price = token?.token.lastSell.value
+        if (!price && token?.token?.lastSale?.price?.amount?.decimal) {
+          price = token?.token.lastSale?.price.amount.decimal
         }
 
         return (
