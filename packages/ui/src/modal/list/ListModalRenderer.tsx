@@ -132,7 +132,7 @@ export const ListModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
-  const [allMarketplaces] = useMarketplaces(true)
+  const [allMarketplaces] = useMarketplaces(collectionId, true)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<ListModalStepData | null>(null)
@@ -186,7 +186,11 @@ export const ListModalRenderer: FC<Props> = ({
     royaltyBps = onChainRoyaltyBps
   }
 
-  const [marketplaces, setMarketplaces] = useMarketplaces(true, royaltyBps)
+  const [marketplaces, setMarketplaces] = useMarketplaces(
+    collectionId,
+    true,
+    royaltyBps
+  )
   const {
     data: unapprovedMarketplaces,
     isFetching: isFetchingUnapprovedMarketplaces,
@@ -200,6 +204,7 @@ export const ListModalRenderer: FC<Props> = ({
     open && {
       tokens: [`${contract}:${tokenId}`],
       includeAttributes: true,
+      includeLastSale: true,
       normalizeRoyalties,
     },
     {
@@ -506,15 +511,17 @@ export const ListModalRenderer: FC<Props> = ({
             })
           } else {
             const currentStep = executableSteps[incompleteStepIndex]
-            const currentStepItem = currentStep.items
-              ? currentStep.items[incompleteStepItemIndex]
-              : null
-            const listings =
-              currentStepItem && currentStepItem.orderIndexes !== undefined
-                ? listingData.filter((_, i) =>
-                    currentStepItem.orderIndexes?.includes(i)
-                  )
-                : [listingData[listingData.length - 1]]
+            const listingIndexes: Set<number> = new Set()
+            currentStep.items?.forEach(({ orderIndexes, status }) => {
+              if (status === 'incomplete') {
+                orderIndexes?.forEach((orderIndex) => {
+                  listingIndexes.add(orderIndex)
+                })
+              }
+            })
+            const listings = Array.from(listingIndexes).map(
+              (index) => listingData[index]
+            )
 
             setStepData({
               totalSteps: stepCount,

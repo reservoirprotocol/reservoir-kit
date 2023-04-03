@@ -1,5 +1,45 @@
+## [v0.13.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/db5a5c041894f79e8ce7084ad36ff98c5d3646cd) (2023-03-28)
 
+- Update mainnet oracle zone address [c37fbc9](https://github.com/reservoirprotocol/reservoir-kit/commit/c37fbc960153af2ce8d8aa8daa9510c17ffed93a)
+- Fix quantity selector colors [518f8f8](https://github.com/reservoirprotocol/reservoir-kit/commit/518f8f8158f1d621e8edacb734d6c2beb97a70be)
 
+## [v0.13.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/ab377778c7162e4bf20be18980defa1b41097b39) (2023-03-23)
+
+- Merge pull request #194 from oplabs/main [73ab41f](https://github.com/reservoirprotocol/reservoir-kit/commit/73ab41f82c989b1ddde8d0842faa811edf26b9b6)
+
+## [v0.13.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6536d3ea545b6886baf3f854365309d8c9ac5f5c) (2023-03-23)
+
+- Add logic for non native currency conversion [50134eb](https://github.com/reservoirprotocol/reservoir-kit/commit/50134ebc13b32c8256f7c8048ae0ac9c10591ea5)
+
+## [v0.13.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d74762ef493ef6112897be22523f2ea98b12ca87) (2023-03-22)
+
+- Merge pull request #195 from reservoirprotocol/ted/grwth-2247-oracle-order-edit-listing-offer [8955637](https://github.com/reservoirprotocol/reservoir-kit/commit/89556378c847883a546fd2e48e6187abf758d87c)
+- Allow passing oracle enabled [f9b1514](https://github.com/reservoirprotocol/reservoir-kit/commit/f9b151472e1f41f23d8ef26e2f3409f7ab44aabd)
+- updated quantity logic below token name [924c5eb](https://github.com/reservoirprotocol/reservoir-kit/commit/924c5eb20d5930bee34071d47dcc9065aa9bcea7)
+- Updated token primitive to show quanitty by name if there is expiration data [b911e58](https://github.com/reservoirprotocol/reservoir-kit/commit/b911e585b3a7307446f949767796397e8150877d)
+- remove unused import [598b9be](https://github.com/reservoirprotocol/reservoir-kit/commit/598b9be0aabdbd54f29c29b52976e152ec818bb1)
+- Add oracle support to bid modal [b279ae0](https://github.com/reservoirprotocol/reservoir-kit/commit/b279ae087e10f7809b729a96cad3edd6a2362e69)
+
+## [v0.12.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2d31ede350022436080e011da9d1be9b01db9015) (2023-03-21)
+
+- Add arbitrum WETH contract [8540040](https://github.com/reservoirprotocol/reservoir-kit/commit/85400406851af43a673c715878c2efc9ce8960fd)
+
+## [v0.12.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/5142760b1c475b8749d22e6db75e07f49a5307d7) (2023-03-21)
+
+- Upgrade typescript to be compatible with wagmi@latest [16398e6](https://github.com/reservoirprotocol/reservoir-kit/commit/16398e650ae8099e4d6ab9fb70a5bc93eeceec9c)
+- 1155 cart support [f582fd3](https://github.com/reservoirprotocol/reservoir-kit/commit/f582fd3cc94a00478617e7b7b214c43c8f2431be)
+- EditListingModal for oracle orders [7b1f993](https://github.com/reservoirprotocol/reservoir-kit/commit/7b1f9937e6544aa7dc857f9e8f21f46c08c2d516)
+- Fixed quantity selector input to allow empty value [efa2bc3](https://github.com/reservoirprotocol/reservoir-kit/commit/efa2bc3ebd53aaa2a2da0a5208014dc2386659cb)
+- Update priceSubtitle [2244211](https://github.com/reservoirprotocol/reservoir-kit/commit/2244211a4fdf0149b75d24b97c91f31445938227)
+- Added chain id to fetchOrders and fetchTokens [448f34f](https://github.com/reservoirprotocol/reservoir-kit/commit/448f34f43c79edd5b9947a0aac1d6ba1866da4d2)
+- don't include token if orderId in checkout [99e3f4c](https://github.com/reservoirprotocol/reservoir-kit/commit/99e3f4c0f6a5ed7293d81e85ecf467b63736500f)
+- Moved QuantitySelector to modal directory [b50c11d](https://github.com/reservoirprotocol/reservoir-kit/commit/b50c11d976de9efb05320f5e5c9e88c6bf7cf719)
+- Added orderId and quantity to checkout [2780098](https://github.com/reservoirprotocol/reservoir-kit/commit/278009801f68a1f0ee0304c170db5099762ddd42)
+- Removed hardcoded baseUrl [7c391a3](https://github.com/reservoirprotocol/reservoir-kit/commit/7c391a36fd68e1c8cd220f24674563893d26790e)
+- Finished validate function [93376cc](https://github.com/reservoirprotocol/reservoir-kit/commit/93376ccf92c4eefdf589c6b12ee28663b7079c52)
+- Swapped ConnectKit for RainbowKit [37c6c62](https://github.com/reservoirprotocol/reservoir-kit/commit/37c6c62e4690b36c82222d4e0fe52e527bcbc884)
+- Upgrade to typescript v4.94 [ stiches v1.3.1-1](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-03-09)
+- Add Currency prop to bid modal [ba8e60d](https://github.com/reservoirprotocol/reservoir-kit/commit/ba8e60d71db7ac59f9272c9dfddc9430eab41788)
 
 ## [v0.12.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e01e871b914083b8cd90447094c93e08f30d88c3) (2023-03-17)
 

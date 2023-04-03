@@ -1,4 +1,16 @@
-- fix: removing space from top of changelog and fixing package.json version:update [de1aea7](https://github.com/reservoirprotocol/reservoir-kit/commit/de1aea7acf3fd69e762c60311513bc149aff38d4)
+## [v0.7.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1a88adbe5702e73ff1df400537404a3de546919f) (2023-03-23)
+
+- Upgrade cancelOrder action to use v3 api [73ab41f](https://github.com/reservoirprotocol/reservoir-kit/commit/73ab41f82c989b1ddde8d0842faa811edf26b9b6)
+- [BREAKING] Change the StepData type to include batched orderIds and crossPostingOrderId [d3d49d5](https://github.com/reservoirprotocol/reservoir-kit/commit/d3d49d548af4b85c5d4d172dc0605980cc5d5b3f)
+- Advanced sdk logging' [3773fda](https://github.com/reservoirprotocol/reservoir-kit/commit/3773fda53bd0e6390a5bfc303a646f84528c2a49)
+- Expose crosspost listing id [7f6fb52](https://github.com/reservoirprotocol/reservoir-kit/commit/7f6fb52c0d153ae09530730f5adafa33940552bf)
+- update api.ts [8111c95](https://github.com/reservoirprotocol/reservoir-kit/commit/8111c9598261645eab9d78998a89889f5cd885d8)
+
+## [v0.6.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1daaf0a3144a164d5f0b9409ea119e8bd57d951f) (2023-03-21)
+
+- Sync Api [eb9ddfd](https://github.com/reservoirprotocol/reservoir-kit/commit/eb9ddfd85306044fb6d10d52961f42faf977d20d)
+
+* fix: removing space from top of changelog and fixing package.json version:update [de1aea7](https://github.com/reservoirprotocol/reservoir-kit/commit/de1aea7acf3fd69e762c60311513bc149aff38d4)
 
 ## [v0.6.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/29ba325ecf702f48c2e22937b5d01383bd11bf01) (2023-03-15)
 

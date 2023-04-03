@@ -12,7 +12,7 @@
   "scripts": {
     "lint": "prettier --write .",
     "demo": "yarn workspace reservoir-kit-demo dev",
-    "dev": "parcel watch 'packages/*' --no-cache --no-hmr",
+    "dev": "parcel watch 'packages/*' --no-cache --no-hmr --no-source-maps",
     "clean": "yarn workspaces foreach --exclude primitives --exclude ssr-testing run clean",
     "types:check": "tsc --skipLibCheck --noEmit",
     "build": "yarn build:config && yarn build:packages && yarn build:cleanup",
@@ -41,8 +41,6 @@
     "@types/react-dom": "^18.0.6",
     "buffer": "^6.0.3",
     "ethers": "^5.6.9",
-    "git-log-nodejs": "^0.5.0",
-    "gitlog": "^4.0.4",
     "parcel": "^2.8.3",
     "prettier": "^2.5.1",
     "process": "^0.11.10",

@@ -122,6 +122,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: tokens, mutate: mutateTokens } = useTokens(
     open && {
       tokens: [`${contract}:${tokenId}`],
+      includeLastSale: true,
       normalizeRoyalties,
     },
     {

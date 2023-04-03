@@ -79,7 +79,7 @@ const TokenStats: FC<Props> = ({ token, collection, royaltyBps = 0 }) => {
                 Last Sale
               </Text>
             ),
-            value: token?.token?.lastSell?.value || null,
+            value: token?.token?.lastSale?.price?.amount?.decimal || null,
             asNative: true,
           },
           {

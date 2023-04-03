@@ -1,7 +1,25 @@
 const fs = require('fs')
 const path = require('path')
-const { gitlogPromise } = require('gitlog')
-const gitlog = require('git-log-nodejs')
+const { exec } = require('child_process')
+
+const parseCommit = (commit) => {
+  const pieces = commit.split(',')
+  const subject = pieces[0]
+  const ignore =
+    !subject ||
+    subject.includes('changelog:') ||
+    subject.includes('chore:') ||
+    subject.includes('wip:') ||
+    subject.includes("Merge branch 'main'")
+  return {
+    subject: subject,
+    date: pieces[1],
+    abbrevHash: pieces[2],
+    hash: pieces[3],
+    isVersionCommit: subject && subject.includes('🎉 Release'),
+    ignore,
+  }
+}
 
 let package = process.argv.find((arg) => arg.includes('package='))
 if (package) {
@@ -9,92 +27,70 @@ if (package) {
 }
 
 const repo = path.join(__dirname, '..', 'packages', package)
-const options = {
-  repo: repo,
-  number: -1000000000000000000000000,
-  execOptions: { maxBuffer: 1000 * 1024 },
-  fields: ['subject', 'hash', 'abbrevHash', 'authorDate', 'tag'],
-  file: repo,
-}
 
 fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
   if (err) {
     return console.log(err)
   }
 
-  const latestCommitHashIndex =
-    data.indexOf('https://github.com/reservoirprotocol/reservoir-kit/commit/') +
-    58
-  const latestCommitHash = data.slice(
-    latestCommitHashIndex,
-    latestCommitHashIndex + 40
-  )
+  let regex = /./g
 
-  const tags = await gitlog.tags()
+  if (package === 'ui') {
+    regex = /v([^\]-]+)-UI/g
+  } else {
+    regex = /v([^\]-]+)-SDK/g
+  }
 
-  gitlogPromise(options)
-    .then((commits) => {
-      let latestCommitIndex
-      for (let i = 0; i < commits.length; i++) {
-        if (commits[i].hash === latestCommitHash) {
-          latestCommitIndex = i
-          break
-        } else {
-          continue
-        }
-      }
+  const lastTagDocumented = data.match(regex)[0]
 
-      const newCommits = commits.slice(0, latestCommitIndex)
-      console.log(commits[0])
-
+  exec(
+    `git log --date=short --pretty=format:%s,%ad,%h,%H ${lastTagDocumented}..HEAD ${repo}`,
+    (error, stdout) => {
+      const newCommits = stdout.trim().split('\n')
       const changelog = newCommits.reduce((changelog, commit) => {
-        if (
-          !commit.subject ||
-          commit.subject.includes('changelog:') ||
-          commit.subject.includes('chore:') ||
-          commit.subject.includes('wip:') ||
-          commit.subject.includes("Merge branch 'main' into")
-        ) {
+        const { ignore, hash, abbrevHash, subject, date, isVersionCommit } =
+          parseCommit(commit)
+        if (ignore) {
           return changelog
         }
 
-        let version = null
-        const commitLink = `https://github.com/reservoirprotocol/reservoir-kit/commit/${commit.hash}`
+        const commitLink = `https://github.com/reservoirprotocol/reservoir-kit/commit/${hash}`
 
-        if (package === 'ui') {
-          const i = tags.findIndex((tag) => tag.hash === commit.hash)
-          if (i > -1) {
-            version = tags[i].name
-          }
-        } else if (package === 'sdk') {
-          const i = tags.findIndex((tag) => tag.hash === commit.hash)
-          if (i > -1) {
-            version = tags[i].name
-          }
-        }
-
-        if (version !== null) {
-          changelog += `\n## [${version}](${commitLink}) (${
-            commit.authorDate.split(' ')[0]
+        if (isVersionCommit) {
+          const packageMsg = package === 'ui' ? 'ui' : 'client'
+          const version = subject.replace(
+            `🎉 Release ${packageMsg} package `,
+            ''
+          )
+          const versionSuffix = package === 'ui' ? 'UI' : 'SDK'
+          changelog += `\n## [${version}-${versionSuffix}](${commitLink}) (${
+            date.split(' ')[0]
           })\n`
         } else {
-          changelog += `\n* ${commit.subject} [${commit.abbrevHash}](${commitLink})`
+          changelog += `\n* ${subject} [${abbrevHash}](${commitLink})`
         }
 
         return `${changelog}`
       }, '')
 
-      const newChangelog = changelog + '\n' + data
+      if (changelog.length > 0) {
+        const newChangelog = changelog + '\n' + data
 
-      fs.writeFile(repo + '/CHANGELOG.md', newChangelog, function (err) {
-        if (err) {
-          return console.log(err)
-        }
+        fs.writeFile(repo + '/CHANGELOG.md', newChangelog, function (err) {
+          if (err) {
+            return console.log(err)
+          }
+          console.log(
+            '\x1b[32m%s\x1b[0m',
+            `Changelog: ${newCommits.length} new commits added for ${package}`
+          )
+        })
+      } else {
         console.log(
           '\x1b[32m%s\x1b[0m',
-          `Changelog was generated from ${commits.length} commits`
+          `Changelog: No new commits for ${package}!`
         )
-      })
-    })
-    .catch((err) => console.log('\x1b[31m%s\x1b[0m', err))
+      }
+    }
+  )
 })
