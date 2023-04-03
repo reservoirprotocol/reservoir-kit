@@ -12,6 +12,7 @@ export type Execute = {
     action: string
     description: string
     kind: 'transaction' | 'signature'
+    id: string
     items?: {
       status: 'complete' | 'incomplete'
       data?: any
