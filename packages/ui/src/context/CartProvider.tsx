@@ -1089,6 +1089,10 @@ function cartStore({
               errorType = CheckoutTransactionError.PiceMismatch
               message = error.message
             }
+            if (error?.code >= 400 && error?.code < 500) {
+              message = error.message
+              errorType = CheckoutTransactionError.Unknown
+            }
 
             //@ts-ignore: Should be fixed in an update to typescript
             error = new Error(message, {
