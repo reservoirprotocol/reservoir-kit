@@ -1,28 +1,28 @@
 import {
   Execute,
-  isOpenSeaBanned,
-  paths,
   ReservoirChain,
   ReservoirClientActions,
+  isOpenSeaBanned,
+  paths,
   setParams,
 } from '@reservoir0x/reservoir-sdk'
-import { constants, utils } from 'ethers'
-import { formatUnits } from 'ethers/lib/utils.js'
-import React, {
-  createContext,
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react'
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { fetchSigner, getNetwork } from 'wagmi/actions'
-import { version } from '../../package.json'
 import { useListings, useReservoirClient, useTokens } from '../hooks'
 import { getChainCurrency } from '../hooks/useChainCurrency'
-import { toFixed } from '../lib/numbers'
 import { defaultFetcher } from '../lib/swr'
+import React, {
+  createContext,
+  useCallback,
+  useRef,
+  ReactNode,
+  useEffect,
+  FC,
+} from 'react'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
+import { constants, utils } from 'ethers'
+import { toFixed } from '../lib/numbers'
+import { formatUnits } from 'ethers/lib/utils.js'
+import { version } from '../../package.json'
+import { fetchSigner, getNetwork } from 'wagmi/actions'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
@@ -1079,8 +1079,6 @@ function cartStore({
           }
           let error = e as any
           let errorType = CheckoutTransactionError.Unknown
-          const errorStatus = e?.statusCode
-
           if (error?.message && error?.message.includes('ETH balance')) {
             errorType = CheckoutTransactionError.InsufficientBalance
           } else if (error?.code && error?.code == 4001) {
@@ -1089,9 +1087,6 @@ function cartStore({
             let message = 'Oops, something went wrong. Please try again.'
             if (error?.type && error?.type === 'price mismatch') {
               errorType = CheckoutTransactionError.PiceMismatch
-              message = error.message
-            }
-            if (errorStatus >= 400 && errorStatus < 500) {
               message = error.message
             }
 
