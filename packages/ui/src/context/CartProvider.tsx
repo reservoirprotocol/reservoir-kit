@@ -1080,7 +1080,7 @@ function cartStore({
           let error = e as any
           let errorType = CheckoutTransactionError.Unknown
           const errorStatus = (error as any)?.statusCode
-          
+
           if (error?.message && error?.message.includes('ETH balance')) {
             errorType = CheckoutTransactionError.InsufficientBalance
           } else if (error?.code && error?.code == 4001) {
@@ -1088,7 +1088,7 @@ function cartStore({
           } else {
             let message = 'Oops, something went wrong. Please try again.'
             if (errorStatus >= 400 && errorStatus < 500) {
-              message = error.message || message
+              message = error.message 
             }
             if (error?.type && error?.type === 'price mismatch') {
               errorType = CheckoutTransactionError.PiceMismatch

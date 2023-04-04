@@ -158,7 +158,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
         const errorStatus = (error as any)?.statusCode
         let message = 'Oops, something went wrong. Please try again.'
         if (errorStatus >= 400 && errorStatus < 500) {
-          message = error.message || message
+          message = error.message 
         }
         const transactionError = new Error(message, {
           cause: error,
