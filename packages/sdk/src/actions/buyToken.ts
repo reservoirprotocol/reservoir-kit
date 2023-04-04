@@ -33,6 +33,21 @@ export async function buyToken(data: Data) {
   const client = getClient()
   const options = data.options || {}
   const baseApiUrl = client.currentChain()?.baseApiUrl
+  const errHandler = () => {
+    items.forEach(({ token }) => {
+      if (token) {
+        const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
+          {
+            token,
+          }
+        request({
+          method: 'POST',
+          url: `${baseApiUrl}/tokens/refresh/v1`,
+          data: JSON.stringify(data),
+        }).catch(() => {})
+      }
+    })
+  }
 
   if (!baseApiUrl) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
@@ -52,7 +67,6 @@ export async function buyToken(data: Data) {
     ) {
       params.normalizeRoyalties = client.normalizeRoyalties
     }
-
     return executeSteps(
       {
         url: `${baseApiUrl}/execute/buy/v7`,
@@ -63,21 +77,12 @@ export async function buyToken(data: Data) {
       onProgress,
       undefined,
       expectedPrice
-    )
-  } catch (err: any) {
-    items.forEach(({ token }) => {
-      if (token) {
-        const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
-          {
-            token,
-          }
-        request({
-          method: 'POST',
-          url: `${baseApiUrl}/tokens/refresh/v1`,
-          data: JSON.stringify(data),
-        }).catch(() => {})
-      }
+    ).catch((err: any) => {
+      errHandler()
+      throw err
     })
+  } catch (err: any) {
+    errHandler()
     throw err
   }
 }
