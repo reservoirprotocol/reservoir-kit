@@ -1,10 +1,9 @@
-
-* Fix buyToken method [2023-04-04](https://github.com/reservoirprotocol/reservoir-kit/commit/d15707e)
-
-* Fix buyToken method [2023-04-04](https://github.com/reservoirprotocol/reservoir-kit/commit/d15707e)
 ## [v0.7.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/985268ee145e864fa15781e001505755ed22cdb0) (2023-04-03)
 
-* Sync api [6f68c95](https://github.com/reservoirprotocol/reservoir-kit/commit/6f68c95135b1b53cb8f07355e7bce8553c98bae5)
+- Fix buyToken method regression, refresh token not triggered when buying a token that fails to be purchased [2023-04-04](https://github.com/reservoirprotocol/reservoir-kit/commit/d15707e)
+
+- Sync api [6f68c95](https://github.com/reservoirprotocol/reservoir-kit/commit/6f68c95135b1b53cb8f07355e7bce8553c98bae5)
+
 ## [v0.7.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1a88adbe5702e73ff1df400537404a3de546919f) (2023-03-23)
 
 - Upgrade cancelOrder action to use v3 api [73ab41f](https://github.com/reservoirprotocol/reservoir-kit/commit/73ab41f82c989b1ddde8d0842faa811edf26b9b6)
