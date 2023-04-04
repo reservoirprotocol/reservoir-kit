@@ -21,6 +21,7 @@ const BuyPage: NextPage = () => {
   const [orderId, setOrderId] = useState('')
   const [referrer, setReferrer] = useState<string | undefined>(undefined)
   const [referrerBps, setReferrerBps] = useState<number | undefined>(undefined)
+  const [referrerFee, setReferrerFee] = useState<number | undefined>(undefined)
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
@@ -83,6 +84,16 @@ const BuyPage: NextPage = () => {
           }
         />
       </div>
+      <div>
+        <label>Referrer Fee (Flat): </label>
+        <input
+          type="number"
+          value={referrerFee}
+          onChange={(e) =>
+            setReferrerFee(e.target.value ? +e.target.value : undefined)
+          }
+        />
+      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -118,6 +129,7 @@ const BuyPage: NextPage = () => {
         orderId={orderId}
         referrer={referrer}
         referrerFeeBps={referrerBps}
+        referrerFeeFixed={referrerFee}
         normalizeRoyalties={normalizeRoyalties}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onGoToToken={() => console.log('Go to token')}
