@@ -1089,7 +1089,7 @@ function cartStore({
               errorType = CheckoutTransactionError.PiceMismatch
               message = error.message
             }
-            if (error?.code >= 400 && error?.code < 500) {
+            if (error?.statusCode >= 400 && error?.statusCode < 500) {
               message = error.message
               errorType = CheckoutTransactionError.Unknown
             }

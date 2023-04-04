@@ -157,7 +157,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
       .catch((e: any) => {
         const error = e as any
         let message = 'Oops, something went wrong. Please try again.'
-        if (error?.code >= 400 && error?.code < 500) {
+        if (error?.statusCode >= 400 && error?.statusCode < 500) {
           message = error.message
         }
         //@ts-ignore: Should be fixed in an update to typescript
