@@ -1,20 +1,12 @@
-import React, {
-  FC,
-  useEffect,
-  useState,
-  useCallback,
-  ReactNode,
-  ComponentProps,
-} from 'react'
-import {
-  useTokens,
-  useCoinConversion,
-  useReservoirClient,
-  useCollections,
-  useBids,
-} from '../../hooks'
-import { useAccount, useSigner, useNetwork } from 'wagmi'
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
+import React, {
+  ComponentProps, FC, ReactNode, useCallback, useEffect,
+  useState
+} from 'react'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
+import {
+  useBids, useCoinConversion, useCollections, useReservoirClient, useTokens
+} from '../../hooks'
 import Fees from './Fees'
 
 export enum AcceptBidStep {
@@ -285,8 +277,13 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       .catch((e: any) => {
         const error = e as Error
         const errorType = (error as any)?.type
+        const errorStatus = (error as any)?.statusCode
+
         let message = 'Oops, something went wrong. Please try again.'
         if (errorType && errorType === 'price mismatch') {
+          message = error.message
+        }
+        if (errorStatus >= 400 && errorStatus < 500) {
           message = error.message
         }
         const transactionError = new Error(message, {
