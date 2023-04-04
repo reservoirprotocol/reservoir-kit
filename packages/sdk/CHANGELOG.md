@@ -1,5 +1,7 @@
 
 * Fix buyToken method [2023-04-04](https://github.com/reservoirprotocol/reservoir-kit/commit/d15707e)
+
+* Fix buyToken method [2023-04-04](https://github.com/reservoirprotocol/reservoir-kit/commit/d15707e)
 ## [v0.7.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/985268ee145e864fa15781e001505755ed22cdb0) (2023-04-03)
 
 * Sync api [6f68c95](https://github.com/reservoirprotocol/reservoir-kit/commit/6f68c95135b1b53cb8f07355e7bce8553c98bae5)
