@@ -181,4 +181,11 @@ const Dialog = forwardRef<
   }
 )
 
-export { Dialog, Content, AnimatedContent, Overlay, AnimatedOverlay }
+export {
+  Dialog,
+  Content,
+  AnimatedContent,
+  Overlay,
+  AnimatedOverlay,
+  StyledAnimatedContent,
+}

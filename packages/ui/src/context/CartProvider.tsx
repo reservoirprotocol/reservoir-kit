@@ -92,6 +92,7 @@ export type Cart = {
     errorType?: CheckoutTransactionError
     status: CheckoutStatus
     steps?: Execute['steps']
+    currentStep?: Execute['steps'][0]
   } | null
 }
 
@@ -1018,9 +1019,23 @@ function cartStore({
               (step) => step.items && step.items.length > 0
             )
 
+            let stepCount = executableSteps.length
+
             let currentStepItem:
               | NonNullable<Execute['steps'][0]['items']>[0]
               | undefined
+
+            const currentStepIndex = executableSteps.findIndex((step) => {
+              currentStepItem = step.items?.find(
+                (item) => item.status === 'incomplete'
+              )
+              return currentStepItem
+            })
+
+            const currentStep =
+              currentStepIndex > -1
+                ? executableSteps[currentStepIndex]
+                : executableSteps[stepCount - 1]
 
             executableSteps.findIndex((step) => {
               currentStepItem = step.items?.find(
@@ -1065,6 +1080,7 @@ function cartStore({
 
             if (cartData.current.transaction) {
               cartData.current.transaction.status = status
+              cartData.current.transaction.currentStep = currentStep
               if (currentStepItem) {
                 cartData.current.transaction.txHash = currentStepItem?.txHash
                 cartData.current.transaction.steps = steps

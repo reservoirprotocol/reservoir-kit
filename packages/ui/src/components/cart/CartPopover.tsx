@@ -39,6 +39,7 @@ import {
   CheckoutTransactionError,
 } from '../../context/CartProvider'
 import { useAccount } from 'wagmi'
+import { CartCheckoutModal } from './CartCheckoutModal'
 
 const scaleUp = keyframes({
   '0%': { opacity: 0, transform: 'scale(0.9) translateY(-10px)' },
@@ -129,6 +130,7 @@ export function CartPopover({
           }
         }, [transaction?.status])
 
+        console.log('transaction: ', transaction)
         const flaggedItemsSubject = flaggedItems.length > 1 ? 'items' : 'item'
         const unavailableItemsSubject =
           unavailableItems.length > 1 ? 'items' : 'item'
@@ -341,7 +343,7 @@ export function CartPopover({
                     </Text>
                   </Flex>
                 )}
-              {displayPendingTransaction &&
+              {/* {displayPendingTransaction &&
                 transaction?.status === CheckoutStatus.Finalizing && (
                   <Flex
                     direction="column"
@@ -361,7 +363,7 @@ export function CartPopover({
                       View on Etherscan
                     </Anchor>
                   </Flex>
-                )}
+                )} */}
               <Flex direction="column" css={{ mt: 'auto', pb: 10 }}>
                 {!isCartEmpty && referrerFee ? (
                   <Flex css={{ mb: '$4' }}>
@@ -417,17 +419,43 @@ export function CartPopover({
                     </Flex>
                   </Flex>
                 )}
+                <CartCheckoutModal
+                  open={displayPendingTransaction}
+                  items={items}
+                  currency={currency}
+                  totalPrice={totalPrice}
+                  usdPrice={usdPrice}
+                  transaction={transaction}
+                  cartChain={cartChain}
+                  blockExplorerBaseUrl={blockExplorerBaseUrl}
+                  setCartPopoverOpen={setOpen}
+                />
 
-                {displayPendingTransaction &&
+                {/* {displayPendingTransaction &&
                   transaction?.status === CheckoutStatus.Approving && (
-                    <Text
-                      style="body2"
-                      color="subtle"
-                      css={{ mb: '$2', textAlign: 'center' }}
-                    >
-                      Please confirm purchase in your wallet{' '}
-                    </Text>
-                  )}
+                    <>
+                      {transaction.currentStep &&
+                      transaction.currentStep.id === 'auth' ? (
+                        <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
+                      ) : null}
+
+                      {transaction.currentStep &&
+                      transaction.currentStep.id === 'currency-approval' ? (
+                        <Text>Approve currency</Text>
+                      ) : null}
+
+                      {transaction.currentStep &&
+                      transaction.currentStep.id === 'sale' ? (
+                        <Text
+                          style="body2"
+                          color="subtle"
+                          css={{ mb: '$2', textAlign: 'center' }}
+                        >
+                          Please confirm purchase in your wallet{' '}
+                        </Text>
+                      ) : null}
+                    </>
+                  )} */}
                 {!hasEnoughCurrency && isConnected && (
                   <Flex
                     align="center"
@@ -475,6 +503,31 @@ export function CartPopover({
                         : 'Add Funds to Purchase'}
                     </Button>
                   )}
+                {!isCartEmpty &&
+                  hasValidItems &&
+                  transaction?.status === CheckoutStatus.Approving && (
+                    <Button
+                      disabled={!hasEnoughCurrency && isConnected}
+                      onClick={async () => {
+                        if (!isConnected) {
+                          onConnectWallet?.()
+                        } else {
+                          checkout()
+                            .then(() => {
+                              setDisplayPendingTransaction(true)
+                            })
+                            .catch((e) => {
+                              console.error(e)
+                              setDisplayPendingTransaction(false)
+                            })
+                        }
+                      }}
+                    >
+                      {hasEnoughCurrency || !isConnected
+                        ? 'Purchase'
+                        : 'Add Funds to Purchase'}
+                    </Button>
+                  )}
                 {!isCartEmpty && !hasValidItems && (
                   <Button
                     color="secondary"
@@ -486,7 +539,7 @@ export function CartPopover({
                     Refresh Cart
                   </Button>
                 )}
-                {displayPendingTransaction &&
+                {/* {displayPendingTransaction &&
                   transaction?.status === CheckoutStatus.Approving && (
                     <Button disabled={true}>
                       <Loader />
@@ -499,7 +552,7 @@ export function CartPopover({
                       <Loader />
                       Waiting to be Validated...
                     </Button>
-                  )}
+                  )} */}
                 {!providerOptionsContext.disablePoweredByReservoir && (
                   <Flex
                     css={{
