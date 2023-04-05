@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
+import { EditBidModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
@@ -14,14 +14,11 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
 
-const BuyPage: NextPage = () => {
+const EditBidPage: NextPage = () => {
   const router = useRouter()
+  const [bidId, setBidId] = useState('')
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
-  const [orderId, setOrderId] = useState('')
-  const [referrer, setReferrer] = useState<string | undefined>(undefined)
-  const [referrerBps, setReferrerBps] = useState<number | undefined>(undefined)
-  const [referrerFee, setReferrerFee] = useState<number | undefined>(undefined)
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
@@ -43,6 +40,14 @@ const BuyPage: NextPage = () => {
       <ConnectButton />
 
       <div>
+        <label>Bid Id: </label>
+        <input
+          type="text"
+          value={bidId}
+          onChange={(e) => setBidId(e.target.value)}
+        />
+      </div>
+      <div>
         <label>Collection Id: </label>
         <input
           type="text"
@@ -58,42 +63,7 @@ const BuyPage: NextPage = () => {
           onChange={(e) => setTokenId(e.target.value)}
         />
       </div>
-      <div>
-        <label>Order Id: </label>
-        <input
-          type="text"
-          value={orderId}
-          onChange={(e) => setOrderId(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Referrer: </label>
-        <input
-          type="text"
-          value={referrer}
-          onChange={(e) => setReferrer(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Referrer BPS: </label>
-        <input
-          type="number"
-          value={referrerBps}
-          onChange={(e) =>
-            setReferrerBps(e.target.value ? +e.target.value : undefined)
-          }
-        />
-      </div>
-      <div>
-        <label>Referrer Fee (Flat): </label>
-        <input
-          type="number"
-          value={referrerFee}
-          onChange={(e) =>
-            setReferrerFee(e.target.value ? +e.target.value : undefined)
-          }
-        />
-      </div>
+
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -106,7 +76,7 @@ const BuyPage: NextPage = () => {
         />
       </div>
 
-      <BuyModal
+      <EditBidModal
         trigger={
           <button
             style={{
@@ -121,26 +91,22 @@ const BuyPage: NextPage = () => {
               cursor: 'pointer',
             }}
           >
-            Buy Now
+            Edit Bid
           </button>
         }
+        bidId={bidId}
         collectionId={collectionId}
         tokenId={tokenId}
-        orderId={orderId}
-        referrer={referrer}
-        referrerFeeBps={referrerBps}
-        referrerFeeFixed={referrerFee}
         normalizeRoyalties={normalizeRoyalties}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
-        onGoToToken={() => console.log('Go to token')}
-        onPurchaseComplete={(data) => {
-          console.log('Purchase Complete', data)
+        onEditBidComplete={(data) => {
+          console.log('EditBid Complete', data)
         }}
-        onPurchaseError={(error, data) => {
-          console.log('Transaction Error', error, data)
+        onEditBidError={(error, data) => {
+          console.log('EditBid Transaction Error', error, data)
         }}
         onClose={() => {
-          console.log('BuyModal Closed')
+          console.log('EditBidModal Closed')
         }}
       />
       <ThemeSwitcher />
@@ -148,4 +114,4 @@ const BuyPage: NextPage = () => {
   )
 }
 
-export default BuyPage
+export default EditBidPage

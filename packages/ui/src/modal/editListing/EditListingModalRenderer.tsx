@@ -166,7 +166,7 @@ export const EditListingModalRenderer: FC<Props> = ({
 
   const { data: tokens } = useTokens(
     open && {
-      tokens: [`${contract}:${tokenId}`],
+      tokens: [`${collectionId}:${tokenId}`],
       includeAttributes: true,
       normalizeRoyalties,
     },
@@ -181,7 +181,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   const { data: userTokens } = useUserTokens(
     open && is1155 ? account.address : undefined,
     {
-      tokens: [`${contract}:${tokenId}`],
+      tokens: [`${collectionId}:${tokenId}`],
     }
   )
 

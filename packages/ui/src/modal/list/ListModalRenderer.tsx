@@ -200,6 +200,7 @@ export const ListModalRenderer: FC<Props> = ({
     open && {
       tokens: [`${contract}:${tokenId}`],
       includeAttributes: true,
+      includeLastSale: true,
       normalizeRoyalties,
     },
     {
