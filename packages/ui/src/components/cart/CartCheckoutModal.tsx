@@ -59,6 +59,10 @@ export function CartCheckoutModal({
     return `${cartChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1`
   })
 
+  if (transaction) {
+    debugger
+  }
+
   useEffect(() => {
     if (open !== undefined && open !== dialogOpen) {
       setDialogOpen(open)
@@ -137,10 +141,13 @@ export function CartCheckoutModal({
                           gap: '$5',
                         }}
                       >
-                        {transaction.currentStep?.id === 'auth' ? (
+                        {transaction?.currentStep == undefined ? (
+                          <Loader />
+                        ) : null}
+                        {transaction?.currentStep?.id == 'auth' ? (
                           <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
                         ) : null}
-                        {transaction.currentStep?.id === 'sale' ? (
+                        {transaction?.currentStep?.id == 'sale' ? (
                           <>
                             <Text style="h6">
                               Confirm transaction in your wallet

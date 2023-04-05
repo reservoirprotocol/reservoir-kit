@@ -38,7 +38,7 @@ export const TokenCheckout: FC<Props> = ({
       <Flex align="center" css={{ gap: '$4' }}>
         <Flex>
           {images.map((image) => (
-            <Img src={image} />
+            <Img src={image} key={image} />
           ))}
         </Flex>
         <Text style="h6">

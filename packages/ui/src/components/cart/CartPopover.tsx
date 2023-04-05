@@ -130,7 +130,6 @@ export function CartPopover({
           }
         }, [transaction?.status])
 
-        console.log('transaction: ', transaction)
         const flaggedItemsSubject = flaggedItems.length > 1 ? 'items' : 'item'
         const unavailableItemsSubject =
           unavailableItems.length > 1 ? 'items' : 'item'
@@ -420,7 +419,7 @@ export function CartPopover({
                   </Flex>
                 )}
                 <CartCheckoutModal
-                  open={displayPendingTransaction}
+                  open={displayPendingTransaction && !transaction?.error}
                   items={items}
                   currency={currency}
                   totalPrice={totalPrice}
@@ -503,7 +502,7 @@ export function CartPopover({
                         : 'Add Funds to Purchase'}
                     </Button>
                   )}
-                {!isCartEmpty &&
+                {/* {!isCartEmpty &&
                   hasValidItems &&
                   transaction?.status === CheckoutStatus.Approving && (
                     <Button
@@ -527,7 +526,7 @@ export function CartPopover({
                         ? 'Purchase'
                         : 'Add Funds to Purchase'}
                     </Button>
-                  )}
+                  )} */}
                 {!isCartEmpty && !hasValidItems && (
                   <Button
                     color="secondary"
