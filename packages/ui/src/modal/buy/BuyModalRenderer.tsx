@@ -84,6 +84,7 @@ type Props = {
   collectionId?: string
   orderId?: string
   referrerFeeBps?: number | null
+  referrerFeeFixed?: number | null
   referrer?: string | null
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
@@ -96,6 +97,7 @@ export const BuyModalRenderer: FC<Props> = ({
   orderId,
   referrer,
   referrerFeeBps,
+  referrerFeeFixed,
   normalizeRoyalties,
   children,
 }) => {
@@ -234,6 +236,8 @@ export const BuyModalRenderer: FC<Props> = ({
         .div(10000)
       const atomicUnitsFee = formatUnits(fee, 0)
       options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
+    } else if (referrer && referrerFeeFixed) {
+      options.feesOnTop = [`${referrer}:${referrerFeeFixed}`]
     } else if (referrer === null && referrerFeeBps === null) {
       delete options.feesOnTop
     }
@@ -350,6 +354,7 @@ export const BuyModalRenderer: FC<Props> = ({
     orderId,
     referrer,
     referrerFeeBps,
+    referrerFeeFixed,
     quantity,
     normalizeRoyalties,
     client,
@@ -363,6 +368,7 @@ export const BuyModalRenderer: FC<Props> = ({
   ])
 
   useEffect(() => {
+    let currency: Currency | undefined
     if (listing) {
       let total = 0
       if (quantity > 1) {
@@ -407,26 +413,35 @@ export const BuyModalRenderer: FC<Props> = ({
         }
         total = mixedCurrencies ? nativeTotal : orderCurrencyTotal
         setListingsToBuy(orders)
-        setCurrency(
-          mixedCurrencies
-            ? {
-                contract: chainCurrency.address,
-                symbol: chainCurrency.symbol,
-                decimals: chainCurrency.decimals,
-                name: chainCurrency.name,
-              }
-            : (listing.price?.currency as any)
-        )
+        currency = mixedCurrencies
+          ? {
+              contract: chainCurrency.address,
+              symbol: chainCurrency.symbol,
+              decimals: chainCurrency.decimals,
+              name: chainCurrency.name,
+            }
+          : (listing.price?.currency as any)
+        setCurrency(currency)
         setMixedCurrencies(mixedCurrencies)
       } else if (listing.price?.amount?.decimal) {
         total = listing.price.amount.decimal
-        setCurrency(listing.price.currency as any)
+        currency = listing.price.currency as Currency
+        setCurrency(currency)
         setMixedCurrencies(false)
       }
 
       if (total > 0) {
         if (referrerFeeBps && referrer) {
           const fee = (referrerFeeBps / 10000) * total
+          total += fee
+          setReferrerFee(fee)
+        } else if (referrerFeeFixed && referrer) {
+          const fee = Number(
+            formatUnits(
+              BigNumber.from(`${referrerFeeFixed}`),
+              currency?.decimals
+            )
+          )
           total += fee
           setReferrerFee(fee)
         }
@@ -453,6 +468,7 @@ export const BuyModalRenderer: FC<Props> = ({
     listing,
     isValidatingListing,
     referrerFeeBps,
+    referrerFeeFixed,
     referrer,
     client,
     quantity,
