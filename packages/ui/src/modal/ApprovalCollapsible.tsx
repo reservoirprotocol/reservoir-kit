@@ -45,9 +45,9 @@ export const ApprovalCollapsible: FC<Props> = ({
       console.log(path)
 
       if (path) {
-        totalPrice += path.quote || 0
         let imageRedirect = `${cartChain?.baseApiUrl}/redirect/tokens/${path.contract}:${path.tokenId}/image/v1`
         images.push(imageRedirect)
+        totalPrice += path.quote || 0
       }
     })
 

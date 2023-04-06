@@ -1045,16 +1045,26 @@ function cartStore({
               return currentStepItem
             })
 
-            if (currentStepItem) {
-              if (currentStepItem.txHash) {
-                status = CheckoutStatus.Finalizing
-                if (cartData.current.items.length > 0) {
-                  cartData.current.items = []
-                  cartData.current.pools = {}
-                  cartData.current.totalPrice = 0
-                  cartData.current.currency = undefined
-                  cartData.current.chain = undefined
-                }
+            // if (currentStepItem) {
+            //   if (currentStepItem.txHash) {
+            //     status = CheckoutStatus.Finalizing
+            //     if (cartData.current.items.length > 0) {
+            //       cartData.current.items = []
+            //       cartData.current.pools = {}
+            //       cartData.current.totalPrice = 0
+            //       cartData.current.currency = undefined
+            //       cartData.current.chain = undefined
+            //     }
+            //   }
+            // }
+            if (currentStep.items?.every((item) => item.txHash)) {
+              status = CheckoutStatus.Finalizing
+              if (cartData.current.items.length > 0) {
+                cartData.current.items = []
+                cartData.current.pools = {}
+                cartData.current.totalPrice = 0
+                cartData.current.currency = undefined
+                cartData.current.chain = undefined
               }
             } else if (
               steps.every(

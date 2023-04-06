@@ -72,16 +72,7 @@ export function CartCheckoutModal({
       )
     : {}
 
-  // const images2 = transaction?.currentStep?.items?.slice(0, 2).map((item) => {
-  //   const { token, collection } = item
-  //   const contract = collection.id.split(':')[0]
-
-  //   return `${cartChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1`
-  // })
-
   console.log(transaction)
-
-  console.log('path map: ', pathMap)
 
   useEffect(() => {
     if (open !== undefined && open !== dialogOpen) {
@@ -231,22 +222,7 @@ export function CartCheckoutModal({
                 )}
                 {transaction?.status === CheckoutStatus.Finalizing && (
                   <Flex direction="column">
-                    <Box
-                      css={{
-                        p: '$4',
-                        borderBottom: '1px solid $neutralBorder',
-                      }}
-                    >
-                      <TokenCheckout
-                        itemCount={items.length}
-                        images={images}
-                        totalPrice={totalPrice}
-                        usdPrice={usdPrice}
-                        currency={currency}
-                        chain={cartChain}
-                      />
-                    </Box>
-                    <Flex direction="column" css={{ p: '$4' }}>
+                    <Flex direction="column" css={{ px: '$4', py: '$5' }}>
                       <Flex
                         direction="column"
                         align="center"
@@ -257,9 +233,9 @@ export function CartCheckoutModal({
                       >
                         <Text style="h6">Finalizing on blockchain</Text>
                         <Text style="subtitle2" color="subtle">
-                          You can close this modal while it is finalizing on the
-                          blockchain; you will be notified once the validation
-                          process is complete.
+                          You can close this modal while it finalizes on the
+                          blockchain. The transaction will continue in the
+                          background.
                         </Text>
 
                         <FontAwesomeIcon icon={faCube} width="24" />
