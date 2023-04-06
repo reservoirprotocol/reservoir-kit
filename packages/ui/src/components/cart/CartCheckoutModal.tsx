@@ -48,7 +48,7 @@ export function CartCheckoutModal({
   transaction,
   open,
   setCartPopoverOpen,
-}: Props): ReactElement {
+}: Props): ReactElement | null {
   const [dialogOpen, setDialogOpen] = useState(false)
   const providerOptionsContext = useContext(ProviderOptionsContext)
 
@@ -71,8 +71,6 @@ export function CartCheckoutModal({
         {} as Record<string, Path>
       )
     : {}
-
-  console.log(transaction)
 
   useEffect(() => {
     if (open !== undefined && open !== dialogOpen) {
@@ -194,7 +192,11 @@ export function CartCheckoutModal({
                                 ))}
                               </Flex>
                             ) : (
-                              <>
+                              <Flex
+                                direction="column"
+                                align="center"
+                                css={{ gap: '$4', py: '$4' }}
+                              >
                                 <Text style="h6">
                                   Confirm transaction in your wallet
                                 </Text>
@@ -208,7 +210,7 @@ export function CartCheckoutModal({
                                     }}
                                   />
                                 </Box>
-                              </>
+                              </Flex>
                             )}
                           </>
                         ) : null}
@@ -232,7 +234,11 @@ export function CartCheckoutModal({
                         }}
                       >
                         <Text style="h6">Finalizing on blockchain</Text>
-                        <Text style="subtitle2" color="subtle">
+                        <Text
+                          style="subtitle2"
+                          color="subtle"
+                          css={{ textAlign: 'center' }}
+                        >
                           You can close this modal while it finalizes on the
                           blockchain. The transaction will continue in the
                           background.
@@ -249,39 +255,48 @@ export function CartCheckoutModal({
                 )}
 
                 {transaction?.status === CheckoutStatus.Complete && (
-                  <Flex direction="column">
-                    <Box
-                      css={{
-                        color: '$successAccent',
-                        mb: 24,
-                      }}
+                  <Flex
+                    direction="column"
+                    align="center"
+                    css={{ width: '100%', p: '$4' }}
+                  >
+                    <Flex
+                      direction="column"
+                      align="center"
+                      css={{ px: '$4', py: '$5', gap: 24 }}
                     >
-                      <FontAwesomeIcon icon={faCheckCircle} fontSize={32} />
-                    </Box>
-                    <Text>Congrats! Items purchased successfully.</Text>
-                    <Flex direction="column" css={{ gap: '$2' }}>
-                      {transaction.currentStep?.items?.map((item) => {
-                        console.log('complete item: ', item)
-                        // @ts-ignore
-                        const itemCount = item.orderIds.length || 1
-                        const itemSubject = itemCount > 1 ? 'items' : 'item'
+                      <Box
+                        css={{
+                          color: '$successAccent',
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faCheckCircle} fontSize={32} />
+                      </Box>
+                      <Text style="h5" css={{ textAlign: 'center' }}>
+                        Congrats! Purchase was successful.
+                      </Text>
+                      <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
+                        {transaction.currentStep?.items?.map((item) => {
+                          const itemCount = item?.orderIds?.length || 1
+                          const itemSubject = itemCount > 1 ? 'items' : 'item'
 
-                        return (
-                          <Anchor
-                            href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                            color="primary"
-                            weight="medium"
-                            target="_blank"
-                            css={{ fontSize: 12 }}
-                          >
-                            View transaction for {itemCount} {itemSubject} on
-                            Etherscan
-                          </Anchor>
-                        )
-                      })}
+                          return (
+                            <Anchor
+                              href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
+                              color="primary"
+                              weight="medium"
+                              target="_blank"
+                              css={{ fontSize: 12 }}
+                            >
+                              View transaction for {itemCount} {itemSubject} on
+                              Etherscan
+                            </Anchor>
+                          )
+                        })}
+                      </Flex>
                     </Flex>
                     <Button
-                      css={{ m: '$4' }}
+                      css={{ width: '100%' }}
                       onClick={() => setDialogOpen(false)}
                     >
                       Close

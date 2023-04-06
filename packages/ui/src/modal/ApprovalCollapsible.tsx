@@ -32,8 +32,7 @@ export const ApprovalCollapsible: FC<Props> = ({
   const [collapsibleOpen, setCollapsibleOpen] = useState(false)
 
   const isComplete = item && item?.status == 'complete'
-  // @ts-ignore Todo: orderIds not a part of item object
-  const itemCount = item.orderIds.length || 1
+  const itemCount = item?.orderIds?.length || 1
 
   function processOrders(orderIds: string[]) {
     let totalPrice = 0
@@ -41,8 +40,6 @@ export const ApprovalCollapsible: FC<Props> = ({
 
     orderIds.forEach((orderId: string) => {
       const path = pathMap[orderId]
-
-      console.log(path)
 
       if (path) {
         let imageRedirect = `${cartChain?.baseApiUrl}/redirect/tokens/${path.contract}:${path.tokenId}/image/v1`
@@ -56,8 +53,7 @@ export const ApprovalCollapsible: FC<Props> = ({
     return { totalPrice, images }
   }
 
-  // @ts-ignore Todo: fix
-  const { totalPrice, images } = processOrders(item.orderIds)
+  const { totalPrice, images } = processOrders(item?.orderIds as string[])
 
   useEffect(() => {
     if (open !== undefined && open !== collapsibleOpen) {

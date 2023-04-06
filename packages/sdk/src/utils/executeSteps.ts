@@ -211,6 +211,7 @@ export async function executeSteps(
                   ['Execute Steps: Transaction step, waiting on transaction'],
                   LogLevel.Verbose
                 )
+
                 await tx.wait()
                 client.log(
                   [
@@ -386,9 +387,6 @@ export async function executeSteps(
                     }
                     setState([...json?.steps], path)
                   } catch (err) {
-                    json.steps[incompleteStepIndex].error =
-                      'Your order could not be posted.'
-                    setState([...json?.steps], path)
                     throw err
                   }
                 }
@@ -402,7 +400,15 @@ export async function executeSteps(
             stepItem.status = 'complete'
             resolve(stepItem)
           } catch (e) {
-            reject(e)
+            const error = e as Error
+
+            if (error && json?.steps) {
+              json.steps[incompleteStepIndex].error =
+                error.message || 'Error: something went wrong'
+              stepItem.error = error.message || 'Error: something went wrong'
+              setState([...json?.steps], path)
+            }
+            reject(error)
           }
         })
       })

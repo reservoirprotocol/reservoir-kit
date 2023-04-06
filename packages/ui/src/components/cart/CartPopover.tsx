@@ -283,11 +283,17 @@ export function CartPopover({
                   message={`${priceChangeItems.length} ${priceChangeItemsSubject} updated`}
                 />
               )}
-              {transaction?.error &&
-                transaction.errorType !==
-                  CheckoutTransactionError.UserDenied && (
-                  <CartToast kind="error" message={transaction.error.message} />
-                )}
+              {transaction?.error && (
+                <CartToast
+                  kind="error"
+                  message={
+                    transaction.errorType ===
+                    CheckoutTransactionError.UserDenied
+                      ? 'User denied transaction signature.'
+                      : transaction.error.message
+                  }
+                />
+              )}
               {purchaseComplete && (
                 <CartToast
                   message={`Transaction Complete`}
@@ -397,8 +403,12 @@ export function CartPopover({
                   </Flex>
                 )}
                 <CartCheckoutModal
-                  // open={displayPendingTransaction && !transaction?.error}
-                  open={displayPendingTransaction}
+                  open={
+                    (transaction?.status == CheckoutStatus.Approving ||
+                      transaction?.status == CheckoutStatus.Finalizing ||
+                      transaction?.status == CheckoutStatus.Complete) &&
+                    !transaction?.error
+                  }
                   items={items}
                   currency={currency}
                   totalPrice={totalPrice}
