@@ -15,6 +15,11 @@ const Img = styled('img', {
   },
 })
 
+enum Size {
+  SM,
+  LG,
+}
+
 type Props = {
   itemCount: number
   images: string[]
@@ -22,6 +27,7 @@ type Props = {
   usdPrice: number
   currency?: NonNullable<Cart['items'][0]['price']>['currency']
   chain?: ReservoirChain
+  size?: Size
 }
 
 export const TokenCheckout: FC<Props> = ({
@@ -31,27 +37,38 @@ export const TokenCheckout: FC<Props> = ({
   usdPrice,
   currency,
   chain,
+  size = Size.LG,
 }) => {
   const itemSubject = itemCount > 1 ? 'items' : 'item'
   return (
-    <Flex justify="between" align="center">
-      <Flex align="center" css={{ gap: '$4' }}>
+    <Flex justify="between" align="center" css={{ width: '100%' }}>
+      <Flex align="center" css={{ gap: size == Size.SM ? '$3' : '$4' }}>
         <Flex>
           {images.map((image) => (
-            <Img src={image} key={image} />
+            <Img
+              src={image}
+              key={image}
+              css={{
+                height: size == Size.SM ? 40 : 56,
+                width: size == Size.SM ? 40 : 56,
+                '& + img': {
+                  marginLeft: size == Size.SM ? -32 : -48,
+                },
+              }}
+            />
           ))}
         </Flex>
-        <Text style="h6">
+        <Text style={size == Size.SM ? 'subtitle2' : 'h6'}>
           {itemCount} {itemSubject}
         </Text>
       </Flex>
       <Flex direction="column" align="end" css={{ gap: '$1' }}>
         <FormatCryptoCurrency
-          textStyle="h6"
+          textStyle={size == Size.SM ? 'subtitle2' : 'h6'}
           amount={totalPrice}
           address={currency?.contract}
           decimals={currency?.decimals}
-          logoWidth={18}
+          logoWidth={size == Size.SM ? 12 : 18}
           chainId={chain?.id}
         />
         {usdPrice && (

@@ -92,6 +92,7 @@ export type Cart = {
     errorType?: CheckoutTransactionError
     status: CheckoutStatus
     steps?: Execute['steps']
+    path?: Execute['path']
     currentStep?: Execute['steps'][0]
   } | null
 }
@@ -1004,7 +1005,7 @@ function cartStore({
           signer,
           items: tokens,
           options,
-          onProgress: (steps: Execute['steps']) => {
+          onProgress: (steps: Execute['steps'], path: Execute['path']) => {
             if (!steps) {
               return
             }
@@ -1084,6 +1085,7 @@ function cartStore({
               if (currentStepItem) {
                 cartData.current.transaction.txHash = currentStepItem?.txHash
                 cartData.current.transaction.steps = steps
+                cartData.current.transaction.path = path
               }
             }
             commit()
