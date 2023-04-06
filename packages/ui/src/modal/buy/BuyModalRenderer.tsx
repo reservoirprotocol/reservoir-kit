@@ -329,9 +329,13 @@ export const BuyModalRenderer: FC<Props> = ({
           setHasEnoughCurrency(false)
         } else {
           const errorType = (error as any)?.type
+          const errorStatus = (error as any)?.statusCode
           let message = 'Oops, something went wrong. Please try again.'
           if (errorType && errorType === 'price mismatch') {
             message = error.message
+          }
+          if (errorStatus >= 400 && errorStatus < 500) {
+            message = error.message 
           }
           //@ts-ignore: Should be fixed in an update to typescript
           const transactionError = new Error(message, {
