@@ -2,7 +2,7 @@ import { paths } from '@reservoir0x/reservoir-sdk'
 import getLocalMarketplaceData from '../lib/getLocalMarketplaceData'
 import { useEffect, useState } from 'react'
 import useReservoirClient from './useReservoirClient'
-import useSWRImmutable from 'swr/immutable'
+import useSWR from 'swr'
 
 export type Marketplace = NonNullable<
   paths['/admin/get-marketplaces']['get']['responses']['200']['schema']['marketplaces']
@@ -13,6 +13,7 @@ export type Marketplace = NonNullable<
 }
 
 export default function (
+  collectionId?: string,
   listingEnabledOnly?: boolean,
   royaltyBps?: number,
   chainId?: number
@@ -23,11 +24,13 @@ export default function (
     chainId !== undefined
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
-  const path = new URL(`${chain?.baseApiUrl}/admin/get-marketplaces`)
+  const path = new URL(
+    `${chain?.baseApiUrl}/collections/${collectionId}/supported-marketplaces/v1`
+  )
 
-  const { data } = useSWRImmutable<
-    paths['/admin/get-marketplaces']['get']['responses']['200']['schema']
-  >([path.href, chain?.apiKey, client?.version], null)
+  const { data } = useSWR<
+    paths['/collections/{collection}/supported-marketplaces/v1']['get']['responses'][200]['schema']
+  >(collectionId ? [path.href, chain?.apiKey, client?.version] : null, null)
 
   useEffect(() => {
     if (data && data.marketplaces) {
@@ -54,7 +57,7 @@ export default function (
             marketplace.imageUrl = data.icon
           }
         }
-        if (marketplace.orderbook === 'opensea') {
+        if (marketplace.orderbook === 'opensea' && royaltyBps !== undefined) {
           const osFee =
             royaltyBps && royaltyBps >= 50 ? 0 : 50 - (royaltyBps || 0)
           marketplace.fee = {
@@ -62,6 +65,11 @@ export default function (
             percent: osFee / 100,
           }
           marketplace.feeBps = osFee
+        } else {
+          if (marketplace.fee) {
+            marketplace.fee.percent = (marketplace.fee.bps || 0) / 100
+            marketplace.feeBps = marketplace.fee.bps
+          }
         }
         marketplace.price = 0
         marketplace.truePrice = 0
@@ -70,7 +78,7 @@ export default function (
       })
       setMarketplaces(updatedMarketplaces)
     }
-  }, [data, listingEnabledOnly, royaltyBps])
+  }, [data, listingEnabledOnly, chainId])
 
   return [marketplaces, setMarketplaces]
 }
