@@ -1,8 +1,8 @@
 import { NextPage } from 'next'
-import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
+import { BuyModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 
@@ -25,6 +25,20 @@ const BuyPage: NextPage = () => {
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
+
+  const client = useReservoirClient()
+
+  useEffect(() => {
+    let eventListener: any
+    if (client) {
+      eventListener = client.addEventListener((event, chainId) => {
+        debugger
+      })
+    }
+    return () => {
+      client?.removeEventListener(eventListener)
+    }
+  }, [client])
 
   return (
     <div

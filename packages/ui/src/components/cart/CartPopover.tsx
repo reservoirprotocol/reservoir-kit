@@ -25,7 +25,6 @@ import React, {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faClose,
-  faCube,
   faRefresh,
   faShoppingCart,
 } from '@fortawesome/free-solid-svg-icons'

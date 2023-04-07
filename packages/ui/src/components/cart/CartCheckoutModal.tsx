@@ -14,11 +14,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { TokenCheckout } from '../../modal/TokenCheckout'
-import {
-  Cart,
-  CheckoutStatus,
-  CheckoutTransactionError,
-} from '../../context/CartProvider'
+import { Cart, CheckoutStatus } from '../../context/CartProvider'
 import { useCoinConversion } from '../../hooks'
 import SigninStep from '../../modal/SigninStep'
 

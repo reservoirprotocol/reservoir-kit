@@ -2,6 +2,7 @@ import actions from './actions'
 import * as utils from '../utils'
 import { version } from '../../package.json'
 import { LogLevel, log as logUtil } from '../utils/logger'
+import { ReservoirEvent } from '../utils/events'
 
 export type ReservoirChain = {
   id: number
@@ -9,6 +10,11 @@ export type ReservoirChain = {
   default: boolean
   apiKey?: string
 }
+
+export type ReservoirEventListener = (
+  event: ReservoirEvent,
+  chainId: number
+) => void
 
 /**
  * ReservoirClient Configuration Options
@@ -33,6 +39,7 @@ export type ReservoirClientOptions = {
 export type ReservoirClientActions = typeof actions
 
 let _client: ReservoirClient
+let _eventListeners: ReservoirEventListener[] = []
 
 export class ReservoirClient {
   version: string
@@ -96,10 +103,46 @@ export class ReservoirClient {
     }
     return null
   }
+
+  /**
+   * Add an Event Listener
+   * @param listener A function to callback whenever an event is emitted
+   */
+  addEventListener(listener: ReservoirEventListener) {
+    _eventListeners.push(listener)
+  }
+
+  /**
+   * Remove an Event Listener
+   * @param listener The listener function to remove
+   */
+  removeEventListener(listener: ReservoirEventListener) {
+    _eventListeners = _eventListeners.filter((item) => listener !== item)
+  }
+
+  /**
+   * Remove all Event Listeners
+   */
+  clearEventListeners() {
+    _eventListeners = []
+  }
+
+  /**
+   * Internal method to send events to listeners, not to be used directly
+   * @param listener A function to callback whenever an event is emitted
+   */
+  _sendEvent(event: ReservoirEvent, chainId: number) {
+    _eventListeners.forEach((listener) => {
+      this.log(
+        ['ReservoirClient: Sending Event', event, chainId],
+        LogLevel.Verbose
+      )
+      listener(event, chainId)
+    })
+  }
 }
 
 export function getClient() {
-  //throw an error
   return _client
 }
 
