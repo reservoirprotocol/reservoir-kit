@@ -92,6 +92,7 @@ export type Cart = {
     errorType?: CheckoutTransactionError
     status: CheckoutStatus
     steps?: Execute['steps']
+    path?: Execute['path']
     currentStep?: Execute['steps'][0]
   } | null
 }
@@ -1004,7 +1005,7 @@ function cartStore({
           signer,
           items: tokens,
           options,
-          onProgress: (steps: Execute['steps']) => {
+          onProgress: (steps: Execute['steps'], path: Execute['path']) => {
             if (!steps) {
               return
             }
@@ -1037,6 +1038,10 @@ function cartStore({
                 ? executableSteps[currentStepIndex]
                 : executableSteps[stepCount - 1]
 
+            if (currentStep.error) {
+              return
+            }
+
             executableSteps.findIndex((step) => {
               currentStepItem = step.items?.find(
                 (item) => item.status === 'incomplete'
@@ -1044,18 +1049,17 @@ function cartStore({
               return currentStepItem
             })
 
-            if (currentStepItem) {
-              if (currentStepItem.txHash) {
-                status = CheckoutStatus.Finalizing
-                if (cartData.current.items.length > 0) {
-                  cartData.current.items = []
-                  cartData.current.pools = {}
-                  cartData.current.totalPrice = 0
-                  cartData.current.currency = undefined
-                  cartData.current.chain = undefined
-                }
+            if (currentStep.items?.every((item) => item.txHash)) {
+              status = CheckoutStatus.Finalizing
+              if (cartData.current.items.length > 0) {
+                cartData.current.items = []
+                cartData.current.pools = {}
+                cartData.current.totalPrice = 0
+                cartData.current.currency = undefined
+                cartData.current.chain = undefined
               }
-            } else if (
+            }
+            if (
               steps.every(
                 (step) =>
                   !step.items ||
@@ -1084,6 +1088,7 @@ function cartStore({
               if (currentStepItem) {
                 cartData.current.transaction.txHash = currentStepItem?.txHash
                 cartData.current.transaction.steps = steps
+                cartData.current.transaction.path = path
               }
             }
             commit()

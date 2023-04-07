@@ -283,11 +283,17 @@ export function CartPopover({
                   message={`${priceChangeItems.length} ${priceChangeItemsSubject} updated`}
                 />
               )}
-              {transaction?.error &&
-                transaction.errorType !==
-                  CheckoutTransactionError.UserDenied && (
-                  <CartToast kind="error" message={transaction.error.message} />
-                )}
+              {transaction?.error && (
+                <CartToast
+                  kind="error"
+                  message={
+                    transaction.errorType ===
+                    CheckoutTransactionError.UserDenied
+                      ? 'User denied transaction signature.'
+                      : transaction.error.message
+                  }
+                />
+              )}
               {purchaseComplete && (
                 <CartToast
                   message={`Transaction Complete`}
@@ -341,27 +347,6 @@ export function CartPopover({
                     </Text>
                   </Flex>
                 )}
-              {/* {displayPendingTransaction &&
-                transaction?.status === CheckoutStatus.Finalizing && (
-                  <Flex
-                    direction="column"
-                    align="center"
-                    justify="center"
-                    css={{ color: '$neutralBorderHover', flex: 1, gap: '$5' }}
-                  >
-                    <Text style="h6">Finalizing on blockchain</Text>
-                    <FontAwesomeIcon icon={faCube} width="24" />
-                    <Anchor
-                      href={`${blockExplorerBaseUrl}/tx/${transaction?.txHash}`}
-                      color="primary"
-                      weight="medium"
-                      target="_blank"
-                      css={{ fontSize: 12 }}
-                    >
-                      View on Etherscan
-                    </Anchor>
-                  </Flex>
-                )} */}
               <Flex direction="column" css={{ mt: 'auto', pb: 10 }}>
                 {!isCartEmpty && referrerFee ? (
                   <Flex css={{ mb: '$4' }}>
@@ -418,7 +403,12 @@ export function CartPopover({
                   </Flex>
                 )}
                 <CartCheckoutModal
-                  open={displayPendingTransaction && !transaction?.error}
+                  open={
+                    (transaction?.status == CheckoutStatus.Approving ||
+                      transaction?.status == CheckoutStatus.Finalizing ||
+                      transaction?.status == CheckoutStatus.Complete) &&
+                    !transaction?.error
+                  }
                   items={items}
                   currency={currency}
                   totalPrice={totalPrice}
@@ -429,31 +419,6 @@ export function CartPopover({
                   setCartPopoverOpen={setOpen}
                 />
 
-                {/* {displayPendingTransaction &&
-                  transaction?.status === CheckoutStatus.Approving && (
-                    <>
-                      {transaction.currentStep &&
-                      transaction.currentStep.id === 'auth' ? (
-                        <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
-                      ) : null}
-
-                      {transaction.currentStep &&
-                      transaction.currentStep.id === 'currency-approval' ? (
-                        <Text>Approve currency</Text>
-                      ) : null}
-
-                      {transaction.currentStep &&
-                      transaction.currentStep.id === 'sale' ? (
-                        <Text
-                          style="body2"
-                          color="subtle"
-                          css={{ mb: '$2', textAlign: 'center' }}
-                        >
-                          Please confirm purchase in your wallet{' '}
-                        </Text>
-                      ) : null}
-                    </>
-                  )} */}
                 {!hasEnoughCurrency && isConnected && (
                   <Flex
                     align="center"
@@ -501,31 +466,6 @@ export function CartPopover({
                         : 'Add Funds to Purchase'}
                     </Button>
                   )}
-                {/* {!isCartEmpty &&
-                  hasValidItems &&
-                  transaction?.status === CheckoutStatus.Approving && (
-                    <Button
-                      disabled={!hasEnoughCurrency && isConnected}
-                      onClick={async () => {
-                        if (!isConnected) {
-                          onConnectWallet?.()
-                        } else {
-                          checkout()
-                            .then(() => {
-                              setDisplayPendingTransaction(true)
-                            })
-                            .catch((e) => {
-                              console.error(e)
-                              setDisplayPendingTransaction(false)
-                            })
-                        }
-                      }}
-                    >
-                      {hasEnoughCurrency || !isConnected
-                        ? 'Purchase'
-                        : 'Add Funds to Purchase'}
-                    </Button>
-                  )} */}
                 {!isCartEmpty && !hasValidItems && (
                   <Button
                     color="secondary"
@@ -537,20 +477,7 @@ export function CartPopover({
                     Refresh Cart
                   </Button>
                 )}
-                {/* {displayPendingTransaction &&
-                  transaction?.status === CheckoutStatus.Approving && (
-                    <Button disabled={true}>
-                      <Loader />
-                      Waiting for Approval...
-                    </Button>
-                  )}
-                {displayPendingTransaction &&
-                  transaction?.status === CheckoutStatus.Finalizing && (
-                    <Button disabled={true}>
-                      <Loader />
-                      Waiting to be Validated...
-                    </Button>
-                  )} */}
+
                 {!providerOptionsContext.disablePoweredByReservoir && (
                   <Flex
                     css={{

@@ -31,6 +31,11 @@ const CollapsibleContent = styled(CollapsiblePrimitive.CollapsibleContent, {
   },
 })
 
+const CollapsibleRoot = styled(CollapsiblePrimitive.Root, {
+  borderRadius: 8,
+  overflow: 'hidden',
+})
+
 type Props = {
   trigger: ReactNode
   contentProps?: CollapsiblePrimitive.CollapsibleContentProps
@@ -58,7 +63,7 @@ const Collapsible = forwardRef<
     }, [open])
 
     return (
-      <CollapsiblePrimitive.Root
+      <CollapsibleRoot
         {...props}
         onOpenChange={(open) => {
           setCollapsibleOpen(open)
@@ -74,9 +79,9 @@ const Collapsible = forwardRef<
         <CollapsibleContent ref={forwardedRef} {...contentProps}>
           {children}
         </CollapsibleContent>
-      </CollapsiblePrimitive.Root>
+      </CollapsibleRoot>
     )
   }
 )
 
-export { Collapsible, CollapsibleContent }
+export { Collapsible, CollapsibleContent, CollapsibleRoot }
