@@ -408,11 +408,13 @@ export async function executeSteps(
             resolve(stepItem)
           } catch (e) {
             const error = e as Error
+            const errorMessage = error
+              ? error.message
+              : 'Error: something went wrong'
 
             if (error && json?.steps) {
-              json.steps[incompleteStepIndex].error =
-                error.message || 'Error: something went wrong'
-              stepItem.error = error.message || 'Error: something went wrong'
+              json.steps[incompleteStepIndex].error = errorMessage
+              stepItem.error = errorMessage
               setState([...json?.steps], path)
             }
             reject(error)
@@ -426,10 +428,19 @@ export async function executeSteps(
     await executeSteps(request, signer, setState, json)
   } catch (err: any) {
     client.log(['Execute Steps: An error occurred', err], LogLevel.Error)
+    const error = err as Error
+    const errorMessage = error ? error.message : 'Error: something went wrong'
+
+    if (json) {
+      json.error = errorMessage
+      setState([...json?.steps], json.path)
+    }
+
     client._sendEvent(
       generateEvent(request, json),
       currentReservoirChain?.id || 1
     )
+
     throw err
   }
 }

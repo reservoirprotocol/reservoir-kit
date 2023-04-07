@@ -132,11 +132,15 @@ export class ReservoirClient {
    * @param listener A function to callback whenever an event is emitted
    */
   _sendEvent(event: ReservoirEvent, chainId: number) {
+    this.log(
+      [
+        `ReservoirClient: Sending Event to ${_eventListeners.length} listeners`,
+        event,
+        chainId,
+      ],
+      LogLevel.Verbose
+    )
     _eventListeners.forEach((listener) => {
-      this.log(
-        ['ReservoirClient: Sending Event', event, chainId],
-        LogLevel.Verbose
-      )
       listener(event, chainId)
     })
   }

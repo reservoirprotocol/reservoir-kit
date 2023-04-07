@@ -8,8 +8,10 @@ export type ReservoirEventName =
   | 'accept_offer_complete'
   | 'offer_error'
   | 'offer_complete'
-  | 'list_error'
-  | 'list_complete'
+  | 'listing_error'
+  | 'listing_complete'
+  | 'cancel_error'
+  | 'cancel_complete'
   | 'unknown'
 
 export type ReservoirEvent = {
@@ -25,6 +27,7 @@ export const generateEvent = (
   const isSell = request.url?.includes('/execute/sell')
   const isBid = request.url?.includes('/execute/bid')
   const isList = request.url?.includes('/execute/list')
+  const isCancel = request.url?.includes('/execute/cancel')
   let name: ReservoirEventName | undefined
   const hasError = data?.error || data?.steps.some((step) => step.error)
 
@@ -35,7 +38,9 @@ export const generateEvent = (
   } else if (isBid) {
     name = hasError ? 'offer_error' : 'offer_complete'
   } else if (isList) {
-    name = hasError ? 'list_error' : 'list_complete'
+    name = hasError ? 'listing_error' : 'listing_complete'
+  } else if (isCancel) {
+    name = hasError ? 'cancel_error' : 'cancel_complete'
   } else {
     name = 'unknown'
   }
