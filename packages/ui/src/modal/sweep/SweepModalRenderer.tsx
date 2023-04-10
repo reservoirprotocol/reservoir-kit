@@ -6,10 +6,16 @@ import React, {
   useState,
   useMemo,
 } from 'react'
-import { useChainCurrency, useCoinConversion, useTokens } from '../../hooks'
+import {
+  useChainCurrency,
+  useCoinConversion,
+  useReservoirClient,
+  useTokens,
+} from '../../hooks'
 import { constants } from 'ethers'
-import { useAccount } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 import Token from '../list/Token'
+import { ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 
 export enum SweepStep {
   Checkout,
@@ -24,6 +30,10 @@ type Token = ReturnType<typeof useTokens>['data'][0]
 type FloorAskPrice = NonNullable<
   NonNullable<NonNullable<Token>['market']>['floorAsk']
 >['price']
+
+type BuyTokenOptions = Parameters<
+  ReservoirClientActions['buyToken']
+>['0']['options']
 
 type ChildrenProps = {
   loading: boolean
@@ -61,6 +71,7 @@ export const SweepModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
+  const { data: signer } = useSigner()
   const account = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<
     ReturnType<typeof useTokens>['data']
@@ -71,10 +82,12 @@ export const SweepModalRenderer: FC<Props> = ({
   const [maxInput, setMaxInput] = useState<number>(0)
   const [total, setTotal] = useState<number>(0)
   const [sweepStep, setSweepStep] = useState<SweepStep>(SweepStep.Checkout)
+  const [transactionError, setTransactionError] = useState<Error | null>()
 
   const currency = useChainCurrency()
+  const client = useReservoirClient()
 
-  const { data: tokens } = useTokens(
+  const { data: tokens, isFetchingPage } = useTokens(
     open && {
       collection: collectionId,
       normalizeRoyalties,
@@ -109,7 +122,9 @@ export const SweepModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     setMaxInput(Math.min(availableTokens.length, 50))
+  }, [availableTokens])
 
+  useEffect(() => {
     const total = selectedTokens.reduce((total, token) => {
       if (token?.market?.floorAsk?.price?.amount?.native) {
         total += token.market.floorAsk.price.amount.native
@@ -118,7 +133,7 @@ export const SweepModalRenderer: FC<Props> = ({
     }, 0)
 
     setTotal(total)
-  }, [availableTokens])
+  }, [selectedTokens])
 
   // Add by item
   useEffect(() => {
@@ -195,7 +210,7 @@ export const SweepModalRenderer: FC<Props> = ({
         }
         return total
       }, 0)
-      if (total <= ethAmount) {
+      if (total <= ethAmount && newTokens.length <= maxInput) {
         updatedTokens.push(token)
       } else {
         break
@@ -277,12 +292,30 @@ export const SweepModalRenderer: FC<Props> = ({
     }
   }, [])
 
-  const sweepTokens = useCallback(() => {}, [])
+  const sweepTokens = useCallback(async (options: BuyTokenOptions = {}) => {
+    if (!signer) {
+      const error = new Error('Missing a signer')
+      setTransactionError(error)
+      throw error
+    }
+
+    if (!selectedTokens) {
+      const error = new Error('No tokens selected to sweep')
+      setTransactionError(error)
+      throw error
+    }
+
+    if (!client) {
+      const error = new Error('ReservoirClient was not initialized')
+      setTransactionError(error)
+      throw error
+    }
+  }, [])
 
   return (
     <>
       {children({
-        loading: !tokens,
+        loading: isFetchingPage,
         selectedTokens,
         setSelectedTokens,
         itemAmount,

@@ -1,3 +1,5 @@
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { Dispatch, ReactElement, SetStateAction } from 'react'
 import { useFallbackState } from '../../hooks'
 import {
@@ -9,6 +11,7 @@ import {
   Input,
   Grid,
   FormatCurrency,
+  Box,
 } from '../../primitives'
 import { Modal } from '../Modal'
 import { ItemToggle } from './ItemToggle'
@@ -59,6 +62,7 @@ export function SweepModal({
         setSweepStep,
         sweepTokens,
       }) => {
+        const hasTokens = tokens && tokens.length > 0
         return (
           <Modal
             trigger={trigger}
@@ -69,7 +73,18 @@ export function SweepModal({
               setOpen(open)
             }}
           >
-            {!loading && sweepStep === SweepStep.Checkout && (
+            {!loading && !hasTokens ? (
+              <Flex
+                direction="column"
+                align="center"
+                css={{ py: '$6', px: '$4', gap: '$3' }}
+              >
+                <Text style="h6" css={{ textAlign: 'center' }}>
+                  No items were found for this collection.
+                </Text>
+              </Flex>
+            ) : null}
+            {!loading && hasTokens && sweepStep === SweepStep.Checkout && (
               <Flex direction="column">
                 <Flex direction="column" css={{ px: '$4', pt: '$5', pb: '$2' }}>
                   <Slider
