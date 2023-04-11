@@ -398,6 +398,7 @@ export async function executeSteps(
                 break
             }
             stepItem.status = 'complete'
+            setState([...json?.steps])
             resolve(stepItem)
           } catch (e) {
             const error = e as Error
