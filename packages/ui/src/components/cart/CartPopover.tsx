@@ -25,7 +25,6 @@ import React, {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faClose,
-  faCube,
   faRefresh,
   faShoppingCart,
 } from '@fortawesome/free-solid-svg-icons'
@@ -39,6 +38,7 @@ import {
   CheckoutTransactionError,
 } from '../../context/CartProvider'
 import { useAccount } from 'wagmi'
+import { CartCheckoutModal } from './CartCheckoutModal'
 
 const scaleUp = keyframes({
   '0%': { opacity: 0, transform: 'scale(0.9) translateY(-10px)' },
@@ -283,11 +283,17 @@ export function CartPopover({
                   message={`${priceChangeItems.length} ${priceChangeItemsSubject} updated`}
                 />
               )}
-              {transaction?.error &&
-                transaction.errorType !==
-                  CheckoutTransactionError.UserDenied && (
-                  <CartToast kind="error" message={transaction.error.message} />
-                )}
+              {transaction?.error && (
+                <CartToast
+                  kind="error"
+                  message={
+                    transaction.errorType ===
+                    CheckoutTransactionError.UserDenied
+                      ? 'User denied transaction signature.'
+                      : transaction.error.message
+                  }
+                />
+              )}
               {purchaseComplete && (
                 <CartToast
                   message={`Transaction Complete`}
@@ -339,27 +345,6 @@ export function CartPopover({
                     <Text style="body3" color="subtle">
                       No items in your cart
                     </Text>
-                  </Flex>
-                )}
-              {displayPendingTransaction &&
-                transaction?.status === CheckoutStatus.Finalizing && (
-                  <Flex
-                    direction="column"
-                    align="center"
-                    justify="center"
-                    css={{ color: '$neutralBorderHover', flex: 1, gap: '$5' }}
-                  >
-                    <Text style="h6">Finalizing on blockchain</Text>
-                    <FontAwesomeIcon icon={faCube} width="24" />
-                    <Anchor
-                      href={`${blockExplorerBaseUrl}/tx/${transaction?.txHash}`}
-                      color="primary"
-                      weight="medium"
-                      target="_blank"
-                      css={{ fontSize: 12 }}
-                    >
-                      View on Etherscan
-                    </Anchor>
                   </Flex>
                 )}
               <Flex direction="column" css={{ mt: 'auto', pb: 10 }}>
@@ -417,17 +402,23 @@ export function CartPopover({
                     </Flex>
                   </Flex>
                 )}
+                <CartCheckoutModal
+                  open={
+                    (transaction?.status == CheckoutStatus.Approving ||
+                      transaction?.status == CheckoutStatus.Finalizing ||
+                      transaction?.status == CheckoutStatus.Complete) &&
+                    !transaction?.error
+                  }
+                  items={items}
+                  currency={currency}
+                  totalPrice={totalPrice}
+                  usdPrice={usdPrice}
+                  transaction={transaction}
+                  cartChain={cartChain}
+                  blockExplorerBaseUrl={blockExplorerBaseUrl}
+                  setCartPopoverOpen={setOpen}
+                />
 
-                {displayPendingTransaction &&
-                  transaction?.status === CheckoutStatus.Approving && (
-                    <Text
-                      style="body2"
-                      color="subtle"
-                      css={{ mb: '$2', textAlign: 'center' }}
-                    >
-                      Please confirm purchase in your wallet{' '}
-                    </Text>
-                  )}
                 {!hasEnoughCurrency && isConnected && (
                   <Flex
                     align="center"
@@ -486,20 +477,7 @@ export function CartPopover({
                     Refresh Cart
                   </Button>
                 )}
-                {displayPendingTransaction &&
-                  transaction?.status === CheckoutStatus.Approving && (
-                    <Button disabled={true}>
-                      <Loader />
-                      Waiting for Approval...
-                    </Button>
-                  )}
-                {displayPendingTransaction &&
-                  transaction?.status === CheckoutStatus.Finalizing && (
-                    <Button disabled={true}>
-                      <Loader />
-                      Waiting to be Validated...
-                    </Button>
-                  )}
+
                 {!providerOptionsContext.disablePoweredByReservoir && (
                   <Flex
                     css={{

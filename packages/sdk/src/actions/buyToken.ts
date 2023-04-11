@@ -16,7 +16,7 @@ type Data = {
   expectedPrice?: number
   options?: BuyTokenOptions
   signer: Signer
-  onProgress: (steps: Execute['steps']) => any
+  onProgress: (steps: Execute['steps'], path: Execute['path']) => any
 }
 
 /**

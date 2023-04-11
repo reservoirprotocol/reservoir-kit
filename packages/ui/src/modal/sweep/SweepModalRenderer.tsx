@@ -13,9 +13,13 @@ import {
   useTokens,
 } from '../../hooks'
 import { constants } from 'ethers'
-import { useAccount, useSigner } from 'wagmi'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
 import Token from '../list/Token'
-import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
+import {
+  Execute,
+  ReservoirChain,
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-sdk'
 
 export enum SweepStep {
   Idle,
@@ -59,7 +63,10 @@ type ChildrenProps = {
   currency: ReturnType<typeof useChainCurrency>
   total: number
   totalUsd: number
+  currentChain: ReservoirChain | null | undefined
   tokens: ReturnType<typeof useTokens>['data']
+  blockExplorerBaseUrl: string
+  transactionError: Error | null | undefined
   stepData: SweepModalStepData | null
   setStepData: React.Dispatch<React.SetStateAction<SweepModalStepData | null>>
   sweepStep: SweepStep
@@ -96,8 +103,15 @@ export const SweepModalRenderer: FC<Props> = ({
 
   const currency = useChainCurrency()
   const client = useReservoirClient()
+  const currentChain = client?.currentChain()
 
-  const { data: tokens, isFetchingPage } = useTokens(
+  const { chains } = useNetwork()
+  const chain = chains.find((chain) => chain.id === currentChain?.id)
+
+  const blockExplorerBaseUrl =
+    chain?.blockExplorers?.default?.url || 'https://etherscan.io'
+
+  const { data: tokens, isFetchingPage: fetchingTokens } = useTokens(
     open && {
       collection: collectionId,
       normalizeRoyalties,
@@ -283,9 +297,9 @@ export const SweepModalRenderer: FC<Props> = ({
       setSelectedTokens([])
       setItemAmount(0)
       setEthAmount(0)
-      setMaxInput(0)
       setSweepStep(SweepStep.Idle)
       setIsItemsToggled(true)
+      setTransactionError(null)
     }
   }, [open])
 
@@ -302,7 +316,7 @@ export const SweepModalRenderer: FC<Props> = ({
     }
   }, [])
 
-  const sweepTokens = useCallback(async (options: BuyTokenOptions = {}) => {
+  const sweepTokens = useCallback(() => {
     if (!signer) {
       const error = new Error('Missing a signer')
       setTransactionError(error)
@@ -314,6 +328,10 @@ export const SweepModalRenderer: FC<Props> = ({
       setTransactionError(error)
       throw error
     }
+
+    setTransactionError(null)
+
+    let options: BuyTokenOptions = {}
 
     const items = selectedTokens.reduce((items, token) => {
       if (token?.token?.tokenId && token?.token?.contract) {
@@ -396,21 +414,51 @@ export const SweepModalRenderer: FC<Props> = ({
             )
           ) {
             setSweepStep(SweepStep.Complete)
-            // reset state
+            setSelectedTokens([])
+            setEthAmount(0)
+            setItemAmount(0)
           }
         },
       })
       .catch((e: any) => {
         // handle errors
+        const error = e as Error
+        let message = 'Oops, something went wrong. Please try again.'
+        if (error && error?.message && error?.message.includes('ETH balance')) {
+          message = 'Insufficient funds'
+        } else {
+          const errorType = (error as any)?.type
+          const errorStatus = (error as any)?.statusCode
+          if (errorType && errorType === 'price mismatch') {
+            message = error.message
+          }
+          if (errorStatus >= 400 && errorStatus < 500) {
+            message = error.message
+          }
+          const transactionError = new Error(message, {
+            cause: error,
+          })
+          setTransactionError(transactionError)
+          setSweepStep(SweepStep.Idle)
+        }
       })
 
     //
-  }, [])
+  }, [
+    selectedTokens,
+    client,
+    signer,
+    total,
+    normalizeRoyalties,
+    chain,
+    collectionId,
+    currency,
+  ])
 
   return (
     <>
       {children({
-        loading: isFetchingPage,
+        loading: fetchingTokens,
         selectedTokens,
         setSelectedTokens,
         itemAmount,
@@ -424,7 +472,10 @@ export const SweepModalRenderer: FC<Props> = ({
         currency,
         total,
         totalUsd,
+        currentChain,
         tokens,
+        blockExplorerBaseUrl,
+        transactionError,
         stepData,
         setStepData,
         sweepStep,

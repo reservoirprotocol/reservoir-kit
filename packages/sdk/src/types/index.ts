@@ -16,13 +16,16 @@ export type Execute = {
     items?: {
       status: 'complete' | 'incomplete'
       data?: any
+      orderIndexes?: number[]
+      orderIds?: string[]
+      // manually added
+      error?: string
       txHash?: string
       orderData?: {
         crossPostingOrderId?: string
         orderId: string
         orderIndex: string
       }[]
-      orderIndexes?: number[]
     }[]
   }[]
 }
