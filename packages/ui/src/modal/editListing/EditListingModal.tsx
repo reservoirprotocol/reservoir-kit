@@ -397,13 +397,13 @@ export function EditListingModal({
               </Flex>
             )}
             {editListingStep === EditListingStep.Complete && (
-              <Flex direction="column">
+              <Flex direction="column" align="center" css={{ width: '100%' }}>
                 <Flex
+                  direction="column"
+                  align="center"
                   css={{
                     p: '$4',
                     py: '$5',
-                    flexDirection: 'column',
-                    alignItems: 'center',
                     textAlign: 'center',
                   }}
                 >
