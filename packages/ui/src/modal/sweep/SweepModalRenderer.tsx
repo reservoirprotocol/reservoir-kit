@@ -29,6 +29,7 @@ export type SweepModalStepData = {
   stepProgress: number
   currentStep: Execute['steps'][0]
   currentStepItem: NonNullable<Execute['steps'][0]['items']>[0]
+  path: Execute['path']
 }
 
 type Token = ReturnType<typeof useTokens>['data'][0]
@@ -341,7 +342,7 @@ export const SweepModalRenderer: FC<Props> = ({
         expectedPrice: total,
         signer,
         options,
-        onProgress: (steps: Execute['steps']) => {
+        onProgress: (steps: Execute['steps'], path: Execute['path']) => {
           if (!steps) {
             return
           }
@@ -378,6 +379,7 @@ export const SweepModalRenderer: FC<Props> = ({
               stepProgress: currentStepIndex,
               currentStep,
               currentStepItem,
+              path: path,
             })
           }
 

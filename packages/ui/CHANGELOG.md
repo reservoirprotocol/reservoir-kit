@@ -1,3 +1,25 @@
+## [v0.14.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/36d6937b93c53b4406b44e9fd666def6ff46d8dc) (2023-04-04)
+
+- Add fixed fee support to BuyModal [0e3b0dd](https://github.com/reservoirprotocol/reservoir-kit/commit/0e3b0ddf523ad9de2a90e9c42077db66184306b6)
+
+## [v0.14.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/31822b795c201bd5b312008b314270fc8b170640) (2023-04-03)
+
+## [v0.14.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/47898101f873d11ca105e006c53fb09d0dae04e3) (2023-04-03)
+
+- Merge pull request #199 from reservoirprotocol/ted/grwth-2337-edit-offer-modal [fd95d60](https://github.com/reservoirprotocol/reservoir-kit/commit/fd95d603898d122cd66a0ea3ae03e6f9b0e75943)
+- Merge pull request #201 from reservoirprotocol/pedro/grwth-2371-update-useusertokens-hook-to-v7 [5453d8f](https://github.com/reservoirprotocol/reservoir-kit/commit/5453d8f6d2b7e8dbea3ef8305abdaf8f3b2b857a)
+- Merge branch 'ted/grwth-2337-edit-offer-modal' of https://github.com/reservoirprotocol/reservoir-kit into ted/grwth-2337-edit-offer-modal [d7f6522](https://github.com/reservoirprotocol/reservoir-kit/commit/d7f65229ba34672c3d50f680d8ff709165b0d913)
+- bug fix: use collectionId in tokens fetch [6785b05](https://github.com/reservoirprotocol/reservoir-kit/commit/6785b05279d564037b4b274c87e43bbdb239bb1a)
+- Fix BidModal/EditBidModal balance check when currency has less than 18 decimals [6a3b74c](https://github.com/reservoirprotocol/reservoir-kit/commit/6a3b74cc9dcaef04cf47557fe80df606358e4832)
+- Fix BidModal and EditBidModal to properly display the wrapped balance [5eaaaca](https://github.com/reservoirprotocol/reservoir-kit/commit/5eaaaca27fa02d906ef5bdee602480e569940a48)
+- Upgrade useTokens to v6 [73a1f84](https://github.com/reservoirprotocol/reservoir-kit/commit/73a1f843f6bb87e23514f6f4a854b1720cd497ab)
+- Upgrade useUserTokens to use user/tokens v7 api [ea4d7c9](https://github.com/reservoirprotocol/reservoir-kit/commit/ea4d7c90df52e2f76df370ea7fb0b9162ffaca8d)
+- Added support for different currency bids to edit bid modal [74c3ed6](https://github.com/reservoirprotocol/reservoir-kit/commit/74c3ed6a1c9a7b58b35634a22808857649c2b3ce)
+- Added isTokenBid logic [2df88c4](https://github.com/reservoirprotocol/reservoir-kit/commit/2df88c429d64091b5b02be3a2f949a248594d8e1)
+- finished edit bid modal [e745f36](https://github.com/reservoirprotocol/reservoir-kit/commit/e745f369330363b77eeff97309b562c9ce792f20)
+- wip [95688fc](https://github.com/reservoirprotocol/reservoir-kit/commit/95688fc773c448080b8dceedb72a03e96c0b9bba)
+- got basic edit bid modal set up [be8b609](https://github.com/reservoirprotocol/reservoir-kit/commit/be8b609ce602acbdc14376b044f11aaa445e529f)
+
 ## [v0.13.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/db5a5c041894f79e8ce7084ad36ff98c5d3646cd) (2023-03-28)
 
 - Update mainnet oracle zone address [c37fbc9](https://github.com/reservoirprotocol/reservoir-kit/commit/c37fbc960153af2ce8d8aa8daa9510c17ffed93a)

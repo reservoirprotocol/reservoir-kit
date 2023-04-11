@@ -39,6 +39,9 @@ const Index: NextPage = () => {
         <Link href="/modal/cancelListing">
           <a>CancelListingModal</a>
         </Link>
+        <Link href="/modal/editBid">
+          <a>EditBidModal</a>
+        </Link>
         <Link href="/modal/editListing">
           <a>EditListingModal</a>
         </Link>

@@ -12,7 +12,7 @@
   "scripts": {
     "lint": "prettier --write .",
     "demo": "yarn workspace reservoir-kit-demo dev",
-    "dev": "parcel watch 'packages/*' --no-cache --no-hmr",
+    "dev": "parcel watch 'packages/*' --no-cache --no-hmr --no-source-maps",
     "clean": "yarn workspaces foreach --exclude primitives --exclude ssr-testing run clean",
     "types:check": "tsc --skipLibCheck --noEmit",
     "build": "yarn build:config && yarn build:packages && yarn build:cleanup",

@@ -39,6 +39,7 @@ import InfoTooltip from '../../primitives/InfoTooltip'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { Currency } from '../../types/Currency'
 import { constants } from 'ethers'
+import SigninStep from '../SigninStep'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -111,7 +112,6 @@ export function ListModal({
     openState ? openState[0] : false,
     openState
   )
-  const [stepTitle, setStepTitle] = useState('')
   const client = useReservoirClient()
   const reservoirChain = client?.currentChain()
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
@@ -163,32 +163,6 @@ export function ListModal({
           token && token.token?.image
             ? token.token.image
             : (collection?.image as string)
-
-        useEffect(() => {
-          if (stepData) {
-            const orderKind =
-              stepData.listingData[0].listing.orderKind || 'exchange'
-            const marketplaceNames = stepData.listingData
-              .map((listing) => listing.marketplace.name)
-              .join(', ')
-            switch (stepData.currentStep.kind) {
-              case 'transaction': {
-                setStepTitle(
-                  `Approve ${
-                    orderKind?.[0].toUpperCase() + orderKind?.slice(1)
-                  } to access item\nin your wallet`
-                )
-                break
-              }
-              case 'signature': {
-                setStepTitle(
-                  `Confirm listing on ${marketplaceNames}\nin your wallet`
-                )
-                break
-              }
-            }
-          }
-        }, [stepData])
 
         useEffect(() => {
           if (unapprovedMarketplaces.length > 0) {
@@ -657,13 +631,18 @@ export function ListModal({
                     max={stepData?.totalSteps || 0}
                   />
                   {transactionError && <ErrorWell css={{ mt: 24 }} />}
-                  {stepData && (
+                  {stepData && stepData.currentStep.id === 'auth' ? (
+                    <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
+                  ) : null}
+                  {stepData && stepData.currentStep.id !== 'auth' ? (
                     <>
                       <Text
                         css={{ textAlign: 'center', mt: 48, mb: 28 }}
                         style="subtitle1"
                       >
-                        {stepTitle}
+                        {stepData.currentStep.kind === 'transaction'
+                          ? 'Approve access to items\nin your wallet'
+                          : 'Confirm listing in your wallet'}
                       </Text>
                       <TransactionProgress
                         justify="center"
@@ -686,7 +665,7 @@ export function ListModal({
                         {stepData?.currentStep.description}
                       </Text>
                     </>
-                  )}
+                  ) : null}
                   {!stepData && (
                     <Flex
                       css={{ height: '100%' }}

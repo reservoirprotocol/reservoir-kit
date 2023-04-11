@@ -224,10 +224,12 @@ export function SweepModal({
                     chain={cartChain}
                   /> */}
                 </Box>
-                <Flex
-                  direction="column"
-                  css={{ p: '$4', overflowY: 'auto' }}
-                ></Flex>
+                <Flex direction="column" css={{ p: '$4', overflowY: 'auto' }}>
+                  {/* {stepData?.currentStep &&
+                  stepData.currentStep.id === 'auth' ? (
+                    <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
+                  ) : null} */}
+                </Flex>
               </Flex>
             )}
 
