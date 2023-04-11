@@ -26,7 +26,7 @@ export type Execute = {
         orderId: string
         orderIndex: string
       }[]
+      salesData?: paths['/sales/v4']['get']['responses']['200']['schema']['sales']
     }[]
   }[]
-  tokensExecuted?: string[]
 }

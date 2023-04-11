@@ -291,11 +291,8 @@ export async function executeSteps(
                       return false
                     }
                   )
-                  json.tokensExecuted =
-                    salesData.sales?.map(
-                      (sale) => `${sale.token?.contract}:${sale.token?.tokenId}`
-                    ) || []
-                  setState([...json?.steps])
+                  stepItem.salesData = salesData.sales
+                  setState([...json?.steps], path)
                 }
 
                 break
@@ -404,7 +401,7 @@ export async function executeSteps(
                 break
             }
             stepItem.status = 'complete'
-            setState([...json?.steps])
+            setState([...json?.steps], path)
             resolve(stepItem)
           } catch (e) {
             const error = e as Error
