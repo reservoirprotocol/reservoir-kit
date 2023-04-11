@@ -1,4 +1,4 @@
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faCube, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { Dispatch, ReactElement, SetStateAction } from 'react'
 import { useFallbackState } from '../../hooks'
@@ -58,6 +58,8 @@ export function SweepModal({
         total,
         totalUsd,
         tokens,
+        stepData,
+        setStepData,
         sweepStep,
         setSweepStep,
         sweepTokens,
@@ -84,7 +86,7 @@ export function SweepModal({
                 </Text>
               </Flex>
             ) : null}
-            {!loading && hasTokens && sweepStep === SweepStep.Checkout && (
+            {!loading && hasTokens && sweepStep === SweepStep.Idle && (
               <Flex direction="column">
                 <Flex direction="column" css={{ px: '$4', pt: '$5', pb: '$2' }}>
                   <Slider
@@ -202,6 +204,53 @@ export function SweepModal({
                 >
                   {selectedTokens.length > 0 ? 'Sweep' : 'Select Items to Buy'}
                 </Button>
+              </Flex>
+            )}
+
+            {!loading && sweepStep === SweepStep.Approving && (
+              <Flex direction="column">
+                <Box
+                  css={{
+                    p: '$4',
+                    borderBottom: '1px solid $neutralBorder',
+                  }}
+                >
+                  {/* <TokenCheckout
+                    itemCount={selectedTokens.length}
+                    images={images}
+                    totalPrice={total}
+                    usdPrice={totalUsd}
+                    currency={currency}
+                    chain={cartChain}
+                  /> */}
+                </Box>
+                <Flex
+                  direction="column"
+                  css={{ p: '$4', overflowY: 'auto' }}
+                ></Flex>
+              </Flex>
+            )}
+
+            {!loading && sweepStep === SweepStep.Finalizing && (
+              <Flex
+                direction="column"
+                align="center"
+                justify="center"
+                css={{
+                  gap: '$4',
+                }}
+              >
+                <Text style="h6">Finalizing on blockchain</Text>
+                <Text
+                  style="subtitle2"
+                  color="subtle"
+                  css={{ textAlign: 'center' }}
+                >
+                  You can close this modal while it finalizes on the blockchain.
+                  The transaction will continue in the background.
+                </Text>
+
+                <FontAwesomeIcon icon={faCube} width="24" />
               </Flex>
             )}
           </Modal>

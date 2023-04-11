@@ -44,7 +44,7 @@ export const SweepItem: FC<Props> = ({ name, image, amount, currency }) => {
             amount={amount}
             address={currency.address}
             decimals={currency.decimals}
-            maximumFractionDigits={3}
+            maximumFractionDigits={amount && amount >= 10 ? 2 : 3}
           />
         </Flex>
       </Flex>

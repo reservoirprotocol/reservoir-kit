@@ -15,14 +15,20 @@ import {
 import { constants } from 'ethers'
 import { useAccount, useSigner } from 'wagmi'
 import Token from '../list/Token'
-import { ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 
 export enum SweepStep {
-  Checkout,
+  Idle,
   Approving,
-  AddFunds,
+  Finalizing,
   Complete,
-  Unavailable,
+}
+
+export type SweepModalStepData = {
+  totalSteps: number
+  stepProgress: number
+  currentStep: Execute['steps'][0]
+  currentStepItem: NonNullable<Execute['steps'][0]['items']>[0]
 }
 
 type Token = ReturnType<typeof useTokens>['data'][0]
@@ -53,6 +59,8 @@ type ChildrenProps = {
   total: number
   totalUsd: number
   tokens: ReturnType<typeof useTokens>['data']
+  stepData: SweepModalStepData | null
+  setStepData: React.Dispatch<React.SetStateAction<SweepModalStepData | null>>
   sweepStep: SweepStep
   setSweepStep: React.Dispatch<React.SetStateAction<SweepStep>>
   sweepTokens: () => void
@@ -81,7 +89,8 @@ export const SweepModalRenderer: FC<Props> = ({
   const [isItemsToggled, setIsItemsToggled] = useState<boolean>(true)
   const [maxInput, setMaxInput] = useState<number>(0)
   const [total, setTotal] = useState<number>(0)
-  const [sweepStep, setSweepStep] = useState<SweepStep>(SweepStep.Checkout)
+  const [sweepStep, setSweepStep] = useState<SweepStep>(SweepStep.Idle)
+  const [stepData, setStepData] = useState<SweepModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
 
   const currency = useChainCurrency()
@@ -121,7 +130,7 @@ export const SweepModalRenderer: FC<Props> = ({
   }, [tokens, account])
 
   useEffect(() => {
-    setMaxInput(Math.min(availableTokens.length, 50))
+    setMaxInput(Math.min(availableTokens.length, isItemsToggled ? 50 : 100))
   }, [availableTokens])
 
   useEffect(() => {
@@ -274,7 +283,7 @@ export const SweepModalRenderer: FC<Props> = ({
       setItemAmount(0)
       setEthAmount(0)
       setMaxInput(0)
-      setSweepStep(SweepStep.Checkout)
+      setSweepStep(SweepStep.Idle)
       setIsItemsToggled(true)
     }
   }, [open])
@@ -299,17 +308,101 @@ export const SweepModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (!selectedTokens) {
-      const error = new Error('No tokens selected to sweep')
-      setTransactionError(error)
-      throw error
-    }
-
     if (!client) {
       const error = new Error('ReservoirClient was not initialized')
       setTransactionError(error)
       throw error
     }
+
+    const items = selectedTokens.reduce((items, token) => {
+      if (token?.token?.tokenId && token?.token?.contract) {
+        items?.push({
+          token: `${token.token.contract}:${token.token.tokenId}`,
+        })
+      }
+      return items
+    }, [] as Parameters<ReservoirClientActions['buyToken']>['0']['items'])
+
+    if (!items || items.length === 0) {
+      const error = new Error('No tokens to sweep')
+      setTransactionError(error)
+      throw error
+    }
+
+    if (options.partial === undefined) {
+      options.partial = true
+    }
+
+    setSweepStep(SweepStep.Approving)
+
+    client.actions
+      .buyToken({
+        items: items,
+        expectedPrice: total,
+        signer,
+        options,
+        onProgress: (steps: Execute['steps']) => {
+          if (!steps) {
+            return
+          }
+
+          const executableSteps = steps.filter(
+            (step) => step.items && step.items.length > 0
+          )
+
+          let stepCount = executableSteps.length
+
+          let currentStepItem:
+            | NonNullable<Execute['steps'][0]['items']>[0]
+            | undefined
+
+          const currentStepIndex = executableSteps.findIndex((step) => {
+            currentStepItem = step.items?.find(
+              (item) => item.status === 'incomplete'
+            )
+            return currentStepItem
+          })
+
+          const currentStep =
+            currentStepIndex > -1
+              ? executableSteps[currentStepIndex]
+              : executableSteps[stepCount - 1]
+
+          // if (currentStep.error) {
+          //   return
+          // }
+
+          if (currentStepItem) {
+            setStepData({
+              totalSteps: stepCount,
+              stepProgress: currentStepIndex,
+              currentStep,
+              currentStepItem,
+            })
+          }
+
+          if (currentStep.items?.every((item) => item.txHash)) {
+            setSweepStep(SweepStep.Finalizing)
+          }
+
+          if (
+            steps.every(
+              (step) =>
+                !step.items ||
+                step.items.length == 0 ||
+                step.items?.every((item) => item.status === 'complete')
+            )
+          ) {
+            setSweepStep(SweepStep.Complete)
+            // reset state
+          }
+        },
+      })
+      .catch((e: any) => {
+        // handle errors
+      })
+
+    //
   }, [])
 
   return (
@@ -330,6 +423,8 @@ export const SweepModalRenderer: FC<Props> = ({
         total,
         totalUsd,
         tokens,
+        stepData,
+        setStepData,
         sweepStep,
         setSweepStep,
         sweepTokens,

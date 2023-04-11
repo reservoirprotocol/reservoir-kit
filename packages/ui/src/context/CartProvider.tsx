@@ -28,7 +28,7 @@ type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
   paths['/orders/asks/v4']['get']['responses']['200']['schema']
 type Token = NonNullable<ReturnType<typeof useTokens>['data'][0]>
-type TokensSchema = paths['/tokens/v5']['get']['responses']['200']['schema']
+type TokensSchema = paths['/tokens/v6']['get']['responses']['200']['schema']
 type FloorAsk = NonNullable<NonNullable<Token['market']>['floorAsk']>
 type CartItemPrice = FloorAsk['price']
 type Currency = NonNullable<NonNullable<CartItemPrice>['currency']>
@@ -92,6 +92,8 @@ export type Cart = {
     errorType?: CheckoutTransactionError
     status: CheckoutStatus
     steps?: Execute['steps']
+    path?: Execute['path']
+    currentStep?: Execute['steps'][0]
   } | null
 }
 
@@ -287,9 +289,9 @@ function cartStore({
       const reservoirChain = client?.chains.find(
         (chain) => chain.id === chainId
       )
-      const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v5`)
+      const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v6`)
 
-      const query: paths['/tokens/v5']['get']['parameters']['query'] = {
+      const query: paths['/tokens/v6']['get']['parameters']['query'] = {
         tokens: tokenIds,
         limit: 100,
         includeDynamicPricing: true,
@@ -1003,7 +1005,7 @@ function cartStore({
           signer,
           items: tokens,
           options,
-          onProgress: (steps: Execute['steps']) => {
+          onProgress: (steps: Execute['steps'], path: Execute['path']) => {
             if (!steps) {
               return
             }
@@ -1018,9 +1020,27 @@ function cartStore({
               (step) => step.items && step.items.length > 0
             )
 
+            let stepCount = executableSteps.length
+
             let currentStepItem:
               | NonNullable<Execute['steps'][0]['items']>[0]
               | undefined
+
+            const currentStepIndex = executableSteps.findIndex((step) => {
+              currentStepItem = step.items?.find(
+                (item) => item.status === 'incomplete'
+              )
+              return currentStepItem
+            })
+
+            const currentStep =
+              currentStepIndex > -1
+                ? executableSteps[currentStepIndex]
+                : executableSteps[stepCount - 1]
+
+            if (currentStep.error) {
+              return
+            }
 
             executableSteps.findIndex((step) => {
               currentStepItem = step.items?.find(
@@ -1029,18 +1049,17 @@ function cartStore({
               return currentStepItem
             })
 
-            if (currentStepItem) {
-              if (currentStepItem.txHash) {
-                status = CheckoutStatus.Finalizing
-                if (cartData.current.items.length > 0) {
-                  cartData.current.items = []
-                  cartData.current.pools = {}
-                  cartData.current.totalPrice = 0
-                  cartData.current.currency = undefined
-                  cartData.current.chain = undefined
-                }
+            if (currentStep.items?.every((item) => item.txHash)) {
+              status = CheckoutStatus.Finalizing
+              if (cartData.current.items.length > 0) {
+                cartData.current.items = []
+                cartData.current.pools = {}
+                cartData.current.totalPrice = 0
+                cartData.current.currency = undefined
+                cartData.current.chain = undefined
               }
-            } else if (
+            }
+            if (
               steps.every(
                 (step) =>
                   !step.items ||
@@ -1065,9 +1084,11 @@ function cartStore({
 
             if (cartData.current.transaction) {
               cartData.current.transaction.status = status
+              cartData.current.transaction.currentStep = currentStep
               if (currentStepItem) {
                 cartData.current.transaction.txHash = currentStepItem?.txHash
                 cartData.current.transaction.steps = steps
+                cartData.current.transaction.path = path
               }
             }
             commit()
@@ -1079,12 +1100,17 @@ function cartStore({
           }
           let error = e as any
           let errorType = CheckoutTransactionError.Unknown
+          const errorStatus = (error as any)?.statusCode
+
           if (error?.message && error?.message.includes('ETH balance')) {
             errorType = CheckoutTransactionError.InsufficientBalance
           } else if (error?.code && error?.code == 4001) {
             errorType = CheckoutTransactionError.UserDenied
           } else {
             let message = 'Oops, something went wrong. Please try again.'
+            if (errorStatus >= 400 && errorStatus < 500) {
+              message = error.message
+            }
             if (error?.type && error?.type === 'price mismatch') {
               errorType = CheckoutTransactionError.PiceMismatch
               message = error.message
