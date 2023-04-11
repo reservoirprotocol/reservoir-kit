@@ -265,6 +265,8 @@ export async function executeSteps(
                       txHash: stepItem.txHash,
                     }
                   setParams(indexerConfirmationUrl, queryParams)
+                  let salesData: paths['/sales/v4']['get']['responses']['200']['schema'] =
+                    {}
                   await pollUntilOk(
                     {
                       url: indexerConfirmationUrl.href,
@@ -280,15 +282,19 @@ export async function executeSteps(
                         LogLevel.Verbose
                       )
                       if (res.status === 200) {
-                        const data =
-                          res.data as paths['/sales/v4']['get']['responses']['200']['schema']
-                        return data.sales && data.sales.length > 0
+                        salesData = res.data
+                        return salesData.sales && salesData.sales.length > 0
                           ? true
                           : false
                       }
                       return false
                     }
                   )
+                  json.tokensExecuted =
+                    salesData.sales?.map(
+                      (sale) => `${sale.token?.contract}:${sale.token?.tokenId}`
+                    ) || []
+                  setState([...json?.steps])
                 }
 
                 break

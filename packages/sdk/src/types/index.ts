@@ -25,4 +25,5 @@ export type Execute = {
       orderIndexes?: number[]
     }[]
   }[]
+  tokensExecuted?: string[]
 }
