@@ -38,7 +38,7 @@ type Props = {
   | 'onFocusCapture'
 >
 
-const Logo = styled(ReservoirLogoWhiteText, {
+export const Logo = styled(ReservoirLogoWhiteText, {
   '& .letter': {
     fill: '$reservoirLogoColor',
   },

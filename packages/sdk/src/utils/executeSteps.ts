@@ -26,7 +26,7 @@ import { sendTransactionSafely } from './transaction'
 export async function executeSteps(
   request: AxiosRequestConfig,
   signer: Signer,
-  setState: (steps: Execute['steps']) => any,
+  setState: (steps: Execute['steps'], path: Execute['path']) => any,
   newJson?: Execute,
   expectedPrice?: number
 ) {
@@ -105,13 +105,13 @@ export async function executeSteps(
       if (error) {
         json.steps[0].error = error.message
         json.steps[0].errorData = json.path
-        setState([...json?.steps])
+        setState([...json?.steps], path)
         throw error
       }
     }
 
     // Update state on first call or recursion
-    setState([...json?.steps])
+    setState([...json?.steps], path)
 
     let incompleteStepIndex = -1
     let incompleteStepItemIndex = -1
@@ -177,7 +177,7 @@ export async function executeSteps(
       }
       stepItems = items
       stepItem = items[incompleteStepItemIndex]
-      setState([...json?.steps])
+      setState([...json?.steps], path)
     }
     client.log(
       [`Execute Steps: Begin processing step items for: ${step.action}`],
@@ -211,7 +211,7 @@ export async function executeSteps(
                   )
                   stepItem.txHash = tx.hash
                   if (json) {
-                    setState([...json.steps])
+                    setState([...json.steps], path)
                   }
                 })
                 client.log(
@@ -267,6 +267,8 @@ export async function executeSteps(
                       txHash: stepItem.txHash,
                     }
                   setParams(indexerConfirmationUrl, queryParams)
+                  let salesData: paths['/sales/v4']['get']['responses']['200']['schema'] =
+                    {}
                   await pollUntilOk(
                     {
                       url: indexerConfirmationUrl.href,
@@ -282,15 +284,16 @@ export async function executeSteps(
                         LogLevel.Verbose
                       )
                       if (res.status === 200) {
-                        const data =
-                          res.data as paths['/sales/v4']['get']['responses']['200']['schema']
-                        return data.sales && data.sales.length > 0
+                        salesData = res.data
+                        return salesData.sales && salesData.sales.length > 0
                           ? true
                           : false
                       }
                       return false
                     }
                   )
+                  stepItem.salesData = salesData.sales
+                  setState([...json?.steps], path)
                 }
 
                 break
@@ -386,11 +389,8 @@ export async function executeSteps(
                         },
                       ]
                     }
-                    setState([...json?.steps])
+                    setState([...json?.steps], path)
                   } catch (err) {
-                    json.steps[incompleteStepIndex].error =
-                      'Your order could not be posted.'
-                    setState([...json?.steps])
                     throw err
                   }
                 }
@@ -402,10 +402,18 @@ export async function executeSteps(
                 break
             }
             stepItem.status = 'complete'
-            setState([...json?.steps])
+            setState([...json?.steps], path)
             resolve(stepItem)
           } catch (e) {
-            reject(e)
+            const error = e as Error
+
+            if (error && json?.steps) {
+              json.steps[incompleteStepIndex].error =
+                error.message || 'Error: something went wrong'
+              stepItem.error = error.message || 'Error: something went wrong'
+              setState([...json?.steps], path)
+            }
+            reject(error)
           }
         })
       })
