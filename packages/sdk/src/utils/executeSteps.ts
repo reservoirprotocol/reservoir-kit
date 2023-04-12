@@ -8,6 +8,7 @@ import { getClient } from '../actions/index'
 import { setParams } from './params'
 import { version } from '../../package.json'
 import { LogLevel } from '../utils/logger'
+import { sendTransactionSafely } from './transaction'
 
 /**
  * When attempting to perform actions, such as, selling a token or
@@ -203,15 +204,16 @@ export async function executeSteps(
                   ],
                   LogLevel.Verbose
                 )
-                const tx = await signer.sendTransaction(stepData)
-
-                stepItem.txHash = tx.hash
-                setState([...json?.steps])
-                client.log(
-                  ['Execute Steps: Transaction step, waiting on transaction'],
-                  LogLevel.Verbose
-                )
-                await tx.wait()
+                await sendTransactionSafely(stepData, signer, (tx) => {
+                  client.log(
+                    ['Execute Steps: Transaction step, got transaction', tx],
+                    LogLevel.Verbose
+                  )
+                  stepItem.txHash = tx.hash
+                  if (json) {
+                    setState([...json.steps])
+                  }
+                })
                 client.log(
                   [
                     'Execute Steps: Transaction finished, starting to poll for confirmation',
@@ -221,7 +223,7 @@ export async function executeSteps(
 
                 //Implicitly poll the confirmation url to confirm the transaction went through
                 const confirmationUrl = new URL(
-                  `${request.baseURL}/transactions/${tx.hash}/synced/v1`
+                  `${request.baseURL}/transactions/${stepItem.txHash}/synced/v1`
                 )
                 const headers: AxiosRequestHeaders = {
                   'x-rkc-version': version,
