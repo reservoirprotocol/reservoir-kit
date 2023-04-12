@@ -12,7 +12,7 @@ import {
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import { constants } from 'ethers'
+import { constants, utils } from 'ethers'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import Token from '../list/Token'
 import {
@@ -20,6 +20,8 @@ import {
   ReservoirChain,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
+import { toFixed } from '../../lib/numbers'
+import { formatUnits } from 'ethers/lib/utils.js'
 
 export enum SweepStep {
   Idle,
@@ -64,6 +66,7 @@ type ChildrenProps = {
   total: number
   totalUsd: number
   currentChain: ReservoirChain | null | undefined
+  availableTokens: ReturnType<typeof useTokens>['data']
   tokens: ReturnType<typeof useTokens>['data']
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
@@ -77,6 +80,9 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   collectionId?: string
+  referrerFeeBps?: number | null
+  referrerFeeFixed?: number | null
+  referrer?: string | null
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -84,6 +90,9 @@ type Props = {
 export const SweepModalRenderer: FC<Props> = ({
   open,
   collectionId,
+  referrerFeeBps,
+  referrerFeeFixed,
+  referrer,
   normalizeRoyalties,
   children,
 }) => {
@@ -111,7 +120,11 @@ export const SweepModalRenderer: FC<Props> = ({
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
-  const { data: tokens, isFetchingPage: fetchingTokens } = useTokens(
+  const {
+    data: tokens,
+    isFetchingPage: fetchingTokens,
+    mutate: mutateTokens,
+  } = useTokens(
     open && {
       collection: collectionId,
       normalizeRoyalties,
@@ -144,10 +157,23 @@ export const SweepModalRenderer: FC<Props> = ({
     )
   }, [tokens, account])
 
+  // set max input
   useEffect(() => {
-    setMaxInput(Math.min(availableTokens.length, isItemsToggled ? 50 : 100))
-  }, [availableTokens])
+    if (isItemsToggled) {
+      setMaxInput(Math.min(availableTokens.length, 50))
+    } else {
+      const maxEth = availableTokens.slice(0, 50).reduce((total, token) => {
+        if (token?.market?.floorAsk?.price?.amount?.native) {
+          total += token.market.floorAsk.price.amount.native
+        }
+        return total
+      }, 0)
 
+      setMaxInput(maxEth)
+    }
+  }, [availableTokens, isItemsToggled])
+
+  // calculate total
   useEffect(() => {
     const total = selectedTokens.reduce((total, token) => {
       if (token?.market?.floorAsk?.price?.amount?.native) {
@@ -234,7 +260,7 @@ export const SweepModalRenderer: FC<Props> = ({
         }
         return total
       }, 0)
-      if (total <= ethAmount && newTokens.length <= maxInput) {
+      if (total <= ethAmount && newTokens.length <= 50) {
         updatedTokens.push(token)
       } else {
         break
@@ -291,7 +317,7 @@ export const SweepModalRenderer: FC<Props> = ({
     setEthAmount(0)
   }, [isItemsToggled])
 
-  // reset on close
+  // reset state on close
   useEffect(() => {
     if (!open) {
       setSelectedTokens([])
@@ -304,8 +330,8 @@ export const SweepModalRenderer: FC<Props> = ({
   }, [open])
 
   const sortByPrice = useCallback((a: Token, b: Token) => {
-    const aPrice = a.market?.floorAsk?.price?.amount?.decimal
-    const bPrice = b.market?.floorAsk?.price?.amount?.decimal
+    const aPrice = a.market?.floorAsk?.price?.amount?.native
+    const bPrice = b.market?.floorAsk?.price?.amount?.native
 
     if (aPrice === undefined) {
       return 1
@@ -332,6 +358,24 @@ export const SweepModalRenderer: FC<Props> = ({
     setTransactionError(null)
 
     let options: BuyTokenOptions = {}
+
+    if (referrer && referrerFeeBps) {
+      const price = toFixed(total, currency?.decimals || 18)
+      const fee = utils
+        .parseUnits(`${price}`, currency?.decimals)
+        .mul(referrerFeeBps)
+        .div(10000)
+      const atomicUnitsFee = formatUnits(fee, 0)
+      options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
+    } else if (referrer && referrerFeeFixed) {
+      options.feesOnTop = [`${referrer}:${referrerFeeFixed}`]
+    } else if (referrer === null && referrerFeeBps === null) {
+      delete options.feesOnTop
+    }
+
+    if (normalizeRoyalties !== undefined) {
+      options.normalizeRoyalties = normalizeRoyalties
+    }
 
     const items = selectedTokens.reduce((items, token) => {
       if (token?.token?.tokenId && token?.token?.contract) {
@@ -387,10 +431,6 @@ export const SweepModalRenderer: FC<Props> = ({
               ? executableSteps[currentStepIndex]
               : executableSteps[stepCount - 1]
 
-          // if (currentStep.error) {
-          //   return
-          // }
-
           if (currentStepItem) {
             setStepData({
               totalSteps: stepCount,
@@ -421,29 +461,14 @@ export const SweepModalRenderer: FC<Props> = ({
         },
       })
       .catch((e: any) => {
-        // handle errors
         const error = e as Error
-        let message = 'Oops, something went wrong. Please try again.'
-        if (error && error?.message && error?.message.includes('ETH balance')) {
-          message = 'Insufficient funds'
-        } else {
-          const errorType = (error as any)?.type
-          const errorStatus = (error as any)?.statusCode
-          if (errorType && errorType === 'price mismatch') {
-            message = error.message
-          }
-          if (errorStatus >= 400 && errorStatus < 500) {
-            message = error.message
-          }
-          const transactionError = new Error(message, {
-            cause: error,
-          })
-          setTransactionError(transactionError)
-          setSweepStep(SweepStep.Idle)
-        }
+        const transactionError = new Error(error?.message || '', {
+          cause: error,
+        })
+        setTransactionError(transactionError)
+        setSweepStep(SweepStep.Idle)
+        mutateTokens()
       })
-
-    //
   }, [
     selectedTokens,
     client,
@@ -473,6 +498,7 @@ export const SweepModalRenderer: FC<Props> = ({
         total,
         totalUsd,
         currentChain,
+        availableTokens,
         tokens,
         blockExplorerBaseUrl,
         transactionError,

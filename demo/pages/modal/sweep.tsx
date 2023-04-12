@@ -16,6 +16,9 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 const SweepPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
+  const [referrer, setReferrer] = useState<string | undefined>(undefined)
+  const [referrerBps, setReferrerBps] = useState<number | undefined>(undefined)
+  const [referrerFee, setReferrerFee] = useState<number | undefined>(undefined)
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
@@ -41,6 +44,34 @@ const SweepPage: NextPage = () => {
           type="text"
           value={collectionId}
           onChange={(e) => setCollectionId(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Referrer: </label>
+        <input
+          type="text"
+          value={referrer}
+          onChange={(e) => setReferrer(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Referrer BPS: </label>
+        <input
+          type="number"
+          value={referrerBps}
+          onChange={(e) =>
+            setReferrerBps(e.target.value ? +e.target.value : undefined)
+          }
+        />
+      </div>
+      <div>
+        <label>Referrer Fee (Flat): </label>
+        <input
+          type="number"
+          value={referrerFee}
+          onChange={(e) =>
+            setReferrerFee(e.target.value ? +e.target.value : undefined)
+          }
         />
       </div>
       <DeeplinkCheckbox />
@@ -74,6 +105,9 @@ const SweepPage: NextPage = () => {
           </button>
         }
         collectionId={collectionId}
+        referrer={referrer}
+        referrerFeeBps={referrerBps}
+        referrerFeeFixed={referrerFee}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         normalizeRoyalties={normalizeRoyalties}
       />

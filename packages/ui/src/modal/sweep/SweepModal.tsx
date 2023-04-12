@@ -32,6 +32,9 @@ import { SweepModalRenderer, SweepStep } from './SweepModalRenderer'
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
+  referrerFeeBps?: number | null
+  referrerFeeFixed?: number | null
+  referrer?: string | null
   normalizeRoyalties?: boolean
   // Todo: add callback functions
 }
@@ -40,6 +43,9 @@ export function SweepModal({
   openState,
   trigger,
   collectionId,
+  referrerFeeBps,
+  referrerFeeFixed,
+  referrer,
   normalizeRoyalties,
 }: Props): ReactElement {
   const [open, setOpen] = useFallbackState(
@@ -51,6 +57,9 @@ export function SweepModal({
     <SweepModalRenderer
       open={open}
       collectionId={collectionId}
+      referrerFeeBps={referrerFeeBps}
+      referrerFeeFixed={referrerFeeFixed}
+      referrer={referrer}
       normalizeRoyalties={normalizeRoyalties}
     >
       {({
@@ -69,6 +78,7 @@ export function SweepModal({
         total,
         totalUsd,
         currentChain,
+        availableTokens,
         tokens,
         blockExplorerBaseUrl,
         transactionError,
@@ -78,7 +88,7 @@ export function SweepModal({
         setSweepStep,
         sweepTokens,
       }) => {
-        const hasTokens = tokens && tokens.length > 0
+        const hasTokens = availableTokens && availableTokens.length > 0
 
         const images = selectedTokens.slice(0, 2).map((token) => {
           if (token?.token?.image) {
@@ -127,12 +137,8 @@ export function SweepModal({
                   ) : null}
                   <Slider
                     min={0}
-                    max={
-                      isItemsToggled
-                        ? Math.min(50, maxInput)
-                        : Math.min(100, maxInput)
-                    }
-                    step={isItemsToggled ? 1 : 0.1}
+                    max={isItemsToggled ? Math.min(50, maxInput) : maxInput}
+                    step={isItemsToggled ? 1 : 0.01}
                     value={isItemsToggled ? [itemAmount] : [ethAmount]}
                     onValueChange={(value) => {
                       if (isItemsToggled) {
@@ -147,7 +153,7 @@ export function SweepModal({
                     <Input
                       value={isItemsToggled ? itemAmount : ethAmount}
                       type="number"
-                      step={isItemsToggled ? 1 : 0.1}
+                      step={isItemsToggled ? 1 : 0.01}
                       onChange={(e) => {
                         const inputValue = Number(e.target.value)
 
@@ -201,8 +207,8 @@ export function SweepModal({
                             image={token.token?.image}
                             currency={currency}
                             amount={
-                              token?.market?.floorAsk?.price?.amount?.decimal
-                            } // TODO: decimal or native?
+                              token?.market?.floorAsk?.price?.amount?.native
+                            }
                           />
                         ))}
                       </Grid>
@@ -275,7 +281,7 @@ export function SweepModal({
                   stepData.currentStep.id === 'auth' ? (
                     <>
                       <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
-                      <Button disabled={true} css={{ m: '$4' }}>
+                      <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                         <Loader />
                         Waiting for Approval...
                       </Button>
@@ -314,7 +320,7 @@ export function SweepModal({
                         <Flex
                           direction="column"
                           align="center"
-                          css={{ gap: '$4', py: '$4' }}
+                          css={{ gap: '$4', pt: '$4', width: '100%' }}
                         >
                           <Text style="h6">
                             Confirm transaction in your wallet
@@ -329,6 +335,13 @@ export function SweepModal({
                               }}
                             />
                           </Box>
+                          <Button
+                            disabled={true}
+                            css={{ mt: '$4', width: '100%' }}
+                          >
+                            <Loader />
+                            Waiting for Approval...
+                          </Button>
                         </Flex>
                       )}
                     </>
@@ -360,6 +373,8 @@ export function SweepModal({
                   justify="center"
                   css={{
                     gap: '$4',
+                    px: '$4',
+                    py: '$5',
                   }}
                 >
                   <Text style="h6">Finalizing on blockchain</Text>
