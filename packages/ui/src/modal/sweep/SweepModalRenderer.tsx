@@ -54,10 +54,10 @@ type ChildrenProps = {
   setSelectedTokens: React.Dispatch<
     React.SetStateAction<ReturnType<typeof useTokens>['data']>
   >
-  itemAmount: number
-  setItemAmount: React.Dispatch<React.SetStateAction<number>>
-  ethAmount: number
-  setEthAmount: React.Dispatch<React.SetStateAction<number>>
+  itemAmount?: number
+  setItemAmount: React.Dispatch<React.SetStateAction<number | undefined>>
+  ethAmount?: number
+  setEthAmount: React.Dispatch<React.SetStateAction<number | undefined>>
   isItemsToggled: boolean
   setIsItemsToggled: React.Dispatch<React.SetStateAction<boolean>>
   maxInput: number
@@ -101,8 +101,8 @@ export const SweepModalRenderer: FC<Props> = ({
   const [selectedTokens, setSelectedTokens] = useState<
     ReturnType<typeof useTokens>['data']
   >([])
-  const [itemAmount, setItemAmount] = useState<number>(0)
-  const [ethAmount, setEthAmount] = useState<number>(0)
+  const [itemAmount, setItemAmount] = useState<number | undefined>(0)
+  const [ethAmount, setEthAmount] = useState<number | undefined>(0)
   const [isItemsToggled, setIsItemsToggled] = useState<boolean>(true)
   const [maxInput, setMaxInput] = useState<number>(0)
   const [total, setTotal] = useState<number>(0)
@@ -193,7 +193,11 @@ export const SweepModalRenderer: FC<Props> = ({
     // Create a copy of availableTokens
     let processedTokens = [...availableTokens]
 
-    for (let i = 0; i < itemAmount && i < processedTokens.length; i++) {
+    for (
+      let i = 0;
+      itemAmount && i < itemAmount && i < processedTokens.length;
+      i++
+    ) {
       const token = processedTokens[i]
 
       updatedTokens.push(token)
@@ -260,7 +264,7 @@ export const SweepModalRenderer: FC<Props> = ({
         }
         return total
       }, 0)
-      if (total <= ethAmount && newTokens.length <= 50) {
+      if (ethAmount && total <= ethAmount && newTokens.length <= 50) {
         updatedTokens.push(token)
       } else {
         break

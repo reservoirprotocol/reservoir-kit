@@ -147,7 +147,9 @@ export function SweepModal({
                     min={0}
                     max={isItemsToggled ? Math.min(50, maxInput) : maxInput}
                     step={isItemsToggled ? 1 : 0.01}
-                    value={isItemsToggled ? [itemAmount] : [ethAmount]}
+                    value={
+                      isItemsToggled ? [itemAmount || 0] : [ethAmount || 0]
+                    }
                     onValueChange={(value) => {
                       if (isItemsToggled) {
                         setItemAmount(value[0])
@@ -161,13 +163,14 @@ export function SweepModal({
                     <Input
                       value={isItemsToggled ? itemAmount : ethAmount}
                       type="number"
+                      placeholder="0"
                       step={isItemsToggled ? 1 : 0.01}
                       onChange={(e) => {
                         const inputValue = Number(e.target.value)
 
                         if (e.target.value == '') {
-                          setItemAmount(0)
-                          setEthAmount(0)
+                          setItemAmount(undefined)
+                          setEthAmount(undefined)
                         } else if (isItemsToggled) {
                           setItemAmount(
                             Math.min(Math.max(inputValue, 0), maxInput) // min: 0, max: maxInput
