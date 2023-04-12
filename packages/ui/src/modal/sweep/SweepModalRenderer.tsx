@@ -67,6 +67,7 @@ type ChildrenProps = {
   totalUsd: number
   currentChain: ReservoirChain | null | undefined
   availableTokens: ReturnType<typeof useTokens>['data']
+  address?: string
   tokens: ReturnType<typeof useTokens>['data']
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
@@ -488,6 +489,7 @@ export const SweepModalRenderer: FC<Props> = ({
     <>
       {children({
         loading: fetchingTokens,
+        address: account?.address,
         selectedTokens,
         setSelectedTokens,
         itemAmount,

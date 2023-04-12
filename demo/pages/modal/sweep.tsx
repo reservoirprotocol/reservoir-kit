@@ -110,6 +110,15 @@ const SweepPage: NextPage = () => {
         referrerFeeFixed={referrerFee}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         normalizeRoyalties={normalizeRoyalties}
+        onSweepComplete={(data) => {
+          console.log('Sweep Complete', data)
+        }}
+        onSweepError={(error, data) => {
+          console.log('Sweep Error', error, data)
+        }}
+        onClose={() => {
+          console.log('SweepModal Closed')
+        }}
       />
       <ThemeSwitcher />
     </div>

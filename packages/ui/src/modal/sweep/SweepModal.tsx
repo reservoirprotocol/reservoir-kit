@@ -5,7 +5,7 @@ import {
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { Dispatch, ReactElement, SetStateAction } from 'react'
+import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
 import { Path } from '../../components/cart/CartCheckoutModal'
 import { useFallbackState } from '../../hooks'
 import {
@@ -28,7 +28,17 @@ import SigninStep from '../SigninStep'
 import { TokenCheckout } from '../TokenCheckout'
 import { ItemToggle } from './ItemToggle'
 import { SweepItem } from './SweepItem'
-import { SweepModalRenderer, SweepStep } from './SweepModalRenderer'
+import {
+  SweepModalRenderer,
+  SweepModalStepData,
+  SweepStep,
+} from './SweepModalRenderer'
+
+type SweepCallbackData = {
+  collectionId?: string
+  maker?: string
+  stepData: SweepModalStepData | null
+}
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
@@ -37,7 +47,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   referrerFeeFixed?: number | null
   referrer?: string | null
   normalizeRoyalties?: boolean
-  // Todo: add callback functions
+  onSweepComplete?: (data: SweepCallbackData) => void
+  onSweepError?: (error: Error, data: SweepCallbackData) => void
+  onClose?: (data: SweepCallbackData) => void
 }
 
 export function SweepModal({
@@ -48,6 +60,9 @@ export function SweepModal({
   referrerFeeFixed,
   referrer,
   normalizeRoyalties,
+  onSweepComplete,
+  onSweepError,
+  onClose,
 }: Props): ReactElement {
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
@@ -65,6 +80,7 @@ export function SweepModal({
     >
       {({
         loading,
+        address,
         selectedTokens,
         setSelectedTokens,
         itemAmount,
@@ -89,6 +105,29 @@ export function SweepModal({
         setSweepStep,
         sweepTokens,
       }) => {
+        useEffect(() => {
+          if (sweepStep === SweepStep.Complete && onSweepComplete) {
+            const data: SweepCallbackData = {
+              collectionId: collectionId,
+              maker: address,
+              stepData,
+            }
+
+            onSweepComplete(data)
+          }
+        }, [sweepStep])
+
+        useEffect(() => {
+          if (transactionError && onSweepError) {
+            const data: SweepCallbackData = {
+              collectionId: collectionId,
+              maker: address,
+              stepData,
+            }
+            onSweepError(transactionError, data)
+          }
+        }, [transactionError])
+
         const hasTokens = availableTokens && availableTokens.length > 0
 
         const images = selectedTokens.slice(0, 2).map((token) => {
@@ -123,6 +162,14 @@ export function SweepModal({
             open={open}
             loading={loading}
             onOpenChange={(open) => {
+              if (!open && onClose) {
+                const data: SweepCallbackData = {
+                  collectionId: collectionId,
+                  maker: address,
+                  stepData,
+                }
+                onClose(data)
+              }
               setOpen(open)
             }}
           >
