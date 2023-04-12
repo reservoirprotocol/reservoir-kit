@@ -1,5 +1,6 @@
 import {
   faCheckCircle,
+  faCircleExclamation,
   faCube,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
@@ -108,6 +109,13 @@ export function SweepModal({
               {} as Record<string, Path>
             )
           : {}
+
+        const totalPurchases =
+          stepData?.currentStep?.items?.reduce(
+            (total, item) => total + (item?.salesData?.length || 0),
+            0
+          ) || 0
+        const failedPurchases = (selectedTokens.length || 0) - totalPurchases
         return (
           <Modal
             trigger={trigger}
@@ -404,13 +412,26 @@ export function SweepModal({
                 >
                   <Box
                     css={{
-                      color: '$successAccent',
+                      color: failedPurchases
+                        ? '$errorAccent'
+                        : '$successAccent',
                     }}
                   >
-                    <FontAwesomeIcon icon={faCheckCircle} fontSize={32} />
+                    <FontAwesomeIcon
+                      icon={
+                        failedPurchases ? faCircleExclamation : faCheckCircle
+                      }
+                      fontSize={32}
+                    />
                   </Box>
                   <Text style="h5" css={{ textAlign: 'center' }}>
-                    Congrats! Purchase was successful.
+                    {failedPurchases
+                      ? `${totalPurchases} ${
+                          totalPurchases > 1 ? 'items' : 'item'
+                        } purchased, ${failedPurchases} ${
+                          failedPurchases > 1 ? 'items' : 'item'
+                        } failed`
+                      : 'Congrats! Purchase was successful.'}
                   </Text>
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
                     {stepData?.currentStep?.items?.map((item) => {
