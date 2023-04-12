@@ -154,7 +154,9 @@ export function SweepModal({
             (total, item) => total + (item?.salesData?.length || 0),
             0
           ) || 0
+
         const failedPurchases = (selectedTokens.length || 0) - totalPurchases
+
         return (
           <Modal
             trigger={trigger}
@@ -180,7 +182,7 @@ export function SweepModal({
                 css={{ py: '$6', px: '$4', gap: '$3' }}
               >
                 <Text style="h6" css={{ textAlign: 'center' }}>
-                  No items were found for this collection.
+                  No available items were found for this collection.
                 </Text>
               </Flex>
             ) : null}

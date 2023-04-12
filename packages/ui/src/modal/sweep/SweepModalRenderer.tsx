@@ -459,9 +459,6 @@ export const SweepModalRenderer: FC<Props> = ({
             )
           ) {
             setSweepStep(SweepStep.Complete)
-            setSelectedTokens([])
-            setEthAmount(0)
-            setItemAmount(0)
           }
         },
       })
