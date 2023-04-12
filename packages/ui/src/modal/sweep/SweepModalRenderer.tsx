@@ -188,8 +188,8 @@ export const SweepModalRenderer: FC<Props> = ({
 
   // function to sort tokens
   const sortByPrice = useCallback((a: Token, b: Token) => {
-    const aPrice = a.market?.floorAsk?.price?.amount?.native
-    const bPrice = b.market?.floorAsk?.price?.amount?.native
+    const aPrice = a.market?.floorAsk?.price?.amount?.decimal
+    const bPrice = b.market?.floorAsk?.price?.amount?.decimal
 
     if (aPrice === undefined) {
       return 1
@@ -272,6 +272,8 @@ export const SweepModalRenderer: FC<Props> = ({
       (count, token) => {
         const tokenPrice = token.market?.floorAsk?.price?.amount?.native || 0
 
+        console.log('token price: ', tokenPrice)
+
         if (
           ethAmount &&
           count.totalPrice + tokenPrice <= ethAmount &&
@@ -282,11 +284,14 @@ export const SweepModalRenderer: FC<Props> = ({
         } else {
           return count
         }
+        console.log('total price: ', count.totalPrice)
 
         return count
       },
       { totalPrice: 0, tokenCount: 0 }
     ).tokenCount
+
+    console.log(maxTokens)
 
     const updatedTokens = updateSelectedTokens(availableTokens, maxTokens)
     setSelectedTokens(updatedTokens)
