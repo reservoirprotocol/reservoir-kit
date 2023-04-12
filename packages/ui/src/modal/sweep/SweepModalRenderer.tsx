@@ -164,8 +164,8 @@ export const SweepModalRenderer: FC<Props> = ({
       setMaxInput(Math.min(availableTokens.length, 50))
     } else {
       const maxEth = availableTokens.slice(0, 50).reduce((total, token) => {
-        if (token?.market?.floorAsk?.price?.amount?.native) {
-          total += token.market.floorAsk.price.amount.native
+        if (token?.market?.floorAsk?.price?.amount?.decimal) {
+          total += token.market.floorAsk.price.amount.decimal
         }
         return total
       }, 0)
@@ -177,8 +177,8 @@ export const SweepModalRenderer: FC<Props> = ({
   // calculate total
   useEffect(() => {
     const total = selectedTokens.reduce((total, token) => {
-      if (token?.market?.floorAsk?.price?.amount?.native) {
-        total += token.market.floorAsk.price.amount.native
+      if (token?.market?.floorAsk?.price?.amount?.decimal) {
+        total += token.market.floorAsk.price.amount.decimal
       }
       return total
     }, 0)
@@ -270,7 +270,7 @@ export const SweepModalRenderer: FC<Props> = ({
   useEffect(() => {
     const maxTokens = availableTokens.reduce(
       (count, token) => {
-        const tokenPrice = token.market?.floorAsk?.price?.amount?.native || 0
+        const tokenPrice = token.market?.floorAsk?.price?.amount?.decimal || 0
 
         if (
           ethAmount &&

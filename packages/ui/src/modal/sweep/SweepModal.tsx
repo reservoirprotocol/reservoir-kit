@@ -262,7 +262,7 @@ export function SweepModal({
                             image={token.token?.image}
                             currency={currency}
                             amount={
-                              token?.market?.floorAsk?.price?.amount?.native
+                              token?.market?.floorAsk?.price?.amount?.decimal
                             }
                           />
                         ))}
