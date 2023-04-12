@@ -186,134 +186,111 @@ export const SweepModalRenderer: FC<Props> = ({
     setTotal(total)
   }, [selectedTokens])
 
+  // function to sort tokens
+  const sortByPrice = useCallback((a: Token, b: Token) => {
+    const aPrice = a.market?.floorAsk?.price?.amount?.native
+    const bPrice = b.market?.floorAsk?.price?.amount?.native
+
+    if (aPrice === undefined) {
+      return 1
+    } else if (bPrice === undefined) {
+      return -1
+    } else {
+      return aPrice - bPrice
+    }
+  }, [])
+
+  const updateSelectedTokens = useCallback(
+    (tokens: Token[], maxTokens: number) => {
+      let pools: { [poolId: string]: number } = {}
+      let updatedTokens: Token[] = []
+
+      // Create a copy of the availableTokens
+      let processedTokens = [...tokens]
+
+      for (let i = 0; i < maxTokens && i < processedTokens.length; i++) {
+        const token = processedTokens[i]
+
+        updatedTokens.push(token)
+
+        // handle if token is in a dynamic pricing pool
+        if (
+          token.market?.floorAsk?.dynamicPricing?.kind === 'pool' &&
+          token?.market?.floorAsk?.dynamicPricing?.data?.pool &&
+          token?.market?.floorAsk?.dynamicPricing?.data?.prices
+        ) {
+          const poolId = token.market.floorAsk.dynamicPricing.data
+            .pool as string
+          const poolPrices = token.market.floorAsk.dynamicPricing.data
+            .prices as FloorAskPrice[]
+
+          // update the pools
+          if (pools[poolId] === undefined) {
+            pools[poolId] = 1
+          } else {
+            pools[poolId] += 1
+          }
+
+          // update the prices of other tokens in the same pool
+          processedTokens = processedTokens.map((processedToken) => {
+            if (
+              processedToken.market?.floorAsk?.dynamicPricing?.data?.pool ===
+                poolId &&
+              !updatedTokens.some(
+                (updatedToken) =>
+                  updatedToken.token?.tokenId === processedToken.token?.tokenId
+              )
+            ) {
+              if (pools[poolId] < poolPrices.length) {
+                processedToken.market.floorAsk.price = poolPrices[pools[poolId]]
+              } else {
+                processedToken.market.floorAsk.price = undefined
+              }
+            }
+            return processedToken
+          })
+
+          // sort tokens with the updated prices
+          processedTokens.sort(sortByPrice)
+        }
+      }
+
+      return updatedTokens
+    },
+    [sortByPrice]
+  )
+
   // Add by item
   useEffect(() => {
-    let pools: { [poolId: string]: number } = {}
-    let updatedTokens: Token[] = []
-
-    // Create a copy of availableTokens
-    let processedTokens = [...availableTokens]
-
-    for (
-      let i = 0;
-      itemAmount && i < itemAmount && i < processedTokens.length;
-      i++
-    ) {
-      const token = processedTokens[i]
-
-      updatedTokens.push(token)
-
-      // handle if token is in a dynamic pricing pool
-      if (
-        token.market?.floorAsk?.dynamicPricing?.kind === 'pool' &&
-        token?.market?.floorAsk?.dynamicPricing?.data?.pool &&
-        token?.market?.floorAsk?.dynamicPricing?.data?.prices
-      ) {
-        const poolId = token.market.floorAsk.dynamicPricing.data.pool as string
-        const poolPrices = token.market.floorAsk.dynamicPricing.data
-          .prices as FloorAskPrice[]
-
-        // update the pools
-        if (pools[poolId] === undefined) {
-          pools[poolId] = 1
-        } else {
-          pools[poolId] += 1
-        }
-
-        // update the prices of other tokens in the same pool
-        processedTokens = processedTokens.map((processedToken) => {
-          if (
-            processedToken.market?.floorAsk?.dynamicPricing?.data?.pool ===
-              poolId &&
-            !updatedTokens.some(
-              (updatedToken) =>
-                updatedToken.token?.tokenId === processedToken.token?.tokenId
-            )
-          ) {
-            if (pools[poolId] < poolPrices.length) {
-              processedToken.market.floorAsk.price = poolPrices[pools[poolId]]
-            } else {
-              processedToken.market.floorAsk.price = undefined
-            }
-          }
-          return processedToken
-        })
-
-        // sort tokens with the updated prices
-        processedTokens.sort(sortByPrice)
-      }
-    }
-
+    const updatedTokens = updateSelectedTokens(availableTokens, itemAmount || 0)
     setSelectedTokens(updatedTokens)
-  }, [itemAmount])
+  }, [itemAmount, updateSelectedTokens])
 
   // Add by price
   useEffect(() => {
-    let pools: { [poolId: string]: number } = {}
-    let updatedTokens: Token[] = []
+    const maxTokens = availableTokens.reduce(
+      (count, token) => {
+        const tokenPrice = token.market?.floorAsk?.price?.amount?.native || 0
 
-    // Create a copy of the availableTokens
-    let processedTokens = [...availableTokens]
-
-    for (let i = 0; i < processedTokens.length; i++) {
-      const token = processedTokens[i]
-
-      let newTokens = [...updatedTokens, token]
-      const total = newTokens.reduce((total, token) => {
-        if (token?.market?.floorAsk?.price?.amount?.native) {
-          total += token.market.floorAsk.price.amount.native
-        }
-        return total
-      }, 0)
-      if (ethAmount && total <= ethAmount && newTokens.length <= 50) {
-        updatedTokens.push(token)
-      } else {
-        break
-      }
-
-      // handle dynamic pricing
-      if (
-        token.market?.floorAsk?.dynamicPricing?.kind === 'pool' &&
-        token?.market?.floorAsk?.dynamicPricing?.data?.pool &&
-        token?.market?.floorAsk?.dynamicPricing?.data?.prices
-      ) {
-        const poolId = token.market.floorAsk.dynamicPricing.data.pool as string
-        const poolPrices = token.market.floorAsk.dynamicPricing.data
-          .prices as FloorAskPrice[]
-
-        // Update the pools
-        if (pools[poolId] === undefined) {
-          pools[poolId] = 1
+        if (
+          ethAmount &&
+          count.totalPrice + tokenPrice <= ethAmount &&
+          count.tokenCount < 50
+        ) {
+          count.totalPrice += tokenPrice
+          count.tokenCount += 1
         } else {
-          pools[poolId] += 1
+          return count
         }
 
-        // Update the prices of other tokens in the same pool
-        processedTokens = processedTokens.map((processedToken) => {
-          if (
-            processedToken.market?.floorAsk?.dynamicPricing?.data?.pool ===
-              poolId &&
-            !updatedTokens.some(
-              (updatedToken) =>
-                updatedToken.token?.tokenId === processedToken.token?.tokenId
-            )
-          ) {
-            if (pools[poolId] < poolPrices.length) {
-              processedToken.market.floorAsk.price = poolPrices[pools[poolId]]
-            } else {
-              processedToken.market.floorAsk.price = undefined
-            }
-          }
-          return processedToken
-        })
+        return count
+      },
+      { totalPrice: 0, tokenCount: 0 }
+    ).tokenCount
 
-        // Sort tokens with the updated prices
-        processedTokens.sort(sortByPrice)
-      }
-    }
-
+    const updatedTokens = updateSelectedTokens(availableTokens, maxTokens)
     setSelectedTokens(updatedTokens)
-  }, [ethAmount])
+  }, [ethAmount, updateSelectedTokens])
 
   // reset selectedItems when toggle changes
   useEffect(() => {
@@ -333,19 +310,6 @@ export const SweepModalRenderer: FC<Props> = ({
       setTransactionError(null)
     }
   }, [open])
-
-  const sortByPrice = useCallback((a: Token, b: Token) => {
-    const aPrice = a.market?.floorAsk?.price?.amount?.native
-    const bPrice = b.market?.floorAsk?.price?.amount?.native
-
-    if (aPrice === undefined) {
-      return 1
-    } else if (bPrice === undefined) {
-      return -1
-    } else {
-      return aPrice - bPrice
-    }
-  }, [])
 
   const sweepTokens = useCallback(() => {
     if (!signer) {
