@@ -1,3 +1,23 @@
+
+## [v0.8.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/da760bb5d868cedc47d729dcf6a0ab5f6a42abbc) (2023-04-12)
+
+* Add partial messaging support for the cart [1dd82b7](https://github.com/reservoirprotocol/reservoir-kit/commit/1dd82b708d79c63120fb054e8221ef19735000e9)
+* Merge branch 'ted/grwth-2318-support-displaying-steps-in-the-cart-ui' into pedro/grwth-1973-buytoken-method-should-return-info-on [74d5f0a](https://github.com/reservoirprotocol/reservoir-kit/commit/74d5f0af07699180c5ea636aefbcb2ec3f1f5f1b)
+* Safely handle transactions being sped up and replaced [b1f406b](https://github.com/reservoirprotocol/reservoir-kit/commit/b1f406b288611ecb1de3ac0bb89d10c834f793bd)
+* Added missing setState to execute steps [1e48ab6](https://github.com/reservoirprotocol/reservoir-kit/commit/1e48ab696d6d085ffc0d9be124a170a323d4c97a)
+* Updated executeSteps [ fixed error ux](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-04-06)
+* Added approval collapsible [2023-04-06](https://github.com/reservoirprotocol/reservoir-kit/commit/fad39c8)
+## [v0.7.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e475a3838507e242eda6fd0f2f6ee3b8b80e6097) (2023-04-06)
+
+* Added path to executeSteps state [2023-04-05](https://github.com/reservoirprotocol/reservoir-kit/commit/57271d6)
+## [v0.7.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/f711acc75d34e6633ac8622a8bfbc91e0824625e) (2023-04-04)
+
+* Sync api [6c80b4c](https://github.com/reservoirprotocol/reservoir-kit/commit/6c80b4c9c5936f009e3b2628d0c0e5db1d2701d3)
+* Fix buyToken method [2023-04-04](https://github.com/reservoirprotocol/reservoir-kit/commit/d15707e)
+* Added new marketplace api to dynamically calculate the marketplace fee [6dadd2f](https://github.com/reservoirprotocol/reservoir-kit/commit/6dadd2f6a0616de6e00f356888d737c4391897ee)
+* Sync api [9db0e0a](https://github.com/reservoirprotocol/reservoir-kit/commit/9db0e0a72a48b57a4dbcd21888c0000a0c83902c)
+* fix: bugs in the executeSteps parallelization changes [00677ef](https://github.com/reservoirprotocol/reservoir-kit/commit/00677ef9f198e1e54f9bab7b26e1bf5778e896f4)
+* Parallelize step items [2023-03-31](https://github.com/reservoirprotocol/reservoir-kit/commit/1caf531)
 ## [v0.7.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/985268ee145e864fa15781e001505755ed22cdb0) (2023-04-03)
 
 - Fix buyToken method regression, refresh token not triggered when buying a token that fails to be purchased [2023-04-04](https://github.com/reservoirprotocol/reservoir-kit/commit/d15707e)
