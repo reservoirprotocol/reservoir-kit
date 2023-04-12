@@ -9,6 +9,7 @@ import { setParams } from './params'
 import { version } from '../../package.json'
 import { LogLevel } from '../utils/logger'
 import { generateEvent } from '../utils/events'
+import { sendTransactionSafely } from './transaction'
 
 /**
  * When attempting to perform actions, such as, selling a token or
@@ -210,16 +211,16 @@ export async function executeSteps(
                   ],
                   LogLevel.Verbose
                 )
-                const tx = await signer.sendTransaction(stepData)
-
-                stepItem.txHash = tx.hash
-                setState([...json?.steps], path)
-                client.log(
-                  ['Execute Steps: Transaction step, waiting on transaction'],
-                  LogLevel.Verbose
-                )
-
-                await tx.wait()
+                await sendTransactionSafely(stepData, signer, (tx) => {
+                  client.log(
+                    ['Execute Steps: Transaction step, got transaction', tx],
+                    LogLevel.Verbose
+                  )
+                  stepItem.txHash = tx.hash
+                  if (json) {
+                    setState([...json.steps], path)
+                  }
+                })
                 client.log(
                   [
                     'Execute Steps: Transaction finished, starting to poll for confirmation',
@@ -229,7 +230,7 @@ export async function executeSteps(
 
                 //Implicitly poll the confirmation url to confirm the transaction went through
                 const confirmationUrl = new URL(
-                  `${request.baseURL}/transactions/${tx.hash}/synced/v1`
+                  `${request.baseURL}/transactions/${stepItem.txHash}/synced/v1`
                 )
                 const headers: AxiosRequestHeaders = {
                   'x-rkc-version': version,
@@ -273,6 +274,8 @@ export async function executeSteps(
                       txHash: stepItem.txHash,
                     }
                   setParams(indexerConfirmationUrl, queryParams)
+                  let salesData: paths['/sales/v4']['get']['responses']['200']['schema'] =
+                    {}
                   await pollUntilOk(
                     {
                       url: indexerConfirmationUrl.href,
@@ -288,15 +291,16 @@ export async function executeSteps(
                         LogLevel.Verbose
                       )
                       if (res.status === 200) {
-                        const data =
-                          res.data as paths['/sales/v4']['get']['responses']['200']['schema']
-                        return data.sales && data.sales.length > 0
+                        salesData = res.data
+                        return salesData.sales && salesData.sales.length > 0
                           ? true
                           : false
                       }
                       return false
                     }
                   )
+                  stepItem.salesData = salesData.sales
+                  setState([...json?.steps], path)
                 }
 
                 break
@@ -405,6 +409,7 @@ export async function executeSteps(
                 break
             }
             stepItem.status = 'complete'
+            setState([...json?.steps], path)
             resolve(stepItem)
           } catch (e) {
             const error = e as Error
