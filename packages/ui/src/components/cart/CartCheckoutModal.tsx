@@ -8,6 +8,7 @@ import { styled } from '@stitches/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
+  faCircleExclamation,
   faClose,
   faCube,
   faWallet,
@@ -58,6 +59,13 @@ export function CartCheckoutModal({
 
     return `${cartChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1`
   })
+
+  const totalPurchases =
+    transaction?.currentStep?.items?.reduce(
+      (total, item) => total + (item?.salesData?.length || 0),
+      0
+    ) || 0
+  const failedPurchases = (transaction?.items?.length || 0) - totalPurchases
 
   const pathMap = transaction?.path
     ? (transaction.path as Path[]).reduce(
@@ -266,13 +274,28 @@ export function CartCheckoutModal({
                     >
                       <Box
                         css={{
-                          color: '$successAccent',
+                          color: failedPurchases
+                            ? '$errorAccent'
+                            : '$successAccent',
                         }}
                       >
-                        <FontAwesomeIcon icon={faCheckCircle} fontSize={32} />
+                        <FontAwesomeIcon
+                          icon={
+                            failedPurchases
+                              ? faCircleExclamation
+                              : faCheckCircle
+                          }
+                          fontSize={32}
+                        />
                       </Box>
                       <Text style="h5" css={{ textAlign: 'center' }}>
-                        Congrats! Purchase was successful.
+                        {failedPurchases
+                          ? `${totalPurchases} ${
+                              totalPurchases > 1 ? 'items' : 'item'
+                            } purchased, ${failedPurchases} ${
+                              failedPurchases > 1 ? 'items' : 'item'
+                            } failed`
+                          : 'Congrats! Purchase was successful.'}
                       </Text>
                       <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
                         {transaction.currentStep?.items?.map((item) => {
