@@ -272,8 +272,6 @@ export const SweepModalRenderer: FC<Props> = ({
       (count, token) => {
         const tokenPrice = token.market?.floorAsk?.price?.amount?.native || 0
 
-        console.log('token price: ', tokenPrice)
-
         if (
           ethAmount &&
           count.totalPrice + tokenPrice <= ethAmount &&
@@ -284,14 +282,11 @@ export const SweepModalRenderer: FC<Props> = ({
         } else {
           return count
         }
-        console.log('total price: ', count.totalPrice)
 
         return count
       },
       { totalPrice: 0, tokenCount: 0 }
     ).tokenCount
-
-    console.log(maxTokens)
 
     const updatedTokens = updateSelectedTokens(availableTokens, maxTokens)
     setSelectedTokens(updatedTokens)
