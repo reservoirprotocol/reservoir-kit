@@ -4421,7 +4421,8 @@ export interface definitions {
       | "x2y2"
       | "universe"
       | "infinity"
-      | "flow";
+      | "flow"
+      | "alienswap";
     options?: definitions["options"];
     /**
      * @description Orderbook where order is placed. Example: `Reservoir`
@@ -4857,7 +4858,8 @@ export interface definitions {
       | "universe"
       | "rarible"
       | "infinity"
-      | "flow";
+      | "flow"
+      | "alienswap";
     token?: string;
     /** @description Optional. Set custom gas price */
     maxFeePerGas?: string;
@@ -5016,7 +5018,8 @@ export interface definitions {
       | "x2y2"
       | "universe"
       | "infinity"
-      | "flow";
+      | "flow"
+      | "alienswap";
     options?: definitions["options"];
     /**
      * @description Orderbook where order is placed. Example: `Reservoir`
@@ -5172,7 +5175,8 @@ export interface definitions {
       | "rarible"
       | "infinity"
       | "sudoswap"
-      | "nftx";
+      | "nftx"
+      | "alienswap";
     data: definitions["source"];
   };
   Model437: {
