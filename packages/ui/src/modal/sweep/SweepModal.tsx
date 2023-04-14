@@ -94,6 +94,8 @@ export function SweepModal({
         totalUsd,
         currentChain,
         availableTokens,
+        balance,
+        hasEnoughCurrency,
         blockExplorerBaseUrl,
         transactionError,
         stepData,
@@ -295,13 +297,41 @@ export function SweepModal({
                     </Flex>
                   </Flex>
                 </Flex>
-                <Button
-                  css={{ m: '$4' }}
-                  disabled={!(selectedTokens.length > 0)}
-                  onClick={sweepTokens}
-                >
-                  {selectedTokens.length > 0 ? 'Sweep' : 'Select Items to Buy'}
-                </Button>
+                {hasEnoughCurrency ? (
+                  <Button
+                    css={{ m: '$4' }}
+                    disabled={
+                      !(selectedTokens.length > 0) || !hasEnoughCurrency
+                    }
+                    onClick={sweepTokens}
+                  >
+                    {selectedTokens.length > 0
+                      ? 'Sweep'
+                      : 'Select Items to Buy'}
+                  </Button>
+                ) : (
+                  <Flex direction="column" align="center" css={{ px: '$3' }}>
+                    <Flex align="center">
+                      <Text css={{ mr: '$3' }} color="error" style="body2">
+                        Insufficient Balance
+                      </Text>
+
+                      <FormatCryptoCurrency
+                        amount={balance}
+                        address={currency?.address}
+                        decimals={currency?.decimals}
+                        textStyle="body2"
+                      />
+                    </Flex>
+                    <Button
+                      css={{ my: '$4', width: '100%' }}
+                      disabled={true}
+                      onClick={sweepTokens}
+                    >
+                      Add Funds to Purchase
+                    </Button>
+                  </Flex>
+                )}
               </Flex>
             )}
 
@@ -441,8 +471,9 @@ export function SweepModal({
                     You can close this modal while it finalizes on the
                     blockchain. The transaction will continue in the background.
                   </Text>
-
-                  <FontAwesomeIcon icon={faCube} width="24" />
+                  <Box css={{ color: '$neutralSolid' }}>
+                    <FontAwesomeIcon icon={faCube} width={32} height={32} />
+                  </Box>
                 </Flex>
               </Flex>
             )}

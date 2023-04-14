@@ -12,8 +12,8 @@ import {
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import { constants, utils } from 'ethers'
-import { useAccount, useNetwork, useSigner } from 'wagmi'
+import { BigNumber, constants, utils } from 'ethers'
+import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
 import Token from '../list/Token'
 import {
   Execute,
@@ -22,6 +22,7 @@ import {
 } from '@reservoir0x/reservoir-sdk'
 import { toFixed } from '../../lib/numbers'
 import { formatUnits } from 'ethers/lib/utils.js'
+import { UseBalanceToken } from '../../types/wagmi'
 
 export enum SweepStep {
   Idle,
@@ -48,6 +49,10 @@ type BuyTokenOptions = Parameters<
   ReservoirClientActions['buyToken']
 >['0']['options']
 
+type Currency = NonNullable<
+  NonNullable<NonNullable<Token['market']>['floorAsk']>['price']
+>['currency']
+
 type ChildrenProps = {
   loading: boolean
   selectedTokens: ReturnType<typeof useTokens>['data']
@@ -69,6 +74,8 @@ type ChildrenProps = {
   availableTokens: ReturnType<typeof useTokens>['data']
   address?: string
   tokens: ReturnType<typeof useTokens>['data']
+  balance?: BigNumber
+  hasEnoughCurrency: boolean
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
   stepData: SweepModalStepData | null
@@ -111,7 +118,11 @@ export const SweepModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<SweepModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
 
-  const currency = useChainCurrency()
+  const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
+
+  const chainCurrency = useChainCurrency()
+  const [currency, setCurrency] = useState(chainCurrency)
+
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
 
@@ -147,13 +158,78 @@ export const SweepModalRenderer: FC<Props> = ({
       : 0
   const totalUsd = usdPrice * (total || 0)
 
+  const { data: balance } = useBalance({
+    chainId: chain?.id,
+    address: account.address,
+    token:
+      currency?.address !== constants.AddressZero
+        ? (currency?.address as UseBalanceToken)
+        : undefined,
+    watch: open,
+    formatUnits: currency?.decimals,
+  })
+
+  // Determine if user has enough funds
+  useEffect(() => {
+    if (balance) {
+      const totalPriceTruncated = toFixed(total, currency?.decimals || 18)
+      if (!balance.value) {
+        setHasEnoughCurrency(false)
+      } else if (
+        balance.value.lt(
+          utils.parseUnits(`${totalPriceTruncated}`, currency?.decimals)
+        )
+      ) {
+        setHasEnoughCurrency(false)
+      } else {
+        setHasEnoughCurrency(true)
+      }
+    }
+  }, [total, balance, currency])
+
+  // Update currency
+  const updateCurrency = useCallback(
+    (tokens: Token[]) => {
+      let currencies = new Set<string>()
+      let currenciesData: Record<string, Currency> = {}
+      for (let i = 0; i < tokens.length; i++) {
+        const currency = tokens[i]?.market?.floorAsk?.price?.currency
+        if (currency?.contract) {
+          currencies.add(currency.contract)
+          currenciesData[currency.contract] = currency
+        }
+        if (currencies.size > 1) {
+          break
+        }
+      }
+      if (currencies.size > 1) {
+        return setCurrency(chainCurrency)
+      } else if (currencies.size > 0) {
+        let otherCurrency = Object.values(currenciesData)[0]
+        return setCurrency({
+          name: otherCurrency?.name as string,
+          symbol: otherCurrency?.symbol as string,
+          decimals: otherCurrency?.decimals as number,
+          address: otherCurrency?.contract as string,
+          chainId: chain?.id as number,
+        })
+      }
+    },
+    [chain, chainCurrency]
+  )
+
+  // update currency based on selected tokens
+  useEffect(() => {
+    updateCurrency(selectedTokens)
+  }, [selectedTokens])
+
   const availableTokens = useMemo(() => {
     return tokens.filter(
       (token) =>
         token !== undefined &&
         token?.token !== undefined &&
-        token?.market?.floorAsk?.price?.currency?.contract ===
-          constants.AddressZero &&
+        token?.market?.floorAsk?.price !== undefined &&
+        token?.market?.floorAsk?.price?.amount?.decimal !== undefined &&
         token?.token?.owner?.toLowerCase() !== account?.address?.toLowerCase()
     )
   }, [tokens, account])
@@ -186,7 +262,7 @@ export const SweepModalRenderer: FC<Props> = ({
     setTotal(total)
   }, [selectedTokens])
 
-  // function to sort tokens
+  // sort tokens by price
   const sortByPrice = useCallback((a: Token, b: Token) => {
     const aPrice = a.market?.floorAsk?.price?.amount?.decimal
     const bPrice = b.market?.floorAsk?.price?.amount?.decimal
@@ -467,6 +543,8 @@ export const SweepModalRenderer: FC<Props> = ({
         currentChain,
         availableTokens,
         tokens,
+        balance: balance?.value,
+        hasEnoughCurrency,
         blockExplorerBaseUrl,
         transactionError,
         stepData,
