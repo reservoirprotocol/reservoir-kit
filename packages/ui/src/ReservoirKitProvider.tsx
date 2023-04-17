@@ -16,6 +16,7 @@ import { SWRConfig } from 'swr'
 export type CoinGecko = {
   proxy?: string
   apiKey?: string
+  coinId?: string
 }
 
 type ReservoirKitProviderOptions = {

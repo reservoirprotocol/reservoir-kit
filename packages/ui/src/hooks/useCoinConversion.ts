@@ -20,6 +20,8 @@ export default function (
 
   const baseUrl = createBaseUrl(providerOptionsContext?.coinGecko)
 
+  id = (id || null) ?? (providerOptionsContext.coinGecko?.coinId || '');
+
   const { data } = useSWR(
     vs_currency
       ? `${baseUrl}vs_currency=${vs_currency}&symbols=${symbols}&ids=${id}`
