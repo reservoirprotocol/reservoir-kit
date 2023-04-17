@@ -232,6 +232,9 @@ export function SweepModal({
                         width: '100%',
                         height: 44,
                         boxSizing: 'border-box',
+                        '&::placeholder': {
+                          paddingLeft: 12,
+                        },
                       }}
                       containerCss={{ width: '100%' }}
                     />

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useChainCurrency } from '../../hooks'
-import { ToggleGroup, ToggleGroupButton } from '../../primitives'
+import { ToggleGroup, ToggleGroupButton, Text } from '../../primitives'
 
 type Props = {
   isItemsToggled: boolean
@@ -32,10 +32,14 @@ export const ItemToggle: FC<Props> = ({
       }}
     >
       <ToggleGroupButton value="items" css={{ borderRadius: 8 }}>
-        Items
+        <Text style="subtitle2" css={{ fontSize: 14 }}>
+          Items
+        </Text>
       </ToggleGroupButton>
       <ToggleGroupButton value="currency" css={{ borderRadius: 8 }}>
-        {currency.symbol.toUpperCase()}
+        <Text style="subtitle2" css={{ fontSize: 14 }}>
+          {currency.symbol.toUpperCase()}
+        </Text>
       </ToggleGroupButton>
     </ToggleGroup>
   )

@@ -39,12 +39,13 @@ export const SweepItem: FC<Props> = ({ name, image, amount, currency }) => {
             objectFit: 'cover',
           }}
         />
-        <Flex css={{ px: '$2', py: '$2' }}>
+        <Flex css={{ px: '$1', py: '$2' }}>
           <FormatCryptoCurrency
             amount={amount}
             address={currency.address}
             decimals={currency.decimals}
             maximumFractionDigits={amount && amount >= 10 ? 2 : 3}
+            css={{ whiteSpace: 'nowrap' }}
           />
         </Flex>
       </Flex>

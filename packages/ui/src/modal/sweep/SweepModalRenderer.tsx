@@ -109,8 +109,8 @@ export const SweepModalRenderer: FC<Props> = ({
   const [selectedTokens, setSelectedTokens] = useState<
     ReturnType<typeof useTokens>['data']
   >([])
-  const [itemAmount, setItemAmount] = useState<number | undefined>(0)
-  const [ethAmount, setEthAmount] = useState<number | undefined>(0)
+  const [itemAmount, setItemAmount] = useState<number | undefined>(undefined)
+  const [ethAmount, setEthAmount] = useState<number | undefined>(undefined)
   const [isItemsToggled, setIsItemsToggled] = useState<boolean>(true)
   const [maxInput, setMaxInput] = useState<number>(0)
   const [total, setTotal] = useState<number>(0)
@@ -379,8 +379,8 @@ export const SweepModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (!open) {
       setSelectedTokens([])
-      setItemAmount(0)
-      setEthAmount(0)
+      setItemAmount(undefined)
+      setEthAmount(undefined)
       setSweepStep(SweepStep.Idle)
       setIsItemsToggled(true)
       setTransactionError(null)
