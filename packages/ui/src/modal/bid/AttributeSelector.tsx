@@ -144,12 +144,12 @@ const AttributeSelector: FC<Props> = ({
                       </Box>
                     </Flex>
                     <Flex justify="between" css={{ gap: '$2' }}>
-                      <Text style="body2" color="subtle">
+                      <Text style="body3" color="subtle">
                         {count && tokenCount
                           ? `${Math.round((count / tokenCount) * 100)}%`
                           : '-'}
                       </Text>
-                      <Text style="body2" color="subtle">
+                      <Text style="body3" color="subtle">
                         floor
                       </Text>
                     </Flex>

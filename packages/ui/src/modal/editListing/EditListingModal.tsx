@@ -177,7 +177,8 @@ export function EditListingModal({
                       width={16}
                       height={16}
                     />
-                    <Text style="body2" color="errorLight">
+                    <Text style="body3" color="errorLight">
+                      {' '}
                       {transactionError.message}
                     </Text>
                   </Flex>
@@ -224,9 +225,10 @@ export function EditListingModal({
                         </Select>
                       </Box>
                       <Text
-                        style="body2"
+                        style="body3"
                         css={{ mb: 24, display: 'inline-block' }}
                       >
+                        {' '}
                         {quantityAvailable} items available
                       </Text>
                     </>
@@ -271,7 +273,8 @@ export function EditListingModal({
                       price !== 0 &&
                       price < MINIMUM_AMOUNT && (
                         <Box>
-                          <Text style="body2" color="error">
+                          <Text style="body3" color="error">
+                            {' '}
                             Amount must be higher than {MINIMUM_AMOUNT}
                           </Text>
                         </Box>
@@ -286,7 +289,8 @@ export function EditListingModal({
                       currency?.contract === constants.AddressZero &&
                       price < collection?.floorAsk?.price.amount.native && (
                         <Box>
-                          <Text style="body2" color="error">
+                          <Text style="body3" color="error">
+                            {' '}
                             Price is{' '}
                             {Math.round(
                               ((collection.floorAsk.price.amount.native -
@@ -413,9 +417,9 @@ export function EditListingModal({
                   <Text style="h5" css={{ mb: '$4' }}>
                     Listing Updated!
                   </Text>
-                  <Text style="body3" color="subtle" css={{ mb: 24 }}>
+                  <Text style="body2" color="subtle" css={{ mb: 24 }}>
                     Your listing for{' '}
-                    <Text style="body3" color="base">
+                    <Text style="body2" color="base">
                       {token?.token?.name}
                     </Text>{' '}
                     has been updated.

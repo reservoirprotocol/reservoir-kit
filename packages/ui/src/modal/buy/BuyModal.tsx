@@ -232,7 +232,7 @@ export function BuyModal({
                       width={16}
                       height={16}
                     />
-                    <Text style="body2" color="errorLight">
+                    <Text style="body3" color="errorLight">
                       {transactionError.message}
                     </Text>
                   </Flex>
@@ -252,7 +252,7 @@ export function BuyModal({
                       width={16}
                       height={16}
                     />
-                    <Text style="body2" color="errorLight">
+                    <Text style="body3" color="errorLight">
                       Mixed currency listings are only available to checkout
                       with {currency?.symbol || 'ETH'}.
                     </Text>
@@ -275,8 +275,8 @@ export function BuyModal({
                     justify="between"
                   >
                     <Flex direction="column" css={{ gap: '$1' }}>
-                      <Text style="body2">Quantity</Text>
-                      <Text style="body2" color="subtle">
+                      <Text style="body3">Quantity</Text>
+                      <Text style="body3" color="subtle">
                         {formatNumber(quantityAvailable)} items available
                       </Text>
                     </Flex>
@@ -347,7 +347,7 @@ export function BuyModal({
                   ) : (
                     <Flex direction="column" align="center">
                       <Flex align="center" css={{ mb: '$3' }}>
-                        <Text css={{ mr: '$3' }} color="error" style="body2">
+                        <Text css={{ mr: '$3' }} color="error" style="body3">
                           Insufficient Balance
                         </Text>
 
@@ -355,7 +355,7 @@ export function BuyModal({
                           amount={balance}
                           address={currency?.contract}
                           decimals={currency?.decimals}
-                          textStyle="body2"
+                          textStyle="body3"
                         />
                       </Flex>
 
@@ -541,7 +541,8 @@ export function BuyModal({
                   <Text style="subtitle1" css={{ my: 24 }}>
                     <Popover
                       content={
-                        <Text style={'body2'}>
+                        <Text style={'body3'}>
+                          {' '}
                           Trade one crypto for another on a crypto exchange.
                           Popular decentralized exchanges include{' '}
                           <Anchor

@@ -116,7 +116,7 @@ const TokenPrimitive: FC<Props> = ({
               ) : null}
             </Flex>
             {name && (
-              <Text style="body2" color={isUnavailable ? 'subtle' : 'base'}>
+              <Text style="body3" color={isUnavailable ? 'subtle' : 'base'}>
                 {collection}
               </Text>
             )}
@@ -137,10 +137,11 @@ const TokenPrimitive: FC<Props> = ({
             ) : null}
             {!expires && !quantity && royaltiesBps ? (
               <Text
-                style="body2"
+                style="body3"
                 color="subtle"
                 css={{ display: 'flex', gap: '$1' }}
               >
+                {' '}
                 Creator Royalties: {royaltyPercent}%
                 <InfoTooltip
                   side="right"

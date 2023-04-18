@@ -216,7 +216,8 @@ export function EditBidModal({
                       width={16}
                       height={16}
                     />
-                    <Text style="body2" color="errorLight">
+                    <Text style="body3" color="errorLight">
+                      {' '}
                       {transactionError.message}
                     </Text>
                   </Flex>
@@ -465,7 +466,8 @@ export function EditBidModal({
                       <Box css={{ width: '100%', mt: 'auto' }}>
                         {!hasEnoughNativeCurrency && (
                           <Flex css={{ gap: '$2', mt: 10 }} justify="center">
-                            <Text style="body2" color="error">
+                            <Text style="body3" color="error">
+                              {' '}
                               {balance?.symbol || 'ETH'} Balance
                             </Text>
                             <FormatCryptoCurrency amount={balance?.value} />
@@ -564,9 +566,9 @@ export function EditBidModal({
                   <Text style="h5" css={{ mb: '$4' }}>
                     Offer Updated!
                   </Text>
-                  <Text style="body3" color="subtle" css={{ mb: 24 }}>
+                  <Text style="body2" color="subtle" css={{ mb: 24 }}>
                     Your offer for{' '}
-                    <Text style="body3" color="base">
+                    <Text style="body2" color="base">
                       {token?.token?.name}
                     </Text>{' '}
                     has been updated.
