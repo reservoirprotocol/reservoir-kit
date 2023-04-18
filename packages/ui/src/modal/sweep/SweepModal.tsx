@@ -519,8 +519,11 @@ export function SweepModal({
                   </Text>
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
                     {stepData?.currentStep?.items?.map((item) => {
-                      const itemCount = item?.orderIds?.length || 1
-                      const itemSubject = itemCount > 1 ? 'items' : 'item'
+                      const txHash = item.txHash
+                        ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
+                            -4
+                          )}`
+                        : ''
 
                       return (
                         <Anchor
@@ -530,8 +533,7 @@ export function SweepModal({
                           target="_blank"
                           css={{ fontSize: 12 }}
                         >
-                          View transaction for {itemCount} {itemSubject} on
-                          Etherscan
+                          View transaction: {txHash}
                         </Anchor>
                       )
                     })}
