@@ -207,7 +207,9 @@ export function SweepModal({
                   />
                   <Flex align="center" css={{ gap: '$3', mb: 20 }}>
                     <Input
-                      value={isItemsToggled ? itemAmount : ethAmount}
+                      value={
+                        isItemsToggled ? itemAmount || '' : ethAmount || ''
+                      }
                       type="number"
                       placeholder="0"
                       step={isItemsToggled ? 1 : 0.01}

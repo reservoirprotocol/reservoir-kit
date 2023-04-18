@@ -371,8 +371,8 @@ export const SweepModalRenderer: FC<Props> = ({
   // reset selectedItems when toggle changes
   useEffect(() => {
     setSelectedTokens([])
-    setItemAmount(0)
-    setEthAmount(0)
+    setItemAmount(undefined)
+    setEthAmount(undefined)
   }, [isItemsToggled])
 
   // reset state on close
