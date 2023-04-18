@@ -221,7 +221,6 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             >
               <FontAwesomeIcon width="11" icon={faArrowDown} />
               <Text style="body3" color="accent">
-                {' '}
                 Price went down {formatNumber(priceDiff)}%
               </Text>
             </Flex>
