@@ -68,6 +68,7 @@ type ChildrenProps = {
   maxInput: number
   setMaxInput: React.Dispatch<React.SetStateAction<number>>
   currency: ReturnType<typeof useChainCurrency>
+  isChainCurrency: boolean
   total: number
   totalUsd: number
   currentChain: ReservoirChain | null | undefined
@@ -122,6 +123,8 @@ export const SweepModalRenderer: FC<Props> = ({
 
   const chainCurrency = useChainCurrency()
   const [currency, setCurrency] = useState(chainCurrency)
+
+  const isChainCurrency = currency.address === chainCurrency.address
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -240,9 +243,21 @@ export const SweepModalRenderer: FC<Props> = ({
       setMaxInput(Math.min(availableTokens.length, 50))
     } else {
       const maxEth = availableTokens.slice(0, 50).reduce((total, token) => {
-        if (token?.market?.floorAsk?.price?.amount?.decimal) {
-          total += token.market.floorAsk.price.amount.decimal
+        if (isChainCurrency) {
+          if (
+            token?.market?.floorAsk?.price?.amount?.native &&
+            token?.market?.floorAsk?.price?.amount?.decimal
+          ) {
+            total +=
+              token.market.floorAsk.price.amount.native || // native price is null for tokens with dynamimc pricing
+              token?.market?.floorAsk?.price?.amount?.decimal
+          }
+        } else {
+          if (token?.market?.floorAsk?.price?.amount?.decimal) {
+            total += token.market.floorAsk.price.amount.decimal
+          }
         }
+
         return total
       }, 0)
 
@@ -253,14 +268,26 @@ export const SweepModalRenderer: FC<Props> = ({
   // calculate total
   useEffect(() => {
     const total = selectedTokens.reduce((total, token) => {
-      if (token?.market?.floorAsk?.price?.amount?.decimal) {
-        total += token.market.floorAsk.price.amount.decimal
+      if (isChainCurrency) {
+        if (
+          token?.market?.floorAsk?.price?.amount?.native &&
+          token.market.floorAsk.price.amount.decimal
+        ) {
+          total +=
+            token.market.floorAsk.price.amount.native ||
+            token.market.floorAsk.price.amount.decimal
+        }
+      } else {
+        if (token?.market?.floorAsk?.price?.amount?.decimal) {
+          total += token.market.floorAsk.price.amount.decimal
+        }
       }
+
       return total
     }, 0)
 
     setTotal(total)
-  }, [selectedTokens])
+  }, [selectedTokens, isChainCurrency])
 
   // sort tokens by price
   const sortByPrice = useCallback((a: Token, b: Token) => {
@@ -346,7 +373,11 @@ export const SweepModalRenderer: FC<Props> = ({
   useEffect(() => {
     const maxTokens = availableTokens.reduce(
       (count, token) => {
-        const tokenPrice = token.market?.floorAsk?.price?.amount?.decimal || 0
+        const tokenPrice = isChainCurrency
+          ? token.market?.floorAsk?.price?.amount?.native || // native price is null for tokens with dynamimc pricing
+            token.market?.floorAsk?.price?.amount?.decimal ||
+            0
+          : token.market?.floorAsk?.price?.amount?.decimal || 0
 
         if (
           ethAmount &&
@@ -538,6 +569,7 @@ export const SweepModalRenderer: FC<Props> = ({
         maxInput,
         setMaxInput,
         currency,
+        isChainCurrency,
         total,
         totalUsd,
         currentChain,

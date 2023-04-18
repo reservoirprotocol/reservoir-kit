@@ -90,6 +90,7 @@ export function SweepModal({
         setIsItemsToggled,
         maxInput,
         currency,
+        isChainCurrency,
         total,
         totalUsd,
         currentChain,
@@ -269,7 +270,13 @@ export function SweepModal({
                             image={token.token?.image}
                             currency={currency}
                             amount={
-                              token?.market?.floorAsk?.price?.amount?.decimal
+                              isChainCurrency
+                                ? token?.market?.floorAsk?.price?.amount // native price is null for tokens with dynamimc pricing
+                                    ?.native ||
+                                  token?.market?.floorAsk?.price?.amount
+                                    ?.decimal
+                                : token?.market?.floorAsk?.price?.amount
+                                    ?.decimal
                             }
                           />
                         ))}
