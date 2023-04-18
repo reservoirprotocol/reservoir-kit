@@ -583,7 +583,6 @@ export function BidModal({
                         {!hasEnoughNativeCurrency && (
                           <Flex css={{ gap: '$2', mt: 10 }} justify="center">
                             <Text style="body3" color="error">
-                              {' '}
                               {balance?.symbol || 'ETH'} Balance
                             </Text>
                             <FormatCryptoCurrency amount={balance?.value} />

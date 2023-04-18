@@ -343,7 +343,6 @@ export function CartPopover({
                       style={{ height: 30 }}
                     />
                     <Text style="body2" color="subtle">
-                      {' '}
                       No items in your cart
                     </Text>
                   </Flex>

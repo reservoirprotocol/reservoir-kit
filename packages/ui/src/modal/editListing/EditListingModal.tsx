@@ -178,7 +178,6 @@ export function EditListingModal({
                       height={16}
                     />
                     <Text style="body3" color="errorLight">
-                      {' '}
                       {transactionError.message}
                     </Text>
                   </Flex>
@@ -228,7 +227,6 @@ export function EditListingModal({
                         style="body3"
                         css={{ mb: 24, display: 'inline-block' }}
                       >
-                        {' '}
                         {quantityAvailable} items available
                       </Text>
                     </>
@@ -274,7 +272,6 @@ export function EditListingModal({
                       price < MINIMUM_AMOUNT && (
                         <Box>
                           <Text style="body3" color="error">
-                            {' '}
                             Amount must be higher than {MINIMUM_AMOUNT}
                           </Text>
                         </Box>
@@ -290,7 +287,6 @@ export function EditListingModal({
                       price < collection?.floorAsk?.price.amount.native && (
                         <Box>
                           <Text style="body3" color="error">
-                            {' '}
                             Price is{' '}
                             {Math.round(
                               ((collection.floorAsk.price.amount.native -

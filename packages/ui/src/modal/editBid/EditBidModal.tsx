@@ -217,7 +217,6 @@ export function EditBidModal({
                       height={16}
                     />
                     <Text style="body3" color="errorLight">
-                      {' '}
                       {transactionError.message}
                     </Text>
                   </Flex>
@@ -467,7 +466,6 @@ export function EditBidModal({
                         {!hasEnoughNativeCurrency && (
                           <Flex css={{ gap: '$2', mt: 10 }} justify="center">
                             <Text style="body3" color="error">
-                              {' '}
                               {balance?.symbol || 'ETH'} Balance
                             </Text>
                             <FormatCryptoCurrency amount={balance?.value} />

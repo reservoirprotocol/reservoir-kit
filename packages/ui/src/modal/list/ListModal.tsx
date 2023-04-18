@@ -424,7 +424,6 @@ export function ListModal({
                           display: 'block',
                         }}
                       >
-                        {' '}
                         You can change or cancel your listing for free on{' '}
                         {localMarketplace?.name}.
                       </Text>
@@ -494,7 +493,6 @@ export function ListModal({
                           style="body3"
                           css={{ mb: 24, display: 'inline-block' }}
                         >
-                          {' '}
                           {quantityAvailable} items available
                         </Text>
                       </>
@@ -542,7 +540,6 @@ export function ListModal({
                           Number(marketplace.truePrice) < MINIMUM_AMOUNT && (
                             <Box>
                               <Text style="body3" color="error">
-                                {' '}
                                 Amount must be higher than {MINIMUM_AMOUNT}
                               </Text>
                             </Box>
@@ -559,7 +556,6 @@ export function ListModal({
                             collection?.floorAsk?.price.amount.native && (
                             <Box>
                               <Text style="body3" color="error">
-                                {' '}
                                 Price is{' '}
                                 {Math.round(
                                   ((collection.floorAsk.price.amount.native -
@@ -666,7 +662,6 @@ export function ListModal({
                         style="body2"
                         color="subtle"
                       >
-                        {' '}
                         {stepData?.currentStep.description}
                       </Text>
                     </>
@@ -734,9 +729,7 @@ export function ListModal({
                       as="p"
                       css={{ mb: 24, maxWidth: 300, overflow: 'hidden' }}
                     >
-                      {' '}
                       <Text color="accent" ellipsify style="body2">
-                        {' '}
                         {token?.token?.name
                           ? token?.token?.name
                           : `#${token?.token?.tokenId}`}

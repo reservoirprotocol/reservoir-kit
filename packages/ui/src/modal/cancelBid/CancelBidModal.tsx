@@ -141,7 +141,6 @@ export function CancelBidModal({
                       height={16}
                     />
                     <Text style="body3" color="errorLight">
-                      {' '}
                       {transactionError.message}
                     </Text>
                   </Flex>
@@ -212,7 +211,6 @@ export function CancelBidModal({
                           color="subtle"
                           css={{ maxWidth: 400, textAlign: 'center', mx: '$3' }}
                         >
-                          {' '}
                           This will cancel your offer on all items that were
                           included in this attribute offer.
                         </Text>
@@ -243,7 +241,6 @@ export function CancelBidModal({
                     Offer Canceled!
                   </Text>
                   <Text style="body2" color="subtle" css={{ mb: 24 }}>
-                    {' '}
                     <>
                       Your{' '}
                       <Text style="body2" color="accent">
@@ -251,7 +248,6 @@ export function CancelBidModal({
                       </Text>{' '}
                       offer for{' '}
                       <Text style="body2" color="accent">
-                        {' '}
                         {bid?.criteria?.data?.token?.name ||
                           bid?.criteria?.data?.collection?.name}{' '}
                       </Text>

@@ -542,7 +542,6 @@ export function BuyModal({
                     <Popover
                       content={
                         <Text style={'body3'}>
-                          {' '}
                           Trade one crypto for another on a crypto exchange.
                           Popular decentralized exchanges include{' '}
                           <Anchor
