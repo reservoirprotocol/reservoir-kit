@@ -482,6 +482,7 @@ export function SweepModal({
                 </Flex>
               </Flex>
             )}
+
             {sweepStep === SweepStep.Complete && (
               <Flex
                 direction="column"
