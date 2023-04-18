@@ -140,7 +140,7 @@ export function CancelBidModal({
                       width={16}
                       height={16}
                     />
-                    <Text style="body2" color="errorLight">
+                    <Text style="body3" color="errorLight">
                       {transactionError.message}
                     </Text>
                   </Flex>
@@ -160,7 +160,7 @@ export function CancelBidModal({
                   />
                 </Box>
                 <Text
-                  style="body3"
+                  style="body2"
                   color="subtle"
                   css={{ mt: '$3', mr: '$3', ml: '$3', textAlign: 'center' }}
                 >
@@ -207,7 +207,7 @@ export function CancelBidModal({
                     {isAttributeOffer && !stepData?.currentStepItem.txHash && (
                       <Flex justify="center">
                         <Text
-                          style="body3"
+                          style="body2"
                           color="subtle"
                           css={{ maxWidth: 400, textAlign: 'center', mx: '$3' }}
                         >
@@ -240,14 +240,14 @@ export function CancelBidModal({
                   <Text style="h5" css={{ mb: '$2' }}>
                     Offer Canceled!
                   </Text>
-                  <Text style="body3" color="subtle" css={{ mb: 24 }}>
+                  <Text style="body2" color="subtle" css={{ mb: 24 }}>
                     <>
                       Your{' '}
-                      <Text style="body3" color="accent">
+                      <Text style="body2" color="accent">
                         {bid?.source?.name as string}
                       </Text>{' '}
                       offer for{' '}
-                      <Text style="body3" color="accent">
+                      <Text style="body2" color="accent">
                         {bid?.criteria?.data?.token?.name ||
                           bid?.criteria?.data?.collection?.name}{' '}
                       </Text>

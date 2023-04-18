@@ -45,7 +45,7 @@ const CartToast: FC<Props> = ({ kind = 'success', message, link }) => {
           <FontAwesomeIcon icon={faCircleInfo} width="16" height="16" />
         </Text>
       )}
-      <Text css={{ ml: '$1', mt: 3 }} style="body2">
+      <Text css={{ ml: '$1', mt: 3 }} style="body3">
         {message}
       </Text>
       {link}
