@@ -314,9 +314,9 @@ export function ListModal({
                         />
                       </Box>
                       <Box css={{ mr: '$2', flex: 1 }}>
-                        <Text style="body3">{localMarketplace?.name}</Text>
+                        <Text style="body2">{localMarketplace?.name}</Text>
                         <Flex css={{ alignItems: 'center', gap: 8 }}>
-                          <Text style="body3" color="subtle" as="div">
+                          <Text style="body2" color="subtle" as="div">
                             on Reservoir
                           </Text>
                           <InfoTooltip
@@ -377,7 +377,7 @@ export function ListModal({
                     )}
                     {oracleEnabled && (
                       <Text
-                        style="body3"
+                        style="body2"
                         color="subtle"
                         css={{
                           mb: 10,
@@ -454,7 +454,7 @@ export function ListModal({
                           </Select>
                         </Box>
                         <Text
-                          style="body2"
+                          style="body3"
                           css={{ mb: 24, display: 'inline-block' }}
                         >
                           {quantityAvailable} items available
@@ -536,7 +536,7 @@ export function ListModal({
                           Number(marketplace.truePrice) !== 0 &&
                           Number(marketplace.truePrice) < MINIMUM_AMOUNT && (
                             <Box>
-                              <Text style="body2" color="error">
+                              <Text style="body3" color="error">
                                 Amount must be higher than {MINIMUM_AMOUNT}
                               </Text>
                             </Box>
@@ -552,7 +552,7 @@ export function ListModal({
                           Number(marketplace.truePrice) <
                             collection?.floorAsk?.price.amount.native && (
                             <Box>
-                              <Text style="body2" color="error">
+                              <Text style="body3" color="error">
                                 Price is{' '}
                                 {Math.round(
                                   ((collection.floorAsk.price.amount.native -
@@ -656,7 +656,7 @@ export function ListModal({
                           mx: 'auto',
                           mb: '$4',
                         }}
-                        style="body3"
+                        style="body2"
                         color="subtle"
                       >
                         {stepData?.currentStep.description}
@@ -721,12 +721,12 @@ export function ListModal({
                       Your item has been listed!
                     </Text>
                     <Text
-                      style="body3"
+                      style="body2"
                       color="subtle"
                       as="p"
                       css={{ mb: 24, maxWidth: 300, overflow: 'hidden' }}
                     >
-                      <Text color="accent" ellipsify style="body3">
+                      <Text color="accent" ellipsify style="body2">
                         {token?.token?.name
                           ? token?.token?.name
                           : `#${token?.token?.tokenId}`}

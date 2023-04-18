@@ -8,6 +8,8 @@ import { getClient } from '../actions/index'
 import { setParams } from './params'
 import { version } from '../../package.json'
 import { LogLevel } from '../utils/logger'
+import { generateEvent } from '../utils/events'
+import { sendTransactionSafely } from './transaction'
 
 /**
  * When attempting to perform actions, such as, selling a token or
@@ -19,24 +21,26 @@ import { LogLevel } from '../utils/logger'
  * @param request AxiosRequestConfig object with at least a url set
  * @param signer Ethereum signer object provided by the browser
  * @param setState Callback to update UI state has execution progresses
- * @returns The data field of the last element in the steps array
+ * @param newJson Data passed around, which contains steps and items etc
+ * @param expectedPrice Expected price to check for price moves before starting to process the steps
+ * @returns A promise you can await on
  */
 
 export async function executeSteps(
   request: AxiosRequestConfig,
   signer: Signer,
-  setState: (steps: Execute['steps']) => any,
+  setState: (steps: Execute['steps'], path: Execute['path']) => any,
   newJson?: Execute,
   expectedPrice?: number
 ) {
   const client = getClient()
+  const currentReservoirChain = client?.currentChain()
+  let json = newJson
   try {
-    let json = newJson
-
     if (!request.headers) {
       request.headers = {}
     }
-    const currentReservoirChain = client?.currentChain()
+
     if (currentReservoirChain?.baseApiUrl) {
       request.baseURL = currentReservoirChain.baseApiUrl
     }
@@ -104,13 +108,13 @@ export async function executeSteps(
       if (error) {
         json.steps[0].error = error.message
         json.steps[0].errorData = json.path
-        setState([...json?.steps])
+        setState([...json?.steps], path)
         throw error
       }
     }
 
     // Update state on first call or recursion
-    setState([...json?.steps])
+    setState([...json?.steps], path)
 
     let incompleteStepIndex = -1
     let incompleteStepItemIndex = -1
@@ -131,6 +135,10 @@ export async function executeSteps(
     // There are no more incomplete steps
     if (incompleteStepIndex === -1) {
       client.log(['Execute Steps: all steps complete'], LogLevel.Verbose)
+      client._sendEvent(
+        generateEvent(request, json),
+        currentReservoirChain?.id || 1
+      )
       return
     }
 
@@ -176,7 +184,7 @@ export async function executeSteps(
       }
       stepItems = items
       stepItem = items[incompleteStepItemIndex]
-      setState([...json?.steps])
+      setState([...json?.steps], path)
     }
     client.log(
       [`Execute Steps: Begin processing step items for: ${step.action}`],
@@ -203,15 +211,16 @@ export async function executeSteps(
                   ],
                   LogLevel.Verbose
                 )
-                const tx = await signer.sendTransaction(stepData)
-
-                stepItem.txHash = tx.hash
-                setState([...json?.steps])
-                client.log(
-                  ['Execute Steps: Transaction step, waiting on transaction'],
-                  LogLevel.Verbose
-                )
-                await tx.wait()
+                await sendTransactionSafely(stepData, signer, (tx) => {
+                  client.log(
+                    ['Execute Steps: Transaction step, got transaction', tx],
+                    LogLevel.Verbose
+                  )
+                  stepItem.txHash = tx.hash
+                  if (json) {
+                    setState([...json.steps], path)
+                  }
+                })
                 client.log(
                   [
                     'Execute Steps: Transaction finished, starting to poll for confirmation',
@@ -221,7 +230,7 @@ export async function executeSteps(
 
                 //Implicitly poll the confirmation url to confirm the transaction went through
                 const confirmationUrl = new URL(
-                  `${request.baseURL}/transactions/${tx.hash}/synced/v1`
+                  `${request.baseURL}/transactions/${stepItem.txHash}/synced/v1`
                 )
                 const headers: AxiosRequestHeaders = {
                   'x-rkc-version': version,
@@ -265,6 +274,8 @@ export async function executeSteps(
                       txHash: stepItem.txHash,
                     }
                   setParams(indexerConfirmationUrl, queryParams)
+                  let salesData: paths['/sales/v4']['get']['responses']['200']['schema'] =
+                    {}
                   await pollUntilOk(
                     {
                       url: indexerConfirmationUrl.href,
@@ -280,15 +291,16 @@ export async function executeSteps(
                         LogLevel.Verbose
                       )
                       if (res.status === 200) {
-                        const data =
-                          res.data as paths['/sales/v4']['get']['responses']['200']['schema']
-                        return data.sales && data.sales.length > 0
+                        salesData = res.data
+                        return salesData.sales && salesData.sales.length > 0
                           ? true
                           : false
                       }
                       return false
                     }
                   )
+                  stepItem.salesData = salesData.sales
+                  setState([...json?.steps], path)
                 }
 
                 break
@@ -384,11 +396,8 @@ export async function executeSteps(
                         },
                       ]
                     }
-                    setState([...json?.steps])
+                    setState([...json?.steps], path)
                   } catch (err) {
-                    json.steps[incompleteStepIndex].error =
-                      'Your order could not be posted.'
-                    setState([...json?.steps])
                     throw err
                   }
                 }
@@ -400,10 +409,20 @@ export async function executeSteps(
                 break
             }
             stepItem.status = 'complete'
-            setState([...json?.steps])
+            setState([...json?.steps], path)
             resolve(stepItem)
           } catch (e) {
-            reject(e)
+            const error = e as Error
+            const errorMessage = error
+              ? error.message
+              : 'Error: something went wrong'
+
+            if (error && json?.steps) {
+              json.steps[incompleteStepIndex].error = errorMessage
+              stepItem.error = errorMessage
+              setState([...json?.steps], path)
+            }
+            reject(error)
           }
         })
       })
@@ -414,6 +433,19 @@ export async function executeSteps(
     await executeSteps(request, signer, setState, json)
   } catch (err: any) {
     client.log(['Execute Steps: An error occurred', err], LogLevel.Error)
+    const error = err as Error
+    const errorMessage = error ? error.message : 'Error: something went wrong'
+
+    if (json) {
+      json.error = errorMessage
+      setState([...json?.steps], json.path)
+    }
+
+    client._sendEvent(
+      generateEvent(request, json),
+      currentReservoirChain?.id || 1
+    )
+
     throw err
   }
 }

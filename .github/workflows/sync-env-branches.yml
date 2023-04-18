@@ -28,3 +28,15 @@ jobs:
           git pull
           git merge --no-ff dev -m "Auto-merge dev into polygon"
           git push
+      - name: Sync arbitrum with dev
+        run: |
+          git checkout arbitrum
+          git pull
+          git merge --no-ff dev -m "Auto-merge dev into arbitrum"
+          git push
+      - name: Sync optimism with dev
+        run: |
+          git checkout optimism
+          git pull
+          git merge --no-ff dev -m "Auto-merge dev into optimism"
+          git push

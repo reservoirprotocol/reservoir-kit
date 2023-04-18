@@ -1,7 +1,7 @@
 {
   "name": "@reservoir0x/reservoir-kit-ui",
   "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
-  "version": "0.14.5",
+  "version": "0.15.0",
   "author": "Reservoir Protocol",
   "license": "MIT",
   "source": "src/index.ts",
@@ -33,6 +33,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@radix-ui/colors": "^0.1.8",
+    "@radix-ui/react-collapsible": "^1.0.2",
     "@radix-ui/react-dialog": "1.0.1-rc.2",
     "@radix-ui/react-popover": "1.0.1-rc.2",
     "@radix-ui/react-scroll-area": "1.0.1-rc.2",

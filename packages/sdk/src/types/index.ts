@@ -2,10 +2,11 @@ import { paths } from './api'
 export * from './api'
 
 export type Execute = {
-  error?: string
+  errors?: { message?: string; orderId?: string }[]
   path:
     | paths['/execute/buy/v7']['post']['responses']['200']['schema']['path']
     | paths['/execute/sell/v7']['post']['responses']['200']['schema']['path']
+  error?: string // Manually added client error
   steps: {
     error?: string
     errorData?: any
@@ -16,13 +17,18 @@ export type Execute = {
     items?: {
       status: 'complete' | 'incomplete'
       data?: any
+      orderIndexes?: number[]
+      orderIds?: string[]
+      // Manually added
+      error?: string
       txHash?: string
       orderData?: {
         crossPostingOrderId?: string
         orderId: string
         orderIndex: string
       }[]
-      orderIndexes?: number[]
+      salesData?: paths['/sales/v4']['get']['responses']['200']['schema']['sales']
+      //
     }[]
   }[]
 }

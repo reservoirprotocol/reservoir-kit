@@ -335,7 +335,7 @@ export const BuyModalRenderer: FC<Props> = ({
             message = error.message
           }
           if (errorStatus >= 400 && errorStatus < 500) {
-            message = error.message 
+            message = error.message
           }
           //@ts-ignore: Should be fixed in an update to typescript
           const transactionError = new Error(message, {
