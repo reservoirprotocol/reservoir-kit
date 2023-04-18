@@ -283,7 +283,7 @@ export function SweepModal({
                       </Grid>
                     ) : (
                       <Text
-                        style="body3"
+                        style="body2"
                         color="subtle"
                         css={{ textAlign: 'center', my: 'auto' }}
                       >
@@ -324,7 +324,7 @@ export function SweepModal({
                 ) : (
                   <Flex direction="column" align="center" css={{ px: '$3' }}>
                     <Flex align="center">
-                      <Text css={{ mr: '$3' }} color="error" style="body2">
+                      <Text css={{ mr: '$3' }} color="error" style="body3">
                         Insufficient Balance
                       </Text>
 
@@ -332,7 +332,7 @@ export function SweepModal({
                         amount={balance}
                         address={currency?.address}
                         decimals={currency?.decimals}
-                        textStyle="body2"
+                        textStyle="body3"
                       />
                     </Flex>
                     <Button

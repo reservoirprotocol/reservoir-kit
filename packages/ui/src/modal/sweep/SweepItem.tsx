@@ -14,7 +14,7 @@ export const SweepItem: FC<Props> = ({ name, image, amount, currency }) => {
   return (
     <Tooltip
       content={
-        <Text style="body2" as="p">
+        <Text style="body3" as="p">
           {name}
         </Text>
       }
