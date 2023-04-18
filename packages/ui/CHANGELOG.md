@@ -1,3 +1,28 @@
+## [v0.15.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3aec049d51ca8899ba52ed02af8a5f77344f4359) (2023-04-12)
+
+- Upgrade to v3 for user collections endpoint [734ab16](https://github.com/reservoirprotocol/reservoir-kit/commit/734ab16203b1a9508e3cdeb60e783671d20ab9c0)
+- Add partial messaging support for the cart [1dd82b7](https://github.com/reservoirprotocol/reservoir-kit/commit/1dd82b708d79c63120fb054e8221ef19735000e9)
+- Display Steps in the cart checkout [74d5f0a](https://github.com/reservoirprotocol/reservoir-kit/commit/74d5f0af07699180c5ea636aefbcb2ec3f1f5f1b)
+
+## [v0.14.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f295f775d25c366769d0c1edd5e27e5c36397ad5) (2023-04-07)
+
+## [v0.14.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/88aad19c72a36d36fbca1f975bf43bf8302443e7) (2023-04-07)
+
+- Updated executeSteps [ fixed error ux](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-04-06)
+- Added approval collapsible [2023-04-06](https://github.com/reservoirprotocol/reservoir-kit/commit/fad39c8)
+- Merge pull request #206 from reservoirprotocol/armando/grwth-2391-let-error-messages-through-from-the [a644005](https://github.com/reservoirprotocol/reservoir-kit/commit/a6440055b2ce36d7620d6c2b753d5799e1c57127)
+- Added path to executeSteps state [2023-04-05](https://github.com/reservoirprotocol/reservoir-kit/commit/57271d6)
+- Removed Accordion primitive [bcadb42](https://github.com/reservoirprotocol/reservoir-kit/commit/bcadb42da40462895b9023da1de6a6197762f494)
+
+## [v0.14.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2f4991f415637da15e7adef62d56f20ee8a0ec24) (2023-04-04)
+
+- feat: Expose all 400 errors from backend [629fd3d](https://github.com/reservoirprotocol/reservoir-kit/commit/629fd3d38a21171226e86390e12239d88d40547b)
+- fix: Use statusCode property [4cb1093](https://github.com/reservoirprotocol/reservoir-kit/commit/4cb10931ebaa05ad2fbbc7b925ab83b095dd896f)
+- feat: Expose cancel listing errors [a52e72b](https://github.com/reservoirprotocol/reservoir-kit/commit/a52e72b200b02162162c9f8038d331c14bfb83fd)
+- feat: Expose cart errors [df07115](https://github.com/reservoirprotocol/reservoir-kit/commit/df07115a4a90c8706ee69af1f7ea045b1e88da27)
+- Added new marketplace api to dynamically calculate the marketplace fee [6dadd2f](https://github.com/reservoirprotocol/reservoir-kit/commit/6dadd2f6a0616de6e00f356888d737c4391897ee)
+- Parallelize step items [2023-03-31](https://github.com/reservoirprotocol/reservoir-kit/commit/1caf531)
+
 ## [v0.14.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/36d6937b93c53b4406b44e9fd666def6ff46d8dc) (2023-04-04)
 
 - Add fixed fee support to BuyModal [0e3b0dd](https://github.com/reservoirprotocol/reservoir-kit/commit/0e3b0ddf523ad9de2a90e9c42077db66184306b6)

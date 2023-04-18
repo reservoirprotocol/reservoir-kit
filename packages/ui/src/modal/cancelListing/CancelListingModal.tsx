@@ -142,7 +142,7 @@ export function CancelListingModal({
                       width={16}
                       height={16}
                     />
-                    <Text style="body2" color="errorLight">
+                    <Text style="body3" color="errorLight">
                       {transactionError.message}
                     </Text>
                   </Flex>
@@ -161,7 +161,7 @@ export function CancelListingModal({
                   />
                 </Box>
                 <Text
-                  style="body3"
+                  style="body2"
                   color="subtle"
                   css={{ mt: '$3', mr: '$3', ml: '$3', textAlign: 'center' }}
                 >
@@ -228,14 +228,14 @@ export function CancelListingModal({
                   <Text style="h5" css={{ mb: '$2' }}>
                     Listing Canceled!
                   </Text>
-                  <Text style="body3" color="subtle" css={{ mb: 24 }}>
+                  <Text style="body2" color="subtle" css={{ mb: 24 }}>
                     <>
                       Your{' '}
-                      <Text style="body3" color="accent">
+                      <Text style="body2" color="accent">
                         {listing?.source?.name as string}
                       </Text>{' '}
                       listing for{' '}
-                      <Text style="body3" color="accent">
+                      <Text style="body2" color="accent">
                         {listing?.criteria?.data?.token?.name ||
                           listing?.criteria?.data?.collection?.name}{' '}
                       </Text>

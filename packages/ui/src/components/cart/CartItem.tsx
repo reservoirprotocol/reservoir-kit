@@ -180,16 +180,16 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               />
             )}
           </Flex>
-          <Text style="body2" color="subtle" ellipsify>
+          <Text style="body3" color="subtle" ellipsify>
             {collection.name}
           </Text>
           {!price && !order?.id && (
-            <Text style="body2" color="error">
+            <Text style="body3" color="error">
               Item no longer available
             </Text>
           )}
           {!price && order?.id && (
-            <Text style="body2" color="error">
+            <Text style="body3" color="error">
               Listing no longer available
             </Text>
           )}
@@ -198,7 +198,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               css={{ gap: '$1', color: '$accentSolidHover' }}
               align="center"
             >
-              <Text style="body2" color="accent">
+              <Text style="body3" color="accent">
                 Currency converted
               </Text>
             </Flex>
@@ -220,7 +220,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               align="center"
             >
               <FontAwesomeIcon width="11" icon={faArrowDown} />
-              <Text style="body2" color="accent">
+              <Text style="body3" color="accent">
                 Price went down {formatNumber(priceDiff)}%
               </Text>
             </Flex>
@@ -267,9 +267,9 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             align="start"
             css={{ gap: '$1', overflow: 'hidden', minWidth: 0 }}
           >
-            <Text style="body2">Quantity</Text>
+            <Text style="body3">Quantity</Text>
             <Text
-              style="body2"
+              style="body3"
               color="subtle"
               ellipsify
               css={{ width: '100%' }}

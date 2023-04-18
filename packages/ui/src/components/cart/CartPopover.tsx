@@ -342,7 +342,7 @@ export function CartPopover({
                       height="30"
                       style={{ height: 30 }}
                     />
-                    <Text style="body3" color="subtle">
+                    <Text style="body2" color="subtle">
                       No items in your cart
                     </Text>
                   </Flex>
@@ -425,11 +425,11 @@ export function CartPopover({
                     justify="center"
                     css={{ mb: '$2', gap: '$2' }}
                   >
-                    <Text style="body2" color="error">
+                    <Text style="body3" color="error">
                       Insufficient balance
                     </Text>
                     <FormatCryptoCurrency
-                      textStyle="body2"
+                      textStyle="body3"
                       amount={balance}
                       address={currency?.contract}
                       decimals={currency?.decimals}
@@ -489,7 +489,7 @@ export function CartPopover({
                   >
                     <Anchor href="https://reservoir.tools/" target="_blank">
                       <Text
-                        style="body2"
+                        style="body3"
                         color="subtle"
                         css={{
                           display: 'inline-flex',
