@@ -51,6 +51,8 @@ type ChildrenProps = {
   bidAmountCurrency?: {
     contract?: string
     decimals?: number
+    name?: string
+    symbol?: string
   }
   ethBidAmount?: number
   acceptBidStep: AcceptBidStep
