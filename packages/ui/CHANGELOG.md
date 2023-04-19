@@ -1,3 +1,24 @@
+
+## [v0.15.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/18e8b8dc11f02cce70f9733de3bdb843cff889b5) (2023-04-19)
+
+* Merge pull request #217 from reservoirprotocol/armando/grwth-2518-global-coingeckoid-mapping-for-usd [919e33b](https://github.com/reservoirprotocol/reservoir-kit/commit/919e33b50edae08b7818354a4b90d42e83fe91d8)
+* feat: Formatting [02a3e17](https://github.com/reservoirprotocol/reservoir-kit/commit/02a3e17b0c5fb60e0bf86ee3ec84062a52a3581d)
+* feat: Support passing in multiple symbols [d48c4cd](https://github.com/reservoirprotocol/reservoir-kit/commit/d48c4cdf46bdac3b8fa5f0d222fc0709ef6ebb50)
+* fix: Update type [d47170e](https://github.com/reservoirprotocol/reservoir-kit/commit/d47170eb2dcc3bce5281a36c1be52b49f2c7e140)
+* patch: Update var names [7a9d4ce](https://github.com/reservoirprotocol/reservoir-kit/commit/7a9d4ce648d555fff20eb8188c716f0f6947a67a)
+* fix: Update imports [645fd14](https://github.com/reservoirprotocol/reservoir-kit/commit/645fd14302f90e9f94f05222118d16c16b19fd85)
+* patch: Update conditional for coin ids [769477b](https://github.com/reservoirprotocol/reservoir-kit/commit/769477bb4c4156bca8c44b7245b7658bbeffaf6c)
+* patch: Update CoinGecko type [6b6df31](https://github.com/reservoirprotocol/reservoir-kit/commit/6b6df31842523e979bedc3a6e8c207b45692b520)
+* feat: Update CoinGecko type [1ef61d7](https://github.com/reservoirprotocol/reservoir-kit/commit/1ef61d7d8316abfa5a7e9a8f1f274f6c4679a2a1)
+* Updated list modal with updated body styles [b32fd2b](https://github.com/reservoirprotocol/reservoir-kit/commit/b32fd2bdd54ce075c868be112380611c282b846c)
+* Removed extra space from CartItem [e957a13](https://github.com/reservoirprotocol/reservoir-kit/commit/e957a13b893d6dd42cebdce945448a8d1b108980)
+* Removed unnecessary spaces [9eee63d](https://github.com/reservoirprotocol/reservoir-kit/commit/9eee63df0514243297de5e756fee30e331a2ba81)
+* Refactored text primitive's body styles [e300556](https://github.com/reservoirprotocol/reservoir-kit/commit/e3005567331728d991343918e2e605cd258daaa5)
+## [v0.15.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/17d59a69ce47d71c6c652105502309fef88be4a9) (2023-04-17)
+
+* feat: Cleanup logical op [b6e1afd](https://github.com/reservoirprotocol/reservoir-kit/commit/b6e1afdfb818842b4da528c40cc3ef9353d0e841)
+* feat: Add global coinId param [d70f800](https://github.com/reservoirprotocol/reservoir-kit/commit/d70f80094f8811da5d86281f633b99875754391b)
+* Updated single marketplace state for list modal [2023-04-12](https://github.com/reservoirprotocol/reservoir-kit/commit/c955691)
 ## [v0.15.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3aec049d51ca8899ba52ed02af8a5f77344f4359) (2023-04-12)
 
 - Upgrade to v3 for user collections endpoint [734ab16](https://github.com/reservoirprotocol/reservoir-kit/commit/734ab16203b1a9508e3cdeb60e783671d20ab9c0)

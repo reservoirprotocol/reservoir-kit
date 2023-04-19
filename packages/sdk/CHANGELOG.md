@@ -1,3 +1,12 @@
+
+## [v0.9.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/a334f4cb644d8ca1393e8fa000cf3cb34f9c87d2) (2023-04-19)
+
+## [v0.9.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/96af2dade0e25fc8a932252a076353f953eb1ad8) (2023-04-17)
+
+* Merge pull request #209 from reservoirprotocol/pedro/grwth-2433-notification-emitter [2efc730](https://github.com/reservoirprotocol/reservoir-kit/commit/2efc7304a1e02c1161cdb4a40d3437f29bdf80ad)
+* feat: syncing api types for opensea_verification_status [b2be3f7](https://github.com/reservoirprotocol/reservoir-kit/commit/b2be3f795c67f33e16c1b14a1f1f84b1be2d4f15)
+* Notification emitter [1e2eb52](https://github.com/reservoirprotocol/reservoir-kit/commit/1e2eb522a220c9ee9799187f866f78c3cf7c9a30)
+* Merge branch 'ted/grwth-2318-support-displaying-steps-in-the-cart-ui' into pedro/grwth-2433-notification-emitter [7d58d3e](https://github.com/reservoirprotocol/reservoir-kit/commit/7d58d3eb86824bed24c7efd44d402d12f14ae282)
 ## [v0.8.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/da760bb5d868cedc47d729dcf6a0ab5f6a42abbc) (2023-04-12)
 
 - Add sales data to step item [1dd82b7](https://github.com/reservoirprotocol/reservoir-kit/commit/1dd82b708d79c63120fb054e8221ef19735000e9)
