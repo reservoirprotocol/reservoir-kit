@@ -19,7 +19,7 @@ export type CoinId = {
 export type CoinGecko = {
   proxy?: string
   apiKey?: string
-  coinIds?: string
+  coinIds?: CoinId
 }
 
 type ReservoirKitProviderOptions = {
