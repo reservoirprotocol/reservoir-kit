@@ -1,22 +1,26 @@
+import { ReservoirClientOptions } from '@reservoir0x/reservoir-sdk'
 import React, {
+  ComponentPropsWithoutRef,
   createContext,
   FC,
   ReactNode,
-  useEffect,
-  useState,
-  useRef,
-  ComponentPropsWithoutRef,
   useCallback,
+  useEffect,
+  useRef,
+  useState,
 } from 'react'
-import { ReservoirClientOptions } from '@reservoir0x/reservoir-sdk'
-import { ReservoirKitTheme, darkTheme } from './themes'
-import { ReservoirClientProvider } from './ReservoirClientProvider'
 import { SWRConfig } from 'swr'
+import { ReservoirClientProvider } from './ReservoirClientProvider'
+import { darkTheme, ReservoirKitTheme } from './themes'
+
+type IDs = {
+  [key: string]: string
+}
 
 export type CoinGecko = {
   proxy?: string
   apiKey?: string
-  coinId?: string
+  coinIDs: IDs[]
 }
 
 type ReservoirKitProviderOptions = {
@@ -47,8 +51,8 @@ const classNameObserverOptions = {
   attributeFilter: ['class'],
 }
 
-import calendarCss from './styles/calendar'
 import useMutationObservable from './hooks/useMutationObservable'
+import calendarCss from './styles/calendar'
 
 export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   children,
