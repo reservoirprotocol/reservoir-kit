@@ -13,14 +13,14 @@ import { SWRConfig } from 'swr'
 import { ReservoirClientProvider } from './ReservoirClientProvider'
 import { darkTheme, ReservoirKitTheme } from './themes'
 
-type IDs = {
+type CoinIds = {
   [key: string]: string
 }
 
 export type CoinGecko = {
   proxy?: string
   apiKey?: string
-  coinIDs: IDs[]
+  coinIds?: CoinIds;
 }
 
 type ReservoirKitProviderOptions = {

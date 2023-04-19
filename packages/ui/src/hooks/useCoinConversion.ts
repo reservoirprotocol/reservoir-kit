@@ -20,7 +20,9 @@ export default function (
 
   const baseUrl = createBaseUrl(providerOptionsContext?.coinGecko)
 
-  id = id ? id : providerOptionsContext.coinGecko?.coinId || ''
+  const coinIDs = providerOptionsContext.coinGecko?.coinIDs
+
+  id = id ? id : providerOptionsContext.coinGecko?.co || ''
 
   const { data } = useSWR(
     vs_currency
