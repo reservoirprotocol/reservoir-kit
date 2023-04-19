@@ -16,13 +16,11 @@ export default function (
   symbols: string = 'eth',
   id: string = ''
 ) {
-  const providerOptionsContext = useContext(ProviderOptionsContext)
+  const { coinGecko } = useContext(ProviderOptionsContext)
 
-  const baseUrl = createBaseUrl(providerOptionsContext?.coinGecko)
+  const baseUrl = createBaseUrl(coinGecko)
 
-  const coinIDs = providerOptionsContext.coinGecko?.coinIDs
-
-  id = id ? id : providerOptionsContext.coinGecko?.co || ''
+  id = id ? id : coinGecko?.coinIds?.[symbols] || ''
 
   const { data } = useSWR(
     vs_currency
