@@ -344,7 +344,7 @@ export function CartCheckoutModal({
                 >
                   <Anchor href="https://reservoir.tools/" target="_blank">
                     <Text
-                      style="body2"
+                      style="body3"
                       css={{
                         display: 'inline-flex',
                         alignItems: 'center',

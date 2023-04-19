@@ -39,7 +39,7 @@ const TokenFallback: FC<TokenFallbackProps> = ({
           src={token?.collection?.image}
         />
       )}
-      <Text style="body3" css={{ textAlign: 'center' }}>
+      <Text style="body2" css={{ textAlign: 'center' }}>
         No Content Available
       </Text>
       <Button
