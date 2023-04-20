@@ -348,7 +348,6 @@ export const SweepModalRenderer: FC<Props> = ({
               if (pools[poolId] < poolPrices.length) {
                 processedToken.market.floorAsk.price = poolPrices[pools[poolId]]
               } else {
-                console.log('inside the else - sets it to undefined')
                 processedToken.market.floorAsk.price = undefined
               }
             }
