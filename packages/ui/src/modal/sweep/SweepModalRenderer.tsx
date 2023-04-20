@@ -114,7 +114,6 @@ export const SweepModalRenderer: FC<Props> = ({
   const [ethAmount, setEthAmount] = useState<number | undefined>(undefined)
   const [isItemsToggled, setIsItemsToggled] = useState<boolean>(true)
   const [maxInput, setMaxInput] = useState<number>(0)
-  const [total, setTotal] = useState<number>(0)
   const [sweepStep, setSweepStep] = useState<SweepStep>(SweepStep.Idle)
   const [stepData, setStepData] = useState<SweepModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -150,6 +149,23 @@ export const SweepModalRenderer: FC<Props> = ({
     },
     { revalidateFirstPage: true }
   )
+
+  const total = useMemo(() => {
+    const updatedTotal = selectedTokens.reduce((total, token) => {
+      if (token?.market?.floorAsk?.price?.amount?.decimal) {
+        if (isChainCurrency) {
+          total +=
+            token.market.floorAsk.price.amount.native || // native price is null for tokens with dynamic pricing
+            token.market.floorAsk.price.amount.decimal
+        } else {
+          total += token.market.floorAsk.price.amount.decimal
+        }
+      }
+
+      return total
+    }, 0)
+    return updatedTotal
+  }, [selectedTokens, isChainCurrency])
 
   const coinConversion = useCoinConversion(
     open && currency ? 'USD' : undefined,
@@ -243,17 +259,12 @@ export const SweepModalRenderer: FC<Props> = ({
       setMaxInput(Math.min(availableTokens.length, 50))
     } else {
       const maxEth = availableTokens.slice(0, 50).reduce((total, token) => {
-        if (isChainCurrency) {
-          if (
-            token?.market?.floorAsk?.price?.amount?.native &&
-            token?.market?.floorAsk?.price?.amount?.decimal
-          ) {
+        if (token?.market?.floorAsk?.price?.amount?.decimal) {
+          if (isChainCurrency) {
             total +=
-              token.market.floorAsk.price.amount.native || // native price is null for tokens with dynamimc pricing
-              token?.market?.floorAsk?.price?.amount?.decimal
-          }
-        } else {
-          if (token?.market?.floorAsk?.price?.amount?.decimal) {
+              token.market.floorAsk.price.amount.native || // native price is null for tokens with dynamic pricing
+              token.market.floorAsk.price.amount.decimal
+          } else {
             total += token.market.floorAsk.price.amount.decimal
           }
         }
@@ -264,30 +275,6 @@ export const SweepModalRenderer: FC<Props> = ({
       setMaxInput(maxEth)
     }
   }, [availableTokens, isItemsToggled])
-
-  // calculate total
-  useEffect(() => {
-    const total = selectedTokens.reduce((total, token) => {
-      if (isChainCurrency) {
-        if (
-          token?.market?.floorAsk?.price?.amount?.native &&
-          token.market.floorAsk.price.amount.decimal
-        ) {
-          total +=
-            token.market.floorAsk.price.amount.native ||
-            token.market.floorAsk.price.amount.decimal
-        }
-      } else {
-        if (token?.market?.floorAsk?.price?.amount?.decimal) {
-          total += token.market.floorAsk.price.amount.decimal
-        }
-      }
-
-      return total
-    }, 0)
-
-    setTotal(total)
-  }, [selectedTokens, isChainCurrency])
 
   // sort tokens by price
   const sortByPrice = useCallback((a: Token, b: Token) => {
@@ -310,11 +297,25 @@ export const SweepModalRenderer: FC<Props> = ({
 
       // Create a copy of the availableTokens
       let processedTokens = [...tokens]
+      let total = 0
 
       for (let i = 0; i < maxTokens && i < processedTokens.length; i++) {
         const token = processedTokens[i]
 
-        updatedTokens.push(token)
+        const tokenPrice = isChainCurrency
+          ? token.market?.floorAsk?.price?.amount?.native || // native price is null for tokens with dynamic pricing
+            token.market?.floorAsk?.price?.amount?.decimal ||
+            0
+          : token.market?.floorAsk?.price?.amount?.decimal || 0
+
+        if (isItemsToggled) {
+          updatedTokens.push(token)
+        } else if (ethAmount && tokenPrice + total <= ethAmount) {
+          total += tokenPrice
+          updatedTokens.push(token)
+        } else {
+          break
+        }
 
         // handle if token is in a dynamic pricing pool
         if (
@@ -347,6 +348,7 @@ export const SweepModalRenderer: FC<Props> = ({
               if (pools[poolId] < poolPrices.length) {
                 processedToken.market.floorAsk.price = poolPrices[pools[poolId]]
               } else {
+                console.log('inside the else - sets it to undefined')
                 processedToken.market.floorAsk.price = undefined
               }
             }
@@ -360,44 +362,21 @@ export const SweepModalRenderer: FC<Props> = ({
 
       return updatedTokens
     },
-    [sortByPrice]
+    [sortByPrice, isItemsToggled, ethAmount, isChainCurrency]
   )
 
-  // Add by item
   useEffect(() => {
-    const updatedTokens = updateSelectedTokens(availableTokens, itemAmount || 0)
-    setSelectedTokens(updatedTokens)
-  }, [itemAmount, updateSelectedTokens])
-
-  // Add by price
-  useEffect(() => {
-    const maxTokens = availableTokens.reduce(
-      (count, token) => {
-        const tokenPrice = isChainCurrency
-          ? token.market?.floorAsk?.price?.amount?.native || // native price is null for tokens with dynamimc pricing
-            token.market?.floorAsk?.price?.amount?.decimal ||
-            0
-          : token.market?.floorAsk?.price?.amount?.decimal || 0
-
-        if (
-          ethAmount &&
-          count.totalPrice + tokenPrice <= ethAmount &&
-          count.tokenCount < 50
-        ) {
-          count.totalPrice += tokenPrice
-          count.tokenCount += 1
-        } else {
-          return count
-        }
-
-        return count
-      },
-      { totalPrice: 0, tokenCount: 0 }
-    ).tokenCount
-
-    const updatedTokens = updateSelectedTokens(availableTokens, maxTokens)
-    setSelectedTokens(updatedTokens)
-  }, [ethAmount, updateSelectedTokens])
+    if (isItemsToggled) {
+      const updatedTokens = updateSelectedTokens(
+        availableTokens,
+        itemAmount || 0
+      )
+      setSelectedTokens(updatedTokens)
+    } else {
+      const updatedTokens = updateSelectedTokens(availableTokens, 50)
+      setSelectedTokens(updatedTokens)
+    }
+  }, [isItemsToggled, ethAmount, itemAmount, updateSelectedTokens])
 
   // reset selectedItems when toggle changes
   useEffect(() => {
@@ -433,7 +412,9 @@ export const SweepModalRenderer: FC<Props> = ({
 
     setTransactionError(null)
 
-    let options: BuyTokenOptions = {}
+    let options: BuyTokenOptions = {
+      partial: true,
+    }
 
     if (referrer && referrerFeeBps) {
       const price = toFixed(total, currency?.decimals || 18)
@@ -466,10 +447,6 @@ export const SweepModalRenderer: FC<Props> = ({
       const error = new Error('No tokens to sweep')
       setTransactionError(error)
       throw error
-    }
-
-    if (options.partial === undefined) {
-      options.partial = true
     }
 
     setSweepStep(SweepStep.Approving)

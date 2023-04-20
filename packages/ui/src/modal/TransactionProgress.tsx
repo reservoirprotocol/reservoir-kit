@@ -24,23 +24,23 @@ const ProgressDot = styled(Box, {
 })
 
 const loadingStart = keyframes({
-  '0%': { transform: 'scale(0.8)', backgroundColor: '$gray9' },
-  '20%': { transform: 'scale(1)', backgroundColor: '$primary11' },
-  '100%': { transform: 'scale(0.8)', backgroundColor: '$gray9' },
+  '0%': { transform: 'scale(0.8)', backgroundColor: '$neutralSolid' },
+  '20%': { transform: 'scale(1)', backgroundColor: '$accentText' },
+  '100%': { transform: 'scale(0.8)', backgroundColor: '$neutralSolid' },
 })
 
 const loadingMiddle = keyframes({
-  '0%': { transform: 'scale(0.8)', backgroundColor: '$gray9' },
-  '20%': { transform: 'scale(0.8)', backgroundColor: '$gray9' },
-  '40%': { transform: 'scale(1)', backgroundColor: '$primary11' },
-  '100%': { transform: 'scale(0.8)', backgroundColor: '$gray9' },
+  '0%': { transform: 'scale(0.8)', backgroundColor: '$neutralSolid' },
+  '20%': { transform: 'scale(0.8)', backgroundColor: '$neutralSolid' },
+  '40%': { transform: 'scale(1)', backgroundColor: '$accentText' },
+  '100%': { transform: 'scale(0.8)', backgroundColor: '$neutralSolid' },
 })
 
 const loadingEnd = keyframes({
-  '0%': { transform: 'scale(0.8)', backgroundColor: '$grayy9' },
-  '40%': { transform: 'scale(0.8)', backgroundColor: '$gray9' },
-  '60%': { transform: 'scale(1)', backgroundColor: '$primary11' },
-  '100%': { transform: 'scale(0.8)', backgroundColor: '$gray9' },
+  '0%': { transform: 'scale(0.8)', backgroundColor: '$neutralSolid' },
+  '40%': { transform: 'scale(0.8)', backgroundColor: '$neutralSolid' },
+  '60%': { transform: 'scale(1)', backgroundColor: '$accentText' },
+  '100%': { transform: 'scale(0.8)', backgroundColor: '$neutralSolid' },
 })
 
 const TransactionProgress: FC<Props> = ({ fromImg, toImgs, ...props }) => {

@@ -271,7 +271,7 @@ export function SweepModal({
                             currency={currency}
                             amount={
                               isChainCurrency
-                                ? token?.market?.floorAsk?.price?.amount // native price is null for tokens with dynamimc pricing
+                                ? token?.market?.floorAsk?.price?.amount // native price is null for tokens with dynamic pricing
                                     ?.native ||
                                   token?.market?.floorAsk?.price?.amount
                                     ?.decimal
