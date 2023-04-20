@@ -29,6 +29,7 @@ import { TokenCheckout } from '../TokenCheckout'
 import { ItemToggle } from './ItemToggle'
 import { SweepItem } from './SweepItem'
 import {
+  SweepAttributes,
   SweepModalRenderer,
   SweepModalStepData,
   SweepStep,
@@ -43,6 +44,7 @@ type SweepCallbackData = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
+  attributes?: SweepAttributes
   referrerFeeBps?: number | null
   referrerFeeFixed?: number | null
   referrer?: string | null
@@ -56,6 +58,7 @@ export function SweepModal({
   openState,
   trigger,
   collectionId,
+  attributes,
   referrerFeeBps,
   referrerFeeFixed,
   referrer,
@@ -73,6 +76,7 @@ export function SweepModal({
     <SweepModalRenderer
       open={open}
       collectionId={collectionId}
+      attributes={attributes}
       referrerFeeBps={referrerFeeBps}
       referrerFeeFixed={referrerFeeFixed}
       referrer={referrer}

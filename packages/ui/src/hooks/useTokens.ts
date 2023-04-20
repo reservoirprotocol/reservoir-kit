@@ -5,7 +5,9 @@ import { useInfiniteApi, useReservoirClient } from './'
 type TokenDetailsResponse =
   paths['/tokens/v6']['get']['responses']['200']['schema']
 
-type TokensQuery = paths['/tokens/v6']['get']['parameters']['query']
+type TokensQuery = paths['/tokens/v6']['get']['parameters']['query'] & {
+  [key: `attributes[${string}]`]: string | string[]
+}
 
 export default function (
   options?: TokensQuery | false,

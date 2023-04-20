@@ -23,6 +23,7 @@ import {
 import { toFixed } from '../../lib/numbers'
 import { formatUnits } from 'ethers/lib/utils.js'
 import { UseBalanceToken } from '../../types/wagmi'
+import { TokensQuery } from 'packages/ui/dist'
 
 export enum SweepStep {
   Idle,
@@ -37,6 +38,10 @@ export type SweepModalStepData = {
   currentStep: Execute['steps'][0]
   currentStepItem: NonNullable<Execute['steps'][0]['items']>[0]
   path: Execute['path']
+}
+
+export type SweepAttributes = {
+  [key: `attributes[${string}]`]: string | string[]
 }
 
 type Token = ReturnType<typeof useTokens>['data'][0]
@@ -89,6 +94,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   collectionId?: string
+  attributes?: SweepAttributes
   referrerFeeBps?: number | null
   referrerFeeFixed?: number | null
   referrer?: string | null
@@ -99,6 +105,7 @@ type Props = {
 export const SweepModalRenderer: FC<Props> = ({
   open,
   collectionId,
+  attributes,
   referrerFeeBps,
   referrerFeeFixed,
   referrer,
@@ -134,6 +141,10 @@ export const SweepModalRenderer: FC<Props> = ({
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
+  // let attributes = {
+  //   'attributes[Background]': ['M1 Yellow', 'M1 Aquamarine'],
+  // }
+
   const {
     data: tokens,
     isFetchingPage: fetchingTokens,
@@ -146,9 +157,12 @@ export const SweepModalRenderer: FC<Props> = ({
       includeDynamicPricing: true,
       sortBy: 'floorAskPrice',
       sortDirection: 'asc',
+      'attributes[Mouth]': 'Bored',
     },
     { revalidateFirstPage: true }
   )
+
+  console.log(attributes)
 
   const total = useMemo(() => {
     const updatedTotal = selectedTokens.reduce((total, token) => {
