@@ -133,9 +133,14 @@ function formatBN(
     const lowestValue = Number(
       `0.${new Array(maximumFractionDigits).join('0')}1`
     )
+
     if (amountToFormat > 1000) {
       return truncateFractionAndFormat(parts, 1)
-    } else if (amountToFormat < 1 && amountToFormat < lowestValue) {
+    } else if (
+      amountToFormat < 1 &&
+      amountToFormat < lowestValue &&
+      amountToFormat !== 0
+    ) {
       return `< ${lowestValue}`
     } else {
       return truncateFractionAndFormat(parts, maximumFractionDigits)

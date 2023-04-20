@@ -191,7 +191,6 @@ export function CartCheckoutModal({
                                 {transaction.currentStep?.items.map((item) => (
                                   <ApprovalCollapsible
                                     item={item}
-                                    transaction={transaction}
                                     pathMap={pathMap}
                                     usdPrice={usdPrice}
                                     cartChain={cartChain}

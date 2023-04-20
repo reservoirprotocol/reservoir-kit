@@ -34,7 +34,7 @@ export interface ReservoirKitThemeColors {
   neutralBg: string
   neutralBgHover: string
   neutralBgActive: string
-  neutalLine: string
+  neutralLine: string
   neutralBorder: string
   neutralBorderHover: string
   neutralSolid: string
