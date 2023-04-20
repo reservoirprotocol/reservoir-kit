@@ -49,7 +49,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   normalizeRoyalties?: boolean
   onSweepComplete?: (data: SweepCallbackData) => void
   onSweepError?: (error: Error, data: SweepCallbackData) => void
-  onClose?: (data: SweepCallbackData) => void
+  onClose?: (data: SweepCallbackData, currentStep: SweepStep) => void
 }
 
 export function SweepModal({
@@ -168,7 +168,7 @@ export function SweepModal({
                   maker: address,
                   stepData,
                 }
-                onClose(data)
+                onClose(data, sweepStep)
               }
               setOpen(open)
             }}

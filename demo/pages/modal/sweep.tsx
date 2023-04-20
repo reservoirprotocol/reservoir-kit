@@ -116,7 +116,7 @@ const SweepPage: NextPage = () => {
         onSweepError={(error, data) => {
           console.log('Sweep Error', error, data)
         }}
-        onClose={() => {
+        onClose={(data, currentStep) => {
           console.log('SweepModal Closed')
         }}
       />
