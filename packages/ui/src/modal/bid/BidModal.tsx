@@ -551,7 +551,7 @@ export function BidModal({
                   <Box css={{ width: '100%', mt: 'auto' }}>
                     {oracleEnabled && (
                       <Text
-                        style="body3"
+                        style="body2"
                         color="subtle"
                         css={{
                           mb: 10,
@@ -582,7 +582,7 @@ export function BidModal({
                       <>
                         {!hasEnoughNativeCurrency && (
                           <Flex css={{ gap: '$2', mt: 10 }} justify="center">
-                            <Text style="body2" color="error">
+                            <Text style="body3" color="error">
                               {balance?.symbol || 'ETH'} Balance
                             </Text>
                             <FormatCryptoCurrency amount={balance?.value} />
@@ -660,7 +660,10 @@ export function BidModal({
                         // <WethApproval style={{ margin: '0 auto' }} />
                         <Flex align="center" justify="center">
                           <Flex
-                            css={{ background: '$neutalLine', borderRadius: 8 }}
+                            css={{
+                              background: '$neutralLine',
+                              borderRadius: 8,
+                            }}
                           >
                             <CryptoCurrencyIcon
                               css={{ height: 56, width: 56 }}
@@ -677,7 +680,7 @@ export function BidModal({
                           mx: 'auto',
                           mb: '$4',
                         }}
-                        style="body3"
+                        style="body2"
                         color="subtle"
                       >
                         {stepData?.currentStep.description}

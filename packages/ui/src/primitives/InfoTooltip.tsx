@@ -15,7 +15,7 @@ const InfoTooltip = ({ side, content, width, kind = 'info' }: Props) => {
       side={side}
       width={width}
       content={
-        <Text style={'body2'} as="p">
+        <Text style={'body3'} as="p">
           {content}
         </Text>
       }

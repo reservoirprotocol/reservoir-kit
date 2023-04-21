@@ -191,7 +191,6 @@ export function CartCheckoutModal({
                                 {transaction.currentStep?.items.map((item) => (
                                   <ApprovalCollapsible
                                     item={item}
-                                    transaction={transaction}
                                     pathMap={pathMap}
                                     usdPrice={usdPrice}
                                     cartChain={cartChain}
@@ -300,9 +299,11 @@ export function CartCheckoutModal({
                       </Text>
                       <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
                         {transaction.currentStep?.items?.map((item) => {
-                          const itemCount = item?.orderIds?.length || 1
-                          const itemSubject = itemCount > 1 ? 'items' : 'item'
-
+                          const txHash = item.txHash
+                            ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
+                                -4
+                              )}`
+                            : ''
                           return (
                             <Anchor
                               href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
@@ -311,8 +312,7 @@ export function CartCheckoutModal({
                               target="_blank"
                               css={{ fontSize: 12 }}
                             >
-                              View transaction for {itemCount} {itemSubject} on
-                              Etherscan
+                              View transaction: {txHash}
                             </Anchor>
                           )
                         })}
@@ -343,7 +343,7 @@ export function CartCheckoutModal({
                 >
                   <Anchor href="https://reservoir.tools/" target="_blank">
                     <Text
-                      style="body2"
+                      style="body3"
                       css={{
                         display: 'inline-flex',
                         alignItems: 'center',

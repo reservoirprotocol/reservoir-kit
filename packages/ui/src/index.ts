@@ -53,6 +53,9 @@ export { EditBidStep } from './modal/editBid/EditBidModalRenderer'
 export { EditListingModal } from './modal/editListing/EditListingModal'
 export { EditListingStep } from './modal/editListing/EditListingModalRenderer'
 
+export { SweepModal } from './modal/sweep/SweepModal'
+export { SweepStep } from './modal/sweep/SweepModalRenderer'
+
 export {
   default as TokenMedia,
   extractMediaType,
