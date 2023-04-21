@@ -746,7 +746,7 @@ export function ListModal({
                           data.listing.orderbook === 'reservoir' &&
                           client?.source
                             ? client?.source
-                            : data.marketplace.name
+                            : data.marketplace.domain
                         return (
                           <a
                             key={data.listing.orderbook}
