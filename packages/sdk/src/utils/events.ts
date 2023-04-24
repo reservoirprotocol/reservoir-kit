@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig } from '../utils'
 import { Execute } from '../types/index'
 
 export type ReservoirEventName =

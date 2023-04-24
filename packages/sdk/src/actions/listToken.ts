@@ -2,7 +2,7 @@ import { Execute, paths } from '../types'
 import { Signer } from 'ethers'
 import { getClient } from '.'
 import { executeSteps } from '../utils/executeSteps'
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig } from '../utils'
 import { version } from '../../package.json'
 
 type ListTokenBody = NonNullable<

@@ -1,4 +1,4 @@
-import axios, { AxiosRequestHeaders } from 'axios'
+import axios, { AxiosRequestHeaders } from '../utils'
 import { getClient } from '../actions'
 import { version } from '../../package.json'
 
