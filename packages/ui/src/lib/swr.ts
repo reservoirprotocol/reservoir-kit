@@ -33,7 +33,15 @@ export const defaultFetcher = (params: string[] | string) => {
   return fetch(resource, {
     headers,
   })
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.headers.get('deprecation') === 'true') {
+        console.warn(
+          `Warning: API ${res.url} is deprecated. Stability and performance may be affected.`
+        )
+      }
+
+      return res.json()
+    })
     .catch((e) => {
       throw e
     })
