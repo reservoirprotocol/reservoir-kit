@@ -570,7 +570,10 @@ export function BidModal({
                       </Button>
                     )}
                     {bidAmount !== '' && hasEnoughWrappedCurrency && (
-                      <Button onClick={placeBid} css={{ width: '100%' }}>
+                      <Button
+                        onClick={() => placeBid({ quantity: 10 })}
+                        css={{ width: '100%' }}
+                      >
                         {token && token.token
                           ? 'Make an Offer'
                           : trait
@@ -612,7 +615,7 @@ export function BidModal({
                             <Button
                               css={{ flex: 1, maxHeight: 44 }}
                               disabled={!hasEnoughNativeCurrency}
-                              onClick={placeBid}
+                              onClick={() => placeBid()}
                             >
                               <Text style="h6" color="button" ellipsify>
                                 Convert {amountToWrap}{' '}
@@ -711,7 +714,7 @@ export function BidModal({
                       >
                         Edit Offer
                       </Button>
-                      <Button css={{ flex: 1 }} onClick={placeBid}>
+                      <Button css={{ flex: 1 }} onClick={() => placeBid()}>
                         Retry
                       </Button>
                     </Flex>
