@@ -12,7 +12,7 @@ import {
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import { BigNumber, constants, utils } from 'ethers'
+import { ZeroAddress, parseUnits, formatUnits } from 'ethers'
 import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
 import Token from '../list/Token'
 import {
@@ -21,7 +21,6 @@ import {
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
 import { toFixed } from '../../lib/numbers'
-import { formatUnits } from 'ethers/lib/utils.js'
 import { UseBalanceToken } from '../../types/wagmi'
 
 export enum SweepStep {
@@ -75,7 +74,7 @@ type ChildrenProps = {
   availableTokens: ReturnType<typeof useTokens>['data']
   address?: string
   tokens: ReturnType<typeof useTokens>['data']
-  balance?: BigNumber
+  balance?: BigInt
   hasEnoughCurrency: boolean
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
@@ -181,7 +180,7 @@ export const SweepModalRenderer: FC<Props> = ({
     chainId: chain?.id,
     address: account.address,
     token:
-      currency?.address !== constants.AddressZero
+      currency?.address !== ZeroAddress
         ? (currency?.address as UseBalanceToken)
         : undefined,
     watch: open,
@@ -195,9 +194,7 @@ export const SweepModalRenderer: FC<Props> = ({
       if (!balance.value) {
         setHasEnoughCurrency(false)
       } else if (
-        balance.value.lt(
-          utils.parseUnits(`${totalPriceTruncated}`, currency?.decimals)
-        )
+        balance.value < parseUnits(`${totalPriceTruncated}`, currency?.decimals)
       ) {
         setHasEnoughCurrency(false)
       } else {
@@ -417,10 +414,9 @@ export const SweepModalRenderer: FC<Props> = ({
 
     if (referrer && referrerFeeBps) {
       const price = toFixed(total, currency?.decimals || 18)
-      const fee = utils
-        .parseUnits(`${price}`, currency?.decimals)
-        .mul(referrerFeeBps)
-        .div(10000)
+      const fee =
+        (parseUnits(`${price}`, currency?.decimals) * BigInt(referrerFeeBps)) /
+        BigInt(1000)
       const atomicUnitsFee = formatUnits(fee, 0)
       options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
     } else if (referrer && referrerFeeFixed) {

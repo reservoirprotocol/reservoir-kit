@@ -18,9 +18,8 @@ import React, {
   FC,
 } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { constants, utils } from 'ethers'
+import { ZeroAddress, formatUnits, parseUnits } from 'ethers'
 import { toFixed } from '../lib/numbers'
-import { formatUnits } from 'ethers/lib/utils.js'
 import { version } from '../../package.json'
 import { fetchSigner, getNetwork } from 'wagmi/actions'
 
@@ -358,7 +357,7 @@ function cartStore({
           `${criteria?.data?.collection?.id}:${criteria?.data?.token?.tokenId}`
       )
 
-      let flaggedStatuses = undefined
+      let flaggedStatuses: Record<string, boolean> | undefined = undefined
       if (tokenIds) {
         flaggedStatuses = (await isOpenSeaBanned(tokenIds)) || {}
       }
@@ -378,7 +377,14 @@ function cartStore({
       }
       const dynamicPricing = market?.floorAsk?.dynamicPricing
 
-      let order = undefined
+      let order:
+        | {
+            id: string
+            quantityRemaining: number
+            quantity: number
+            maker: string
+          }
+        | undefined = undefined
       if (token.kind === 'erc1155' && market?.floorAsk) {
         order = {
           id: market?.floorAsk?.id || '',
@@ -966,7 +972,7 @@ function cartStore({
       const expectedPrice = cartData.current.totalPrice
 
       if (isMixedCurrency) {
-        options.currency = constants.AddressZero
+        options.currency = ZeroAddress as any
       }
 
       if (cartData.current.referrer && cartData.current.referrerFeeBps) {
@@ -974,10 +980,10 @@ function cartStore({
           expectedPrice,
           cartData.current.currency?.decimals || 18
         )
-        const fee = utils
-          .parseUnits(`${price}`, cartData.current.currency?.decimals)
-          .mul(cartData.current.referrerFeeBps)
-          .div(10000)
+        const fee =
+          (parseUnits(`${price}`, cartData.current.currency?.decimals) *
+            BigInt(cartData.current.referrerFeeBps)) /
+          BigInt(10000)
         const atomicUnitsFee = formatUnits(fee, 0)
         options.feesOnTop = [`${cartData.current.referrer}:${atomicUnitsFee}`]
       }

@@ -17,12 +17,11 @@ import {
   goerli,
 } from 'wagmi'
 
-import { constants } from 'ethers'
+import { parseUnits } from 'ethers'
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
-import { parseUnits } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
@@ -221,13 +220,13 @@ export const BidModalRenderer: FC<Props> = ({
     if (bidAmount !== '') {
       const bid = parseUnits(bidAmount, wrappedBalance?.decimals)
 
-      if (!wrappedBalance?.value || wrappedBalance?.value.lt(bid)) {
+      if (!wrappedBalance?.value || wrappedBalance?.value > bid) {
         setHasEnoughWrappedCurrency(false)
-        const wrappedAmount = wrappedBalance?.value || constants.Zero
-        const amountToWrap = bid.sub(wrappedAmount)
-        setAmountToWrap(formatBN(bid.sub(wrappedAmount), 5))
+        const wrappedAmount = wrappedBalance?.value || BigInt(0)
+        const amountToWrap = bid - wrappedAmount
+        setAmountToWrap(formatBN(bid - wrappedAmount, 5))
 
-        if (!balance?.value || balance.value.lt(amountToWrap)) {
+        if (!balance?.value || balance.value > amountToWrap) {
           setHasEnoughNativeCurrency(false)
         } else {
           setHasEnoughNativeCurrency(true)

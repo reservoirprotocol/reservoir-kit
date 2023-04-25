@@ -1,12 +1,11 @@
 import { goerli, mainnet, useContractRead } from 'wagmi'
-import { BigNumber } from 'ethers'
-import { parseUnits } from 'ethers/lib/utils.js'
+import { parseUnits } from 'ethers'
 import useChainCurrency from '../hooks/useChainCurrency'
 
 type Props = {
   contract?: string
   tokenId?: string
-  value?: BigNumber
+  value?: BigInt
   enabled: boolean
   chainId: number
 }
@@ -77,7 +76,7 @@ export default function ({
     chainId: chainId,
     address: manifoldContract as any,
     abi: MANIFOLD_ABI,
-    args: [contract as any, tokenId as any, amount],
+    args: [contract as any, tokenId as any, amount as bigint],
     functionName: 'getRoyaltyView',
     enabled: enabled && tokenId && contract && amount ? true : false,
     cacheTime: 60 * 1000,

@@ -15,7 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import PriceInput from './PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
-import { constants } from 'ethers'
+import { ZeroAddress } from 'ethers'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
@@ -283,7 +283,7 @@ export function EditListingModal({
                       price !== null &&
                       price !== 0 &&
                       price >= MINIMUM_AMOUNT &&
-                      currency?.contract === constants.AddressZero &&
+                      currency?.contract === ZeroAddress &&
                       price < collection?.floorAsk?.price.amount.native && (
                         <Box>
                           <Text style="body3" color="error">

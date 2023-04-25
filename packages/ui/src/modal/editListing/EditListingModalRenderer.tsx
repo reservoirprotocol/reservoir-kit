@@ -21,9 +21,8 @@ import { Execute } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
-import { constants } from 'ethers'
 import { Listings } from '../list/ListModalRenderer'
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
+import { formatUnits, parseUnits, ZeroAddress } from 'ethers'
 import zoneAddresses from '../../constants/zoneAddresses'
 
 export enum EditListingStep {
@@ -252,9 +251,9 @@ export const EditListingModalRenderer: FC<Props> = ({
 
     const listing: Listings[0] = {
       token: `${contract}:${tokenId}`,
-      weiPrice: parseUnits(`${price}`, currency?.decimals)
-        .mul(quantity)
-        .toString(),
+      weiPrice: (
+        parseUnits(`${price}`, currency?.decimals) * BigInt(quantity)
+      ).toString(),
       orderbook: 'reservoir',
       orderKind: 'seaport-v1.4',
     }
@@ -267,7 +266,7 @@ export const EditListingModalRenderer: FC<Props> = ({
       listing.expirationTime = expirationTime
     }
 
-    if (currency && currency.contract != constants.AddressZero) {
+    if (currency && currency.contract != ZeroAddress) {
       listing.currency = currency.contract
     }
 

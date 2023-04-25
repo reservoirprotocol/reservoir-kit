@@ -1,7 +1,7 @@
 import EthLogo from './EthLogo'
 import React, { FC } from 'react'
 import { useReservoirClient, useChainCurrency } from '../hooks/index'
-import { constants } from 'ethers'
+import { ZeroAddress } from 'ethers'
 import { styled } from '../../stitches.config'
 import { StyledComponent } from '@stitches/react/types/styled-component'
 import Box from './Box'
@@ -16,7 +16,7 @@ type Props = {
 const StyledImg = styled('img', {})
 
 const CryptoCurrencyIcon: FC<Props> = ({
-  address = constants.AddressZero,
+  address = ZeroAddress,
   chainId,
   css,
 }) => {
@@ -27,7 +27,7 @@ const CryptoCurrencyIcon: FC<Props> = ({
   )
 
   if (chainCurrency.symbol === 'ETH') {
-    if (constants.AddressZero === address) {
+    if (ZeroAddress === address) {
       return (
         <Box css={{ display: 'flex', ...css }}>
           <EthLogo />

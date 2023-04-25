@@ -1,6 +1,6 @@
 import FormatCrypto from './FormatCrypto'
 import React, { FC, ComponentProps } from 'react'
-import { constants } from 'ethers'
+import { ZeroAddress } from 'ethers'
 import CryptoCurrencyIcon from './CryptoCurrencyIcon'
 
 type FormatCryptoCurrencyProps = {
@@ -13,7 +13,7 @@ type Props = ComponentProps<typeof FormatCrypto> & FormatCryptoCurrencyProps
 
 const FormatCryptoCurrency: FC<Props> = ({
   amount,
-  address = constants.AddressZero,
+  address = ZeroAddress,
   maximumFractionDigits,
   logoWidth = 14,
   textStyle,

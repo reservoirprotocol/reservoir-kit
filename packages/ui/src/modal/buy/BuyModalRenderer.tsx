@@ -17,12 +17,10 @@ import {
 } from '../../hooks'
 import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
 
-import { BigNumber, utils } from 'ethers'
+import { parseUnits, formatUnits, ZeroAddress } from 'ethers'
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
-import { formatUnits } from 'ethers/lib/utils.js'
-import { constants } from 'ethers'
 import { Currency } from '../../types/Currency'
 
 export enum BuyStep {
@@ -66,7 +64,7 @@ type ChildrenProps = {
   totalUsd: number
   usdPrice: ReturnType<typeof useCoinConversion>
   isBanned: boolean
-  balance?: BigNumber
+  balance?: BigInt
   address?: string
   blockExplorerBaseUrl: string
   steps: Execute['steps'] | null
@@ -141,7 +139,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: balance } = useBalance({
     address: address,
     token:
-      currency?.contract !== constants.AddressZero
+      currency?.contract !== ZeroAddress
         ? (currency?.contract as UseBalanceToken)
         : undefined,
     watch: open,
@@ -230,10 +228,9 @@ export const BuyModalRenderer: FC<Props> = ({
 
     if (referrer && referrerFeeBps) {
       const price = toFixed(totalPrice, currency?.decimals || 18)
-      const fee = utils
-        .parseUnits(`${price}`, currency?.decimals)
-        .mul(referrerFeeBps)
-        .div(10000)
+      const fee =
+        (parseUnits(`${price}`, currency?.decimals) * BigInt(referrerFeeBps)) /
+        BigInt(10000)
       const atomicUnitsFee = formatUnits(fee, 0)
       options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
     } else if (referrer && referrerFeeFixed) {
@@ -440,10 +437,7 @@ export const BuyModalRenderer: FC<Props> = ({
           setReferrerFee(fee)
         } else if (referrerFeeFixed && referrer) {
           const fee = Number(
-            formatUnits(
-              BigNumber.from(`${referrerFeeFixed}`),
-              currency?.decimals
-            )
+            formatUnits(BigInt(`${referrerFeeFixed}`), currency?.decimals)
           )
           total += fee
           setReferrerFee(fee)
@@ -485,9 +479,7 @@ export const BuyModalRenderer: FC<Props> = ({
       if (!balance.value) {
         setHasEnoughCurrency(false)
       } else if (
-        balance.value.lt(
-          utils.parseUnits(`${totalPriceTruncated}`, currency?.decimals)
-        )
+        balance.value < parseUnits(`${totalPriceTruncated}`, currency?.decimals)
       ) {
         setHasEnoughCurrency(false)
       } else {

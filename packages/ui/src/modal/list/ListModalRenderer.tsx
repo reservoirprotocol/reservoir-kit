@@ -21,12 +21,11 @@ import {
 import { useAccount, useSigner } from 'wagmi'
 
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
+import { formatUnits, parseUnits, ZeroAddress } from 'ethers'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
-import { constants } from 'ethers'
 import { Currency } from '../../types/Currency'
 
 export enum ListStep {
@@ -102,7 +101,7 @@ const isCurrencyAllowed = (
   openseaPaymentTokens: PaymentTokens
 ) => {
   if (marketplace.listingEnabled) {
-    if (currency.contract === constants.AddressZero) {
+    if (currency.contract === ZeroAddress) {
       return true
     }
     switch (marketplace.orderbook) {
@@ -395,9 +394,9 @@ export const ListModalRenderer: FC<Props> = ({
       if (market.isSelected) {
         const listing: Listings[0] = {
           token: `${contract}:${tokenId}`,
-          weiPrice: parseUnits(`${+market.price}`, currency.decimals)
-            .mul(quantity)
-            .toString(),
+          weiPrice: (
+            parseUnits(`${+market.price}`, currency.decimals) * BigInt(quantity)
+          ).toString(),
           //@ts-ignore
           orderbook: market.orderbook,
           //@ts-ignore
@@ -439,7 +438,7 @@ export const ListModalRenderer: FC<Props> = ({
           listing.expirationTime = expirationTime
         }
 
-        if (currency && currency.contract != constants.AddressZero) {
+        if (currency && currency.contract != ZeroAddress) {
           listing.currency = currency.contract
         }
 

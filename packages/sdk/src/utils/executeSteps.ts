@@ -1,4 +1,4 @@
-import { arrayify } from 'ethers/lib/utils'
+import { getBytes } from 'ethers'
 import { Execute, paths } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { Signer } from 'ethers'
@@ -325,7 +325,7 @@ export async function executeSteps(
                     if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
                       // If the message represents a hash, we need to convert it to raw bytes first
                       signature = await signer.signMessage(
-                        arrayify(signData.message)
+                        getBytes(signData.message)
                       )
                     } else {
                       signature = await signer.signMessage(signData.message)
