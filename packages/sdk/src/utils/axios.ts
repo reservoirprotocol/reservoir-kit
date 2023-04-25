@@ -1,6 +1,6 @@
-import axios, { AxiosResponse } from 'axios'
+import _axios, { AxiosResponse } from 'axios'
 
-axios.interceptors.response.use((_res: AxiosResponse) => {
+_axios.interceptors.response.use((_res: AxiosResponse) => {
   if (_res.headers['Deprecation'] === 'true') {
     console.warn(
       `Warning: API ${_res.config.url} is deprecated. Stability and performance may be affected.`
@@ -8,5 +8,5 @@ axios.interceptors.response.use((_res: AxiosResponse) => {
   }
   return _res
 })
-export * from 'axios'
-export { default } from 'axios'
+
+export const axios = _axios
