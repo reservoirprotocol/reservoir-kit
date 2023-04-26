@@ -58,7 +58,7 @@ type ChildrenProps = {
   transactionError?: Error | null
   txHash: string | null
   totalUsd: number
-  usdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: number
   address?: string
   etherscanBaseUrl: string
   stepData: AcceptBidStepData | null
@@ -68,18 +68,16 @@ type ChildrenProps = {
 
 type Props = {
   open: boolean
-  tokenId?: string
-  collectionId?: string
-  bidId?: string
+  tokens: string[]
+  bidIds?: string[]
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
 export const AcceptBidModalRenderer: FC<Props> = ({
   open,
-  tokenId,
-  bidId,
-  collectionId,
+  tokens,
+  bidIds,
   normalizeRoyalties,
   children,
 }) => {
@@ -94,11 +92,10 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const { chain: activeChain } = useNetwork()
   const etherscanBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
-  const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
-  const { data: tokens, mutate: mutateTokens } = useTokens(
+  const { data: tokensData, mutate: mutateTokens } = useTokens(
     open && {
-      tokens: [`${contract}:${tokenId}`],
+      tokens,
       includeTopBid: true,
       normalizeRoyalties,
     },
@@ -106,12 +103,19 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       revalidateFirstPage: true,
     }
   )
-  const { data: collections, mutate: mutateCollection } = useCollections(
-    open && {
-      id: collectionId,
-      normalizeRoyalties,
-    }
-  )
+  // const { data: collections, mutate: mutateCollection } = useCollections(
+  //   open && {
+  //     id: collectionId,
+  //     normalizeRoyalties,
+  //   }
+  // )
+  const _bidIds: string[] = tokensData
+    .filter(
+      (token) =>
+        token.market?.topBid?.id !== undefined &&
+        token.market?.topBid?.id !== null
+    )
+    .map((token) => token.market?.topBid?.id as string)
 
   const {
     data: bids,
@@ -119,7 +123,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     mutate: mutateBids,
   } = useBids(
     {
-      ids: bidId,
+      ids: bidIds || _bidIds,
       status: 'active',
       includeCriteriaMetadata: true,
       normalizeRoyalties,
@@ -127,12 +131,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && bidId ? true : false
+    open && (bidIds || _bidIds) ? true : false
   )
 
-  const bid = bids && bids[0] ? bids[0] : undefined
-  const collection = collections && collections[0] ? collections[0] : undefined
-  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
+  // const bid = bids && bids[0] ? bids[0] : undefined
+  // const collection = collections && collections[0] ? collections[0] : undefined
+  // const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
   const client = useReservoirClient()
 
@@ -168,7 +172,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const totalUsd = totalPrice * (usdPrice || 0)
 
   const fees = {
-    creatorRoyalties: collection?.royalties?.bps || 0,
+    //get the fees from the bid now
+    // creatorRoyalties: collection?.royalties?.bps || 0,
     feeBreakdown,
   }
 

@@ -29,17 +29,16 @@ import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
 import { useNetwork } from 'wagmi'
 
 type BidData = {
-  tokenId?: string
-  collectionId?: string
+  tokens?: string[]
+  bidIds?: string[]
   txHash?: string
   maker?: string
 }
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
-  tokenId?: string
-  collectionId?: string
-  bidId?: string
+  tokens: string[]
+  bidIds?: string[]
   normalizeRoyalties?: boolean
   onBidAccepted?: (data: BidData) => void
   onClose?: (
@@ -63,9 +62,8 @@ function titleForStep(step: AcceptBidStep) {
 export function AcceptBidModal({
   openState,
   trigger,
-  tokenId,
-  collectionId,
-  bidId,
+  tokens,
+  bidIds,
   normalizeRoyalties,
   onBidAccepted,
   onClose,
@@ -83,9 +81,8 @@ export function AcceptBidModal({
   return (
     <AcceptBidModalRenderer
       open={open}
-      tokenId={tokenId}
-      collectionId={collectionId}
-      bidId={bidId}
+      tokens={tokens}
+      bidIds={bidIds}
       normalizeRoyalties={normalizeRoyalties}
     >
       {({
@@ -114,8 +111,10 @@ export function AcceptBidModal({
         useEffect(() => {
           if (acceptBidStep === AcceptBidStep.Complete && onBidAccepted) {
             const data: BidData = {
-              tokenId: tokenId,
-              collectionId: collectionId,
+              // tokenId: tokenId,
+              // collectionId: collectionId,
+              tokens: tokens,
+              bidIds: bidIds,
               maker: address,
             }
             if (txHash) {
@@ -128,8 +127,10 @@ export function AcceptBidModal({
         useEffect(() => {
           if (transactionError && onBidAcceptError) {
             const data: BidData = {
-              tokenId: tokenId,
-              collectionId: collectionId,
+              // tokenId: tokenId,
+              // collectionId: collectionId,
+              tokens: tokens,
+              bidIds: bidIds,
               maker: address,
             }
             onBidAcceptError(transactionError, data)
@@ -172,8 +173,8 @@ export function AcceptBidModal({
             onOpenChange={(open) => {
               if (!open && onClose) {
                 const data: BidData = {
-                  tokenId: tokenId,
-                  collectionId: collectionId,
+                  tokens: tokens,
+                  bidIds: bidIds,
                   maker: address,
                 }
                 onClose(data, stepData, acceptBidStep)

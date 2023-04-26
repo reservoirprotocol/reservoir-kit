@@ -15,7 +15,7 @@ export default function (
   vs_currency?: string,
   symbols: string = 'eth',
   id: string = ''
-) {
+): { price: number; symbol: string }[] {
   const providerOptionsContext = useContext(ProviderOptionsContext)
 
   const baseUrl = createBaseUrl(providerOptionsContext?.coinGecko)
@@ -39,8 +39,11 @@ export default function (
     }
   )
 
-  if (data && data[0] && data[0].current_price) {
-    return data[0].current_price
+  if (data && data.length > 0) {
+    return data.map((conversion: any) => ({
+      price: conversion.current_price,
+      symbol: conversion.symbol || '',
+    }))
   }
-  return null
+  return []
 }

@@ -16,7 +16,6 @@ import {
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { TokenCheckout } from '../../modal/TokenCheckout'
 import { Cart, CheckoutStatus } from '../../context/CartProvider'
-import { useCoinConversion } from '../../hooks'
 import SigninStep from '../../modal/SigninStep'
 import { ApprovalCollapsible } from '../../modal/ApprovalCollapsible'
 import { Execute } from '@reservoir0x/reservoir-sdk'
@@ -30,7 +29,7 @@ export type Path = NonNullable<Execute['path']>[0]
 type Props = {
   items: Cart['items']
   totalPrice: number
-  usdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: number
   currency: NonNullable<Cart['items'][0]['price']>['currency']
   cartChain: Cart['chain']
   blockExplorerBaseUrl: string
