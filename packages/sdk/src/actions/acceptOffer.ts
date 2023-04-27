@@ -14,7 +14,7 @@ export type AcceptOfferOptions = Omit<
 type Data = {
   items: NonNullable<AcceptOfferBodyParameters>['items']
   options?: Partial<AcceptOfferOptions>
-  expectedPrice?: number
+  expectedPrice?: number | Record<string, number>
   signer: Signer
   onProgress: (steps: Execute['steps']) => any
 }

@@ -239,7 +239,7 @@ export const ListModalRenderer: FC<Props> = ({
     currency.symbol,
     currency.coinGeckoId
   )
-  const usdPrice = coinConversion.length > 0 ? coinConversion[0] : 0
+  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
 
   const toggleMarketplace = (marketplace: Marketplace) => {
     const updatedMarketplaces = marketplaces.map((market) => {

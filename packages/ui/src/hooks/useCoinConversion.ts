@@ -42,7 +42,8 @@ export default function (
   if (data && data.length > 0) {
     return data.map((conversion: any) => ({
       price: conversion.current_price,
-      symbol: conversion.symbol || '',
+      symbol: (conversion.symbol || '').toUpperCase(),
+      coinGeckoId: conversion.id,
     }))
   }
   return []

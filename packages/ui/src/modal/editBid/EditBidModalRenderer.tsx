@@ -168,7 +168,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     open && bid ? 'USD' : undefined,
     wrappedContractName
   )
-  const usdPrice = coinConversion.length > 0 ? coinConversion[0] : 0
+  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
 
   const bidAmountUsd = +bidAmount * (usdPrice || 0)
 

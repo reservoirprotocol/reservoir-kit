@@ -23,7 +23,7 @@ import QuantitySelector from '../../modal/QuantitySelector'
 
 type Props = {
   item: Cart['items'][0]
-  usdConversion: number
+  usdConversion: number | null
   tokenUrl?: string
 }
 

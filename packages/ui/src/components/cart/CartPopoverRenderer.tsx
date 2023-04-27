@@ -56,7 +56,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     open ? 'USD' : undefined,
     currency?.symbol || currency?.name
   )
-  const usdPrice = usdConversion.length > 0 ? usdConversion[0] : null
+  const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
 
   const { chains } = useNetwork()
   const chain = chains.find((chain) => chain.id === transaction?.chain.id)

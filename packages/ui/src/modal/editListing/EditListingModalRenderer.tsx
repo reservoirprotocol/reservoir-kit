@@ -131,7 +131,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     open && listing ? 'USD' : undefined,
     currency?.symbol
   )
-  const usdPrice = coinConversion.length > 0 ? coinConversion[0] : 0
+  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
   const totalUsd = usdPrice * (listing?.price?.amount?.decimal || 0)
 
   const client = useReservoirClient()

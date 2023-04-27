@@ -1,6 +1,7 @@
 import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import { SWRInfiniteConfiguration } from 'swr/infinite'
 import { useInfiniteApi, useReservoirClient } from './'
+import { useMemo } from 'react'
 
 type TokenDetailsResponse =
   paths['/tokens/v6']['get']['responses']['200']['schema']
@@ -50,7 +51,10 @@ export default function (
     }
   )
 
-  const tokens = response.data?.flatMap((page) => page.tokens || []) ?? []
+  const tokens = useMemo(
+    () => response.data?.flatMap((page) => page.tokens || []) ?? [],
+    [response.data]
+  )
 
   return {
     ...response,

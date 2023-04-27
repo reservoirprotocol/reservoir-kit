@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { AcceptBidModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 
@@ -31,6 +31,17 @@ const AcceptBidPage: NextPage = () => {
     setBidId(prefilledBidId)
     console.log(router.query)
   }, [router.query])
+
+  const tokens = useMemo(
+    () => [
+      {
+        tokenId,
+        collectionId,
+        bidIds: [bidId],
+      },
+    ],
+    [tokenId, collectionId, bidId]
+  )
 
   return (
     <div
@@ -103,10 +114,8 @@ const AcceptBidPage: NextPage = () => {
             Accept Bid
           </button>
         }
-        collectionId={collectionId}
-        tokenId={tokenId}
+        tokens={tokens}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
-        bidId={bidId}
         normalizeRoyalties={normalizeRoyalties}
         onBidAccepted={(data) => {
           console.log('Bid Accepted', data)

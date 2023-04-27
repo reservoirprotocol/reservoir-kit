@@ -11,6 +11,39 @@ import { LogLevel } from '../utils/logger'
 import { generateEvent } from '../utils/events'
 import { sendTransactionSafely } from './transaction'
 
+function checkExpectedPrice(
+  quote: number,
+  isSell: boolean,
+  isBuy: boolean,
+  expectedPrice?: number
+) {
+  let error: null | Error | { type: string; message: string } = null
+  if (expectedPrice === undefined) {
+    error = {
+      type: 'price mismatch',
+      message: `Attention: the offer price of this token is now ${quote}`,
+    }
+    return
+  }
+
+  // Check if the user is selling
+  if (isSell && Number((quote - expectedPrice).toFixed(6)) < -0.00001) {
+    error = {
+      type: 'price mismatch',
+      message: `Attention: the offer price of this token is now ${quote}`,
+    }
+  }
+
+  // Check if the user is buying
+  if (isBuy && Number((quote - expectedPrice).toFixed(6)) > 0.00001) {
+    error = {
+      type: 'price mismatch',
+      message: `Attention: the price of this token is now ${quote}`,
+    }
+  }
+  return error
+}
+
 /**
  * When attempting to perform actions, such as, selling a token or
  * buying a token, the user's account needs to meet certain requirements. For
@@ -22,7 +55,8 @@ import { sendTransactionSafely } from './transaction'
  * @param signer Ethereum signer object provided by the browser
  * @param setState Callback to update UI state has execution progresses
  * @param newJson Data passed around, which contains steps and items etc
- * @param expectedPrice Expected price to check for price moves before starting to process the steps
+ * @param expectedPrice Expected price to check for price moves before starting to process the steps.
+ * Can be a number or an object representing currency contract address to expected price
  * @returns A promise you can await on
  */
 
@@ -31,7 +65,7 @@ export async function executeSteps(
   signer: Signer,
   setState: (steps: Execute['steps'], path: Execute['path']) => any,
   newJson?: Execute,
-  expectedPrice?: number
+  expectedPrice?: number | Record<string, number>
 ) {
   const client = getClient()
   const currentReservoirChain = client?.currentChain()
@@ -63,45 +97,60 @@ export async function executeSteps(
     // Handle errors
     if (json.error || !json.steps) throw json
 
-    const isBuy = request.url?.includes('/execute/buy')
-    const isSell = request.url?.includes('/execute/sell')
+    const isBuy = request.url?.includes('/execute/buy') || false
+    const isSell = request.url?.includes('/execute/sell') || false
 
     // Handle price changes to protect users from paying more
     // than expected when buying and selling for less than expected
     const path = json.path as {
       quote?: number //This is the quote, matching the order currency
       buyInQuote?: number //This is the "Buy In" quote, when converting to a currency to buy an order in
+      currency?: string
     }[]
     if (path && expectedPrice) {
-      const quote = path.reduce((total: number, { quote, buyInQuote }) => {
-        total += buyInQuote || quote || 0
-        return total
-      }, 0)
       client.log(
         [
           'Execute Steps: checking expected price',
           'expected price',
           expectedPrice,
-          'quote',
-          quote,
+          'path',
+          path,
         ],
         LogLevel.Verbose
       )
-
-      // Check if the user is selling
-      let error: null | Error | { type: string; message: string } = null
-      if (isSell && Number((quote - expectedPrice).toFixed(6)) < -0.00001) {
-        error = {
-          type: 'price mismatch',
-          message: `Attention: the offer price of this token is now ${quote}`,
-        }
-      }
-
-      // Check if the user is buying
-      if (isBuy && Number((quote - expectedPrice).toFixed(6)) > 0.00001) {
-        error = {
-          type: 'price mismatch',
-          message: `Attention: the price of this token is now ${quote}`,
+      let error: ReturnType<typeof checkExpectedPrice>
+      if (typeof expectedPrice === 'number') {
+        const quote = path.reduce((total: number, { quote, buyInQuote }) => {
+          total += buyInQuote || quote || 0
+          return total
+        }, 0)
+        error = checkExpectedPrice(quote, isSell, isBuy, expectedPrice)
+      } else {
+        const quotes: Record<string, number> = path.reduce(
+          (quotes, { quote, buyInQuote, currency }) => {
+            if (currency) {
+              if (!quotes[currency]) {
+                quotes[currency] = buyInQuote || quote || 0
+              } else {
+                quotes[currency] += buyInQuote || quote || 0
+              }
+            }
+            return quotes
+          },
+          {} as Record<string, number>
+        )
+        const quoteEntries = Object.entries(quotes)
+        for (let i = 0; i < quoteEntries.length; i++) {
+          const [currency, quote] = quoteEntries[i]
+          error = checkExpectedPrice(
+            quote,
+            isSell,
+            isBuy,
+            expectedPrice[currency]
+          )
+          if (error) {
+            break
+          }
         }
       }
 
