@@ -245,27 +245,6 @@ export function AcceptBidModal({
                   />
                 ))}
 
-                {/* <Flex
-                  align="center"
-                  justify="between"
-                  css={{ px: '$4', mt: '$4' }}
-                >
-                  <Text style="h6">You Get</Text>
-                  <FormatCryptoCurrency
-                    textStyle="h6"
-                    amount={totalPrice}
-                    address={bidAmountCurrency?.contract}
-                    logoWidth={16}
-                  />
-                </Flex>
-                <Flex justify="end">
-                  <FormatCurrency
-                    amount={totalUsd}
-                    color="subtle"
-                    css={{ mr: '$4' }}
-                  />
-                </Flex> */}
-
                 {prices.map((price) => (
                   <Collapsible
                     trigger={
