@@ -382,7 +382,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         if (currency && currency.symbol) {
           bid.feeBreakdown?.forEach((fee) => {
             const feeAmount = utils
-              .parseUnits(`${netAmount}`, currency.decimals)
+              .parseUnits(`${amount}`, currency.decimals)
               .mul(fee.bps || 0)
               .div(10000)
             switch (fee.kind) {
