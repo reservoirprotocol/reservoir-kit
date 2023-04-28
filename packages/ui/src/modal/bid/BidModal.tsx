@@ -571,7 +571,7 @@ export function BidModal({
                     )}
                     {bidAmount !== '' && hasEnoughWrappedCurrency && (
                       <Button
-                        onClick={() => placeBid({ quantity: 10 })}
+                        onClick={() => placeBid()}
                         css={{ width: '100%' }}
                       >
                         {token && token.token
