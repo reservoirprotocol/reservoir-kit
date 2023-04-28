@@ -1,11 +1,8 @@
-
 ## [v0.9.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b160e2344e988e0d0ae4fd36ce6117cc46c27b7d) (2023-04-28)
 
-* Merge pull request #226 from reservoirprotocol/armando/grwth-387-rk-show-a-warning-if-deprecated-api [c6bf13d](https://github.com/reservoirprotocol/reservoir-kit/commit/c6bf13d57fffee302af86d3ee8c1dccce73aa526)
-* feat: Update axios imports [a1bfa7f](https://github.com/reservoirprotocol/reservoir-kit/commit/a1bfa7fbe6e7fbc2d154ad09d342d9f0e90dc4fc)
-* feat: Update import axios to use import from utils [fc053b0](https://github.com/reservoirprotocol/reservoir-kit/commit/fc053b0a009b5bba2b187a628c7b59c7701ac027)
-* feat: Axios intercept and export wrapper [2aa9258](https://github.com/reservoirprotocol/reservoir-kit/commit/2aa925818463c1eee672f6904887b14d7fd5df2e)
-* Fix marketplace redirects on ListModal [04f7435](https://github.com/reservoirprotocol/reservoir-kit/commit/04f743578fc59805b6def02af78a958e9970be46)
+- Show a warning when using deprecated APIs [c6bf13d](https://github.com/reservoirprotocol/reservoir-kit/commit/c6bf13d57fffee302af86d3ee8c1dccce73aa526)
+- Sync API types [04f7435](https://github.com/reservoirprotocol/reservoir-kit/commit/04f743578fc59805b6def02af78a958e9970be46)
+
 ## [v0.9.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/a334f4cb644d8ca1393e8fa000cf3cb34f9c87d2) (2023-04-19)
 
 ## [v0.9.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/96af2dade0e25fc8a932252a076353f953eb1ad8) (2023-04-17)
