@@ -234,6 +234,7 @@ export function EditBidModal({
                     collection={bid?.criteria?.data?.collection?.name || ''}
                     currencyContract={bid?.price?.currency?.contract}
                     currencyDecimals={bid?.price?.currency?.decimals}
+                    currencySymbol={bid?.price?.currency?.symbol}
                     expires={previousBidsExpiration}
                     source={(bid?.source?.icon as string) || ''}
                   />
@@ -257,6 +258,7 @@ export function EditBidModal({
                           amount={wrappedBalance?.value}
                           decimals={wrappedBalance?.decimals}
                           address={wrappedContractAddress}
+                          symbol={wrappedBalance?.symbol}
                         />{' '}
                       </Text>
                     ) : null}
@@ -468,7 +470,10 @@ export function EditBidModal({
                             <Text style="body3" color="error">
                               {balance?.symbol || 'ETH'} Balance
                             </Text>
-                            <FormatCryptoCurrency amount={balance?.value} />
+                            <FormatCryptoCurrency
+                              amount={balance?.value}
+                              symbol={balance?.symbol}
+                            />
                           </Flex>
                         )}
                         <Flex
@@ -522,6 +527,7 @@ export function EditBidModal({
                     collection={collection?.name || ''}
                     currencyContract={bid?.price?.currency?.contract}
                     currencyDecimals={bid?.price?.currency?.decimals}
+                    currencySymbol={bid?.price?.currency?.symbol}
                     expires={`in ${expirationOption.text.toLowerCase()}`}
                     source={(bid?.source?.icon as string) || ''}
                   />

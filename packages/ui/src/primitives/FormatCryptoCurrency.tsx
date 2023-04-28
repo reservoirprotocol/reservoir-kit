@@ -11,7 +11,6 @@ type FormatCryptoCurrencyProps = {
   address?: string
   chainId?: number
   symbol?: string
-  tooltipEnabled?: boolean
 }
 
 type Props = ComponentProps<typeof FormatCrypto> & FormatCryptoCurrencyProps
@@ -27,7 +26,6 @@ const FormatCryptoCurrency: FC<Props> = ({
   decimals,
   chainId,
   symbol,
-  tooltipEnabled,
 }) => {
   const { chain: activeChain } = useNetwork()
   const blockExplorerBaseUrl =
@@ -42,7 +40,7 @@ const FormatCryptoCurrency: FC<Props> = ({
       maximumFractionDigits={maximumFractionDigits}
       decimals={decimals}
     >
-      {tooltipEnabled && symbol ? (
+      {symbol ? (
         <Tooltip
           side="top"
           content={
@@ -51,6 +49,7 @@ const FormatCryptoCurrency: FC<Props> = ({
               target="_blank"
               weight="medium"
               css={{ fontSize: 14 }}
+              onClick={(event) => event.stopPropagation()}
             >
               {symbol}
             </Anchor>

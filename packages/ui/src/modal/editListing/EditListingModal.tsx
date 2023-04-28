@@ -193,6 +193,7 @@ export function EditListingModal({
                     collection={listing.criteria?.data?.collection?.name || ''}
                     currencyContract={listing.price?.currency?.contract}
                     currencyDecimals={listing?.price?.currency?.decimals}
+                    currencySymbol={listing?.price?.currency?.symbol}
                     expires={expires}
                     source={(listing?.source?.icon as string) || ''}
                     quantity={listing?.quantityRemaining}
@@ -370,6 +371,7 @@ export function EditListingModal({
                     collection={collection?.name || ''}
                     currencyContract={listing?.price?.currency?.contract}
                     currencyDecimals={listing?.price?.currency?.decimals}
+                    currencySymbol={listing?.price?.currency?.symbol}
                     expires={`in ${expirationOption.text.toLowerCase()}`}
                     source={(listing?.source?.icon as string) || ''}
                     quantity={quantity}

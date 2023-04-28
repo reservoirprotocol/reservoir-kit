@@ -52,7 +52,7 @@ const Tooltip = ({
           <Box
             css={{
               zIndex: 9999,
-              $$shadowColor: '$colors$panelShadow',
+              $$shadowColor: '$colors$gray7',
               boxShadow: '0px 1px 5px rgba(0,0,0,0.2)',
               borderRadius: 8,
               overflow: 'hidden',
@@ -100,7 +100,7 @@ const Tooltip = ({
         <Box
           css={{
             zIndex: 9999,
-            $$shadowColor: '$colors$panelShadow',
+            $$shadowColor: '$colors$gray7',
             boxShadow: '0px 1px 5px rgba(0,0,0,0.2)',
             borderRadius: 8,
             overflow: 'hidden',

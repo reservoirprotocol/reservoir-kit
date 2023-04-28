@@ -81,6 +81,7 @@ const MarketplacePriceInput = ({
           amount={profit}
           address={currency.contract}
           decimals={currency.decimals}
+          symbol={currency?.symbol}
           textStyle="h6"
           logoWidth={18}
         />

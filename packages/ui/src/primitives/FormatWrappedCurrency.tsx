@@ -1,10 +1,9 @@
 import React, { FC, ComponentProps } from 'react'
-import FormatCrypto from './FormatCrypto'
 import wrappedContracts from '../constants/wrappedContracts'
 import { useNetwork } from 'wagmi'
 import FormatCryptoCurrency from './FormatCryptoCurrency'
 
-type Props = ComponentProps<typeof FormatCrypto> & {
+type Props = ComponentProps<typeof FormatCryptoCurrency> & {
   logoWidth?: number
   address?: string
 }

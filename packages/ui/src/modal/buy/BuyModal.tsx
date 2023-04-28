@@ -302,6 +302,7 @@ export function BuyModal({
                         amount={referrerFee}
                         address={currency?.contract}
                         decimals={currency?.decimals}
+                        symbol={currency?.symbol}
                       />
                     </Flex>
                     <Flex justify="end">
@@ -325,6 +326,7 @@ export function BuyModal({
                     amount={totalPrice}
                     address={currency?.contract}
                     decimals={currency?.decimals}
+                    symbol={currency?.symbol}
                   />
                 </Flex>
                 <Flex justify="end">
@@ -355,6 +357,7 @@ export function BuyModal({
                           amount={balance}
                           address={currency?.contract}
                           decimals={currency?.decimals}
+                          symbol={currency?.symbol}
                           textStyle="body3"
                         />
                       </Flex>

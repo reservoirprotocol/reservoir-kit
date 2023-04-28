@@ -80,6 +80,7 @@ const TokenStats: FC<Props> = ({ token, collection, royaltyBps = 0 }) => {
               </Text>
             ),
             value: token?.token?.lastSale?.price?.amount?.decimal || null,
+            symbol: token?.token?.lastSale?.price?.currency?.symbol,
             asNative: true,
           },
           {
@@ -95,6 +96,7 @@ const TokenStats: FC<Props> = ({ token, collection, royaltyBps = 0 }) => {
               </Text>
             ),
             value: collection?.floorAsk?.price?.amount?.native || 0,
+            symbol: collection?.floorAsk?.price?.currency?.symbol,
             asNative: true,
           },
           {
@@ -122,6 +124,7 @@ const TokenStats: FC<Props> = ({ token, collection, royaltyBps = 0 }) => {
               attributeFloor ||
               collection?.floorAsk?.price?.amount?.native ||
               0,
+            symbol: collection?.floorAsk?.price?.currency?.symbol,
             asNative: true,
           },
         ].map((stat) => (

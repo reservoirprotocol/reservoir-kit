@@ -585,7 +585,10 @@ export function BidModal({
                             <Text style="body3" color="error">
                               {balance?.symbol || 'ETH'} Balance
                             </Text>
-                            <FormatCryptoCurrency amount={balance?.value} />
+                            <FormatCryptoCurrency
+                              amount={balance?.value}
+                              symbol={balance?.symbol}
+                            />
                           </Flex>
                         )}
                         <Flex
