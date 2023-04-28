@@ -347,6 +347,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     collectionId,
     tokenId,
     expirationOption,
+    price,
     currency,
     quantity,
   ])
