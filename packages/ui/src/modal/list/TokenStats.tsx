@@ -80,6 +80,7 @@ const TokenStats: FC<Props> = ({ token, collection, royaltyBps = 0 }) => {
               </Text>
             ),
             value: token?.token?.lastSale?.price?.amount?.decimal || null,
+            address: token?.token?.lastSale?.price?.currency?.contract,
             symbol: token?.token?.lastSale?.price?.currency?.symbol,
             asNative: true,
           },
