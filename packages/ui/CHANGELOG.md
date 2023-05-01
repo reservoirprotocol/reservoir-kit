@@ -1,3 +1,34 @@
+## [v0.15.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/31393e72a0e2b36caa32985bcc2b3065fb811cea) (2023-04-28)
+
+- Fixed missing price in callback dependencies for edit listing modal [2e94a10](https://github.com/reservoirprotocol/reservoir-kit/commit/2e94a10a60c8f35e2809207ef63a7493e8912149)
+- Show a warning when using deprecated APIs [c6bf13d](https://github.com/reservoirprotocol/reservoir-kit/commit/c6bf13d57fffee302af86d3ee8c1dccce73aa526)
+- Fix marketplace redirects on ListModal [04f7435](https://github.com/reservoirprotocol/reservoir-kit/commit/04f743578fc59805b6def02af78a958e9970be46)
+
+## [v0.15.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/88f62ea4ece5e0e51b913f4a92ca10f70fc04cd7) (2023-04-21)
+
+- Add optimism wrapped contract address used for bidding [a9c8438](https://github.com/reservoirprotocol/reservoir-kit/commit/a9c84387087659d264767dadecc1e00c918e1ce7)
+
+## [v0.15.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/0bac191b0e8c3d3b9564831fd7e70ea5e0e8dc1d) (2023-04-20)
+
+- Added sweepStep to onClose callback [3605351](https://github.com/reservoirprotocol/reservoir-kit/commit/3605351c9f36d7b0f2601eb1d632f499fbd3dcc4)
+
+## [v0.15.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/515033b3186eb3f9f52357ee687a82dd03ac1683) (2023-04-20)
+
+- Sweeping Modal [e53e550](https://github.com/reservoirprotocol/reservoir-kit/commit/e53e5503c1615308fdee68ea080a3f0f4ff785f5)
+  reservoir-kit/commit/2e0542b)
+
+## [v0.15.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/18e8b8dc11f02cce70f9733de3bdb843cff889b5) (2023-04-19)
+
+- Add support for coinGeckoId global setting to map symbols to coinGeckoIds [919e33b](https://github.com/reservoirprotocol/reservoir-kit/commit/919e33b50edae08b7818354a4b90d42e83fe91d8)
+- Updated list modal with updated body styles [b32fd2b](https://github.com/reservoirprotocol/reservoir-kit/commit/b32fd2bdd54ce075c868be112380611c282b846c)
+- Refactored text primitive's body styles [e300556](https://github.com/reservoirprotocol/reservoir-kit/commit/e3005567331728d991343918e2e605cd258daaa5)
+
+## [v0.15.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/17d59a69ce47d71c6c652105502309fef88be4a9) (2023-04-17)
+
+- feat: Cleanup logical op [b6e1afd](https://github.com/reservoirprotocol/reservoir-kit/commit/b6e1afdfb818842b4da528c40cc3ef9353d0e841)
+- feat: Add global coinId param [d70f800](https://github.com/reservoirprotocol/reservoir-kit/commit/d70f80094f8811da5d86281f633b99875754391b)
+- Updated single marketplace state for list modal [2023-04-12](https://github.com/reservoirprotocol/reservoir-kit/commit/c955691)
+
 ## [v0.15.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3aec049d51ca8899ba52ed02af8a5f77344f4359) (2023-04-12)
 
 - Upgrade to v3 for user collections endpoint [734ab16](https://github.com/reservoirprotocol/reservoir-kit/commit/734ab16203b1a9508e3cdeb60e783671d20ab9c0)

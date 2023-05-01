@@ -1109,7 +1109,7 @@ function cartStore({
           } else {
             let message = 'Oops, something went wrong. Please try again.'
             if (errorStatus >= 400 && errorStatus < 500) {
-              message = error.message 
+              message = error.message
             }
             if (error?.type && error?.type === 'price mismatch') {
               errorType = CheckoutTransactionError.PiceMismatch

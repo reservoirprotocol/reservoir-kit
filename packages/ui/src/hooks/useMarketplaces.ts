@@ -5,11 +5,15 @@ import useReservoirClient from './useReservoirClient'
 import useSWR from 'swr'
 
 export type Marketplace = NonNullable<
-  paths['/admin/get-marketplaces']['get']['responses']['200']['schema']['marketplaces']
+  paths['/collections/{collection}/supported-marketplaces/v1']['get']['responses']['200']['schema']['marketplaces']
 >[0] & {
   isSelected: boolean
   price: number | string
   truePrice: number | string
+  fee: {
+    bps: number
+    percent: number
+  }
 }
 
 export default function (
@@ -46,9 +50,7 @@ export default function (
         if (marketplace.orderbook === 'reservoir') {
           const data = getLocalMarketplaceData()
           marketplace.name = data.title
-          marketplace.feeBps = client?.marketplaceFee
-            ? client.marketplaceFee
-            : 0
+          marketplace.domain = client?.source
           marketplace.fee = {
             bps: client?.marketplaceFee || 0,
             percent: (client?.marketplaceFee || 0) / 100,
@@ -64,11 +66,9 @@ export default function (
             bps: osFee,
             percent: osFee / 100,
           }
-          marketplace.feeBps = osFee
         } else {
           if (marketplace.fee) {
             marketplace.fee.percent = (marketplace.fee.bps || 0) / 100
-            marketplace.feeBps = marketplace.fee.bps
           }
         }
         marketplace.price = 0

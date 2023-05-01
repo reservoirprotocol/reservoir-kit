@@ -37,7 +37,13 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 
 const { chains, provider } = configureChains(
-  [allChains.mainnet, allChains.goerli, allChains.polygon],
+  [
+    allChains.mainnet,
+    allChains.goerli,
+    allChains.polygon,
+    allChains.optimism,
+    allChains.arbitrum,
+  ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
 
@@ -97,6 +103,18 @@ const AppWrapper: FC<any> = ({ children }) => {
               baseApiUrl: 'https://api-polygon.reservoir.tools',
               id: allChains.polygon.id,
               default: CHAIN_ID === allChains.polygon.id,
+              apiKey: API_KEY,
+            },
+            {
+              baseApiUrl: 'https://api-optimism.reservoir.tools',
+              id: allChains.optimism.id,
+              default: CHAIN_ID === allChains.optimism.id,
+              apiKey: API_KEY,
+            },
+            {
+              baseApiUrl: 'https://api-arbitrum.reservoir.tools',
+              id: allChains.arbitrum.id,
+              default: CHAIN_ID === allChains.arbitrum.id,
               apiKey: API_KEY,
             },
           ],

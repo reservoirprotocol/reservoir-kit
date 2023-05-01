@@ -14,16 +14,14 @@ type Props = {
       NonNullable<NonNullable<Cart['transaction']>['steps']>[0]
     >['items']
   >[0]
-  transaction: Cart['transaction']
   pathMap: Record<string, Path>
   usdPrice: number
-  cartChain: Cart['chain']
+  cartChain: Cart['chain'] | null
   open?: boolean
 }
 
 export const ApprovalCollapsible: FC<Props> = ({
   item,
-  transaction,
   pathMap,
   usdPrice,
   cartChain,

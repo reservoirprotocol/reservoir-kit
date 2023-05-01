@@ -34,7 +34,6 @@ const Tooltip = ({
           style={{
             backgroundColor: 'transparent',
             borderWidth: 0,
-            cursor: 'pointer',
             padding: 0,
             display: 'flex',
           }}
@@ -82,7 +81,6 @@ const Tooltip = ({
         style={{
           backgroundColor: 'transparent',
           borderWidth: 0,
-          cursor: 'pointer',
           padding: 0,
           display: 'flex',
         }}

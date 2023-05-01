@@ -46,7 +46,7 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
       neutralBg: '$slate3',
       neutralBgHover: '$slate4',
       neutralBgActive: '$slate5',
-      neutalLine: '$slate6',
+      neutralLine: '$slate6',
       neutralBorder: '$slate7',
       neutralBorderHover: '$slate8',
       neutralSolid: '$slate9',

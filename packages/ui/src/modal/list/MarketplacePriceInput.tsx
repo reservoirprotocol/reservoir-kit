@@ -13,13 +13,17 @@ import { Marketplace } from '../../hooks/useMarketplaces'
 import { Currency } from '../../types/Currency'
 import { CryptoCurrencyIcon } from '../../primitives'
 import { useCollections } from '../../hooks'
+import { CurrencySelector } from './CurrencySelector'
 
 type MarketPlaceInputProps = {
   marketplace: Marketplace
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   currency: Currency
+  currencies: Currency[]
+  setCurrency: (currency: Currency) => void
   usdPrice?: number | null
   quantity?: number
+  nativeOnly?: boolean
   onChange: (e: any) => void
   onBlur: (e: any) => void
 }
@@ -28,8 +32,11 @@ const MarketplacePriceInput = ({
   marketplace,
   collection,
   currency,
+  currencies,
+  setCurrency,
   usdPrice,
   quantity = 1,
+  nativeOnly,
   onChange,
   onBlur,
   ...props
@@ -44,29 +51,54 @@ const MarketplacePriceInput = ({
 
   return (
     <Flex {...props} align="center">
-      <Box css={{ mr: '$2' }}>
-        <img
-          src={marketplace.imageUrl}
-          style={{ height: 32, width: 32, borderRadius: 4 }}
-        />
-      </Box>
-      <Flex align="center">
-        <Box
-          css={{
-            width: 'auto',
-            height: 20,
-          }}
-        >
-          <CryptoCurrencyIcon
-            css={{ height: 18 }}
-            address={currency.contract}
+      <>
+        {!nativeOnly ? (
+          <Box css={{ mr: '$2' }}>
+            <img
+              src={marketplace.imageUrl}
+              style={{ height: 32, width: 32, borderRadius: 4 }}
+            />
+          </Box>
+        ) : null}
+        {nativeOnly && currencies.length > 1 ? (
+          <CurrencySelector
+            currency={currency}
+            currencies={currencies}
+            setCurrency={setCurrency}
+            triggerCss={{
+              mr: '$3',
+              backgroundColor: '$neutralBgActive',
+              borderRadius: 4,
+              p: '$3',
+              width: 120,
+            }}
+            valueCss={{ justifyContent: 'space-between', width: '100%' }}
           />
-        </Box>
+        ) : (
+          <Flex align="center">
+            <Box
+              css={{
+                width: 'auto',
+                height: 20,
+              }}
+            >
+              <CryptoCurrencyIcon
+                css={{ height: 18 }}
+                address={currency.contract}
+              />
+            </Box>
 
-        <Text style="body1" color="subtle" css={{ ml: '$1', mr: '$4' }} as="p">
-          {currency.symbol}
-        </Text>
-      </Flex>
+            <Text
+              style="body1"
+              color="subtle"
+              css={{ ml: '$1', mr: '$4' }}
+              as="p"
+            >
+              {currency.symbol}
+            </Text>
+          </Flex>
+        )}
+      </>
       <Box css={{ flex: 1 }}>
         <Input
           type="number"

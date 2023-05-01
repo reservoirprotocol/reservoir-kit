@@ -26,7 +26,7 @@ type Props = {
   totalPrice: number
   usdPrice: number
   currency?: NonNullable<Cart['items'][0]['price']>['currency']
-  chain?: ReservoirChain
+  chain?: ReservoirChain | null
   size?: Size
 }
 

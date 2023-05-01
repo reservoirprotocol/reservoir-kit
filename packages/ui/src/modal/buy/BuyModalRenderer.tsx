@@ -362,7 +362,6 @@ export const BuyModalRenderer: FC<Props> = ({
     quantity,
     normalizeRoyalties,
     client,
-    signer,
     currency,
     totalPrice,
     listingsToBuy,

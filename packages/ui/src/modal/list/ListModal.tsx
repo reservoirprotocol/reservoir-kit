@@ -15,7 +15,7 @@ import {
   Loader,
   Select,
   ErrorWell,
-  CryptoCurrencyIcon,
+  Popover,
 } from '../../primitives'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -27,7 +27,11 @@ import {
   ListModalStepData,
 } from './ListModalRenderer'
 import { ModalSize } from '../Modal'
-import { faChevronLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import {
+  faChevronLeft,
+  faCheckCircle,
+  faInfoCircle,
+} from '@fortawesome/free-solid-svg-icons'
 import TokenStats from './TokenStats'
 import MarketplaceToggle from './MarketplaceToggle'
 import MarketplacePriceInput from './MarketplacePriceInput'
@@ -40,6 +44,7 @@ import { Marketplace } from '../../hooks/useMarketplaces'
 import { Currency } from '../../types/Currency'
 import { constants } from 'ethers'
 import SigninStep from '../SigninStep'
+import { CurrencySelector } from './CurrencySelector'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -165,6 +170,12 @@ export function ListModal({
             : (collection?.image as string)
 
         useEffect(() => {
+          if (nativeOnly) {
+            setListStep(ListStep.SetPrice)
+          }
+        }, [nativeOnly, open])
+
+        useEffect(() => {
           if (unapprovedMarketplaces.length > 0) {
             const unapprovedNames = unapprovedMarketplaces.reduce(
               (names, marketplace) => {
@@ -271,60 +282,11 @@ export function ListModal({
                         css={{ mb: '$4', gap: '$2', alignItems: 'center' }}
                       >
                         List item in
-                        <Select
-                          trigger={
-                            <Select.Trigger
-                              css={{
-                                width: 'auto',
-                                p: 0,
-                                backgroundColor: 'transparent',
-                              }}
-                            >
-                              <Select.Value asChild>
-                                <Flex align="center">
-                                  <CryptoCurrencyIcon
-                                    address={currency.contract}
-                                    css={{ height: 18 }}
-                                  />
-                                  <Text
-                                    style="subtitle1"
-                                    color="subtle"
-                                    css={{ ml: '$1' }}
-                                  >
-                                    {currency.symbol}
-                                  </Text>
-                                  <Select.DownIcon style={{ marginLeft: 6 }} />
-                                </Flex>
-                              </Select.Value>
-                            </Select.Trigger>
-                          }
-                          value={currency.contract}
-                          onValueChange={(value: string) => {
-                            const option = currencies.find(
-                              (option) => option.contract == value
-                            )
-                            if (option) {
-                              setCurrency(option)
-                            }
-                          }}
-                        >
-                          {currencies.map((option) => (
-                            <Select.Item
-                              key={option.contract}
-                              value={option.contract}
-                            >
-                              <Select.ItemText>
-                                <Flex align="center" css={{ gap: '$1' }}>
-                                  <CryptoCurrencyIcon
-                                    address={option.contract}
-                                    css={{ height: 18 }}
-                                  />
-                                  {option.symbol}
-                                </Flex>
-                              </Select.ItemText>
-                            </Select.Item>
-                          ))}
-                        </Select>
+                        <CurrencySelector
+                          currency={currency}
+                          currencies={currencies}
+                          setCurrency={setCurrency}
+                        />
                       </Text>
                     ) : (
                       <Text style="subtitle1" as="h3" css={{ mb: '$4' }}>
@@ -352,9 +314,9 @@ export function ListModal({
                         />
                       </Box>
                       <Box css={{ mr: '$2', flex: 1 }}>
-                        <Text style="body2">{localMarketplace?.name}</Text>
+                        <Text style="body3">{localMarketplace?.name}</Text>
                         <Flex css={{ alignItems: 'center', gap: 8 }}>
-                          <Text style="body2" color="subtle" as="div">
+                          <Text style="body3" color="subtle" as="div">
                             on Reservoir
                           </Text>
                           <InfoTooltip
@@ -415,7 +377,7 @@ export function ListModal({
                     )}
                     {oracleEnabled && (
                       <Text
-                        style="body2"
+                        style="body3"
                         color="subtle"
                         css={{
                           mb: 10,
@@ -449,18 +411,20 @@ export function ListModal({
                 <MainContainer>
                   <Box css={{ p: '$4', flex: 1 }}>
                     <Flex align="center" css={{ mb: '$4' }}>
-                      <Button
-                        color="ghost"
-                        size="none"
-                        css={{ mr: '$2', color: '$neutralText' }}
-                        onClick={() => setListStep(ListStep.SelectMarkets)}
-                      >
-                        <FontAwesomeIcon
-                          icon={faChevronLeft}
-                          width={16}
-                          height={16}
-                        />
-                      </Button>
+                      {!nativeOnly ? (
+                        <Button
+                          color="ghost"
+                          size="none"
+                          css={{ mr: '$2', color: '$neutralText' }}
+                          onClick={() => setListStep(ListStep.SelectMarkets)}
+                        >
+                          <FontAwesomeIcon
+                            icon={faChevronLeft}
+                            width={16}
+                            height={16}
+                          />
+                        </Button>
+                      ) : null}
                       <Text style="subtitle1" as="h3">
                         Set Your Price
                       </Text>
@@ -490,7 +454,7 @@ export function ListModal({
                           </Select>
                         </Box>
                         <Text
-                          style="body3"
+                          style="body2"
                           css={{ mb: 24, display: 'inline-block' }}
                         >
                           {quantityAvailable} items available
@@ -509,11 +473,41 @@ export function ListModal({
                             ? 'Total Profit'
                             : 'Profit'}
                         </Text>
-                        <InfoTooltip
-                          side="left"
-                          width={200}
-                          content={`How much ${currency.symbol} you will receive after marketplace fees and creator royalties are subtracted.`}
-                        />
+                        {nativeOnly ? (
+                          <Popover
+                            side="left"
+                            content={
+                              <Flex direction="column" css={{ gap: '$3' }}>
+                                <Flex justify="between" css={{ gap: '$4' }}>
+                                  <Text style="body3">Marketplace Fee</Text>
+                                  <Text style="subtitle2" color="subtle">
+                                    {marketplaces[0].fee?.percent || 0}%
+                                  </Text>
+                                </Flex>
+                                <Flex justify="between" css={{ gap: '$4' }}>
+                                  <Text style="body3">Creator Royalties</Text>
+                                  <Text style="subtitle2" color="subtle">
+                                    {(royaltyBps || 0) * 0.01}%
+                                  </Text>
+                                </Flex>
+                              </Flex>
+                            }
+                          >
+                            <Box
+                              css={{
+                                color: '$neutralText',
+                              }}
+                            >
+                              <FontAwesomeIcon icon={faInfoCircle} />
+                            </Box>
+                          </Popover>
+                        ) : (
+                          <InfoTooltip
+                            side="left"
+                            width={200}
+                            content={`How much ${currency.symbol} you will receive after marketplace fees and creator royalties are subtracted.`}
+                          />
+                        )}
                       </Flex>
                     </Flex>
 
@@ -523,8 +517,11 @@ export function ListModal({
                           marketplace={marketplace}
                           collection={collection}
                           currency={currency}
+                          currencies={currencies}
+                          setCurrency={setCurrency}
                           usdPrice={usdPrice}
                           quantity={quantity}
+                          nativeOnly={nativeOnly}
                           onChange={(e) => {
                             setMarketPrice(e.target.value, marketplace)
                           }}
@@ -539,7 +536,7 @@ export function ListModal({
                           Number(marketplace.truePrice) !== 0 &&
                           Number(marketplace.truePrice) < MINIMUM_AMOUNT && (
                             <Box>
-                              <Text style="body3" color="error">
+                              <Text style="body2" color="error">
                                 Amount must be higher than {MINIMUM_AMOUNT}
                               </Text>
                             </Box>
@@ -555,7 +552,7 @@ export function ListModal({
                           Number(marketplace.truePrice) <
                             collection?.floorAsk?.price.amount.native && (
                             <Box>
-                              <Text style="body3" color="error">
+                              <Text style="body2" color="error">
                                 Price is{' '}
                                 {Math.round(
                                   ((collection.floorAsk.price.amount.native -
@@ -659,7 +656,7 @@ export function ListModal({
                           mx: 'auto',
                           mb: '$4',
                         }}
-                        style="body2"
+                        style="body3"
                         color="subtle"
                       >
                         {stepData?.currentStep.description}
@@ -724,12 +721,12 @@ export function ListModal({
                       Your item has been listed!
                     </Text>
                     <Text
-                      style="body2"
+                      style="body3"
                       color="subtle"
                       as="p"
                       css={{ mb: 24, maxWidth: 300, overflow: 'hidden' }}
                     >
-                      <Text color="accent" ellipsify style="body2">
+                      <Text color="accent" ellipsify style="body3">
                         {token?.token?.name
                           ? token?.token?.name
                           : `#${token?.token?.tokenId}`}
@@ -749,7 +746,7 @@ export function ListModal({
                           data.listing.orderbook === 'reservoir' &&
                           client?.source
                             ? client?.source
-                            : data.marketplace.name
+                            : data.marketplace.domain
                         return (
                           <a
                             key={data.listing.orderbook}
