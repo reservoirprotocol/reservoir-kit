@@ -19,6 +19,7 @@ const Tooltip = ({
   open,
   defaultOpen,
   onOpenChange,
+  delayDuration = 0,
   ...props
 }: any) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)')
@@ -75,7 +76,7 @@ const Tooltip = ({
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={onOpenChange}
-      delayDuration={250}
+      delayDuration={delayDuration}
     >
       <TooltipPrimitive.Trigger
         style={{
