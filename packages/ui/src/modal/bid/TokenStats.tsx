@@ -55,8 +55,12 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
       value: token
         ? token.market?.topBid?.price?.amount?.decimal || null
         : collection?.topBid?.price?.amount?.decimal || null,
-      address: token?.market?.topBid?.price?.currency?.contract,
-      symbol: token?.market?.topBid?.price?.currency?.symbol,
+      address: token
+        ? token?.market?.topBid?.price?.currency?.contract
+        : collection?.topBid?.price?.currency?.contract,
+      symbol: token
+        ? token?.market?.topBid?.price?.currency?.symbol
+        : collection?.topBid?.price?.currency?.symbol,
       asWrapped: true,
     }
   )

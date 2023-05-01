@@ -51,6 +51,7 @@ const Stat: FC<StatProps> = ({
       <FormatCryptoCurrency
         amount={value}
         textStyle="subtitle2"
+        address={address}
         symbol={symbol}
       />
     )}

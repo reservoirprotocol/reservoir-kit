@@ -330,6 +330,7 @@ export function BidModal({
                         amount={wrappedBalance?.value}
                         address={wrappedContractAddress}
                         decimals={wrappedBalance?.decimals}
+                        symbol={wrappedBalance?.symbol}
                       />{' '}
                     </Text>
                   </Flex>
