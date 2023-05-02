@@ -39,6 +39,7 @@ const ListingStat: FC<Props> = ({ listing, marketImg, currency, ...props }) => {
           textStyle="subtitle2"
           address={currency.contract}
           decimals={currency.decimals}
+          symbol={currency?.symbol}
         />
         <Img src={marketImg} />
       </Flex>

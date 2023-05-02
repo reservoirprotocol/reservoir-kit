@@ -44,6 +44,7 @@ export const SweepItem: FC<Props> = ({ name, image, amount, currency }) => {
             amount={amount}
             address={currency.address}
             decimals={currency.decimals}
+            symbol={currency.symbol}
             maximumFractionDigits={amount && amount >= 10 ? 2 : 3}
             css={{ whiteSpace: 'nowrap' }}
           />

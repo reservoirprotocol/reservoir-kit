@@ -248,6 +248,7 @@ export function AcceptBidModal({
                     amount={totalPrice}
                     address={bidAmountCurrency?.contract}
                     logoWidth={16}
+                    symbol={bidAmountCurrency?.symbol}
                   />
                 </Flex>
                 <Flex justify="end">

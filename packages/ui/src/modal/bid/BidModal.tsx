@@ -330,6 +330,7 @@ export function BidModal({
                         amount={wrappedBalance?.value}
                         address={wrappedContractAddress}
                         decimals={wrappedBalance?.decimals}
+                        symbol={wrappedBalance?.symbol}
                       />{' '}
                     </Text>
                   </Flex>
@@ -588,7 +589,10 @@ export function BidModal({
                             <Text style="body3" color="error">
                               {balance?.symbol || 'ETH'} Balance
                             </Text>
-                            <FormatCryptoCurrency amount={balance?.value} />
+                            <FormatCryptoCurrency
+                              amount={balance?.value}
+                              symbol={balance?.symbol}
+                            />
                           </Flex>
                         )}
                         <Flex

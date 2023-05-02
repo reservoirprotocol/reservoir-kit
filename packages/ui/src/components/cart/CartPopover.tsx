@@ -361,6 +361,7 @@ export function CartPopover({
                         amount={referrerFee}
                         address={currency?.contract}
                         decimals={currency?.decimals}
+                        symbol={currency?.symbol}
                         logoWidth={12}
                         chainId={cartChain?.id}
                       />
@@ -388,6 +389,7 @@ export function CartPopover({
                         amount={totalPrice}
                         address={currency?.contract}
                         decimals={currency?.decimals}
+                        symbol={currency?.symbol}
                         logoWidth={18}
                         chainId={cartChain?.id}
                       />
@@ -433,6 +435,7 @@ export function CartPopover({
                       amount={balance}
                       address={currency?.contract}
                       decimals={currency?.decimals}
+                      symbol={currency?.symbol}
                       logoWidth={10}
                     />
                   </Flex>

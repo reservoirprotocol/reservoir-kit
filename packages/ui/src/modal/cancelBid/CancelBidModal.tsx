@@ -154,6 +154,7 @@ export function CancelBidModal({
                     collection={bid?.criteria?.data?.collection?.name || ''}
                     currencyContract={bid?.price?.currency?.contract}
                     currencyDecimals={bid?.price?.currency?.decimals}
+                    currencySymbol={bid?.price?.currency?.symbol}
                     expires={expires}
                     source={(bid?.source?.icon as string) || ''}
                     priceSubtitle="Offer"
@@ -187,6 +188,7 @@ export function CancelBidModal({
                     collection={bid?.criteria?.data?.collection?.name || ''}
                     currencyContract={bid?.price?.currency?.contract}
                     currencyDecimals={bid?.price?.currency?.decimals}
+                    currencySymbol={bid?.price?.currency?.symbol}
                     expires={expires}
                     source={(bid?.source?.icon as string) || ''}
                     priceSubtitle="Offer"

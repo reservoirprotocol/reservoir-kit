@@ -16,6 +16,7 @@ type Props = {
   collection: string
   currencyContract?: string
   currencyDecimals?: number
+  currencySymbol?: string
   source?: string
   price?: number
   usdPrice?: number | string
@@ -39,6 +40,7 @@ const TokenPrimitive: FC<Props> = ({
   collection,
   currencyContract,
   currencyDecimals,
+  currencySymbol,
   expires,
   warning,
   source,
@@ -165,6 +167,7 @@ const TokenPrimitive: FC<Props> = ({
               textColor={isUnavailable ? 'subtle' : 'base'}
               address={currencyContract}
               decimals={currencyDecimals}
+              symbol={currencySymbol}
               logoWidth={14.5}
             />
           ) : (

@@ -68,6 +68,7 @@ export const TokenCheckout: FC<Props> = ({
           amount={totalPrice}
           address={currency?.contract}
           decimals={currency?.decimals}
+          symbol={currency?.symbol}
           logoWidth={size == Size.SM ? 12 : 18}
           chainId={chain?.id}
         />
