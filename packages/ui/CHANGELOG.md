@@ -1,3 +1,15 @@
+
+## [v0.15.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/69bc916d3aaa5e439741561bb6df6e40d92e2207) (2023-05-02)
+
+* Merge pull request #229 from reservoirprotocol/ted/grwth-2505-add-tooltip-to-currency-in-accept-bid [a0a6632](https://github.com/reservoirprotocol/reservoir-kit/commit/a0a6632b536b13b6db800581249c7152fb326b56)
+* Fix last sale currency address in list modal token stats [ab80c4a](https://github.com/reservoirprotocol/reservoir-kit/commit/ab80c4a439f72a4e170b437f39e284d1c0b3ae79)
+* Merge pull request #228 from reservoirprotocol/pedro/grwth-2529-add-ability-to-pass-quantity-to [a765e26](https://github.com/reservoirprotocol/reservoir-kit/commit/a765e26e9de53e8b929be587a225bb0596929db0)
+* Added back delayDuration to tooltip [7e529ae](https://github.com/reservoirprotocol/reservoir-kit/commit/7e529aef1c757f214b6825a75dcbdf0139db46c1)
+* Resolved merge conflicts [2023-05-01](https://github.com/reservoirprotocol/reservoir-kit/commit/294bb74)
+* Fixed token stats currencies [d9645c3](https://github.com/reservoirprotocol/reservoir-kit/commit/d9645c37dc12ef176a1a33647f140966b5fd8688)
+* Added tooltip to all currencies [afdf0f7](https://github.com/reservoirprotocol/reservoir-kit/commit/afdf0f7295d160784a8f7c4d6a96d24a84958db6)
+* Add ability to pass quantity to placeBid function in BidModalRenderer when creating a custom BidModal [c232268](https://github.com/reservoirprotocol/reservoir-kit/commit/c23226811391fe14b62ef56fa6540382297b25ef)
+* Added tooltip to currency in accept bid modal [9520cf6](https://github.com/reservoirprotocol/reservoir-kit/commit/9520cf67a55cb94dce1ddea2f5ff45c66306bb48)
 ## [v0.15.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/31393e72a0e2b36caa32985bcc2b3065fb811cea) (2023-04-28)
 
 - Fixed missing price in callback dependencies for edit listing modal [2e94a10](https://github.com/reservoirprotocol/reservoir-kit/commit/2e94a10a60c8f35e2809207ef63a7493e8912149)

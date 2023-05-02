@@ -1,3 +1,6 @@
+
+## [v0.9.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4c4a3c7f2cefc49c724c6277dfd0e33931daf860) (2023-05-02)
+
 ## [v0.9.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b160e2344e988e0d0ae4fd36ce6117cc46c27b7d) (2023-04-28)
 
 - Show a warning when using deprecated APIs [c6bf13d](https://github.com/reservoirprotocol/reservoir-kit/commit/c6bf13d57fffee302af86d3ee8c1dccce73aa526)
