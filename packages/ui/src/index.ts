@@ -12,6 +12,7 @@ export {
   useReservoirClient,
   useTokens,
   useTokenActivity,
+  useCoinConversion,
   useTokenOpenseaBanned,
   useListings,
   useOwnerListings,
