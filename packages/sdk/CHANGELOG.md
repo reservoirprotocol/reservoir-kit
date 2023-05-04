@@ -1,3 +1,12 @@
+## [v0.9.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4c4a3c7f2cefc49c724c6277dfd0e33931daf860) (2023-05-02)
+
+- Sync API Types
+
+## [v0.9.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b160e2344e988e0d0ae4fd36ce6117cc46c27b7d) (2023-04-28)
+
+- Show a warning when using deprecated APIs [c6bf13d](https://github.com/reservoirprotocol/reservoir-kit/commit/c6bf13d57fffee302af86d3ee8c1dccce73aa526)
+- Sync API types [04f7435](https://github.com/reservoirprotocol/reservoir-kit/commit/04f743578fc59805b6def02af78a958e9970be46)
+
 ## [v0.9.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/a334f4cb644d8ca1393e8fa000cf3cb34f9c87d2) (2023-04-19)
 
 ## [v0.9.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/96af2dade0e25fc8a932252a076353f953eb1ad8) (2023-04-17)

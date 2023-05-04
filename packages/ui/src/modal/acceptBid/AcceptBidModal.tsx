@@ -264,6 +264,7 @@ export function AcceptBidModal({
                             amount={price.netAmount}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
+                            symbol={price.currency?.symbol}
                             textStyle="h6"
                           />
                           {price.currency?.symbol &&
@@ -298,6 +299,7 @@ export function AcceptBidModal({
                           amount={price.amount}
                           decimals={price.currency?.decimals}
                           address={price.currency?.contract}
+                          symbol={price.currency?.symbol}
                           textStyle="subtitle2"
                         />
                       </Flex>
@@ -310,6 +312,7 @@ export function AcceptBidModal({
                             amount={price.royalty * -1}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
+                            symbol={price.currency?.symbol}
                             textStyle="subtitle2"
                           />
                         </Flex>
@@ -323,6 +326,7 @@ export function AcceptBidModal({
                             amount={price.marketplaceFee * -1}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
+                            symbol={price.currency?.symbol}
                             textStyle="subtitle2"
                           />
                         </Flex>

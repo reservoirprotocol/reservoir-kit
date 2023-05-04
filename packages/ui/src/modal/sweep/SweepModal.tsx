@@ -299,6 +299,7 @@ export function SweepModal({
                         amount={total}
                         address={currency?.address}
                         decimals={currency?.decimals}
+                        symbol={currency?.symbol}
                         logoWidth={18}
                       />
                       <FormatCurrency
@@ -332,6 +333,7 @@ export function SweepModal({
                         amount={balance}
                         address={currency?.address}
                         decimals={currency?.decimals}
+                        symbol={currency?.symbol}
                         textStyle="body3"
                       />
                     </Flex>

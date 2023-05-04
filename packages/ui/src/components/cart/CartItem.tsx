@@ -242,6 +242,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               amount={price}
               address={cartCurrency?.contract}
               decimals={cartCurrency?.decimals}
+              symbol={cartCurrency?.symbol}
               logoWidth={12}
               chainId={cartChain?.id}
             />

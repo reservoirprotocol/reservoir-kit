@@ -21,6 +21,7 @@ type TokenLineItemProps = {
   currency?: {
     contract?: string
     decimals?: number
+    symbol?: string
   }
   expires?: string
   sourceImg?: string
@@ -74,6 +75,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         collection={collectionName}
         currencyContract={currency?.contract}
         currencyDecimals={currency?.decimals}
+        currencySymbol={currency?.symbol}
         expires={expires}
         warning={warning}
         source={sourceImg || ''}

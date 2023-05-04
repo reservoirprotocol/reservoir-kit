@@ -1,3 +1,22 @@
+## [v0.15.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/69bc916d3aaa5e439741561bb6df6e40d92e2207) (2023-05-02)
+
+- Added tooltip to all currencies [afdf0f7](https://github.com/reservoirprotocol/reservoir-kit/commit/afdf0f7295d160784a8f7c4d6a96d24a84958db6)
+- Add ability to pass quantity to placeBid function in BidModalRenderer when creating a custom BidModal [c232268](https://github.com/reservoirprotocol/reservoir-kit/commit/c23226811391fe14b62ef56fa6540382297b25ef)
+
+## [v0.15.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/31393e72a0e2b36caa32985bcc2b3065fb811cea) (2023-04-28)
+
+- Fixed missing price in callback dependencies for edit listing modal [2e94a10](https://github.com/reservoirprotocol/reservoir-kit/commit/2e94a10a60c8f35e2809207ef63a7493e8912149)
+- Show a warning when using deprecated APIs [c6bf13d](https://github.com/reservoirprotocol/reservoir-kit/commit/c6bf13d57fffee302af86d3ee8c1dccce73aa526)
+- Fix marketplace redirects on ListModal [04f7435](https://github.com/reservoirprotocol/reservoir-kit/commit/04f743578fc59805b6def02af78a958e9970be46)
+
+## [v0.15.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/88f62ea4ece5e0e51b913f4a92ca10f70fc04cd7) (2023-04-21)
+
+- Add optimism wrapped contract address used for bidding [a9c8438](https://github.com/reservoirprotocol/reservoir-kit/commit/a9c84387087659d264767dadecc1e00c918e1ce7)
+
+## [v0.15.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/0bac191b0e8c3d3b9564831fd7e70ea5e0e8dc1d) (2023-04-20)
+
+- Added sweepStep to onClose callback [3605351](https://github.com/reservoirprotocol/reservoir-kit/commit/3605351c9f36d7b0f2601eb1d632f499fbd3dcc4)
+
 ## [v0.15.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/515033b3186eb3f9f52357ee687a82dd03ac1683) (2023-04-20)
 
 - Sweeping Modal [e53e550](https://github.com/reservoirprotocol/reservoir-kit/commit/e53e5503c1615308fdee68ea080a3f0f4ff785f5)

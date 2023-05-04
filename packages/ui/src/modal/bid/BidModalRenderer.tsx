@@ -84,7 +84,7 @@ type ChildrenProps = {
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
   trait: Trait
-  placeBid: () => void
+  placeBid: (options?: { quantity?: number }) => void
 }
 
 type Props = {
@@ -282,123 +282,133 @@ export const BidModalRenderer: FC<Props> = ({
 
   const isBanned = useTokenOpenseaBanned(open ? contract : undefined, tokenId)
 
-  const placeBid = useCallback(() => {
-    if (!signer) {
-      const error = new Error('Missing a signer')
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!tokenId && !collectionId) {
-      const error = new Error('Missing tokenId and collectionId')
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!client) {
-      const error = new Error('ReservoirClient was not initialized')
-      setTransactionError(error)
-      throw error
-    }
-
-    setBidStep(BidStep.Offering)
-    setTransactionError(null)
-    setBidData(null)
-
-    const bid: BidData = {
-      weiPrice: parseUnits(`${bidAmount}`, currency?.decimals).toString(),
-      orderbook: 'reservoir',
-      orderKind: 'seaport',
-      attributeKey: trait?.key,
-      attributeValue: trait?.value,
-    }
-
-    if (currency) {
-      bid.currency = currency.contract
-    }
-
-    if (tokenId && collectionId) {
-      const contract = collectionId ? collectionId?.split(':')[0] : undefined
-      bid.token = `${contract}:${tokenId}`
-    } else if (collectionId) {
-      bid.collection = collectionId
-    }
-
-    if (expirationOption.relativeTime) {
-      if (expirationOption.relativeTimeUnit) {
-        bid.expirationTime = dayjs()
-          .add(expirationOption.relativeTime, expirationOption.relativeTimeUnit)
-          .unix()
-          .toString()
-      } else {
-        bid.expirationTime = `${expirationOption.relativeTime}`
+  const placeBid = useCallback(
+    (options?: { quantity?: number }) => {
+      if (!signer) {
+        const error = new Error('Missing a signer')
+        setTransactionError(error)
+        throw error
       }
-    }
 
-    if (oracleEnabled) {
-      bid.options = {
-        'seaport-v1.4': {
-          useOffChainCancellation: true,
-        },
+      if (!tokenId && !collectionId) {
+        const error = new Error('Missing tokenId and collectionId')
+        setTransactionError(error)
+        throw error
       }
-    }
 
-    setBidData(bid)
+      if (!client) {
+        const error = new Error('ReservoirClient was not initialized')
+        setTransactionError(error)
+        throw error
+      }
 
-    client.actions
-      .placeBid({
-        signer,
-        bids: [bid],
-        onProgress: (steps: Execute['steps']) => {
-          const executableSteps = steps.filter(
-            (step) => step.items && step.items.length > 0
-          )
+      setBidStep(BidStep.Offering)
+      setTransactionError(null)
+      setBidData(null)
 
-          let stepCount = executableSteps.length
-          let incompleteStepItemIndex: number | null = null
-          let incompleteStepIndex: number | null = null
+      const bid: BidData = {
+        weiPrice: parseUnits(`${bidAmount}`, currency?.decimals).toString(),
+        orderbook: 'reservoir',
+        orderKind: 'seaport',
+        attributeKey: trait?.key,
+        attributeValue: trait?.value,
+      }
 
-          executableSteps.find((step, i) => {
-            if (!step.items) {
-              return false
-            }
+      if (currency) {
+        bid.currency = currency.contract
+      }
 
-            incompleteStepItemIndex = step.items.findIndex(
-              (item) => item.status == 'incomplete'
+      if (tokenId && collectionId) {
+        const contract = collectionId ? collectionId?.split(':')[0] : undefined
+        bid.token = `${contract}:${tokenId}`
+      } else if (collectionId) {
+        bid.collection = collectionId
+      }
+
+      if (expirationOption.relativeTime) {
+        if (expirationOption.relativeTimeUnit) {
+          bid.expirationTime = dayjs()
+            .add(
+              expirationOption.relativeTime,
+              expirationOption.relativeTimeUnit
             )
-            if (incompleteStepItemIndex !== -1) {
-              incompleteStepIndex = i
-              return true
-            }
-          })
+            .unix()
+            .toString()
+        } else {
+          bid.expirationTime = `${expirationOption.relativeTime}`
+        }
+      }
 
-          if (incompleteStepIndex !== null) {
-            setStepData({
-              totalSteps: stepCount,
-              stepProgress: incompleteStepIndex,
-              currentStep: executableSteps[incompleteStepIndex],
+      if (oracleEnabled) {
+        bid.options = {
+          'seaport-v1.4': {
+            useOffChainCancellation: true,
+          },
+        }
+      }
+
+      if (options?.quantity) {
+        bid.quantity = options.quantity
+      }
+
+      setBidData(bid)
+
+      client.actions
+        .placeBid({
+          signer,
+          bids: [bid],
+          onProgress: (steps: Execute['steps']) => {
+            const executableSteps = steps.filter(
+              (step) => step.items && step.items.length > 0
+            )
+
+            let stepCount = executableSteps.length
+            let incompleteStepItemIndex: number | null = null
+            let incompleteStepIndex: number | null = null
+
+            executableSteps.find((step, i) => {
+              if (!step.items) {
+                return false
+              }
+
+              incompleteStepItemIndex = step.items.findIndex(
+                (item) => item.status == 'incomplete'
+              )
+              if (incompleteStepItemIndex !== -1) {
+                incompleteStepIndex = i
+                return true
+              }
             })
-          } else {
-            setBidStep(BidStep.Complete)
-          }
-        },
-      })
-      .catch((e: any) => {
-        const transactionError = new Error(e?.message || '', {
-          cause: e,
+
+            if (incompleteStepIndex !== null) {
+              setStepData({
+                totalSteps: stepCount,
+                stepProgress: incompleteStepIndex,
+                currentStep: executableSteps[incompleteStepIndex],
+              })
+            } else {
+              setBidStep(BidStep.Complete)
+            }
+          },
         })
-        setTransactionError(transactionError)
-      })
-  }, [
-    tokenId,
-    collectionId,
-    currency,
-    client,
-    signer,
-    bidAmount,
-    expirationOption,
-    trait,
-  ])
+        .catch((e: any) => {
+          const transactionError = new Error(e?.message || '', {
+            cause: e,
+          })
+          setTransactionError(transactionError)
+        })
+    },
+    [
+      tokenId,
+      collectionId,
+      currency,
+      client,
+      signer,
+      bidAmount,
+      expirationOption,
+      trait,
+    ]
+  )
 
   return (
     <>

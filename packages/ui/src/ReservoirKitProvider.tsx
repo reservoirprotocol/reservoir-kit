@@ -12,6 +12,7 @@ import { ReservoirClientOptions } from '@reservoir0x/reservoir-sdk'
 import { ReservoirKitTheme, darkTheme } from './themes'
 import { ReservoirClientProvider } from './ReservoirClientProvider'
 import { SWRConfig } from 'swr'
+import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
 export type CoinId = {
   [key: string]: string
@@ -109,13 +110,15 @@ export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
 
   return (
     <ThemeContext.Provider value={globalTheme}>
-      <ProviderOptionsContext.Provider value={providerOptions}>
-        <ReservoirClientProvider options={options}>
-          <SWRConfig value={{ ...swrDefaultOptions, ...swrOptions }}>
-            {children}
-          </SWRConfig>
-        </ReservoirClientProvider>
-      </ProviderOptionsContext.Provider>
+      <TooltipPrimitive.Provider>
+        <ProviderOptionsContext.Provider value={providerOptions}>
+          <ReservoirClientProvider options={options}>
+            <SWRConfig value={{ ...swrDefaultOptions, ...swrOptions }}>
+              {children}
+            </SWRConfig>
+          </ReservoirClientProvider>
+        </ProviderOptionsContext.Provider>
+      </TooltipPrimitive.Provider>
     </ThemeContext.Provider>
   )
 }

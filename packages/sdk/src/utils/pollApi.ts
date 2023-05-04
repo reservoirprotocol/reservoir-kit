@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { axios } from '../utils'
 
 /**
  * Poll the URL with a 5 second interval until the step has data

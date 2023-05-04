@@ -330,6 +330,7 @@ export function BidModal({
                         amount={wrappedBalance?.value}
                         address={wrappedContractAddress}
                         decimals={wrappedBalance?.decimals}
+                        symbol={wrappedBalance?.symbol}
                       />{' '}
                     </Text>
                   </Flex>
@@ -570,7 +571,10 @@ export function BidModal({
                       </Button>
                     )}
                     {bidAmount !== '' && hasEnoughWrappedCurrency && (
-                      <Button onClick={placeBid} css={{ width: '100%' }}>
+                      <Button
+                        onClick={() => placeBid()}
+                        css={{ width: '100%' }}
+                      >
                         {token && token.token
                           ? 'Make an Offer'
                           : trait
@@ -585,7 +589,10 @@ export function BidModal({
                             <Text style="body3" color="error">
                               {balance?.symbol || 'ETH'} Balance
                             </Text>
-                            <FormatCryptoCurrency amount={balance?.value} />
+                            <FormatCryptoCurrency
+                              amount={balance?.value}
+                              symbol={balance?.symbol}
+                            />
                           </Flex>
                         )}
                         <Flex
@@ -612,7 +619,7 @@ export function BidModal({
                             <Button
                               css={{ flex: 1, maxHeight: 44 }}
                               disabled={!hasEnoughNativeCurrency}
-                              onClick={placeBid}
+                              onClick={() => placeBid()}
                             >
                               <Text style="h6" color="button" ellipsify>
                                 Convert {amountToWrap}{' '}
@@ -711,7 +718,7 @@ export function BidModal({
                       >
                         Edit Offer
                       </Button>
-                      <Button css={{ flex: 1 }} onClick={placeBid}>
+                      <Button css={{ flex: 1 }} onClick={() => placeBid()}>
                         Retry
                       </Button>
                     </Flex>
