@@ -260,7 +260,11 @@ export async function executeSteps(
                 )
 
                 //Confirm that on-chain tx has been picked up by the indexer
-                if (stepItem.txHash && (isSell || isBuy)) {
+                if (
+                  step.id === 'sale' &&
+                  stepItem.txHash &&
+                  (isSell || isBuy)
+                ) {
                   client.log(
                     [
                       'Execute Steps: Polling sales to verify transaction was indexed',
