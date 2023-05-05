@@ -82,6 +82,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
+  const client = useReservoirClient()
   const { data: signer } = useSigner()
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [prices, setPrices] = useState<AcceptBidPrice[]>([])
@@ -93,6 +94,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const { chain: activeChain } = useNetwork()
   const blockExplorerBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+  const [isFetchingBidPath, setIsFetchingBidPath] = useState(false)
+  const [bidsPath, setBidsPath] = useState<Execute['path'] | null>(null)
 
   const _tokenIds = tokens.map((token) => {
     const contract = (token?.collectionId || '').split(':')[0]
@@ -174,6 +177,65 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     open && bidIds.length > 0 ? true : false
   )
 
+  useEffect(() => {
+    if (!open || !signer || !client) {
+      setIsFetchingBidPath(false)
+      return
+    }
+    setIsFetchingBidPath(true)
+    type AcceptOfferOptions = Parameters<
+      ReservoirClientActions['acceptOffer']
+    >['0']['options']
+    let options: AcceptOfferOptions = {
+      onlyPath: true,
+    }
+    if (normalizeRoyalties !== undefined) {
+      options.normalizeRoyalties = normalizeRoyalties
+    }
+
+    type AcceptBidItems = Parameters<
+      ReservoirClientActions['acceptOffer']
+    >[0]['items']
+    const items: AcceptBidItems = tokens?.reduce((items, token) => {
+      if (tokens) {
+        const contract = token.collectionId.split(':')[0]
+        const bids = token.bidIds
+          ? token.bidIds.filter((bid) => bid.length > 0)
+          : []
+        if (bids && bids.length > 0) {
+          bids.forEach((bidId) => {
+            items.push({
+              orderId: bidId,
+              token: `${contract}:${token.tokenId}`,
+            })
+          })
+        } else {
+          items.push({
+            token: `${contract}:${token.tokenId}`,
+          })
+        }
+      }
+      return items
+    }, [] as AcceptBidItems)
+
+    client.actions
+      .acceptOffer({
+        items: items,
+        signer: signer,
+        options,
+        precheck: true,
+        onProgress: () => {},
+      })
+      .then((data) => {
+        setBidsPath(
+          data && data['path'] ? (data['path'] as Execute['path']) : null
+        )
+      })
+      .finally(() => {
+        setIsFetchingBidPath(false)
+      })
+  }, [client, tokens, open])
+
   const bids = useMemo(
     () =>
       bidData
@@ -200,8 +262,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         .map((bid) => ({ ...bid, tokenData: bidTokenMap[bid.id].tokenData })),
     [bidData, bidTokenMap]
   )
-
-  const client = useReservoirClient()
 
   const currencySymbols = useMemo(
     () =>
@@ -272,7 +332,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         const contract = tokenData.collectionId.split(':')[0]
         items.push({
           orderId: bid.id,
-          token: `${contract}${tokenData.tokenId}`,
+          token: `${contract}:${tokenData.tokenId}`,
         })
       }
       return items

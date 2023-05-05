@@ -2,6 +2,7 @@ import { Signer } from 'ethers'
 import { getClient } from '.'
 import { Execute, paths } from '../types'
 import { executeSteps, request } from '../utils'
+import axios, { AxiosRequestConfig } from 'axios'
 
 type AcceptOfferBodyParameters =
   paths['/execute/sell/v7']['post']['parameters']['body']['body']
@@ -17,6 +18,7 @@ type Data = {
   expectedPrice?: number | Record<string, number>
   signer: Signer
   onProgress: (steps: Execute['steps']) => any
+  precheck?: boolean
 }
 
 /**
@@ -26,9 +28,10 @@ type Data = {
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.options Additional options to pass into the accept request
  * @param data.onProgress Callback to update UI state as execution progresses
+ * @param data.precheck Set to true to skip executing steps and just to get the initial steps/path
  */
 export async function acceptOffer(data: Data) {
-  const { items, expectedPrice, signer, onProgress } = data
+  const { items, expectedPrice, signer, onProgress, precheck } = data
   const taker = await signer.getAddress()
   const client = getClient()
   const options = data.options || {}
@@ -53,18 +56,30 @@ export async function acceptOffer(data: Data) {
       params.normalizeRoyalties = client.normalizeRoyalties
     }
 
-    await executeSteps(
-      {
-        url: `${baseApiUrl}/execute/sell/v7`,
-        method: 'post',
-        data: params,
-      },
-      signer,
-      onProgress,
-      undefined,
-      expectedPrice
-    )
-    return true
+    const request: AxiosRequestConfig = {
+      url: `${baseApiUrl}/execute/sell/v7`,
+      method: 'post',
+      data: params,
+    }
+
+    if (precheck) {
+      const apiKey = client.currentChain()?.apiKey
+      if (apiKey && request.headers) {
+        request.headers['x-api-key'] = apiKey
+      }
+      if (client?.uiVersion && request.headers) {
+        request.headers['x-rkui-version'] = client.uiVersion
+      }
+
+      const res = await axios.request(request)
+      if (res.status !== 200) throw res.data
+      const data = res.data as Execute
+      onProgress(data['steps'])
+      return data
+    } else {
+      await executeSteps(request, signer, onProgress, undefined, expectedPrice)
+      return true
+    }
   } catch (err: any) {
     items.forEach(({ token }) => {
       const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
