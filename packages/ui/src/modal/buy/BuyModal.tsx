@@ -158,6 +158,16 @@ export function BuyModal({
           steps?.filter((step) => step.items && step.items.length > 0) || []
         const lastStepItems =
           executableSteps[executableSteps.length - 1]?.items || []
+
+        const totalPurchases =
+          stepData?.currentStep?.items?.reduce(
+            (total, item) => total + (item?.salesData?.length || 0),
+            0
+          ) || 0
+
+        const failedPurchases =
+          (stepData?.currentStep.items?.length || 0) - totalPurchases
+
         let finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
         let price = listing?.price?.amount?.decimal || 0
