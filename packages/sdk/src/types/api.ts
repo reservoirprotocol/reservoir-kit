@@ -1586,6 +1586,7 @@ export interface definitions {
     id: number;
     orderId: string;
     orderbook: string;
+    /** @description Possible values: pending - Waiting to be submitted. posted - Successfully submitted to the marketplace. posted - Failed to be submitted to the marketplace (see statusReason for detail). */
     status: string;
     statusReason: string;
     createdAt: string;
@@ -3720,6 +3721,8 @@ export interface definitions {
     kind?: string;
     name?: string;
     image?: string;
+    supply?: number;
+    remainingSupply?: number;
     rarityScore?: number;
     rarityRank?: number;
     media?: string;
@@ -4717,6 +4720,7 @@ export interface definitions {
       | "zeroex-v4"
       | "seaport"
       | "seaport-v1.4"
+      | "seaport-v1.5"
       | "x2y2"
       | "universe"
       | "rarible"
@@ -4820,6 +4824,7 @@ export interface definitions {
       | "zeroex-v4"
       | "seaport"
       | "seaport-v1.4"
+      | "seaport-v1.5"
       | "x2y2"
       | "universe"
       | "rarible"
@@ -4927,26 +4932,38 @@ export interface definitions {
   };
   Model412: definitions["Model411"][];
   Model413: {
+    kind?: string;
+    recipient?: string;
+    bps?: number;
+    amount?: number;
+    rawAmount?: string;
+  };
+  builtInFees: definitions["Model413"][];
+  Model414: {
     orderId?: string;
     contract?: string;
     tokenId?: string;
     quantity?: number;
     source?: string;
     currency?: string;
+    currencySymbol?: string;
+    currencyDecimals?: number;
     quote?: number;
     rawQuote?: string;
     buyInQuote?: number;
     buyInRawQuote?: string;
+    builtInFees?: definitions["builtInFees"];
+    feesOnTop?: definitions["builtInFees"];
   };
-  Model414: definitions["Model413"][];
+  Model415: definitions["Model414"][];
   getExecuteBuyV7Response: {
     steps?: definitions["Model410"];
     errors?: definitions["Model412"];
-    path?: definitions["Model414"];
+    path?: definitions["Model415"];
   };
-  Model415: string[];
-  Model416: {
-    orderIds?: definitions["Model415"];
+  Model416: string[];
+  Model417: {
+    orderIds?: definitions["Model416"];
     maker?: string;
     /** @enum {string} */
     orderKind?:
@@ -4970,9 +4987,9 @@ export interface definitions {
     steps?: definitions["Model401"];
   };
   /** @description Ids of the orders to cancel */
-  Model417: string[];
-  Model418: {
-    orderIds: definitions["Model417"];
+  Model418: string[];
+  Model419: {
+    orderIds: definitions["Model418"];
     /**
      * @description Exchange protocol used to bulk cancel order. Example: `seaport-v1.4`
      * @default seaport-v1.4
@@ -4980,7 +4997,7 @@ export interface definitions {
      */
     orderKind?: "seaport-v1.4" | "alienswap" | "blur-bid";
   };
-  Model419: {
+  Model420: {
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Quanity of tokens user is listing. Only compatible with ERC1155 tokens. Example: `5` */
@@ -5017,26 +5034,26 @@ export interface definitions {
     /** @default 0x0000000000000000000000000000000000000000 */
     currency?: string;
   };
-  Model420: definitions["Model419"][];
-  Model421: {
+  Model421: definitions["Model420"][];
+  Model422: {
     /** @description Address of wallet making the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     maker: string;
     /** @description Domain of the platform that created the order. Example: `chimpers.xyz` */
     source?: string;
-    params?: definitions["Model420"];
+    params?: definitions["Model421"];
   };
-  Model422: {
+  Model423: {
     /** @enum {string} */
     kind: "request" | "signature" | "transaction";
     action: string;
     description: string;
     items: definitions["Model126"];
   };
-  Model423: definitions["Model422"][];
+  Model424: definitions["Model423"][];
   getExecuteListV3Response: {
-    steps?: definitions["Model423"];
+    steps?: definitions["Model424"];
   };
-  Model424: {
+  Model425: {
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Quantity of tokens user is listing. Only compatible with ERC1155 tokens. Example: `5` */
@@ -5090,13 +5107,13 @@ export interface definitions {
     /** @default 0x0000000000000000000000000000000000000000 */
     currency?: string;
   };
-  Model425: definitions["Model424"][];
-  Model426: {
+  Model426: definitions["Model425"][];
+  Model427: {
     /** @description Address of wallet making the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     maker: string;
     /** @description Domain of your app that is creating the order, e.g. `myapp.xyz`. This is used for filtering, and to attribute the "order source" of sales in on-chain analytics, to help your app get discovered. Lean more <a href='https://docs.reservoir.tools/docs/calldata-attribution'>here</a> */
     source?: string;
-    params?: definitions["Model425"];
+    params?: definitions["Model426"];
   };
   getExecuteListV4Response: {
     steps?: definitions["Model381"];
@@ -5106,11 +5123,11 @@ export interface definitions {
     replaceOrderId?: string;
   };
   /** @description Additional options. */
-  Model427: {
+  Model428: {
     "seaport-v1.4"?: definitions["seaport-v1.4"];
     alienswap?: definitions["alienswap"];
   };
-  Model428: {
+  Model429: {
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Quantity of tokens user is listing. Only compatible with ERC1155 tokens. Example: `5` */
@@ -5133,7 +5150,7 @@ export interface definitions {
       | "universe"
       | "flow"
       | "alienswap";
-    options?: definitions["Model427"];
+    options?: definitions["Model428"];
     /**
      * @description Orderbook where order is placed. Example: `Reservoir`
      * @default reservoir
@@ -5168,15 +5185,15 @@ export interface definitions {
     /** @default 0x0000000000000000000000000000000000000000 */
     currency?: string;
   };
-  Model429: definitions["Model428"][];
-  Model430: {
+  Model430: definitions["Model429"][];
+  Model431: {
     /** @description Address of wallet making the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     maker: string;
     /** @description Domain of your app that is creating the order, e.g. `myapp.xyz`. This is used for filtering, and to attribute the "order source" of sales in on-chain analytics, to help your app get discovered. Lean more <a href='https://docs.reservoir.tools/docs/calldata-attribution'>here</a> */
     source?: string;
-    params?: definitions["Model429"];
+    params?: definitions["Model430"];
   };
-  Model431: {
+  Model432: {
     orderId?: string;
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
@@ -5196,7 +5213,7 @@ export interface definitions {
     /** @description Optional. Set custom gas price. */
     maxPriorityFeePerGas?: string;
   };
-  Model432: {
+  Model433: {
     orderId?: string;
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
@@ -5220,16 +5237,15 @@ export interface definitions {
     /** @description Override the X2Y2 API key used for filling. */
     x2y2ApiKey?: string;
   };
-  Model433: {
+  Model434: {
     /** @enum {string} */
     kind:
       | "opensea"
       | "looks-rare"
       | "zeroex-v4"
       | "seaport"
-      | "seaport-partial"
       | "seaport-v1.4"
-      | "seaport-v1.4-partial"
+      | "seaport-v1.5"
       | "x2y2"
       | "universe"
       | "flow";
@@ -5240,10 +5256,10 @@ export interface definitions {
    * The currency used for any fees on top matches the accepted bid's currency.
    * Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00:1000000000000000`
    */
-  Model434: string[];
-  Model435: {
+  Model435: string[];
+  Model436: {
     orderId?: string;
-    rawOrder?: definitions["Model433"];
+    rawOrder?: definitions["Model434"];
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Address of wallet filling the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
@@ -5252,7 +5268,7 @@ export interface definitions {
     quantity?: number;
     /** @description Filling source used for attribution. Example: `reservoir.market` */
     source?: string;
-    feesOnTop?: definitions["Model434"];
+    feesOnTop?: definitions["Model435"];
     /**
      * @description If true, only the path will be returned.
      * @default false
@@ -5278,7 +5294,7 @@ export interface definitions {
     x2y2ApiKey?: string;
   };
   /** @description Optional raw order to sell into. */
-  Model436: {
+  Model437: {
     /** @enum {string} */
     kind:
       | "opensea"
@@ -5286,6 +5302,7 @@ export interface definitions {
       | "zeroex-v4"
       | "seaport"
       | "seaport-v1.4"
+      | "seaport-v1.5"
       | "x2y2"
       | "universe"
       | "rarible"
@@ -5293,7 +5310,7 @@ export interface definitions {
       | "nftx";
     data: definitions["source"];
   };
-  Model437: {
+  Model438: {
     /** @description Token to sell. */
     token: string;
     /**
@@ -5303,19 +5320,19 @@ export interface definitions {
     quantity?: number;
     /** @description Optional order id to sell into. */
     orderId?: string;
-    rawOrder?: definitions["Model436"];
+    rawOrder?: definitions["Model437"];
     /** @description Only consider orders from this source. */
     exactOrderSource?: string;
   };
   /** @description List of items to sell. */
-  Model438: definitions["Model437"][];
-  Model439: {
-    items: definitions["Model438"];
+  Model439: definitions["Model438"][];
+  Model440: {
+    items: definitions["Model439"];
     /** @description Address of wallet filling. */
     taker: string;
     /** @description Filling source used for attribution. */
     source?: string;
-    feesOnTop?: definitions["Model434"];
+    feesOnTop?: definitions["Model435"];
     /**
      * @description If true, only the filling path will be returned.
      * @default false
@@ -5355,30 +5372,22 @@ export interface definitions {
     /** @description Optional OpenSea API key used for filling. You don't need to pass your own key, but if you don't, you are more likely to be rate-limited. */
     openseaApiKey?: string;
   };
-  Model440: {
+  Model441: {
     /** @enum {string} */
     status: "complete" | "incomplete";
     tip?: string;
     data?: definitions["source"];
   };
-  Model441: definitions["Model440"][];
-  Model442: {
+  Model442: definitions["Model441"][];
+  Model443: {
     id: string;
     action: string;
     description: string;
     /** @enum {string} */
     kind: "signature" | "transaction";
-    items: definitions["Model441"];
+    items: definitions["Model442"];
   };
-  Model443: definitions["Model442"][];
-  Model444: {
-    kind?: string;
-    recipient?: string;
-    bps?: number;
-    amount?: number;
-    rawAmount?: string;
-  };
-  builtInFees: definitions["Model444"][];
+  Model444: definitions["Model443"][];
   Model445: {
     orderId?: string;
     contract?: string;
@@ -5386,6 +5395,8 @@ export interface definitions {
     quantity?: number;
     source?: string;
     currency?: string;
+    currencySymbol?: string;
+    currencyDecimals?: number;
     quote?: number;
     rawQuote?: string;
     builtInFees?: definitions["builtInFees"];
@@ -5393,7 +5404,7 @@ export interface definitions {
   };
   Model446: definitions["Model445"][];
   getExecuteSellV7Response: {
-    steps?: definitions["Model443"];
+    steps?: definitions["Model444"];
     errors?: definitions["Model412"];
     path?: definitions["Model446"];
   };
@@ -10661,7 +10672,7 @@ export interface operations {
   postExecuteCancelV3: {
     parameters: {
       body: {
-        body?: definitions["Model416"];
+        body?: definitions["Model417"];
       };
     };
     responses: {
@@ -10680,7 +10691,7 @@ export interface operations {
         auth?: string;
       };
       body: {
-        body?: definitions["Model418"];
+        body?: definitions["Model419"];
       };
     };
     responses: {
@@ -10694,7 +10705,7 @@ export interface operations {
   postExecuteListV3: {
     parameters: {
       body: {
-        body?: definitions["Model421"];
+        body?: definitions["Model422"];
       };
     };
     responses: {
@@ -10708,7 +10719,7 @@ export interface operations {
   postExecuteListV4: {
     parameters: {
       body: {
-        body?: definitions["Model426"];
+        body?: definitions["Model427"];
       };
     };
     responses: {
@@ -10725,7 +10736,7 @@ export interface operations {
   postExecuteListV5: {
     parameters: {
       body: {
-        body?: definitions["Model430"];
+        body?: definitions["Model431"];
       };
     };
     responses: {
@@ -10738,7 +10749,7 @@ export interface operations {
   postExecuteSellV4: {
     parameters: {
       body: {
-        body?: definitions["Model431"];
+        body?: definitions["Model432"];
       };
     };
     responses: {
@@ -10751,7 +10762,7 @@ export interface operations {
   postExecuteSellV5: {
     parameters: {
       body: {
-        body?: definitions["Model432"];
+        body?: definitions["Model433"];
       };
     };
     responses: {
@@ -10764,7 +10775,7 @@ export interface operations {
   postExecuteSellV6: {
     parameters: {
       body: {
-        body?: definitions["Model435"];
+        body?: definitions["Model436"];
       };
     };
     responses: {
@@ -10777,7 +10788,7 @@ export interface operations {
   postExecuteSellV7: {
     parameters: {
       body: {
-        body?: definitions["Model439"];
+        body?: definitions["Model440"];
       };
     };
     responses: {
