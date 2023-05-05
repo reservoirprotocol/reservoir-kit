@@ -7,7 +7,7 @@ import { ReservoirEvent } from '../utils/events'
 export type ReservoirChain = {
   id: number
   baseApiUrl: string
-  default: boolean
+  active: boolean
   apiKey?: string
 }
 
@@ -95,7 +95,7 @@ export class ReservoirClient {
 
   currentChain() {
     if (this.chains && this.chains.length > 0) {
-      const defaultChain = this.chains.find((chain) => chain.default)
+      const defaultChain = this.chains.find((chain) => chain.active)
       if (defaultChain) {
         return defaultChain
       }
