@@ -963,22 +963,18 @@ function cartStore({
       const currencyChain = client.chains.find(
         (chain) => (chainCurrency.chainId = chain.id)
       )
-      const expectedPrice = cartData.current.totalPrice
+      const referrerFee =
+        cartData.current.referrer && cartData.current.referrerFee
+          ? cartData.current.referrerFee
+          : 0
+      const expectedPrice = cartData.current.totalPrice - referrerFee
 
       if (isMixedCurrency) {
         options.currency = constants.AddressZero
       }
 
-      if (cartData.current.referrer && cartData.current.referrerFeeBps) {
-        const price = toFixed(
-          expectedPrice,
-          cartData.current.currency?.decimals || 18
-        )
-        const fee = utils
-          .parseUnits(`${price}`, cartData.current.currency?.decimals)
-          .mul(cartData.current.referrerFeeBps)
-          .div(10000)
-        const atomicUnitsFee = formatUnits(fee, 0)
+      if (referrerFee) {
+        const atomicUnitsFee = formatUnits(referrerFee, 0)
         options.feesOnTop = [`${cartData.current.referrer}:${atomicUnitsFee}`]
       }
 
