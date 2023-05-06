@@ -6,15 +6,14 @@ import React, {
   ReactNode,
   useMemo,
 } from 'react'
-import {
-  useTokens,
-  useCoinConversion,
-  useReservoirClient,
-  useBids,
-} from '../../hooks'
+import { useTokens, useCoinConversion, useReservoirClient } from '../../hooks'
 import { useAccount, useSigner, useNetwork } from 'wagmi'
-import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
-import { utils } from 'ethers'
+import {
+  Execute,
+  ReservoirClientActions,
+  paths,
+} from '@reservoir0x/reservoir-sdk'
+import { Currency } from '../../types/Currency'
 
 export enum AcceptBidStep {
   Checkout,
@@ -25,10 +24,15 @@ export enum AcceptBidStep {
   Unavailable,
 }
 
+type SellPath = NonNullable<
+  paths['/execute/buy/v7']['post']['responses']['200']['schema']['path']
+>
+
 export type AcceptBidTokenData = {
   tokenId: string
   collectionId: string
   bidIds?: string[]
+  bidsPath?: SellPath
 }
 
 export type EnhancedAcceptBidTokenData = Required<AcceptBidTokenData> & {
@@ -38,9 +42,7 @@ export type EnhancedAcceptBidTokenData = Required<AcceptBidTokenData> & {
 export type AcceptBidPrice = {
   netAmount: number
   amount: number
-  currency: NonNullable<
-    ReturnType<typeof useBids>['data'][0]['price']
-  >['currency']
+  currency: Currency
   royalty: number
   marketplaceFee: number
 }
@@ -54,9 +56,6 @@ export type AcceptBidStepData = {
 type ChildrenProps = {
   loading: boolean
   tokensData: EnhancedAcceptBidTokenData[]
-  bids: (NonNullable<ReturnType<typeof useBids>['data']>[0] & {
-    tokenData: EnhancedAcceptBidTokenData['tokenData']
-  })[]
   acceptBidStep: AcceptBidStep
   transactionError?: Error | null
   txHash: string | null
@@ -95,7 +94,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const blockExplorerBaseUrl =
     activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
   const [isFetchingBidPath, setIsFetchingBidPath] = useState(false)
-  const [bidsPath, setBidsPath] = useState<Execute['path'] | null>(null)
+  const [bidsPath, setBidsPath] = useState<SellPath | null>(null)
 
   const _tokenIds = tokens.map((token) => {
     const contract = (token?.collectionId || '').split(':')[0]
@@ -108,7 +107,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   } = useTokens(
     open && {
       tokens: _tokenIds,
-      includeTopBid: true,
       normalizeRoyalties,
     },
     {
@@ -122,10 +120,24 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       return map
     }, {} as Record<string, typeof tokensData[0]>)
 
+    const tokensBidPathMap =
+      bidsPath?.reduce((map, path) => {
+        const key = `${path.contract}:${path.tokenId}`
+        if (!map[key]) {
+          map[key] = [path]
+        } else {
+          map[key].push(path)
+        }
+        return map
+      }, {} as Record<string, SellPath>) || {}
+
     return tokens.reduce((enhancedTokens, token) => {
       const dataMapKey = `${token.collectionId}:${token.tokenId}`
       const tokenData = tokensDataMap[dataMapKey]
       const bidIds = token.bidIds?.filter((bidId) => bidId.length > 0) || []
+      const bidsPath = tokensBidPathMap[dataMapKey]
+        ? tokensBidPathMap[dataMapKey]
+        : []
       if (!bidIds.length) {
         if (tokenData && tokenData.market?.topBid?.id) {
           enhancedTokens.push({
@@ -134,6 +146,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               ? [tokenData.market.topBid.id]
               : [],
             tokenData,
+            bidsPath,
           })
         }
       } else {
@@ -141,11 +154,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           ...token,
           bidIds: token.bidIds || [],
           tokenData,
+          bidsPath,
         })
       }
       return enhancedTokens
     }, [] as EnhancedAcceptBidTokenData[])
-  }, [tokensData, tokens])
+  }, [tokensData, tokens, bidsPath])
 
   const bidTokenMap = useMemo(
     () =>
@@ -158,126 +172,93 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     [enhancedTokens]
   )
 
-  const bidIds = enhancedTokens.map((token) => token.bidIds).flat()
+  const fetchBidsPath = useCallback(
+    (tokens: AcceptBidTokenData[]) => {
+      if (!signer || !client) {
+        setIsFetchingBidPath(false)
+        return
+      }
+      setIsFetchingBidPath(true)
+      type AcceptOfferOptions = Parameters<
+        ReservoirClientActions['acceptOffer']
+      >['0']['options']
+      let options: AcceptOfferOptions = {
+        onlyPath: true,
+      }
+      if (normalizeRoyalties !== undefined) {
+        options.normalizeRoyalties = normalizeRoyalties
+      }
 
-  const {
-    data: bidData,
-    isValidating: isFetchingBidData,
-    mutate: mutateBids,
-  } = useBids(
-    {
-      ids: bidIds,
-      status: 'active',
-      includeCriteriaMetadata: true,
-      normalizeRoyalties,
+      type AcceptBidItems = Parameters<
+        ReservoirClientActions['acceptOffer']
+      >[0]['items']
+      const items: AcceptBidItems = tokens?.reduce((items, token) => {
+        if (tokens) {
+          const contract = token.collectionId.split(':')[0]
+          const bids = token.bidIds
+            ? token.bidIds.filter((bid) => bid.length > 0)
+            : []
+          if (bids && bids.length > 0) {
+            bids.forEach((bidId) => {
+              items.push({
+                orderId: bidId,
+                token: `${contract}:${token.tokenId}`,
+              })
+            })
+          } else {
+            items.push({
+              token: `${contract}:${token.tokenId}`,
+            })
+          }
+        }
+        return items
+      }, [] as AcceptBidItems)
+
+      client.actions
+        .acceptOffer({
+          items: items,
+          signer: signer,
+          options,
+          precheck: true,
+          onProgress: () => {},
+        })
+        .then((data) => {
+          setBidsPath(
+            'path' in (data as any)
+              ? ((data as Execute)['path'] as SellPath)
+              : null
+          )
+        })
+        .finally(() => {
+          setIsFetchingBidPath(false)
+        })
     },
-    {
-      revalidateFirstPage: true,
-    },
-    open && bidIds.length > 0 ? true : false
+    [client, signer]
   )
 
   useEffect(() => {
-    if (!open || !signer || !client) {
-      setIsFetchingBidPath(false)
-      return
+    if (open) {
+      fetchBidsPath(tokens)
     }
-    setIsFetchingBidPath(true)
-    type AcceptOfferOptions = Parameters<
-      ReservoirClientActions['acceptOffer']
-    >['0']['options']
-    let options: AcceptOfferOptions = {
-      onlyPath: true,
-    }
-    if (normalizeRoyalties !== undefined) {
-      options.normalizeRoyalties = normalizeRoyalties
-    }
-
-    type AcceptBidItems = Parameters<
-      ReservoirClientActions['acceptOffer']
-    >[0]['items']
-    const items: AcceptBidItems = tokens?.reduce((items, token) => {
-      if (tokens) {
-        const contract = token.collectionId.split(':')[0]
-        const bids = token.bidIds
-          ? token.bidIds.filter((bid) => bid.length > 0)
-          : []
-        if (bids && bids.length > 0) {
-          bids.forEach((bidId) => {
-            items.push({
-              orderId: bidId,
-              token: `${contract}:${token.tokenId}`,
-            })
-          })
-        } else {
-          items.push({
-            token: `${contract}:${token.tokenId}`,
-          })
-        }
-      }
-      return items
-    }, [] as AcceptBidItems)
-
-    client.actions
-      .acceptOffer({
-        items: items,
-        signer: signer,
-        options,
-        precheck: true,
-        onProgress: () => {},
-      })
-      .then((data) => {
-        setBidsPath(
-          data && data['path'] ? (data['path'] as Execute['path']) : null
-        )
-      })
-      .finally(() => {
-        setIsFetchingBidPath(false)
-      })
   }, [client, tokens, open])
-
-  const bids = useMemo(
-    () =>
-      bidData
-        .filter((bid) => {
-          const tokenData = bidTokenMap[bid.id]
-          if (
-            bid &&
-            bid.status === 'active' &&
-            bid.price?.netAmount?.decimal !== undefined &&
-            bid.criteria?.data?.collection?.id === tokenData.collectionId
-          ) {
-            if (bid.criteria?.kind === 'token') {
-              const tokenSetPieces = bid.tokenSetId.split(':')
-              const bidTokenId = tokenSetPieces[tokenSetPieces.length - 1]
-              if (tokenData.tokenId === bidTokenId) {
-                return true
-              }
-            } else {
-              return true
-            }
-          }
-          return false
-        })
-        .map((bid) => ({ ...bid, tokenData: bidTokenMap[bid.id].tokenData })),
-    [bidData, bidTokenMap]
-  )
 
   const currencySymbols = useMemo(
     () =>
       Array.from(
-        bids.reduce((symbols, bid) => {
-          if (bid.price?.currency?.symbol) {
-            symbols.add(bid.price?.currency?.symbol)
-          }
+        enhancedTokens.reduce((symbols, { bidsPath }) => {
+          bidsPath.forEach(({ currencySymbol }) => {
+            if (currencySymbol) {
+              symbols.add(currencySymbol)
+            }
+          })
           return symbols
         }, new Set() as Set<string>)
       ).join(''),
-    [bids]
+    [enhancedTokens]
   )
 
   const conversions = useCoinConversion(
-    open && bidIds.length > 0 ? 'USD' : undefined,
+    open && currencySymbols.length > 0 ? 'USD' : undefined,
     currencySymbols
   )
 
@@ -297,7 +278,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (!bids) {
+    if (!bidsPath) {
       const error = new Error('Missing bids to accept')
       setTransactionError(error)
       throw error
@@ -326,17 +307,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     type AcceptBidItems = Parameters<
       ReservoirClientActions['acceptOffer']
     >[0]['items']
-    const items: AcceptBidItems = bids?.reduce((items, bid) => {
-      const tokenData = bidTokenMap[bid.id]
-      if (tokenData) {
-        const contract = tokenData.collectionId.split(':')[0]
-        items.push({
-          orderId: bid.id,
-          token: `${contract}:${tokenData.tokenId}`,
-        })
-      }
-      return items
-    }, [] as AcceptBidItems)
+    const items: AcceptBidItems = bidsPath.map(
+      ({ orderId, tokenId, contract }) => ({
+        orderId: orderId,
+        token: `${contract}:${tokenId}`,
+      })
+    )
 
     const expectedPrice: Record<string, number> = {}
     for (let currency in prices) {
@@ -424,63 +400,86 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         setTransactionError(transactionError)
         setAcceptBidStep(AcceptBidStep.Checkout)
         setStepData(null)
-        mutateBids()
+        fetchBidsPath(tokens)
         mutateTokens()
       })
-  }, [bids, bidTokenMap, client, signer, prices, mutateTokens, mutateBids])
+  }, [bidsPath, bidTokenMap, client, signer, prices, mutateTokens])
 
   useEffect(() => {
-    if (bids && bids.length > 0) {
-      const prices: Record<string, AcceptBidPrice> = bids.reduce((map, bid) => {
-        const price = bid.price
-        const currency = price?.currency
-        const netAmount = price?.netAmount?.decimal || 0
-        const amount = price?.amount?.decimal || 0
-        let royalty = 0
-        let marketplaceFee = 0
-
-        if (currency && currency.symbol) {
-          bid.feeBreakdown?.forEach((fee) => {
-            const feeAmount = utils
-              .parseUnits(`${amount}`, currency.decimals)
-              .mul(fee.bps || 0)
-              .div(10000)
-            switch (fee.kind) {
-              case 'marketplace': {
-                marketplaceFee = feeAmount.toNumber()
-                break
-              }
-              case 'royalty': {
-                royalty = feeAmount.toNumber()
-                break
-              }
-            }
-          })
-          if (!map[currency.symbol]) {
-            map[currency.symbol] = {
-              netAmount,
-              amount,
-              currency,
-              royalty,
-              marketplaceFee,
-            }
-          } else if (map[currency.symbol]) {
-            map[currency.symbol].netAmount += netAmount
-            map[currency.symbol].amount += amount
-            map[currency.symbol].royalty += royalty
-            map[currency.symbol].marketplaceFee += marketplaceFee
+    if (bidsPath && bidsPath.length > 0) {
+      const prices: Record<string, AcceptBidPrice> = bidsPath.reduce(
+        (
+          map,
+          {
+            quote,
+            currency,
+            currencyDecimals,
+            currencySymbol,
+            builtInFees,
+            feesOnTop,
           }
-        }
-        return map
-      }, {} as Record<string, AcceptBidPrice>)
+        ) => {
+          const netAmount = quote || 0 //TODO: need to subtract from the fees to get the net amount
+          const amount = quote || 0 //TODO: need to subtract from the fees to get the net amount
+          let royalty = 0
+          let marketplaceFee = 0
+
+          if (currency && currencySymbol) {
+            builtInFees?.forEach((fee) => {
+              switch (fee.kind) {
+                case 'marketplace': {
+                  marketplaceFee = fee.amount || 0
+                  break
+                }
+                case 'royalty': {
+                  royalty = fee.amount || 0
+                  break
+                }
+              }
+            })
+            feesOnTop?.forEach((fee) => {
+              switch (fee.kind) {
+                case 'marketplace': {
+                  marketplaceFee = fee.amount || 0
+                  break
+                }
+                case 'royalty': {
+                  royalty = fee.amount || 0
+                  break
+                }
+              }
+            })
+            if (!map[currencySymbol]) {
+              map[currencySymbol] = {
+                netAmount,
+                amount,
+                currency: {
+                  contract: currency,
+                  symbol: currencySymbol,
+                  decimals: currencyDecimals,
+                },
+                royalty,
+                marketplaceFee,
+              }
+            } else if (map[currencySymbol]) {
+              map[currencySymbol].netAmount += netAmount
+              map[currencySymbol].amount += amount
+              map[currencySymbol].royalty += royalty
+              map[currencySymbol].marketplaceFee += marketplaceFee
+            }
+          }
+          return map
+        },
+        {} as Record<string, AcceptBidPrice>
+      )
 
       setPrices(Object.values(prices))
       setAcceptBidStep(AcceptBidStep.Checkout)
-    } else if (!isFetchingBidData) {
+    } else if (!isFetchingBidPath) {
       setPrices([])
       setAcceptBidStep(AcceptBidStep.Unavailable)
     }
-  }, [client, bids, isFetchingBidData])
+  }, [client, bidsPath, isFetchingBidPath])
 
   const { address } = useAccount()
 
@@ -496,8 +495,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
-        loading: isFetchingBidData || isFetchingTokenData,
-        bids,
+        loading: isFetchingBidPath || isFetchingTokenData,
         tokensData: enhancedTokens,
         acceptBidStep,
         transactionError,

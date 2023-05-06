@@ -1,4 +1,10 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useMemo,
+} from 'react'
 import {
   Flex,
   Box,
@@ -88,7 +94,6 @@ export function AcceptBidModal({
         acceptBidStep,
         transactionError,
         txHash,
-        bids,
         usdPrices,
         prices,
         tokensData,
@@ -103,7 +108,6 @@ export function AcceptBidModal({
           if (acceptBidStep === AcceptBidStep.Complete && onBidAccepted) {
             const data: BidData = {
               tokens: tokensData,
-              bids,
               maker: address,
             }
             if (txHash) {
@@ -117,7 +121,6 @@ export function AcceptBidModal({
           if (transactionError && onBidAcceptError) {
             const data: BidData = {
               tokens: tokensData,
-              bids,
               maker: address,
             }
             onBidAcceptError(transactionError, data)
@@ -130,6 +133,15 @@ export function AcceptBidModal({
           }
         }, [stepData])
 
+        const bidCount = useMemo(
+          () =>
+            tokensData.reduce(
+              (total, tokenData) => (total += tokenData.bidsPath.length),
+              0
+            ),
+          [tokensData]
+        )
+
         return (
           <Modal
             trigger={trigger}
@@ -139,7 +151,6 @@ export function AcceptBidModal({
               if (!open && onClose) {
                 const data: BidData = {
                   tokens: tokensData,
-                  bids,
                   maker: address,
                 }
                 onClose(data, stepData, acceptBidStep)
@@ -150,8 +161,7 @@ export function AcceptBidModal({
           >
             {acceptBidStep === AcceptBidStep.Unavailable && !loading && (
               <Flex direction="column">
-                {/* //TODO */}
-                {bids.map(({ tokenData, price, source }) => (
+                {tokensData.map(({ tokenData }) => (
                   <AcceptBidLineItem
                     token={{
                       name: tokenData?.token?.name || '',
@@ -165,12 +175,6 @@ export function AcceptBidModal({
                       tokenData?.token?.image ||
                       tokenData?.token?.collection?.image ||
                       ''
-                    }
-                    price={price?.netAmount?.decimal}
-                    currency={price?.currency?.contract}
-                    decimals={price?.currency?.decimals}
-                    sourceImg={
-                      source?.icon ? (source.icon as string) : undefined
                     }
                   />
                 ))}
@@ -205,45 +209,52 @@ export function AcceptBidModal({
                 )}
                 <Flex justify="between" css={{ px: '$4', pt: '$4' }}>
                   <Text style="subtitle2" color="subtle">
-                    {bids.length > 1 ? `${bids.length} Items` : 'Item'}
+                    {bidCount > 1 ? `${bidCount} Items` : 'Item'}
                   </Text>
                   <Text style="subtitle2" color="subtle">
                     Total Offer Value
                   </Text>
                 </Flex>
-                {bids.map(({ tokenData, price, source, feeBreakdown }) => (
-                  <AcceptBidLineItem
-                    token={{
-                      name: tokenData?.token?.name || '',
-                      id: tokenData?.token?.tokenId || '',
-                    }}
-                    collection={{
-                      id: tokenData?.token?.collection?.id || '',
-                      name: tokenData?.token?.collection?.name || '',
-                    }}
-                    img={
-                      tokenData?.token?.image ||
-                      tokenData?.token?.collection?.image ||
-                      ''
-                    }
-                    price={price?.netAmount?.decimal}
-                    nativePrice={price?.netAmount?.native}
-                    nativeFloorPrice={
-                      tokenData?.market?.floorAsk?.price?.netAmount?.native
-                    }
-                    currency={price?.currency?.contract}
-                    decimals={price?.currency?.decimals}
-                    sourceImg={
-                      source?.icon ? (source.icon as string) : undefined
-                    }
-                    royaltiesBps={feeBreakdown?.reduce((total, fee) => {
-                      if (fee?.kind === 'royalty') {
-                        total += fee?.bps || 0
+                {tokensData.map(({ tokenData, bidsPath }) =>
+                  bidsPath.map((bidPath) => (
+                    <AcceptBidLineItem
+                      token={{
+                        name: tokenData?.token?.name || '',
+                        id: tokenData?.token?.tokenId || '',
+                      }}
+                      collection={{
+                        id: tokenData?.token?.collection?.id || '',
+                        name: tokenData?.token?.collection?.name || '',
+                      }}
+                      img={
+                        tokenData?.token?.image ||
+                        tokenData?.token?.collection?.image ||
+                        ''
                       }
-                      return total
-                    }, 0)}
-                  />
-                ))}
+                      price={bidPath.quote}
+                      currency={bidPath.currency}
+                      decimals={bidPath.currencyDecimals}
+                      sourceImg={
+                        bidPath.source
+                          ? `https://api.reservoir.tools/redirect/sources/${bidPath.source}/logo/v2`
+                          : ''
+                      }
+                      // nativePrice={price?.netAmount?.native}
+                      // nativeFloorPrice={
+                      //   tokenData?.market?.floorAsk?.price?.netAmount?.native
+                      // }
+                      royaltiesBps={bidPath.builtInFees?.reduce(
+                        (total, fee) => {
+                          if (fee?.kind === 'royalty') {
+                            total += fee?.bps || 0
+                          }
+                          return total
+                        },
+                        0
+                      )}
+                    />
+                  ))
+                )}
 
                 {prices.map((price) => (
                   <Collapsible
