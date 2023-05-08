@@ -1,5 +1,4 @@
 import useSWR, { SWRConfiguration } from 'swr'
-import { goerli } from 'wagmi'
 import useReservoirClient from './useReservoirClient'
 
 export type OpenSeaTokenResponse = {
@@ -22,7 +21,7 @@ export default function (
   const client = useReservoirClient()
 
   const baseUrl =
-    client?.currentChain()?.id === goerli.id
+    client?.currentChain()?.id === 5
       ? 'https://testnets-api.opensea.io/api/v1/assets'
       : 'https://api.opensea.io/api/v1/assets'
 

@@ -2,7 +2,6 @@ import { axios } from '../utils'
 import { AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions'
 import { version } from '../../package.json'
-import { goerli } from 'wagmi'
 
 /**
  * Check if tokens are banned on OpenSea
@@ -15,7 +14,7 @@ export async function isOpenSeaBanned(ids: string[]) {
   const baseApiUrl = currentReservoirChain?.apiKey
 
   let url =
-    client.currentChain()?.id === goerli.id
+    client.currentChain()?.id === 5
       ? 'https://testnets-api.opensea.io/api/v1/assets'
       : 'https://api.opensea.io/api/v1/assets'
 
