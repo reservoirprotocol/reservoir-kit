@@ -243,6 +243,7 @@ export const SweepModalRenderer: FC<Props> = ({
   }, [selectedTokens])
 
   const availableTokens = useMemo(() => {
+    if (!tokens) return []
     return tokens.filter(
       (token) =>
         token !== undefined &&
@@ -252,6 +253,14 @@ export const SweepModalRenderer: FC<Props> = ({
         token?.token?.owner?.toLowerCase() !== account?.address?.toLowerCase()
     )
   }, [tokens, account])
+
+  const cheapestAvailablePrice =
+    availableTokens?.[0]?.market?.floorAsk?.price?.amount?.native || 0
+
+  useEffect(() => {
+    setItemAmount(1)
+    setEthAmount(cheapestAvailablePrice)
+  }, [availableTokens.length])
 
   // set max input
   useEffect(() => {
@@ -379,9 +388,8 @@ export const SweepModalRenderer: FC<Props> = ({
 
   // reset selectedItems when toggle changes
   useEffect(() => {
-    setSelectedTokens([])
-    setItemAmount(undefined)
-    setEthAmount(undefined)
+    setItemAmount(1)
+    setEthAmount(cheapestAvailablePrice)
   }, [isItemsToggled])
 
   // reset state on close
