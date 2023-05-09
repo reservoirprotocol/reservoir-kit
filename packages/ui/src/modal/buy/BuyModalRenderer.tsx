@@ -21,7 +21,7 @@ import { BigNumber, utils } from 'ethers'
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
-import { formatUnits } from 'ethers/lib/utils.js'
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
 import { constants } from 'ethers'
 import { Currency } from '../../types/Currency'
 
@@ -228,16 +228,9 @@ export const BuyModalRenderer: FC<Props> = ({
       ReservoirClientActions['buyToken']
     >['0']['options'] = {}
 
-    if (referrer && referrerFeeBps) {
-      const price = toFixed(totalPrice, currency?.decimals || 18)
-      const fee = utils
-        .parseUnits(`${price}`, currency?.decimals)
-        .mul(referrerFeeBps)
-        .div(10000)
-      const atomicUnitsFee = formatUnits(fee, 0)
+    if (referrer && referrerFee) {
+      const atomicUnitsFee = parseUnits(`${referrerFee}`, currency?.decimals)
       options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
-    } else if (referrer && referrerFeeFixed) {
-      options.feesOnTop = [`${referrer}:${referrerFeeFixed}`]
     } else if (referrer === null && referrerFeeBps === null) {
       delete options.feesOnTop
     }
@@ -274,7 +267,7 @@ export const BuyModalRenderer: FC<Props> = ({
     client.actions
       .buyToken({
         items: items,
-        expectedPrice: totalPrice,
+        expectedPrice: totalPrice - referrerFee,
         signer,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
@@ -358,8 +351,7 @@ export const BuyModalRenderer: FC<Props> = ({
     collectionId,
     orderId,
     referrer,
-    referrerFeeBps,
-    referrerFeeFixed,
+    referrerFee,
     quantity,
     normalizeRoyalties,
     client,

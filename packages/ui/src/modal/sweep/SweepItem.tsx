@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useChainCurrency } from '../../hooks'
-import { Flex, FormatCryptoCurrency, Text } from '../../primitives'
+import { Flex, FormatCryptoCurrency, Img, Text } from '../../primitives'
 import Tooltip from '../../primitives/Tooltip'
 
 type Props = {
@@ -30,15 +30,7 @@ export const SweepItem: FC<Props> = ({ name, image, amount, currency }) => {
           overflow: 'hidden',
         }}
       >
-        <img
-          src={image}
-          style={{
-            width: 60,
-            height: 60,
-            backgroundColor: '$neutralBg',
-            objectFit: 'cover',
-          }}
-        />
+        <Img src={image as string} css={{ width: 60, height: 60 }} width={20} />
         <Flex css={{ px: '$1', py: '$2' }}>
           <FormatCryptoCurrency
             amount={amount}
