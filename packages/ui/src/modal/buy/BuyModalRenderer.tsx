@@ -251,6 +251,7 @@ export const BuyModalRenderer: FC<Props> = ({
     const items: Item[] = []
 
     if (quantity > 1) {
+      options.partial = is1155
       Object.keys(listingsToBuy).forEach((listingId) => {
         items.push({
           orderId: listingId,
