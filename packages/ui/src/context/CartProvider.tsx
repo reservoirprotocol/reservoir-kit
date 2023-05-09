@@ -18,9 +18,8 @@ import React, {
   FC,
 } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { constants, utils } from 'ethers'
-import { toFixed } from '../lib/numbers'
-import { formatUnits } from 'ethers/lib/utils.js'
+import { constants } from 'ethers'
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
 import { version } from '../../package.json'
 import { fetchSigner, getNetwork } from 'wagmi/actions'
 
@@ -974,7 +973,10 @@ function cartStore({
       }
 
       if (referrerFee) {
-        const atomicUnitsFee = formatUnits(referrerFee, 0)
+        const atomicUnitsFee = parseUnits(
+          `${referrerFee}`,
+          cartData.current.currency?.decimals
+        )
         options.feesOnTop = [`${cartData.current.referrer}:${atomicUnitsFee}`]
       }
 
