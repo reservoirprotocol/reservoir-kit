@@ -1,3 +1,13 @@
+
+## [v0.10.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/ab6cc02aea8ad246d5344324949ccdb35171d338) (2023-05-09)
+
+## [v0.10.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/5035eb2d3895caff0c55feb1fdb84d477a3b1495) (2023-05-05)
+
+## [v0.10.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/3fadb8c442e9a28685c190261ed46870c6583b49) (2023-05-05)
+
+* Merge pull request #230 from reservoirprotocol/armando/grwth-2410-ts-error-default-is-a-reserved-keyword [f93eea0](https://github.com/reservoirprotocol/reservoir-kit/commit/f93eea0a25028c0cd1be7ab2543898232f68a9a6)
+* Only validate sales if the step has an id of sale [e9ee4aa](https://github.com/reservoirprotocol/reservoir-kit/commit/e9ee4aa19fec17f530affc65431743470c004511)
+* feat: Remove usage of reserver keyword [bcbf179](https://github.com/reservoirprotocol/reservoir-kit/commit/bcbf179663653a8b75a968ad8eee17c402988465)
 ## [v0.9.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4c4a3c7f2cefc49c724c6277dfd0e33931daf860) (2023-05-02)
 
 - Sync API Types

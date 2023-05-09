@@ -1,3 +1,24 @@
+
+## [v0.16.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/94282cc33a064d42a37c6b33e6dec27aacad042a) (2023-05-09)
+
+* Merge pull request #235 from reservoirprotocol/pedro/grwth-2656-cartprovider-applying-feeontop-twice [e29b85f](https://github.com/reservoirprotocol/reservoir-kit/commit/e29b85fa306f5bbb12664e3b361a084475aaa10f)
+* Fix buymodal referrer fee bugs [8a9d325](https://github.com/reservoirprotocol/reservoir-kit/commit/8a9d325ccc514b695d681e6811566128d4938150)
+* Merge pull request #236 from reservoirprotocol/ted/grwth-2627-set-the-sweeping-default-to-1 [96c8258](https://github.com/reservoirprotocol/reservoir-kit/commit/96c82585f5eb55770f865e88fc71359eb4253e28)
+* Updated Img primitive variable name [b3b0cda](https://github.com/reservoirprotocol/reservoir-kit/commit/b3b0cdab78cea068b45fd84a5c5f4797f371e67a)
+* Merge pull request #233 from oplabs/expose-coinconversion [12591d9](https://github.com/reservoirprotocol/reservoir-kit/commit/12591d9da934e3a092fa6b35a164725b674ef129)
+* fix: More oracle order patches [bdc73ef](https://github.com/reservoirprotocol/reservoir-kit/commit/bdc73efabd12f0b05a2a65410834924fd73d0246)
+* feat: Use new property for oracle orders [bd37f80](https://github.com/reservoirprotocol/reservoir-kit/commit/bd37f80d25564907a6f31bb496422746332116a9)
+* Set selected items default to 1 token [2023-05-08](https://github.com/reservoirprotocol/reservoir-kit/commit/9566751)
+* Fix issue with fee being applied twice to the cart item total [9925580](https://github.com/reservoirprotocol/reservoir-kit/commit/9925580609a7e39ac589e38b9a69ff08a92949d9)
+* Revert "feat: Partial logic" [7fe440c](https://github.com/reservoirprotocol/reservoir-kit/commit/7fe440c6c700214d0ec20baa062c8fbdd9324dc3)
+* feat: Partial logic [83f1391](https://github.com/reservoirprotocol/reservoir-kit/commit/83f13917c6384ff0aceccb9421fe676ff535f861)
+## [v0.16.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/0ba32ae2c6c5a89ad08a983444ea06908c41fb73) (2023-05-05)
+
+## [v0.16.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f5b2db715c153d8316801f8bbbdb37290404fe5a) (2023-05-05)
+
+* Merge pull request #230 from reservoirprotocol/armando/grwth-2410-ts-error-default-is-a-reserved-keyword [f93eea0](https://github.com/reservoirprotocol/reservoir-kit/commit/f93eea0a25028c0cd1be7ab2543898232f68a9a6)
+* Update index.ts [7101299](https://github.com/reservoirprotocol/reservoir-kit/commit/7101299033121cf20b11c39ea54dadf294232fb1)
+* feat: Fix build issues [85f38aa](https://github.com/reservoirprotocol/reservoir-kit/commit/85f38aa7030bdbdf16d746ea0486937c306451c0)
 ## [v0.15.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/69bc916d3aaa5e439741561bb6df6e40d92e2207) (2023-05-02)
 
 - Added tooltip to all currencies [afdf0f7](https://github.com/reservoirprotocol/reservoir-kit/commit/afdf0f7295d160784a8f7c4d6a96d24a84958db6)
