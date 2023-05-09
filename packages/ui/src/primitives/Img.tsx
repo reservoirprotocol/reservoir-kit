@@ -8,15 +8,15 @@ import React from 'react'
 const StyledImg = styled('img')
 
 const Img = (props: ComponentPropsWithoutRef<typeof StyledImg>) => {
-  const [collectionImageBroken, setCollectionImageBroken] = useState(false)
+  const [imageBroken, setImageBroken] = useState(false)
 
   useEffect(() => {
-    if (collectionImageBroken) {
-      setCollectionImageBroken(false)
+    if (imageBroken) {
+      setImageBroken(false)
     }
   }, [props.src])
 
-  return collectionImageBroken || !props.src ? (
+  return imageBroken || !props.src ? (
     <Flex
       css={{ ...props.css, background: '$neutralBgActive' }}
       justify="center"
@@ -28,7 +28,7 @@ const Img = (props: ComponentPropsWithoutRef<typeof StyledImg>) => {
     <StyledImg
       {...props}
       onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-        setCollectionImageBroken(true)
+        setImageBroken(true)
       }}
     />
   )
