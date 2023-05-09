@@ -1,19 +1,13 @@
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
-import { styled } from '@stitches/react'
 import React, { FC } from 'react'
 import { Cart } from '../context/CartProvider'
-import { Flex, FormatCryptoCurrency, FormatCurrency, Text } from '../primitives'
-
-const Img = styled('img', {
-  height: 56,
-  width: 56,
-  borderRadius: 4,
-  objectFit: 'cover',
-  '& + img': {
-    marginLeft: -48,
-    zIndex: -1,
-  },
-})
+import {
+  Flex,
+  FormatCryptoCurrency,
+  FormatCurrency,
+  Img,
+  Text,
+} from '../primitives'
 
 enum Size {
   SM,
@@ -49,10 +43,13 @@ export const TokenCheckout: FC<Props> = ({
               src={image}
               key={image}
               css={{
+                borderRadius: 4,
+                objectFit: 'cover',
                 height: size == Size.SM ? 40 : 56,
                 width: size == Size.SM ? 40 : 56,
-                '& + img': {
+                '& + img, & + div': {
                   marginLeft: size == Size.SM ? -32 : -48,
+                  zIndex: -1,
                 },
               }}
             />
