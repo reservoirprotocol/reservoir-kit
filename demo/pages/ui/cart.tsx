@@ -1,9 +1,5 @@
 import { NextPage } from 'next'
-import {
-  CartPopover,
-  useDynamicTokens,
-  useReservoirClient,
-} from '@reservoir0x/reservoir-kit-ui'
+import { CartPopover, useDynamicTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useState } from 'react'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useConnectModal } from '@rainbow-me/rainbowkit'

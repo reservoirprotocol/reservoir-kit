@@ -18,9 +18,8 @@ import React, {
   FC,
 } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { constants, utils } from 'ethers'
-import { toFixed } from '../lib/numbers'
-import { formatUnits } from 'ethers/lib/utils.js'
+import { constants } from 'ethers'
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
 import { version } from '../../package.json'
 import { fetchSigner, getNetwork } from 'wagmi/actions'
 
@@ -963,22 +962,21 @@ function cartStore({
       const currencyChain = client.chains.find(
         (chain) => (chainCurrency.chainId = chain.id)
       )
-      const expectedPrice = cartData.current.totalPrice
+      const referrerFee =
+        cartData.current.referrer && cartData.current.referrerFee
+          ? cartData.current.referrerFee
+          : 0
+      const expectedPrice = cartData.current.totalPrice - referrerFee
 
       if (isMixedCurrency) {
         options.currency = constants.AddressZero
       }
 
-      if (cartData.current.referrer && cartData.current.referrerFeeBps) {
-        const price = toFixed(
-          expectedPrice,
-          cartData.current.currency?.decimals || 18
+      if (referrerFee) {
+        const atomicUnitsFee = parseUnits(
+          `${referrerFee}`,
+          cartData.current.currency?.decimals
         )
-        const fee = utils
-          .parseUnits(`${price}`, cartData.current.currency?.decimals)
-          .mul(cartData.current.referrerFeeBps)
-          .div(10000)
-        const atomicUnitsFee = formatUnits(fee, 0)
         options.feesOnTop = [`${cartData.current.referrer}:${atomicUnitsFee}`]
       }
 
