@@ -1,3 +1,16 @@
+## [v0.16.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/94282cc33a064d42a37c6b33e6dec27aacad042a) (2023-05-09)
+
+- Fix referrer fee bugs in BuyModal and CartProvider [e29b85f](https://github.com/reservoirprotocol/reservoir-kit/commit/e29b85fa306f5bbb12664e3b361a084475aaa10f)
+- SweepModal: copy changes, change default to 1, fix broken images [96c8258](https://github.com/reservoirprotocol/reservoir-kit/commit/96c82585f5eb55770f865e88fc71359eb4253e28)
+- Expose unofficial useCoinConversion hook [12591d9](https://github.com/reservoirprotocol/reservoir-kit/commit/12591d9da934e3a092fa6b35a164725b674ef129)
+- Support seaport 1.5 for oracle orders [bdc73ef](https://github.com/reservoirprotocol/reservoir-kit/commit/bdc73efabd12f0b05a2a65410834924fd73d0246)
+
+## [v0.16.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/0ba32ae2c6c5a89ad08a983444ea06908c41fb73) (2023-05-05)
+
+## [v0.16.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f5b2db715c153d8316801f8bbbdb37290404fe5a) (2023-05-05)
+
+- [BREAKING] Fix reserved keyword typescript errors with default chain type (changed to active) [f93eea0](https://github.com/reservoirprotocol/reservoir-kit/commit/f93eea0a25028c0cd1be7ab2543898232f68a9a6)
+
 ## [v0.15.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/69bc916d3aaa5e439741561bb6df6e40d92e2207) (2023-05-02)
 
 - Added tooltip to all currencies [afdf0f7](https://github.com/reservoirprotocol/reservoir-kit/commit/afdf0f7295d160784a8f7c4d6a96d24a84958db6)

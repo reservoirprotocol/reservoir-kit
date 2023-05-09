@@ -349,7 +349,15 @@ export interface paths {
     get: operations["getOrdersBidsV4"];
   };
   "/orders/bids/v5": {
-    /** Get a list of bids (offers), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing */
+    /**
+     * Get a list of bids (offers), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing.
+     *
+     *  There are a different kind of bids than can be returned:
+     *
+     * - Inputting a 'contract' will return token and attribute bids.
+     *
+     * - Inputting a 'collection-id' will return collection wide bids.
+     */
     get: operations["getOrdersBidsV5"];
   };
   "/orders/depth/v1": {
@@ -999,8 +1007,13 @@ export interface paths {
   };
   "/execute/bid/v5": {
     /**
-     * Generate bids and submit them to multiple marketplaces. Please use the `/cross-posting-orders/v1` to check the status on cross posted bids.
-     *  We recommend using Reservoir SDK as it abstracts the process of iterating through steps, and returning callbacks that can be used to update your UI.
+     * Generate bids and submit them to multiple marketplaces.
+     *
+     *  Notes:
+     *
+     * - Please use the `/cross-posting-orders/v1` to check the status on cross posted bids.
+     *
+     * - We recommend using Reservoir SDK as it abstracts the process of iterating through steps, and returning callbacks that can be used to update your UI.
      */
     post: operations["postExecuteBidV5"];
   };
@@ -1033,8 +1046,13 @@ export interface paths {
   };
   "/execute/list/v5": {
     /**
-     * Generate listings and submit them to multiple marketplaces. Please use the `/cross-posting-orders/v1` to check the status on cross posted bids.
-     *  We recommend using Reservoir SDK as it abstracts the process of iterating through steps, and returning callbacks that can be used to update your UI.
+     * Generate listings and submit them to multiple marketplaces.
+     *
+     *  Notes:
+     *
+     * - Please use the `/cross-posting-orders/v1` to check the status on cross posted bids.
+     *
+     * - We recommend using Reservoir SDK as it abstracts the process of iterating through steps, and returning callbacks that can be used to update your UI.
      */
     post: operations["postExecuteListV5"];
   };
@@ -2638,6 +2656,7 @@ export interface definitions {
     createdAt: string;
     updatedAt: string;
     rawData?: definitions["source"];
+    isNativeOffChainCancellable?: boolean;
     depth?: definitions["depth"];
   };
   Model149: definitions["Model148"][];
@@ -4138,6 +4157,7 @@ export interface definitions {
     ruleId: number;
     tier?: number;
     points?: number;
+    pointsToConsume?: number;
     duration?: number;
     apiKey?: string;
     /** @enum {string} */
@@ -4206,6 +4226,7 @@ export interface definitions {
       | "zeroex-v4"
       | "seaport"
       | "seaport-v1.4"
+      | "seaport-v1.5"
       | "x2y2"
       | "universe"
       | "flow"
@@ -4243,6 +4264,7 @@ export interface definitions {
       | "zeroex-v4"
       | "seaport"
       | "seaport-v1.4"
+      | "seaport-v1.5"
       | "x2y2"
       | "universe"
       | "flow"
@@ -4255,10 +4277,10 @@ export interface definitions {
   };
   bulkData: {
     /**
-     * @default seaport-v1.4
+     * @default seaport-v1.5
      * @enum {string}
      */
-    kind?: "seaport-v1.4" | "alienswap";
+    kind?: "seaport-v1.4" | "seaport-v1.5" | "alienswap";
     data?: definitions["Model361"];
   };
   Model362: {
@@ -4412,14 +4434,15 @@ export interface definitions {
     /** @description Amount bidder is willing to offer in wei. Example: `1000000000000000000` */
     weiPrice: string;
     /**
-     * @description Exchange protocol used to create order. Example: `seaport-v1.4`
-     * @default seaport-v1.4
+     * @description Exchange protocol used to create order. Example: `seaport-v1.5`
+     * @default seaport-v1.5
      * @enum {string}
      */
     orderKind?:
       | "zeroex-v4"
       | "seaport"
       | "seaport-v1.4"
+      | "seaport-v1.5"
       | "looks-rare"
       | "looks-rare-v2"
       | "x2y2"
@@ -4492,13 +4515,14 @@ export interface definitions {
   /** @description Additional options. */
   options: {
     "seaport-v1.4"?: definitions["seaport-v1.4"];
+    "seaport-v1.5"?: definitions["seaport-v1.4"];
   };
   /** @description List of fees (formatted as `feeRecipient:feeBps`) to be bundled within the order. 1 BPS = 0.01% Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00:100` */
   Model382: string[];
   Model383: {
     /** @description Bid on a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token?: string;
-    /** @description Bid on a particular token set. Example: `token:CONTRACT:TOKEN_ID` representing a single token within contract, `contract:CONTRACT` representing a whole contract, `range:CONTRACT:START_TOKEN_ID:END_TOKEN_ID` representing a continuous token id range within a contract and `list:CONTRACT:TOKEN_IDS_HASH` representing a list of token ids within a contract. */
+    /** @description Bid on a particular token set. Cannot be used with cross-posting to OpenSea. Example: `token:CONTRACT:TOKEN_ID` representing a single token within contract, `contract:CONTRACT` representing a whole contract, `range:CONTRACT:START_TOKEN_ID:END_TOKEN_ID` representing a continuous token id range within a contract and `list:CONTRACT:TOKEN_IDS_HASH` representing a list of token ids within a contract. */
     tokenSetId?: string;
     /** @description Bid on a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
     collection?: string;
@@ -4511,8 +4535,8 @@ export interface definitions {
     /** @description Amount bidder is willing to offer in wei. Example: `1000000000000000000` */
     weiPrice: string;
     /**
-     * @description Exchange protocol used to create order. Example: `seaport-v1.4`
-     * @default seaport-v1.4
+     * @description Exchange protocol used to create order. Example: `seaport-v1.5`
+     * @default seaport-v1.5
      * @enum {string}
      */
     orderKind?:
@@ -4520,6 +4544,7 @@ export interface definitions {
       | "zeroex-v4"
       | "seaport"
       | "seaport-v1.4"
+      | "seaport-v1.5"
       | "looks-rare"
       | "looks-rare-v2"
       | "x2y2"
@@ -4952,6 +4977,8 @@ export interface definitions {
     rawQuote?: string;
     buyInQuote?: number;
     buyInRawQuote?: string;
+    totalPrice?: number;
+    totalRawPrice?: string;
     builtInFees?: definitions["builtInFees"];
     feesOnTop?: definitions["builtInFees"];
   };
@@ -4969,6 +4996,7 @@ export interface definitions {
     orderKind?:
       | "seaport"
       | "seaport-v1.4"
+      | "seaport-v1.5"
       | "looks-rare"
       | "zeroex-v4-erc721"
       | "zeroex-v4-erc1155"
@@ -4991,11 +5019,10 @@ export interface definitions {
   Model419: {
     orderIds: definitions["Model418"];
     /**
-     * @description Exchange protocol used to bulk cancel order. Example: `seaport-v1.4`
-     * @default seaport-v1.4
+     * @description Exchange protocol used to bulk cancel order. Example: `seaport-v1.5`
      * @enum {string}
      */
-    orderKind?: "seaport-v1.4" | "alienswap" | "blur-bid";
+    orderKind: "seaport-v1.4" | "seaport-v1.5" | "alienswap" | "blur-bid";
   };
   Model420: {
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
@@ -5061,8 +5088,8 @@ export interface definitions {
     /** @description Amount seller is willing to sell for in wei. Example: `1000000000000000000` */
     weiPrice: string;
     /**
-     * @description Exchange protocol used to create order. Example: `seaport-v1.4`
-     * @default seaport-v1.4
+     * @description Exchange protocol used to create order. Example: `seaport-v1.5`
+     * @default seaport-v1.5
      * @enum {string}
      */
     orderKind?:
@@ -5071,6 +5098,7 @@ export interface definitions {
       | "zeroex-v4"
       | "seaport"
       | "seaport-v1.4"
+      | "seaport-v1.5"
       | "x2y2"
       | "universe"
       | "flow";
@@ -5125,6 +5153,7 @@ export interface definitions {
   /** @description Additional options. */
   Model428: {
     "seaport-v1.4"?: definitions["seaport-v1.4"];
+    "seaport-v1.5"?: definitions["seaport-v1.4"];
     alienswap?: definitions["alienswap"];
   };
   Model429: {
@@ -5135,8 +5164,8 @@ export interface definitions {
     /** @description Amount seller is willing to sell for in wei. Example: `1000000000000000000` */
     weiPrice: string;
     /**
-     * @description Exchange protocol used to create order. Example: `seaport-v1.4`
-     * @default seaport-v1.4
+     * @description Exchange protocol used to create order. Example: `seaport-v1.5`
+     * @default seaport-v1.5
      * @enum {string}
      */
     orderKind?:
@@ -5146,6 +5175,7 @@ export interface definitions {
       | "zeroex-v4"
       | "seaport"
       | "seaport-v1.4"
+      | "seaport-v1.5"
       | "x2y2"
       | "universe"
       | "flow"
@@ -5399,6 +5429,8 @@ export interface definitions {
     currencyDecimals?: number;
     quote?: number;
     rawQuote?: string;
+    totalPrice?: number;
+    totalRawPrice?: string;
     builtInFees?: definitions["builtInFees"];
     feesOnTop?: definitions["builtInFees"];
   };
@@ -7345,11 +7377,11 @@ export interface operations {
         contractsSetId?: string;
         contracts?: string[] | string;
         /**
-         * active*^º = currently valid
-         * inactive*^ = temporarily invalid
-         * expired*^, canceled*^, filled*^ = permanently invalid
-         * any*º = any status
-         * * when an `id` is passed
+         * activeª^º = currently valid
+         * inactiveª^ = temporarily invalid
+         * expiredª^, canceledª^, filledª^ = permanently invalid
+         * anyªº = any status
+         * ª when an `id` is passed
          * ^ when a `maker` is passed
          * º when a `contract` is passed
          */
@@ -7551,7 +7583,15 @@ export interface operations {
       };
     };
   };
-  /** Get a list of bids (offers), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing */
+  /**
+   * Get a list of bids (offers), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing.
+   *
+   *  There are a different kind of bids than can be returned:
+   *
+   * - Inputting a 'contract' will return token and attribute bids.
+   *
+   * - Inputting a 'collection-id' will return collection wide bids.
+   */
   getOrdersBidsV5: {
     parameters: {
       query: {
@@ -7575,11 +7615,11 @@ export interface operations {
         /** Filter to an array of contracts. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contracts?: string[] | string;
         /**
-         * active*^º = currently valid
-         * inactive*^ = temporarily invalid
-         * expired*^, canceled*^, filled*^ = permanently invalid
-         * any*º = any status
-         * * when an `id` is passed
+         * activeª^º = currently valid
+         * inactiveª^ = temporarily invalid
+         * expiredª^, canceledª^, filledª^ = permanently invalid
+         * anyªº = any status
+         * ª when an `id` is passed
          * ^ when a `maker` is passed
          * º when a `contract` is passed
          */
@@ -10600,8 +10640,13 @@ export interface operations {
     };
   };
   /**
-   * Generate bids and submit them to multiple marketplaces. Please use the `/cross-posting-orders/v1` to check the status on cross posted bids.
-   *  We recommend using Reservoir SDK as it abstracts the process of iterating through steps, and returning callbacks that can be used to update your UI.
+   * Generate bids and submit them to multiple marketplaces.
+   *
+   *  Notes:
+   *
+   * - Please use the `/cross-posting-orders/v1` to check the status on cross posted bids.
+   *
+   * - We recommend using Reservoir SDK as it abstracts the process of iterating through steps, and returning callbacks that can be used to update your UI.
    */
   postExecuteBidV5: {
     parameters: {
@@ -10730,8 +10775,13 @@ export interface operations {
     };
   };
   /**
-   * Generate listings and submit them to multiple marketplaces. Please use the `/cross-posting-orders/v1` to check the status on cross posted bids.
-   *  We recommend using Reservoir SDK as it abstracts the process of iterating through steps, and returning callbacks that can be used to update your UI.
+   * Generate listings and submit them to multiple marketplaces.
+   *
+   *  Notes:
+   *
+   * - Please use the `/cross-posting-orders/v1` to check the status on cross posted bids.
+   *
+   * - We recommend using Reservoir SDK as it abstracts the process of iterating through steps, and returning callbacks that can be used to update your UI.
    */
   postExecuteListV5: {
     parameters: {

@@ -408,7 +408,7 @@ export const ListModalRenderer: FC<Props> = ({
         if (
           enableOnChainRoyalties &&
           onChainRoyalties &&
-          listing.orderKind === 'seaport'
+          listing.orderKind?.includes('seaport')
         ) {
           const royalties = onChainRoyalties.recipients.map((recipient, i) => {
             const bps =
@@ -446,7 +446,7 @@ export const ListModalRenderer: FC<Props> = ({
 
         if (oracleEnabled) {
           listing.options = {
-            'seaport-v1.4': {
+            [`${listing.orderKind}`]: {
               useOffChainCancellation: true,
             },
           }
