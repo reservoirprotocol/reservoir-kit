@@ -250,7 +250,10 @@ export function CartCheckoutModal({
                           background.
                         </Text>
 
-                        <FontAwesomeIcon icon={faCube} width="24" />
+                        <FontAwesomeIcon
+                          icon={faCube}
+                          style={{ height: 24, width: 24 }}
+                        />
                       </Flex>
                     </Flex>
                     <Button disabled={true} css={{ m: '$4' }}>

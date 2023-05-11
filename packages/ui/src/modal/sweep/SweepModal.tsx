@@ -487,7 +487,10 @@ export function SweepModal({
                     blockchain. The transaction will continue in the background.
                   </Text>
                   <Box css={{ color: '$neutralSolid' }}>
-                    <FontAwesomeIcon icon={faCube} width={32} height={32} />
+                    <FontAwesomeIcon
+                      icon={faCube}
+                      style={{ width: 32, height: 32 }}
+                    />
                   </Box>
                 </Flex>
               </Flex>

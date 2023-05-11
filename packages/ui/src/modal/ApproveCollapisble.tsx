@@ -4,12 +4,14 @@ import React, { FC, PropsWithChildren, useEffect } from 'react'
 import { Flex, Box, Text } from '../primitives'
 import { CollapsibleContent, CollapsibleRoot } from '../primitives/Collapsible'
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible'
+import { CSS } from '@stitches/react'
 
 type Props = {
   title?: string
   isComplete: boolean
   open: boolean
   onOpenChange: (open: boolean) => void
+  css?: CSS
 } & PropsWithChildren
 
 export const ApproveCollapsible: FC<Props> = ({
@@ -17,6 +19,7 @@ export const ApproveCollapsible: FC<Props> = ({
   isComplete,
   children,
   open,
+  css,
   onOpenChange,
 }) => {
   useEffect(() => {
@@ -29,7 +32,7 @@ export const ApproveCollapsible: FC<Props> = ({
     <CollapsibleRoot
       open={open}
       onOpenChange={onOpenChange}
-      css={{ backgroundColor: '$gray3' }}
+      css={{ backgroundColor: '$gray3', ...css }}
     >
       <CollapsiblePrimitive.Trigger asChild>
         <Flex justify="between" css={{ p: '$4' }}>

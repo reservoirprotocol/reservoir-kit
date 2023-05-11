@@ -35,8 +35,9 @@ import {
 import { useBids, useFallbackState, useReservoirClient } from '../../hooks'
 import AcceptBidLineItem from './AcceptBidLineItem'
 import { Collapsible } from '../../primitives/Collapsible'
-import { ApproveCollectionsCollapsible } from './ApproveCollectionsCollapsible'
+import { ApproveBidCollapsible } from './ApproveBidCollapsible'
 import SigninStep from '../SigninStep'
+import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -152,10 +153,26 @@ export function AcceptBidModal({
             loading={loading}
           >
             {acceptBidStep === AcceptBidStep.Unavailable && !loading && (
-              <Flex direction="column" align="center" css={{ height: 200 }}>
-                <FontAwesomeIcon icon={faEnvelopeOpen} />
-                <Text>Offers are no longer available</Text>
-                <Button onClick={() => setOpen(false)} css={{ m: '$4' }}>
+              <Flex direction="column" css={{ mt: 80 }}>
+                <Box css={{ color: '$neutralSolidHover', m: '0 auto' }}>
+                  <FontAwesomeIcon
+                    icon={faEnvelopeOpen}
+                    style={{ height: 24, width: 24 }}
+                  />
+                </Box>
+                <Text
+                  style="body2"
+                  css={{ mt: '$2', mb: 74, textAlign: 'center' }}
+                >
+                  Offers are no longer available
+                </Text>
+                <Button
+                  onClick={() => setOpen(false)}
+                  css={{
+                    m: '$4',
+                    flex: 1,
+                  }}
+                >
                   Close
                 </Button>
               </Flex>
@@ -217,16 +234,13 @@ export function AcceptBidModal({
                           ? `https://api.reservoir.tools/redirect/sources/${bidPath.source}/logo/v2`
                           : ''
                       }
-                      // nativePrice={price?.netAmount?.native}
-                      // nativeFloorPrice={
-                      //   tokenData?.market?.floorAsk?.price?.netAmount?.native
-                      // }
                     />
                   ))
                 )}
 
-                {prices.map((price) => (
+                {prices.map((price, i) => (
                   <Collapsible
+                    key={i}
                     trigger={
                       <Flex justify="between" css={{ p: '$4' }}>
                         <Text style="h6">
@@ -316,12 +330,9 @@ export function AcceptBidModal({
                 ))}
 
                 <Button
-                  style={{
+                  css={{
                     flex: 1,
-                    marginBottom: 16,
-                    marginTop: 16,
-                    marginRight: 16,
-                    marginLeft: 16,
+                    m: '$4',
                   }}
                   color="primary"
                   onClick={acceptBid}
@@ -331,17 +342,35 @@ export function AcceptBidModal({
               </Flex>
             )}
             {acceptBidStep === AcceptBidStep.Auth && !loading && (
-              <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
+              <Flex direction="column">
+                <AcceptBidSummaryLineItem
+                  tokensData={tokensData}
+                  usdPrices={usdPrices}
+                  prices={prices}
+                  chain={chain}
+                />
+                <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
+              </Flex>
             )}
             {acceptBidStep === AcceptBidStep.ApproveMarketplace && !loading && (
               <Flex direction="column">
-                {stepData?.steps.map((step) => (
-                  <ApproveCollectionsCollapsible
-                    step={step}
-                    tokensData={tokensData}
-                    chain={chain}
-                  />
-                ))}
+                <Text style="h6">Confirm Selling</Text>
+                <AcceptBidSummaryLineItem
+                  tokensData={tokensData}
+                  usdPrices={usdPrices}
+                  prices={prices}
+                  chain={chain}
+                />
+                {stepData?.steps.map((step) =>
+                  step?.items && step.items.length > 0 ? (
+                    <ApproveBidCollapsible
+                      key={step.id}
+                      step={step}
+                      tokensData={tokensData}
+                      chain={chain}
+                    />
+                  ) : null
+                )}
 
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
@@ -361,6 +390,12 @@ export function AcceptBidModal({
                   py: '$5',
                 }}
               >
+                <AcceptBidSummaryLineItem
+                  tokensData={tokensData}
+                  usdPrices={usdPrices}
+                  prices={prices}
+                  chain={chain}
+                />
                 <Text style="h6">Finalizing on blockchain</Text>
                 <Text
                   style="subtitle2"
@@ -371,7 +406,10 @@ export function AcceptBidModal({
                   The transaction will continue in the background.
                 </Text>
                 <Box css={{ color: '$neutralSolid', width: 32, height: 32 }}>
-                  <FontAwesomeIcon icon={faCube} width={32} height={32} />
+                  <FontAwesomeIcon
+                    icon={faCube}
+                    style={{ width: 32, height: 32 }}
+                  />
                 </Box>
               </Flex>
             )}

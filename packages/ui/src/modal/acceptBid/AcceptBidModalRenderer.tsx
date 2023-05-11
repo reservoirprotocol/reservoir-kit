@@ -322,8 +322,9 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         expectedPrice,
         signer,
         items,
-        onProgress: (steps: Execute['steps']) => {
+        onProgress: (steps: Execute['steps'], path: Execute['path']) => {
           if (!steps) return
+          setBidsPath(path)
           const executableSteps = steps.filter(
             (step) => step.items && step.items.length > 0
           )
@@ -480,7 +481,9 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       )
 
       setPrices(Object.values(prices))
-      setAcceptBidStep(AcceptBidStep.Checkout)
+      if (acceptBidStep === AcceptBidStep.Unavailable) {
+        setAcceptBidStep(AcceptBidStep.Checkout)
+      }
     } else if (!isFetchingBidPath) {
       setPrices([])
       setAcceptBidStep(AcceptBidStep.Unavailable)

@@ -2,8 +2,10 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Execute, ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { ApproveCollapsible } from '../ApproveCollapisble'
 import { EnhancedAcceptBidTokenData } from './AcceptBidModalRenderer'
-import { Box, Flex, Grid, Img, Loader, Text } from '../../primitives'
+import { Flex, Grid, Img, Loader, Text } from '../../primitives'
 import { styled } from '@stitches/react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   step: NonNullable<Execute['steps'][0]>
@@ -15,9 +17,21 @@ type Props = {
 const StyledImg = styled(Img, {
   width: 24,
   height: 24,
+  borderRadius: 4,
 })
 
-export const ApproveCollectionsCollapsible: FC<Props> = ({
+const Spinner = () => (
+  <Loader
+    css={{ display: 'flex', alignItems: 'center' }}
+    icon={
+      <Flex css={{ color: '$accentSolidHover' }}>
+        <FontAwesomeIcon icon={faCircleNotch} width={16} height={16} />
+      </Flex>
+    }
+  />
+)
+
+export const ApproveBidCollapsible: FC<Props> = ({
   step,
   tokensData,
   chain,
@@ -64,6 +78,7 @@ export const ApproveCollectionsCollapsible: FC<Props> = ({
 
   const title = step.id === 'sale' ? 'Confirm Sale' : 'Approve Collections'
   const disabled = !step.items || !step.items.length
+  const baseApiUrl = chain?.baseApiUrl
 
   return (
     <ApproveCollapsible
@@ -71,16 +86,17 @@ export const ApproveCollectionsCollapsible: FC<Props> = ({
       open={disabled ? false : collapsibleOpen}
       onOpenChange={disabled ? () => {} : setCollapsibleOpen}
       isComplete={isComplete}
+      css={{ margin: 12 }}
     >
       <Grid
         css={{
           px: '$4',
           pb: '$2',
           gridTemplateColumns: 'auto 1fr 16px',
+          gridRowGap: 24,
         }}
       >
         {step?.items?.map((item) => {
-          debugger
           const paths = item.orderIds?.map((id) => pathMap[id]) || []
           const marketplaces = Array.from(
             paths.reduce((marketplaces, path) => {
@@ -91,22 +107,43 @@ export const ApproveCollectionsCollapsible: FC<Props> = ({
             }, new Set() as Set<string>)
           ).join(',')
           if (step.id === 'sale') {
+            const images = paths.reduce((images, path) => {
+              const tokenKey = `${path?.contract}:${path?.tokenId}`
+              const tokenData = tokensMap[tokenKey]?.tokenData
+              const image =
+                tokenData?.token?.image || baseApiUrl
+                  ? `${baseApiUrl}/redirect/tokens/${tokenKey}/image/v1`
+                  : null
+              if (image && images.length < 4) {
+                images.push(image)
+              }
+              return images
+            }, [] as string[])
+
             return (
               <>
-                <Flex>
-                  <StyledImg src="" />
-                  <StyledImg src="" />
+                <Flex css={{ mr: '$2' }}>
+                  {images.map((image, i) => (
+                    <StyledImg
+                      key={i}
+                      src={image}
+                      css={{ marginLeft: i > 0 ? -14 : 0 }}
+                    />
+                  ))}
                 </Flex>
-                <Text style="body2" color="subtle">
+                <Text
+                  style="body2"
+                  color="subtle"
+                  css={{ display: 'flex', alignItems: 'center' }}
+                >
                   Confirm sale of {paths.length}{' '}
-                  {paths.length > 0 ? 'items' : 'item'} on{' '}
+                  {paths.length > 1 ? 'items' : 'item'} on{' '}
                   {marketplaces.length > 0 ? marketplaces : 'exchange'}
                 </Text>
-                <Loader css={{ height: 16 }} />
+                <Spinner />
               </>
             )
           } else {
-            const baseApiUrl = chain?.baseApiUrl
             const path = paths.length > 0 ? paths[0] : null
             const tokenKey = `${path?.contract}:${path?.tokenId}`
             const collection = tokensMap[tokenKey]?.tokenData?.token?.collection
@@ -121,39 +158,17 @@ export const ApproveCollectionsCollapsible: FC<Props> = ({
 
             return (
               <>
-                <Flex>
+                <Flex css={{ mr: '$2' }}>
                   <StyledImg src={collectionImage} />
                   {sourceImages.map((src) => (
-                    <StyledImg src={src} css={{ marginLeft: -12 }} />
+                    <StyledImg src={src} css={{ marginLeft: -14 }} />
                   ))}
                 </Flex>
                 <Text style="body2" color="subtle">
                   Approve {collectionName} for{' '}
                   {marketplaces.length > 0 ? marketplaces : 'trading'}
                 </Text>
-                <Loader css={{ height: 16 }} />
-                <Flex>
-                  <StyledImg src={collectionImage} />
-                  {sourceImages.map((src) => (
-                    <StyledImg src={src} css={{ marginLeft: -12 }} />
-                  ))}
-                </Flex>
-                <Text style="body2" color="subtle">
-                  Approve {collectionName} for{' '}
-                  {marketplaces.length > 0 ? marketplaces : 'trading'}
-                </Text>
-                <Loader css={{ height: 16 }} />
-                <Flex>
-                  <StyledImg src={collectionImage} />
-                  {sourceImages.map((src) => (
-                    <StyledImg src={src} css={{ marginLeft: -12 }} />
-                  ))}
-                </Flex>
-                <Text style="body2" color="subtle">
-                  Approve {collectionName} for{' '}
-                  {marketplaces.length > 0 ? marketplaces : 'trading'}
-                </Text>
-                <Loader css={{ height: 16 }} />
+                <Spinner />
               </>
             )
           }

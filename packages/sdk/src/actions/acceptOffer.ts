@@ -17,7 +17,7 @@ type Data = {
   options?: Partial<AcceptOfferOptions>
   expectedPrice?: number | Record<string, number>
   signer: Signer
-  onProgress: (steps: Execute['steps']) => any
+  onProgress: (steps: Execute['steps'], path: Execute['path']) => any
   precheck?: boolean
 }
 
@@ -78,7 +78,7 @@ export async function acceptOffer(data: Data) {
       const res = await axios.request(request)
       if (res.status !== 200) throw res.data
       const data = res.data as Execute
-      onProgress(data['steps'])
+      onProgress(data['steps'], data['path'])
       return data
     } else {
       await executeSteps(request, signer, onProgress, undefined, expectedPrice)
