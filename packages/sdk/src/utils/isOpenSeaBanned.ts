@@ -15,7 +15,7 @@ export async function isOpenSeaBanned(ids: string[], chainId?: number) {
   const baseApiUrl = currentReservoirChain?.apiKey
 
   let url =
-    chainId || client?.currentChain()?.id == 5
+    (chainId || client?.currentChain()?.id) === 5
       ? 'https://testnets-api.opensea.io/api/v1/assets'
       : 'https://api.opensea.io/api/v1/assets'
 
