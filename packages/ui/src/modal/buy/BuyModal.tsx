@@ -432,13 +432,53 @@ export function BuyModal({
                     textAlign: 'center',
                   }}
                 >
-                  <Text style="h5" css={{ mb: 24 }}>
-                    Congratulations!
+                  <Box
+                    css={{
+                      color: failedPurchases
+                        ? '$errorAccent'
+                        : '$successAccent',
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      icon={
+                        failedPurchases ? faCircleExclamation : faCheckCircle
+                      }
+                      fontSize={32}
+                    />
+                  </Box>
+                  <Text style="h5" css={{ textAlign: 'center' }}>
+                    {failedPurchases
+                      ? `${totalPurchases} ${
+                          totalPurchases > 1 ? 'items' : 'item'
+                        } purchased, ${failedPurchases} ${
+                          failedPurchases > 1 ? 'items' : 'item'
+                        } failed`
+                      : 'Congrats! Purchase was successful.'}
                   </Text>
                   <img
                     src={token?.token?.image}
                     style={{ width: 100, height: 100 }}
                   />
+                  <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
+                    {lastStepItems?.map((item) => {
+                      const txHash = item.txHash
+                        ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
+                            -4
+                          )}`
+                        : ''
+                      return (
+                        <Anchor
+                          href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
+                          color="primary"
+                          weight="medium"
+                          target="_blank"
+                          css={{ fontSize: 12 }}
+                        >
+                          View transaction: {txHash}
+                        </Anchor>
+                      )
+                    })}
+                  </Flex>
                   <Flex
                     css={{ mb: 24, mt: '$2', maxWidth: '100%' }}
                     align="center"
@@ -463,7 +503,6 @@ export function BuyModal({
                         : `#${token?.token?.tokenId}`}
                     </Text>
                   </Flex>
-
                   <Flex css={{ mb: '$2' }} align="center">
                     <Box css={{ color: '$successAccent', mr: '$2' }}>
                       <FontAwesomeIcon icon={faCheckCircle} />
@@ -472,26 +511,16 @@ export function BuyModal({
                       Your transaction went through successfully
                     </Text>
                   </Flex>
-                  <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-                    {stepData?.currentStep?.items?.map((item) => {
-                      const txHash = item.txHash
-                        ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
-                            -4
-                          )}`
-                        : ''
-                      return (
-                        <Anchor
-                          href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                          color="primary"
-                          weight="medium"
-                          target="_blank"
-                          css={{ fontSize: 12 }}
-                        >
-                          View transaction: {txHash}
-                        </Anchor>
-                      )
-                    })}
-                  </Flex>
+                  <Anchor
+                    color="primary"
+                    weight="medium"
+                    css={{ fontSize: 12 }}
+                    href={`${blockExplorerBaseUrl}/tx/${finalTxHash}`}
+                    target="_blank"
+                  >
+                    View on{' '}
+                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
+                  </Anchor>
                 </Flex>
                 <Flex
                   css={{
