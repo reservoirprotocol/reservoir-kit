@@ -472,16 +472,26 @@ export function BuyModal({
                       Your transaction went through successfully
                     </Text>
                   </Flex>
-                  <Anchor
-                    color="primary"
-                    weight="medium"
-                    css={{ fontSize: 12 }}
-                    href={`${blockExplorerBaseUrl}/tx/${finalTxHash}`}
-                    target="_blank"
-                  >
-                    View on{' '}
-                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
-                  </Anchor>
+                  <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
+                    {stepData?.currentStep?.items?.map((item) => {
+                      const txHash = item.txHash
+                        ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
+                            -4
+                          )}`
+                        : ''
+                      return (
+                        <Anchor
+                          href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
+                          color="primary"
+                          weight="medium"
+                          target="_blank"
+                          css={{ fontSize: 12 }}
+                        >
+                          View transaction: {txHash}
+                        </Anchor>
+                      )
+                    })}
+                  </Flex>
                 </Flex>
                 <Flex
                   css={{
