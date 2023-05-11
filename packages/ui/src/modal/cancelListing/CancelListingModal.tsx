@@ -89,7 +89,7 @@ export function CancelListingModal({
           (listing.status === 'active' || listing.status === 'inactive') &&
           !loading
 
-        const isOracleOrder = listing?.rawData?.isNativeOffChainCancellable
+        const isOracleOrder = listing?.isNativeOffChainCancellable
 
         return (
           <Modal
