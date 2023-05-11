@@ -87,7 +87,7 @@ export function CancelBidModal({
           (bid.status === 'active' || bid.status === 'inactive') &&
           !loading
 
-        const isOracleOrder = bid?.rawData?.isNativeOffChainCancellable
+        const isOracleOrder = bid?.isNativeOffChainCancellable
 
         return (
           <Modal
