@@ -251,7 +251,6 @@ export const BuyModalRenderer: FC<Props> = ({
           quantity: listingsToBuy[listingId],
         })
       })
-      console.log(items)
     } else {
       const item: Item = {
         quantity: 1,
