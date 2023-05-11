@@ -144,7 +144,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   const contract = bid?.tokenSetId?.split(':')[1]
   const currency = bid?.price?.currency
 
-  const isOracleOrder = bid?.rawData?.isNativeOffChainCancellable as boolean
+  const isOracleOrder = bid?.isNativeOffChainCancellable as boolean
 
   const wrappedContractAddress = currency
     ? (currency.contract as string)

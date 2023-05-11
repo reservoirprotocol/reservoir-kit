@@ -114,7 +114,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   const listing = listings && listings[0] ? listings[0] : undefined
   const currency = listing?.price?.currency
 
-  const isOracleOrder = listing?.rawData?.isNativeOffChainCancellable as boolean
+  const isOracleOrder = listing?.isNativeOffChainCancellable as boolean
 
   useEffect(() => {
     if (listing?.price?.amount?.decimal) {
