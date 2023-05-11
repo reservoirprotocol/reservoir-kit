@@ -11,28 +11,24 @@ import { useAccount, useSigner, useNetwork } from 'wagmi'
 import {
   Execute,
   ReservoirClientActions,
-  paths,
+  SellPath,
 } from '@reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
 
 export enum AcceptBidStep {
   Checkout,
+  Auth,
   ApproveMarketplace,
-  Confirming,
   Finalizing,
   Complete,
   Unavailable,
 }
 
-type SellPath = NonNullable<
-  paths['/execute/buy/v7']['post']['responses']['200']['schema']['path']
->
-
 export type AcceptBidTokenData = {
   tokenId: string
   collectionId: string
   bidIds?: string[]
-  bidsPath?: SellPath
+  bidsPath: NonNullable<SellPath>
 }
 
 export type EnhancedAcceptBidTokenData = Required<AcceptBidTokenData> & {
@@ -49,6 +45,7 @@ export type AcceptBidPrice = {
 
 export type AcceptBidStepData = {
   totalSteps: number
+  steps: Execute['steps']
   currentStep: Execute['steps'][0]
   currentStepItem?: NonNullable<Execute['steps'][0]['items']>[0]
 }
@@ -123,32 +120,33 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     const tokensBidPathMap =
       bidsPath?.reduce((map, path) => {
         const key = `${path.contract}:${path.tokenId}`
-        if (!map[key]) {
+        const mapPath = map[key]
+        if (!mapPath) {
           map[key] = [path]
         } else {
-          map[key].push(path)
+          mapPath.push(path)
         }
         return map
-      }, {} as Record<string, SellPath>) || {}
+      }, {} as Record<string, AcceptBidTokenData['bidsPath']>) || {}
 
     return tokens.reduce((enhancedTokens, token) => {
       const dataMapKey = `${token.collectionId}:${token.tokenId}`
       const tokenData = tokensDataMap[dataMapKey]
       const bidIds = token.bidIds?.filter((bidId) => bidId.length > 0) || []
-      const bidsPath = tokensBidPathMap[dataMapKey]
+      const bidsPath: AcceptBidTokenData['bidsPath'] = tokensBidPathMap[
+        dataMapKey
+      ]
         ? tokensBidPathMap[dataMapKey]
         : []
       if (!bidIds.length) {
-        if (tokenData && tokenData.market?.topBid?.id) {
-          enhancedTokens.push({
-            ...token,
-            bidIds: tokenData.market.topBid.id
-              ? [tokenData.market.topBid.id]
-              : [],
-            tokenData,
-            bidsPath,
-          })
-        }
+        enhancedTokens.push({
+          ...token,
+          bidIds: tokenData?.market?.topBid?.id
+            ? [tokenData.market.topBid.id]
+            : [],
+          tokenData,
+          bidsPath,
+        })
       } else {
         enhancedTokens.push({
           ...token,
@@ -302,7 +300,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
-    setAcceptBidStep(AcceptBidStep.Confirming)
+    setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
 
     type AcceptBidItems = Parameters<
       ReservoirClientActions['acceptOffer']
@@ -354,14 +352,20 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               totalSteps: stepCount,
               currentStep,
               currentStepItem,
+              steps,
             })
-            if (currentStepIndex !== executableSteps.length - 1) {
+            if (currentStep.id === 'auth') {
+              setAcceptBidStep(AcceptBidStep.Auth)
+            } else if (currentStep.id === 'nft-approval') {
               setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
-            } else if (currentStepItem.txHash) {
-              setTxHash(currentStepItem.txHash)
-              setAcceptBidStep(AcceptBidStep.Finalizing)
-            } else {
-              setAcceptBidStep(AcceptBidStep.Confirming)
+            } else if (currentStep.id === 'sale') {
+              if (
+                currentStep.items?.every((item) => item.txHash !== undefined)
+              ) {
+                setAcceptBidStep(AcceptBidStep.Finalizing)
+              } else {
+                setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
+              }
             }
           } else if (
             executableSteps.every(
@@ -378,6 +382,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             if (lastStepItem) {
               setStepData({
                 totalSteps: stepCount,
+                steps,
                 currentStep,
                 currentStepItem: lastStepItem,
               })
@@ -417,10 +422,11 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             currencySymbol,
             builtInFees,
             feesOnTop,
+            totalPrice,
           }
         ) => {
-          const netAmount = quote || 0 //TODO: need to subtract from the fees to get the net amount
-          const amount = quote || 0 //TODO: need to subtract from the fees to get the net amount
+          const netAmount = quote || 0
+          const amount = totalPrice || 0
           let royalty = 0
           let marketplaceFee = 0
 

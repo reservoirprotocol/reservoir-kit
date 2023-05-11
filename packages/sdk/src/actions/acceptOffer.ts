@@ -64,6 +64,10 @@ export async function acceptOffer(data: Data) {
 
     if (precheck) {
       const apiKey = client.currentChain()?.apiKey
+      if (!request.headers) {
+        request.headers = {}
+      }
+
       if (apiKey && request.headers) {
         request.headers['x-api-key'] = apiKey
       }

@@ -22,7 +22,7 @@ import {
   Anchor,
   ErrorWell,
 } from '../../primitives'
-import { ApprovalCollapsible } from '../ApprovalCollapsible'
+import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
 import { Modal } from '../Modal'
 import SigninStep from '../SigninStep'
 import { TokenCheckout } from '../TokenCheckout'
@@ -407,11 +407,11 @@ export function SweepModal({
                             transactions.
                           </Text>
                           {stepData?.currentStep?.items.map((item) => (
-                            <ApprovalCollapsible
+                            <ApprovePurchasingCollapsible
                               item={item}
                               pathMap={pathMap}
                               usdPrice={totalUsd}
-                              cartChain={currentChain}
+                              chain={currentChain}
                               open={true}
                             />
                           ))}

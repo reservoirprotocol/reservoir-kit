@@ -17,7 +17,7 @@ import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { TokenCheckout } from '../../modal/TokenCheckout'
 import { Cart, CheckoutStatus } from '../../context/CartProvider'
 import SigninStep from '../../modal/SigninStep'
-import { ApprovalCollapsible } from '../../modal/ApprovalCollapsible'
+import { ApprovePurchasingCollapsible } from '../../modal/ApprovePurchasingCollapsible'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 
 const Title = styled(DialogPrimitive.Title, {
@@ -188,11 +188,11 @@ export function CartCheckoutModal({
                                   separate transactions.
                                 </Text>
                                 {transaction.currentStep?.items.map((item) => (
-                                  <ApprovalCollapsible
+                                  <ApprovePurchasingCollapsible
                                     item={item}
                                     pathMap={pathMap}
                                     usdPrice={usdPrice}
-                                    cartChain={cartChain}
+                                    chain={cartChain}
                                     open={true}
                                   />
                                 ))}
