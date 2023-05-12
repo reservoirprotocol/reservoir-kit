@@ -58,7 +58,19 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
       }, 0),
     [tokensData]
   )
-  const usdPrice = 100.5
+  const usdPrice = useMemo(() => {
+    let missingConversion = false
+    const totalUsd = prices.reduce((total, { amount, currency }) => {
+      const conversion = usdPrices[currency.symbol]
+      if (conversion) {
+        total += conversion.price * amount
+      } else {
+        missingConversion = true
+      }
+      return total
+    }, 0)
+    return missingConversion ? 0 : totalUsd
+  }, [prices, usdPrices])
 
   return (
     <Flex
@@ -74,7 +86,7 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
         </Text>
       </Flex>
       <Flex align="center">
-        <Flex>
+        <Flex css={{ mr: '$4' }}>
           <Img
             src={img}
             alt={'Token Image'}
@@ -100,17 +112,17 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
         </Text>
 
         <Flex
-          align="center"
+          align="end"
           justify="end"
           direction="column"
-          css={{ ml: 'auto' }}
+          css={{ ml: 'auto', gap: '$2' }}
         >
-          <Flex>
+          <Flex align="center">
             {prices.map(({ netAmount, currency }, i) => {
               return (
                 <>
                   {i > 0 ? (
-                    <Text color="subtle" style="subtitle2">
+                    <Text color="subtle" style="subtitle2" css={{ mx: '$1' }}>
                       +
                     </Text>
                   ) : null}

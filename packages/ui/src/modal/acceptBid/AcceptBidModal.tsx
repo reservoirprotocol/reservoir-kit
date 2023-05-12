@@ -135,6 +135,14 @@ export function AcceptBidModal({
           [tokensData]
         )
 
+        const totalSales =
+          stepData?.currentStep?.items?.reduce(
+            (total, item) => total + (item?.salesData?.length || 0),
+            0
+          ) || 0
+        const failedSales =
+          (stepData?.currentStep?.items?.length || 0) - totalSales
+
         return (
           <Modal
             trigger={trigger}
@@ -208,35 +216,55 @@ export function AcceptBidModal({
                     Total Offer Value
                   </Text>
                 </Flex>
-                {tokensData.map(({ tokenData, bidsPath }) =>
-                  bidsPath.map((bidPath) => (
-                    <AcceptBidLineItem
-                      token={{
-                        name: tokenData?.token?.name || '',
-                        id: tokenData?.token?.tokenId || '',
-                      }}
-                      collection={{
-                        id: tokenData?.token?.collection?.id || '',
-                        name: tokenData?.token?.collection?.name || '',
-                      }}
-                      img={
-                        tokenData?.token?.image ||
-                        tokenData?.token?.collection?.image ||
-                        ''
-                      }
-                      netAmount={bidPath.totalPrice}
-                      price={bidPath.totalPrice}
-                      fees={bidPath.builtInFees}
-                      currency={bidPath.currency}
-                      decimals={bidPath.currencyDecimals}
-                      sourceImg={
-                        bidPath.source
-                          ? `https://api.reservoir.tools/redirect/sources/${bidPath.source}/logo/v2`
-                          : ''
-                      }
-                    />
-                  ))
-                )}
+                {tokensData.map(({ tokenData, bidsPath }) => {
+                  if (!bidsPath || !bidsPath.length) {
+                    return (
+                      <AcceptBidLineItem
+                        token={{
+                          name: tokenData?.token?.name || '',
+                          id: tokenData?.token?.tokenId || '',
+                        }}
+                        collection={{
+                          id: tokenData?.token?.collection?.id || '',
+                          name: tokenData?.token?.collection?.name || '',
+                        }}
+                        img={
+                          tokenData?.token?.image ||
+                          tokenData?.token?.collection?.image ||
+                          ''
+                        }
+                      />
+                    )
+                  } else {
+                    return bidsPath.map((bidPath) => (
+                      <AcceptBidLineItem
+                        token={{
+                          name: tokenData?.token?.name || '',
+                          id: tokenData?.token?.tokenId || '',
+                        }}
+                        collection={{
+                          id: tokenData?.token?.collection?.id || '',
+                          name: tokenData?.token?.collection?.name || '',
+                        }}
+                        img={
+                          tokenData?.token?.image ||
+                          tokenData?.token?.collection?.image ||
+                          ''
+                        }
+                        netAmount={bidPath.totalPrice}
+                        price={bidPath.totalPrice}
+                        fees={bidPath.builtInFees}
+                        currency={bidPath.currency}
+                        decimals={bidPath.currencyDecimals}
+                        sourceImg={
+                          bidPath.source
+                            ? `https://api.reservoir.tools/redirect/sources/${bidPath.source}/logo/v2`
+                            : ''
+                        }
+                      />
+                    ))
+                  }
+                })}
 
                 {prices.map((price, i) => (
                   <Collapsible
@@ -349,18 +377,24 @@ export function AcceptBidModal({
                   prices={prices}
                   chain={chain}
                 />
-                <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
+                <SigninStep css={{ mt: 48, mb: 60, gap: 20 }} />
+                <Button disabled={true} css={{ m: '$4' }}>
+                  <Loader />
+                  Waiting for Approval...
+                </Button>
               </Flex>
             )}
             {acceptBidStep === AcceptBidStep.ApproveMarketplace && !loading && (
               <Flex direction="column">
-                <Text style="h6">Confirm Selling</Text>
                 <AcceptBidSummaryLineItem
                   tokensData={tokensData}
                   usdPrices={usdPrices}
                   prices={prices}
                   chain={chain}
                 />
+                <Text style="h6" css={{ m: '$4', textAlign: 'center' }}>
+                  Confirm Selling
+                </Text>
                 {stepData?.steps.map((step) =>
                   step?.items && step.items.length > 0 ? (
                     <ApproveBidCollapsible
@@ -368,6 +402,8 @@ export function AcceptBidModal({
                       step={step}
                       tokensData={tokensData}
                       chain={chain}
+                      isCurrentStep={stepData.currentStep.id === step.id}
+                      open={stepData.currentStep.id === step.id}
                     />
                   ) : null
                 )}
@@ -382,12 +418,10 @@ export function AcceptBidModal({
             {acceptBidStep === AcceptBidStep.Finalizing && !loading && (
               <Flex
                 direction="column"
-                align="center"
                 justify="center"
                 css={{
                   gap: '$4',
-                  px: '$4',
-                  py: '$5',
+                  pb: '$5',
                 }}
               >
                 <AcceptBidSummaryLineItem
@@ -396,16 +430,25 @@ export function AcceptBidModal({
                   prices={prices}
                   chain={chain}
                 />
-                <Text style="h6">Finalizing on blockchain</Text>
+                <Text style="h6" css={{ textAlign: 'center' }}>
+                  Finalizing on blockchain
+                </Text>
                 <Text
                   style="subtitle2"
                   color="subtle"
-                  css={{ textAlign: 'center' }}
+                  css={{ textAlign: 'center', px: '$4' }}
                 >
                   You can close this modal while it finalizes on the blockchain.
                   The transaction will continue in the background.
                 </Text>
-                <Box css={{ color: '$neutralSolid', width: 32, height: 32 }}>
+                <Box
+                  css={{
+                    color: '$neutralSolid',
+                    width: 32,
+                    height: 32,
+                    m: '0 auto',
+                  }}
+                >
                   <FontAwesomeIcon
                     icon={faCube}
                     style={{ width: 32, height: 32 }}
@@ -425,17 +468,24 @@ export function AcceptBidModal({
                     textAlign: 'center',
                   }}
                 >
-                  {' '}
                   <Box
                     css={{
-                      color: '$successAccent',
-                      mb: 24,
+                      color: failedSales ? '$errorAccent' : '$successAccent',
                     }}
                   >
-                    <FontAwesomeIcon icon={faCircleCheck} fontSize={32} />
+                    <FontAwesomeIcon
+                      icon={failedSales ? faCircleExclamation : faCircleCheck}
+                      fontSize={32}
+                    />
                   </Box>
-                  <Text style="h5" css={{ mb: 8 }}>
-                    Offer accepted!
+                  <Text style="h5" css={{ my: 24 }}>
+                    {failedSales
+                      ? `${totalSales} ${
+                          failedSales > 1 ? 'items' : 'item'
+                        } purchased, ${failedSales} ${
+                          failedSales > 1 ? 'items' : 'item'
+                        } failed`
+                      : `${totalSales > 1 ? 'Offers' : 'Offer'} accepted!`}
                   </Text>
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
                     {stepData?.currentStep?.items?.map((item) => {

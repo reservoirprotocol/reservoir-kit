@@ -12,6 +12,7 @@ type Props = {
   tokensData: EnhancedAcceptBidTokenData[]
   chain?: ReservoirChain | null
   open?: boolean
+  isCurrentStep?: boolean
 }
 
 const StyledImg = styled(Img, {
@@ -36,6 +37,7 @@ export const ApproveBidCollapsible: FC<Props> = ({
   tokensData,
   chain,
   open,
+  isCurrentStep,
 }) => {
   const [collapsibleOpen, setCollapsibleOpen] = useState(false)
   const isComplete =
@@ -85,6 +87,7 @@ export const ApproveBidCollapsible: FC<Props> = ({
       title={title}
       open={disabled ? false : collapsibleOpen}
       onOpenChange={disabled ? () => {} : setCollapsibleOpen}
+      isInProgress={isCurrentStep}
       isComplete={isComplete}
       css={{ margin: 12 }}
     >
@@ -140,7 +143,7 @@ export const ApproveBidCollapsible: FC<Props> = ({
                   {paths.length > 1 ? 'items' : 'item'} on{' '}
                   {marketplaces.length > 0 ? marketplaces : 'exchange'}
                 </Text>
-                <Spinner />
+                {isCurrentStep ? <Spinner /> : null}
               </>
             )
           } else {
@@ -168,7 +171,7 @@ export const ApproveBidCollapsible: FC<Props> = ({
                   Approve {collectionName} for{' '}
                   {marketplaces.length > 0 ? marketplaces : 'trading'}
                 </Text>
-                <Spinner />
+                {isCurrentStep ? <Spinner /> : null}
               </>
             )
           }

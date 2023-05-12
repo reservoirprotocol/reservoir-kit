@@ -8,6 +8,7 @@ import { CSS } from '@stitches/react'
 
 type Props = {
   title?: string
+  isInProgress?: boolean
   isComplete: boolean
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -16,6 +17,7 @@ type Props = {
 
 export const ApproveCollapsible: FC<Props> = ({
   title,
+  isInProgress,
   isComplete,
   children,
   open,
@@ -27,6 +29,17 @@ export const ApproveCollapsible: FC<Props> = ({
       onOpenChange(false)
     }
   }, [isComplete])
+
+  let backgroundColor = 'transparent'
+  let borderColor = '$neutralLine'
+
+  if (isComplete) {
+    backgroundColor = '$green6'
+    borderColor = '$green9'
+  } else if (isInProgress) {
+    backgroundColor = '$accentSolid'
+    borderColor = '$accentLine'
+  }
 
   return (
     <CollapsibleRoot
@@ -41,8 +54,8 @@ export const ApproveCollapsible: FC<Props> = ({
               css={{
                 width: 18,
                 height: 18,
-                backgroundColor: isComplete ? '$green6' : '$accentSolid',
-                borderColor: isComplete ? '$green9' : '$accentLine',
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
                 borderStyle: 'solid',
                 borderWidth: 4,
                 borderRadius: 999,

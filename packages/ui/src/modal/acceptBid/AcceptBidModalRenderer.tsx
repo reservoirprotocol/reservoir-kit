@@ -182,6 +182,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       >['0']['options']
       let options: AcceptOfferOptions = {
         onlyPath: true,
+        partial: true,
       }
       if (normalizeRoyalties !== undefined) {
         options.normalizeRoyalties = normalizeRoyalties
@@ -251,7 +252,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           })
           return symbols
         }, new Set() as Set<string>)
-      ).join(''),
+      ).join(','),
     [enhancedTokens]
   )
 
@@ -270,6 +271,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   )
 
   const acceptBid = useCallback(() => {
+    setTransactionError(null)
     if (!signer) {
       const error = new Error('Missing a signer')
       setTransactionError(error)
@@ -317,13 +319,15 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       expectedPrice[currency] = prices[currency].amount
     }
 
+    let hasError = false
+
     client.actions
       .acceptOffer({
         expectedPrice,
         signer,
         items,
         onProgress: (steps: Execute['steps'], path: Execute['path']) => {
-          if (!steps) return
+          if (!steps || hasError) return
           setBidsPath(path)
           const executableSteps = steps.filter(
             (step) => step.items && step.items.length > 0
@@ -403,6 +407,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         const transactionError = new Error(message, {
           cause: error,
         })
+        hasError = true
         setTransactionError(transactionError)
         setAcceptBidStep(AcceptBidStep.Checkout)
         setStepData(null)
