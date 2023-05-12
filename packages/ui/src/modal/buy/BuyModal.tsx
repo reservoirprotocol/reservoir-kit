@@ -1,33 +1,33 @@
+import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import { useCopyToClipboard, useFallbackState } from '../../hooks'
 import {
-  faCheckCircle,
-  faCircleExclamation,
+  Flex,
+  Box,
+  Text,
+  Input,
+  Anchor,
+  Button,
+  FormatCurrency,
+  FormatCryptoCurrency,
+  Loader,
+} from '../../primitives'
+import Progress from '../Progress'
+import Popover from '../../primitives/Popover'
+import { Modal } from '../Modal'
+import {
   faCopy,
+  faCircleExclamation,
+  faCheckCircle,
   faExchange,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Execute } from '@reservoir0x/reservoir-sdk'
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
-import { useNetwork } from 'wagmi'
-import { useCopyToClipboard, useFallbackState } from '../../hooks'
-import { formatNumber } from '../../lib/numbers'
-import {
-  Anchor,
-  Box,
-  Button,
-  Flex,
-  FormatCryptoCurrency,
-  FormatCurrency,
-  Input,
-  Loader,
-  Text,
-} from '../../primitives'
-import Popover from '../../primitives/Popover'
-import { Modal } from '../Modal'
-import Progress from '../Progress'
-import ProgressBar from '../ProgressBar'
-import QuantitySelector from '../QuantitySelector'
 import TokenLineItem from '../TokenLineItem'
-import { BuyModalRenderer, BuyModalStepData, BuyStep } from './BuyModalRenderer'
+import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
+import { Execute } from '@reservoir0x/reservoir-sdk'
+import ProgressBar from '../ProgressBar'
+import { useNetwork } from 'wagmi'
+import QuantitySelector from '../QuantitySelector'
+import { formatNumber } from '../../lib/numbers'
 
 type PurchaseData = {
   tokenId?: string
@@ -446,7 +446,7 @@ export function BuyModal({
                       fontSize={32}
                     />
                   </Box>
-                  <Text style="h5" css={{ textAlign: 'center' }}>
+                  <Text style="h5" css={{ textAlign: 'center', mb: 24 }}>
                     {failedPurchases
                       ? `${totalPurchases} ${
                           totalPurchases > 1 ? 'items' : 'item'
