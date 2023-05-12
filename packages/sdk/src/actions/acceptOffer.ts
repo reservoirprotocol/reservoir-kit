@@ -1,7 +1,7 @@
-import { Signer } from 'ethers'
 import { getClient } from '.'
 import { Execute, paths } from '../types'
 import { executeSteps, request } from '../utils'
+import { WalletClient } from 'viem'
 
 type AcceptOfferBodyParameters =
   paths['/execute/sell/v7']['post']['parameters']['body']['body']
@@ -15,7 +15,7 @@ type Data = {
   items: NonNullable<AcceptOfferBodyParameters>['items']
   options?: Partial<AcceptOfferOptions>
   expectedPrice?: number
-  signer: Signer
+  signer: WalletClient
   onProgress: (steps: Execute['steps']) => any
 }
 
@@ -29,7 +29,7 @@ type Data = {
  */
 export async function acceptOffer(data: Data) {
   const { items, expectedPrice, signer, onProgress } = data
-  const taker = await signer.getAddress()
+  const [taker] = await signer.getAddresses()
   const client = getClient()
   const options = data.options || {}
   const baseApiUrl = client.currentChain()?.baseApiUrl

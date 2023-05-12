@@ -1,7 +1,5 @@
-import { Signer } from 'ethers'
+import { Transaction, WalletClient, createPublicClient, http } from 'viem'
 import { LogLevel, getClient } from '..'
-
-type TransactionResponse = Awaited<ReturnType<Signer['sendTransaction']>>
 
 /**
  * Safe txhash.wait which handles replacements when users speed up the transactio
@@ -10,31 +8,32 @@ type TransactionResponse = Awaited<ReturnType<Signer['sendTransaction']>>
  */
 export async function sendTransactionSafely(
   data: any,
-  signer: Signer,
-  setTx: (tx: TransactionResponse) => void,
-  tx?: TransactionResponse
+  signer: WalletClient,
+  setTx: (tx: Transaction['hash']) => void
+  // tx?: TransactionResponse
 ) {
-  try {
-    let transaction = tx
-    if (!tx) {
-      transaction = await signer.sendTransaction(data)
-      setTx(transaction)
-    }
-    await transaction?.wait()
-    return true
-  } catch (e) {
-    const error = e as any
-    if (
-      error &&
-      error['code'] &&
-      error['code'] === 'TRANSACTION_REPLACED' &&
-      error.replacement
-    ) {
-      setTx(error.replacement)
-      sendTransactionSafely(data, signer, setTx, error.replacement)
-      getClient()?.log(['Transaction replaced', error], LogLevel.Verbose)
-    } else {
-      throw e
-    }
-  }
+  const viemClient = createPublicClient({
+    chain: undefined,
+    transport: http(),
+  })
+
+  const transaction = await signer.sendTransaction({
+    chain: undefined,
+    account: data.from,
+    to: data.to,
+    value: data.value,
+  })
+  setTx(transaction)
+
+  await viemClient.waitForTransactionReceipt({
+    hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d',
+    onReplaced: (replacement) => {
+      const x = replacement.replacedTransaction
+      setTx(replacement.replacedTransaction.hash)
+      // sendTransactionSafely(data, signer, setTx, replacement.replacedTransaction.hash) //TODO: test speeding up a transaction
+      getClient()?.log(['Transaction replaced', replacement], LogLevel.Verbose)
+    },
+  })
+
+  return true
 }

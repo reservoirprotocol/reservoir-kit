@@ -1,5 +1,5 @@
 import { Execute, paths } from '../types'
-import { Signer } from 'ethers'
+import { WalletClient } from 'viem'
 import { getClient } from '.'
 import { executeSteps, request } from '../utils'
 
@@ -15,7 +15,7 @@ type Data = {
   items: BuyTokenBodyParameters['items']
   expectedPrice?: number
   options?: BuyTokenOptions
-  signer: Signer
+  signer: WalletClient
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
 }
 
@@ -29,7 +29,7 @@ type Data = {
  */
 export async function buyToken(data: Data) {
   const { items, expectedPrice, signer, onProgress } = data
-  const taker = await signer.getAddress()
+  const [taker] = await signer.getAddresses()
   const client = getClient()
   const options = data.options || {}
   const baseApiUrl = client.currentChain()?.baseApiUrl

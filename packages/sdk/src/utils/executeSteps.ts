@@ -1,7 +1,6 @@
-import { arrayify } from 'ethers/lib/utils'
 import { Execute, paths } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
-import { Signer } from 'ethers'
+import { Account, WalletClient, toBytes } from 'viem'
 import { TypedDataSigner } from '@ethersproject/abstract-signer'
 import { axios } from '../utils'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
@@ -29,7 +28,7 @@ import { sendTransactionSafely } from './transaction'
 
 export async function executeSteps(
   request: AxiosRequestConfig,
-  signer: Signer,
+  signer: WalletClient,
   setState: (steps: Execute['steps'], path: Execute['path']) => any,
   newJson?: Execute,
   expectedPrice?: number
@@ -217,7 +216,7 @@ export async function executeSteps(
                     ['Execute Steps: Transaction step, got transaction', tx],
                     LogLevel.Verbose
                   )
-                  stepItem.txHash = tx.hash
+                  stepItem.txHash = tx
                   if (json) {
                     setState([...json.steps], path)
                   }
@@ -329,11 +328,15 @@ export async function executeSteps(
                     )
                     if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
                       // If the message represents a hash, we need to convert it to raw bytes first
-                      signature = await signer.signMessage(
-                        arrayify(signData.message)
-                      )
+                      signature = await signer.signMessage({
+                        account: signer.account as Account,
+                        message: toBytes(signData.message).toString(),
+                      })
                     } else {
-                      signature = await signer.signMessage(signData.message)
+                      signature = await signer.signMessage({
+                        account: signer.account as Account,
+                        message: signData.message,
+                      })
                     }
                   } else if (signData.signatureKind === 'eip712') {
                     client.log(
