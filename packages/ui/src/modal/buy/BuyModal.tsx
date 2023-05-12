@@ -1,33 +1,33 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
-import { useCopyToClipboard, useFallbackState } from '../../hooks'
 import {
-  Flex,
-  Box,
-  Text,
-  Input,
-  Anchor,
-  Button,
-  FormatCurrency,
-  FormatCryptoCurrency,
-  Loader,
-} from '../../primitives'
-import Progress from '../Progress'
-import Popover from '../../primitives/Popover'
-import { Modal } from '../Modal'
-import {
-  faCopy,
-  faCircleExclamation,
   faCheckCircle,
+  faCircleExclamation,
+  faCopy,
   faExchange,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import TokenLineItem from '../TokenLineItem'
-import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
-import ProgressBar from '../ProgressBar'
+import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
 import { useNetwork } from 'wagmi'
-import QuantitySelector from '../QuantitySelector'
+import { useCopyToClipboard, useFallbackState } from '../../hooks'
 import { formatNumber } from '../../lib/numbers'
+import {
+  Anchor,
+  Box,
+  Button,
+  Flex,
+  FormatCryptoCurrency,
+  FormatCurrency,
+  Input,
+  Loader,
+  Text,
+} from '../../primitives'
+import Popover from '../../primitives/Popover'
+import { Modal } from '../Modal'
+import Progress from '../Progress'
+import ProgressBar from '../ProgressBar'
+import QuantitySelector from '../QuantitySelector'
+import TokenLineItem from '../TokenLineItem'
+import { BuyModalRenderer, BuyModalStepData, BuyStep } from './BuyModalRenderer'
 
 type PurchaseData = {
   tokenId?: string
@@ -460,7 +460,7 @@ export function BuyModal({
                     style={{ width: 100, height: 100 }}
                   />
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-                    {lastStepItems?.map((item) => {
+                    {stepData?.currentStep.items?.map((item) => {
                       const txHash = item.txHash
                         ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
                             -4
