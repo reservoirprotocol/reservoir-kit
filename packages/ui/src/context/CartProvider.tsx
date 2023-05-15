@@ -21,7 +21,7 @@ import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import { zeroAddress } from 'viem'
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
 import { version } from '../../package.json'
-import { fetchSigner, getNetwork } from 'wagmi/actions'
+import { getNetwork, getWalletClient } from 'wagmi/actions'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
@@ -923,7 +923,7 @@ function cartStore({
         }
       }
 
-      const signer = await fetchSigner({
+      const signer = await getWalletClient({
         chainId: cartData.current.chain?.id,
       })
 
