@@ -18,6 +18,7 @@ import {
 } from 'wagmi'
 
 import { constants } from 'ethers'
+import { zeroAddress } from 'viem'
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'

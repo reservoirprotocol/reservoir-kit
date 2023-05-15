@@ -28,7 +28,6 @@ export async function sendTransactionSafely(
   await viemClient.waitForTransactionReceipt({
     hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d',
     onReplaced: (replacement) => {
-      const x = replacement.replacedTransaction
       setTx(replacement.replacedTransaction.hash)
       // sendTransactionSafely(data, signer, setTx, replacement.replacedTransaction.hash) //TODO: test speeding up a transaction
       getClient()?.log(['Transaction replaced', replacement], LogLevel.Verbose)

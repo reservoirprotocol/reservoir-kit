@@ -18,7 +18,7 @@ import React, {
   FC,
 } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { constants } from 'ethers'
+import { zeroAddress } from 'viem'
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
 import { version } from '../../package.json'
 import { fetchSigner, getNetwork } from 'wagmi/actions'
@@ -969,7 +969,7 @@ function cartStore({
       const expectedPrice = cartData.current.totalPrice - referrerFee
 
       if (isMixedCurrency) {
-        options.currency = constants.AddressZero
+        options.currency = zeroAddress
       }
 
       if (referrerFee) {

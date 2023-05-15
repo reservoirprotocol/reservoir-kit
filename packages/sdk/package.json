@@ -32,9 +32,6 @@
         "protocol",
         "sdk"
     ],
-    "peerDependencies": {
-        "ethers": "^5.6.1"
-    },
     "dependencies": {
         "axios": "^0.27.2",
         "viem": "^0.3.22"
