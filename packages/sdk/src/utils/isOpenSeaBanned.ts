@@ -20,7 +20,7 @@ export async function isOpenSeaBanned(ids: string[]) {
   const json = res.data
   const client = getClient()
   const currentReservoirChain = client?.currentChain()
-  const baseApiUrl = currentReservoirChain?.apiKey
+  const baseApiUrl = currentReservoirChain?.baseApiUrl
   const statuses: Record<string, boolean> = json.assets.reduce(
     (statuses: Record<string, boolean>, asset: any) => {
       statuses[`${asset.asset_contract.address}:${asset.token_id}`] =
