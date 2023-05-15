@@ -426,7 +426,9 @@ export function BidModal({
                                       {trait?.floorAskPrice && (
                                         <Box css={{ flex: 'none' }}>
                                           <FormatCryptoCurrency
-                                            amount={trait?.floorAskPrice}
+                                            amount={BigInt(
+                                              trait?.floorAskPrice
+                                            )}
                                             maximumFractionDigits={2}
                                             logoWidth={11}
                                           />

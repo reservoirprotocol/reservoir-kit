@@ -12,8 +12,7 @@ import {
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import { BigNumber, constants, utils } from 'ethers'
-import { useAccount, useBalance, useNetwork, useSigner } from 'wagmi'
+import { useAccount, useBalance, useNetwork, useWalletClient } from 'wagmi'
 import Token from '../list/Token'
 import {
   Execute,
@@ -21,8 +20,8 @@ import {
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
 import { toFixed } from '../../lib/numbers'
-import { formatUnits } from 'ethers/lib/utils.js'
 import { UseBalanceToken } from '../../types/wagmi'
+import { formatUnits, parseUnits, zeroAddress } from 'viem'
 
 export enum SweepStep {
   Idle,
@@ -75,7 +74,7 @@ type ChildrenProps = {
   availableTokens: ReturnType<typeof useTokens>['data']
   address?: string
   tokens: ReturnType<typeof useTokens>['data']
-  balance?: BigNumber
+  balance?: BigInt
   hasEnoughCurrency: boolean
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
@@ -105,7 +104,7 @@ export const SweepModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
   const account = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<
     ReturnType<typeof useTokens>['data']
@@ -181,7 +180,7 @@ export const SweepModalRenderer: FC<Props> = ({
     chainId: chain?.id,
     address: account.address,
     token:
-      currency?.address !== constants.AddressZero
+      currency?.address !== zeroAddress
         ? (currency?.address as UseBalanceToken)
         : undefined,
     watch: open,
@@ -195,9 +194,8 @@ export const SweepModalRenderer: FC<Props> = ({
       if (!balance.value) {
         setHasEnoughCurrency(false)
       } else if (
-        balance.value.lt(
-          utils.parseUnits(`${totalPriceTruncated}`, currency?.decimals)
-        )
+        balance?.value <
+        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals)
       ) {
         setHasEnoughCurrency(false)
       } else {
@@ -425,11 +423,10 @@ export const SweepModalRenderer: FC<Props> = ({
 
     if (referrer && referrerFeeBps) {
       const price = toFixed(total, currency?.decimals || 18)
-      const fee = utils
-        .parseUnits(`${price}`, currency?.decimals)
-        .mul(referrerFeeBps)
-        .div(10000)
-      const atomicUnitsFee = formatUnits(fee, 0)
+      const fee =
+        (parseUnits(`${Number(price)}`, currency?.decimals) * referrerFeeBps) /
+        10000
+      const atomicUnitsFee = formatUnits(BigInt(fee), 0)
       options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
     } else if (referrer && referrerFeeFixed) {
       options.feesOnTop = [`${referrer}:${referrerFeeFixed}`]

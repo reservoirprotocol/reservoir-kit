@@ -16,7 +16,7 @@ import {
   useOnChainRoyalties,
   useChainCurrency,
 } from '../../hooks'
-import { useSigner, useAccount } from 'wagmi'
+import { useWalletClient, useAccount } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
@@ -87,7 +87,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   enableOnChainRoyalties = false,
   children,
 }) => {
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
   const account = useAccount()
   const [editListingStep, setEditListingStep] = useState<EditListingStep>(
     EditListingStep.Edit

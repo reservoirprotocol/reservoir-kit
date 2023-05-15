@@ -1,12 +1,12 @@
-import { goerli, mainnet, useContractRead } from 'wagmi'
-import { BigNumber } from 'ethers'
-import { parseUnits } from 'ethers/lib/utils.js'
+import { mainnet, useContractRead } from 'wagmi'
+import { goerli } from 'wagmi/chains'
 import useChainCurrency from '../hooks/useChainCurrency'
+import { parseUnits } from 'viem'
 
 type Props = {
   contract?: string
   tokenId?: string
-  value?: BigNumber
+  value?: bigint
   enabled: boolean
   chainId: number
 }

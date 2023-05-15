@@ -18,7 +18,7 @@ import {
   useChainCurrency,
   useOnChainRoyalties,
 } from '../../hooks'
-import { useAccount, useSigner } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
@@ -127,7 +127,7 @@ export const ListModalRenderer: FC<Props> = ({
   oracleEnabled = false,
   children,
 }) => {
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
   const account = useAccount()
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)

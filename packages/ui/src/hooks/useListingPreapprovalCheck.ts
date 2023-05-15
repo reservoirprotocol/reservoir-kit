@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import useReservoirClient from './useReservoirClient'
 import { Marketplace } from './useMarketplaces'
 import { Listings } from '../modal/list/ListModalRenderer'
-import { useSigner } from 'wagmi'
+import { useWalletClient } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 
 export default function (
@@ -15,7 +15,7 @@ export default function (
   >([])
   const [isFetching, setIsFetching] = useState(false)
   const client = useReservoirClient()
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
 
   useEffect(() => {
     if (

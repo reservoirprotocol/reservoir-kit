@@ -1,7 +1,6 @@
 import { useCoinConversion, useCart, useReservoirClient } from '../../hooks'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
-import { BigNumber, utils } from 'ethers'
 import { zeroAddress, parseUnits } from 'viem'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
@@ -18,7 +17,7 @@ type ChildrenProps = {
   totalPrice: number
   referrerFee?: number
   usdPrice: ReturnType<typeof useCoinConversion>
-  balance?: BigInt
+  balance?: bigint
   hasEnoughCurrency: boolean
   items: Cart['items']
   flaggedItems: Cart['items']
@@ -114,11 +113,10 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
       if (!balance.value) {
         setHasEnoughCurrency(false)
       } else if (
-        balance.value.lt(
-          parseUnits(
-            `${totalPriceTruncated as number}`,
-            currency?.decimals as number
-          )
+        balance.value <
+        parseUnits(
+          `${totalPriceTruncated as number}`,
+          currency?.decimals as number
         )
       ) {
         setHasEnoughCurrency(false)

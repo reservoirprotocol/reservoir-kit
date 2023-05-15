@@ -3106,12 +3106,12 @@ __metadata:
     framer-motion: ^6.4.2
     react-flatpickr: ^3.10.13
     swr: 2.0.1
-    wagmi: ^1.0.3
+    wagmi: ^1.0.1
   peerDependencies:
     ethers: ^5.6.1
     react: ^18.0
     react-dom: ^18.0
-    viem: 0.3.24
+    viem: ~0.3.19
   languageName: unknown
   linkType: soft
 
@@ -3121,7 +3121,7 @@ __metadata:
   dependencies:
     axios: ^0.27.2
     openapi-typescript: ^5.4.1
-    viem: ^0.3.22
+    viem: ~0.3.19
   languageName: unknown
   linkType: soft
 
@@ -3698,9 +3698,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/core@npm:1.0.3":
-  version: 1.0.3
-  resolution: "@wagmi/core@npm:1.0.3"
+"@wagmi/core@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@wagmi/core@npm:1.0.4"
   dependencies:
     "@wagmi/chains": 0.2.22
     "@wagmi/connectors": 1.0.2
@@ -3713,7 +3713,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 7eb7e625e074277e6ac631797f3d706440ab8e3f15dcbb9ff791aa6ee742b0b38409291c4ba86d3c235df0083abe6d59d92ffb63c616393a59a241fc52c1eec1
+  checksum: 2f960e1812324f9e597eb316cb8758aac0a380f4c61852322731f60d7d8fa298d799fa62ec45d05865560911574acee0bf1c9137856ad6e374bb882d9d3ca45c
   languageName: node
   linkType: hard
 
@@ -8225,7 +8225,7 @@ __metadata:
     react-dom: ^18.0.0
     react-intersection-observer: ^9.4.0
     typescript: ^4.9.4
-    wagmi: ^1.0.3
+    wagmi: ^1.0.1
   languageName: unknown
   linkType: soft
 
@@ -8251,7 +8251,7 @@ __metadata:
     process: ^0.11.10
     replace-in-files: ^3.0.0
     typescript: ^4.9.4
-    viem: ^0.3.24
+    viem: ~0.3.19
   languageName: unknown
   linkType: soft
 
@@ -9123,24 +9123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^0.3.22":
-  version: 0.3.22
-  resolution: "viem@npm:0.3.22"
-  dependencies:
-    "@adraffy/ens-normalize": 1.9.0
-    "@noble/curves": 1.0.0
-    "@noble/hashes": 1.3.0
-    "@scure/bip32": 1.3.0
-    "@scure/bip39": 1.2.0
-    "@wagmi/chains": 0.2.16
-    abitype: 0.8.2
-    isomorphic-ws: 5.0.0
-    ws: 8.12.0
-  checksum: c757cec7ca42572cdb466fa7200b270a84e4167e36cbfb8f1f19e5f760b3a030ffc91d566bf8b70f5aaf743cf32e71618f27b42cf8a412bd94e38cd0dc1153b1
-  languageName: node
-  linkType: hard
-
-"viem@npm:^0.3.24":
+"viem@npm:~0.3.19":
   version: 0.3.24
   resolution: "viem@npm:0.3.24"
   dependencies:
@@ -9157,14 +9140,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "wagmi@npm:1.0.3"
+"wagmi@npm:^1.0.1":
+  version: 1.0.4
+  resolution: "wagmi@npm:1.0.4"
   dependencies:
     "@tanstack/query-sync-storage-persister": ^4.27.1
     "@tanstack/react-query": ^4.28.0
     "@tanstack/react-query-persist-client": ^4.28.0
-    "@wagmi/core": 1.0.3
+    "@wagmi/core": 1.0.4
     abitype: 0.8.1
     use-sync-external-store: ^1.2.0
   peerDependencies:
@@ -9174,7 +9157,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 47c3f0e788f2008d5a092ebbbe9d59cc962ab837f5d2ac7860f1ecbaa9e5e776e8beabdebe554972909d7149433aca6a04a03400f3e7395daff0ca2ace35f2e6
+  checksum: 8d983a562097a6bbe711609c946fad64e0c2b3c4db3ec4ab383c516aca4f557c777cec8af8eb192cb3508f871b7ce497d3537af6f44de947c6a2457466b6d134
   languageName: node
   linkType: hard
 
