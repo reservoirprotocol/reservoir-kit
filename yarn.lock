@@ -3106,11 +3106,11 @@ __metadata:
     framer-motion: ^6.4.2
     react-flatpickr: ^3.10.13
     swr: 2.0.1
-    wagmi: ^1.0.5
   peerDependencies:
     react: ^18.0
     react-dom: ^18.0
     viem: ~0.3.18
+    wagmi: ^1.0.5
   languageName: unknown
   linkType: soft
 
@@ -3120,6 +3120,7 @@ __metadata:
   dependencies:
     axios: ^0.27.2
     openapi-typescript: ^5.4.1
+  peerDependencies:
     viem: ~0.3.18
   languageName: unknown
   linkType: soft

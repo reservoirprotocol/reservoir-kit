@@ -33,13 +33,15 @@
         "sdk"
     ],
     "dependencies": {
-        "axios": "^0.27.2",
-        "viem": "~0.3.18"
+        "axios": "^0.27.2"
     },
     "publishConfig": {
         "access": "public"
     },
     "devDependencies": {
         "openapi-typescript": "^5.4.1"
+    },
+    "peerDependencies": {
+        "viem": "~0.3.18"
     }
 }
