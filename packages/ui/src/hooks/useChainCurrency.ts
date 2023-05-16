@@ -1,6 +1,6 @@
 import { getClient } from '@reservoir0x/reservoir-sdk'
 import { zeroAddress } from 'viem'
-import { Chain, mainnet, useNetwork } from 'wagmi'
+import { Address, Chain, mainnet, useNetwork } from 'wagmi'
 import { goerli } from 'wagmi/chains'
 
 export default function (chainId?: number) {
@@ -27,13 +27,13 @@ export const getChainCurrency = (chains: Chain[], chainId?: number) => {
       name: 'Ethereum',
       symbol: 'ETH',
       decimals: 18,
-      address: zeroAddress,
+      address: zeroAddress as Address,
       chainId: chain?.id || mainnet.id,
     }
   } else {
     return {
       ...chain.nativeCurrency,
-      address: zeroAddress,
+      address: zeroAddress as Address,
       chainId: chain.id,
     }
   }

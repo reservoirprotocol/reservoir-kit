@@ -12,7 +12,13 @@ import {
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import { useAccount, useBalance, useNetwork, useWalletClient } from 'wagmi'
+import {
+  Address,
+  useAccount,
+  useBalance,
+  useNetwork,
+  useWalletClient,
+} from 'wagmi'
 import Token from '../list/Token'
 import {
   Execute,
@@ -74,7 +80,7 @@ type ChildrenProps = {
   availableTokens: ReturnType<typeof useTokens>['data']
   address?: string
   tokens: ReturnType<typeof useTokens>['data']
-  balance?: BigInt
+  balance?: bigint
   hasEnoughCurrency: boolean
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
@@ -227,7 +233,7 @@ export const SweepModalRenderer: FC<Props> = ({
           name: otherCurrency?.name as string,
           symbol: otherCurrency?.symbol as string,
           decimals: otherCurrency?.decimals as number,
-          address: otherCurrency?.contract as string,
+          address: otherCurrency?.contract as Address,
           chainId: chain?.id as number,
         })
       }
@@ -424,7 +430,8 @@ export const SweepModalRenderer: FC<Props> = ({
     if (referrer && referrerFeeBps) {
       const price = toFixed(total, currency?.decimals || 18)
       const fee =
-        (parseUnits(`${Number(price)}`, currency?.decimals) * referrerFeeBps) /
+        (Number(parseUnits(`${Number(price)}`, currency?.decimals)) *
+          referrerFeeBps) /
         10000
       const atomicUnitsFee = formatUnits(BigInt(fee), 0)
       options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]

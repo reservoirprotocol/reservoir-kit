@@ -1,10 +1,10 @@
 import FormatCrypto from './FormatCrypto'
 import React, { FC, ComponentProps } from 'react'
-import { constants } from 'ethers'
 import CryptoCurrencyIcon from './CryptoCurrencyIcon'
 import { useNetwork } from 'wagmi'
 import Tooltip from './Tooltip'
 import Anchor from './Anchor'
+import { zeroAddress } from 'viem'
 
 type FormatCryptoCurrencyProps = {
   logoWidth?: number
@@ -17,7 +17,7 @@ type Props = ComponentProps<typeof FormatCrypto> & FormatCryptoCurrencyProps
 
 const FormatCryptoCurrency: FC<Props> = ({
   amount,
-  address = constants.AddressZero,
+  address = zeroAddress,
   maximumFractionDigits,
   logoWidth = 14,
   textStyle,

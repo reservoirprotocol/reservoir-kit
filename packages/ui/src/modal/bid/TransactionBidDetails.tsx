@@ -4,8 +4,8 @@ import TokenStatsHeader from './TokenStatsHeader'
 import { useTokens, useCollections } from '../../hooks'
 import { BidData } from './BidModalRenderer'
 import { useTimeSince } from '../../hooks'
-import { formatEther } from 'ethers/lib/utils.js'
 import SelectedAttribute from './SelectedAttribute'
+import { formatEther } from 'viem'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
@@ -20,7 +20,7 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
   )
 
   useEffect(() => {
-    setValue(bidData ? formatEther(bidData.weiPrice) : '')
+    setValue(bidData ? formatEther(BigInt(bidData.weiPrice)) : '')
   }, [bidData])
 
   return (

@@ -21,13 +21,12 @@ import {
 import { useAccount, useWalletClient } from 'wagmi'
 
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
-import { constants } from 'ethers'
 import { Currency } from '../../types/Currency'
+import { formatUnits, parseUnits, zeroAddress } from 'viem'
 
 export enum ListStep {
   SelectMarkets,
@@ -102,7 +101,7 @@ const isCurrencyAllowed = (
   openseaPaymentTokens: PaymentTokens
 ) => {
   if (marketplace.listingEnabled) {
-    if (currency.contract === constants.AddressZero) {
+    if (currency.contract === zeroAddress) {
       return true
     }
     switch (marketplace.orderbook) {
@@ -173,7 +172,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   const onChainRoyaltyBps = useMemo(() => {
     const totalRoyalty = onChainRoyalties?.[1].reduce((total, royalty) => {
-      total += parseFloat(formatUnits(royalty, currency.decimals))
+      total += parseFloat(formatUnits(royalty, currency.decimals as number))
       return total
     }, 0)
     if (totalRoyalty) {
@@ -395,9 +394,10 @@ export const ListModalRenderer: FC<Props> = ({
       if (market.isSelected) {
         const listing: Listings[0] = {
           token: `${contract}:${tokenId}`,
-          weiPrice: parseUnits(`${+market.price}`, currency.decimals)
-            .mul(quantity)
-            .toString(),
+          weiPrice: (
+            parseUnits(`${+market.price}`, currency.decimals as number) *
+            BigInt(quantity)
+          ).toString(),
           //@ts-ignore
           orderbook: market.orderbook,
           //@ts-ignore
@@ -409,10 +409,10 @@ export const ListModalRenderer: FC<Props> = ({
           onChainRoyalties &&
           listing.orderKind?.includes('seaport')
         ) {
-          const royalties = onChainRoyalties.recipients.map((recipient, i) => {
+          const royalties = onChainRoyalties[0].map((recipient, i) => {
             const bps =
               (parseFloat(
-                formatUnits(onChainRoyalties.amounts[i], currency.decimals)
+                formatUnits(onChainRoyalties[1][i], currency.decimals as number)
               ) /
                 1) *
               10000
@@ -439,7 +439,7 @@ export const ListModalRenderer: FC<Props> = ({
           listing.expirationTime = expirationTime
         }
 
-        if (currency && currency.contract != constants.AddressZero) {
+        if (currency && currency.contract != zeroAddress) {
           listing.currency = currency.contract
         }
 
