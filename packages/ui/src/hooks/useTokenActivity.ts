@@ -6,7 +6,7 @@ type TokenActivityQuery =
   paths['/tokens/{token}/activity/v4']['get']['parameters']['query']
 
 type TokenActivityResponse =
-  paths['/tokens/{token}/activity/v4']['get']['responses']['200']['schema']
+  paths['/tokens/{token}/activity/v5']['get']['responses']['200']['schema']
 
 export default function (
   token: string,
@@ -26,7 +26,7 @@ export default function (
         return null
       }
 
-      const url = new URL(`${chain?.baseApiUrl}/tokens/${token}/activity/v4`)
+      const url = new URL(`${chain?.baseApiUrl}/tokens/${token}/activity/v5`)
 
       let query: TokenActivityQuery = { ...options }
 
