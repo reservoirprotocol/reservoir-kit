@@ -46,7 +46,7 @@
     "process": "^0.11.10",
     "replace-in-files": "^3.0.0",
     "typescript": "^4.9.4",
-    "viem": "~0.3.19"
+    "viem": "~0.3.18"
   },
   "engines": {
     "node": ">=12",

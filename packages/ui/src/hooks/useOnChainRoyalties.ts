@@ -1,5 +1,5 @@
-import { mainnet, useContractRead } from 'wagmi'
-import { goerli } from 'wagmi/chains'
+import { useContractRead } from 'wagmi'
+import { mainnet, goerli } from 'wagmi/chains'
 import useChainCurrency from '../hooks/useChainCurrency'
 import { parseUnits } from 'viem'
 

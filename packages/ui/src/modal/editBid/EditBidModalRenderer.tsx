@@ -9,14 +9,8 @@ import {
   useBids,
   useAttributes,
 } from '../../hooks'
-import {
-  useWalletClient,
-  useAccount,
-  useBalance,
-  useNetwork,
-  mainnet,
-} from 'wagmi'
-import { goerli } from 'wagmi/chains'
+import { useWalletClient, useAccount, useBalance, useNetwork } from 'wagmi'
+import { mainnet, goerli } from 'wagmi/chains'
 
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'

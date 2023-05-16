@@ -23,8 +23,8 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-intersection-observer": "^9.4.0",
-    "viem": "~0.3.19",
-    "wagmi": "^1.0.1"
+    "viem": "~0.3.18",
+    "wagmi": "^1.0.5"
   },
   "devDependencies": {
     "@types/node": "^12.12.21",

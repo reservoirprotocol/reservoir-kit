@@ -8,14 +8,8 @@ import {
   useAttributes,
   useChainCurrency,
 } from '../../hooks'
-import {
-  useAccount,
-  useBalance,
-  useNetwork,
-  useWalletClient,
-  mainnet,
-} from 'wagmi'
-import { goerli } from 'wagmi/chains'
+import { useAccount, useBalance, useNetwork, useWalletClient } from 'wagmi'
+import { mainnet, goerli } from 'wagmi/chains'
 
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
