@@ -211,16 +211,22 @@ export async function executeSteps(
                   ],
                   LogLevel.Verbose
                 )
-                await sendTransactionSafely(stepData, signer, (tx) => {
-                  client.log(
-                    ['Execute Steps: Transaction step, got transaction', tx],
-                    LogLevel.Verbose
-                  )
-                  stepItem.txHash = tx
-                  if (json) {
-                    setState([...json.steps], path)
+
+                await sendTransactionSafely(
+                  currentReservoirChain?.id || 1,
+                  stepData,
+                  signer,
+                  (tx) => {
+                    client.log(
+                      ['Execute Steps: Transaction step, got transaction', tx],
+                      LogLevel.Verbose
+                    )
+                    stepItem.txHash = tx
+                    if (json) {
+                      setState([...json.steps], path)
+                    }
                   }
-                })
+                )
                 client.log(
                   [
                     'Execute Steps: Transaction finished, starting to poll for confirmation',

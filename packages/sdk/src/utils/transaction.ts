@@ -1,5 +1,6 @@
 import { Transaction, WalletClient, createPublicClient, http } from 'viem'
 import { LogLevel, getClient } from '..'
+import { mainnet, goerli, polygon, arbitrum, optimism } from 'viem/chains'
 
 /**
  * Safe txhash.wait which handles replacements when users speed up the transactio
@@ -7,18 +8,22 @@ import { LogLevel, getClient } from '..'
  * @returns A Promise to wait on
  */
 export async function sendTransactionSafely(
+  chainId: number,
   data: any,
   signer: WalletClient,
   setTx: (tx: Transaction['hash']) => void
   // tx?: TransactionResponse
 ) {
+  const supportedChains = [mainnet, goerli, polygon, arbitrum, optimism]
+  const viemChain = supportedChains.find((chain) => chain.id === chainId)
+
   const viemClient = createPublicClient({
-    chain: undefined,
+    chain: viemChain,
     transport: http(),
   })
 
   const transaction = await signer.sendTransaction({
-    chain: undefined,
+    chain: viemChain,
     account: data.from,
     to: data.to,
     value: data.value,

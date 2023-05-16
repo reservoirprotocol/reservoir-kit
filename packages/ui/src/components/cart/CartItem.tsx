@@ -17,8 +17,8 @@ import {
 import { Cart } from '../../context/CartProvider'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { formatNumber } from '../../lib/numbers'
-import { mainnet } from 'wagmi'
-import * as allChains from 'wagmi/chains'
+// import { mainnet } from 'wagmi'
+// import * as allChains from 'wagmi/chains'
 import QuantitySelector from '../../modal/QuantitySelector'
 
 type Props = {
@@ -97,29 +97,29 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
     >
       <Flex
         onClick={() => {
-          const chain = Object.values(allChains).find(
-            (chain) => cartChain?.id === chain.id
-          )
-          let url: string | undefined = tokenUrl
-          if (!url && cartChain) {
-            let tokenMetaKey: string | null = null
-            if (cartChain.id === mainnet.id) {
-              tokenMetaKey = 'reservoir:token-url-mainnet'
-            } else {
-              tokenMetaKey = `reservoir:token-url-${chain?.name.toLowerCase()}`
-            }
-            const tokenMetaTag = document.querySelector(
-              `meta[property='${tokenMetaKey}']`
-            )
-            if (tokenMetaTag) {
-              url = tokenMetaTag.getAttribute('content') || undefined
-            }
-          }
-          if (url) {
-            window.location.href = url
-              .replace('${contract}', contract)
-              .replace('${tokenId}', token.id)
-          }
+          // const chain = Object.values(allChains).find(
+          //   (chain) => cartChain?.id === chain.id
+          // )
+          // let url: string | undefined = tokenUrl
+          // if (!url && cartChain) {
+          //   let tokenMetaKey: string | null = null
+          //   if (cartChain.id === mainnet.id) {
+          //     tokenMetaKey = 'reservoir:token-url-mainnet'
+          //   } else {
+          //     tokenMetaKey = `reservoir:token-url-${chain?.name.toLowerCase()}`
+          //   }
+          //   const tokenMetaTag = document.querySelector(
+          //     `meta[property='${tokenMetaKey}']`
+          //   )
+          //   if (tokenMetaTag) {
+          //     url = tokenMetaTag.getAttribute('content') || undefined
+          //   }
+          // }
+          // if (url) {
+          //   window.location.href = url
+          //     .replace('${contract}', contract)
+          //     .replace('${tokenId}', token.id)
+          // }
         }}
         css={{
           width: '100%',
