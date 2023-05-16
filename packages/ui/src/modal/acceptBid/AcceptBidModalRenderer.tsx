@@ -28,7 +28,7 @@ export type AcceptBidTokenData = {
   tokenId: string
   collectionId: string
   bidIds?: string[]
-  bidsPath: NonNullable<SellPath>
+  bidsPath?: NonNullable<SellPath>
 }
 
 export type EnhancedAcceptBidTokenData = Required<AcceptBidTokenData> & {
@@ -127,17 +127,15 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           mapPath.push(path)
         }
         return map
-      }, {} as Record<string, AcceptBidTokenData['bidsPath']>) || {}
+      }, {} as Record<string, NonNullable<AcceptBidTokenData['bidsPath']>>) ||
+      {}
 
     return tokens.reduce((enhancedTokens, token) => {
       const dataMapKey = `${token.collectionId}:${token.tokenId}`
       const tokenData = tokensDataMap[dataMapKey]
       const bidIds = token.bidIds?.filter((bidId) => bidId.length > 0) || []
-      const bidsPath: AcceptBidTokenData['bidsPath'] = tokensBidPathMap[
-        dataMapKey
-      ]
-        ? tokensBidPathMap[dataMapKey]
-        : []
+      const bidsPath: NonNullable<AcceptBidTokenData['bidsPath']> =
+        tokensBidPathMap[dataMapKey] ? tokensBidPathMap[dataMapKey] : []
       if (!bidIds.length) {
         enhancedTokens.push({
           ...token,
