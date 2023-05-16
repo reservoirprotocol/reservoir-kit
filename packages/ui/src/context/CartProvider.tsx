@@ -18,8 +18,7 @@ import React, {
   FC,
 } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { zeroAddress } from 'viem'
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
+import { parseUnits, zeroAddress } from 'viem'
 import { version } from '../../package.json'
 import { getNetwork, getWalletClient } from 'wagmi/actions'
 
@@ -975,7 +974,7 @@ function cartStore({
       if (referrerFee) {
         const atomicUnitsFee = parseUnits(
           `${referrerFee}`,
-          cartData.current.currency?.decimals
+          cartData.current.currency?.decimals as number
         )
         options.feesOnTop = [`${cartData.current.referrer}:${atomicUnitsFee}`]
       }

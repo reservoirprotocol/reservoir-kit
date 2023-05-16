@@ -1,6 +1,7 @@
 import { getClient } from '@reservoir0x/reservoir-sdk'
 import { zeroAddress } from 'viem'
-import { Chain, goerli, mainnet, useNetwork } from 'wagmi'
+import { Chain, mainnet, useNetwork } from 'wagmi'
+import { goerli } from 'wagmi/chains'
 
 export default function (chainId?: number) {
   const { chains } = useNetwork()
