@@ -14,7 +14,6 @@ import {
   faCircleExclamation,
   faGasPump,
 } from '@fortawesome/free-solid-svg-icons'
-import zoneAddresses from '../../constants/zoneAddresses'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
@@ -90,12 +89,7 @@ export function CancelListingModal({
           (listing.status === 'active' || listing.status === 'inactive') &&
           !loading
 
-        const orderZone = listing?.rawData?.zone
-        const orderKind = listing?.kind
-
-        const isOracleOrder =
-          orderKind === 'seaport-v1.4' &&
-          zoneAddresses.includes(orderZone as string)
+        const isOracleOrder = listing?.isNativeOffChainCancellable
 
         return (
           <Modal

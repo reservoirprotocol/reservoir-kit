@@ -23,7 +23,6 @@ import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import { constants } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils.js'
-import zoneAddresses from '../../constants/zoneAddresses'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { BidData, Trait, Traits } from '../bid/BidModalRenderer'
@@ -145,11 +144,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   const contract = bid?.tokenSetId?.split(':')[1]
   const currency = bid?.price?.currency
 
-  const orderZone = bid?.rawData?.zone
-  const orderKind = bid?.kind
-
-  const isOracleOrder =
-    orderKind === 'seaport-v1.4' && zoneAddresses.includes(orderZone as string)
+  const isOracleOrder = bid?.isNativeOffChainCancellable as boolean
 
   const wrappedContractAddress = currency
     ? (currency.contract as string)

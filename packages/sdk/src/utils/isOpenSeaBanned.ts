@@ -10,9 +10,9 @@ import { version } from '../../package.json'
  * @returns `{tokenId: true}` A dictionary of token banned status from OpenSea.
  */
 export async function isOpenSeaBanned(ids: string[], chainId?: number) {
-  const client = getClient()
-  const currentReservoirChain = client?.currentChain()
-  const baseApiUrl = currentReservoirChain?.apiKey
+    const client = getClient()
+    const currentReservoirChain = client?.currentChain()
+    const baseApiUrl = currentReservoirChain?.baseApiUrl
 
   let url =
     (chainId || client?.currentChain()?.id) === 5

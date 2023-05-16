@@ -24,7 +24,6 @@ import dayjs from 'dayjs'
 import { constants } from 'ethers'
 import { Listings } from '../list/ListModalRenderer'
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
-import zoneAddresses from '../../constants/zoneAddresses'
 
 export enum EditListingStep {
   Edit,
@@ -115,11 +114,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   const listing = listings && listings[0] ? listings[0] : undefined
   const currency = listing?.price?.currency
 
-  const orderZone = listing?.rawData?.zone
-  const orderKind = listing?.kind
-
-  const isOracleOrder =
-    orderKind === 'seaport-v1.4' && zoneAddresses.includes(orderZone as string)
+  const isOracleOrder = listing?.isNativeOffChainCancellable as boolean
 
   useEffect(() => {
     if (listing?.price?.amount?.decimal) {

@@ -158,7 +158,7 @@ export function SweepModal({
         return (
           <Modal
             trigger={trigger}
-            title="Sweep"
+            title="Buy"
             open={open}
             loading={loading}
             onOpenChange={(open) => {
@@ -267,7 +267,10 @@ export function SweepModal({
                             name={
                               token.token?.name || `#${token?.token?.tokenId}`
                             }
-                            image={token.token?.image}
+                            image={
+                              token.token?.image ||
+                              token?.token?.collection?.image
+                            }
                             currency={currency}
                             amount={
                               isChainCurrency
@@ -318,9 +321,7 @@ export function SweepModal({
                     }
                     onClick={sweepTokens}
                   >
-                    {selectedTokens.length > 0
-                      ? 'Sweep'
-                      : 'Select Items to Buy'}
+                    {selectedTokens.length > 0 ? 'Buy' : 'Select Items to Buy'}
                   </Button>
                 ) : (
                   <Flex direction="column" align="center" css={{ px: '$3' }}>

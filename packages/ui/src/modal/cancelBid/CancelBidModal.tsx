@@ -11,7 +11,6 @@ import {
   faCircleExclamation,
   faGasPump,
 } from '@fortawesome/free-solid-svg-icons'
-import zoneAddresses from '../../constants/zoneAddresses'
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
@@ -88,12 +87,7 @@ export function CancelBidModal({
           (bid.status === 'active' || bid.status === 'inactive') &&
           !loading
 
-        const orderZone = bid?.rawData?.zone
-        const orderKind = bid?.kind
-
-        const isOracleOrder =
-          orderKind === 'seaport-v1.4' &&
-          zoneAddresses.includes(orderZone as string)
+        const isOracleOrder = bid?.isNativeOffChainCancellable
 
         return (
           <Modal
