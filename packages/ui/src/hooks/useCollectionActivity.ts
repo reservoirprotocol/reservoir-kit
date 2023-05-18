@@ -3,10 +3,10 @@ import { SWRInfiniteConfiguration } from 'swr/infinite'
 import { useInfiniteApi, useReservoirClient } from './'
 
 type CollectionActivityResponse =
-  paths['/collections/activity/v5']['get']['responses']['200']['schema']
+  paths['/collections/activity/v6']['get']['responses']['200']['schema']
 
 type CollectionActivityQuery =
-  paths['/collections/activity/v5']['get']['parameters']['query']
+  paths['/collections/activity/v6']['get']['parameters']['query']
 
 export default function (
   options?: CollectionActivityQuery | false,
@@ -28,7 +28,7 @@ export default function (
         return null
       }
 
-      const url = new URL(`${chain?.baseApiUrl}/collections/activity/v5`)
+      const url = new URL(`${chain?.baseApiUrl}/collections/activity/v6`)
 
       let query: CollectionActivityQuery = { ...options }
 
