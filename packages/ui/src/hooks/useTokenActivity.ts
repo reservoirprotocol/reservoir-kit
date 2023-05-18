@@ -3,7 +3,7 @@ import { SWRInfiniteConfiguration } from 'swr/infinite'
 import { useInfiniteApi, useReservoirClient } from './'
 
 type TokenActivityQuery =
-  paths['/tokens/{token}/activity/v4']['get']['parameters']['query']
+  paths['/tokens/{token}/activity/v5']['get']['parameters']['query']
 
 type TokenActivityResponse =
   paths['/tokens/{token}/activity/v5']['get']['responses']['200']['schema']
