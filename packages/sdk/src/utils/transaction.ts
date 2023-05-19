@@ -24,10 +24,12 @@ export async function sendTransactionSafely(
 
   const transaction = await signer.sendTransaction({
     chain: viemChain,
+    data: data.data,
     account: data.from,
     to: data.to,
     value: data.value,
   })
+
   setTx(transaction)
 
   await viemClient.waitForTransactionReceipt({
