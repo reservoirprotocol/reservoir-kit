@@ -3,6 +3,7 @@ import { buyToken } from './buyToken'
 import { cancelOrder } from './cancelOrder'
 import { listToken } from './listToken'
 import { placeBid } from './placeBid'
+import { mint } from './mint'
 
 const actions = {
   acceptOffer,
@@ -10,6 +11,7 @@ const actions = {
   cancelOrder,
   listToken,
   placeBid,
+  mint,
 }
 
 export default actions

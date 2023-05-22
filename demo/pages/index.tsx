@@ -20,7 +20,7 @@ const Index: NextPage = () => {
       <ThemeSwitcher />
 
       <h2>Modals</h2>
-      <nav style={{ display: 'flex', gap: 15 }}>
+      <nav style={{ display: 'flex', gap: 15, flexWrap: 'wrap' }}>
         <Link href="/modal/buy">
           <a>BuyModal</a>
         </Link>
@@ -48,9 +48,12 @@ const Index: NextPage = () => {
         <Link href="/modal/sweep">
           <a>SweepModal</a>
         </Link>
+        <Link href="/modal/mint">
+          <a>Mint</a>
+        </Link>
       </nav>
       <h2>Hooks</h2>
-      <nav style={{ display: 'flex', gap: 15 }}>
+      <nav style={{ display: 'flex', gap: 15, flexWrap: 'wrap' }}>
         <Link href="/hook/collections">
           <a>useCollections</a>
         </Link>
