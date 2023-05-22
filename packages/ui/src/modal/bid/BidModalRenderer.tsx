@@ -279,7 +279,7 @@ export const BidModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  const isBanned = useTokenOpenseaBanned(open ? contract : undefined, tokenId)
+  const isBanned = useTokenOpenseaBanned(open ? contract : undefined, tokenId, client?.currentChain()?.id)
 
   const placeBid = useCallback(
     (options?: { quantity?: number }) => {
