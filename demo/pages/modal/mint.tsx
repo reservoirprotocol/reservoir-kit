@@ -75,6 +75,7 @@ const MintPage: NextPage = () => {
           }
           client?.actions.mint({
             collection: collectionId,
+            quantity,
             signer,
             onProgress: (steps, path) => {
               console.log('steps', steps)
