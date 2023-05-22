@@ -195,7 +195,7 @@ export const EditListingModalRenderer: FC<Props> = ({
 
   const onChainRoyaltyBps = useMemo(() => {
     const totalRoyalty = onChainRoyalties?.[1].reduce((total, royalty) => {
-      total += parseFloat(formatUnits(royalty, currency?.decimals as number))
+      total += parseFloat(formatUnits(royalty, currency?.decimals || 18))
       return total
     }, 0)
     if (totalRoyalty) {
@@ -247,7 +247,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     const listing: Listings[0] = {
       token: `${contract}:${tokenId}`,
       weiPrice: (
-        parseUnits(`${price as number}`, currency?.decimals as number) *
+        parseUnits(`${price as number}`, currency?.decimals || 18) *
         BigInt(quantity)
       ).toString(),
       orderbook: 'reservoir',

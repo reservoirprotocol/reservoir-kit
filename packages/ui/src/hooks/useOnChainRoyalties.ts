@@ -71,7 +71,7 @@ export default function ({
     }
   }
   const currency = useChainCurrency(chainId)
-  const amount = value ? value : parseUnits('1', currency.decimals)
+  const amount = value ? value : parseUnits('1', currency.decimals || 18)
 
   return useContractRead({
     chainId: chainId,

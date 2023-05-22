@@ -201,7 +201,7 @@ export const SweepModalRenderer: FC<Props> = ({
         setHasEnoughCurrency(false)
       } else if (
         balance?.value <
-        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals)
+        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals || 18)
       ) {
         setHasEnoughCurrency(false)
       } else {
@@ -430,7 +430,7 @@ export const SweepModalRenderer: FC<Props> = ({
     if (referrer && referrerFeeBps) {
       const price = toFixed(total, currency?.decimals || 18)
       const fee =
-        (Number(parseUnits(`${Number(price)}`, currency?.decimals)) *
+        (Number(parseUnits(`${Number(price)}`, currency?.decimals || 18)) *
           referrerFeeBps) /
         10000
       const atomicUnitsFee = formatUnits(BigInt(fee), 0)

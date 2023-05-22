@@ -229,7 +229,7 @@ export const BuyModalRenderer: FC<Props> = ({
     if (referrer && referrerFee) {
       const atomicUnitsFee = parseUnits(
         `${referrerFee}`,
-        currency?.decimals as number
+        currency?.decimals || 18
       )
       options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
     } else if (referrer === null && referrerFeeBps === null) {
@@ -433,7 +433,7 @@ export const BuyModalRenderer: FC<Props> = ({
           setReferrerFee(fee)
         } else if (referrerFeeFixed && referrer) {
           const fee = Number(
-            formatUnits(BigInt(referrerFeeFixed), currency?.decimals as number)
+            formatUnits(BigInt(referrerFeeFixed), currency?.decimals || 18)
           )
           total += fee
           setReferrerFee(fee)
@@ -476,10 +476,7 @@ export const BuyModalRenderer: FC<Props> = ({
         setHasEnoughCurrency(false)
       } else if (
         balance.value <
-        parseUnits(
-          `${totalPriceTruncated as number}`,
-          currency?.decimals as number
-        )
+        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals || 18)
       ) {
         setHasEnoughCurrency(false)
       } else {

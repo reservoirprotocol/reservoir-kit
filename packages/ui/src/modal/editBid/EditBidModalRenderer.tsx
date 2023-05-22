@@ -228,7 +228,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     if (bidAmount !== '') {
       const bid = parseUnits(
         `${Number(bidAmount)}`,
-        wrappedBalance?.decimals as number
+        wrappedBalance?.decimals || 18
       )
 
       if (!wrappedBalance?.value || wrappedBalance?.value < bid) {
@@ -326,7 +326,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     const bid: BidData = {
       weiPrice: parseUnits(
         `${Number(bidAmount)}`,
-        wrappedBalance?.decimals as number
+        wrappedBalance?.decimals || 18
       ).toString(),
       orderbook: 'reservoir',
       orderKind: 'seaport-v1.4',

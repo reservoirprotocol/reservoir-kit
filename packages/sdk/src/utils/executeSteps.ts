@@ -349,13 +349,13 @@ export async function executeSteps(
                       ['Execute Steps: Signing with eip712'],
                       LogLevel.Verbose
                     )
-                    signature = await (
-                      signer as unknown as TypedDataSigner
-                    )._signTypedData(
-                      signData.domain,
-                      signData.types,
-                      signData.value
-                    )
+                    signature = await signer.signTypedData({
+                      account: signer.account as Account,
+                      domain: signData.domain,
+                      types: signData.types,
+                      primaryType: signData.primaryType,
+                      message: signData.value,
+                    })
                   }
 
                   if (signature) {

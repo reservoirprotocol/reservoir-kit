@@ -172,7 +172,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   const onChainRoyaltyBps = useMemo(() => {
     const totalRoyalty = onChainRoyalties?.[1].reduce((total, royalty) => {
-      total += parseFloat(formatUnits(royalty, currency.decimals as number))
+      total += parseFloat(formatUnits(royalty, currency.decimals || 18))
       return total
     }, 0)
     if (totalRoyalty) {
@@ -391,11 +391,28 @@ export const ListModalRenderer: FC<Props> = ({
     }
 
     marketplaces.forEach((market) => {
+      console.log('Market price: ', market.price)
+      console.log('Currency decimals: ', currency.decimals)
+      console.log(
+        'parseUnits: ',
+        parseUnits(`${+market.price}`, currency.decimals || 18)
+      )
+      console.log('Big int: ', BigInt(quantity))
+      console.log(
+        parseUnits(`${+market.price}`, currency.decimals || 18) *
+          BigInt(quantity)
+      )
+      console.log(
+        (
+          parseUnits(`${+market.price}`, currency.decimals || 18) *
+          BigInt(quantity)
+        ).toString()
+      )
       if (market.isSelected) {
         const listing: Listings[0] = {
           token: `${contract}:${tokenId}`,
           weiPrice: (
-            parseUnits(`${+market.price}`, currency.decimals as number) *
+            parseUnits(`${+market.price}`, currency.decimals || 18) *
             BigInt(quantity)
           ).toString(),
           //@ts-ignore
@@ -412,7 +429,7 @@ export const ListModalRenderer: FC<Props> = ({
           const royalties = onChainRoyalties[0].map((recipient, i) => {
             const bps =
               (parseFloat(
-                formatUnits(onChainRoyalties[1][i], currency.decimals as number)
+                formatUnits(onChainRoyalties[1][i], currency.decimals || 18)
               ) /
                 1) *
               10000

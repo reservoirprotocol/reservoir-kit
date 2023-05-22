@@ -57,7 +57,9 @@ function formatBN(
   if (typeof amount === 'undefined' || amount === null) return '-'
 
   const amountToFormat =
-    typeof amount === 'number' ? amount : +formatUnits(BigInt(amount), decimals)
+    typeof amount === 'number'
+      ? amount
+      : +formatUnits(BigInt(amount), decimals || 18)
 
   const amountFraction = `${amount}`.split('.')[1]
   const isSafari = isSafariBrowser()

@@ -974,7 +974,7 @@ function cartStore({
       if (referrerFee) {
         const atomicUnitsFee = parseUnits(
           `${referrerFee}`,
-          cartData.current.currency?.decimals as number
+          cartData.current.currency?.decimals || 18
         )
         options.feesOnTop = [`${cartData.current.referrer}:${atomicUnitsFee}`]
       }
