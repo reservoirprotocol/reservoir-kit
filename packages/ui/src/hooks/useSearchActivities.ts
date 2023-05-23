@@ -8,22 +8,7 @@ type SearchActivitiesQuery =
 type SearchActivitiesResponse =
   paths['/search/activities/v1']['get']['responses']['200']['schema']
 
-type SearchFilters = Pick<
-  SearchActivitiesQuery,
-  | 'attributes'
-  | 'collection'
-  | 'collectionsSetId'
-  | 'community'
-  | 'users'
-  | 'contractsSetId'
->
-
-type Search = {
-  [K in keyof SearchFilters]: SearchFilters[K]
-}
-
 export default function (
-  search: Search,
   options?: SearchActivitiesQuery,
   swrOptions: SWRInfiniteConfiguration = {},
   chaindId?: number
@@ -37,17 +22,13 @@ export default function (
 
   const response = useInfiniteApi<SearchActivitiesResponse>(
     (pageIndex, previousPageData) => {
-      if (
-        Object.values(search).some(
-          (value) => !value || (Array.isArray(value) && value.length === 0)
-        )
-      ) {
+      if (!options) {
         return null
       }
 
       const url = new URL(`${chain?.baseApiUrl}/search/activities/v1`)
 
-      let query: SearchActivitiesQuery = { ...search, ...options }
+      let query: SearchActivitiesQuery = { ...options }
 
       if (previousPageData && !previousPageData.continuation) {
         return null
