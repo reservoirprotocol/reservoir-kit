@@ -9,7 +9,7 @@ type SearchActivitiesResponse =
   paths['/search/activities/v1']['get']['responses']['200']['schema']
 
 export default function (
-  options?: SearchActivitiesQuery,
+  options?: SearchActivitiesQuery | false,
   swrOptions: SWRInfiniteConfiguration = {},
   chaindId?: number
 ) {
