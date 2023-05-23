@@ -5,9 +5,10 @@ import del from 'rollup-plugin-delete'
 import dts from 'rollup-plugin-dts'
 
 /**
- *
- * @param {*} pkg
- * @returns
+ * # getPkgJson
+ * Get's the package.json file and returns it parsed.
+ * @param {String} pkg - Package to return the pkg.json for
+ * @returns {Object} package.json
  */
 const getPkgJson = (pkg) =>
   JSON.parse(fs.readFileSync(`packages/${pkg}/package.json`, 'utf-8'))
