@@ -35,8 +35,8 @@ const Activity: NextPage = () => {
     >
       <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Activity</h3>
-      {activity.map((token, i) => (
-        <pre>{JSON.stringify(token, null, 2)}</pre>
+      {activity.map((activity, i) => (
+        <pre>{JSON.stringify(activity, null, 2)}</pre>
       ))}
       {hasNextPage ? (
         <div
