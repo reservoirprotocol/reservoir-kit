@@ -37,7 +37,11 @@ export default function (
 
   const response = useInfiniteApi<SearchActivitiesResponse>(
     (pageIndex, previousPageData) => {
-      if (Object.values(search).some((value) => !value)) {
+      if (
+        Object.values(search).some(
+          (value) => !value || (Array.isArray(value) && value.length === 0)
+        )
+      ) {
         return null
       }
 
