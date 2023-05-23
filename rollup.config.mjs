@@ -50,6 +50,7 @@ const rollupPackage = (pkg) => {
     input: `packages/${pkg}/src/index.ts`,
     external: Object.keys(getPkgJson(pkg).peerDependencies || {}),
     sourcemap: false,
+    cache: false,
     treeshake: true,
     output: [
       {
