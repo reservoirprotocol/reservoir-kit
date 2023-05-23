@@ -6,10 +6,19 @@ import { version } from '../../package.json'
 /**
  * Check if tokens are banned on OpenSea
  * @param tokens An array of token ids (e.g. ["123:0xabc123"])
+ * @param chaindId An optional chainId to override the active client chain
  * @returns `{tokenId: true}` A dictionary of token banned status from OpenSea.
  */
-export async function isOpenSeaBanned(ids: string[]) {
-  let url = 'https://api.opensea.io/api/v1/assets'
+export async function isOpenSeaBanned(ids: string[], chainId?: number) {
+    const client = getClient()
+    const currentReservoirChain = client?.currentChain()
+    const baseApiUrl = currentReservoirChain?.baseApiUrl
+
+  let url =
+    (chainId || client?.currentChain()?.id) === 5
+      ? 'https://testnets-api.opensea.io/api/v1/assets'
+      : 'https://api.opensea.io/api/v1/assets'
+
   ids.forEach((id, i) => {
     const [contract, tokenId] = id.split(':')
     const prefix = i === 0 ? '?' : '&'
@@ -18,9 +27,6 @@ export async function isOpenSeaBanned(ids: string[]) {
 
   const res = await axios.get(url)
   const json = res.data
-  const client = getClient()
-  const currentReservoirChain = client?.currentChain()
-  const baseApiUrl = currentReservoirChain?.baseApiUrl
   const statuses: Record<string, boolean> = json.assets.reduce(
     (statuses: Record<string, boolean>, asset: any) => {
       statuses[`${asset.asset_contract.address}:${asset.token_id}`] =

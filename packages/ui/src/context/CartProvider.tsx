@@ -309,7 +309,7 @@ function cartStore({
 
       const promises = await Promise.allSettled([
         defaultFetcher(params),
-        isOpenSeaBanned(tokenIds),
+        isOpenSeaBanned(tokenIds, reservoirChain?.id),
       ])
       const response: TokensSchema =
         promises[0].status === 'fulfilled' ? promises[0].value : {}
@@ -359,7 +359,7 @@ function cartStore({
 
       let flaggedStatuses = undefined
       if (tokenIds) {
-        flaggedStatuses = (await isOpenSeaBanned(tokenIds)) || {}
+        flaggedStatuses = (await isOpenSeaBanned(tokenIds, client?.currentChain()?.id)) || {}
       }
 
       return { orders: response.orders, flaggedStatuses }
