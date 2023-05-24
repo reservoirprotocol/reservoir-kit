@@ -69,8 +69,8 @@ const rollupPackage = (pkg) => {
     plugins: [
       jsn(),
       tsc({
-        sourceMap: false,
-        tsconfig: './tsconfig.json',
+        sourceMap: true,
+        tsconfig: './tsconfig.base.json',
         declaration: true,
         declarationDir: `packages/${pkg}/dist/`,
       }),
