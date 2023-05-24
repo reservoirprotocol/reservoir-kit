@@ -78,7 +78,7 @@ const rollupPackage = (pkg) => {
 
 export default [
   rollupPackage('sdk'),
-  rollupTypes('sdk'),
   rollupPackage('ui'),
+  rollupTypes('sdk'),
   rollupTypes('ui'),
 ]
