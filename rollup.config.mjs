@@ -25,14 +25,15 @@ const rollupTypes = (pkg) => {
     output: {
       file: `packages/${pkg}/dist/index.d.ts`,
       format: 'es',
+      sourcemap: false,
     },
-    sourcemap: false,
+    treeshake: true,
     plugins: [
       dts(),
       del({
         targets: `packages/${pkg}/dist/**/*/`,
         hook: 'buildEnd',
-        runOnce: true,
+        runOnce: false,
       }),
     ],
   }
@@ -52,6 +53,7 @@ const rollupPackage = (pkg) => {
     input: `packages/${pkg}/src/index.ts`,
     external: Object.keys(getPkgJson(pkg).peerDependencies || {}),
     cache: false,
+    treeshake: true,
     output: [
       {
         file: `packages/${pkg}/dist/index.js`,
@@ -61,6 +63,7 @@ const rollupPackage = (pkg) => {
       {
         file: `packages/${pkg}/dist/index.module.js`,
         format: 'esm',
+        sourcemap: true,
       },
     ],
     plugins: [
@@ -79,6 +82,7 @@ const rollupPackage = (pkg) => {
 export default [
   rollupPackage('sdk'),
   rollupPackage('ui'),
-  rollupTypes('sdk'),
-  rollupTypes('ui'),
+  ...(process.env.NODE_ENV == 'production'
+    ? [rollupTypes('ui'), rollupTypes('sdk')]
+    : []),
 ]
