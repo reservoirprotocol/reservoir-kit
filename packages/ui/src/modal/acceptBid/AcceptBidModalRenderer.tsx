@@ -230,7 +230,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           setIsFetchingBidPath(false)
         })
     },
-    [client, signer]
+    [client, signer, normalizeRoyalties]
   )
 
   useEffect(() => {
