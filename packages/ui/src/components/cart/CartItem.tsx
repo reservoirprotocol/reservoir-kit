@@ -17,16 +17,14 @@ import {
 import { Cart } from '../../context/CartProvider'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { formatNumber } from '../../lib/numbers'
-import { mainnet, goerli, polygon, arbitrum, optimism } from 'wagmi/chains'
 import QuantitySelector from '../../modal/QuantitySelector'
+import * as allChains from 'viem/chains'
 
 type Props = {
   item: Cart['items'][0]
   usdConversion: number
   tokenUrl?: string
 }
-
-const supportedChains = [mainnet, goerli, polygon, arbitrum, optimism]
 
 const CartItemImage = styled('img', {
   width: 56,
@@ -98,13 +96,13 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
     >
       <Flex
         onClick={() => {
-          const chain = supportedChains.find(
+          const chain = Object.values(allChains).find(
             (chain) => cartChain?.id === chain.id
           )
           let url: string | undefined = tokenUrl
           if (!url && cartChain) {
             let tokenMetaKey: string | null = null
-            if (cartChain.id === mainnet.id) {
+            if (cartChain.id === allChains.mainnet.id) {
               tokenMetaKey = 'reservoir:token-url-mainnet'
             } else {
               tokenMetaKey = `reservoir:token-url-${chain?.name.toLowerCase()}`
