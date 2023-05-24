@@ -52,13 +52,12 @@ const rollupPackage = (pkg) => {
   const options = {
     input: `packages/${pkg}/src/index.ts`,
     external: Object.keys(getPkgJson(pkg).peerDependencies || {}),
-    sourcemap: true,
     cache: false,
-    treeshake: true,
     output: [
       {
         file: `packages/${pkg}/dist/index.js`,
         format: 'cjs',
+        sourcemap: true,
       },
       {
         file: `packages/${pkg}/dist/index.module.js`,

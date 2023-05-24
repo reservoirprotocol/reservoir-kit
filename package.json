@@ -17,27 +17,19 @@
     "types:check": "tsc --skipLibCheck --noEmit",
     "build": "yarn build:config && yarn build:packages && yarn build:cleanup",
     "build:config": "mv tsconfig.json tsconfig.tmp.json && mv tsconfig.production.json tsconfig.json",
-    "build:packages": "BUNDLE_BUDDY=true parcel build 'packages/*' --no-cache --reporter @parcel/reporter-bundle-buddy && yarn build:fix-type-defs",
+    "build:packages": "rollup -c -m -v --silent",
     "build:fix-type-defs": "node ./scripts/fix-type-defs-imports",
     "build:cleanup": "mv tsconfig.json tsconfig.production.json && mv tsconfig.tmp.json tsconfig.json",
     "publish:stable": "yarn bump:stable && yarn clean && yarn build && yarn workspaces foreach --no-private --exclude reservoir-kit --exclude demo npm publish --tolerate-republish --access public; git push",
     "changelog": "yarn workspaces foreach --no-private --exclude reservoir-kit --exclude demo run changelog && git add -A; git commit -m 'changelog: update changelog'",
     "bump:stable": "yarn version apply --all",
-    "reset": "yarn clean && rm -rf node_modules .yarn/cache .parcel-cache"
+    "reset": "yarn clean && rm -rf node_modules .yarn/cache"
   },
   "prettier": {
     "semi": false,
     "singleQuote": true
   },
   "devDependencies": {
-    "@parcel/core": "^2.8.3",
-    "@parcel/optimizer-data-url": "^2.8.3",
-    "@parcel/packager-ts": "^2.8.3",
-    "@parcel/reporter-bundle-analyzer": "^2.8.3",
-    "@parcel/reporter-bundle-buddy": "^2.8.3",
-    "@parcel/transformer-inline-string": "^2.8.3",
-    "@parcel/transformer-typescript-tsc": "^2.8.3",
-    "@parcel/transformer-typescript-types": "^2.8.3",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^11.1.1",
