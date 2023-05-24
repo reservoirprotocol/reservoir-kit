@@ -3,7 +3,6 @@ import tsc from '@rollup/plugin-typescript'
 import fs from 'fs'
 import del from 'rollup-plugin-delete'
 import dts from 'rollup-plugin-dts'
-import { visualizer } from 'rollup-plugin-visualizer'
 
 /**
  * # getPkgJson
@@ -72,7 +71,6 @@ const rollupPackage = (pkg) => {
         declaration: true,
         declarationDir: `packages/${pkg}/dist/`,
       }),
-      visualizer(),
     ],
   }
   return options
