@@ -7316,6 +7316,7 @@ __metadata:
     prettier: ^2.5.1
     process: ^0.11.10
     replace-in-files: ^3.0.0
+    rollup: ^3.23.0
     rollup-plugin-delete: ^2.0.0
     rollup-plugin-dts: ^5.3.0
     typescript: ^4.9.4
@@ -7421,6 +7422,20 @@ __metadata:
     "@babel/code-frame":
       optional: true
   checksum: ba3a6065598586c52af60211877a234b8c829b8a7ecd6e6b426e52ec4dc2c8c8ac6e1fb9f47db6afd91858be0dcb09fd3d312c865e972fb72ae8c9ee00eb1d36
+  languageName: node
+  linkType: hard
+
+"rollup@npm:^3.23.0":
+  version: 3.23.0
+  resolution: "rollup@npm:3.23.0"
+  dependencies:
+    fsevents: ~2.3.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    rollup: dist/bin/rollup
+  checksum: 0721065cf725c5611815be61d2b01f20b4d0027e17035f6e76384d38396b56cf6ed21a3db78eb004d9db4d24c8a6a19da4563b4ff96b5dd36f0a0f7a3baf85e8
   languageName: node
   linkType: hard
 
