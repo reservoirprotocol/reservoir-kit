@@ -62,7 +62,7 @@ function titleForStep(step: BuyStep) {
     case BuyStep.Unavailable:
       return 'Selected item is no longer Available'
     default:
-      return 'Complete Checkout'
+      return 'Complete DOg'
   }
 }
 
