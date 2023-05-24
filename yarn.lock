@@ -7304,7 +7304,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "reservoir-kit@workspace:."
   dependencies:
-    "@fortawesome/react-fontawesome": ^0.2.0
     "@rollup/plugin-json": ^6.0.0
     "@rollup/plugin-typescript": ^11.1.1
     "@types/node": ^17.0.10
