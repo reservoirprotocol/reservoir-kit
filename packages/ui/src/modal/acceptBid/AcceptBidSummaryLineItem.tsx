@@ -35,17 +35,24 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
   usdPrices,
   chain,
 }) => {
-  const img = useMemo(() => {
-    if (!tokensData || !tokensData[0]) {
-      return
+  const imgs = useMemo(() => {
+    if (!tokensData || tokensData.length <= 0) {
+      return []
     }
+    const imgs: string[] = []
     const baseApiUrl = chain?.baseApiUrl
-    const token = tokensData[0]
-    const contract = (token?.collectionId || '').split(':')[0]
-    const tokenId = `${contract}:${token?.tokenId}`
-    return token?.tokenData?.token?.image || baseApiUrl
-      ? `${baseApiUrl}/redirect/tokens/${tokenId}/image/v1`
-      : ''
+    for (var i = 0; i < tokensData.length; i++) {
+      const token = tokensData[i]
+      const contract = (token?.collectionId || '').split(':')[0]
+      const tokenId = `${contract}:${token?.tokenId}`
+      if (token?.tokenData?.token?.image || baseApiUrl) {
+        imgs.push(`${baseApiUrl}/redirect/tokens/${tokenId}/image/v1`)
+      }
+      if (imgs.length > 2) {
+        break
+      }
+    }
+    return imgs
   }, [tokensData, chain])
 
   const itemCount = useMemo(
@@ -86,21 +93,22 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
         </Text>
       </Flex>
       <Flex align="center">
-        <Flex css={{ mr: '$4' }}>
+        <Flex css={{ mr: '$4', position: 'relative' }}>
           <Img
-            src={img}
+            src={imgs[0]}
             alt={'Token Image'}
             css={{
-              visibility: !img || img.length === 0 ? 'hidden' : 'visible',
+              visibility: !imgs[0] ? 'hidden' : 'visible',
+              mr: itemCount > 1 && imgs[1] ? 8 : 0,
             }}
           />
-          {itemCount > 1 ? (
+          {itemCount > 1 && imgs[1] ? (
             <Img
-              src={img}
+              src={imgs[1]}
               alt={'Token Image'}
               css={{
-                visibility: !img || img.length === 0 ? 'hidden' : 'visible',
-                ml: '-40%',
+                position: 'absolute',
+                right: -5,
                 zIndex: -1,
                 opacity: 0.5,
               }}

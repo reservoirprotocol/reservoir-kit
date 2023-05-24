@@ -74,7 +74,7 @@ const AcceptBidLineItem: FC<Props> = ({
         </Text>
         {royaltiesBps ? (
           <Text style="body3" color="subtle">
-            {royaltiesBps / 100}
+            Creator Royalties: {royaltiesBps / 100}%
           </Text>
         ) : null}
       </Flex>

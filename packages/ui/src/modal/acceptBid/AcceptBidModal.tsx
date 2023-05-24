@@ -251,7 +251,7 @@ export function AcceptBidModal({
                           tokenData?.token?.collection?.image ||
                           ''
                         }
-                        netAmount={bidPath.totalPrice}
+                        netAmount={bidPath.quote}
                         price={bidPath.totalPrice}
                         fees={bidPath.builtInFees}
                         currency={bidPath.currency}
