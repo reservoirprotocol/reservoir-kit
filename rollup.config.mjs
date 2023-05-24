@@ -82,7 +82,9 @@ const rollupPackage = (pkg) => {
 export default [
   rollupPackage('sdk'),
   rollupPackage('ui'),
-  ...(process.env.NODE_ENV == 'production'
-    ? [rollupTypes('ui'), rollupTypes('sdk')]
-    : []),
+  rollupTypes('ui'),
+  rollupTypes('sdk')
+  // ...(process.env.NODE_ENV == 'develop'
+    // ? [rollupTypes('ui'), rollupTypes('sdk')]
+    // : []),
 ]
