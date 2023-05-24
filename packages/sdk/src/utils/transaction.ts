@@ -3,7 +3,7 @@ import { LogLevel, getClient } from '..'
 import { mainnet, goerli, polygon, arbitrum, optimism } from 'viem/chains'
 
 /**
- * Safe txhash.wait which handles replacements when users speed up the transactio
+ * Safe txhash.wait which handles replacements when users speed up the transaction
  * @param url an URL object
  * @returns A Promise to wait on
  */
@@ -11,8 +11,8 @@ export async function sendTransactionSafely(
   chainId: number,
   data: any,
   signer: WalletClient,
-  setTx: (tx: Transaction['hash']) => void
-  // tx?: TransactionResponse
+  setTx: (tx: Transaction['hash']) => void,
+  tx?: Transaction['hash']
 ) {
   const supportedChains = [mainnet, goerli, polygon, arbitrum, optimism]
   const viemChain = supportedChains.find((chain) => chain.id === chainId)
@@ -29,14 +29,12 @@ export async function sendTransactionSafely(
     to: data.to,
     value: data.value,
   })
-
   setTx(transaction)
 
   await viemClient.waitForTransactionReceipt({
-    hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d',
+    hash: transaction,
     onReplaced: (replacement) => {
-      setTx(replacement.replacedTransaction.hash)
-      // sendTransactionSafely(data, signer, setTx, replacement.replacedTransaction.hash) //TODO: test speeding up a transaction
+      setTx(replacement.transaction.hash)
       getClient()?.log(['Transaction replaced', replacement], LogLevel.Verbose)
     },
   })

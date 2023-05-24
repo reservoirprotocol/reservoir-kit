@@ -1,7 +1,6 @@
 import { Execute, paths } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { Account, WalletClient, toBytes } from 'viem'
-import { TypedDataSigner } from '@ethersproject/abstract-signer'
 import { axios } from '../utils'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions/index'

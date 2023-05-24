@@ -391,23 +391,6 @@ export const ListModalRenderer: FC<Props> = ({
     }
 
     marketplaces.forEach((market) => {
-      console.log('Market price: ', market.price)
-      console.log('Currency decimals: ', currency.decimals)
-      console.log(
-        'parseUnits: ',
-        parseUnits(`${+market.price}`, currency.decimals || 18)
-      )
-      console.log('Big int: ', BigInt(quantity))
-      console.log(
-        parseUnits(`${+market.price}`, currency.decimals || 18) *
-          BigInt(quantity)
-      )
-      console.log(
-        (
-          parseUnits(`${+market.price}`, currency.decimals || 18) *
-          BigInt(quantity)
-        ).toString()
-      )
       if (market.isSelected) {
         const listing: Listings[0] = {
           token: `${contract}:${tokenId}`,
