@@ -147,12 +147,16 @@ export function SweepModal({
             )
           : {}
 
-        const totalPurchases =
-          stepData?.currentStep?.items?.reduce(
-            (total, item) => total + (item?.salesData?.length || 0),
-            0
-          ) || 0
-
+        const salesTxHashes =
+          stepData?.currentStep?.items?.reduce((txHashes, item) => {
+            item.salesData?.forEach((saleData) => {
+              if (saleData.txHash) {
+                txHashes.add(saleData.txHash)
+              }
+            })
+            return txHashes
+          }, new Set<string>()) || []
+        const totalPurchases = Array.from(salesTxHashes).length
         const failedPurchases = (selectedTokens.length || 0) - totalPurchases
 
         return (

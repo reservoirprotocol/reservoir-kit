@@ -135,13 +135,19 @@ export function AcceptBidModal({
           [tokensData]
         )
 
-        const totalSales =
-          stepData?.currentStep?.items?.reduce(
-            (total, item) => total + (item?.salesData?.length || 0),
-            0
-          ) || 0
+        const salesTxHashes =
+          stepData?.currentStep?.items?.reduce((txHashes, item) => {
+            item.salesData?.forEach((saleData) => {
+              if (saleData.txHash) {
+                txHashes.add(saleData.txHash)
+              }
+            })
+            return txHashes
+          }, new Set<string>()) || []
+        const totalSales = Array.from(salesTxHashes).length
         const failedSales =
-          (stepData?.currentStep?.items?.length || 0) - totalSales
+          totalSales - (stepData?.currentStep?.items?.length || 0)
+        const successfulSales = totalSales - failedSales
 
         return (
           <Modal
@@ -480,9 +486,9 @@ export function AcceptBidModal({
                   </Box>
                   <Text style="h5" css={{ my: 24 }}>
                     {failedSales
-                      ? `${totalSales} ${
-                          failedSales > 1 ? 'items' : 'item'
-                        } purchased, ${failedSales} ${
+                      ? `${successfulSales} ${
+                          successfulSales > 1 ? 'items' : 'item'
+                        } sold, ${failedSales} ${
                           failedSales > 1 ? 'items' : 'item'
                         } failed`
                       : `${totalSales > 1 ? 'Offers' : 'Offer'} accepted!`}
