@@ -1,5 +1,3 @@
-/// <reference path="./types/parcel.d.ts" />
-
 //Providers
 export { ReservoirKitProvider } from './ReservoirKitProvider'
 export { ReservoirClientProvider } from './ReservoirClientProvider'
