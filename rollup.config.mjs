@@ -3,6 +3,7 @@ import tsc from '@rollup/plugin-typescript'
 import fs from 'fs'
 import del from 'rollup-plugin-delete'
 import dts from 'rollup-plugin-dts'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 /**
  * # getPkgJson
@@ -26,6 +27,7 @@ const rollupTypes = (pkg) => {
       file: `packages/${pkg}/dist/index.d.ts`,
       format: 'es',
     },
+    sourcemap: false,
     plugins: [
       dts(),
       del({
@@ -50,7 +52,7 @@ const rollupPackage = (pkg) => {
   const options = {
     input: `packages/${pkg}/src/index.ts`,
     external: Object.keys(getPkgJson(pkg).peerDependencies || {}),
-    sourcemap: false,
+    sourcemap: true,
     cache: false,
     treeshake: true,
     output: [
@@ -71,6 +73,7 @@ const rollupPackage = (pkg) => {
         declaration: true,
         declarationDir: `packages/${pkg}/dist/`,
       }),
+      visualizer(),
     ],
   }
   return options
