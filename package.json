@@ -17,7 +17,7 @@
     "types:check": "tsc --skipLibCheck --noEmit",
     "build": "yarn build:config && yarn build:packages && yarn build:cleanup",
     "build:config": "mv tsconfig.json tsconfig.tmp.json && mv tsconfig.production.json tsconfig.json",
-    "build:packages": "rollup --silent -c",
+    "build:packages": "rollup -c",
     "build:cleanup": "mv tsconfig.json tsconfig.production.json && mv tsconfig.tmp.json tsconfig.json",
     "publish:stable": "yarn bump:stable && yarn clean && yarn build && yarn workspaces foreach --no-private --exclude reservoir-kit --exclude demo npm publish --tolerate-republish --access public; git push",
     "changelog": "yarn workspaces foreach --no-private --exclude reservoir-kit --exclude demo run changelog && git add -A; git commit -m 'changelog: update changelog'",
