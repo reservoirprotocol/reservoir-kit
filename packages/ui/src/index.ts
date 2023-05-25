@@ -11,6 +11,7 @@ export {
   useUsersActivity,
   useReservoirClient,
   useTokens,
+  useSearchActivities,
   useTokenActivity,
   useCoinConversion,
   useTokenOpenseaBanned,
