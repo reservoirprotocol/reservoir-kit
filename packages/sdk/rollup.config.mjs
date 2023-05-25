@@ -49,7 +49,7 @@ const rollupPackage = () => {
    */
   const options = {
     input: `packages/sdk/src/index.ts`,
-    external: [...Object.keys(getPkgJson().peerDependencies || ''), '@reservoir0x/reservoir-sdk'],
+    external: [...Object.keys(getPkgJson().peerDependencies || ''), '@reservoir0x/reservoir-kit-ui'],
     cache: false,
     treeshake: true,
     output: [
