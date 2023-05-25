@@ -49,7 +49,7 @@ const rollupPackage = () => {
    */
   const options = {
     input: `packages/ui/src/index.ts`,
-    external: Object.keys(getPkgJson().peerDependencies || {}),
+    external: [...Object.keys(getPkgJson().peerDependencies || ''), '@reservoir0x/reservoir-sdk'],
     cache: false,
     treeshake: true,
     output: [
@@ -72,7 +72,6 @@ const rollupPackage = () => {
         declaration: true,
         declarationDir: `packages/ui/dist/`,
       }),
-      nodeResolve(),
     ],
   }
   return options
