@@ -3,6 +3,7 @@ import tsc from '@rollup/plugin-typescript'
 import fs from 'fs'
 import del from 'rollup-plugin-delete'
 import dts from 'rollup-plugin-dts'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
 
 /**
  * # getPkgJson
@@ -71,6 +72,7 @@ const rollupPackage = () => {
         declaration: true,
         declarationDir: `packages/sdk/dist/`,
       }),
+      nodeResolve(),
     ],
   }
   return options
