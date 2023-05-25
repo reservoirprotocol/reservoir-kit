@@ -79,6 +79,9 @@ type ChildrenProps = {
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   stepData: BidModalStepData | null
+  currencies: Currency[]
+  currency: Currency
+  setCurrency: (currency: Currency) => void
   setBidStep: React.Dispatch<React.SetStateAction<BidStep>>
   setBidAmount: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
@@ -93,7 +96,7 @@ type Props = {
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
-  currency?: Currency
+  currencies?: Currency[]
   oracleEnabled: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -114,7 +117,7 @@ export const BidModalRenderer: FC<Props> = ({
   collectionId,
   attribute,
   normalizeRoyalties,
-  currency,
+  currencies,
   oracleEnabled = false,
   children,
 }) => {
@@ -135,6 +138,13 @@ export const BidModalRenderer: FC<Props> = ({
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
   const chainCurrency = useChainCurrency()
+  const defaultCurrency = {
+    contract: chainCurrency.address,
+    symbol: chainCurrency.symbol,
+  }
+  const [currency, setCurrency] = useState<Currency>(
+    currencies && currencies[0] ? currencies[0] : defaultCurrency
+  )
 
   const nativeWrappedContractAddress =
     chainCurrency.chainId in wrappedContracts
@@ -277,9 +287,22 @@ export const BidModalRenderer: FC<Props> = ({
     } else {
       setTrait(attribute)
     }
+    setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
   }, [open])
 
-  const isBanned = useTokenOpenseaBanned(open ? contract : undefined, tokenId, client?.currentChain()?.id)
+  useEffect(() => {
+    if (currencies && currencies.length > 5) {
+      console.warn(
+        'The BidModal UI was designed to have a maximum of 5 currencies, going above 5 may degrade the user experience.'
+      )
+    }
+  }, [currencies])
+
+  const isBanned = useTokenOpenseaBanned(
+    open ? contract : undefined,
+    tokenId,
+    client?.currentChain()?.id
+  )
 
   const placeBid = useCallback(
     (options?: { quantity?: number }) => {
@@ -434,6 +457,9 @@ export const BidModalRenderer: FC<Props> = ({
         expirationOption,
         expirationOptions,
         stepData,
+        currencies: currencies || [defaultCurrency],
+        currency,
+        setCurrency,
         setBidStep,
         setBidAmount,
         setExpirationOption,
