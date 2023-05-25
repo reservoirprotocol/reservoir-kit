@@ -7,23 +7,21 @@ import dts from 'rollup-plugin-dts'
 /**
  * # getPkgJson
  * Get's the package.json file and returns it parsed.
- * @param {String} pkg - Package to return the pkg.json for
  * @returns {Object} package.json
  */
-const getPkgJson = (pkg) =>
-  JSON.parse(fs.readFileSync(`packages/${pkg}/package.json`, 'utf-8'))
+const getPkgJson = () =>
+  JSON.parse(fs.readFileSync(`packages/ui/package.json`, 'utf-8'))
 
 /**
  * # rollupTypes
  * Rolls up the types of a package into a single file
- * @param {String} pkg - Types to rollup
  * @returns {import('rollup'.RollupOptions)}
  */
-const rollupTypes = (pkg) => {
+const rollupTypes = () => {
   return {
-    input: `packages/${pkg}/dist/${pkg}/src/index.d.ts`,
+    input: `packages/ui/dist/ui/src/index.d.ts`,
     output: {
-      file: `packages/${pkg}/dist/index.d.ts`,
+      file: `packages/ui/dist/index.d.ts`,
       format: 'es',
       sourcemap: false,
     },
@@ -31,7 +29,7 @@ const rollupTypes = (pkg) => {
     plugins: [
       dts(),
       del({
-        targets: `packages/${pkg}/dist/**/*/`,
+        targets: `packages/ui/dist/**/*/`,
         hook: 'buildEnd',
         runOnce: false,
       }),
@@ -42,26 +40,25 @@ const rollupTypes = (pkg) => {
 /**
  * # rollupPackage
  * Rolls up a package
- * @param {String} pkg - Package to rollup
  * @returns {import('rollup'.RollupOptions)}
  */
-const rollupPackage = (pkg) => {
+const rollupPackage = () => {
   /**
    * @type {import('rollup'.RollupOptions)}
    */
   const options = {
-    input: `packages/${pkg}/src/index.ts`,
-    external: Object.keys(getPkgJson(pkg).peerDependencies || {}),
+    input: `packages/ui/src/index.ts`,
+    external: Object.keys(getPkgJson().peerDependencies || {}),
     cache: false,
     treeshake: true,
     output: [
       {
-        file: `packages/${pkg}/dist/index.js`,
+        file: `packages/ui/dist/index.js`,
         format: 'cjs',
         sourcemap: true,
       },
       {
-        file: `packages/${pkg}/dist/index.module.js`,
+        file: `packages/ui/dist/index.module.js`,
         format: 'esm',
         sourcemap: true,
       },
@@ -72,19 +69,11 @@ const rollupPackage = (pkg) => {
         sourceMap: true,
         tsconfig: './tsconfig.json',
         declaration: true,
-        declarationDir: `packages/${pkg}/dist/`,
+        declarationDir: `packages/ui/dist/`,
       }),
     ],
   }
   return options
 }
 
-export default [
-  rollupPackage('sdk'),
-  rollupPackage('ui'),
-  rollupTypes('ui'),
-  rollupTypes('sdk'),
-  // ...(process.env.NODE_ENV == 'develop'
-  // ? [rollupTypes('ui'), rollupTypes('sdk')]
-  // : []),
-]
+export default [rollupPackage(), rollupTypes()]
