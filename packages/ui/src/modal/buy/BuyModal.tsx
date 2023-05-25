@@ -168,9 +168,11 @@ export function BuyModal({
             })
             return txHashes
           }, new Set<string>()) || []
-        const totalPurchases = 4 // Array.from(purchaseTxHashes).length
-        const failedPurchases = 3
-        // totalPurchases - (stepData?.currentStep?.items?.length || 0)
+          
+        const totalPurchases = Array.from(purchaseTxHashes).length
+        
+        const failedPurchases =
+          totalPurchases - (stepData?.currentStep?.items?.length || 0)
 
         const successfulPurchases = totalPurchases - failedPurchases
 
@@ -472,7 +474,7 @@ export function BuyModal({
                       >
                         {failedPurchases
                           ? `${successfulPurchases} ${
-                            successfulPurchases > 1 ? 'items' : 'item'
+                              successfulPurchases > 1 ? 'items' : 'item'
                             } purchased, ${failedPurchases} ${
                               failedPurchases > 1 ? 'items' : 'item'
                             } failed`
@@ -588,7 +590,7 @@ export function BuyModal({
                           onGoToToken()
                         }}
                       >
-                        Go to Token
+                        Go to {successfulPurchases > 1 ? 'Tokens' : 'Token'}
                       </Button>
                     </>
                   ) : (
