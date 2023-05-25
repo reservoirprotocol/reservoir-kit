@@ -336,8 +336,15 @@ export function AcceptBidModal({
                           <Text style="subtitle2" color="subtle">
                             Creator Royalties
                           </Text>
+                          <Text
+                            css={{ ml: 'auto' }}
+                            style="subtitle2"
+                            color="subtle"
+                          >
+                            -
+                          </Text>
                           <FormatCryptoCurrency
-                            amount={price.royalty * -1}
+                            amount={price.royalty}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
                             symbol={price.currency?.symbol}
@@ -350,8 +357,15 @@ export function AcceptBidModal({
                           <Text style="subtitle2" color="subtle">
                             Marketplace Fee
                           </Text>
+                          <Text
+                            css={{ ml: 'auto' }}
+                            style="subtitle2"
+                            color="subtle"
+                          >
+                            -
+                          </Text>
                           <FormatCryptoCurrency
-                            amount={price.marketplaceFee * -1}
+                            amount={price.marketplaceFee}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
                             symbol={price.currency?.symbol}
