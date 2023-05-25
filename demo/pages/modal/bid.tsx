@@ -15,19 +15,19 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   : false
 const chainId: number = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
 
-let mainnetSymbol = 'WETH'
-let chainWrappedContract = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+let wrappedSymbol = 'WETH'
+let wrappedContract = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
 
 switch (chainId) {
   case 1:
   case 5: {
-    mainnetSymbol = 'WETH'
-    chainWrappedContract = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'
+    wrappedSymbol = 'WETH'
+    wrappedContract = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'
     break
   }
   case 137: {
-    mainnetSymbol = 'WMATIC'
-    chainWrappedContract = '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
+    wrappedSymbol = 'WMATIC'
+    wrappedContract = '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
     break
   }
 }
@@ -42,8 +42,8 @@ const BidPage: NextPage = () => {
     { contract: string; symbol: string; decimals?: number }[] | undefined
   >([
     {
-      contract: chainWrappedContract,
-      symbol: mainnetSymbol,
+      contract: wrappedContract,
+      symbol: wrappedSymbol,
     },
     {
       contract: '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557',
