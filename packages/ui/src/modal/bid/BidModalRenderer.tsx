@@ -138,13 +138,6 @@ export const BidModalRenderer: FC<Props> = ({
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
   const chainCurrency = useChainCurrency()
-  const defaultCurrency = {
-    contract: chainCurrency.address,
-    symbol: chainCurrency.symbol,
-  }
-  const [currency, setCurrency] = useState<Currency>(
-    currencies && currencies[0] ? currencies[0] : defaultCurrency
-  )
 
   const nativeWrappedContractAddress =
     chainCurrency.chainId in wrappedContracts
@@ -154,6 +147,14 @@ export const BidModalRenderer: FC<Props> = ({
     chainCurrency.chainId in wrappedContractNames
       ? wrappedContractNames[chainCurrency.chainId]
       : wrappedContractNames[1]
+
+  const defaultCurrency = {
+    contract: nativeWrappedContractAddress,
+    symbol: nativeWrappedContractName,
+  }
+  const [currency, setCurrency] = useState<Currency>(
+    currencies && currencies[0] ? currencies[0] : defaultCurrency
+  )
 
   const wrappedContractAddress = currency
     ? currency.contract
