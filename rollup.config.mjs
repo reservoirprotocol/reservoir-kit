@@ -70,7 +70,7 @@ const rollupPackage = (pkg) => {
       jsn(),
       tsc({
         sourceMap: true,
-        tsconfig: './tsconfig.base.json',
+        tsconfig: './tsconfig.json',
         declaration: true,
         declarationDir: `packages/${pkg}/dist/`,
       }),
@@ -83,8 +83,8 @@ export default [
   rollupPackage('sdk'),
   rollupPackage('ui'),
   rollupTypes('ui'),
-  rollupTypes('sdk')
+  rollupTypes('sdk'),
   // ...(process.env.NODE_ENV == 'develop'
-    // ? [rollupTypes('ui'), rollupTypes('sdk')]
-    // : []),
+  // ? [rollupTypes('ui'), rollupTypes('sdk')]
+  // : []),
 ]
