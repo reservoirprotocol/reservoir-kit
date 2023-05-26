@@ -2,35 +2,33 @@ import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import { SWRInfiniteConfiguration } from 'swr/infinite'
 import { useInfiniteApi, useReservoirClient } from './'
 
-type CollectionActivityResponse =
-  paths['/collections/activity/v6']['get']['responses']['200']['schema']
+type SearchActivitiesQuery =
+  paths['/search/activities/v1']['get']['parameters']['query']
 
-type CollectionActivityQuery =
-  paths['/collections/activity/v6']['get']['parameters']['query']
+type SearchActivitiesResponse =
+  paths['/search/activities/v1']['get']['responses']['200']['schema']
 
 export default function (
-  options?: CollectionActivityQuery | false,
+  options?: SearchActivitiesQuery | false,
   swrOptions: SWRInfiniteConfiguration = {},
-  chainId?: number
+  chaindId?: number
 ) {
   const client = useReservoirClient()
+
   const chain =
-    chainId !== undefined
-      ? client?.chains.find((chain) => chain.id === chainId)
+    chaindId !== undefined
+      ? client?.chains.find((chain) => chain.id === chaindId)
       : client?.currentChain()
 
-  const response = useInfiniteApi<CollectionActivityResponse>(
+  const response = useInfiniteApi<SearchActivitiesResponse>(
     (pageIndex, previousPageData) => {
-      if (
-        !options ||
-        (!options.collection && !options.collectionsSetId && !options.community)
-      ) {
+      if (!options) {
         return null
       }
 
-      const url = new URL(`${chain?.baseApiUrl}/collections/activity/v6`)
+      const url = new URL(`${chain?.baseApiUrl}/search/activities/v1`)
 
-      let query: CollectionActivityQuery = { ...options }
+      let query: SearchActivitiesQuery = { ...options }
 
       if (previousPageData && !previousPageData.continuation) {
         return null
