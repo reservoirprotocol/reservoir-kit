@@ -1,7 +1,7 @@
 import { CSS } from '@stitches/react'
 import React, { FC } from 'react'
-import { CryptoCurrencyIcon, Flex, Select, Text } from '../../primitives'
-import { Currency } from '../../types/Currency'
+import { CryptoCurrencyIcon, Flex, Select, Text } from '../primitives'
+import { Currency } from '../types/Currency'
 
 type Props = {
   triggerCss?: CSS

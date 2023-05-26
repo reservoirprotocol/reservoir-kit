@@ -43,7 +43,7 @@ import InfoTooltip from '../../primitives/InfoTooltip'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'
-import { CurrencySelector } from './CurrencySelector'
+import { CurrencySelector } from '../CurrencySelector'
 import { zeroAddress } from 'viem'
 
 type ListingCallbackData = {

@@ -16,8 +16,13 @@ type ChildrenProps = {
   cartCurrencyConverted?: Boolean
   totalPrice: number
   referrerFee?: number
+<<<<<<< HEAD
   usdPrice: ReturnType<typeof useCoinConversion>
   balance?: bigint
+=======
+  usdPrice: number | null
+  balance?: BigNumber
+>>>>>>> 16c91b76e32735f75b9ea8f63e554e270b483f4f
   hasEnoughCurrency: boolean
   items: Cart['items']
   flaggedItems: Cart['items']
@@ -52,10 +57,11 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     referrerFee,
     chain: cartChain,
   } = data
-  const usdPrice = useCoinConversion(
+  const usdConversion = useCoinConversion(
     open ? 'USD' : undefined,
     currency?.symbol || currency?.name
   )
+  const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
 
   const { chains } = useNetwork()
   const chain = chains.find((chain) => chain.id === transaction?.chain.id)

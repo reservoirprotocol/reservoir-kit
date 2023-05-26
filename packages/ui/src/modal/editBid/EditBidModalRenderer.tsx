@@ -65,7 +65,7 @@ type ChildrenProps = {
   royaltyBps?: number
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
-  usdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: number
   steps: Execute['steps'] | null
   stepData: EditBidStepData | null
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
@@ -157,10 +157,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     open && bid ? 'USD' : undefined,
     wrappedContractName
   )
-  const usdPrice =
-    coinConversion !== undefined && coinConversion !== null
-      ? Number(coinConversion)
-      : 0
+  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
 
   const bidAmountUsd = +bidAmount * (usdPrice || 0)
 

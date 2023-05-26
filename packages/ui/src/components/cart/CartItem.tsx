@@ -22,7 +22,7 @@ import * as allChains from 'viem/chains'
 
 type Props = {
   item: Cart['items'][0]
-  usdConversion: number
+  usdConversion: number | null
   tokenUrl?: string
 }
 
