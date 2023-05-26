@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  ReactElement,
-  SetStateAction,
-  useEffect,
-  useMemo,
-} from 'react'
+import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
 import { useCopyToClipboard, useFallbackState } from '../../hooks'
 import {
   Flex,
@@ -47,9 +41,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   orderId?: string
-  referrerFeeBps?: number | null
-  referrerFeeFixed?: number | null
-  referrer?: string | null
+  feesOnTopBps?: string[] | null
+  feesOnTopFixed?: string[] | null
   normalizeRoyalties?: boolean
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -78,9 +71,8 @@ export function BuyModal({
   tokenId,
   collectionId,
   orderId,
-  referrer,
-  referrerFeeBps,
-  referrerFeeFixed,
+  feesOnTopBps,
+  feesOnTopFixed,
   normalizeRoyalties,
   onPurchaseComplete,
   onPurchaseError,
@@ -94,27 +86,12 @@ export function BuyModal({
   const { copy: copyToClipboard, copied } = useCopyToClipboard()
   const { chain: activeChain } = useNetwork()
 
-  const feesOnTopFixed = useMemo(() => {
-    if (referrerFeeFixed && referrer) {
-      return [`${referrer}:${referrerFeeFixed}`]
-    }
-    return undefined
-  }, [referrerFeeFixed, referrer])
-
-  const feesOnTopBps = useMemo(() => {
-    if (referrerFeeBps && referrer) {
-      return [`${referrer}:${referrerFeeBps}`]
-    }
-    return undefined
-  }, [referrerFeeBps, referrer])
-
   return (
     <BuyModalRenderer
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
       orderId={orderId}
-      referrer={referrer}
       feesOnTopBps={feesOnTopBps}
       feesOnTopFixed={feesOnTopFixed}
       normalizeRoyalties={normalizeRoyalties}
@@ -130,7 +107,7 @@ export function BuyModal({
         currency,
         mixedCurrencies,
         totalPrice,
-        referrerFee,
+        feeOnTop,
         buyStep,
         transactionError,
         hasEnoughCurrency,
@@ -310,7 +287,7 @@ export function BuyModal({
                     />
                   </Flex>
                 )}
-                {referrerFee > 0 && (
+                {feeOnTop > 0 && (
                   <>
                     <Flex
                       align="center"
@@ -319,7 +296,7 @@ export function BuyModal({
                     >
                       <Text style="subtitle2">Referral Fee</Text>
                       <FormatCryptoCurrency
-                        amount={referrerFee}
+                        amount={feeOnTop}
                         address={currency?.contract}
                         decimals={currency?.decimals}
                         symbol={currency?.symbol}

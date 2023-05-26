@@ -58,7 +58,7 @@ type ChildrenProps = {
   >
   mixedCurrencies: boolean
   totalPrice: number
-  referrerFee: number
+  feeOnTop: number
   buyStep: BuyStep
   transactionError?: Error | null
   hasEnoughCurrency: boolean
@@ -85,7 +85,6 @@ type Props = {
   orderId?: string
   feesOnTopBps?: string[] | null
   feesOnTopFixed?: string[] | null
-  referrer?: string | null
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -106,7 +105,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const [listingsToBuy, setListingsToBuy] = useState<Record<string, number>>({})
   const [currency, setCurrency] = useState<undefined | Currency>()
   const [mixedCurrencies, setMixedCurrencies] = useState(false)
-  const [referrerFee, setReferrerFee] = useState(0)
+  const [feeOnTop, setFeeOnTop] = useState(0)
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
@@ -198,7 +197,7 @@ export const BuyModalRenderer: FC<Props> = ({
     currency?.symbol
   )
   const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : 0
-  const feeUsd = referrerFee * usdPrice
+  const feeUsd = feeOnTop * usdPrice
   const totalUsd = totalPrice * usdPrice
 
   const client = useReservoirClient()
@@ -231,10 +230,12 @@ export const BuyModalRenderer: FC<Props> = ({
     if (feesOnTopFixed && feesOnTopFixed.length > 0) {
       options.feesOnTop = feesOnTopFixed
     } else if (feesOnTopBps && feesOnTopBps?.length > 0) {
-      const fixedFees = feesOnTopBps.map((feeOnTop) => {
-        const [referrer, feeBps] = feeOnTop.split(':')
-        const fee = (Number(feeBps) / 10000) * (totalPrice - referrerFee)
-        const atomicUnitsFee = parseUnits(`${fee}`, currency?.decimals)
+      const fixedFees = feesOnTopBps.map((fullFee) => {
+        const [referrer, feeBps] = fullFee.split(':')
+        const fee = parseUnits(`${totalPrice - feeOnTop}`, currency?.decimals)
+          .mul(feeBps)
+          .div(10000)
+        const atomicUnitsFee = formatUnits(fee, 0)
         return `${referrer}:${atomicUnitsFee}`
       })
       options.feesOnTop = fixedFees
@@ -273,7 +274,7 @@ export const BuyModalRenderer: FC<Props> = ({
     client.actions
       .buyToken({
         items: items,
-        expectedPrice: totalPrice - referrerFee,
+        expectedPrice: totalPrice - feeOnTop,
         signer,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
@@ -438,7 +439,7 @@ export const BuyModalRenderer: FC<Props> = ({
             return totalFees + (Number(fee) / 10000) * total
           }, 0)
           total += fees
-          setReferrerFee(fees)
+          setFeeOnTop(fees)
         } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
           const fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
             const [_, fee] = feeOnTop.split(':')
@@ -449,7 +450,7 @@ export const BuyModalRenderer: FC<Props> = ({
             return totalFees + Number(parsedFee)
           }, 0)
           total += fees
-          setReferrerFee(fees)
+          setFeeOnTop(fees)
         }
         setTotalPrice(total)
         setAverageUnitPrice(total / quantity)
@@ -475,7 +476,7 @@ export const BuyModalRenderer: FC<Props> = ({
     isValidatingListing,
     feesOnTopBps,
     feesOnTopFixed,
-    referrerFee,
+    feeOnTop,
     client,
     quantity,
     token,
@@ -523,7 +524,7 @@ export const BuyModalRenderer: FC<Props> = ({
         mixedCurrencies,
         totalPrice,
         averageUnitPrice,
-        referrerFee,
+        feeOnTop,
         buyStep,
         transactionError,
         hasEnoughCurrency,
