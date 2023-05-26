@@ -231,9 +231,9 @@ export const BuyModalRenderer: FC<Props> = ({
     if (feesOnTopFixed && feesOnTopFixed.length > 0) {
       options.feesOnTop = feesOnTopFixed
     } else if (feesOnTopBps && feesOnTopBps?.length > 0) {
-      debugger
       const fixedFees = feesOnTopBps.map((feeOnTop) => {
-        const [referrer, fee] = feeOnTop.split(':')
+        const [referrer, feeBps] = feeOnTop.split(':')
+        const fee = (Number(feeBps) / 10000) * (totalPrice - referrerFee)
         const atomicUnitsFee = parseUnits(`${fee}`, currency?.decimals)
         return `${referrer}:${atomicUnitsFee}`
       })
