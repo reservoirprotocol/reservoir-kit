@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { BidModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { ComponentPropsWithoutRef, PropsWithoutRef, useState } from 'react'
+import { ComponentPropsWithoutRef, useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 
@@ -13,6 +13,24 @@ const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '39'
 const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
+const chainId: number = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
+
+let wrappedSymbol = 'WETH'
+let wrappedContract = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+
+switch (chainId) {
+  case 1:
+  case 5: {
+    wrappedSymbol = 'WETH'
+    wrappedContract = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'
+    break
+  }
+  case 137: {
+    wrappedSymbol = 'WMATIC'
+    wrappedContract = '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
+    break
+  }
+}
 
 const BidPage: NextPage = () => {
   const router = useRouter()
@@ -20,8 +38,19 @@ const BidPage: NextPage = () => {
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [attributeKey, setAttributeKey] = useState('')
   const [attributeValue, setAttributeValue] = useState('')
-  const [currency, setCurrency] =
-    useState<ComponentPropsWithoutRef<typeof BidModal>['currency']>()
+  const [currencies, setCurrencies] = useState<
+    { contract: string; symbol: string; decimals?: number }[] | undefined
+  >([
+    {
+      contract: wrappedContract,
+      symbol: wrappedSymbol,
+    },
+    {
+      contract: '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557',
+      symbol: 'USDC',
+      decimals: 6,
+    },
+  ])
   const [attribute, setAttribute] =
     useState<ComponentPropsWithoutRef<typeof BidModal>['attribute']>(undefined)
   const deeplinkOpenState = useState(true)
@@ -93,23 +122,22 @@ const BidPage: NextPage = () => {
         />
       </div>
       <div>
-        <label>Currency: </label>
+        <label>Currencies: </label>
         <textarea
           onChange={() => {}}
-          placeholder={`"contract": "", "symbol": ""`}
-          defaultValue={JSON.stringify(currency)}
+          defaultValue={JSON.stringify(currencies)}
           onFocus={(e) => {
-            e.target.value = JSON.stringify(currency)
+            e.target.value = JSON.stringify(currencies)
           }}
           onBlur={(e) => {
             if (e.target.value && e.target.value.length > 0) {
               try {
-                setCurrency(JSON.parse(e.target.value))
+                setCurrencies(JSON.parse(e.target.value))
               } catch (e) {
-                setCurrency(undefined)
+                setCurrencies(undefined)
               }
             } else {
-              setCurrency(undefined)
+              setCurrencies(undefined)
             }
           }}
         />
@@ -156,7 +184,7 @@ const BidPage: NextPage = () => {
         }
         collectionId={collectionId}
         tokenId={tokenId}
-        currency={currency ? currency : undefined}
+        currencies={currencies}
         attribute={attribute}
         normalizeRoyalties={normalizeRoyalties}
         oracleEnabled={oracleEnabled}

@@ -8,7 +8,10 @@ type TokenLineItemProps = {
   tokenDetails?: NonNullable<
     NonNullable<ReturnType<typeof useTokens>>['data']
   >[0]
-  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  collection?: Pick<
+    NonNullable<ReturnType<typeof useCollections>['data']>[0],
+    'name' | 'royalties' | 'image'
+  >
   usdConversion?: number
   isSuspicious?: Boolean
   isUnavailable?: boolean

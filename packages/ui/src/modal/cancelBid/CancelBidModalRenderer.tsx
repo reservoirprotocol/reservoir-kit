@@ -23,7 +23,7 @@ type ChildrenProps = {
   cancelStep: CancelStep
   transactionError?: Error | null
   totalUsd: number
-  usdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: number
   blockExplorerBaseUrl: string
   steps: Execute['steps'] | null
   stepData: CancelBidStepData | null
@@ -73,10 +73,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
     open && bid ? 'USD' : undefined,
     currency?.symbol
   )
-  const usdPrice =
-    coinConversion !== undefined && coinConversion !== null
-      ? Number(coinConversion)
-      : 0
+  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
   const totalUsd = usdPrice * (bid?.price?.amount?.decimal || 0)
 
   const client = useReservoirClient()

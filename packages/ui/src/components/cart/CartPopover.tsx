@@ -414,7 +414,7 @@ export function CartPopover({
                   items={items}
                   currency={currency}
                   totalPrice={totalPrice}
-                  usdPrice={usdPrice}
+                  usdPrice={usdPrice || 0}
                   transaction={transaction}
                   cartChain={cartChain}
                   blockExplorerBaseUrl={blockExplorerBaseUrl}

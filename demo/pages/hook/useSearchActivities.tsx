@@ -1,4 +1,4 @@
-import { useTokenActivity } from '@reservoir0x/reservoir-kit-ui'
+import { useSearchActivities } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { NextPage } from 'next'
 import { useEffect } from 'react'
@@ -9,7 +9,9 @@ const Activity: NextPage = () => {
     data: activity,
     fetchNextPage,
     hasNextPage,
-  } = useTokenActivity('0x60e4d786628fea6478f785a6d7e704777c86a7c6:8320')
+  } = useSearchActivities({
+    collection: '0xed5af388653567af2f388e6224dc7c4b3241c544',
+  })
 
   const { ref, inView } = useInView()
 
@@ -33,8 +35,8 @@ const Activity: NextPage = () => {
     >
       <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Activity</h3>
-      {activity.map((token, i) => (
-        <pre>{JSON.stringify(token, null, 2)}</pre>
+      {activity.map((activity, i) => (
+        <pre>{JSON.stringify(activity, null, 2)}</pre>
       ))}
       {hasNextPage ? (
         <div
