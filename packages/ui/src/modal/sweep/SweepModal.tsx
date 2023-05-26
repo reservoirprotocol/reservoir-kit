@@ -22,7 +22,7 @@ import {
   Anchor,
   ErrorWell,
 } from '../../primitives'
-import { ApprovalCollapsible } from '../ApprovalCollapsible'
+import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
 import { Modal } from '../Modal'
 import SigninStep from '../SigninStep'
 import { TokenCheckout } from '../TokenCheckout'
@@ -147,12 +147,16 @@ export function SweepModal({
             )
           : {}
 
-        const totalPurchases =
-          stepData?.currentStep?.items?.reduce(
-            (total, item) => total + (item?.salesData?.length || 0),
-            0
-          ) || 0
-
+        const salesTxHashes =
+          stepData?.currentStep?.items?.reduce((txHashes, item) => {
+            item.salesData?.forEach((saleData) => {
+              if (saleData.txHash) {
+                txHashes.add(saleData.txHash)
+              }
+            })
+            return txHashes
+          }, new Set<string>()) || []
+        const totalPurchases = Array.from(salesTxHashes).length
         const failedPurchases = (selectedTokens.length || 0) - totalPurchases
 
         return (
@@ -407,11 +411,11 @@ export function SweepModal({
                             transactions.
                           </Text>
                           {stepData?.currentStep?.items.map((item) => (
-                            <ApprovalCollapsible
+                            <ApprovePurchasingCollapsible
                               item={item}
                               pathMap={pathMap}
                               usdPrice={totalUsd}
-                              cartChain={currentChain}
+                              chain={currentChain}
                               open={true}
                             />
                           ))}
@@ -487,7 +491,10 @@ export function SweepModal({
                     blockchain. The transaction will continue in the background.
                   </Text>
                   <Box css={{ color: '$neutralSolid' }}>
-                    <FontAwesomeIcon icon={faCube} width={32} height={32} />
+                    <FontAwesomeIcon
+                      icon={faCube}
+                      style={{ width: 32, height: 32 }}
+                    />
                   </Box>
                 </Flex>
               </Flex>

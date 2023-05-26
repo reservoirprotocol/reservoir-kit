@@ -57,7 +57,7 @@ type ChildrenProps = {
   quantityAvailable: number
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listStep: ListStep
-  usdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: number
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   marketplaces: Marketplace[]
@@ -234,11 +234,12 @@ export const ListModalRenderer: FC<Props> = ({
       ? Number(userTokens[0].ownership?.tokenCount || 1)
       : 1
 
-  const usdPrice = useCoinConversion(
+  const coinConversion = useCoinConversion(
     open ? 'USD' : undefined,
     currency.symbol,
     currency.coinGeckoId
   )
+  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
 
   const toggleMarketplace = (marketplace: Marketplace) => {
     const updatedMarketplaces = marketplaces.map((market) => {

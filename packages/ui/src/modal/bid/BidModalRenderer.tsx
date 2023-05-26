@@ -67,7 +67,7 @@ type ChildrenProps = {
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
   amountToWrap: string
-  usdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: number | null
   isBanned: boolean
   balance?: ReturnType<typeof useBalance>['data']
   wrappedBalance?: ReturnType<typeof useBalance>['data']
@@ -79,6 +79,9 @@ type ChildrenProps = {
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   stepData: BidModalStepData | null
+  currencies: Currency[]
+  currency: Currency
+  setCurrency: (currency: Currency) => void
   setBidStep: React.Dispatch<React.SetStateAction<BidStep>>
   setBidAmount: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
@@ -93,7 +96,7 @@ type Props = {
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
-  currency?: Currency
+  currencies?: Currency[]
   oracleEnabled: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -114,7 +117,7 @@ export const BidModalRenderer: FC<Props> = ({
   collectionId,
   attribute,
   normalizeRoyalties,
-  currency,
+  currencies,
   oracleEnabled = false,
   children,
 }) => {
@@ -144,6 +147,14 @@ export const BidModalRenderer: FC<Props> = ({
     chainCurrency.chainId in wrappedContractNames
       ? wrappedContractNames[chainCurrency.chainId]
       : wrappedContractNames[1]
+
+  const defaultCurrency = {
+    contract: nativeWrappedContractAddress,
+    symbol: nativeWrappedContractName,
+  }
+  const [currency, setCurrency] = useState<Currency>(
+    currencies && currencies[0] ? currencies[0] : defaultCurrency
+  )
 
   const wrappedContractAddress = currency
     ? currency.contract
@@ -179,10 +190,11 @@ export const BidModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
-  const usdPrice = useCoinConversion(
+  const usdConversion = useCoinConversion(
     open ? 'USD' : undefined,
     wrappedContractName
   )
+  const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
   const bidAmountUsd = +bidAmount * (usdPrice || 0)
 
   const client = useReservoirClient()
@@ -277,9 +289,22 @@ export const BidModalRenderer: FC<Props> = ({
     } else {
       setTrait(attribute)
     }
+    setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
   }, [open])
 
-  const isBanned = useTokenOpenseaBanned(open ? contract : undefined, tokenId, client?.currentChain()?.id)
+  useEffect(() => {
+    if (currencies && currencies.length > 5) {
+      console.warn(
+        'The BidModal UI was designed to have a maximum of 5 currencies, going above 5 may degrade the user experience.'
+      )
+    }
+  }, [currencies])
+
+  const isBanned = useTokenOpenseaBanned(
+    open ? contract : undefined,
+    tokenId,
+    client?.currentChain()?.id
+  )
 
   const placeBid = useCallback(
     (options?: { quantity?: number }) => {
@@ -434,6 +459,9 @@ export const BidModalRenderer: FC<Props> = ({
         expirationOption,
         expirationOptions,
         stepData,
+        currencies: currencies || [defaultCurrency],
+        currency,
+        setCurrency,
         setBidStep,
         setBidAmount,
         setExpirationOption,
