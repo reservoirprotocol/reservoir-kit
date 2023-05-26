@@ -64,7 +64,7 @@ type ChildrenProps = {
   hasEnoughCurrency: boolean
   feeUsd: number
   totalUsd: number
-  usdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: number
   isBanned: boolean
   balance?: BigNumber
   address?: string
@@ -194,12 +194,13 @@ export const BuyModalRenderer: FC<Props> = ({
         )
       : listing?.quantityRemaining
 
-  const usdPrice = useCoinConversion(
+  const usdConversion = useCoinConversion(
     open && token ? 'USD' : undefined,
     currency?.symbol
   )
-  const feeUsd = referrerFee * (usdPrice || 0)
-  const totalUsd = totalPrice * (usdPrice || 0)
+  const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : 0
+  const feeUsd = referrerFee * usdPrice
+  const totalUsd = totalPrice * usdPrice
 
   const client = useReservoirClient()
 

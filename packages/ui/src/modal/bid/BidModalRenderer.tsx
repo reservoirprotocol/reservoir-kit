@@ -67,7 +67,7 @@ type ChildrenProps = {
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
   amountToWrap: string
-  usdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: number | null
   isBanned: boolean
   balance?: ReturnType<typeof useBalance>['data']
   wrappedBalance?: ReturnType<typeof useBalance>['data']
@@ -190,10 +190,11 @@ export const BidModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
-  const usdPrice = useCoinConversion(
+  const usdConversion = useCoinConversion(
     open ? 'USD' : undefined,
     wrappedContractName
   )
+  const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
   const bidAmountUsd = +bidAmount * (usdPrice || 0)
 
   const client = useReservoirClient()

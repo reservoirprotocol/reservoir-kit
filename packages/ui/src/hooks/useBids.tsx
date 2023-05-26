@@ -1,6 +1,7 @@
 import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import { SWRInfiniteConfiguration } from 'swr/infinite'
 import { useInfiniteApi, useReservoirClient } from './'
+import { useMemo } from 'react'
 
 type Bids = paths['/orders/bids/v5']['get']['responses']['200']['schema']
 type BidsQuery = paths['/orders/bids/v5']['get']['parameters']['query']
@@ -50,7 +51,10 @@ export default function (
     }
   )
 
-  const bids = response.data?.flatMap((page) => page.orders || []) ?? []
+  const bids = useMemo(
+    () => response.data?.flatMap((page) => page.orders || []) ?? [],
+    [response.data]
+  )
 
   return {
     ...response,

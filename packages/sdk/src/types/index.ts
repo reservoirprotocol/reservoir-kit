@@ -1,11 +1,14 @@
 import { paths } from './api'
 export * from './api'
 
+export type BuyPath =
+  paths['/execute/buy/v7']['post']['responses']['200']['schema']['path']
+export type SellPath =
+  paths['/execute/sell/v7']['post']['responses']['200']['schema']['path']
+
 export type Execute = {
   errors?: { message?: string; orderId?: string }[]
-  path:
-    | paths['/execute/buy/v7']['post']['responses']['200']['schema']['path']
-    | paths['/execute/sell/v7']['post']['responses']['200']['schema']['path']
+  path: BuyPath | SellPath
   error?: string // Manually added client error
   steps: {
     error?: string
