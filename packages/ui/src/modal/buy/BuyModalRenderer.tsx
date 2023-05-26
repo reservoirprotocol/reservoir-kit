@@ -15,14 +15,12 @@ import {
   useListings,
   useChainCurrency,
 } from '../../hooks'
-import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
+import { useAccount, useBalance, useWalletClient, useNetwork } from 'wagmi'
 
-import { BigNumber, utils } from 'ethers'
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
-import { constants } from 'ethers'
+import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { Currency } from '../../types/Currency'
 
 export enum BuyStep {
@@ -66,7 +64,7 @@ type ChildrenProps = {
   totalUsd: number
   usdPrice: ReturnType<typeof useCoinConversion>
   isBanned: boolean
-  balance?: BigNumber
+  balance?: bigint
   address?: string
   blockExplorerBaseUrl: string
   steps: Execute['steps'] | null
@@ -101,7 +99,7 @@ export const BuyModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
   const [totalPrice, setTotalPrice] = useState(0)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0)
   const [listingsToBuy, setListingsToBuy] = useState<Record<string, number>>({})
@@ -141,7 +139,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: balance } = useBalance({
     address: address,
     token:
-      currency?.contract !== constants.AddressZero
+      currency?.contract !== zeroAddress
         ? (currency?.contract as UseBalanceToken)
         : undefined,
     watch: open,
@@ -229,7 +227,10 @@ export const BuyModalRenderer: FC<Props> = ({
     >['0']['options'] = {}
 
     if (referrer && referrerFee) {
-      const atomicUnitsFee = parseUnits(`${referrerFee}`, currency?.decimals)
+      const atomicUnitsFee = parseUnits(
+        `${referrerFee}`,
+        currency?.decimals || 18
+      )
       options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
     } else if (referrer === null && referrerFeeBps === null) {
       delete options.feesOnTop
@@ -432,10 +433,7 @@ export const BuyModalRenderer: FC<Props> = ({
           setReferrerFee(fee)
         } else if (referrerFeeFixed && referrer) {
           const fee = Number(
-            formatUnits(
-              BigNumber.from(`${referrerFeeFixed}`),
-              currency?.decimals
-            )
+            formatUnits(BigInt(referrerFeeFixed), currency?.decimals || 18)
           )
           total += fee
           setReferrerFee(fee)
@@ -477,9 +475,8 @@ export const BuyModalRenderer: FC<Props> = ({
       if (!balance.value) {
         setHasEnoughCurrency(false)
       } else if (
-        balance.value.lt(
-          utils.parseUnits(`${totalPriceTruncated}`, currency?.decimals)
-        )
+        balance.value <
+        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals || 18)
       ) {
         setHasEnoughCurrency(false)
       } else {

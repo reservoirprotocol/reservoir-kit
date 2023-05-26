@@ -1,5 +1,5 @@
 import { Execute, paths } from '../types'
-import { Signer } from 'ethers'
+import { WalletClient } from 'viem'
 import { executeSteps } from '../utils'
 import { getClient } from '.'
 
@@ -13,7 +13,7 @@ export type CancelOrderOptions = Omit<
 
 type Data = {
   ids: string[]
-  signer: Signer
+  signer: WalletClient
   options?: CancelOrderOptions
   onProgress: (steps: Execute['steps']) => any
 }
@@ -34,7 +34,6 @@ export async function cancelOrder(data: Data) {
   if (!baseApiUrl) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
   }
-
 
   if (ids.length === 0) {
     throw {

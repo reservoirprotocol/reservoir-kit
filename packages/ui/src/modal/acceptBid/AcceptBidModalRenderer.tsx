@@ -13,7 +13,7 @@ import {
   useCollections,
   useBids,
 } from '../../hooks'
-import { useAccount, useSigner, useNetwork } from 'wagmi'
+import { useAccount, useWalletClient, useNetwork } from 'wagmi'
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import Fees from './Fees'
 
@@ -85,7 +85,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [totalPrice, setTotalPrice] = useState(0)
   const [acceptBidStep, setAcceptBidStep] = useState<AcceptBidStep>(

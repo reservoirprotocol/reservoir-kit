@@ -16,14 +16,13 @@ import {
   useOnChainRoyalties,
   useChainCurrency,
 } from '../../hooks'
-import { useSigner, useAccount } from 'wagmi'
+import { useWalletClient, useAccount } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
-import { constants } from 'ethers'
 import { Listings } from '../list/ListModalRenderer'
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
+import { formatUnits, parseUnits, zeroAddress } from 'viem'
 
 export enum EditListingStep {
   Edit,
@@ -87,7 +86,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   enableOnChainRoyalties = false,
   children,
 }) => {
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
   const account = useAccount()
   const [editListingStep, setEditListingStep] = useState<EditListingStep>(
     EditListingStep.Edit
@@ -196,7 +195,7 @@ export const EditListingModalRenderer: FC<Props> = ({
 
   const onChainRoyaltyBps = useMemo(() => {
     const totalRoyalty = onChainRoyalties?.[1].reduce((total, royalty) => {
-      total += parseFloat(formatUnits(royalty, currency?.decimals))
+      total += parseFloat(formatUnits(royalty, currency?.decimals || 18))
       return total
     }, 0)
     if (totalRoyalty) {
@@ -247,9 +246,10 @@ export const EditListingModalRenderer: FC<Props> = ({
 
     const listing: Listings[0] = {
       token: `${contract}:${tokenId}`,
-      weiPrice: parseUnits(`${price}`, currency?.decimals)
-        .mul(quantity)
-        .toString(),
+      weiPrice: (
+        parseUnits(`${price as number}`, currency?.decimals || 18) *
+        BigInt(quantity)
+      ).toString(),
       orderbook: 'reservoir',
       orderKind: 'seaport-v1.4',
     }
@@ -262,7 +262,7 @@ export const EditListingModalRenderer: FC<Props> = ({
       listing.expirationTime = expirationTime
     }
 
-    if (currency && currency.contract != constants.AddressZero) {
+    if (currency && currency.contract != zeroAddress) {
       listing.currency = currency.contract
     }
 

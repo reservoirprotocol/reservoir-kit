@@ -18,10 +18,9 @@ import React, {
   FC,
 } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { constants } from 'ethers'
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
+import { parseUnits, zeroAddress } from 'viem'
 import { version } from '../../package.json'
-import { fetchSigner, getNetwork } from 'wagmi/actions'
+import { getNetwork, getWalletClient } from 'wagmi/actions'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
@@ -923,7 +922,7 @@ function cartStore({
         }
       }
 
-      const signer = await fetchSigner({
+      const signer = await getWalletClient({
         chainId: cartData.current.chain?.id,
       })
 
@@ -969,13 +968,13 @@ function cartStore({
       const expectedPrice = cartData.current.totalPrice - referrerFee
 
       if (isMixedCurrency) {
-        options.currency = constants.AddressZero
+        options.currency = zeroAddress
       }
 
       if (referrerFee) {
         const atomicUnitsFee = parseUnits(
           `${referrerFee}`,
-          cartData.current.currency?.decimals
+          cartData.current.currency?.decimals || 18
         )
         options.feesOnTop = [`${cartData.current.referrer}:${atomicUnitsFee}`]
       }

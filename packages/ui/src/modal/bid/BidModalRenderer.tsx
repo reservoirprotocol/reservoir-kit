@@ -8,25 +8,19 @@ import {
   useAttributes,
   useChainCurrency,
 } from '../../hooks'
-import {
-  useAccount,
-  useBalance,
-  useNetwork,
-  useSigner,
-  mainnet,
-  goerli,
-} from 'wagmi'
+import { useAccount, useBalance, useNetwork, useWalletClient } from 'wagmi'
+import { mainnet, goerli } from 'wagmi/chains'
 
-import { constants } from 'ethers'
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
-import { parseUnits } from 'ethers/lib/utils.js'
+
 import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
+import { parseUnits } from 'viem'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -118,7 +112,7 @@ export const BidModalRenderer: FC<Props> = ({
   oracleEnabled = false,
   children,
 }) => {
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [bidAmount, setBidAmount] = useState<string>('')
@@ -219,15 +213,18 @@ export const BidModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (bidAmount !== '') {
-      const bid = parseUnits(bidAmount, wrappedBalance?.decimals)
+      const bid = parseUnits(
+        `${Number(bidAmount)}`,
+        wrappedBalance?.decimals || 18
+      )
 
-      if (!wrappedBalance?.value || wrappedBalance?.value.lt(bid)) {
+      if (!wrappedBalance?.value || wrappedBalance?.value < bid) {
         setHasEnoughWrappedCurrency(false)
-        const wrappedAmount = wrappedBalance?.value || constants.Zero
-        const amountToWrap = bid.sub(wrappedAmount)
-        setAmountToWrap(formatBN(bid.sub(wrappedAmount), 5))
+        const wrappedAmount = wrappedBalance?.value || 0n
+        const amountToWrap = bid - wrappedAmount
+        setAmountToWrap(formatBN(amountToWrap, 5))
 
-        if (!balance?.value || balance.value.lt(amountToWrap)) {
+        if (!balance?.value || balance.value < amountToWrap) {
           setHasEnoughNativeCurrency(false)
         } else {
           setHasEnoughNativeCurrency(true)
@@ -306,7 +303,10 @@ export const BidModalRenderer: FC<Props> = ({
       setBidData(null)
 
       const bid: BidData = {
-        weiPrice: parseUnits(`${bidAmount}`, currency?.decimals).toString(),
+        weiPrice: parseUnits(
+          `${Number(bidAmount)}`,
+          currency?.decimals || 18
+        ).toString(),
         orderbook: 'reservoir',
         orderKind: 'seaport',
         attributeKey: trait?.key,
