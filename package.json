@@ -18,7 +18,7 @@
     "dev:sdk": "nodemon --verbose --watch packages/sdk/src --ext ts,tsx --exec 'yarn build:dev'",
     "dev": "yarn dev:ui & yarn dev:sdk",
     "build": "yarn build:config && yarn build:packages && yarn build:cleanup",
-    "build:dev": "parcel build './packages/*' --no-cache",
+    "build:dev": "parcel build './packages/*'",
     "build:config": "mv tsconfig.json tsconfig.tmp.json && mv tsconfig.production.json tsconfig.json",
     "build:packages": "parcel build 'packages/*' --no-cache && yarn build:fix-type-defs",
     "build:fix-type-defs": "node ./scripts/fix-type-defs-imports",
