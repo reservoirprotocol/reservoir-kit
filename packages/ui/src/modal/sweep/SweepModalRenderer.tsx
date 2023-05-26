@@ -176,10 +176,7 @@ export const SweepModalRenderer: FC<Props> = ({
     open && currency ? 'USD' : undefined,
     currency?.symbol
   )
-  const usdPrice =
-    coinConversion !== undefined && coinConversion !== null
-      ? Number(coinConversion)
-      : 0
+  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
   const totalUsd = usdPrice * (total || 0)
 
   const { data: balance } = useBalance({

@@ -1,45 +1,54 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
-
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useMemo,
+} from 'react'
 import {
   Flex,
-  Box,
   Text,
-  Anchor,
   Button,
   FormatCurrency,
   Loader,
   FormatCryptoCurrency,
+  Box,
+  Anchor,
 } from '../../primitives'
 
-import { Progress } from './Progress'
 import { Modal } from '../Modal'
 import {
   faCircleExclamation,
-  faCheckCircle,
+  faChevronDown,
+  faCube,
+  faCircleCheck,
+  faEnvelopeOpen,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import TokenLineItem from '../TokenLineItem'
 import {
   AcceptBidStep,
   AcceptBidModalRenderer,
   AcceptBidStepData,
+  AcceptBidTokenData,
+  EnhancedAcceptBidTokenData,
 } from './AcceptBidModalRenderer'
-import Fees from './Fees'
-import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
-import { useNetwork } from 'wagmi'
+import { useBids, useFallbackState, useReservoirClient } from '../../hooks'
+import AcceptBidLineItem from './AcceptBidLineItem'
+import { Collapsible } from '../../primitives/Collapsible'
+import { ApproveBidCollapsible } from './ApproveBidCollapsible'
+import SigninStep from '../SigninStep'
+import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
 
 type BidData = {
-  tokenId?: string
-  collectionId?: string
+  tokens?: EnhancedAcceptBidTokenData[]
+  bids?: NonNullable<ReturnType<typeof useBids>['data']>
   txHash?: string
   maker?: string
 }
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
-  tokenId?: string
-  collectionId?: string
-  bidId?: string
+  tokens: AcceptBidTokenData[]
   normalizeRoyalties?: boolean
   onBidAccepted?: (data: BidData) => void
   onClose?: (
@@ -51,21 +60,10 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onCurrentStepUpdate?: (data: AcceptBidStepData) => void
 }
 
-function titleForStep(step: AcceptBidStep) {
-  switch (step) {
-    case AcceptBidStep.Unavailable:
-      return 'Selected item is no longer available'
-    default:
-      return 'Accept Offer'
-  }
-}
-
 export function AcceptBidModal({
   openState,
   trigger,
-  tokenId,
-  collectionId,
-  bidId,
+  tokens,
   normalizeRoyalties,
   onBidAccepted,
   onClose,
@@ -76,46 +74,33 @@ export function AcceptBidModal({
     openState ? openState[0] : false,
     openState
   )
-  const client = useReservoirClient()
-  const { chain: activeChain } = useNetwork()
-  const reservoirChain = client?.currentChain()
 
   return (
     <AcceptBidModalRenderer
       open={open}
-      tokenId={tokenId}
-      collectionId={collectionId}
-      bidId={bidId}
+      tokens={tokens}
       normalizeRoyalties={normalizeRoyalties}
     >
       {({
         loading,
-        token,
-        collection,
-        source,
-        expiration,
-        totalPrice,
-        bidAmount,
-        bidAmountCurrency,
-        ethBidAmount,
-        fees,
         acceptBidStep,
         transactionError,
         txHash,
-        totalUsd,
-        usdPrice,
+        usdPrices,
+        prices,
+        tokensData,
         address,
-        etherscanBaseUrl,
+        blockExplorerBaseUrl,
         stepData,
         acceptBid,
       }) => {
-        const title = titleForStep(acceptBidStep)
+        const client = useReservoirClient()
+        const chain = client?.currentChain()
 
         useEffect(() => {
           if (acceptBidStep === AcceptBidStep.Complete && onBidAccepted) {
             const data: BidData = {
-              tokenId: tokenId,
-              collectionId: collectionId,
+              tokens: tokensData,
               maker: address,
             }
             if (txHash) {
@@ -128,8 +113,7 @@ export function AcceptBidModal({
         useEffect(() => {
           if (transactionError && onBidAcceptError) {
             const data: BidData = {
-              tokenId: tokenId,
-              collectionId: collectionId,
+              tokens: tokensData,
               maker: address,
             }
             onBidAcceptError(transactionError, data)
@@ -142,38 +126,38 @@ export function AcceptBidModal({
           }
         }, [stepData])
 
-        const floorPrice = token?.market?.floorAsk?.price?.amount?.native
+        const bidCount = useMemo(
+          () =>
+            tokensData.reduce(
+              (total, tokenData) => (total += tokenData.bidsPath.length),
+              0
+            ),
+          [tokensData]
+        )
 
-        const difference =
-          floorPrice && ethBidAmount
-            ? ((floorPrice - ethBidAmount) / floorPrice) * 100
-            : undefined
-
-        const warning =
-          difference && difference > 50
-            ? `${difference}% lower than floor price`
-            : undefined
-
-        const marketplace = {
-          name: (source?.name as string) || 'Marketplace',
-          image: (source?.icon as string) || '',
-        }
-
-        const tokenImage =
-          token?.token?.image || token?.token?.collection?.image
-
-        const expires = useTimeSince(expiration)
+        const salesTxHashes =
+          stepData?.currentStep?.items?.reduce((txHashes, item) => {
+            item.salesData?.forEach((saleData) => {
+              if (saleData.txHash) {
+                txHashes.add(saleData.txHash)
+              }
+            })
+            return txHashes
+          }, new Set<string>()) || []
+        const totalSales = Array.from(salesTxHashes).length
+        const failedSales =
+          totalSales - (stepData?.currentStep?.items?.length || 0)
+        const successfulSales = totalSales - failedSales
 
         return (
           <Modal
             trigger={trigger}
-            title={title}
+            title={'Accept Offer'}
             open={open}
             onOpenChange={(open) => {
               if (!open && onClose) {
                 const data: BidData = {
-                  tokenId: tokenId,
-                  collectionId: collectionId,
+                  tokens: tokensData,
                   maker: address,
                 }
                 onClose(data, stepData, acceptBidStep)
@@ -183,20 +167,26 @@ export function AcceptBidModal({
             loading={loading}
           >
             {acceptBidStep === AcceptBidStep.Unavailable && !loading && (
-              <Flex direction="column">
-                <TokenLineItem
-                  tokenDetails={token}
-                  collection={collection}
-                  usdConversion={usdPrice || 0}
-                  isUnavailable={true}
-                  price={bidAmount}
-                  warning={warning}
-                  currency={bidAmountCurrency}
-                  expires={expires}
-                  priceSubtitle="Offer"
-                  sourceImg={source?.icon ? (source.icon as string) : undefined}
-                />
-                <Button onClick={() => setOpen(false)} css={{ m: '$4' }}>
+              <Flex direction="column" css={{ mt: 80 }}>
+                <Box css={{ color: '$neutralSolidHover', m: '0 auto' }}>
+                  <FontAwesomeIcon
+                    icon={faEnvelopeOpen}
+                    style={{ height: 24, width: 24 }}
+                  />
+                </Box>
+                <Text
+                  style="body2"
+                  css={{ mt: '$2', mb: 74, textAlign: 'center' }}
+                >
+                  Offers are no longer available
+                </Text>
+                <Button
+                  onClick={() => setOpen(false)}
+                  css={{
+                    m: '$4',
+                    flex: 1,
+                  }}
+                >
                   Close
                 </Button>
               </Flex>
@@ -224,48 +214,173 @@ export function AcceptBidModal({
                     </Text>
                   </Flex>
                 )}
-                <TokenLineItem
-                  tokenDetails={token}
-                  collection={collection}
-                  usdConversion={usdPrice || 0}
-                  price={bidAmount}
-                  warning={warning}
-                  currency={bidAmountCurrency}
-                  expires={expires}
-                  priceSubtitle="Offer"
-                  sourceImg={source?.icon ? (source.icon as string) : undefined}
-                />
-                <Fees fees={fees} marketplace={marketplace.name} />
+                <Flex justify="between" css={{ px: '$4', pt: '$4' }}>
+                  <Text style="subtitle2" color="subtle">
+                    {bidCount > 1 ? `${bidCount} Items` : 'Item'}
+                  </Text>
+                  <Text style="subtitle2" color="subtle">
+                    Total Offer Value
+                  </Text>
+                </Flex>
+                {tokensData.map(({ tokenData, bidsPath }) => {
+                  if (!bidsPath || !bidsPath.length) {
+                    return (
+                      <AcceptBidLineItem
+                        token={{
+                          name: tokenData?.token?.name || '',
+                          id: tokenData?.token?.tokenId || '',
+                        }}
+                        collection={{
+                          id: tokenData?.token?.collection?.id || '',
+                          name: tokenData?.token?.collection?.name || '',
+                        }}
+                        img={
+                          tokenData?.token?.image ||
+                          tokenData?.token?.collection?.image ||
+                          ''
+                        }
+                      />
+                    )
+                  } else {
+                    return bidsPath.map((bidPath) => (
+                      <AcceptBidLineItem
+                        token={{
+                          name: tokenData?.token?.name || '',
+                          id: tokenData?.token?.tokenId || '',
+                        }}
+                        collection={{
+                          id: tokenData?.token?.collection?.id || '',
+                          name: tokenData?.token?.collection?.name || '',
+                        }}
+                        img={
+                          tokenData?.token?.image ||
+                          tokenData?.token?.collection?.image ||
+                          ''
+                        }
+                        netAmount={bidPath.quote}
+                        price={bidPath.totalPrice}
+                        fees={bidPath.builtInFees}
+                        currency={bidPath.currency}
+                        decimals={bidPath.currencyDecimals}
+                        sourceImg={
+                          bidPath.source
+                            ? `https://api.reservoir.tools/redirect/sources/${bidPath.source}/logo/v2`
+                            : ''
+                        }
+                      />
+                    ))
+                  }
+                })}
 
-                <Flex
-                  align="center"
-                  justify="between"
-                  css={{ px: '$4', mt: '$4' }}
-                >
-                  <Text style="h6">You Get</Text>
-                  <FormatCryptoCurrency
-                    textStyle="h6"
-                    amount={totalPrice}
-                    address={bidAmountCurrency?.contract}
-                    logoWidth={16}
-                    symbol={bidAmountCurrency?.symbol}
-                  />
-                </Flex>
-                <Flex justify="end">
-                  <FormatCurrency
-                    amount={totalUsd}
-                    color="subtle"
-                    css={{ mr: '$4' }}
-                  />
-                </Flex>
+                {prices.map((price, i) => (
+                  <Collapsible
+                    key={i}
+                    trigger={
+                      <Flex justify="between" css={{ p: '$4' }}>
+                        <Text style="h6">
+                          {price.currency?.symbol} You Get{' '}
+                          <Text css={{ color: '$neutralSolidHover', ml: '$2' }}>
+                            <FontAwesomeIcon
+                              icon={faChevronDown}
+                              width={16}
+                              height={16}
+                            />
+                          </Text>
+                        </Text>
+                        <Flex direction="column" css={{ gap: '$1' }}>
+                          <FormatCryptoCurrency
+                            amount={price.netAmount}
+                            decimals={price.currency?.decimals}
+                            address={price.currency?.contract}
+                            symbol={price.currency?.symbol}
+                            textStyle="h6"
+                          />
+                          {price.currency?.symbol &&
+                          usdPrices[price.currency.symbol] ? (
+                            <FormatCurrency
+                              color="subtle"
+                              style="tiny"
+                              amount={
+                                usdPrices[price.currency.symbol].price *
+                                price.amount
+                              }
+                              css={{ textAlign: 'end' }}
+                            />
+                          ) : null}
+                        </Flex>
+                      </Flex>
+                    }
+                  >
+                    <Flex
+                      css={{
+                        gap: '$2',
+                        padding: '$4',
+                        paddingTop: 0,
+                      }}
+                      direction="column"
+                    >
+                      <Flex justify="between">
+                        <Text style="subtitle2" color="subtle">
+                          Total {price.currency?.symbol} Offer Value
+                        </Text>
+                        <FormatCryptoCurrency
+                          amount={price.amount}
+                          decimals={price.currency?.decimals}
+                          address={price.currency?.contract}
+                          symbol={price.currency?.symbol}
+                          textStyle="subtitle2"
+                        />
+                      </Flex>
+                      {price.royalty > 0 ? (
+                        <Flex justify="between">
+                          <Text style="subtitle2" color="subtle">
+                            Creator Royalties
+                          </Text>
+                          <Text
+                            css={{ ml: 'auto' }}
+                            style="subtitle2"
+                            color="subtle"
+                          >
+                            -
+                          </Text>
+                          <FormatCryptoCurrency
+                            amount={price.royalty}
+                            decimals={price.currency?.decimals}
+                            address={price.currency?.contract}
+                            symbol={price.currency?.symbol}
+                            textStyle="subtitle2"
+                          />
+                        </Flex>
+                      ) : null}
+                      {price.marketplaceFee > 0 ? (
+                        <Flex justify="between">
+                          <Text style="subtitle2" color="subtle">
+                            Marketplace Fee
+                          </Text>
+                          <Text
+                            css={{ ml: 'auto' }}
+                            style="subtitle2"
+                            color="subtle"
+                          >
+                            -
+                          </Text>
+                          <FormatCryptoCurrency
+                            amount={price.marketplaceFee}
+                            decimals={price.currency?.decimals}
+                            address={price.currency?.contract}
+                            symbol={price.currency?.symbol}
+                            textStyle="subtitle2"
+                          />
+                        </Flex>
+                      ) : null}
+                    </Flex>
+                  </Collapsible>
+                ))}
 
                 <Button
-                  style={{
+                  css={{
                     flex: 1,
-                    marginBottom: 16,
-                    marginTop: 16,
-                    marginRight: 16,
-                    marginLeft: 16,
+                    m: '$4',
                   }}
                   color="primary"
                   onClick={acceptBid}
@@ -274,42 +389,95 @@ export function AcceptBidModal({
                 </Button>
               </Flex>
             )}
+            {acceptBidStep === AcceptBidStep.Auth && !loading && (
+              <Flex direction="column">
+                <AcceptBidSummaryLineItem
+                  tokensData={tokensData}
+                  usdPrices={usdPrices}
+                  prices={prices}
+                  chain={chain}
+                />
+                <SigninStep css={{ mt: 48, mb: 60, gap: 20 }} />
+                <Button disabled={true} css={{ m: '$4' }}>
+                  <Loader />
+                  Waiting for Approval...
+                </Button>
+              </Flex>
+            )}
+            {acceptBidStep === AcceptBidStep.ApproveMarketplace && !loading && (
+              <Flex direction="column">
+                <AcceptBidSummaryLineItem
+                  tokensData={tokensData}
+                  usdPrices={usdPrices}
+                  prices={prices}
+                  chain={chain}
+                />
+                <Text style="h6" css={{ m: '$4', textAlign: 'center' }}>
+                  Confirm Selling
+                </Text>
+                {stepData?.steps.map((step) =>
+                  step?.items && step.items.length > 0 ? (
+                    <ApproveBidCollapsible
+                      key={step.id}
+                      step={step}
+                      tokensData={tokensData}
+                      chain={chain}
+                      isCurrentStep={stepData.currentStep.id === step.id}
+                      open={stepData.currentStep.id === step.id}
+                    />
+                  ) : null
+                )}
 
-            {(acceptBidStep === AcceptBidStep.Confirming ||
-              acceptBidStep === AcceptBidStep.Finalizing ||
-              acceptBidStep === AcceptBidStep.ApproveMarketplace) &&
-              token && (
-                <Flex direction="column">
-                  <TokenLineItem
-                    tokenDetails={token}
-                    collection={collection}
-                    usdConversion={usdPrice || 0}
-                    price={bidAmount}
-                    warning={warning}
-                    currency={bidAmountCurrency}
-                    expires={expires}
-                    priceSubtitle="Offer"
-                    sourceImg={
-                      source?.icon ? (source.icon as string) : undefined
-                    }
-                  />
-                  <Progress
-                    acceptBidStep={acceptBidStep}
-                    etherscanBaseUrl={`${etherscanBaseUrl}/tx/${txHash}`}
-                    marketplace={marketplace}
-                    tokenImage={tokenImage}
-                    stepData={stepData}
-                  />
-                  <Button disabled={true} css={{ m: '$4' }}>
-                    <Loader />
-                    {acceptBidStep === AcceptBidStep.Confirming
-                      ? 'Waiting for approval...'
-                      : 'Waiting for transaction to be validated'}
-                  </Button>
-                </Flex>
-              )}
+                <Button disabled={true} css={{ m: '$4' }}>
+                  <Loader />
+                  Waiting for Approval...
+                </Button>
+              </Flex>
+            )}
 
-            {acceptBidStep === AcceptBidStep.Complete && token && (
+            {acceptBidStep === AcceptBidStep.Finalizing && !loading && (
+              <Flex
+                direction="column"
+                justify="center"
+                css={{
+                  gap: '$4',
+                  pb: '$5',
+                }}
+              >
+                <AcceptBidSummaryLineItem
+                  tokensData={tokensData}
+                  usdPrices={usdPrices}
+                  prices={prices}
+                  chain={chain}
+                />
+                <Text style="h6" css={{ textAlign: 'center' }}>
+                  Finalizing on blockchain
+                </Text>
+                <Text
+                  style="subtitle2"
+                  color="subtle"
+                  css={{ textAlign: 'center', px: '$4' }}
+                >
+                  You can close this modal while it finalizes on the blockchain.
+                  The transaction will continue in the background.
+                </Text>
+                <Box
+                  css={{
+                    color: '$neutralSolid',
+                    width: 32,
+                    height: 32,
+                    m: '0 auto',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faCube}
+                    style={{ width: 32, height: 32 }}
+                  />
+                </Box>
+              </Flex>
+            )}
+
+            {acceptBidStep === AcceptBidStep.Complete && !loading && (
               <Flex direction="column">
                 <Flex
                   css={{
@@ -320,53 +488,45 @@ export function AcceptBidModal({
                     textAlign: 'center',
                   }}
                 >
-                  {' '}
                   <Box
                     css={{
-                      color: '$successAccent',
-                      mb: 24,
+                      color: failedSales ? '$errorAccent' : '$successAccent',
                     }}
                   >
-                    <FontAwesomeIcon icon={faCheckCircle} fontSize={32} />
+                    <FontAwesomeIcon
+                      icon={failedSales ? faCircleExclamation : faCircleCheck}
+                      fontSize={32}
+                    />
                   </Box>
-                  <Text style="h5" css={{ mb: 8 }}>
-                    Bid accepted!
+                  <Text style="h5" css={{ my: 24 }}>
+                    {failedSales
+                      ? `${successfulSales} ${
+                          successfulSales > 1 ? 'items' : 'item'
+                        } sold, ${failedSales} ${
+                          failedSales > 1 ? 'items' : 'item'
+                        } failed`
+                      : `${totalSales > 1 ? 'Offers' : 'Offer'} accepted!`}
                   </Text>
-                  <Flex
-                    css={{ mb: 24, maxWidth: '100%' }}
-                    align="center"
-                    justify="center"
-                  >
-                    <Text
-                      style="subtitle2"
-                      css={{ maxWidth: '100%' }}
-                      ellipsify
-                    >
-                      You’ve sold{' '}
-                      <Anchor
-                        color="primary"
-                        weight="medium"
-                        css={{ fontSize: 12 }}
-                        href={`${reservoirChain?.baseApiUrl}/redirect/sources/${client?.source}/tokens/${token.token?.contract}:${token?.token?.tokenId}/link/v2`}
-                        target="_blank"
-                      >
-                        {token?.token?.name
-                          ? token?.token?.name
-                          : `#${token?.token?.tokenId}`}
-                      </Anchor>{' '}
-                      from the {token?.token?.collection?.name} collection.
-                    </Text>
+                  <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
+                    {stepData?.currentStep?.items?.map((item) => {
+                      const txHash = item.txHash
+                        ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
+                            -4
+                          )}`
+                        : ''
+                      return (
+                        <Anchor
+                          href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
+                          color="primary"
+                          weight="medium"
+                          target="_blank"
+                          css={{ fontSize: 12 }}
+                        >
+                          View transaction: {txHash}
+                        </Anchor>
+                      )
+                    })}
                   </Flex>
-                  <Anchor
-                    color="primary"
-                    weight="medium"
-                    css={{ fontSize: 12 }}
-                    href={`${etherscanBaseUrl}/tx/${txHash}`}
-                    target="_blank"
-                  >
-                    View on{' '}
-                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
-                  </Anchor>
                 </Flex>
                 <Flex
                   css={{

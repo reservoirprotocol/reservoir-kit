@@ -1,4 +1,5 @@
 import useSWR, { SWRConfiguration } from 'swr'
+import useReservoirClient from './useReservoirClient'
 
 export type OpenSeaTokenResponse = {
   supports_wyvern?: boolean
@@ -15,11 +16,17 @@ export type OpenSeaTokenResponse = {
 export default function (
   contract?: string,
   tokenId?: number | string,
+  chainId?: number,
   swrOptions: SWRConfiguration = {}
 ) {
-  const path = new URL(
-    `https://api.opensea.io/api/v1/asset/${contract}/${tokenId}`
-  )
+  const client = useReservoirClient()
+
+  const baseUrl =
+    (chainId || client?.currentChain()?.id) === 5
+      ? 'https://testnets-api.opensea.io/api/v1/assets'
+      : 'https://api.opensea.io/api/v1/assets'
+
+  const path = new URL(`${baseUrl}/${contract}/${tokenId}`)
 
   const { data, mutate, error, isValidating } = useSWR<OpenSeaTokenResponse>(
     contract && tokenId ? [path.href] : null,

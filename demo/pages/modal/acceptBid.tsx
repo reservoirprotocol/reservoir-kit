@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { AcceptBidModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ComponentPropsWithoutRef } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 
@@ -21,6 +21,9 @@ const AcceptBidPage: NextPage = () => {
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [bidId, setBidId] = useState('')
+  const [tokens, setTokens] = useState<
+    ComponentPropsWithoutRef<typeof AcceptBidModal>['tokens']
+  >([])
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
 
@@ -29,7 +32,6 @@ const AcceptBidPage: NextPage = () => {
       ? (router.query.bidId as string)
       : ''
     setBidId(prefilledBidId)
-    console.log(router.query)
   }, [router.query])
 
   return (
@@ -46,7 +48,19 @@ const AcceptBidPage: NextPage = () => {
       }}
     >
       <ConnectButton />
-
+      <h3 style={{ marginBottom: 0 }}>Additional Options</h3>
+      <DeeplinkCheckbox />
+      <div>
+        <label>Normalize Royalties: </label>
+        <input
+          type="checkbox"
+          checked={normalizeRoyalties}
+          onChange={(e) => {
+            setNormalizeRoyalties(e.target.checked)
+          }}
+        />
+      </div>
+      <h3 style={{ marginBottom: 0 }}>Add Tokens</h3>
       <div>
         <label>Collection Id: </label>
         <input
@@ -73,16 +87,37 @@ const AcceptBidPage: NextPage = () => {
           style={{ width: 250 }}
         />
       </div>
-      <DeeplinkCheckbox />
-      <div>
-        <label>Normalize Royalties: </label>
-        <input
-          type="checkbox"
-          checked={normalizeRoyalties}
-          onChange={(e) => {
-            setNormalizeRoyalties(e.target.checked)
-          }}
-        />
+      <button
+        disabled={!tokenId.length || !collectionId.length}
+        onClick={() => {
+          setTokens([
+            ...tokens,
+            { tokenId: tokenId, collectionId: collectionId, bidIds: [bidId] },
+          ])
+          setTokenId('')
+          setBidId('')
+          setCollectionId('')
+        }}
+      >
+        Add Token
+      </button>
+      <div
+        style={{
+          marginTop: 10,
+          border: '1px solid gray',
+          borderRadius: 4,
+          padding: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+        }}
+      >
+        <b>Tokens Added:</b>
+        {tokens.map((token, i) => (
+          <div key={i}>
+            {token.collectionId}, {token.tokenId}, {token.bidIds}
+          </div>
+        ))}
       </div>
 
       <AcceptBidModal
@@ -103,10 +138,8 @@ const AcceptBidPage: NextPage = () => {
             Accept Bid
           </button>
         }
-        collectionId={collectionId}
-        tokenId={tokenId}
+        tokens={tokens}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
-        bidId={bidId}
         normalizeRoyalties={normalizeRoyalties}
         onBidAccepted={(data) => {
           console.log('Bid Accepted', data)

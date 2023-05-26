@@ -13,7 +13,7 @@ import { Marketplace } from '../../hooks/useMarketplaces'
 import { Currency } from '../../types/Currency'
 import { CryptoCurrencyIcon } from '../../primitives'
 import { useCollections } from '../../hooks'
-import { CurrencySelector } from './CurrencySelector'
+import { CurrencySelector } from '../CurrencySelector'
 
 type MarketPlaceInputProps = {
   marketplace: Marketplace

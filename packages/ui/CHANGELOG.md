@@ -1,3 +1,19 @@
+## [v0.16.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/75011b90a46da0cf7ed171c39dde775c88240efa) (2023-05-18)
+
+- Display prices for mints in activity [874fd2e](https://github.com/reservoirprotocol/reservoir-kit/commit/874fd2e51b136491df7d85eecf56e02536ff725f)
+
+## [v0.16.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/26850598e5a0b2986e9952aa591154768130c299) (2023-05-16)
+
+- Upgrade to v5 userTokens [b84233b](https://github.com/reservoirprotocol/reservoir-kit/commit/b84233bdf467f335cf9b97cfb7aecb9f4255f526)
+
+## [v0.16.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a055f25e07a3fd4deba30e94a61c612f041b24ac) (2023-05-15)
+
+## [v0.16.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6a64e398e55d3d994218fda2365432e3d3b71319) (2023-05-15)
+
+## [v0.16.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/718f297c145b240df931902940a8a3fbacbdb4e6) (2023-05-11)
+
+- feat: Update property [da2f8a2](https://github.com/reservoirprotocol/reservoir-kit/commit/da2f8a213cd07be994043b3b123e93b6219c6ffe)
+
 ## [v0.16.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/94282cc33a064d42a37c6b33e6dec27aacad042a) (2023-05-09)
 
 - Fix referrer fee bugs in BuyModal and CartProvider [e29b85f](https://github.com/reservoirprotocol/reservoir-kit/commit/e29b85fa306f5bbb12664e3b361a084475aaa10f)

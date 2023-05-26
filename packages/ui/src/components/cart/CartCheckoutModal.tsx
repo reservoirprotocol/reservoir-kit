@@ -16,9 +16,8 @@ import {
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { TokenCheckout } from '../../modal/TokenCheckout'
 import { Cart, CheckoutStatus } from '../../context/CartProvider'
-import { useCoinConversion } from '../../hooks'
 import SigninStep from '../../modal/SigninStep'
-import { ApprovalCollapsible } from '../../modal/ApprovalCollapsible'
+import { ApprovePurchasingCollapsible } from '../../modal/ApprovePurchasingCollapsible'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 
 const Title = styled(DialogPrimitive.Title, {
@@ -30,7 +29,7 @@ export type Path = NonNullable<Execute['path']>[0]
 type Props = {
   items: Cart['items']
   totalPrice: number
-  usdPrice: ReturnType<typeof useCoinConversion>
+  usdPrice: number
   currency: NonNullable<Cart['items'][0]['price']>['currency']
   cartChain: Cart['chain']
   blockExplorerBaseUrl: string
@@ -60,11 +59,16 @@ export function CartCheckoutModal({
     return `${cartChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1`
   })
 
-  const totalPurchases =
-    transaction?.currentStep?.items?.reduce(
-      (total, item) => total + (item?.salesData?.length || 0),
-      0
-    ) || 0
+  const salesTxHashes =
+    transaction?.currentStep?.items?.reduce((txHashes, item) => {
+      item.salesData?.forEach((saleData) => {
+        if (saleData.txHash) {
+          txHashes.add(saleData.txHash)
+        }
+      })
+      return txHashes
+    }, new Set<string>()) || []
+  const totalPurchases = Array.from(salesTxHashes).length
   const failedPurchases = (transaction?.items?.length || 0) - totalPurchases
 
   const pathMap = transaction?.path
@@ -189,11 +193,11 @@ export function CartCheckoutModal({
                                   separate transactions.
                                 </Text>
                                 {transaction.currentStep?.items.map((item) => (
-                                  <ApprovalCollapsible
+                                  <ApprovePurchasingCollapsible
                                     item={item}
                                     pathMap={pathMap}
                                     usdPrice={usdPrice}
-                                    cartChain={cartChain}
+                                    chain={cartChain}
                                     open={true}
                                   />
                                 ))}
@@ -251,7 +255,10 @@ export function CartCheckoutModal({
                           background.
                         </Text>
 
-                        <FontAwesomeIcon icon={faCube} width="24" />
+                        <FontAwesomeIcon
+                          icon={faCube}
+                          style={{ height: 24, width: 24 }}
+                        />
                       </Flex>
                     </Flex>
                     <Button disabled={true} css={{ m: '$4' }}>
