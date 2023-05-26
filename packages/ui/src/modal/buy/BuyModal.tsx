@@ -96,17 +96,14 @@ export function BuyModal({
 
   const feesOnTopFixed = useMemo(() => {
     if (referrerFeeFixed && referrer) {
-      return [
-        `${referrer}:${referrerFeeFixed}`,
-        `${referrer}:10000000000000000`,
-      ]
+      return [`${referrer}:${referrerFeeFixed}`]
     }
     return undefined
   }, [referrerFeeFixed, referrer])
 
   const feesOnTopBps = useMemo(() => {
     if (referrerFeeBps && referrer) {
-      return [`${referrer}:${referrerFeeBps}`, `${referrer}:1000`]
+      return [`${referrer}:${referrerFeeBps}`]
     }
     return undefined
   }, [referrerFeeBps, referrer])
