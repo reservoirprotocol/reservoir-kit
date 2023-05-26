@@ -83,8 +83,8 @@ type Props = {
   tokenId?: string
   collectionId?: string
   orderId?: string
-  referrerFeeBps?: number | null
-  referrerFeeFixed?: number | null
+  feesOnTopBps?: string[] | null
+  feesOnTopFixed?: string[] | null
   referrer?: string | null
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
@@ -95,9 +95,8 @@ export const BuyModalRenderer: FC<Props> = ({
   tokenId,
   collectionId,
   orderId,
-  referrer,
-  referrerFeeBps,
-  referrerFeeFixed,
+  feesOnTopBps,
+  feesOnTopFixed,
   normalizeRoyalties,
   children,
 }) => {
@@ -228,10 +227,17 @@ export const BuyModalRenderer: FC<Props> = ({
       ReservoirClientActions['buyToken']
     >['0']['options'] = {}
 
-    if (referrer && referrerFee) {
-      const atomicUnitsFee = parseUnits(`${referrerFee}`, currency?.decimals)
-      options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
-    } else if (referrer === null && referrerFeeBps === null) {
+    if (feesOnTopFixed && feesOnTopFixed.length > 0) {
+      options.feesOnTop = feesOnTopFixed
+    } else if (feesOnTopBps && feesOnTopBps?.length > 0) {
+      debugger
+      const fixedFees = feesOnTopBps.map((feeOnTop) => {
+        const [referrer, fee] = feeOnTop.split(':')
+        const atomicUnitsFee = parseUnits(`${fee}`, currency?.decimals)
+        return `${referrer}:${atomicUnitsFee}`
+      })
+      options.feesOnTop = fixedFees
+    } else if (!feesOnTopFixed && !feesOnTopBps) {
       delete options.feesOnTop
     }
 
@@ -349,8 +355,8 @@ export const BuyModalRenderer: FC<Props> = ({
     tokenId,
     collectionId,
     orderId,
-    referrer,
-    referrerFee,
+    feesOnTopBps,
+    feesOnTopFixed,
     quantity,
     normalizeRoyalties,
     client,
@@ -424,21 +430,25 @@ export const BuyModalRenderer: FC<Props> = ({
         setCurrency(currency)
         setMixedCurrencies(false)
       }
-
       if (total > 0) {
-        if (referrerFeeBps && referrer) {
-          const fee = (referrerFeeBps / 10000) * total
-          total += fee
-          setReferrerFee(fee)
-        } else if (referrerFeeFixed && referrer) {
-          const fee = Number(
-            formatUnits(
-              BigNumber.from(`${referrerFeeFixed}`),
+        if (feesOnTopBps && feesOnTopBps.length > 0) {
+          const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
+            const [_, fee] = feeOnTop.split(':')
+            return totalFees + (Number(fee) / 10000) * total
+          }, 0)
+          total += fees
+          setReferrerFee(fees)
+        } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
+          const fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
+            const [_, fee] = feeOnTop.split(':')
+            const parsedFee = formatUnits(
+              BigNumber.from(fee),
               currency?.decimals
             )
-          )
-          total += fee
-          setReferrerFee(fee)
+            return totalFees + Number(parsedFee)
+          }, 0)
+          total += fees
+          setReferrerFee(fees)
         }
         setTotalPrice(total)
         setAverageUnitPrice(total / quantity)
@@ -462,9 +472,9 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [
     listing,
     isValidatingListing,
-    referrerFeeBps,
-    referrerFeeFixed,
-    referrer,
+    feesOnTopBps,
+    feesOnTopFixed,
+    referrerFee,
     client,
     quantity,
     token,

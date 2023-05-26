@@ -1,4 +1,10 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useMemo,
+} from 'react'
 import { useCopyToClipboard, useFallbackState } from '../../hooks'
 import {
   Flex,
@@ -88,6 +94,23 @@ export function BuyModal({
   const { copy: copyToClipboard, copied } = useCopyToClipboard()
   const { chain: activeChain } = useNetwork()
 
+  const feesOnTopFixed = useMemo(() => {
+    if (referrerFeeFixed && referrer) {
+      return [
+        `${referrer}:${referrerFeeFixed}`,
+        `${referrer}:10000000000000000`,
+      ]
+    }
+    return undefined
+  }, [referrerFeeFixed, referrer])
+
+  const feesOnTopBps = useMemo(() => {
+    if (referrerFeeBps && referrer) {
+      return [`${referrer}:${referrerFeeBps}`, `${referrer}:1000`]
+    }
+    return undefined
+  }, [referrerFeeBps, referrer])
+
   return (
     <BuyModalRenderer
       open={open}
@@ -95,8 +118,8 @@ export function BuyModal({
       collectionId={collectionId}
       orderId={orderId}
       referrer={referrer}
-      referrerFeeBps={referrerFeeBps}
-      referrerFeeFixed={referrerFeeFixed}
+      feesOnTopBps={feesOnTopBps}
+      feesOnTopFixed={feesOnTopFixed}
       normalizeRoyalties={normalizeRoyalties}
     >
       {({
