@@ -232,7 +232,11 @@ export const BuyModalRenderer: FC<Props> = ({
     } else if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
-        const fee = parseUnits(`${totalPrice - feeOnTop}`, currency?.decimals)
+        const totalFeeTruncated = toFixed(
+          totalPrice - feeOnTop,
+          currency?.decimals || 18
+        )
+        const fee = parseUnits(`${totalFeeTruncated}`, currency?.decimals)
           .mul(feeBps)
           .div(10000)
         const atomicUnitsFee = formatUnits(fee, 0)
