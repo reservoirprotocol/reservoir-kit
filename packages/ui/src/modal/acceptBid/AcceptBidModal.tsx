@@ -222,10 +222,11 @@ export function AcceptBidModal({
                     Total Offer Value
                   </Text>
                 </Flex>
-                {tokensData.map(({ tokenData, bidsPath }) => {
+                {tokensData.map(({ tokenData, bidsPath }, i) => {
                   if (!bidsPath || !bidsPath.length) {
                     return (
                       <AcceptBidLineItem
+                        key={i}
                         token={{
                           name: tokenData?.token?.name || '',
                           id: tokenData?.token?.tokenId || '',
@@ -244,6 +245,7 @@ export function AcceptBidModal({
                   } else {
                     return bidsPath.map((bidPath) => (
                       <AcceptBidLineItem
+                        key={i}
                         token={{
                           name: tokenData?.token?.name || '',
                           id: tokenData?.token?.tokenId || '',

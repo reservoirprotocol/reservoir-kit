@@ -99,7 +99,7 @@ export const ApproveBidCollapsible: FC<Props> = ({
           gridRowGap: 24,
         }}
       >
-        {step?.items?.map((item) => {
+        {step?.items?.map((item, i) => {
           const paths = item.orderIds?.map((id) => pathMap[id]) || []
           const marketplaces = Array.from(
             paths.reduce((marketplaces, path) => {
@@ -124,7 +124,7 @@ export const ApproveBidCollapsible: FC<Props> = ({
             }, [] as string[])
 
             return (
-              <>
+              <React.Fragment key={i}>
                 <Flex css={{ mr: '$2' }}>
                   {images.map((image, i) => (
                     <StyledImg
@@ -144,7 +144,7 @@ export const ApproveBidCollapsible: FC<Props> = ({
                   {marketplaces.length > 0 ? marketplaces : 'exchange'}
                 </Text>
                 {isCurrentStep ? <Spinner /> : null}
-              </>
+              </React.Fragment>
             )
           } else {
             const path = paths.length > 0 ? paths[0] : null
@@ -160,19 +160,23 @@ export const ApproveBidCollapsible: FC<Props> = ({
             )
 
             return (
-              <>
+              <React.Fragment key={i}>
                 <Flex css={{ mr: '$2' }}>
                   <StyledImg src={collectionImage} />
-                  {sourceImages.map((src) => (
-                    <StyledImg src={src} css={{ marginLeft: -14 }} />
+                  {sourceImages.map((src, i) => (
+                    <StyledImg key={i} src={src} css={{ marginLeft: -14 }} />
                   ))}
                 </Flex>
-                <Text style="body2" color="subtle">
+                <Text
+                  style="body2"
+                  color="subtle"
+                  css={{ display: 'flex', alignItems: 'center' }}
+                >
                   Approve {collectionName} for{' '}
                   {marketplaces.length > 0 ? marketplaces : 'trading'}
                 </Text>
                 {isCurrentStep ? <Spinner /> : null}
-              </>
+              </React.Fragment>
             )
           }
         })}

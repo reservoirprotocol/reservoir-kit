@@ -19,9 +19,8 @@ const BuyPage: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [orderId, setOrderId] = useState('')
-  const [referrer, setReferrer] = useState<string | undefined>(undefined)
-  const [referrerBps, setReferrerBps] = useState<number | undefined>(undefined)
-  const [referrerFee, setReferrerFee] = useState<number | undefined>(undefined)
+  const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
+  const [feesOnTop, setFeesOnTop] = useState<string[]>([])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
@@ -67,31 +66,41 @@ const BuyPage: NextPage = () => {
         />
       </div>
       <div>
-        <label>Referrer: </label>
-        <input
-          type="text"
-          value={referrer}
-          onChange={(e) => setReferrer(e.target.value)}
+        <label>Fees on top (BPS): </label>
+        <textarea
+          onChange={() => {}}
+          onBlur={(e) => {
+            if (e.target.value && e.target.value.length > 0) {
+              try {
+                setFeesOnTopBps(JSON.parse(e.target.value))
+              } catch (err) {
+                e.target.value = ''
+                setFeesOnTopBps([])
+              }
+            } else {
+              e.target.value = ''
+              setFeesOnTopBps([])
+            }
+          }}
         />
       </div>
       <div>
-        <label>Referrer BPS: </label>
-        <input
-          type="number"
-          value={referrerBps}
-          onChange={(e) =>
-            setReferrerBps(e.target.value ? +e.target.value : undefined)
-          }
-        />
-      </div>
-      <div>
-        <label>Referrer Fee (Flat): </label>
-        <input
-          type="number"
-          value={referrerFee}
-          onChange={(e) =>
-            setReferrerFee(e.target.value ? +e.target.value : undefined)
-          }
+        <label>Fees on top (Flat): </label>
+        <textarea
+          onChange={() => {}}
+          onBlur={(e) => {
+            if (e.target.value && e.target.value.length > 0) {
+              try {
+                setFeesOnTop(JSON.parse(e.target.value))
+              } catch (err) {
+                e.target.value = ''
+                setFeesOnTop([])
+              }
+            } else {
+              e.target.value = ''
+              setFeesOnTop([])
+            }
+          }}
         />
       </div>
       <DeeplinkCheckbox />
@@ -127,9 +136,8 @@ const BuyPage: NextPage = () => {
         collectionId={collectionId}
         tokenId={tokenId}
         orderId={orderId}
-        referrer={referrer}
-        referrerFeeBps={referrerBps}
-        referrerFeeFixed={referrerFee}
+        feesOnTopBps={feesOnTopBps}
+        feesOnTopFixed={feesOnTop}
         normalizeRoyalties={normalizeRoyalties}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onGoToToken={() => console.log('Go to token')}

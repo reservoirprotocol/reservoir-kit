@@ -128,7 +128,7 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
           <Flex align="center">
             {prices.map(({ netAmount, currency }, i) => {
               return (
-                <>
+                <span key={i}>
                   {i > 0 ? (
                     <Text color="subtle" style="subtitle2" css={{ mx: '$1' }}>
                       +
@@ -141,7 +141,7 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
                     textStyle="h6"
                     logoWidth={19}
                   />
-                </>
+                </span>
               )
             })}
           </Flex>
