@@ -1,6 +1,6 @@
 import { Execute, paths } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
-import { Account, WalletClient, toBytes } from 'viem'
+import { Account, WalletClient, createPublicClient, http, toBytes } from 'viem'
 import { axios } from '../utils'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions/index'
@@ -9,6 +9,7 @@ import { version } from '../../package.json'
 import { LogLevel } from '../utils/logger'
 import { generateEvent } from '../utils/events'
 import { sendTransactionSafely } from './transaction'
+import * as allChains from 'viem/chains'
 
 function checkExpectedPrice(
   quote: number,
@@ -68,6 +69,17 @@ export async function executeSteps(
 ) {
   const client = getClient()
   const currentReservoirChain = client?.currentChain()
+
+  const viemChain =
+    Object.values(allChains).find(
+      (chain) => chain.id === (currentReservoirChain?.id || 1)
+    ) || allChains.mainnet
+
+  const viemClient = createPublicClient({
+    chain: viemChain,
+    transport: http(),
+  })
+
   let json = newJson
   try {
     if (!request.headers) {
@@ -261,7 +273,8 @@ export async function executeSteps(
                 )
 
                 await sendTransactionSafely(
-                  currentReservoirChain?.id || 1,
+                  viemChain,
+                  viemClient,
                   stepData,
                   signer,
                   (tx) => {
@@ -494,9 +507,9 @@ export async function executeSteps(
     // Recursively call executeSteps()
     await executeSteps(request, signer, setState, json)
   } catch (err: any) {
-    let blockNumber = 0
+    let blockNumber = 0n
     try {
-      blockNumber = (await signer.provider?.getBlockNumber()) || 0
+      blockNumber = await viemClient.getBlockNumber()
     } catch (blockError) {
       client.log(
         ['Execute Steps: Failed to get block number', blockError],
