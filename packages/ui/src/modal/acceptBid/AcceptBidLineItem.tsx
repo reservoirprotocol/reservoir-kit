@@ -100,7 +100,7 @@ const AcceptBidLineItem: FC<Props> = ({
                   textStyle="subtitle2"
                 />
               </Flex>
-              {fees?.map((fee) => {
+              {fees?.map((fee, i) => {
                 let feeName = 'Misc Fee'
                 switch (fee.kind) {
                   case 'marketplace': {
@@ -113,7 +113,7 @@ const AcceptBidLineItem: FC<Props> = ({
                   }
                 }
                 return (
-                  <Flex justify="between">
+                  <Flex justify="between" key={i}>
                     <Text style="body3" color="subtle" css={{ mr: '$1' }}>
                       {feeName}
                     </Text>

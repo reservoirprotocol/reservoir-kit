@@ -486,7 +486,19 @@ export async function executeSteps(
     // Recursively call executeSteps()
     await executeSteps(request, signer, setState, json)
   } catch (err: any) {
-    client.log(['Execute Steps: An error occurred', err], LogLevel.Error)
+    let blockNumber = 0
+    try {
+      blockNumber = (await signer.provider?.getBlockNumber()) || 0
+    } catch (blockError) {
+      client.log(
+        ['Execute Steps: Failed to get block number', blockError],
+        LogLevel.Error
+      )
+    }
+    client.log(
+      ['Execute Steps: An error occurred', err, 'Block Number:', blockNumber],
+      LogLevel.Error
+    )
     const error = err as Error
     const errorMessage = error ? error.message : 'Error: something went wrong'
 
