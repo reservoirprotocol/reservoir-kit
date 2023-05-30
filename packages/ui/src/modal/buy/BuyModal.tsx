@@ -41,9 +41,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   orderId?: string
-  referrerFeeBps?: number | null
-  referrerFeeFixed?: number | null
-  referrer?: string | null
+  feesOnTopBps?: string[] | null
+  feesOnTopFixed?: string[] | null
   normalizeRoyalties?: boolean
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -72,9 +71,8 @@ export function BuyModal({
   tokenId,
   collectionId,
   orderId,
-  referrer,
-  referrerFeeBps,
-  referrerFeeFixed,
+  feesOnTopBps,
+  feesOnTopFixed,
   normalizeRoyalties,
   onPurchaseComplete,
   onPurchaseError,
@@ -94,9 +92,8 @@ export function BuyModal({
       tokenId={tokenId}
       collectionId={collectionId}
       orderId={orderId}
-      referrer={referrer}
-      referrerFeeBps={referrerFeeBps}
-      referrerFeeFixed={referrerFeeFixed}
+      feesOnTopBps={feesOnTopBps}
+      feesOnTopFixed={feesOnTopFixed}
       normalizeRoyalties={normalizeRoyalties}
     >
       {({
@@ -110,7 +107,7 @@ export function BuyModal({
         currency,
         mixedCurrencies,
         totalPrice,
-        referrerFee,
+        feeOnTop,
         buyStep,
         transactionError,
         hasEnoughCurrency,
@@ -290,7 +287,7 @@ export function BuyModal({
                     />
                   </Flex>
                 )}
-                {referrerFee > 0 && (
+                {feeOnTop > 0 && (
                   <>
                     <Flex
                       align="center"
@@ -299,7 +296,7 @@ export function BuyModal({
                     >
                       <Text style="subtitle2">Referral Fee</Text>
                       <FormatCryptoCurrency
-                        amount={referrerFee}
+                        amount={feeOnTop}
                         address={currency?.contract}
                         decimals={currency?.decimals}
                         symbol={currency?.symbol}
