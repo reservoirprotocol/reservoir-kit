@@ -191,9 +191,7 @@ export function SweepModal({
             {!loading && hasTokens && sweepStep === SweepStep.Idle && (
               <Flex direction="column">
                 <Flex direction="column" css={{ px: '$4', pt: '$4', pb: '$2' }}>
-                  {transactionError ? (
-                    <ErrorWell message={transactionError.message} />
-                  ) : null}
+                  {transactionError ? <ErrorWell /> : null}
                   <Slider
                     min={0}
                     max={isItemsToggled ? Math.min(50, maxInput) : maxInput}
