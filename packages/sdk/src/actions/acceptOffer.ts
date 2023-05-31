@@ -17,6 +17,7 @@ type Data = {
   options?: Partial<AcceptOfferOptions>
   expectedPrice?: number | Record<string, number>
   signer: WalletClient
+  chainId?: number
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
   precheck?: boolean
 }
@@ -27,15 +28,22 @@ type Data = {
  * @param data.expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.options Additional options to pass into the accept request
+ * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state as execution progresses
  * @param data.precheck Set to true to skip executing steps and just to get the initial steps/path
  */
 export async function acceptOffer(data: Data) {
-  const { items, expectedPrice, signer, onProgress, precheck } = data
+  const { items, expectedPrice, signer, chainId, onProgress, precheck } = data
   const [taker] = await signer.getAddresses()
   const client = getClient()
   const options = data.options || {}
-  const baseApiUrl = client.currentChain()?.baseApiUrl
+  let baseApiUrl = client.currentChain()?.baseApiUrl
+
+  if (chainId) {
+    baseApiUrl =
+      client.chains.find((chain) => chain.id === chainId)?.baseApiUrl ||
+      baseApiUrl
+  }
 
   if (!client.currentChain()) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
@@ -81,7 +89,14 @@ export async function acceptOffer(data: Data) {
       onProgress(data['steps'], data['path'])
       return data
     } else {
-      await executeSteps(request, signer, onProgress, undefined, expectedPrice)
+      await executeSteps(
+        request,
+        signer,
+        onProgress,
+        undefined,
+        expectedPrice,
+        chainId
+      )
       return true
     }
   } catch (err: any) {

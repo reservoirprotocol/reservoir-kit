@@ -10,6 +10,7 @@ type PlaceBidBody = NonNullable<
 type Data = {
   bids: Required<PlaceBidBody>['params']
   signer: WalletClient
+  chainId?: number
   onProgress: (steps: Execute['steps']) => any
 }
 
@@ -17,12 +18,19 @@ type Data = {
  * Place a bid on a token
  * @param data.bids Bidding data to be processed
  * @param data.signer Ethereum signer object provided by the browser
+ * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state as execution progresses
  */
-export async function placeBid({ bids, signer, onProgress }: Data) {
+export async function placeBid({ bids, signer, chainId, onProgress }: Data) {
   const client = getClient()
   const [maker] = await signer.getAddresses()
-  const baseApiUrl = client.currentChain()?.baseApiUrl
+  let baseApiUrl = client.currentChain()?.baseApiUrl
+
+  if (chainId) {
+    baseApiUrl =
+      client.chains.find((chain) => chain.id === chainId)?.baseApiUrl ||
+      baseApiUrl
+  }
 
   if (!baseApiUrl) {
     throw new ReferenceError('ReservoirClient missing configuration')
@@ -67,7 +75,10 @@ export async function placeBid({ bids, signer, onProgress }: Data) {
     await executeSteps(
       { url: `${baseApiUrl}/execute/bid/v5`, method: 'post', data },
       signer,
-      onProgress
+      onProgress,
+      undefined,
+      undefined,
+      chainId
     )
     return true
   } catch (err: any) {

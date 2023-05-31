@@ -15,6 +15,7 @@ type Data = {
   ids: string[]
   signer: WalletClient
   options?: CancelOrderOptions
+  chainId?: number
   onProgress: (steps: Execute['steps']) => any
 }
 
@@ -23,13 +24,20 @@ type Data = {
  * @param data.ids Ids of the orders to cancel
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.options Additional options to pass into the cancel request
+ * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state has execution progresses
  */
 export async function cancelOrder(data: Data) {
-  const { ids, signer, onProgress } = data
+  const { ids, signer, chainId, onProgress } = data
   const client = getClient()
   const options = data.options || {}
-  const baseApiUrl = client.currentChain()?.baseApiUrl
+  let baseApiUrl = client.currentChain()?.baseApiUrl
+
+  if (chainId) {
+    baseApiUrl =
+      client.chains.find((chain) => chain.id === chainId)?.baseApiUrl ||
+      baseApiUrl
+  }
 
   if (!baseApiUrl) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
@@ -52,7 +60,10 @@ export async function cancelOrder(data: Data) {
         } as NonNullable<CancelOrderBodyParameters['body']>,
       },
       signer,
-      onProgress
+      onProgress,
+      undefined,
+      undefined,
+      chainId
     )
     return true
   } catch (err: any) {

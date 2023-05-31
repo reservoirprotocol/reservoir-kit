@@ -55,8 +55,8 @@ function checkExpectedPrice(
  * @param signer Ethereum signer object provided by the browser
  * @param setState Callback to update UI state has execution progresses
  * @param newJson Data passed around, which contains steps and items etc
- * @param expectedPrice Expected price to check for price moves before starting to process the steps.
- * Can be a number or an object representing currency contract address to expected price
+ * @param expectedPrice Expected price to check for price moves before starting to process the steps. Can be a number or an object representing currency contract address to expected price
+ * @param chainId Optional parameter to override the default chain
  * @returns A promise you can await on
  */
 
@@ -65,14 +65,18 @@ export async function executeSteps(
   signer: WalletClient,
   setState: (steps: Execute['steps'], path: Execute['path']) => any,
   newJson?: Execute,
-  expectedPrice?: number | Record<string, number>
+  expectedPrice?: number | Record<string, number>,
+  chainId?: number
 ) {
   const client = getClient()
-  const currentReservoirChain = client?.currentChain()
+  let reservoirChain = client?.currentChain()
+  if (chainId) {
+    reservoirChain = client.chains.find((chain) => chain.id === chainId) || null
+  }
 
   const viemChain =
     Object.values(allChains).find(
-      (chain) => chain.id === (currentReservoirChain?.id || 1)
+      (chain) => chain.id === (reservoirChain?.id || 1)
     ) || allChains.mainnet
 
   const viemClient = createPublicClient({
@@ -86,11 +90,11 @@ export async function executeSteps(
       request.headers = {}
     }
 
-    if (currentReservoirChain?.baseApiUrl) {
-      request.baseURL = currentReservoirChain.baseApiUrl
+    if (reservoirChain?.baseApiUrl) {
+      request.baseURL = reservoirChain.baseApiUrl
     }
-    if (currentReservoirChain?.apiKey) {
-      request.headers['x-api-key'] = currentReservoirChain.apiKey
+    if (reservoirChain?.apiKey) {
+      request.headers['x-api-key'] = reservoirChain.apiKey
     }
     if (client?.uiVersion) {
       request.headers['x-rkui-version'] = client.uiVersion
@@ -195,10 +199,7 @@ export async function executeSteps(
     // There are no more incomplete steps
     if (incompleteStepIndex === -1) {
       client.log(['Execute Steps: all steps complete'], LogLevel.Verbose)
-      client._sendEvent(
-        generateEvent(request, json),
-        currentReservoirChain?.id || 1
-      )
+      client._sendEvent(generateEvent(request, json), reservoirChain?.id || 1)
       return
     }
 
@@ -528,10 +529,7 @@ export async function executeSteps(
       setState([...json?.steps], json.path)
     }
 
-    client._sendEvent(
-      generateEvent(request, json),
-      currentReservoirChain?.id || 1
-    )
+    client._sendEvent(generateEvent(request, json), reservoirChain?.id || 1)
 
     throw err
   }

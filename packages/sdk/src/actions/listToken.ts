@@ -13,25 +13,33 @@ type ListTokenBody = NonNullable<
 type Data = {
   listings: Required<ListTokenBody>['params']
   signer: WalletClient
-  onProgress?: (steps: Execute['steps']) => any
+  chainId?: number
   precheck?: boolean
+  onProgress?: (steps: Execute['steps']) => any
 }
 
 /**
  * List a token for sale
  * @param data.listings Listings data to be processed
  * @param data.signer Ethereum signer object provided by the browser
- * @param data.onProgress Callback to update UI state as execution progresses
+ * @param data.chainId Override the current active chain
  * @param data.precheck Set to true to skip executing steps and just to get the initial steps required
+ * @param data.onProgress Callback to update UI state as execution progresses
  */
 
 export async function listToken(
   data: Data
 ): Promise<Execute['steps'] | boolean> {
-  const { listings, signer, onProgress = () => {}, precheck } = data
+  const { listings, signer, chainId, onProgress = () => {}, precheck } = data
   const client = getClient()
   const [maker] = await signer.getAddresses()
-  const baseApiUrl = client.currentChain()?.baseApiUrl
+  let baseApiUrl = client.currentChain()?.baseApiUrl
+
+  if (chainId) {
+    baseApiUrl =
+      client.chains.find((chain) => chain.id === chainId)?.baseApiUrl ||
+      baseApiUrl
+  }
 
   if (!baseApiUrl) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
@@ -89,7 +97,14 @@ export async function listToken(
       onProgress(data['steps'])
       return data['steps']
     } else {
-      await executeSteps(request, signer, onProgress)
+      await executeSteps(
+        request,
+        signer,
+        onProgress,
+        undefined,
+        undefined,
+        chainId
+      )
     }
 
     return true

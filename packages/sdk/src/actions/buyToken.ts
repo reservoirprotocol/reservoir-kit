@@ -16,6 +16,7 @@ type Data = {
   expectedPrice?: number
   options?: BuyTokenOptions
   signer: WalletClient
+  chainId?: number
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
 }
 
@@ -25,14 +26,20 @@ type Data = {
  * @param data.expectedPrice Total price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
  * @param data.options Additional options to pass into the buy request
  * @param data.signer Ethereum signer object provided by the browser
+ * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state as execution progresses
  */
 export async function buyToken(data: Data) {
-  const { items, expectedPrice, signer, onProgress } = data
+  const { items, expectedPrice, signer, chainId, onProgress } = data
   const [taker] = await signer.getAddresses()
   const client = getClient()
   const options = data.options || {}
-  const baseApiUrl = client.currentChain()?.baseApiUrl
+  let baseApiUrl = client.currentChain()?.baseApiUrl
+  if (chainId) {
+    baseApiUrl =
+      client.chains.find((chain) => chain.id === chainId)?.baseApiUrl ||
+      baseApiUrl
+  }
   const errHandler = () => {
     items.forEach(({ token }) => {
       if (token) {
@@ -76,7 +83,8 @@ export async function buyToken(data: Data) {
       signer,
       onProgress,
       undefined,
-      expectedPrice
+      expectedPrice,
+      chainId
     ).catch((err: any) => {
       errHandler()
       throw err
