@@ -33,7 +33,6 @@ const signTypedData = wallet.signTypedData.bind(wallet)
 const signMessageSpy = jest
   .spyOn(wallet, 'signMessage')
   .mockImplementation((...args) => {
-    console.log(`EIP 191 REQUEST`)
     return signMessage(...args)
   })
 
