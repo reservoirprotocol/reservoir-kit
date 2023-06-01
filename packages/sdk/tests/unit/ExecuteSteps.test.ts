@@ -30,9 +30,6 @@ createClient({
 const signMessage = wallet.signMessage.bind(wallet)
 const signTypedData = wallet.signTypedData.bind(wallet)
 
-/**
- * eip191
- */
 const signMessageSpy = jest
   .spyOn(wallet, 'signMessage')
   .mockImplementation((...args) => {
@@ -40,9 +37,6 @@ const signMessageSpy = jest
     return signMessage(...args)
   })
 
-/**
- * eip712
- */
 const signTypedDataSpy = jest
   .spyOn(wallet, 'signTypedData')
   .mockImplementation((...args) => {
