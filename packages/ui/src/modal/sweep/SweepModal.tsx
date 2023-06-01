@@ -129,9 +129,7 @@ export function SweepModal({
         const hasTokens = availableTokens && availableTokens.length > 0
 
         const images = selectedTokens.slice(0, 2).map((token) => {
-          if (token?.token?.image) {
-            return token?.token?.image
-          }
+          return `${currentChain?.baseApiUrl}/redirect/tokens/${token.contract}:${token.tokenId}/image/v1`
         }) as string[]
 
         const pathMap = stepData?.path
@@ -265,24 +263,11 @@ export function SweepModal({
                       >
                         {selectedTokens.map((token, i) => (
                           <SweepItem
-                            key={`${token?.token?.tokenId}-${i}`}
-                            name={
-                              token.token?.name || `#${token?.token?.tokenId}`
-                            }
-                            image={
-                              token.token?.image ||
-                              token?.token?.collection?.image
-                            }
+                            key={`${token?.tokenId}-${i}`}
+                            name={`#${token.tokenId}`}
+                            image={`${currentChain?.baseApiUrl}/redirect/tokens/${token.contract}:${token.tokenId}/image/v1`}
                             currency={currency}
-                            amount={
-                              isChainCurrency
-                                ? token?.market?.floorAsk?.price?.amount // native price is null for tokens with dynamic pricing
-                                    ?.native ||
-                                  token?.market?.floorAsk?.price?.amount
-                                    ?.decimal
-                                : token?.market?.floorAsk?.price?.amount
-                                    ?.decimal
-                            }
+                            amount={token?.totalPrice}
                           />
                         ))}
                       </Grid>

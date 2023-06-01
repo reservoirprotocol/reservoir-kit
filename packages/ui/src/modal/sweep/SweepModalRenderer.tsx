@@ -12,22 +12,17 @@ import {
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import {
-  Address,
-  useAccount,
-  useBalance,
-  useNetwork,
-  useWalletClient,
-} from 'wagmi'
+import { useAccount, useBalance, useNetwork, useWalletClient } from 'wagmi'
 import Token from '../list/Token'
 import {
+  BuyPath,
   Execute,
   ReservoirChain,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
 import { toFixed } from '../../lib/numbers'
 import { UseBalanceToken } from '../../types/wagmi'
-import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 
 export enum SweepStep {
   Idle,
@@ -46,10 +41,6 @@ export type SweepModalStepData = {
 
 type Token = ReturnType<typeof useTokens>['data'][0]
 
-type FloorAskPrice = NonNullable<
-  NonNullable<NonNullable<Token>['market']>['floorAsk']
->['price']
-
 type BuyTokenOptions = Parameters<
   ReservoirClientActions['buyToken']
 >['0']['options']
@@ -60,10 +51,8 @@ type Currency = NonNullable<
 
 type ChildrenProps = {
   loading: boolean
-  selectedTokens: ReturnType<typeof useTokens>['data']
-  setSelectedTokens: React.Dispatch<
-    React.SetStateAction<ReturnType<typeof useTokens>['data']>
-  >
+  selectedTokens: NonNullable<BuyPath>
+  setSelectedTokens: React.Dispatch<React.SetStateAction<NonNullable<BuyPath>>>
   itemAmount?: number
   setItemAmount: React.Dispatch<React.SetStateAction<number | undefined>>
   ethAmount?: number
@@ -77,9 +66,9 @@ type ChildrenProps = {
   total: number
   totalUsd: number
   currentChain: ReservoirChain | null | undefined
-  availableTokens: ReturnType<typeof useTokens>['data']
+  availableTokens: BuyPath
   address?: string
-  tokens: ReturnType<typeof useTokens>['data']
+  tokens: BuyPath
   balance?: bigint
   hasEnoughCurrency: boolean
   blockExplorerBaseUrl: string
@@ -112,9 +101,7 @@ export const SweepModalRenderer: FC<Props> = ({
 }) => {
   const { data: signer } = useWalletClient()
   const account = useAccount()
-  const [selectedTokens, setSelectedTokens] = useState<
-    ReturnType<typeof useTokens>['data']
-  >([])
+  const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
   const [itemAmount, setItemAmount] = useState<number | undefined>(undefined)
   const [ethAmount, setEthAmount] = useState<number | undefined>(undefined)
   const [isItemsToggled, setIsItemsToggled] = useState<boolean>(true)
@@ -139,34 +126,109 @@ export const SweepModalRenderer: FC<Props> = ({
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
-  const {
-    data: tokens,
-    isFetchingPage: fetchingTokens,
-    mutate: mutateTokens,
-  } = useTokens(
-    open && {
-      collection: collectionId,
-      normalizeRoyalties,
-      limit: 100,
-      includeDynamicPricing: true,
-      sortBy: 'floorAskPrice',
-      sortDirection: 'asc',
-    },
-    { revalidateFirstPage: true }
-  )
+  const [isFetchingBuyPath, setIsFetchingBuyPath] = useState(false)
+  const [hasFetchedInitialTokens, setHasFetchedInitialTokens] = useState(false)
+  const [tokens, setTokens] = useState<BuyPath | undefined>(undefined)
 
-  const total = useMemo(() => {
-    const updatedTotal = selectedTokens.reduce((total, token) => {
-      if (token?.market?.floorAsk?.price?.amount?.decimal) {
-        if (isChainCurrency) {
-          total +=
-            token.market.floorAsk.price.amount.native || // native price is null for tokens with dynamic pricing
-            token.market.floorAsk.price.amount.decimal
-        } else {
-          total += token.market.floorAsk.price.amount.decimal
+  const fetchBuyPath = useCallback(() => {
+    if (!signer || !client) {
+      setIsFetchingBuyPath(false)
+      return
+    }
+    setIsFetchingBuyPath(true)
+
+    console.log('fetchBuyPath currency: ', currency.address)
+    console.log('collectionId: ', collectionId)
+
+    let options: BuyTokenOptions = {
+      partial: true,
+      onlyPath: true,
+      currency: currency.address,
+    }
+
+    if (normalizeRoyalties !== undefined) {
+      options.normalizeRoyalties = normalizeRoyalties
+    }
+
+    client?.actions
+      .buyToken({
+        items: [{ collection: collectionId, quantity: 100 }],
+        expectedPrice: undefined,
+        options,
+        signer: signer,
+        precheck: true,
+        onProgress: () => {},
+      })
+      .then((data) => {
+        console.log(data)
+        setTokens(
+          'path' in (data as any)
+            ? ((data as Execute)['path'] as BuyPath)
+            : undefined
+        )
+      })
+      .finally(() => {
+        setHasFetchedInitialTokens(true)
+        setIsFetchingBuyPath(false)
+      })
+  }, [client, signer, normalizeRoyalties, collectionId, currency])
+
+  useEffect(() => {
+    if (open) {
+      console.log('currency changed: ', currency)
+      fetchBuyPath()
+    }
+  }, [client, signer, open, currency])
+
+  // Update currency
+  const updateCurrency = useCallback(
+    (tokens: typeof selectedTokens) => {
+      let currencies = new Set<string>()
+      let currenciesData: Record<string, Currency> = {}
+      for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i]
+        if (token.currency) {
+          currencies.add(token.currency)
+          currenciesData[token.currency] = {
+            contract: token.currency,
+            symbol: token.currencySymbol,
+            decimals: token.currencyDecimals,
+          }
+        }
+        if (currencies.size > 1) {
+          break
         }
       }
+      if (currencies.size > 1) {
+        if (currency?.address != chainCurrency?.address) {
+          console.log('setting currency: ', chainCurrency.address)
+          setCurrency(chainCurrency)
+        }
+      } else if (currencies.size > 0) {
+        let otherCurrency = Object.values(currenciesData)[0]
+        if (otherCurrency?.contract != currency?.address) {
+          console.log('setting currency: ', otherCurrency?.contract)
+          setCurrency({
+            symbol: otherCurrency?.symbol as string,
+            decimals: otherCurrency?.decimals as number,
+            name: '', // TODO: fix
+            address: otherCurrency?.contract as Address,
+            chainId: chain?.id as number,
+          })
+        }
+      }
+    },
+    [chain, chainCurrency]
+  )
 
+  // update currency based on selected tokens
+  useEffect(() => {
+    updateCurrency(selectedTokens)
+  }, [selectedTokens])
+
+  const total = useMemo(() => {
+    const updatedTotal = selectedTokens?.reduce((total, token) => {
+      total += token?.totalPrice || 0
       return total
     }, 0)
     return updatedTotal
@@ -207,56 +269,12 @@ export const SweepModalRenderer: FC<Props> = ({
     }
   }, [total, balance, currency])
 
-  // Update currency
-  const updateCurrency = useCallback(
-    (tokens: Token[]) => {
-      let currencies = new Set<string>()
-      let currenciesData: Record<string, Currency> = {}
-      for (let i = 0; i < tokens.length; i++) {
-        const currency = tokens[i]?.market?.floorAsk?.price?.currency
-        if (currency?.contract) {
-          currencies.add(currency.contract)
-          currenciesData[currency.contract] = currency
-        }
-        if (currencies.size > 1) {
-          break
-        }
-      }
-      if (currencies.size > 1) {
-        return setCurrency(chainCurrency)
-      } else if (currencies.size > 0) {
-        let otherCurrency = Object.values(currenciesData)[0]
-        return setCurrency({
-          name: otherCurrency?.name as string,
-          symbol: otherCurrency?.symbol as string,
-          decimals: otherCurrency?.decimals as number,
-          address: otherCurrency?.contract as Address,
-          chainId: chain?.id as number,
-        })
-      }
-    },
-    [chain, chainCurrency]
-  )
-
-  // update currency based on selected tokens
-  useEffect(() => {
-    updateCurrency(selectedTokens)
-  }, [selectedTokens])
-
   const availableTokens = useMemo(() => {
     if (!tokens) return []
-    return tokens.filter(
-      (token) =>
-        token !== undefined &&
-        token?.token !== undefined &&
-        token?.market?.floorAsk?.price !== undefined &&
-        token?.market?.floorAsk?.price?.amount?.decimal !== undefined &&
-        token?.token?.owner?.toLowerCase() !== account?.address?.toLowerCase()
-    )
+    return tokens
   }, [tokens, account])
 
-  const cheapestAvailablePrice =
-    availableTokens?.[0]?.market?.floorAsk?.price?.amount?.native || 0
+  const cheapestAvailablePrice = availableTokens?.[0]?.totalPrice || 0
 
   useEffect(() => {
     setItemAmount(1)
@@ -269,15 +287,7 @@ export const SweepModalRenderer: FC<Props> = ({
       setMaxInput(Math.min(availableTokens.length, 50))
     } else {
       const maxEth = availableTokens.slice(0, 50).reduce((total, token) => {
-        if (token?.market?.floorAsk?.price?.amount?.decimal) {
-          if (isChainCurrency) {
-            total +=
-              token.market.floorAsk.price.amount.native || // native price is null for tokens with dynamic pricing
-              token.market.floorAsk.price.amount.decimal
-          } else {
-            total += token.market.floorAsk.price.amount.decimal
-          }
-        }
+        total += token?.totalPrice || 0
 
         return total
       }, 0)
@@ -286,106 +296,16 @@ export const SweepModalRenderer: FC<Props> = ({
     }
   }, [availableTokens, isItemsToggled])
 
-  // sort tokens by price
-  const sortByPrice = useCallback((a: Token, b: Token) => {
-    const aPrice = a.market?.floorAsk?.price?.amount?.decimal
-    const bPrice = b.market?.floorAsk?.price?.amount?.decimal
-
-    if (aPrice === undefined) {
-      return 1
-    } else if (bPrice === undefined) {
-      return -1
-    } else {
-      return aPrice - bPrice
-    }
-  }, [])
-
-  const updateSelectedTokens = useCallback(
-    (tokens: Token[], maxTokens: number) => {
-      let pools: { [poolId: string]: number } = {}
-      let updatedTokens: Token[] = []
-
-      // Create a copy of the availableTokens
-      let processedTokens = [...tokens]
-      let total = 0
-
-      for (let i = 0; i < maxTokens && i < processedTokens.length; i++) {
-        const token = processedTokens[i]
-
-        const tokenPrice = isChainCurrency
-          ? token.market?.floorAsk?.price?.amount?.native || // native price is null for tokens with dynamic pricing
-            token.market?.floorAsk?.price?.amount?.decimal ||
-            0
-          : token.market?.floorAsk?.price?.amount?.decimal || 0
-
-        if (isItemsToggled) {
-          updatedTokens.push(token)
-        } else if (ethAmount && tokenPrice + total <= ethAmount) {
-          total += tokenPrice
-          updatedTokens.push(token)
-        } else {
-          break
-        }
-
-        // handle if token is in a dynamic pricing pool
-        if (
-          token.market?.floorAsk?.dynamicPricing?.kind === 'pool' &&
-          token?.market?.floorAsk?.dynamicPricing?.data?.pool &&
-          token?.market?.floorAsk?.dynamicPricing?.data?.prices
-        ) {
-          const poolId = token.market.floorAsk.dynamicPricing.data
-            .pool as string
-          const poolPrices = token.market.floorAsk.dynamicPricing.data
-            .prices as FloorAskPrice[]
-
-          // update the pools
-          if (pools[poolId] === undefined) {
-            pools[poolId] = 1
-          } else {
-            pools[poolId] += 1
-          }
-
-          // update the prices of other tokens in the same pool
-          processedTokens = processedTokens.map((processedToken) => {
-            if (
-              processedToken.market?.floorAsk?.dynamicPricing?.data?.pool ===
-                poolId &&
-              !updatedTokens.some(
-                (updatedToken) =>
-                  updatedToken.token?.tokenId === processedToken.token?.tokenId
-              )
-            ) {
-              if (pools[poolId] < poolPrices.length) {
-                processedToken.market.floorAsk.price = poolPrices[pools[poolId]]
-              } else {
-                processedToken.market.floorAsk.price = undefined
-              }
-            }
-            return processedToken
-          })
-
-          // sort tokens with the updated prices
-          processedTokens.sort(sortByPrice)
-        }
-      }
-
-      return updatedTokens
-    },
-    [sortByPrice, isItemsToggled, ethAmount, isChainCurrency]
-  )
-
   useEffect(() => {
     if (isItemsToggled) {
-      const updatedTokens = updateSelectedTokens(
-        availableTokens,
-        itemAmount || 0
-      )
+      const updatedTokens = availableTokens?.slice(0, itemAmount)
       setSelectedTokens(updatedTokens)
     } else {
-      const updatedTokens = updateSelectedTokens(availableTokens, 50)
-      setSelectedTokens(updatedTokens)
+      // const max
+      // const updatedTokens = updateSelectedTokens(availableTokens, 50)
+      // setSelectedTokens(updatedTokens)
     }
-  }, [isItemsToggled, ethAmount, itemAmount, updateSelectedTokens])
+  }, [isItemsToggled, ethAmount, itemAmount])
 
   // reset selectedItems when toggle changes
   useEffect(() => {
@@ -442,16 +362,16 @@ export const SweepModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
-    const items = selectedTokens.reduce((items, token) => {
-      if (token?.token?.tokenId && token?.token?.contract) {
-        items?.push({
-          token: `${token.token.contract}:${token.token.tokenId}`,
-        })
-      }
-      return items
-    }, [] as Parameters<ReservoirClientActions['buyToken']>['0']['items'])
+    // const items = selectedTokens.reduce((items, token) => {
+    //   if (token?.token?.tokenId && token?.token?.contract) {
+    //     items?.push({
+    //       token: `${token.token.contract}:${token.token.tokenId}`,
+    //     })
+    //   }
+    //   return items
+    // }, [] as Parameters<ReservoirClientActions['buyToken']>['0']['items'])
 
-    if (!items || items.length === 0) {
+    if (!selectedTokens || selectedTokens.length === 0) {
       const error = new Error('No tokens to sweep')
       setTransactionError(error)
       throw error
@@ -461,7 +381,7 @@ export const SweepModalRenderer: FC<Props> = ({
 
     client.actions
       .buyToken({
-        items: items,
+        items: [{ collection: collectionId, quantity: selectedTokens.length }],
         expectedPrice: total,
         signer,
         options,
@@ -525,7 +445,7 @@ export const SweepModalRenderer: FC<Props> = ({
         })
         setTransactionError(transactionError)
         setSweepStep(SweepStep.Idle)
-        mutateTokens()
+        fetchBuyPath()
       })
   }, [
     selectedTokens,
@@ -541,7 +461,7 @@ export const SweepModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
-        loading: fetchingTokens,
+        loading: !hasFetchedInitialTokens,
         address: account?.address,
         selectedTokens,
         setSelectedTokens,
