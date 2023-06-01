@@ -35,7 +35,7 @@
     "strictPropertyInitialization": true,
     "stripInternal": true,
     "target": "ES2020",
-    "types": ["node"],
+    "types": ["node", "jest"],
     "module": "esnext",
     "typeRoots": ["./node_modules/@types", "./types"]
   }
