@@ -1,40 +1,35 @@
-import { Signer } from 'ethers'
+import { PublicClient, Transaction, WalletClient } from 'viem'
 import { LogLevel, getClient } from '..'
-
-type TransactionResponse = Awaited<ReturnType<Signer['sendTransaction']>>
+import { Chain } from 'viem'
 
 /**
- * Safe txhash.wait which handles replacements when users speed up the transactio
+ * Safe txhash.wait which handles replacements when users speed up the transaction
  * @param url an URL object
  * @returns A Promise to wait on
  */
 export async function sendTransactionSafely(
+  viemChain: Chain,
+  viemClient: PublicClient,
   data: any,
-  signer: Signer,
-  setTx: (tx: TransactionResponse) => void,
-  tx?: TransactionResponse
+  signer: WalletClient,
+  setTx: (tx: Transaction['hash']) => void
 ) {
-  try {
-    let transaction = tx
-    if (!tx) {
-      transaction = await signer.sendTransaction(data)
-      setTx(transaction)
-    }
-    await transaction?.wait()
-    return true
-  } catch (e) {
-    const error = e as any
-    if (
-      error &&
-      error['code'] &&
-      error['code'] === 'TRANSACTION_REPLACED' &&
-      error.replacement
-    ) {
-      setTx(error.replacement)
-      sendTransactionSafely(data, signer, setTx, error.replacement)
-      getClient()?.log(['Transaction replaced', error], LogLevel.Verbose)
-    } else {
-      throw e
-    }
-  }
+  const transaction = await signer.sendTransaction({
+    chain: viemChain,
+    data: data.data,
+    account: data.from,
+    to: data.to,
+    value: data.value,
+  })
+  setTx(transaction)
+
+  await viemClient.waitForTransactionReceipt({
+    hash: transaction,
+    onReplaced: (replacement) => {
+      setTx(replacement.transaction.hash)
+      getClient()?.log(['Transaction replaced', replacement], LogLevel.Verbose)
+    },
+  })
+
+  return true
 }

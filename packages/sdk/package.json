@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/reservoir-sdk",
-    "version": "0.11.0",
+    "version": "1.0.0",
     "description": "An SDK that can be used in any javascript/typescript context to easily interact with Reservoir liquidity APIs",
     "source": "src/index.ts",
     "main": "dist/index.js",
@@ -32,9 +32,6 @@
         "protocol",
         "sdk"
     ],
-    "peerDependencies": {
-        "ethers": "^5.6.1"
-    },
     "dependencies": {
         "axios": "^0.27.2"
     },
@@ -45,7 +42,10 @@
         "@types/jest": "^29.5.1",
         "jest": "^29.5.0",
         "jest-resolve": "^29.5.0",
-        "openapi-typescript": "^5.4.1",
-        "ts-jest": "^29.1.0"
+        "ts-jest": "^29.1.0",
+        "openapi-typescript": "^5.4.1"
+    },
+    "peerDependencies": {
+        "viem": "~0.3.18"
     }
 }

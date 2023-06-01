@@ -1,5 +1,5 @@
 import { Execute, paths } from '../types'
-import { Signer } from 'ethers'
+import { WalletClient } from 'viem'
 import { getClient } from '.'
 import { executeSteps } from '../utils/executeSteps'
 import { axios } from '../utils'
@@ -12,7 +12,7 @@ type ListTokenBody = NonNullable<
 
 type Data = {
   listings: Required<ListTokenBody>['params']
-  signer: Signer
+  signer: WalletClient
   onProgress?: (steps: Execute['steps']) => any
   precheck?: boolean
 }
@@ -30,7 +30,7 @@ export async function listToken(
 ): Promise<Execute['steps'] | boolean> {
   const { listings, signer, onProgress = () => {}, precheck } = data
   const client = getClient()
-  const maker = await signer.getAddress()
+  const [maker] = await signer.getAddresses()
   const baseApiUrl = client.currentChain()?.baseApiUrl
 
   if (!baseApiUrl) {

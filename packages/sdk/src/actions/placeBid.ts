@@ -1,5 +1,5 @@
 import { Execute, paths } from '../types'
-import { Signer } from 'ethers'
+import { WalletClient } from 'viem'
 import { executeSteps } from '../utils'
 import { getClient } from '.'
 
@@ -9,7 +9,7 @@ type PlaceBidBody = NonNullable<
 
 type Data = {
   bids: Required<PlaceBidBody>['params']
-  signer: Signer
+  signer: WalletClient
   onProgress: (steps: Execute['steps']) => any
 }
 
@@ -21,7 +21,7 @@ type Data = {
  */
 export async function placeBid({ bids, signer, onProgress }: Data) {
   const client = getClient()
-  const maker = await signer.getAddress()
+  const [maker] = await signer.getAddresses()
   const baseApiUrl = client.currentChain()?.baseApiUrl
 
   if (!baseApiUrl) {

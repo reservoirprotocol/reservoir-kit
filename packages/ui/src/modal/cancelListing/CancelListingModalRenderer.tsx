@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useListings } from '../../hooks'
-import { useSigner, useNetwork } from 'wagmi'
+import { useWalletClient, useNetwork } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 
 export enum CancelStep {
@@ -45,7 +45,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
   const [cancelStep, setCancelStep] = useState<CancelStep>(CancelStep.Cancel)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<CancelListingStepData | null>(null)

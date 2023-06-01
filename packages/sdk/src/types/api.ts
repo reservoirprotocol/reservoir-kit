@@ -329,7 +329,11 @@ export interface paths {
     get: operations["getOrdersAsksV3"];
   };
   "/orders/asks/v4": {
-    /** Get a list of asks (listings), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing */
+    /**
+     * Get a list of asks (listings), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing.
+     *
+     *  Please mark `excludeEOA` as `true` to exclude Blur orders.
+     */
     get: operations["getOrdersAsksV4"];
   };
   "/orders/bids/v1": {
@@ -356,7 +360,7 @@ export interface paths {
      *
      * - Inputting a 'contract' will return token and attribute bids.
      *
-     * - Inputting a 'collection-id' will return collection wide bids.
+     * - Inputting a 'collection-id' will return collection wide bids./n/n Please mark `excludeEOA` as `true` to exclude Blur orders.
      */
     get: operations["getOrdersBidsV5"];
   };
@@ -455,20 +459,20 @@ export interface paths {
     /** When users are placing collection or trait bids, this API can be used to show them where the bid is in the context of other bids, and how many tokens it will be the top bid for. */
     get: operations["getCollectionsCollectionTopbidsV1"];
   };
-  "/collections/{collection}/activity/v3": {
-    /** This API can be used to build a feed for a collection */
-    get: operations["getCollectionsCollectionActivityV3"];
-  };
-  "/collections/{collection}/activity/v1": {
-    /** This API can be used to build a feed for a collection */
-    get: operations["getCollectionsCollectionActivityV1"];
+  "/collections/{collection}/attributes/v1": {
+    get: operations["getCollectionsCollectionAttributesV1"];
   };
   "/collections/{collection}/activity/v2": {
     /** This API can be used to build a feed for a collection */
     get: operations["getCollectionsCollectionActivityV2"];
   };
-  "/collections/{collection}/attributes/v1": {
-    get: operations["getCollectionsCollectionAttributesV1"];
+  "/collections/{collection}/activity/v1": {
+    /** This API can be used to build a feed for a collection */
+    get: operations["getCollectionsCollectionActivityV1"];
+  };
+  "/collections/{collection}/activity/v3": {
+    /** This API can be used to build a feed for a collection */
+    get: operations["getCollectionsCollectionActivityV3"];
   };
   "/collections/{collection}/owners-distribution/v1": {
     /** This API can be used to show what the distribution of owners in a collection looks like. */
@@ -708,25 +712,25 @@ export interface paths {
     /** This API return the recent flagged/un-flagged tokens across all collections sorted by change time */
     get: operations["getTokensFlagChangesV1"];
   };
-  "/tokens/{token}/activity/v5": {
-    /** This API can be used to build a feed for a token activity including sales, asks, transfers, mints, bids, cancelled bids, and cancelled asks types. */
-    get: operations["getTokensTokenActivityV5"];
-  };
-  "/tokens/{token}/activity/v3": {
+  "/tokens/{token}/activity/v4": {
     /** This API can be used to build a feed for a token */
-    get: operations["getTokensTokenActivityV3"];
-  };
-  "/tokens/{token}/activity/v1": {
-    /** This API can be used to build a feed for a token */
-    get: operations["getTokensTokenActivityV1"];
+    get: operations["getTokensTokenActivityV4"];
   };
   "/tokens/{token}/activity/v2": {
     /** This API can be used to build a feed for a token */
     get: operations["getTokensTokenActivityV2"];
   };
-  "/tokens/{token}/activity/v4": {
+  "/tokens/{token}/activity/v1": {
     /** This API can be used to build a feed for a token */
-    get: operations["getTokensTokenActivityV4"];
+    get: operations["getTokensTokenActivityV1"];
+  };
+  "/tokens/{token}/activity/v3": {
+    /** This API can be used to build a feed for a token */
+    get: operations["getTokensTokenActivityV3"];
+  };
+  "/tokens/{token}/activity/v5": {
+    /** This API can be used to build a feed for a token activity including sales, asks, transfers, mints, bids, cancelled bids, and cancelled asks types. */
+    get: operations["getTokensTokenActivityV5"];
   };
   "/transactions/{txHash}/synced/v1": {
     /** Get a boolean response on whether a particular transaction was synced or not. */
@@ -780,24 +784,13 @@ export interface paths {
     /** Get tokens held by a user, along with ownership information such as associated orders and date acquired. */
     get: operations["getUsersUserTokensV7"];
   };
-  "/collections/{collection}/attributes/explore/v3": {
+  "/collections/{collection}/attributes/explore/v4": {
+    /** Use this API to see stats on a specific attribute within a collection. This endpoint will return `tokenCount`, `onSaleCount`, `sampleImages`, and `floorAsk` by default. */
+    get: operations["getCollectionsCollectionAttributesExploreV4"];
+  };
+  "/collections/{collection}/attributes/explore/v2": {
     /** Get detailed aggregate about attributes in a collection, attribute floors */
-    get: operations["getCollectionsCollectionAttributesExploreV3"];
-  };
-  "/collections/{collection}/attributes/explore/v1": {
-    get: operations["getCollectionsCollectionAttributesExploreV1"];
-  };
-  "/collections/{collection}/attributes/static/v1": {
-    get: operations["getCollectionsCollectionAttributesStaticV1"];
-  };
-  "/collections/{collection}/attributes/all/v3": {
-    get: operations["getCollectionsCollectionAttributesAllV3"];
-  };
-  "/collections/{collection}/attributes/all/v1": {
-    get: operations["getCollectionsCollectionAttributesAllV1"];
-  };
-  "/collections/{collection}/attributes/all/v2": {
-    get: operations["getCollectionsCollectionAttributesAllV2"];
+    get: operations["getCollectionsCollectionAttributesExploreV2"];
   };
   "/collections/{collection}/attributes/all/v4": {
     /**
@@ -809,13 +802,32 @@ export interface paths {
      */
     get: operations["getCollectionsCollectionAttributesAllV4"];
   };
-  "/collections/{collection}/attributes/explore/v2": {
-    /** Get detailed aggregate about attributes in a collection, attribute floors */
-    get: operations["getCollectionsCollectionAttributesExploreV2"];
+  "/collections/{collection}/attributes/all/v2": {
+    get: operations["getCollectionsCollectionAttributesAllV2"];
   };
-  "/collections/{collection}/attributes/explore/v4": {
-    /** Use this API to see stats on a specific attribute within a collection. This endpoint will return `tokenCount`, `onSaleCount`, `sampleImages`, and `floorAsk` by default. */
-    get: operations["getCollectionsCollectionAttributesExploreV4"];
+  "/collections/{collection}/attributes/all/v1": {
+    get: operations["getCollectionsCollectionAttributesAllV1"];
+  };
+  "/collections/{collection}/attributes/all/v3": {
+    get: operations["getCollectionsCollectionAttributesAllV3"];
+  };
+  "/collections/{collection}/attributes/static/v1": {
+    get: operations["getCollectionsCollectionAttributesStaticV1"];
+  };
+  "/collections/{collection}/attributes/explore/v1": {
+    get: operations["getCollectionsCollectionAttributesExploreV1"];
+  };
+  "/collections/{collection}/attributes/explore/v3": {
+    /** Get detailed aggregate about attributes in a collection, attribute floors */
+    get: operations["getCollectionsCollectionAttributesExploreV3"];
+  };
+  "/collections/{collection}/attributes/explore/v5": {
+    /**
+     * Use this API to see stats on a specific attribute within a collection. This endpoint will return `tokenCount`, `onSaleCount`, `sampleImages`, and `floorAskPrices` by default.
+     *
+     * - `floorAskPrices` will not be returned on attributes with more than 10k tokens.
+     */
+    get: operations["getCollectionsCollectionAttributesExploreV5"];
   };
   "/oracle/collections/{collection}/floor-ask/v3": {
     /** Get a signed message of any collection's floor price (spot or twap). The oracle's address is 0x32dA57E736E05f75aa4FaE2E9Be60FD904492726. */
@@ -830,7 +842,7 @@ export interface paths {
     get: operations["getOracleCollectionsCollectionFlooraskV2"];
   };
   "/orders/users/{user}/top-bids/v4": {
-    /** Return the top bids for the given user tokens */
+    /** Return the top bids for the given user tokens. Please mark `excludeEOA` as `true` to exclude Blur orders. */
     get: operations["getOrdersUsersUserTopbidsV4"];
   };
   "/orders/users/{user}/top-bids/v2": {
@@ -911,6 +923,9 @@ export interface paths {
   "/admin/resync-floor-events": {
     post: operations["postAdminResyncfloorevents"];
   };
+  "/admin/resync-nft-balances": {
+    post: operations["postAdminResyncnftbalances"];
+  };
   "/admin/resync-sale-royalties": {
     post: operations["postAdminResyncsaleroyalties"];
   };
@@ -922,9 +937,6 @@ export interface paths {
   };
   "/admin/routers": {
     post: operations["postAdminRouters"];
-  };
-  "/admin/set-api-route-points": {
-    post: operations["postAdminSetapiroutepoints"];
   };
   "/admin/set-community": {
     post: operations["postAdminSetcommunity"];
@@ -1044,6 +1056,7 @@ export interface paths {
     post: operations["postExecuteBuyV6"];
   };
   "/execute/buy/v7": {
+    /** Use this API to fill listings. We recommend using the SDK over this API as the SDK will iterate through the steps and return callbacks. Please mark `excludeEOA` as `true` to exclude Blur orders. */
     post: operations["postExecuteBuyV7"];
   };
   "/execute/cancel/v3": {
@@ -1087,6 +1100,7 @@ export interface paths {
     post: operations["postExecuteSellV6"];
   };
   "/execute/sell/v7": {
+    /** Use this API to accept bids. We recommend using the SDK over this API as the SDK will iterate through the steps and return callbacks. Please mark `excludeEOA` as `true` to exclude Blur orders. */
     post: operations["postExecuteSellV7"];
   };
   "/tokens/flag/v1": {
@@ -1680,7 +1694,7 @@ export interface definitions {
     salesCount?: definitions["salesCount"];
     /** @description true or false */
     collectionBidSupported?: boolean;
-    /** @description Number of owners. */
+    /** @description Unique number of owners. */
     ownerCount?: number;
     attributes?: definitions["Model41"];
     /** @description Returns `erc721`, `erc1155`, etc. */
@@ -2180,6 +2194,7 @@ export interface definitions {
     token?: definitions["Model55"];
     from?: string;
     to?: string;
+    /** @description Can be higher than 1 if erc1155. */
     amount?: string;
     txHash?: string;
     block?: number;
@@ -2970,6 +2985,12 @@ export interface definitions {
     continuation?: string;
   };
   Model172: {
+    id?: string;
+    name?: string;
+    image?: string;
+    media?: string;
+  };
+  Model173: {
     type?: string;
     fromAddress?: string;
     toAddress?: string;
@@ -2978,19 +2999,19 @@ export interface definitions {
     timestamp?: number;
     createdAt?: string;
     contract?: string;
-    token?: definitions["Model95"];
-    collection?: definitions["Model96"];
+    token?: definitions["Model172"];
+    collection?: definitions["collection"];
     txHash?: string;
     logIndex?: number;
     batchIndex?: number;
     order?: definitions["Model10"];
   };
-  Model173: definitions["Model172"][];
+  Model174: definitions["Model173"][];
   getSearchActivitiesV1Response: {
     continuation?: string;
-    activities?: definitions["Model173"];
+    activities?: definitions["Model174"];
   };
-  Model174: {
+  Model175: {
     collectionId?: string;
     contract?: string;
     image?: string;
@@ -3000,37 +3021,37 @@ export interface definitions {
     floorAskPrice?: number;
     openseaVerificationStatus?: string;
   };
-  Model175: definitions["Model174"][];
+  Model176: definitions["Model175"][];
   getSearchCollectionsV1Response: {
-    collections?: definitions["Model175"];
+    collections?: definitions["Model176"];
   };
   /** @description Current floor ask price. */
-  Model176: {
+  Model177: {
     currency?: definitions["currency"];
     amount?: definitions["amount"];
     netAmount?: definitions["amount"];
   };
-  Model177: {
+  Model178: {
     collectionId?: string;
     contract?: string;
     image?: string;
     name?: string;
     slug?: string;
     allTimeVolume?: number;
-    floorAskPrice?: definitions["Model176"];
+    floorAskPrice?: definitions["Model177"];
     openseaVerificationStatus?: string;
   };
-  Model178: definitions["Model177"][];
+  Model179: definitions["Model178"][];
   getSearchCollectionsV2Response: {
-    collections?: definitions["Model178"];
+    collections?: definitions["Model179"];
   };
-  Model179: {
+  Model180: {
     amount?: string;
     recipient?: string;
     bps?: number;
   };
-  missingRoyalties: definitions["Model179"][];
-  Model180: {
+  missingRoyalties: definitions["Model180"][];
+  Model181: {
     id: string;
     kind: string;
     /** @enum {string} */
@@ -3058,12 +3079,12 @@ export interface definitions {
     updatedAt: string;
     rawData?: definitions["source"];
   };
-  Model181: definitions["Model180"][];
+  Model182: definitions["Model181"][];
   syncOrdersAsksV1Response: {
-    orders?: definitions["Model181"];
+    orders?: definitions["Model182"];
     continuation?: string;
   };
-  Model182: {
+  Model183: {
     contract?: string;
     tokenId?: string;
     image?: string;
@@ -3074,17 +3095,17 @@ export interface definitions {
     price?: number;
     source?: string;
   };
-  Model183: definitions["Model182"][];
+  Model184: definitions["Model183"][];
   getTokensBootstrapV1Response: {
-    tokens?: definitions["Model183"];
+    tokens?: definitions["Model184"];
     continuation?: string;
   };
-  Model184: {
+  Model185: {
     key?: string;
     value: string;
   };
-  Model185: definitions["Model184"][];
-  Model186: {
+  Model186: definitions["Model185"][];
+  Model187: {
     contract: string;
     tokenId: string;
     name?: string;
@@ -3095,9 +3116,9 @@ export interface definitions {
     lastBuy?: definitions["lastBuy"];
     lastSell?: definitions["lastBuy"];
     owner?: string;
-    attributes?: definitions["Model185"];
+    attributes?: definitions["Model186"];
   };
-  Model187: {
+  Model188: {
     id?: string;
     price?: number;
     maker?: string;
@@ -3105,20 +3126,20 @@ export interface definitions {
     validUntil?: number;
     source?: definitions["source"];
   };
-  Model188: {
-    floorAsk?: definitions["Model187"];
+  Model189: {
+    floorAsk?: definitions["Model188"];
     topBid?: definitions["topBid"];
   };
-  Model189: {
-    token?: definitions["Model186"];
-    market?: definitions["Model188"];
+  Model190: {
+    token?: definitions["Model187"];
+    market?: definitions["Model189"];
   };
-  Model190: definitions["Model189"][];
+  Model191: definitions["Model190"][];
   getTokensDetailsV2Response: {
-    tokens?: definitions["Model190"];
+    tokens?: definitions["Model191"];
     continuation?: string;
   };
-  Model191: {
+  Model192: {
     contract: string;
     tokenId: string;
     name?: string;
@@ -3129,18 +3150,18 @@ export interface definitions {
     lastBuy?: definitions["lastBuy"];
     lastSell?: definitions["lastBuy"];
     owner?: string;
-    attributes?: definitions["Model185"];
+    attributes?: definitions["Model186"];
   };
-  Model192: {
-    token?: definitions["Model191"];
-    market?: definitions["Model188"];
+  Model193: {
+    token?: definitions["Model192"];
+    market?: definitions["Model189"];
   };
-  Model193: definitions["Model192"][];
+  Model194: definitions["Model193"][];
   getTokensDetailsV3Response: {
-    tokens?: definitions["Model193"];
+    tokens?: definitions["Model194"];
     continuation?: string;
   };
-  Model194: {
+  Model195: {
     key?: string;
     value: string;
     tokenCount?: number;
@@ -3148,8 +3169,8 @@ export interface definitions {
     floorAskPrice?: number;
     topBidValue?: number;
   };
-  Model195: definitions["Model194"][];
-  Model196: {
+  Model196: definitions["Model195"][];
+  Model197: {
     contract: string;
     tokenId: string;
     name?: string;
@@ -3164,15 +3185,15 @@ export interface definitions {
     lastBuy?: definitions["lastBuy"];
     lastSell?: definitions["lastBuy"];
     owner?: string;
-    attributes?: definitions["Model195"];
+    attributes?: definitions["Model196"];
   };
-  Model197: {
-    token?: definitions["Model196"];
-    market?: definitions["Model188"];
+  Model198: {
+    token?: definitions["Model197"];
+    market?: definitions["Model189"];
   };
-  Model198: definitions["Model197"][];
+  Model199: definitions["Model198"][];
   getTokensDetailsV4Response: {
-    tokens?: definitions["Model198"];
+    tokens?: definitions["Model199"];
     continuation?: string;
   };
   getTokensFloorV1Response: {
@@ -3180,16 +3201,17 @@ export interface definitions {
       string?: number;
     };
   };
-  Model199: string[];
+  Model200: string[];
   getTokensIdsV1Response: {
-    tokens?: definitions["Model199"];
+    tokens?: definitions["Model200"];
     continuation?: string;
   };
-  Model200: {
+  Model201: {
     id?: string;
     token?: definitions["Model169"];
     from?: string;
     to?: string;
+    /** @description Can be more than 1 if erc1155. */
     amount?: string;
     block?: number;
     txHash?: string;
@@ -3197,12 +3219,12 @@ export interface definitions {
     batchIndex?: number;
     timestamp?: number;
   };
-  Model201: definitions["Model200"][];
+  Model202: definitions["Model201"][];
   getTransfersBulkV1Response: {
-    transfers?: definitions["Model201"];
+    transfers?: definitions["Model202"];
     continuation?: string;
   };
-  Model202: {
+  Model203: {
     type?: string;
     fromAddress?: string;
     toAddress?: string;
@@ -3216,12 +3238,12 @@ export interface definitions {
     batchIndex?: number;
     source?: definitions["source"];
   };
-  Model203: definitions["Model202"][];
+  Model204: definitions["Model203"][];
   getUserActivityV2Response: {
     continuation?: number;
-    activities?: definitions["Model203"];
+    activities?: definitions["Model204"];
   };
-  Model204: {
+  Model205: {
     type?: string;
     fromAddress?: string;
     toAddress?: string;
@@ -3236,12 +3258,12 @@ export interface definitions {
     source?: definitions["source"];
     createdAt?: string;
   };
-  Model205: definitions["Model204"][];
+  Model206: definitions["Model205"][];
   getUserActivityV3Response: {
     continuation?: string;
-    activities?: definitions["Model205"];
+    activities?: definitions["Model206"];
   };
-  Model206: {
+  Model207: {
     type?: string;
     fromAddress?: string;
     toAddress?: string;
@@ -3257,12 +3279,12 @@ export interface definitions {
     order?: definitions["Model5"];
     createdAt?: string;
   };
-  Model207: definitions["Model206"][];
+  Model208: definitions["Model207"][];
   getUserActivityV4Response: {
     continuation?: string;
-    activities?: definitions["Model207"];
+    activities?: definitions["Model208"];
   };
-  Model208: {
+  Model209: {
     tokenId?: string;
     tokenName?: string;
     tokenImage?: string;
@@ -3272,7 +3294,7 @@ export interface definitions {
     tokenRarityRank?: number;
     tokenMedia?: string;
   };
-  Model209: {
+  Model210: {
     type?: string;
     fromAddress?: string;
     toAddress?: string;
@@ -3280,7 +3302,7 @@ export interface definitions {
     amount?: number;
     timestamp?: number;
     contract?: string;
-    token?: definitions["Model208"];
+    token?: definitions["Model209"];
     collection?: definitions["Model96"];
     txHash?: string;
     logIndex?: number;
@@ -3288,12 +3310,12 @@ export interface definitions {
     order?: definitions["Model10"];
     createdAt?: string;
   };
-  Model210: definitions["Model209"][];
+  Model211: definitions["Model210"][];
   getUserActivityV5Response: {
     continuation?: string;
-    activities?: definitions["Model210"];
+    activities?: definitions["Model211"];
   };
-  Model211: {
+  Model212: {
     /** @description Possible types returned: `ask`, `ask_cancel`, `bid`, `bid_cancel`, `sale`, `mint, and `transfer`. */
     type?: string;
     fromAddress?: string;
@@ -3303,7 +3325,7 @@ export interface definitions {
     /** @description Time when added on the blockchain. */
     timestamp?: number;
     contract?: string;
-    token?: definitions["Model208"];
+    token?: definitions["Model209"];
     collection?: definitions["Model96"];
     /** @description Txn hash from the blockchain. */
     txHash?: string;
@@ -3312,27 +3334,27 @@ export interface definitions {
     order?: definitions["Model10"];
     createdAt?: string;
   };
-  Model212: definitions["Model211"][];
+  Model213: definitions["Model212"][];
   getUserActivityV6Response: {
     continuation?: string;
-    activities?: definitions["Model212"];
+    activities?: definitions["Model213"];
   };
   /** @description Marketplace Fee */
-  Model213: {
+  Model214: {
     bps?: number;
   };
-  Model214: {
+  Model215: {
     minBps?: number;
     maxBps?: number;
   };
   /** @description erc20 contract addresses */
   supportedBidCurrencies: string[];
-  Model215: {
+  Model216: {
     name?: string;
     domain?: string;
     imageUrl?: string;
-    fee?: definitions["Model213"];
-    royalties?: definitions["Model214"];
+    fee?: definitions["Model214"];
+    royalties?: definitions["Model215"];
     orderbook?: string;
     orderKind?: string;
     listingEnabled?: boolean;
@@ -3341,19 +3363,59 @@ export interface definitions {
     minimumPrecision?: string;
     supportedBidCurrencies?: definitions["supportedBidCurrencies"];
   };
-  Model216: definitions["Model215"][];
-  Model217: {
-    marketplaces?: definitions["Model216"];
-  };
+  Model217: definitions["Model216"][];
   Model218: {
+    marketplaces?: definitions["Model217"];
+  };
+  Model219: {
     value?: number;
     quantity?: number;
   };
-  topBids: definitions["Model218"][];
+  topBids: definitions["Model219"][];
   getCollectionTopBidsV1Response: {
     topBids?: definitions["topBids"];
   };
-  Model219: {
+  Model220: {
+    value: number;
+    timestamp: number;
+  };
+  lastBuys: definitions["Model220"][];
+  floorAskPrices: number[];
+  Model221: {
+    key: string;
+    value: string;
+    tokenCount: number;
+    sampleImages?: definitions["sampleImages"];
+    lastBuys?: definitions["lastBuys"];
+    lastSells?: definitions["lastBuys"];
+    floorAskPrices?: definitions["floorAskPrices"];
+    topBid?: definitions["topBid"];
+  };
+  Model222: definitions["Model221"][];
+  getCollectionAttributesV1Response: {
+    attributes?: definitions["Model222"];
+  };
+  Model223: {
+    type?: string;
+    fromAddress?: string;
+    toAddress?: string;
+    price?: number;
+    amount?: number;
+    timestamp?: number;
+    createdAt?: string;
+    token?: definitions["Model95"];
+    collection?: definitions["Model96"];
+    txHash?: string;
+    logIndex?: number;
+    batchIndex?: number;
+    source?: definitions["source"];
+  };
+  Model224: definitions["Model223"][];
+  getCollectionActivityV2Response: {
+    continuation?: string;
+    activities?: definitions["Model224"];
+  };
+  Model225: {
     type?: string;
     fromAddress?: string;
     toAddress?: string;
@@ -3369,73 +3431,33 @@ export interface definitions {
     batchIndex?: number;
     order?: definitions["order"];
   };
-  Model220: definitions["Model219"][];
+  Model226: definitions["Model225"][];
   getCollectionActivityV3Response: {
     continuation?: string;
-    activities?: definitions["Model220"];
+    activities?: definitions["Model226"];
   };
-  Model221: {
-    type?: string;
-    fromAddress?: string;
-    toAddress?: string;
-    price?: number;
-    amount?: number;
-    timestamp?: number;
-    createdAt?: string;
-    token?: definitions["Model95"];
-    collection?: definitions["Model96"];
-    txHash?: string;
-    logIndex?: number;
-    batchIndex?: number;
-    source?: definitions["source"];
-  };
-  Model222: definitions["Model221"][];
-  getCollectionActivityV2Response: {
-    continuation?: string;
-    activities?: definitions["Model222"];
-  };
-  Model223: {
-    value: number;
-    timestamp: number;
-  };
-  lastBuys: definitions["Model223"][];
-  floorAskPrices: number[];
-  Model224: {
-    key: string;
-    value: string;
-    tokenCount: number;
-    sampleImages?: definitions["sampleImages"];
-    lastBuys?: definitions["lastBuys"];
-    lastSells?: definitions["lastBuys"];
-    floorAskPrices?: definitions["floorAskPrices"];
-    topBid?: definitions["topBid"];
-  };
-  Model225: definitions["Model224"][];
-  getCollectionAttributesV1Response: {
-    attributes?: definitions["Model225"];
-  };
-  Model226: {
+  Model227: {
     tokenCount?: number;
     /** @description The amount of owners that have the same `tokenCount`. */
     ownerCount?: number;
   };
-  ownersDistribution: definitions["Model226"][];
+  ownersDistribution: definitions["Model227"][];
   getCollectionOwnersDistributionV1Response: {
     ownersDistribution?: definitions["ownersDistribution"];
   };
-  Model227: {
+  Model228: {
     tokenCount?: number;
     /** @description The amount of owners with the same `tokenCount`. */
     ownerCount?: number;
   };
-  Model228: definitions["Model227"][];
+  Model229: definitions["Model228"][];
   getCollectionsSetOwnersDistributionV1Response: {
-    ownersDistribution?: definitions["Model228"];
-  };
-  Model229: {
-    id?: string;
+    ownersDistribution?: definitions["Model229"];
   };
   Model230: {
+    id?: string;
+  };
+  Model231: {
     orderId?: string;
     contract?: string;
     tokenId?: string;
@@ -3444,7 +3466,7 @@ export interface definitions {
     validUntil?: number;
     source?: string;
   };
-  Model231: {
+  Model232: {
     id?: number;
     /** @enum {string} */
     kind?:
@@ -3462,17 +3484,17 @@ export interface definitions {
     txTimestamp?: number;
     createdAt?: string;
   };
-  Model232: {
-    collection?: definitions["Model229"];
-    floorAsk?: definitions["Model230"];
-    event?: definitions["Model231"];
+  Model233: {
+    collection?: definitions["Model230"];
+    floorAsk?: definitions["Model231"];
+    event?: definitions["Model232"];
   };
-  Model233: definitions["Model232"][];
+  Model234: definitions["Model233"][];
   getCollectionsFloorAskV1Response: {
-    events?: definitions["Model233"];
+    events?: definitions["Model234"];
     continuation?: string;
   };
-  Model234: {
+  Model235: {
     orderId?: string;
     contract?: string;
     tokenId?: string;
@@ -3481,7 +3503,7 @@ export interface definitions {
     validUntil?: number;
     source?: string;
   };
-  Model235: {
+  Model236: {
     id?: number;
     /** @enum {string} */
     kind?:
@@ -3501,17 +3523,17 @@ export interface definitions {
     /** @description Time when added to indexer */
     createdAt?: string;
   };
-  Model236: {
-    collection?: definitions["Model229"];
-    floorAsk?: definitions["Model234"];
-    event?: definitions["Model235"];
+  Model237: {
+    collection?: definitions["Model230"];
+    floorAsk?: definitions["Model235"];
+    event?: definitions["Model236"];
   };
-  Model237: definitions["Model236"][];
+  Model238: definitions["Model237"][];
   getCollectionsFloorAskV2Response: {
-    events?: definitions["Model237"];
+    events?: definitions["Model238"];
     continuation?: string;
   };
-  Model238: {
+  Model239: {
     orderId?: string;
     contract?: string;
     tokenSetId?: string;
@@ -3520,17 +3542,17 @@ export interface definitions {
     validUntil?: number;
     source?: string;
   };
-  Model239: {
-    collection?: definitions["Model229"];
-    topBid?: definitions["Model238"];
-    event?: definitions["Model231"];
+  Model240: {
+    collection?: definitions["Model230"];
+    topBid?: definitions["Model239"];
+    event?: definitions["Model232"];
   };
-  Model240: definitions["Model239"][];
+  Model241: definitions["Model240"][];
   getCollectionsTopbidV1Response: {
-    events?: definitions["Model240"];
+    events?: definitions["Model241"];
     continuation?: string;
   };
-  Model241: {
+  Model242: {
     orderId?: string;
     contract?: string;
     tokenSetId?: string;
@@ -3539,17 +3561,17 @@ export interface definitions {
     validUntil?: number;
     source?: string;
   };
-  Model242: {
-    collection?: definitions["Model229"];
-    topBid?: definitions["Model241"];
-    event?: definitions["Model235"];
+  Model243: {
+    collection?: definitions["Model230"];
+    topBid?: definitions["Model242"];
+    event?: definitions["Model236"];
   };
-  Model243: definitions["Model242"][];
+  Model244: definitions["Model243"][];
   getCollectionsTopbidV2Response: {
-    events?: definitions["Model243"];
+    events?: definitions["Model244"];
     continuation?: string;
   };
-  Model244: {
+  Model245: {
     orderId?: string;
     maker?: string;
     nonce?: string;
@@ -3558,17 +3580,17 @@ export interface definitions {
     validUntil?: number;
     source?: string;
   };
-  Model245: {
+  Model246: {
     token?: definitions["Model169"];
-    floorAsk?: definitions["Model244"];
-    event?: definitions["Model231"];
+    floorAsk?: definitions["Model245"];
+    event?: definitions["Model232"];
   };
-  Model246: definitions["Model245"][];
+  Model247: definitions["Model246"][];
   getTokensFloorAskV2Response: {
-    events?: definitions["Model246"];
+    events?: definitions["Model247"];
     continuation?: string;
   };
-  Model247: {
+  Model248: {
     orderId?: string;
     maker?: string;
     nonce?: string;
@@ -3578,17 +3600,17 @@ export interface definitions {
     source?: string;
     isDynamic?: boolean;
   };
-  Model248: {
+  Model249: {
     token?: definitions["Model169"];
-    floorAsk?: definitions["Model247"];
-    event?: definitions["Model231"];
+    floorAsk?: definitions["Model248"];
+    event?: definitions["Model232"];
   };
-  Model249: definitions["Model248"][];
+  Model250: definitions["Model249"][];
   getTokensFloorAskV3Response: {
-    events?: definitions["Model249"];
+    events?: definitions["Model250"];
     continuation?: string;
   };
-  Model250: {
+  Model251: {
     orderId?: string;
     maker?: string;
     nonce?: string;
@@ -3599,14 +3621,14 @@ export interface definitions {
     dynamicPricing?: definitions["dynamicPricing"];
     isDynamic?: boolean;
   };
-  Model251: {
+  Model252: {
     token?: definitions["Model169"];
-    floorAsk?: definitions["Model250"];
-    event?: definitions["Model235"];
+    floorAsk?: definitions["Model251"];
+    event?: definitions["Model236"];
   };
-  Model252: definitions["Model251"][];
+  Model253: definitions["Model252"][];
   getTokensFloorAskV4Response: {
-    events?: definitions["Model252"];
+    events?: definitions["Model253"];
     continuation?: string;
   };
   message: {
@@ -3624,42 +3646,42 @@ export interface definitions {
     price: number;
     message?: definitions["message"];
   };
-  Model253: {
+  Model254: {
     token: string;
     isFlagged: boolean;
     lastTransferTime: number;
     message?: definitions["message"];
   };
-  messages: definitions["Model253"][];
+  messages: definitions["Model254"][];
   getTokenStatusOracleV1Response: {
     messages?: definitions["messages"];
   };
-  Model254: {
+  Model255: {
     tokenId: string;
     lastFlagChange?: string;
     /** @default false */
     isFlagged?: boolean;
     contract: string;
   };
-  Model255: definitions["Model254"][];
+  Model256: definitions["Model255"][];
   getFlaggedTokensV1Response: {
-    tokens?: definitions["Model255"];
+    tokens?: definitions["Model256"];
     continuation?: string;
   };
   getTransactionSyncedV1Response: {
     synced: boolean;
   };
-  Model256: {
+  Model257: {
     id?: string;
     name?: string;
     imageUrl?: string;
     floorAskPrice?: number;
   };
-  Model257: {
+  Model258: {
     id?: string;
     price?: definitions["Model34"];
   };
-  Model258: {
+  Model259: {
     contract?: string;
     tokenId?: string;
     kind?: string;
@@ -3670,11 +3692,11 @@ export interface definitions {
     rarityScore?: number;
     rarityRank?: number;
     media?: string;
-    collection?: definitions["Model256"];
-    topBid?: definitions["Model257"];
+    collection?: definitions["Model257"];
+    topBid?: definitions["Model258"];
     lastAppraisalValue?: number;
   };
-  Model259: {
+  Model260: {
     id?: string;
     price?: definitions["Model34"];
     maker?: string;
@@ -3683,63 +3705,63 @@ export interface definitions {
     dynamicPricing?: definitions["Model153"];
     source?: definitions["source"];
   };
-  Model260: {
+  Model261: {
     tokenCount?: string;
     onSaleCount?: string;
-    floorAsk?: definitions["Model259"];
+    floorAsk?: definitions["Model260"];
     acquiredAt?: string;
   };
-  Model261: {
-    token?: definitions["Model258"];
-    ownership?: definitions["Model260"];
+  Model262: {
+    token?: definitions["Model259"];
+    ownership?: definitions["Model261"];
   };
-  Model262: definitions["Model261"][];
+  Model263: definitions["Model262"][];
   getUserTokensV6Response: {
-    tokens?: definitions["Model262"];
+    tokens?: definitions["Model263"];
     continuation?: string;
   };
-  Model263: {
+  Model264: {
     contract?: string;
     tokenId?: string;
     name?: string;
     image?: string;
-    collection?: definitions["Model256"];
-    topBid?: definitions["Model257"];
+    collection?: definitions["Model257"];
+    topBid?: definitions["Model258"];
   };
-  Model264: {
+  Model265: {
     tokenCount?: string;
     onSaleCount?: string;
     floorAskPrice?: definitions["Model34"];
     acquiredAt?: string;
   };
-  Model265: {
-    token?: definitions["Model263"];
-    ownership?: definitions["Model264"];
+  Model266: {
+    token?: definitions["Model264"];
+    ownership?: definitions["Model265"];
   };
-  Model266: definitions["Model265"][];
+  Model267: definitions["Model266"][];
   getUserTokensV4Response: {
-    tokens?: definitions["Model266"];
+    tokens?: definitions["Model267"];
   };
-  Model267: {
+  Model268: {
     contract?: string;
     tokenId?: string;
     name?: string;
     image?: string;
-    collection?: definitions["Model256"];
+    collection?: definitions["Model257"];
   };
-  Model268: {
+  Model269: {
     tokenCount?: string;
     onSaleCount?: string;
     floorAskPrice?: number;
     acquiredAt?: string;
   };
-  Model269: {
-    token?: definitions["Model267"];
-    ownership?: definitions["Model268"];
+  Model270: {
+    token?: definitions["Model268"];
+    ownership?: definitions["Model269"];
   };
-  Model270: definitions["Model269"][];
+  Model271: definitions["Model270"][];
   getUserTokensV2Response: {
-    tokens?: definitions["Model270"];
+    tokens?: definitions["Model271"];
   };
   set: {
     id?: string;
@@ -3754,16 +3776,16 @@ export interface definitions {
     value?: number;
     expiration?: number;
   };
-  Model271: {
+  Model272: {
     set?: definitions["set"];
     primaryOrder?: definitions["primaryOrder"];
     totalValid?: number;
   };
-  positions: definitions["Model271"][];
+  positions: definitions["Model272"][];
   getUserPositionsV1Response: {
     positions?: definitions["positions"];
   };
-  Model272: {
+  Model273: {
     id?: string;
     slug?: string;
     createdAt?: string;
@@ -3788,20 +3810,20 @@ export interface definitions {
     volumeChange?: definitions["volumeChange"];
     floorSale?: definitions["volumeChange"];
   };
-  Model273: {
+  Model274: {
     tokenCount?: string;
     onSaleCount?: string;
     liquidCount?: string;
   };
-  Model274: {
-    collection?: definitions["Model272"];
-    ownership?: definitions["Model273"];
+  Model275: {
+    collection?: definitions["Model273"];
+    ownership?: definitions["Model274"];
   };
-  Model275: definitions["Model274"][];
+  Model276: definitions["Model275"][];
   getUserCollectionsV2Response: {
-    collections?: definitions["Model275"];
+    collections?: definitions["Model276"];
   };
-  Model276: {
+  Model277: {
     type?: string;
     fromAddress?: string;
     toAddress?: string;
@@ -3814,10 +3836,10 @@ export interface definitions {
     logIndex?: number;
     batchIndex?: number;
   };
-  Model277: definitions["Model276"][];
+  Model278: definitions["Model277"][];
   getUserActivityV1Response: {
     continuation?: number;
-    activities?: definitions["Model277"];
+    activities?: definitions["Model278"];
   };
   metadata: {
     imageUrl?: string;
@@ -3827,34 +3849,34 @@ export interface definitions {
     bannerImageUrl?: string;
     twitterUsername?: string;
   };
-  Model278: {
+  Model279: {
     id?: string;
     name?: string;
     metadata?: definitions["metadata"];
     floorAskPrice?: number;
     topBidValue?: number;
   };
-  Model279: {
-    collection?: definitions["Model278"];
-    ownership?: definitions["Model273"];
+  Model280: {
+    collection?: definitions["Model279"];
+    ownership?: definitions["Model274"];
   };
-  Model280: definitions["Model279"][];
+  Model281: definitions["Model280"][];
   getUserCollectionsV1Response: {
-    collections?: definitions["Model280"];
+    collections?: definitions["Model281"];
   };
   /** @description Current floor ask price */
-  Model281: {
-    currency?: definitions["currency"];
-    amount?: definitions["amount"];
-    netAmount?: definitions["amount"];
-  };
-  /** @description Top bid offer currently if offer is valid */
   Model282: {
     currency?: definitions["currency"];
     amount?: definitions["amount"];
     netAmount?: definitions["amount"];
   };
+  /** @description Top bid offer currently if offer is valid */
   Model283: {
+    currency?: definitions["currency"];
+    amount?: definitions["amount"];
+    netAmount?: definitions["amount"];
+  };
+  Model284: {
     /** @description Collection Id */
     id?: string;
     slug?: string;
@@ -3871,8 +3893,8 @@ export interface definitions {
     tokenCount?: string;
     tokenSetId?: string;
     primaryContract?: string;
-    floorAskPrice?: definitions["Model281"];
-    topBidValue?: definitions["Model282"];
+    floorAskPrice?: definitions["Model282"];
+    topBidValue?: definitions["Model283"];
     topBidMaker?: string;
     topBidSourceDomain?: string;
     rank?: definitions["Model38"];
@@ -3880,62 +3902,62 @@ export interface definitions {
     volumeChange?: definitions["Model39"];
     floorSale?: definitions["floorSale"];
   };
-  Model284: {
-    collection?: definitions["Model283"];
-    ownership?: definitions["Model273"];
+  Model285: {
+    collection?: definitions["Model284"];
+    ownership?: definitions["Model274"];
   };
-  Model285: definitions["Model284"][];
+  Model286: definitions["Model285"][];
   getUserCollectionsV3Response: {
-    collections?: definitions["Model285"];
+    collections?: definitions["Model286"];
   };
-  Model286: {
+  Model287: {
     id?: string;
     value?: number;
     schema?: definitions["source"];
   };
-  Model287: {
+  Model288: {
     contract?: string;
     tokenId?: string;
     name?: string;
     image?: string;
     collection?: definitions["Model54"];
-    topBid?: definitions["Model286"];
+    topBid?: definitions["Model287"];
   };
-  Model288: {
+  Model289: {
     tokenCount?: string;
     onSaleCount?: string;
     floorSellValue?: number;
     acquiredAt?: number;
   };
-  Model289: {
-    token?: definitions["Model287"];
-    ownership?: definitions["Model288"];
+  Model290: {
+    token?: definitions["Model288"];
+    ownership?: definitions["Model289"];
   };
-  Model290: definitions["Model289"][];
+  Model291: definitions["Model290"][];
   getUserTokensV1Response: {
-    tokens?: definitions["Model290"];
+    tokens?: definitions["Model291"];
   };
-  Model291: {
+  Model292: {
     id?: string;
     value?: number;
   };
-  Model292: {
+  Model293: {
     contract?: string;
     tokenId?: string;
     name?: string;
     image?: string;
-    collection?: definitions["Model256"];
-    topBid?: definitions["Model291"];
+    collection?: definitions["Model257"];
+    topBid?: definitions["Model292"];
   };
-  Model293: {
-    token?: definitions["Model292"];
-    ownership?: definitions["Model268"];
+  Model294: {
+    token?: definitions["Model293"];
+    ownership?: definitions["Model269"];
   };
-  Model294: definitions["Model293"][];
+  Model295: definitions["Model294"][];
   getUserTokensV3Response: {
-    tokens?: definitions["Model294"];
+    tokens?: definitions["Model295"];
   };
-  Model295: {
+  Model296: {
     id?: string;
     price?: definitions["Model34"];
     maker?: string;
@@ -3943,40 +3965,40 @@ export interface definitions {
     validUntil?: number;
     source?: definitions["source"];
   };
-  Model296: {
+  Model297: {
     tokenCount?: string;
     onSaleCount?: string;
-    floorAsk?: definitions["Model295"];
+    floorAsk?: definitions["Model296"];
     acquiredAt?: string;
   };
-  Model297: {
-    token?: definitions["Model263"];
-    ownership?: definitions["Model296"];
+  Model298: {
+    token?: definitions["Model264"];
+    ownership?: definitions["Model297"];
   };
-  Model298: definitions["Model297"][];
+  Model299: definitions["Model298"][];
   getUserTokensV5Response: {
-    tokens?: definitions["Model298"];
+    tokens?: definitions["Model299"];
   };
-  Model299: {
+  Model300: {
     bps?: number;
     recipient?: string;
   };
-  Model300: definitions["Model299"][];
-  Model301: {
+  Model301: definitions["Model300"][];
+  Model302: {
     id?: string;
     name?: string;
     imageUrl?: string;
     openseaVerificationStatus?: string;
     floorAskPrice?: definitions["Model34"];
     royaltiesBps?: number;
-    royalties?: definitions["Model300"];
+    royalties?: definitions["Model301"];
   };
-  Model302: {
+  Model303: {
     id?: string;
     price?: definitions["Model34"];
     source?: definitions["source"];
   };
-  Model303: {
+  Model304: {
     contract?: string;
     tokenId?: string;
     kind?: string;
@@ -3987,13 +4009,13 @@ export interface definitions {
     rarityScore?: number;
     rarityRank?: number;
     media?: string;
-    collection?: definitions["Model301"];
+    collection?: definitions["Model302"];
     lastSale?: definitions["Model63"];
-    topBid?: definitions["Model302"];
+    topBid?: definitions["Model303"];
     lastAppraisalValue?: number;
     attributes?: definitions["Model79"];
   };
-  Model304: {
+  Model305: {
     id?: string;
     price?: definitions["Model34"];
     maker?: string;
@@ -4004,142 +4026,30 @@ export interface definitions {
     rawData?: definitions["source"];
     isNativeOffChainCancellable?: boolean;
   };
-  Model305: {
+  Model306: {
     tokenCount?: string;
     onSaleCount?: string;
-    floorAsk?: definitions["Model304"];
+    floorAsk?: definitions["Model305"];
     acquiredAt?: string;
   };
-  Model306: {
-    token?: definitions["Model303"];
-    ownership?: definitions["Model305"];
+  Model307: {
+    token?: definitions["Model304"];
+    ownership?: definitions["Model306"];
   };
-  Model307: definitions["Model306"][];
+  Model308: definitions["Model307"][];
   getUserTokensV7Response: {
-    tokens?: definitions["Model307"];
+    tokens?: definitions["Model308"];
     continuation?: string;
   };
-  Model308: {
+  /** @description Current floor price ask. */
+  Model309: number[];
+  Model310: {
     tokenId: string;
     value: number;
     timestamp: number;
   };
-  Model309: definitions["Model308"][];
-  Model310: {
-    key: string;
-    value: string;
-    tokenCount: number;
-    onSaleCount: number;
-    sampleImages?: definitions["sampleImages"];
-    floorAskPrices?: definitions["floorAskPrices"];
-    lastBuys?: definitions["Model309"];
-    lastSells?: definitions["Model309"];
-    topBid?: definitions["topBid"];
-  };
   Model311: definitions["Model310"][];
-  getAttributesExploreV3Response: {
-    attributes?: definitions["Model311"];
-  };
   Model312: {
-    value: string;
-    count?: number;
-    tokens?: definitions["sampleImages"];
-  };
-  Model313: definitions["Model312"][];
-  Model314: {
-    key: string;
-    /** @enum {string} */
-    kind: "string" | "number" | "date" | "range";
-    values?: definitions["Model313"];
-  };
-  Model315: definitions["Model314"][];
-  getAttributesStaticV1Response: {
-    attributes?: definitions["Model315"];
-  };
-  Model316: {
-    value: string;
-    count?: number;
-    /** @description Returned only for attributes with less than 10k tokens */
-    floorAskPrice?: number;
-  };
-  Model317: definitions["Model316"][];
-  Model318: {
-    key: string;
-    attributeCount?: number;
-    /** @enum {string} */
-    kind: "string" | "number" | "date" | "range";
-    minRange?: number;
-    maxRange?: number;
-    values?: definitions["Model317"];
-  };
-  Model319: definitions["Model318"][];
-  getAttributesAllV3Response: {
-    attributes?: definitions["Model319"];
-  };
-  Model320: {
-    value: string;
-    count?: number;
-    floorAskPrice?: number;
-  };
-  Model321: definitions["Model320"][];
-  Model322: {
-    key: string;
-    attributeCount?: number;
-    /** @enum {string} */
-    kind: "string" | "number" | "date" | "range";
-    minRange?: number;
-    maxRange?: number;
-    values?: definitions["Model321"];
-  };
-  Model323: definitions["Model322"][];
-  getAttributesAllV2Response: {
-    attributes?: definitions["Model323"];
-  };
-  /** @description Returned only for attributes with less than 10k tokens */
-  Model324: {
-    currency?: definitions["currency"];
-    amount?: definitions["amount"];
-    netAmount?: definitions["amount"];
-  };
-  Model325: {
-    /** @description Case sensitive */
-    value: string;
-    count?: number;
-    floorAskPrice?: definitions["Model324"];
-  };
-  Model326: definitions["Model325"][];
-  Model327: {
-    /** @description Case sensitive */
-    key: string;
-    /** @description Number of possible attribute kinds */
-    attributeCount?: number;
-    /** @enum {string} */
-    kind: "string" | "number" | "date" | "range";
-    minRange?: number;
-    maxRange?: number;
-    values?: definitions["Model326"];
-  };
-  Model328: definitions["Model327"][];
-  getAttributesAllV4Response: {
-    attributes?: definitions["Model328"];
-  };
-  Model329: {
-    key: string;
-    value: string;
-    tokenCount: number;
-    onSaleCount: number;
-    sampleImages?: definitions["sampleImages"];
-    floorAskPrices?: definitions["floorAskPrices"];
-    lastSells?: definitions["Model309"];
-    topBid?: definitions["topBid"];
-  };
-  Model330: definitions["Model329"][];
-  getAttributesExploreV2Response: {
-    attributes?: definitions["Model330"];
-  };
-  /** @description Current floor price ask. */
-  Model331: number[];
-  Model332: {
     /** @description Case sensitive */
     key: string;
     /** @description Case sensitive */
@@ -4149,38 +4059,154 @@ export interface definitions {
     /** @description Token count with this attribute on sale. */
     onSaleCount: number;
     sampleImages?: definitions["sampleImages"];
-    floorAskPrices?: definitions["Model331"];
-    lastBuys?: definitions["Model309"];
-    lastSells?: definitions["Model309"];
+    floorAskPrices?: definitions["Model309"];
+    lastBuys?: definitions["Model311"];
+    lastSells?: definitions["Model311"];
     topBid?: definitions["topBid"];
   };
-  Model333: definitions["Model332"][];
+  Model313: definitions["Model312"][];
   getAttributesExploreV4Response: {
-    attributes?: definitions["Model333"];
+    attributes?: definitions["Model313"];
     continuation?: string;
   };
-  /** @description Native currency to chain unless displayCurrency is passed. */
-  Model334: {
+  Model314: {
+    key: string;
+    value: string;
+    tokenCount: number;
+    onSaleCount: number;
+    sampleImages?: definitions["sampleImages"];
+    floorAskPrices?: definitions["floorAskPrices"];
+    lastSells?: definitions["Model311"];
+    topBid?: definitions["topBid"];
+  };
+  Model315: definitions["Model314"][];
+  getAttributesExploreV2Response: {
+    attributes?: definitions["Model315"];
+  };
+  /** @description Returned only for attributes with less than 10k tokens */
+  Model316: {
     currency?: definitions["currency"];
     amount?: definitions["amount"];
     netAmount?: definitions["amount"];
   };
+  Model317: {
+    /** @description Case sensitive */
+    value: string;
+    count?: number;
+    floorAskPrice?: definitions["Model316"];
+  };
+  Model318: definitions["Model317"][];
+  Model319: {
+    /** @description Case sensitive */
+    key: string;
+    /** @description Number of possible attribute kinds */
+    attributeCount?: number;
+    /** @enum {string} */
+    kind: "string" | "number" | "date" | "range";
+    minRange?: number;
+    maxRange?: number;
+    values?: definitions["Model318"];
+  };
+  Model320: definitions["Model319"][];
+  getAttributesAllV4Response: {
+    attributes?: definitions["Model320"];
+  };
+  Model321: {
+    value: string;
+    count?: number;
+    floorAskPrice?: number;
+  };
+  Model322: definitions["Model321"][];
+  Model323: {
+    key: string;
+    attributeCount?: number;
+    /** @enum {string} */
+    kind: "string" | "number" | "date" | "range";
+    minRange?: number;
+    maxRange?: number;
+    values?: definitions["Model322"];
+  };
+  Model324: definitions["Model323"][];
+  getAttributesAllV2Response: {
+    attributes?: definitions["Model324"];
+  };
+  Model325: {
+    value: string;
+    count?: number;
+    /** @description Returned only for attributes with less than 10k tokens */
+    floorAskPrice?: number;
+  };
+  Model326: definitions["Model325"][];
+  Model327: {
+    key: string;
+    attributeCount?: number;
+    /** @enum {string} */
+    kind: "string" | "number" | "date" | "range";
+    minRange?: number;
+    maxRange?: number;
+    values?: definitions["Model326"];
+  };
+  Model328: definitions["Model327"][];
+  getAttributesAllV3Response: {
+    attributes?: definitions["Model328"];
+  };
+  Model329: {
+    value: string;
+    count?: number;
+    tokens?: definitions["sampleImages"];
+  };
+  Model330: definitions["Model329"][];
+  Model331: {
+    key: string;
+    /** @enum {string} */
+    kind: "string" | "number" | "date" | "range";
+    values?: definitions["Model330"];
+  };
+  Model332: definitions["Model331"][];
+  getAttributesStaticV1Response: {
+    attributes?: definitions["Model332"];
+  };
+  Model333: {
+    key: string;
+    value: string;
+    tokenCount: number;
+    onSaleCount: number;
+    sampleImages?: definitions["sampleImages"];
+    floorAskPrices?: definitions["floorAskPrices"];
+    lastBuys?: definitions["Model311"];
+    lastSells?: definitions["Model311"];
+    topBid?: definitions["topBid"];
+  };
+  Model334: definitions["Model333"][];
+  getAttributesExploreV3Response: {
+    attributes?: definitions["Model334"];
+  };
+  getAttributesExploreV5Response: {
+    attributes?: definitions["Model334"];
+    continuation?: string;
+  };
+  /** @description Native currency to chain unless displayCurrency is passed. */
   Model335: {
+    currency?: definitions["currency"];
+    amount?: definitions["amount"];
+    netAmount?: definitions["amount"];
+  };
+  Model336: {
     id?: string;
     name?: string;
     imageUrl?: string;
-    floorAskPrice?: definitions["Model334"];
+    floorAskPrice?: definitions["Model335"];
   };
-  Model336: {
+  Model337: {
     contract?: string;
     tokenId?: string;
     name?: string;
     image?: string;
     floorAskPrice?: definitions["Model34"];
     lastSalePrice?: definitions["Model34"];
-    collection?: definitions["Model335"];
+    collection?: definitions["Model336"];
   };
-  Model337: {
+  Model338: {
     id?: string;
     price?: definitions["price"];
     maker?: string;
@@ -4193,27 +4219,27 @@ export interface definitions {
     source?: definitions["source"];
     feeBreakdown?: definitions["Model155"];
     criteria?: definitions["Model9"];
-    token?: definitions["Model336"];
+    token?: definitions["Model337"];
   };
-  Model338: definitions["Model337"][];
+  Model339: definitions["Model338"][];
   getUserTopBidsV4Response: {
     /** @description Amount of token with bids. */
     totalTokensWithBids?: number;
     /** @description Amount of currency from all token bids; native currency unless `displayCurrency` passed */
     totalAmount?: number;
-    topBids?: definitions["Model338"];
+    topBids?: definitions["Model339"];
     continuation?: string;
   };
-  Model339: {
+  Model340: {
     contract?: string;
     tokenId?: string;
     name?: string;
     image?: string;
     floorAskPrice?: number;
     lastSalePrice?: number;
-    collection?: definitions["Model256"];
+    collection?: definitions["Model257"];
   };
-  Model340: {
+  Model341: {
     id?: string;
     price?: number;
     value?: number;
@@ -4225,15 +4251,15 @@ export interface definitions {
     source?: definitions["source"];
     feeBreakdown?: definitions["Model146"];
     criteria?: definitions["Model9"];
-    token?: definitions["Model339"];
+    token?: definitions["Model340"];
   };
-  Model341: definitions["Model340"][];
+  Model342: definitions["Model341"][];
   getUserTopBidsV2Response: {
     totalTokensWithBids?: number;
-    topBids?: definitions["Model341"];
+    topBids?: definitions["Model342"];
     continuation?: string;
   };
-  Model342: {
+  Model343: {
     id?: string;
     price?: number;
     value?: number;
@@ -4245,15 +4271,15 @@ export interface definitions {
     source?: definitions["source"];
     feeBreakdown?: definitions["Model146"];
     context?: definitions["Model144"];
-    token?: definitions["Model339"];
+    token?: definitions["Model340"];
   };
-  Model343: definitions["Model342"][];
+  Model344: definitions["Model343"][];
   getUserTopBidsV1Response: {
     totalTokensWithBids?: number;
-    topBids?: definitions["Model343"];
+    topBids?: definitions["Model344"];
     continuation?: string;
   };
-  Model344: {
+  Model345: {
     id?: string;
     price?: definitions["Model34"];
     maker?: string;
@@ -4264,16 +4290,16 @@ export interface definitions {
     source?: definitions["source"];
     feeBreakdown?: definitions["Model146"];
     criteria?: definitions["Model9"];
-    token?: definitions["Model339"];
+    token?: definitions["Model340"];
   };
-  Model345: definitions["Model344"][];
+  Model346: definitions["Model345"][];
   getUserTopBidsV3Response: {
     totalTokensWithBids?: number;
     totalAmount?: number;
-    topBids?: definitions["Model345"];
+    topBids?: definitions["Model346"];
     continuation?: string;
   };
-  Model346: {
+  Model347: {
     community: string;
   };
   putSetCollectionCommunityV1Response: {
@@ -4282,20 +4308,20 @@ export interface definitions {
   getNewApiKeyResponse: {
     key: string;
   };
-  Model347: {
+  Model348: {
     /** @description The collection for which to calculate the rarity, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
     collection: string;
   };
-  Model348: {
+  Model349: {
     key?: string;
     value?: string;
   };
-  Model349: definitions["Model348"][];
-  Model350: {
+  Model350: definitions["Model349"][];
+  Model351: {
     /** @description The route for which the rule is created */
     route: string;
-    points: number;
-    duration: number;
+    points?: number;
+    duration?: number;
     pointsToConsume?: number;
     tier?: number;
     /** @default */
@@ -4305,23 +4331,23 @@ export interface definitions {
      * @enum {string}
      */
     method?: "get" | "post" | "delete" | "put";
-    payload?: definitions["Model349"];
+    payload?: definitions["Model350"];
   };
-  Model351: {
+  Model352: {
     /** @description The rule ID to delete */
     ruleId: number;
   };
-  Model352: {
+  Model353: {
     fromBlock: number;
     toBlock: number;
   };
   contracts: string[];
-  Model353: {
+  Model354: {
     /** @enum {string} */
     kind: "tokens-floor-sell" | "tokens-top-buy";
     contracts?: definitions["contracts"];
   };
-  Model354: {
+  Model355: {
     /** @enum {string} */
     by: "id" | "maker" | "token" | "contract";
     id: string;
@@ -4329,18 +4355,18 @@ export interface definitions {
     maker: string;
     contract: string;
   };
-  Model355: {
+  Model356: {
     /** @enum {string} */
     kind: "tokens-floor-sell" | "tokens-top-buy";
     token: string;
   };
-  Model356: {
+  Model357: {
     address: string;
   };
-  Model357: {
+  Model358: {
     token: string;
   };
-  Model358: {
+  Model359: {
     /** @description Refresh the given collection. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
     collection: string;
     /**
@@ -4354,49 +4380,43 @@ export interface definitions {
      */
     cacheOnly?: boolean;
   };
-  Model359: {
+  Model360: {
     /** @description Refresh tokens for the given collection. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
     collection: string;
     /** @default false */
     backfill?: boolean;
   };
-  Model360: {
+  Model361: {
     /** @enum {string} */
     method?: "opensea" | "simplehash" | "centerdev" | "soundxyz";
     /** @description Refresh the given token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
   };
-  Model361: {
+  Model362: {
     collection?: string;
     token?: string;
   };
-  Model362: {
+  Model363: {
     /** @enum {string} */
     kind?: "all";
-    data?: definitions["Model352"];
+    data?: definitions["Model353"];
   };
-  Model363: {
+  Model364: {
     /** @description The source domain to sync. Example: `reservoir.market` */
     source?: string;
   };
-  Model364: {
+  Model365: {
     id: string;
     /** @enum {string} */
     status: "active" | "inactive";
   };
-  Model365: {
+  Model366: {
     address: string;
     domain: string;
   };
-  routers: definitions["Model365"][];
-  Model366: {
-    routers: definitions["routers"];
-  };
+  routers: definitions["Model366"][];
   Model367: {
-    route: string;
-    points: number;
-    /** @default false */
-    delete?: boolean;
+    routers: definitions["routers"];
   };
   Model368: {
     /** @description Update community for a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
@@ -4451,7 +4471,7 @@ export interface definitions {
     apiKey?: string;
     /** @enum {string} */
     method?: "get" | "post" | "delete" | "put";
-    payload?: definitions["Model349"];
+    payload?: definitions["Model350"];
   };
   Model375: {
     /** @description The source domain to sync. Example: `reservoir.market` */
@@ -5221,7 +5241,7 @@ export interface definitions {
      * @default false
      */
     excludeEOA?: boolean;
-    /** @description Optional custom gas settings. */
+    /** @description Optional custom gas settings. Includes base fee & priority fee in this limit. */
     maxFeePerGas?: string;
     /** @description Optional custom gas settings. */
     maxPriorityFeePerGas?: string;
@@ -5229,7 +5249,7 @@ export interface definitions {
     x2y2ApiKey?: string;
     /** @description Optional OpenSea API key used for filling. You don't need to pass your own key, but if you don't, you are more likely to be rate-limited. */
     openseaApiKey?: string;
-    /** @description Optional Blur auth used for filling */
+    /** @description Advanced use case to pass personal blurAuthToken; the API will generate one if left empty. */
     blurAuth?: string;
   };
   Model431: {
@@ -5299,6 +5319,7 @@ export interface definitions {
     maker?: string;
     /** @enum {string} */
     orderKind?:
+      | "blur"
       | "seaport"
       | "seaport-v1.4"
       | "seaport-v1.5"
@@ -5747,7 +5768,7 @@ export interface definitions {
      * @default false
      */
     forceRouter?: boolean;
-    /** @description Optional custom gas settings. */
+    /** @description Optional custom gas settings. Includes base fee & priority fee in this limit. */
     maxFeePerGas?: string;
     /** @description Optional custom gas settings. */
     maxPriorityFeePerGas?: string;
@@ -5755,6 +5776,8 @@ export interface definitions {
     x2y2ApiKey?: string;
     /** @description Optional OpenSea API key used for filling. You don't need to pass your own key, but if you don't, you are more likely to be rate-limited. */
     openseaApiKey?: string;
+    /** @description Optional Blur auth used for filling */
+    blurAuth?: string;
   };
   Model471: {
     /**
@@ -6163,8 +6186,6 @@ export interface operations {
         includeTopBid?: boolean;
         /** If true, attributes will be included in the response. Must filter by `id` or `slug` to a particular collection. */
         includeAttributes?: boolean;
-        /** If true, owner count will be included in the response. Must filter by `id` or `slug` to a particular collection and the collection has less than 50k tokens. */
-        includeOwnerCount?: boolean;
         /** If true, sales count (1 day, 7 day, 30 day, all time) will be included in the response. Must filter by `id` or `slug` to a particular collection. */
         includeSalesCount?: boolean;
         /** If true, prices will include missing royalties to be added on-top. */
@@ -7720,7 +7741,11 @@ export interface operations {
       };
     };
   };
-  /** Get a list of asks (listings), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing */
+  /**
+   * Get a list of asks (listings), filtered by token, collection or maker. This API is designed for efficiently ingesting large volumes of orders, for external processing.
+   *
+   *  Please mark `excludeEOA` as `true` to exclude Blur orders.
+   */
   getOrdersAsksV4: {
     parameters: {
       query: {
@@ -7952,7 +7977,7 @@ export interface operations {
    *
    * - Inputting a 'contract' will return token and attribute bids.
    *
-   * - Inputting a 'collection-id' will return collection wide bids.
+   * - Inputting a 'collection-id' will return collection wide bids./n/n Please mark `excludeEOA` as `true` to exclude Blur orders.
    */
   getOrdersBidsV5: {
     parameters: {
@@ -8145,12 +8170,12 @@ export interface operations {
   getSearchActivitiesV1: {
     parameters: {
       query: {
-        /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
-        token?: string;
+        /** Array of tokens. Max limit is 50. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
+        tokens?: string[] | string;
+        /** Array of collections. Max limit is 50. Example: `collections[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collections?: string[] | string;
         /** Filter to a particular contracts set. */
         contractsSetId?: string;
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection?: string;
         /** Filter to a particular collection set. */
         collectionsSetId?: string;
         /** Filter to a particular community. Example: `artblocks` */
@@ -8161,8 +8186,6 @@ export interface operations {
         users?: string[] | string;
         /** Amount of items returned. Max limit is 50 when `includedMetadata=true` otherwise max limit is 1000. */
         limit?: number;
-        /** Order the items are returned in the response. The blockchain event time is `eventTimestamp`. The event time recorded is `createdAt`. */
-        sortBy?: "eventTimestamp" | "createdAt";
         /** Use continuation token to request next offset of items. */
         continuation?: string;
         types?:
@@ -8628,7 +8651,7 @@ export interface operations {
     responses: {
       /** Successful */
       200: {
-        schema: definitions["Model217"];
+        schema: definitions["Model218"];
       };
     };
   };
@@ -8647,71 +8670,23 @@ export interface operations {
       };
     };
   };
-  /** This API can be used to build a feed for a collection */
-  getCollectionsCollectionActivityV3: {
+  getCollectionsCollectionAttributesV1: {
     parameters: {
       path: {
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         collection: string;
       };
       query: {
-        /** Amount of items returned in response. If `includeMetadata=true` max limit is 20, otherwise max limit is 1,000. */
+        attributeKey?: string;
+        sortBy?: "floorAskPrice" | "topBidValue";
+        offset?: number;
         limit?: number;
-        /** Order the items are returned in the response, eventTimestamp = The blockchain event time, createdAt - The time in which event was recorded */
-        sortBy?: "eventTimestamp" | "createdAt";
-        /** Use continuation token to request next offset of items. */
-        continuation?: string;
-        /** If true, metadata is included in the response. */
-        includeMetadata?: boolean;
-        types?:
-          | (
-              | "sale"
-              | "ask"
-              | "transfer"
-              | "mint"
-              | "bid"
-              | "bid_cancel"
-              | "ask_cancel"
-            )[]
-          | string;
       };
     };
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getCollectionActivityV3Response"];
-      };
-    };
-  };
-  /** This API can be used to build a feed for a collection */
-  getCollectionsCollectionActivityV1: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string;
-      };
-      query: {
-        /** Amount of items returned in response. */
-        limit?: number;
-        /** Use continuation token to request next offset of items. */
-        continuation?: number;
-        types?:
-          | (
-              | "sale"
-              | "ask"
-              | "transfer"
-              | "mint"
-              | "bid"
-              | "bid_cancel"
-              | "ask_cancel"
-            )[]
-          | string;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getUserActivityV2Response"];
+        schema: definitions["getCollectionAttributesV1Response"];
       };
     };
   };
@@ -8751,23 +8726,71 @@ export interface operations {
       };
     };
   };
-  getCollectionsCollectionAttributesV1: {
+  /** This API can be used to build a feed for a collection */
+  getCollectionsCollectionActivityV1: {
     parameters: {
       path: {
-        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         collection: string;
       };
       query: {
-        attributeKey?: string;
-        sortBy?: "floorAskPrice" | "topBidValue";
-        offset?: number;
+        /** Amount of items returned in response. */
         limit?: number;
+        /** Use continuation token to request next offset of items. */
+        continuation?: number;
+        types?:
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
+          | string;
       };
     };
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getCollectionAttributesV1Response"];
+        schema: definitions["getUserActivityV2Response"];
+      };
+    };
+  };
+  /** This API can be used to build a feed for a collection */
+  getCollectionsCollectionActivityV3: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string;
+      };
+      query: {
+        /** Amount of items returned in response. If `includeMetadata=true` max limit is 20, otherwise max limit is 1,000. */
+        limit?: number;
+        /** Order the items are returned in the response, eventTimestamp = The blockchain event time, createdAt - The time in which event was recorded */
+        sortBy?: "eventTimestamp" | "createdAt";
+        /** Use continuation token to request next offset of items. */
+        continuation?: string;
+        /** If true, metadata is included in the response. */
+        includeMetadata?: boolean;
+        types?:
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
+          | string;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getCollectionActivityV3Response"];
       };
     };
   };
@@ -9303,17 +9326,17 @@ export interface operations {
       };
     };
   };
-  /** This API can be used to build a feed for a token activity including sales, asks, transfers, mints, bids, cancelled bids, and cancelled asks types. */
-  getTokensTokenActivityV5: {
+  /** This API can be used to build a feed for a token */
+  getTokensTokenActivityV4: {
     parameters: {
       path: {
         /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
         token: string;
       };
       query: {
-        /** Amount of items returned. Default and max is 20. */
+        /** Amount of items returned in response. */
         limit?: number;
-        /** Order the items are returned in the response. The blockchain event time is `eventTimestamp`. The event time recorded is `createdAt`. */
+        /** Order the items are returned in the response, eventTimestamp = The blockchain event time, createdAt - The time in which event was recorded */
         sortBy?: "eventTimestamp" | "createdAt";
         /** If true, metadata is included in the response. */
         includeMetadata?: boolean;
@@ -9330,14 +9353,78 @@ export interface operations {
               | "ask_cancel"
             )[]
           | string;
-        /** Input any ERC20 address to return result in given currency */
-        displayCurrency?: string;
       };
     };
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getCollectionActivityV6Response"];
+        schema: definitions["getCollectionActivityV5Response"];
+      };
+    };
+  };
+  /** This API can be used to build a feed for a token */
+  getTokensTokenActivityV2: {
+    parameters: {
+      path: {
+        /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
+        token: string;
+      };
+      query: {
+        /** Amount of items returned in response. */
+        limit?: number;
+        /** Order the items are returned in the response, eventTimestamp = The blockchain event time, createdAt - The time in which event was recorded */
+        sortBy?: "eventTimestamp" | "createdAt";
+        /** Use continuation token to request next offset of items. */
+        continuation?: string;
+        types?:
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
+          | string;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getCollectionActivityV2Response"];
+      };
+    };
+  };
+  /** This API can be used to build a feed for a token */
+  getTokensTokenActivityV1: {
+    parameters: {
+      path: {
+        /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
+        token: string;
+      };
+      query: {
+        /** Amount of items returned in response. */
+        limit?: number;
+        /** Use continuation token to request next offset of items. */
+        continuation?: number;
+        types?:
+          | (
+              | "sale"
+              | "ask"
+              | "transfer"
+              | "mint"
+              | "bid"
+              | "bid_cancel"
+              | "ask_cancel"
+            )[]
+          | string;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getUserActivityV2Response"];
       };
     };
   };
@@ -9377,83 +9464,17 @@ export interface operations {
       };
     };
   };
-  /** This API can be used to build a feed for a token */
-  getTokensTokenActivityV1: {
+  /** This API can be used to build a feed for a token activity including sales, asks, transfers, mints, bids, cancelled bids, and cancelled asks types. */
+  getTokensTokenActivityV5: {
     parameters: {
       path: {
         /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
         token: string;
       };
       query: {
-        /** Amount of items returned in response. */
+        /** Amount of items returned. Default and max is 20. */
         limit?: number;
-        /** Use continuation token to request next offset of items. */
-        continuation?: number;
-        types?:
-          | (
-              | "sale"
-              | "ask"
-              | "transfer"
-              | "mint"
-              | "bid"
-              | "bid_cancel"
-              | "ask_cancel"
-            )[]
-          | string;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getUserActivityV2Response"];
-      };
-    };
-  };
-  /** This API can be used to build a feed for a token */
-  getTokensTokenActivityV2: {
-    parameters: {
-      path: {
-        /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
-        token: string;
-      };
-      query: {
-        /** Amount of items returned in response. */
-        limit?: number;
-        /** Order the items are returned in the response, eventTimestamp = The blockchain event time, createdAt - The time in which event was recorded */
-        sortBy?: "eventTimestamp" | "createdAt";
-        /** Use continuation token to request next offset of items. */
-        continuation?: string;
-        types?:
-          | (
-              | "sale"
-              | "ask"
-              | "transfer"
-              | "mint"
-              | "bid"
-              | "bid_cancel"
-              | "ask_cancel"
-            )[]
-          | string;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getCollectionActivityV2Response"];
-      };
-    };
-  };
-  /** This API can be used to build a feed for a token */
-  getTokensTokenActivityV4: {
-    parameters: {
-      path: {
-        /** Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
-        token: string;
-      };
-      query: {
-        /** Amount of items returned in response. */
-        limit?: number;
-        /** Order the items are returned in the response, eventTimestamp = The blockchain event time, createdAt - The time in which event was recorded */
+        /** Order the items are returned in the response. The blockchain event time is `eventTimestamp`. The event time recorded is `createdAt`. */
         sortBy?: "eventTimestamp" | "createdAt";
         /** If true, metadata is included in the response. */
         includeMetadata?: boolean;
@@ -9470,12 +9491,14 @@ export interface operations {
               | "ask_cancel"
             )[]
           | string;
+        /** Input any ERC20 address to return result in given currency */
+        displayCurrency?: string;
       };
     };
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getCollectionActivityV5Response"];
+        schema: definitions["getCollectionActivityV6Response"];
       };
     };
   };
@@ -9904,168 +9927,6 @@ export interface operations {
       };
     };
   };
-  /** Get detailed aggregate about attributes in a collection, attribute floors */
-  getCollectionsCollectionAttributesExploreV3: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string;
-      };
-      query: {
-        /** If true, top bid will be returned in the response. */
-        includeTopBid?: boolean;
-        /** Filter to a particular attribute key. Example: `Composition` */
-        attributeKey?: string;
-        /** Max number of items returned in the response. */
-        maxFloorAskPrices?: number;
-        /** Max number of items returned in the response. */
-        maxLastSells?: number;
-        /** Order the items are returned in the response. */
-        sortBy?: "floorAskPrice" | "topBidValue";
-        /** Use offset to request the next batch of items. */
-        offset?: number;
-        /** Amount of items returned in response. */
-        limit?: number;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getAttributesExploreV3Response"];
-      };
-    };
-  };
-  getCollectionsCollectionAttributesExploreV1: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string;
-      };
-      query: {
-        /** Filter to a particular attribute key, e.g. `Composition` */
-        attributeKey?: string;
-        sortBy?: "floorAskPrice" | "topBidValue";
-        offset?: number;
-        limit?: number;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getCollectionAttributesV1Response"];
-      };
-    };
-  };
-  getCollectionsCollectionAttributesStaticV1: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getAttributesStaticV1Response"];
-      };
-    };
-  };
-  getCollectionsCollectionAttributesAllV3: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getAttributesAllV3Response"];
-      };
-    };
-  };
-  getCollectionsCollectionAttributesAllV1: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getAttributesV1Response"];
-      };
-    };
-  };
-  getCollectionsCollectionAttributesAllV2: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getAttributesAllV2Response"];
-      };
-    };
-  };
-  /**
-   * Use this API to see all possible attributes within a collection.
-   *
-   * - `floorAskPrice` for all attributes might not be returned on collections with more than 10k tokens.
-   *
-   * - Attributes are case sensitive.
-   */
-  getCollectionsCollectionAttributesAllV4: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string;
-      };
-      query: {
-        /** Return result in given currency */
-        displayCurrency?: string;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getAttributesAllV4Response"];
-      };
-    };
-  };
-  /** Get detailed aggregate about attributes in a collection, attribute floors */
-  getCollectionsCollectionAttributesExploreV2: {
-    parameters: {
-      path: {
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection: string;
-      };
-      query: {
-        /** Filter to a particular attribute key. Example: `Composition` */
-        attributeKey?: string;
-        /** Max number of items returned in the response. */
-        maxFloorAskPrices?: number;
-        /** Max number of items returned in the response. */
-        maxLastSells?: number;
-        /** Order the items are returned in the response. */
-        sortBy?: "floorAskPrice" | "topBidValue";
-        /** Use offset to request the next batch of items. */
-        offset?: number;
-        /** Amount of items returned in response. */
-        limit?: number;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getAttributesExploreV2Response"];
-      };
-    };
-  };
   /** Use this API to see stats on a specific attribute within a collection. This endpoint will return `tokenCount`, `onSaleCount`, `sampleImages`, and `floorAsk` by default. */
   getCollectionsCollectionAttributesExploreV4: {
     parameters: {
@@ -10098,6 +9959,207 @@ export interface operations {
       /** Successful */
       200: {
         schema: definitions["getAttributesExploreV4Response"];
+      };
+    };
+  };
+  /** Get detailed aggregate about attributes in a collection, attribute floors */
+  getCollectionsCollectionAttributesExploreV2: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string;
+      };
+      query: {
+        /** Filter to a particular attribute key. Example: `Composition` */
+        attributeKey?: string;
+        /** Max number of items returned in the response. */
+        maxFloorAskPrices?: number;
+        /** Max number of items returned in the response. */
+        maxLastSells?: number;
+        /** Order the items are returned in the response. */
+        sortBy?: "floorAskPrice" | "topBidValue";
+        /** Use offset to request the next batch of items. */
+        offset?: number;
+        /** Amount of items returned in response. */
+        limit?: number;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getAttributesExploreV2Response"];
+      };
+    };
+  };
+  /**
+   * Use this API to see all possible attributes within a collection.
+   *
+   * - `floorAskPrice` for all attributes might not be returned on collections with more than 10k tokens.
+   *
+   * - Attributes are case sensitive.
+   */
+  getCollectionsCollectionAttributesAllV4: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string;
+      };
+      query: {
+        /** Return result in given currency */
+        displayCurrency?: string;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getAttributesAllV4Response"];
+      };
+    };
+  };
+  getCollectionsCollectionAttributesAllV2: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getAttributesAllV2Response"];
+      };
+    };
+  };
+  getCollectionsCollectionAttributesAllV1: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getAttributesV1Response"];
+      };
+    };
+  };
+  getCollectionsCollectionAttributesAllV3: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getAttributesAllV3Response"];
+      };
+    };
+  };
+  getCollectionsCollectionAttributesStaticV1: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getAttributesStaticV1Response"];
+      };
+    };
+  };
+  getCollectionsCollectionAttributesExploreV1: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string;
+      };
+      query: {
+        /** Filter to a particular attribute key, e.g. `Composition` */
+        attributeKey?: string;
+        sortBy?: "floorAskPrice" | "topBidValue";
+        offset?: number;
+        limit?: number;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getCollectionAttributesV1Response"];
+      };
+    };
+  };
+  /** Get detailed aggregate about attributes in a collection, attribute floors */
+  getCollectionsCollectionAttributesExploreV3: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string;
+      };
+      query: {
+        /** If true, top bid will be returned in the response. */
+        includeTopBid?: boolean;
+        /** Filter to a particular attribute key. Example: `Composition` */
+        attributeKey?: string;
+        /** Max number of items returned in the response. */
+        maxFloorAskPrices?: number;
+        /** Max number of items returned in the response. */
+        maxLastSells?: number;
+        /** Order the items are returned in the response. */
+        sortBy?: "floorAskPrice" | "topBidValue";
+        /** Use offset to request the next batch of items. */
+        offset?: number;
+        /** Amount of items returned in response. */
+        limit?: number;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getAttributesExploreV3Response"];
+      };
+    };
+  };
+  /**
+   * Use this API to see stats on a specific attribute within a collection. This endpoint will return `tokenCount`, `onSaleCount`, `sampleImages`, and `floorAskPrices` by default.
+   *
+   * - `floorAskPrices` will not be returned on attributes with more than 10k tokens.
+   */
+  getCollectionsCollectionAttributesExploreV5: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection: string;
+      };
+      query: {
+        /** Filter to a particular token-id. Example: `1` */
+        tokenId?: string;
+        /** If true, top bid will be returned in the response. */
+        includeTopBid?: boolean;
+        /** If true, range traits will be excluded from the response. */
+        excludeRangeTraits?: boolean;
+        /** If true, number traits will be excluded from the response. */
+        excludeNumberTraits?: boolean;
+        /** Filter to a particular attribute key. Example: `Composition` */
+        attributeKey?: string;
+        /** Max number of items returned in the response. */
+        maxFloorAskPrices?: number;
+        /** Max number of items returned in the response. */
+        maxLastSells?: number;
+        /** Use continuation token to request next offset of items. */
+        continuation?: string;
+        /** Amount of items returned in response. Default limit is 20. Max limit is 5000. */
+        limit?: number;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getAttributesExploreV5Response"];
       };
     };
   };
@@ -10161,7 +10223,7 @@ export interface operations {
       };
     };
   };
-  /** Return the top bids for the given user tokens */
+  /** Return the top bids for the given user tokens. Please mark `excludeEOA` as `true` to exclude Blur orders. */
   getOrdersUsersUserTopbidsV4: {
     parameters: {
       path: {
@@ -10414,7 +10476,7 @@ export interface operations {
         collection: string;
       };
       body: {
-        body?: definitions["Model346"];
+        body?: definitions["Model347"];
       };
     };
     responses: {
@@ -10456,7 +10518,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model347"];
+        body?: definitions["Model348"];
       };
     };
     responses: {
@@ -10472,7 +10534,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model350"];
+        body?: definitions["Model351"];
       };
     };
     responses: {
@@ -10488,7 +10550,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model351"];
+        body?: definitions["Model352"];
       };
     };
     responses: {
@@ -10504,7 +10566,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model352"];
+        body?: definitions["Model353"];
       };
     };
     responses: {
@@ -10520,7 +10582,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model353"];
+        body?: definitions["Model354"];
       };
     };
     responses: {
@@ -10536,7 +10598,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model354"];
+        body?: definitions["Model355"];
       };
     };
     responses: {
@@ -10552,7 +10614,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model355"];
+        body?: definitions["Model356"];
       };
     };
     responses: {
@@ -10568,7 +10630,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model356"];
+        body?: definitions["Model357"];
       };
     };
     responses: {
@@ -10584,7 +10646,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model357"];
+        body?: definitions["Model358"];
       };
     };
     responses: {
@@ -10600,7 +10662,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model358"];
+        body?: definitions["Model359"];
       };
     };
     responses: {
@@ -10616,7 +10678,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model359"];
+        body?: definitions["Model360"];
       };
     };
     responses: {
@@ -10632,7 +10694,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model360"];
+        body?: definitions["Model361"];
       };
     };
     responses: {
@@ -10648,7 +10710,23 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model361"];
+        body?: definitions["Model362"];
+      };
+    };
+    responses: {
+      /** Successful */
+      default: {
+        schema: string;
+      };
+    };
+  };
+  postAdminResyncnftbalances: {
+    parameters: {
+      header: {
+        "x-admin-api-key": string;
+      };
+      body: {
+        body?: definitions["Model353"];
       };
     };
     responses: {
@@ -10664,7 +10742,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model362"];
+        body?: definitions["Model363"];
       };
     };
     responses: {
@@ -10680,7 +10758,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model363"];
+        body?: definitions["Model364"];
       };
     };
     responses: {
@@ -10696,7 +10774,7 @@ export interface operations {
         "x-admin-api-key": string;
       };
       body: {
-        body?: definitions["Model364"];
+        body?: definitions["Model365"];
       };
     };
     responses: {
@@ -10707,22 +10785,6 @@ export interface operations {
     };
   };
   postAdminRouters: {
-    parameters: {
-      header: {
-        "x-admin-api-key": string;
-      };
-      body: {
-        body?: definitions["Model366"];
-      };
-    };
-    responses: {
-      /** Successful */
-      default: {
-        schema: string;
-      };
-    };
-  };
-  postAdminSetapiroutepoints: {
     parameters: {
       header: {
         "x-admin-api-key": string;
@@ -10954,7 +11016,7 @@ export interface operations {
     responses: {
       /** Successful */
       200: {
-        schema: definitions["Model229"];
+        schema: definitions["Model230"];
       };
     };
   };
@@ -10980,7 +11042,7 @@ export interface operations {
     responses: {
       /** Successful */
       200: {
-        schema: definitions["Model229"];
+        schema: definitions["Model230"];
       };
     };
   };
@@ -11147,6 +11209,7 @@ export interface operations {
       };
     };
   };
+  /** Use this API to fill listings. We recommend using the SDK over this API as the SDK will iterate through the steps and return callbacks. Please mark `excludeEOA` as `true` to exclude Blur orders. */
   postExecuteBuyV7: {
     parameters: {
       body: {
@@ -11296,6 +11359,7 @@ export interface operations {
       };
     };
   };
+  /** Use this API to accept bids. We recommend using the SDK over this API as the SDK will iterate through the steps and return callbacks. Please mark `excludeEOA` as `true` to exclude Blur orders. */
   postExecuteSellV7: {
     parameters: {
       body: {

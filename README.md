@@ -12,7 +12,7 @@ yarn add @reservoir0x/reservoir-kit-ui
 Also make sure to install the peer dependencies required by ReservoirKit if your application doesn't already include them:
 
 ```
-yarn add wagmi ethers react react-dom
+yarn add wagmi viem react react-dom
 ```
 
 Head over to our [docs](https://docs.reservoir.tools/docs/reservoir-kit) to learn more.  

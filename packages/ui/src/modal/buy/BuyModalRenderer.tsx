@@ -15,14 +15,12 @@ import {
   useListings,
   useChainCurrency,
 } from '../../hooks'
-import { useAccount, useBalance, useSigner, useNetwork } from 'wagmi'
+import { useAccount, useBalance, useWalletClient, useNetwork } from 'wagmi'
 
-import { BigNumber, utils } from 'ethers'
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js'
-import { constants } from 'ethers'
+import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { Currency } from '../../types/Currency'
 
 export enum BuyStep {
@@ -66,7 +64,7 @@ type ChildrenProps = {
   totalUsd: number
   usdPrice: number
   isBanned: boolean
-  balance?: BigNumber
+  balance?: bigint
   address?: string
   blockExplorerBaseUrl: string
   steps: Execute['steps'] | null
@@ -99,7 +97,7 @@ export const BuyModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
   const [totalPrice, setTotalPrice] = useState(0)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0)
   const [listingsToBuy, setListingsToBuy] = useState<Record<string, number>>({})
@@ -139,7 +137,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: balance } = useBalance({
     address: address,
     token:
-      currency?.contract !== constants.AddressZero
+      currency?.contract !== zeroAddress
         ? (currency?.contract as UseBalanceToken)
         : undefined,
     watch: open,
@@ -236,10 +234,14 @@ export const BuyModalRenderer: FC<Props> = ({
           totalPrice - feeOnTop,
           currency?.decimals || 18
         )
-        const fee = parseUnits(`${totalFeeTruncated}`, currency?.decimals)
-          .mul(feeBps)
-          .div(10000)
-        const atomicUnitsFee = formatUnits(fee, 0)
+        const fee =
+          Number(
+            parseUnits(
+              `${Number(totalFeeTruncated)}`,
+              currency?.decimals || 18
+            ) * BigInt(feeBps)
+          ) / 10000
+        const atomicUnitsFee = formatUnits(BigInt(fee), 0)
         return `${referrer}:${atomicUnitsFee}`
       })
       options.feesOnTop = fixedFees
@@ -447,10 +449,7 @@ export const BuyModalRenderer: FC<Props> = ({
         } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
           const fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
             const [_, fee] = feeOnTop.split(':')
-            const parsedFee = formatUnits(
-              BigNumber.from(fee),
-              currency?.decimals
-            )
+            const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
             return totalFees + Number(parsedFee)
           }, 0)
           total += fees
@@ -493,9 +492,8 @@ export const BuyModalRenderer: FC<Props> = ({
       if (!balance.value) {
         setHasEnoughCurrency(false)
       } else if (
-        balance.value.lt(
-          utils.parseUnits(`${totalPriceTruncated}`, currency?.decimals)
-        )
+        balance.value <
+        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals || 18)
       ) {
         setHasEnoughCurrency(false)
       } else {

@@ -17,9 +17,8 @@ import {
 import { Cart } from '../../context/CartProvider'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { formatNumber } from '../../lib/numbers'
-import { mainnet } from 'wagmi'
-import * as allChains from 'wagmi/chains'
 import QuantitySelector from '../../modal/QuantitySelector'
+import * as allChains from 'viem/chains'
 
 type Props = {
   item: Cart['items'][0]
@@ -103,7 +102,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
           let url: string | undefined = tokenUrl
           if (!url && cartChain) {
             let tokenMetaKey: string | null = null
-            if (cartChain.id === mainnet.id) {
+            if (cartChain.id === allChains.mainnet.id) {
               tokenMetaKey = 'reservoir:token-url-mainnet'
             } else {
               tokenMetaKey = `reservoir:token-url-${chain?.name.toLowerCase()}`

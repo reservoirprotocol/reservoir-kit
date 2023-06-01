@@ -10,7 +10,7 @@ import React, {
 import { darkTheme } from 'stitches.config'
 import { ThemeProvider } from 'next-themes'
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
-import { WagmiConfig, createClient, configureChains } from 'wagmi'
+import { WagmiConfig, createConfig, configureChains } from 'wagmi'
 import * as allChains from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
@@ -36,7 +36,7 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   : false
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 
-const { chains, provider } = configureChains(
+const { chains, publicClient } = configureChains(
   [
     allChains.mainnet,
     allChains.goerli,
@@ -52,10 +52,10 @@ const { connectors } = getDefaultWallets({
   chains,
 })
 
-const wagmiClient = createClient({
+const wagmiConfig = createConfig({
   autoConnect: true,
   connectors,
-  provider,
+  publicClient,
 })
 
 export const ThemeSwitcherContext = React.createContext<{
@@ -83,7 +83,7 @@ type AppWrapperProps = {
 const AppWrapper: FC<any> = ({ children }) => {
   const { theme } = useContext(ThemeSwitcherContext)
   return (
-    <WagmiConfig client={wagmiClient}>
+    <WagmiConfig config={wagmiConfig}>
       <ReservoirKitProvider
         options={{
           chains: [
