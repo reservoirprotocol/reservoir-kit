@@ -135,9 +135,9 @@ export const SweepModalRenderer: FC<Props> = ({
     }
 
     let options: BuyTokenOptions = {
-      // partial: true,
-      // onlyPath: true,
-      // currency: currency.address,
+      partial: true,
+      onlyPath: true,
+      currency: currency.address,
     }
 
     if (normalizeRoyalties !== undefined) {
