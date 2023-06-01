@@ -42,9 +42,9 @@ import ProgressBar from '../../modal/ProgressBar'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { Currency } from '../../types/Currency'
-import { constants } from 'ethers'
 import SigninStep from '../SigninStep'
 import { CurrencySelector } from '../CurrencySelector'
+import { zeroAddress } from 'viem'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -548,7 +548,7 @@ export function ListModal({
                           marketplace.truePrice !== null &&
                           Number(marketplace.truePrice) !== 0 &&
                           Number(marketplace.truePrice) >= MINIMUM_AMOUNT &&
-                          currency.contract === constants.AddressZero &&
+                          currency.contract === zeroAddress &&
                           Number(marketplace.truePrice) <
                             collection?.floorAsk?.price.amount.native && (
                             <Box>

@@ -32,9 +32,6 @@
         "protocol",
         "sdk"
     ],
-    "peerDependencies": {
-        "ethers": "^5.6.1"
-    },
     "dependencies": {
         "axios": "^0.27.2"
     },
@@ -43,5 +40,8 @@
     },
     "devDependencies": {
         "openapi-typescript": "^5.4.1"
+    },
+    "peerDependencies": {
+        "viem": "~0.3.18"
     }
 }

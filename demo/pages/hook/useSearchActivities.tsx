@@ -10,7 +10,7 @@ const Activity: NextPage = () => {
     fetchNextPage,
     hasNextPage,
   } = useSearchActivities({
-    collection: '0xed5af388653567af2f388e6224dc7c4b3241c544',
+    collections: ['0xed5af388653567af2f388e6224dc7c4b3241c544'],
   })
 
   const { ref, inView } = useInView()

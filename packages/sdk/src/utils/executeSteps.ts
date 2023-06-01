@@ -1,8 +1,6 @@
-import { arrayify } from 'ethers/lib/utils'
 import { Execute, paths } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
-import { Signer } from 'ethers'
-import { TypedDataSigner } from '@ethersproject/abstract-signer'
+import { Account, WalletClient, createPublicClient, http, toBytes } from 'viem'
 import { axios } from '../utils'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions/index'
@@ -11,6 +9,7 @@ import { version } from '../../package.json'
 import { LogLevel } from '../utils/logger'
 import { generateEvent } from '../utils/events'
 import { sendTransactionSafely } from './transaction'
+import * as allChains from 'viem/chains'
 
 function checkExpectedPrice(
   quote: number,
@@ -63,13 +62,24 @@ function checkExpectedPrice(
 
 export async function executeSteps(
   request: AxiosRequestConfig,
-  signer: Signer,
+  signer: WalletClient,
   setState: (steps: Execute['steps'], path: Execute['path']) => any,
   newJson?: Execute,
   expectedPrice?: number | Record<string, number>
 ) {
   const client = getClient()
   const currentReservoirChain = client?.currentChain()
+
+  const viemChain =
+    Object.values(allChains).find(
+      (chain) => chain.id === (currentReservoirChain?.id || 1)
+    ) || allChains.mainnet
+
+  const viemClient = createPublicClient({
+    chain: viemChain,
+    transport: http(),
+  })
+
   let json = newJson
   try {
     if (!request.headers) {
@@ -261,16 +271,23 @@ export async function executeSteps(
                   ],
                   LogLevel.Verbose
                 )
-                await sendTransactionSafely(stepData, signer, (tx) => {
-                  client.log(
-                    ['Execute Steps: Transaction step, got transaction', tx],
-                    LogLevel.Verbose
-                  )
-                  stepItem.txHash = tx.hash
-                  if (json) {
-                    setState([...json.steps], path)
+
+                await sendTransactionSafely(
+                  viemChain,
+                  viemClient,
+                  stepData,
+                  signer,
+                  (tx) => {
+                    client.log(
+                      ['Execute Steps: Transaction step, got transaction', tx],
+                      LogLevel.Verbose
+                    )
+                    stepItem.txHash = tx
+                    if (json) {
+                      setState([...json.steps], path)
+                    }
                   }
-                })
+                )
                 client.log(
                   [
                     'Execute Steps: Transaction finished, starting to poll for confirmation',
@@ -378,24 +395,28 @@ export async function executeSteps(
                     )
                     if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
                       // If the message represents a hash, we need to convert it to raw bytes first
-                      signature = await signer.signMessage(
-                        arrayify(signData.message)
-                      )
+                      signature = await signer.signMessage({
+                        account: signer.account as Account,
+                        message: toBytes(signData.message).toString(),
+                      })
                     } else {
-                      signature = await signer.signMessage(signData.message)
+                      signature = await signer.signMessage({
+                        account: signer.account as Account,
+                        message: signData.message,
+                      })
                     }
                   } else if (signData.signatureKind === 'eip712') {
                     client.log(
                       ['Execute Steps: Signing with eip712'],
                       LogLevel.Verbose
                     )
-                    signature = await (
-                      signer as unknown as TypedDataSigner
-                    )._signTypedData(
-                      signData.domain,
-                      signData.types,
-                      signData.value
-                    )
+                    signature = await signer.signTypedData({
+                      account: signer.account as Account,
+                      domain: signData.domain,
+                      types: signData.types,
+                      primaryType: signData.primaryType,
+                      message: signData.value,
+                    })
                   }
 
                   if (signature) {
@@ -486,9 +507,9 @@ export async function executeSteps(
     // Recursively call executeSteps()
     await executeSteps(request, signer, setState, json)
   } catch (err: any) {
-    let blockNumber = 0
+    let blockNumber = 0n
     try {
-      blockNumber = (await signer.provider?.getBlockNumber()) || 0
+      blockNumber = await viemClient.getBlockNumber()
     } catch (blockError) {
       client.log(
         ['Execute Steps: Failed to get block number', blockError],

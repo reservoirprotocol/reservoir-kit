@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from 'react'
 import { useTokens, useCoinConversion, useReservoirClient } from '../../hooks'
-import { useAccount, useSigner, useNetwork } from 'wagmi'
+import { useAccount, useWalletClient, useNetwork } from 'wagmi'
 import {
   Execute,
   ReservoirClientActions,
@@ -79,7 +79,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   children,
 }) => {
   const client = useReservoirClient()
-  const { data: signer } = useSigner()
+  const { data: signer } = useWalletClient()
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [prices, setPrices] = useState<AcceptBidPrice[]>([])
   const [acceptBidStep, setAcceptBidStep] = useState<AcceptBidStep>(

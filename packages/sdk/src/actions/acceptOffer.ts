@@ -1,7 +1,7 @@
-import { Signer } from 'ethers'
 import { getClient } from '.'
 import { Execute, paths } from '../types'
 import { executeSteps, request } from '../utils'
+import { WalletClient } from 'viem'
 import axios, { AxiosRequestConfig } from 'axios'
 
 type AcceptOfferBodyParameters =
@@ -16,7 +16,7 @@ type Data = {
   items: NonNullable<AcceptOfferBodyParameters>['items']
   options?: Partial<AcceptOfferOptions>
   expectedPrice?: number | Record<string, number>
-  signer: Signer
+  signer: WalletClient
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
   precheck?: boolean
 }
@@ -32,7 +32,7 @@ type Data = {
  */
 export async function acceptOffer(data: Data) {
   const { items, expectedPrice, signer, onProgress, precheck } = data
-  const taker = await signer.getAddress()
+  const [taker] = await signer.getAddresses()
   const client = getClient()
   const options = data.options || {}
   const baseApiUrl = client.currentChain()?.baseApiUrl
