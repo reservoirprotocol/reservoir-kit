@@ -126,24 +126,18 @@ export const SweepModalRenderer: FC<Props> = ({
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
-  const [isFetchingBuyPath, setIsFetchingBuyPath] = useState(false)
-  const [hasFetchedInitialTokens, setHasFetchedInitialTokens] = useState(false)
+  const [fetchedInitialTokens, setFetchedInitialTokens] = useState(false)
   const [tokens, setTokens] = useState<BuyPath | undefined>(undefined)
 
   const fetchBuyPath = useCallback(() => {
     if (!signer || !client) {
-      setIsFetchingBuyPath(false)
       return
     }
-    setIsFetchingBuyPath(true)
-
-    console.log('fetchBuyPath currency: ', currency.address)
-    console.log('collectionId: ', collectionId)
 
     let options: BuyTokenOptions = {
-      partial: true,
-      onlyPath: true,
-      currency: currency.address,
+      // partial: true,
+      // onlyPath: true,
+      // currency: currency.address,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -160,7 +154,6 @@ export const SweepModalRenderer: FC<Props> = ({
         onProgress: () => {},
       })
       .then((data) => {
-        console.log(data)
         setTokens(
           'path' in (data as any)
             ? ((data as Execute)['path'] as BuyPath)
@@ -168,14 +161,12 @@ export const SweepModalRenderer: FC<Props> = ({
         )
       })
       .finally(() => {
-        setHasFetchedInitialTokens(true)
-        setIsFetchingBuyPath(false)
+        setFetchedInitialTokens(true)
       })
   }, [client, signer, normalizeRoyalties, collectionId, currency])
 
   useEffect(() => {
     if (open) {
-      console.log('currency changed: ', currency)
       fetchBuyPath()
     }
   }, [client, signer, open, currency])
@@ -201,13 +192,11 @@ export const SweepModalRenderer: FC<Props> = ({
       }
       if (currencies.size > 1) {
         if (currency?.address != chainCurrency?.address) {
-          console.log('setting currency: ', chainCurrency.address)
           setCurrency(chainCurrency)
         }
       } else if (currencies.size > 0) {
         let otherCurrency = Object.values(currenciesData)[0]
         if (otherCurrency?.contract != currency?.address) {
-          console.log('setting currency: ', otherCurrency?.contract)
           setCurrency({
             symbol: otherCurrency?.symbol as string,
             decimals: otherCurrency?.decimals as number,
@@ -296,14 +285,30 @@ export const SweepModalRenderer: FC<Props> = ({
     }
   }, [availableTokens, isItemsToggled])
 
+  const calculateTokensToAdd = useCallback(() => {
+    let totalEthPrice = 0
+    let tokensToAdd = []
+    for (let token of availableTokens) {
+      if (
+        ethAmount &&
+        totalEthPrice + (token?.totalPrice || 0) <= ethAmount &&
+        tokensToAdd.length < 50
+      ) {
+        totalEthPrice += token?.totalPrice || 0
+        tokensToAdd.push(token)
+      } else {
+        break
+      }
+    }
+    return tokensToAdd
+  }, [availableTokens, ethAmount])
+
   useEffect(() => {
     if (isItemsToggled) {
       const updatedTokens = availableTokens?.slice(0, itemAmount)
       setSelectedTokens(updatedTokens)
     } else {
-      // const max
-      // const updatedTokens = updateSelectedTokens(availableTokens, 50)
-      // setSelectedTokens(updatedTokens)
+      setSelectedTokens(calculateTokensToAdd())
     }
   }, [isItemsToggled, ethAmount, itemAmount])
 
@@ -317,11 +322,13 @@ export const SweepModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (!open) {
       setSelectedTokens([])
+      setTokens(undefined)
       setItemAmount(undefined)
       setEthAmount(undefined)
       setSweepStep(SweepStep.Idle)
       setIsItemsToggled(true)
       setTransactionError(null)
+      setFetchedInitialTokens(false)
     }
   }, [open])
 
@@ -361,15 +368,6 @@ export const SweepModalRenderer: FC<Props> = ({
     if (normalizeRoyalties !== undefined) {
       options.normalizeRoyalties = normalizeRoyalties
     }
-
-    // const items = selectedTokens.reduce((items, token) => {
-    //   if (token?.token?.tokenId && token?.token?.contract) {
-    //     items?.push({
-    //       token: `${token.token.contract}:${token.token.tokenId}`,
-    //     })
-    //   }
-    //   return items
-    // }, [] as Parameters<ReservoirClientActions['buyToken']>['0']['items'])
 
     if (!selectedTokens || selectedTokens.length === 0) {
       const error = new Error('No tokens to sweep')
@@ -461,7 +459,7 @@ export const SweepModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
-        loading: !hasFetchedInitialTokens,
+        loading: !fetchedInitialTokens,
         address: account?.address,
         selectedTokens,
         setSelectedTokens,
