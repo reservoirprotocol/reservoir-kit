@@ -1,5 +1,4 @@
 import {
-  BuyPath,
   createClient,
   Execute,
   executeSteps,
@@ -17,7 +16,7 @@ const wallet: WalletClient = createWalletClient({
   transport: http(),
 })
 
-const client: ReservoirClient = createClient({
+createClient({
   chains: [
     {
       id: 1,
@@ -26,9 +25,7 @@ const client: ReservoirClient = createClient({
     },
   ],
   logLevel: 0,
-})
-
-client
+}) as ReservoirClient
 
 const signMessage = wallet.signMessage.bind(wallet)
 const signTypedData = wallet.signTypedData.bind(wallet)
@@ -276,7 +273,7 @@ describe(`It should test the executeStepsMethod.`, (): void => {
           ],
         },
       ],
-      path: {} as BuyPath,
+      path: {} as any,
       /**
        * We can't stop the request being sent. So what we do is check if it's an axios error.
        * If it is, then the error that executeSteps threw was due to a bad request made after we tested the data.
