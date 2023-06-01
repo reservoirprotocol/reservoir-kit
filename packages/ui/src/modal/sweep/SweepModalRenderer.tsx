@@ -62,9 +62,12 @@ type ChildrenProps = {
   maxInput: number
   setMaxInput: React.Dispatch<React.SetStateAction<number>>
   currency: ReturnType<typeof useChainCurrency>
+  chainCurrency: ReturnType<typeof useChainCurrency>
   isChainCurrency: boolean
   total: number
   totalUsd: number
+  feeOnTop: number
+  feeUsd: number
   currentChain: ReservoirChain | null | undefined
   availableTokens: BuyPath
   address?: string
@@ -83,9 +86,8 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   collectionId?: string
-  referrerFeeBps?: number | null
-  referrerFeeFixed?: number | null
-  referrer?: string | null
+  feesOnTopBps?: string[] | null
+  feesOnTopFixed?: string[] | null
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -93,9 +95,8 @@ type Props = {
 export const SweepModalRenderer: FC<Props> = ({
   open,
   collectionId,
-  referrerFeeBps,
-  referrerFeeFixed,
-  referrer,
+  feesOnTopBps,
+  feesOnTopFixed,
   normalizeRoyalties,
   children,
 }) => {
@@ -111,6 +112,7 @@ export const SweepModalRenderer: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
 
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
+  const [feeOnTop, setFeeOnTop] = useState(0)
 
   const chainCurrency = useChainCurrency()
   const [currency, setCurrency] = useState(chainCurrency)
@@ -137,7 +139,6 @@ export const SweepModalRenderer: FC<Props> = ({
     let options: BuyTokenOptions = {
       partial: true,
       onlyPath: true,
-      currency: currency.address,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -146,7 +147,12 @@ export const SweepModalRenderer: FC<Props> = ({
 
     client?.actions
       .buyToken({
-        items: [{ collection: collectionId, quantity: 100 }],
+        items: [
+          {
+            collection: collectionId,
+            quantity: 10, // TODO: update once indexer stores more than 10 prices for pool orders
+          },
+        ],
         expectedPrice: undefined,
         options,
         signer: signer,
@@ -169,7 +175,7 @@ export const SweepModalRenderer: FC<Props> = ({
     if (open) {
       fetchBuyPath()
     }
-  }, [client, signer, open, currency])
+  }, [client, signer, open])
 
   // Update currency
   const updateCurrency = useCallback(
@@ -200,7 +206,7 @@ export const SweepModalRenderer: FC<Props> = ({
           setCurrency({
             symbol: otherCurrency?.symbol as string,
             decimals: otherCurrency?.decimals as number,
-            name: '', // TODO: fix
+            name: '',
             address: otherCurrency?.contract as Address,
             chainId: chain?.id as number,
           })
@@ -217,17 +223,38 @@ export const SweepModalRenderer: FC<Props> = ({
 
   const total = useMemo(() => {
     const updatedTotal = selectedTokens?.reduce((total, token) => {
-      total += token?.totalPrice || 0
-      return total
+      return (
+        total +
+        (token?.currency != chainCurrency.address && isChainCurrency
+          ? token?.buyInQuote || 0
+          : token?.totalPrice || 0)
+      )
     }, 0)
-    return updatedTotal
-  }, [selectedTokens, isChainCurrency])
+
+    let fees = 0
+    if (feesOnTopBps && feesOnTopBps.length > 0) {
+      fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
+        const [_, fee] = feeOnTop.split(':')
+        return totalFees + (Number(fee) / 10000) * updatedTotal
+      }, 0)
+    } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
+      fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
+        const [_, fee] = feeOnTop.split(':')
+        const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
+        return totalFees + Number(parsedFee)
+      }, 0)
+    }
+    setFeeOnTop(fees)
+
+    return updatedTotal + fees
+  }, [selectedTokens, feesOnTopBps, feesOnTopFixed, currency, isChainCurrency])
 
   const coinConversion = useCoinConversion(
     open && currency ? 'USD' : undefined,
     currency?.symbol
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
+  const feeUsd = feeOnTop * usdPrice
   const totalUsd = usdPrice * (total || 0)
 
   const { data: balance } = useBalance({
@@ -276,7 +303,10 @@ export const SweepModalRenderer: FC<Props> = ({
       setMaxInput(Math.min(availableTokens.length, 50))
     } else {
       const maxEth = availableTokens.slice(0, 50).reduce((total, token) => {
-        total += token?.totalPrice || 0
+        total +=
+          token?.currency != chainCurrency.address && isChainCurrency
+            ? token?.buyInQuote || 0
+            : token?.totalPrice || 0
 
         return total
       }, 0)
@@ -351,17 +381,27 @@ export const SweepModalRenderer: FC<Props> = ({
       partial: true,
     }
 
-    if (referrer && referrerFeeBps) {
-      const price = toFixed(total, currency?.decimals || 18)
-      const fee =
-        (Number(parseUnits(`${Number(price)}`, currency?.decimals || 18)) *
-          referrerFeeBps) /
-        10000
-      const atomicUnitsFee = formatUnits(BigInt(fee), 0)
-      options.feesOnTop = [`${referrer}:${atomicUnitsFee}`]
-    } else if (referrer && referrerFeeFixed) {
-      options.feesOnTop = [`${referrer}:${referrerFeeFixed}`]
-    } else if (referrer === null && referrerFeeBps === null) {
+    if (feesOnTopFixed && feesOnTopFixed.length > 0) {
+      options.feesOnTop = feesOnTopFixed
+    } else if (feesOnTopBps && feesOnTopBps?.length > 0) {
+      const fixedFees = feesOnTopBps.map((fullFee) => {
+        const [referrer, feeBps] = fullFee.split(':')
+        const totalFeeTruncated = toFixed(
+          total - feeOnTop,
+          currency?.decimals || 18
+        )
+        const fee =
+          Number(
+            parseUnits(
+              `${Number(totalFeeTruncated)}`,
+              currency?.decimals || 18
+            ) * BigInt(feeBps)
+          ) / 10000
+        const atomicUnitsFee = formatUnits(BigInt(fee), 0)
+        return `${referrer}:${atomicUnitsFee}`
+      })
+      options.feesOnTop = fixedFees
+    } else if (!feesOnTopFixed && !feesOnTopBps) {
       delete options.feesOnTop
     }
 
@@ -380,7 +420,7 @@ export const SweepModalRenderer: FC<Props> = ({
     client.actions
       .buyToken({
         items: [{ collection: collectionId, quantity: selectedTokens.length }],
-        expectedPrice: total,
+        expectedPrice: total - feeOnTop,
         signer,
         options,
         onProgress: (steps: Execute['steps'], path: Execute['path']) => {
@@ -472,9 +512,12 @@ export const SweepModalRenderer: FC<Props> = ({
         maxInput,
         setMaxInput,
         currency,
+        chainCurrency,
         isChainCurrency,
         total,
         totalUsd,
+        feeOnTop,
+        feeUsd,
         currentChain,
         availableTokens,
         tokens,

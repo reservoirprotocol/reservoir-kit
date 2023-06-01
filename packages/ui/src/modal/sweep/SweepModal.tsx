@@ -43,9 +43,8 @@ type SweepCallbackData = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
-  referrerFeeBps?: number | null
-  referrerFeeFixed?: number | null
-  referrer?: string | null
+  feesOnTopBps?: string[] | null
+  feesOnTopFixed?: string[] | null
   normalizeRoyalties?: boolean
   onSweepComplete?: (data: SweepCallbackData) => void
   onSweepError?: (error: Error, data: SweepCallbackData) => void
@@ -56,9 +55,8 @@ export function SweepModal({
   openState,
   trigger,
   collectionId,
-  referrerFeeBps,
-  referrerFeeFixed,
-  referrer,
+  feesOnTopBps,
+  feesOnTopFixed,
   normalizeRoyalties,
   onSweepComplete,
   onSweepError,
@@ -73,9 +71,8 @@ export function SweepModal({
     <SweepModalRenderer
       open={open}
       collectionId={collectionId}
-      referrerFeeBps={referrerFeeBps}
-      referrerFeeFixed={referrerFeeFixed}
-      referrer={referrer}
+      feesOnTopBps={feesOnTopBps}
+      feesOnTopFixed={feesOnTopFixed}
       normalizeRoyalties={normalizeRoyalties}
     >
       {({
@@ -90,9 +87,12 @@ export function SweepModal({
         setIsItemsToggled,
         maxInput,
         currency,
+        chainCurrency,
         isChainCurrency,
         total,
         totalUsd,
+        feeOnTop,
+        feeUsd,
         currentChain,
         availableTokens,
         balance,
@@ -267,7 +267,12 @@ export function SweepModal({
                             name={`#${token.tokenId}`}
                             image={`${currentChain?.baseApiUrl}/redirect/tokens/${token.contract}:${token.tokenId}/image/v1`}
                             currency={currency}
-                            amount={token?.totalPrice}
+                            amount={
+                              token?.currency != chainCurrency.address &&
+                              isChainCurrency
+                                ? token?.buyInQuote
+                                : token?.totalPrice
+                            }
                           />
                         ))}
                       </Grid>
@@ -281,6 +286,25 @@ export function SweepModal({
                       </Text>
                     )}
                   </Flex>
+                  {feeOnTop > 0 && (
+                    <Flex
+                      direction="column"
+                      css={{ width: '100%', py: '$4', gap: '$1' }}
+                    >
+                      <Flex align="center" justify="between">
+                        <Text style="subtitle2">Referral Fee</Text>
+                        <FormatCryptoCurrency
+                          amount={feeOnTop}
+                          address={currency?.address}
+                          decimals={currency?.decimals}
+                          symbol={currency?.symbol}
+                        />
+                      </Flex>
+                      <Flex justify="end">
+                        <FormatCurrency amount={feeUsd} color="subtle" />
+                      </Flex>
+                    </Flex>
+                  )}
                   <Flex justify="between" align="start" css={{ height: 34 }}>
                     <Text style="h6">Total</Text>
                     <Flex direction="column" align="end" css={{ gap: '$1' }}>
