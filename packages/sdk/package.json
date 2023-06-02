@@ -13,6 +13,7 @@
     ],
     "scripts": {
         "clean": "rm -rf dist",
+        "test": "jest",
         "version": "yarn version",
         "version:package": "sh ../../scripts/package-version.sh",
         "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release client package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-SDK; git push --tags;",

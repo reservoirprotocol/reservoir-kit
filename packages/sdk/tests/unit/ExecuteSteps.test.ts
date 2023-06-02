@@ -274,9 +274,9 @@ describe(`It should test the executeStepsMethod.`, (): void => {
        * If it isn't, then the error is likely a jest or node exception.
        */
     }).catch((e: Error) => {
+      expect(signTypedDataSpy).toBeCalledWith()
       if (e.name !== 'AxiosError') throw e
     })
-    expect(signTypedDataSpy).toBeCalledWith()
   })
 })
 
