@@ -453,6 +453,7 @@ describe(`It should test the executeSteps Method.`, (): void => {
         return
       })
       .catch((e: Error) => {
+        console.log(e)
         if (e.name !== 'AxiosError') throw e
         return
       })
