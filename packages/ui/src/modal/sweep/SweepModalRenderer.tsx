@@ -381,9 +381,7 @@ export const SweepModalRenderer: FC<Props> = ({
       partial: true,
     }
 
-    if (feesOnTopFixed && feesOnTopFixed.length > 0) {
-      options.feesOnTop = feesOnTopFixed
-    } else if (feesOnTopBps && feesOnTopBps?.length > 0) {
+    if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
         const totalFeeTruncated = toFixed(
@@ -401,6 +399,9 @@ export const SweepModalRenderer: FC<Props> = ({
         return `${referrer}:${atomicUnitsFee}`
       })
       options.feesOnTop = fixedFees
+    }
+    if (feesOnTopFixed && feesOnTopFixed.length > 0) {
+      options.feesOnTop = feesOnTopFixed
     } else if (!feesOnTopFixed && !feesOnTopBps) {
       delete options.feesOnTop
     }
