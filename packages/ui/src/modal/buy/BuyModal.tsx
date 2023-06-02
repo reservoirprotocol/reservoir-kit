@@ -155,6 +155,24 @@ export function BuyModal({
           steps?.filter((step) => step.items && step.items.length > 0) || []
         const lastStepItems =
           executableSteps[executableSteps.length - 1]?.items || []
+
+        const purchaseTxHashes =
+          stepData?.currentStep?.items?.reduce((txHashes, item) => {
+            item.salesData?.forEach((saleData) => {
+              if (saleData.txHash) {
+                txHashes.add(saleData.txHash)
+              }
+            })
+            return txHashes
+          }, new Set<string>()) || []
+          
+        const totalPurchases = Array.from(purchaseTxHashes).length
+        
+        const failedPurchases =
+          totalPurchases - (stepData?.currentStep?.items?.length || 0)
+
+        const successfulPurchases = totalPurchases - failedPurchases
+
         let finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
         let price = listing?.price?.amount?.decimal || 0
@@ -420,56 +438,126 @@ export function BuyModal({
                     textAlign: 'center',
                   }}
                 >
-                  <Text style="h5" css={{ mb: 24 }}>
-                    Congratulations!
-                  </Text>
-                  <img
-                    src={token?.token?.image}
-                    style={{ width: 100, height: 100 }}
-                  />
-                  <Flex
-                    css={{ mb: 24, mt: '$2', maxWidth: '100%' }}
-                    align="center"
-                    justify="center"
-                  >
-                    {!!token.token?.collection?.image && (
-                      <Box css={{ mr: '$1' }}>
-                        <img
-                          src={token.token?.collection?.image}
-                          style={{ width: 24, height: 24, borderRadius: '50%' }}
+                  {totalPurchases === 1 ? (
+                    <>
+                      <Text
+                        style="h5"
+                        css={{ textAlign: 'center', mt: 24, mb: 24 }}
+                      >
+                        Congratulations!
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Box
+                        css={{
+                          color: failedPurchases
+                            ? '$errorAccent'
+                            : '$successAccent',
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          icon={
+                            failedPurchases
+                              ? faCircleExclamation
+                              : faCheckCircle
+                          }
+                          fontSize={32}
                         />
                       </Box>
-                    )}
+                      <Text
+                        style="h5"
+                        css={{ textAlign: 'center', mt: 24, mb: 24 }}
+                      >
+                        {failedPurchases
+                          ? `${successfulPurchases} ${
+                              successfulPurchases > 1 ? 'items' : 'item'
+                            } purchased, ${failedPurchases} ${
+                              failedPurchases > 1 ? 'items' : 'item'
+                            } failed`
+                          : 'Congrats! Purchase was successful.'}
+                      </Text>
+                    </>
+                  )}
+                  {totalPurchases === 1 && (
+                    <img
+                      src={token?.token?.image}
+                      style={{ width: 100, height: 100 }}
+                    />
+                  )}
+                  {totalPurchases > 1 && (
+                    <Flex direction="column" css={{ gap: '$2' }}>
+                      {stepData?.currentStep.items?.map((item) => {
+                        const txHash = item.txHash
+                          ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
+                              -4
+                            )}`
+                          : ''
+                        return (
+                          <Anchor
+                            href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
+                            color="primary"
+                            weight="medium"
+                            target="_blank"
+                            css={{ fontSize: 12 }}
+                          >
+                            View transaction: {txHash}
+                          </Anchor>
+                        )
+                      })}
+                    </Flex>
+                  )}
 
-                    <Text
-                      style="subtitle2"
-                      css={{ maxWidth: '100%' }}
-                      ellipsify
-                    >
-                      {token?.token?.name
-                        ? token?.token?.name
-                        : `#${token?.token?.tokenId}`}
-                    </Text>
-                  </Flex>
-
-                  <Flex css={{ mb: '$2' }} align="center">
-                    <Box css={{ color: '$successAccent', mr: '$2' }}>
-                      <FontAwesomeIcon icon={faCheckCircle} />
-                    </Box>
-                    <Text style="body1">
-                      Your transaction went through successfully
-                    </Text>
-                  </Flex>
-                  <Anchor
-                    color="primary"
-                    weight="medium"
-                    css={{ fontSize: 12 }}
-                    href={`${blockExplorerBaseUrl}/tx/${finalTxHash}`}
-                    target="_blank"
-                  >
-                    View on{' '}
-                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
-                  </Anchor>
+                  {totalPurchases === 1 && (
+                    <>
+                      <Flex
+                        css={{ mb: 24, mt: 24, maxWidth: '100%' }}
+                        align="center"
+                        justify="center"
+                      >
+                        {!!token.token?.collection?.image && (
+                          <Box css={{ mr: '$1' }}>
+                            <img
+                              src={token.token?.collection?.image}
+                              style={{
+                                width: 24,
+                                height: 24,
+                                borderRadius: '50%',
+                              }}
+                            />
+                          </Box>
+                        )}
+                        <Text
+                          style="subtitle2"
+                          css={{ maxWidth: '100%' }}
+                          ellipsify
+                        >
+                          {token?.token?.name
+                            ? token?.token?.name
+                            : `#${token?.token?.tokenId}`}
+                        </Text>
+                      </Flex>
+                      <Flex css={{ mb: '$2' }} align="center">
+                        <Box css={{ color: '$successAccent', mr: '$2' }}>
+                          <FontAwesomeIcon icon={faCheckCircle} />
+                        </Box>
+                        <Text style="body1">
+                          Your transaction went through successfully
+                        </Text>
+                      </Flex>
+                      <Anchor
+                        color="primary"
+                        weight="medium"
+                        css={{ fontSize: 12 }}
+                        href={`${blockExplorerBaseUrl}/tx/${finalTxHash}`}
+                        target="_blank"
+                      >
+                        View on{' '}
+                        {activeChain?.blockExplorers?.default.name ||
+                          'Etherscan'}
+                      </Anchor>
+                    </>
+                  )}
                 </Flex>
                 <Flex
                   css={{
@@ -499,7 +587,7 @@ export function BuyModal({
                           onGoToToken()
                         }}
                       >
-                        Go to Token
+                        Go to {successfulPurchases > 1 ? 'Tokens' : 'Token'}
                       </Button>
                     </>
                   ) : (
