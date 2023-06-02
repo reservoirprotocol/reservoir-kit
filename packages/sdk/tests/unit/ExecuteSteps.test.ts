@@ -367,10 +367,14 @@ describe(`It should test the executeSteps Method.`, (): void => {
           totalRawPrice: '47000000000000000000',
         },
       ],
-    }).catch((e: Error) => {
-      expect(signMessageSpy).toBeCalled()
-      if (e.name !== 'AxiosError') throw e
     })
+      .then((e) => {
+        console.log(`This was called even if we failed`)
+      })
+      .catch((e: Error) => {
+        expect(signMessageSpy).toBeCalled()
+        if (e.name !== 'AxiosError') throw e
+      })
   })
   test('Should execute sendTransaction method.', (): Promise<void> => {
     return executeSteps({}, wallet, (steps: Execute['steps']) => {}, {
@@ -432,10 +436,24 @@ describe(`It should test the executeSteps Method.`, (): void => {
           totalRawPrice: '2500000000000000',
         },
       ],
-    }).catch((e: Error) => {
-      expect(sendTransactionSpy).toBeCalled()
-      if (e.name !== 'AxiosError') throw e
     })
+      .then(() => {
+        expect(sendTransactionSpy).toBeCalled()
+        const firstArg = sendTransactionSpy.mock.calls[0][0]
+
+        expect(firstArg).not.toBeNull()
+
+        expect(firstArg).toEqual(
+          expect.objectContaining({
+            account: '0xd6044091d0b41efb3402ca05ba4068f969fdd9e4',
+            to: '0x00000000000000adc04c56bf30ac9d3c0aaf14dc',
+            value: '0x08e1bc9bf04000',
+          })
+        )
+      })
+      .catch((e: Error) => {
+        if (e.name !== 'AxiosError') throw e
+      })
   })
 })
 
