@@ -154,8 +154,10 @@ export function SweepModal({
             })
             return txHashes
           }, new Set<string>()) || []
-        const totalPurchases = Array.from(salesTxHashes).length
-        const failedPurchases = (selectedTokens.length || 0) - totalPurchases
+        const totalSales = Array.from(salesTxHashes).length
+        const failedSales =
+          totalSales - (stepData?.currentStep?.items?.length || 0)
+        const successfulSales = totalSales - failedSales
 
         return (
           <Modal
@@ -520,24 +522,20 @@ export function SweepModal({
                 >
                   <Box
                     css={{
-                      color: failedPurchases
-                        ? '$errorAccent'
-                        : '$successAccent',
+                      color: failedSales ? '$errorAccent' : '$successAccent',
                     }}
                   >
                     <FontAwesomeIcon
-                      icon={
-                        failedPurchases ? faCircleExclamation : faCheckCircle
-                      }
+                      icon={failedSales ? faCircleExclamation : faCheckCircle}
                       fontSize={32}
                     />
                   </Box>
                   <Text style="h5" css={{ textAlign: 'center' }}>
-                    {failedPurchases
-                      ? `${totalPurchases} ${
-                          totalPurchases > 1 ? 'items' : 'item'
-                        } purchased, ${failedPurchases} ${
-                          failedPurchases > 1 ? 'items' : 'item'
+                    {failedSales
+                      ? `${successfulSales} ${
+                          successfulSales > 1 ? 'items' : 'item'
+                        } purchased, ${failedSales} ${
+                          failedSales > 1 ? 'items' : 'item'
                         } failed`
                       : 'Congrats! Purchase was successful.'}
                   </Text>

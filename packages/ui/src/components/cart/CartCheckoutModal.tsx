@@ -68,8 +68,10 @@ export function CartCheckoutModal({
       })
       return txHashes
     }, new Set<string>()) || []
-  const totalPurchases = Array.from(salesTxHashes).length
-  const failedPurchases = (transaction?.items?.length || 0) - totalPurchases
+  const totalSales = Array.from(salesTxHashes).length
+  const failedSales =
+    totalSales - (transaction?.currentStep?.items?.length || 0)
+  const successfulSales = totalSales - failedSales
 
   const pathMap = transaction?.path
     ? (transaction.path as Path[]).reduce(
@@ -281,26 +283,24 @@ export function CartCheckoutModal({
                     >
                       <Box
                         css={{
-                          color: failedPurchases
+                          color: failedSales
                             ? '$errorAccent'
                             : '$successAccent',
                         }}
                       >
                         <FontAwesomeIcon
                           icon={
-                            failedPurchases
-                              ? faCircleExclamation
-                              : faCheckCircle
+                            failedSales ? faCircleExclamation : faCheckCircle
                           }
                           fontSize={32}
                         />
                       </Box>
                       <Text style="h5" css={{ textAlign: 'center' }}>
-                        {failedPurchases
-                          ? `${totalPurchases} ${
-                              totalPurchases > 1 ? 'items' : 'item'
-                            } purchased, ${failedPurchases} ${
-                              failedPurchases > 1 ? 'items' : 'item'
+                        {failedSales
+                          ? `${successfulSales} ${
+                              successfulSales > 1 ? 'items' : 'item'
+                            } purchased, ${failedSales} ${
+                              failedSales > 1 ? 'items' : 'item'
                             } failed`
                           : 'Congrats! Purchase was successful.'}
                       </Text>
