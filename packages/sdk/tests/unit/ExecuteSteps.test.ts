@@ -35,7 +35,6 @@ const signMessageSpy = jest
   .mockImplementation((...args) => {
     return signMessage(...args)
   })
-signMessageSpy
 
 const signTypedDataSpy = jest
   .spyOn(wallet, 'signTypedData')
@@ -275,6 +274,88 @@ describe(`It should test the executeStepsMethod.`, (): void => {
        */
     }).catch((e: Error) => {
       expect(signTypedDataSpy).toBeCalled()
+      if (e.name !== 'AxiosError') throw e
+    })
+  })
+  test('Should execute EIP191 method.', (): Promise<void> => {
+    return executeSteps({}, wallet, (steps: Execute['steps']) => {}, {
+      steps: [
+        {
+          id: 'auth',
+          action: 'Sign in to Blur',
+          description:
+            'Some marketplaces require signing an auth message before filling',
+          kind: 'signature',
+          items: [
+            {
+              status: 'incomplete',
+              data: {
+                sign: {
+                  signatureKind: 'eip191',
+                  message:
+                    'Sign in to Blur\n\nChallenge: 734acb6851ba66f83188d8e34c3c8719c1e89e9f8e067c028955581bfde860a8',
+                },
+                post: {
+                  endpoint: '/execute/auth-signature/v1',
+                  method: 'POST',
+                  body: {
+                    kind: 'blur',
+                    id: 'blur-auth-challenge:0x00000000219ab540356cbb839cbe05303d7705fa',
+                  },
+                },
+              },
+            },
+          ],
+        },
+        {
+          id: 'currency-approval',
+          action: 'Approve exchange contract',
+          description: 'A one-time setup transaction to enable trading',
+          kind: 'transaction',
+          items: [
+            {
+              status: 'incomplete',
+            },
+          ],
+        },
+        {
+          id: 'sale',
+          action: 'Confirm transaction in your wallet',
+          description:
+            'To purchase this item you must confirm the transaction and pay the gas fee',
+          kind: 'transaction',
+          items: [],
+        },
+      ],
+      path: [
+        {
+          orderId:
+            '0x6ea6242390c7192b633d7f094f23ea9d905d3863c97a7cb8208a9c87d8cc9fb2',
+          contract: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
+          tokenId: '6117',
+          quantity: 1,
+          source: 'blur.io',
+          currency: '0x0000000000000000000000000000000000000000',
+          currencySymbol: 'ETH',
+          currencyDecimals: 18,
+          quote: 47,
+          rawQuote: '47000000000000000000',
+          builtInFees: [
+            {
+              bps: 50,
+              kind: 'royalty',
+              recipient: '0xa858ddc0445d8131dac4d1de01f834ffcba52ef1',
+              amount: 0.235,
+              rawAmount: '235000000000000000',
+            },
+          ],
+          feesOnTop: [],
+          totalPrice: 47,
+          totalRawPrice: '47000000000000000000',
+        },
+      ],
+    }).catch((e: Error) => {
+      expect(signMessageSpy).toBeCalled()
       if (e.name !== 'AxiosError') throw e
     })
   })
