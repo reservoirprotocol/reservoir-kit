@@ -57,10 +57,8 @@ const sendTransactionSpy = jest
   })
 
 jest.spyOn(axios, 'request').mockImplementation((...args) => {
-  console.log(JSON.stringify(args))
   return new Promise((resolve) => {
     if (args[0].url?.includes('/synced/v1')) {
-      console.log(`Resolving with synced/v1`)
       resolve({
         data: {
           synced: true,
