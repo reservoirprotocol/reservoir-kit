@@ -44,8 +44,8 @@ const signTypedDataSpy = jest
   })
 
 describe(`It should test the executeStepsMethod.`, (): void => {
-  test('Shold execute EIP712 method.', async () => {
-    executeSteps({}, wallet, (steps: Execute['steps']) => {}, {
+  test('Shold execute EIP712 method.', (): Promise<void> => {
+    return executeSteps({}, wallet, (steps: Execute['steps']) => {}, {
       steps: [
         {
           id: 'order-signature',
@@ -274,7 +274,7 @@ describe(`It should test the executeStepsMethod.`, (): void => {
        * If it isn't, then the error is likely a jest or node exception.
        */
     }).catch((e: Error) => {
-      expect(signTypedDataSpy).toBeCalledWith()
+      expect(signTypedDataSpy).toBeCalled()
       if (e.name !== 'AxiosError') throw e
     })
   })
