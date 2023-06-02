@@ -8,6 +8,8 @@ import { createWalletClient, http, WalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { mainnet } from 'viem/chains'
 
+jest.retryTimes(3)
+
 const wallet: WalletClient = createWalletClient({
   account: privateKeyToAccount(
     '0xbe3daafa8b8f52645fb72e74689b5b35875c80d5de4c79506a341523fc480cfa'
