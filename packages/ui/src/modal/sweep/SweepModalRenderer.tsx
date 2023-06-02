@@ -150,7 +150,7 @@ export const SweepModalRenderer: FC<Props> = ({
         items: [
           {
             collection: collectionId,
-            quantity: 10, // TODO: update once indexer stores more than 10 prices for pool orders
+            quantity: 50,
           },
         ],
         expectedPrice: undefined,
@@ -495,6 +495,8 @@ export const SweepModalRenderer: FC<Props> = ({
     chain,
     collectionId,
     currency,
+    feesOnTopBps,
+    feesOnTopFixed,
   ])
 
   return (
