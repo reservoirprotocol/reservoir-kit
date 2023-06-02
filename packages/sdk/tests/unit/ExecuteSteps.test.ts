@@ -313,10 +313,15 @@ describe(`It should test the executeSteps Method.`, (): void => {
        * If it is, then the error that executeSteps threw was due to a bad request made after we tested the data.
        * If it isn't, then the error is likely a jest or node exception.
        */
-    }).catch((e: Error) => {
-      expect(signTypedDataSpy).toBeCalled()
-      if (e.name !== 'AxiosError') throw e
     })
+      .then((e) => {
+        return
+      })
+      .catch((e: Error) => {
+        expect(signTypedDataSpy).toBeCalled()
+        if (e.name !== 'AxiosError') throw e
+        return
+      })
   })
   test('Should execute signMessageSpy method.', (): Promise<void> => {
     return executeSteps({}, wallet, (steps: Execute['steps']) => {}, {
@@ -397,7 +402,7 @@ describe(`It should test the executeSteps Method.`, (): void => {
       ],
     })
       .then((e) => {
-        console.log(`This was called even if we failed`)
+        return
       })
       .catch((e: Error) => {
         expect(signMessageSpy).toBeCalled()
@@ -479,6 +484,7 @@ describe(`It should test the executeSteps Method.`, (): void => {
               value: '0x08e1bc9bf04000',
             })
           )
+          return
         })
         /**
          * We can't stop the request being sent. So what we do is check if it's an axios error.
@@ -487,6 +493,7 @@ describe(`It should test the executeSteps Method.`, (): void => {
          */
         .catch((e: Error) => {
           if (e.name !== 'AxiosError') throw e
+          return
         })
     )
   })
