@@ -10,7 +10,6 @@ import {
   useTokens,
   useCoinConversion,
   useReservoirClient,
-  useTokenOpenseaBanned,
   useCollections,
   useListings,
   useChainCurrency,
@@ -63,7 +62,6 @@ type ChildrenProps = {
   feeUsd: number
   totalUsd: number
   usdPrice: number
-  isBanned: boolean
   balance?: bigint
   address?: string
   blockExplorerBaseUrl: string
@@ -513,8 +511,6 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  const isBanned = useTokenOpenseaBanned(open ? contract : undefined, tokenId)
-
   return (
     <>
       {children({
@@ -534,7 +530,6 @@ export const BuyModalRenderer: FC<Props> = ({
         feeUsd,
         totalUsd,
         usdPrice,
-        isBanned,
         balance: balance?.value,
         address: address,
         blockExplorerBaseUrl,

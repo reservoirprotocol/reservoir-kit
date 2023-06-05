@@ -15,7 +15,6 @@ import {
   faClose,
 } from '@fortawesome/free-solid-svg-icons'
 import { Cart } from '../../context/CartProvider'
-import InfoTooltip from '../../primitives/InfoTooltip'
 import { formatNumber } from '../../lib/numbers'
 import QuantitySelector from '../../modal/QuantitySelector'
 import * as allChains from 'viem/chains'
@@ -47,7 +46,7 @@ const CloseButton = styled(Button, {
 })
 
 const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
-  const { token, collection, order, isBannedOnOpensea } = item
+  const { token, collection, order } = item
   const contract = collection.id.split(':')[0]
   const client = useReservoirClient()
   const {
@@ -143,10 +142,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               '&:hover': {
                 background: '$errorAccent',
               },
-              background:
-                item.isBannedOnOpensea || !item.price
-                  ? '$errorAccent'
-                  : '$neutralSolid',
+              background: !item.price ? '$errorAccent' : '$neutralSolid',
             }}
             onClick={(e) => {
               e.stopPropagation()
@@ -170,14 +166,6 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             <Text style="h6" color={price ? undefined : 'subtle'} ellipsify>
               {token.name ? token.name : `#${token.id}`}
             </Text>
-            {isBannedOnOpensea && (
-              <InfoTooltip
-                side="bottom"
-                width={200}
-                content={'Item not tradeable on OpenSea'}
-                kind="error"
-              />
-            )}
           </Flex>
           <Text style="body3" color="subtle" ellipsify>
             {collection.name}

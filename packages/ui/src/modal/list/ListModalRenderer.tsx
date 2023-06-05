@@ -13,7 +13,6 @@ import {
   useMarketplaces,
   useListingPreapprovalCheck,
   useCollections,
-  useTokenOpensea,
   useUserTokens,
   useChainCurrency,
   useOnChainRoyalties,
@@ -91,15 +90,7 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
 }
 
-type PaymentTokens = NonNullable<
-  NonNullable<ReturnType<typeof useTokenOpensea>['response']>['collection']
->['payment_tokens']
-
-const isCurrencyAllowed = (
-  currency: Currency,
-  marketplace: Marketplace,
-  openseaPaymentTokens: PaymentTokens
-) => {
+const isCurrencyAllowed = (currency: Currency, marketplace: Marketplace) => {
   if (marketplace.listingEnabled) {
     if (currency.contract === zeroAddress) {
       return true
@@ -108,9 +99,7 @@ const isCurrencyAllowed = (
       case 'reservoir':
         return true
       case 'opensea':
-        return openseaPaymentTokens.some(
-          (token) => token.address === currency.contract
-        )
+        return false
     }
   }
   return false
@@ -211,13 +200,6 @@ export const ListModalRenderer: FC<Props> = ({
     }
   )
 
-  const { response: openSeaToken } = useTokenOpensea(
-    open ? contract : undefined,
-    open ? tokenId : undefined
-  )
-
-  const paymentTokens = openSeaToken?.collection?.payment_tokens
-
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
   const is1155 = token?.token?.kind === 'erc1155'
 
@@ -285,11 +267,7 @@ export const ListModalRenderer: FC<Props> = ({
     ) {
       let updatedMarketplaces = allMarketplaces.map(
         (marketplace): Marketplace => {
-          const listingEnabled = isCurrencyAllowed(
-            currency,
-            marketplace,
-            paymentTokens || [chainCurrency]
-          )
+          const listingEnabled = isCurrencyAllowed(currency, marketplace)
           return {
             ...marketplace,
             price: '',
@@ -308,11 +286,7 @@ export const ListModalRenderer: FC<Props> = ({
     if (open && loadedInitalPrice) {
       let updatedMarketplaces = allMarketplaces.map(
         (marketplace): Marketplace => {
-          const listingEnabled = isCurrencyAllowed(
-            currency,
-            marketplace,
-            paymentTokens || [chainCurrency]
-          )
+          const listingEnabled = isCurrencyAllowed(currency, marketplace)
           return {
             ...marketplace,
             listingEnabled,
@@ -322,7 +296,7 @@ export const ListModalRenderer: FC<Props> = ({
       )
       setMarketplaces(updatedMarketplaces)
     }
-  }, [open, currency, paymentTokens])
+  }, [open, currency])
 
   useEffect(() => {
     if (marketplaces) {

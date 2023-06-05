@@ -173,7 +173,6 @@ export function BidModal({
         transactionError,
         stepData,
         bidData,
-        isBanned,
         currencies,
         currency,
         setCurrency,
@@ -313,12 +312,6 @@ export function BidModal({
                   trait={trait}
                 />
                 <MainContainer css={{ p: '$4' }}>
-                  {isBanned && (
-                    <ErrorWell
-                      message="Token is not tradable on OpenSea"
-                      css={{ mb: '$2', p: '$2', borderRadius: 4 }}
-                    />
-                  )}
                   <Flex justify="between">
                     <Text style="tiny">Offer Amount</Text>
                     <Text
