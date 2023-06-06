@@ -7,7 +7,7 @@ const wrappedContractNames: Record<number, string> = {
   999: 'WETH', //zoratestnet
   80001: 'WETH', //mumbai
   84531: 'WETH', //base goerli
-  534353: 'WETH', //scroll
+  534353: 'WETH', //scrolltestnet
   11155111: 'WETH', //sepolia
 }
 export default wrappedContractNames
