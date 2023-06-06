@@ -73,7 +73,7 @@ function titleForStep(step: BuyStep, copy: typeof ModalCopy) {
     case BuyStep.AddFunds:
       return copy.titleInsufficientFunds
     case BuyStep.Unavailable:
-      return copy.titleInsufficientFunds
+      return copy.titleUnavilable
     default:
       return copy.titleDefault
   }
