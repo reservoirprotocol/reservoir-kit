@@ -52,6 +52,17 @@ type ListingCallbackData = {
   collectionId?: string
 }
 
+const ModalCopy = {
+  title: 'List Item for sale',
+  ctaClose: 'Close',
+  ctaSetPrice: 'Set your price',
+  ctaList: 'List for Sale',
+  ctaAwaitingApproval: 'Waiting for Approval',
+  ctaEditListing: 'Edit Listing',
+  ctaRetry: 'Retry',
+  ctaGoToToken: 'Go to Token',
+}
+
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
@@ -61,6 +72,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
   oracleEnabled?: boolean
+  copyOverrides?: Partial<typeof ModalCopy>
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
@@ -108,11 +120,13 @@ export function ListModal({
   normalizeRoyalties,
   enableOnChainRoyalties = false,
   oracleEnabled = false,
+  copyOverrides,
   onGoToToken,
   onListingComplete,
   onListingError,
   onClose,
 }: Props): ReactElement {
+  const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
     openState
@@ -249,7 +263,7 @@ export function ListModal({
           <Modal
             trigger={trigger}
             size={ModalSize.LG}
-            title="List Item for sale"
+            title={copy.title}
             open={open}
             onOpenChange={(open) => {
               if (!open && onClose) {
@@ -394,7 +408,7 @@ export function ListModal({
                       onClick={() => setListStep(ListStep.SetPrice)}
                       css={{ width: '100%' }}
                     >
-                      Set your price
+                      {copy.ctaSetPrice}
                     </Button>
                   </Box>
                 </MainContainer>
@@ -608,7 +622,7 @@ export function ListModal({
                       onClick={listToken}
                       css={{ width: '100%' }}
                     >
-                      List for sale
+                      {copy.ctaList}
                     </Button>
                   </Box>
                 </MainContainer>
@@ -675,7 +689,7 @@ export function ListModal({
                   {!transactionError && (
                     <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
                       <Loader />
-                      Waiting for Approval
+                      {copy.ctaAwaitingApproval}
                     </Button>
                   )}
                   {transactionError && (
@@ -685,10 +699,10 @@ export function ListModal({
                         css={{ flex: 1 }}
                         onClick={() => setListStep(ListStep.SetPrice)}
                       >
-                        Edit Listing
+                        {copy.ctaEditListing}
                       </Button>
                       <Button css={{ flex: 1 }} onClick={() => listToken()}>
-                        Retry
+                        {copy.ctaRetry}
                       </Button>
                     </Flex>
                   )}
@@ -781,7 +795,7 @@ export function ListModal({
                           css={{ flex: 1 }}
                           color="secondary"
                         >
-                          Close
+                          {copy.ctaClose}
                         </Button>
                         <Button
                           style={{ flex: 1 }}
@@ -790,7 +804,7 @@ export function ListModal({
                             onGoToToken()
                           }}
                         >
-                          Go to Token
+                          {copy.ctaGoToToken}
                         </Button>
                       </>
                     ) : (
@@ -801,7 +815,7 @@ export function ListModal({
                         style={{ flex: 1 }}
                         color="primary"
                       >
-                        Close
+                        {copy.ctaClose}
                       </Button>
                     )}
                   </Flex>
