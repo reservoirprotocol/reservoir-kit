@@ -93,6 +93,7 @@ export function SweepModal({
         totalUsd,
         feeOnTop,
         feeUsd,
+        usdPrice,
         currentChain,
         availableTokens,
         balance,
@@ -375,7 +376,7 @@ export function SweepModal({
                     itemCount={selectedTokens.length}
                     images={images}
                     totalPrice={total}
-                    usdPrice={totalUsd}
+                    usdPrice={usdPrice}
                     currency={currency}
                     chain={currentChain}
                   />

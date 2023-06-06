@@ -68,6 +68,7 @@ type ChildrenProps = {
   totalUsd: number
   feeOnTop: number
   feeUsd: number
+  usdPrice: number
   currentChain: ReservoirChain | null | undefined
   availableTokens: BuyPath
   address?: string
@@ -151,6 +152,8 @@ export const SweepModalRenderer: FC<Props> = ({
           {
             collection: collectionId,
             quantity: 50,
+            // @ts-ignore // TODO: Remove once changed our moved into indexer on prod
+            fillType: 'trade',
           },
         ],
         expectedPrice: undefined,
@@ -250,7 +253,7 @@ export const SweepModalRenderer: FC<Props> = ({
   }, [selectedTokens, feesOnTopBps, feesOnTopFixed, currency, isChainCurrency])
 
   const coinConversion = useCoinConversion(
-    open && currency ? 'USD' : undefined,
+    open ? 'USD' : undefined,
     currency?.symbol
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
@@ -521,6 +524,7 @@ export const SweepModalRenderer: FC<Props> = ({
         totalUsd,
         feeOnTop,
         feeUsd,
+        usdPrice,
         currentChain,
         availableTokens,
         tokens,

@@ -96,8 +96,7 @@ export async function buyToken(data: Data) {
       onProgress(data['steps'], data['path'])
       return data
     } else {
-      executeSteps(request, signer, onProgress, undefined, expectedPrice)
-      return true
+      return executeSteps(request, signer, onProgress, undefined, expectedPrice)
     }
   } catch (err: any) {
     errHandler()
