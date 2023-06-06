@@ -327,10 +327,12 @@ export const BidModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setBidData(null)
 
+      const quantity = options?.quantity ? options.quantity : 1
+
       const bid: BidData = {
-        weiPrice: parseUnits(
-          `${Number(bidAmount)}`,
-          currency?.decimals || 18
+        weiPrice: (
+          parseUnits(`${Number(bidAmount)}`, currency?.decimals || 18) *
+          BigInt(quantity)
         ).toString(),
         orderbook: 'reservoir',
         orderKind: 'seaport',
@@ -371,8 +373,8 @@ export const BidModalRenderer: FC<Props> = ({
         }
       }
 
-      if (options?.quantity) {
-        bid.quantity = options.quantity
+      if (quantity > 1) {
+        bid.quantity = quantity
       }
 
       setBidData(bid)
