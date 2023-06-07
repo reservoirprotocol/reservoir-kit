@@ -39,6 +39,9 @@ export type BuyModalStepData = {
 }
 
 type Token = NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+type BuyTokenOptions = NonNullable<
+  Parameters<ReservoirClientActions['buyToken']>['0']['options']
+>
 
 type ChildrenProps = {
   loading: boolean
@@ -100,6 +103,9 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: signer } = useWalletClient()
   const [totalPrice, setTotalPrice] = useState(0)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0)
+  const [depth, setDepth] = useState<
+    NonNullable<Execute['preview']>[0]['depth']
+  >([])
   const [listingsToBuy, setListingsToBuy] = useState<Record<string, number>>({})
   const [currency, setCurrency] = useState<undefined | Currency>()
   const [mixedCurrencies, setMixedCurrencies] = useState(false)
@@ -169,11 +175,10 @@ export const BuyModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && (token?.market?.floorAsk?.id !== undefined || orderId)
-      ? true
-      : false
+    open && listingOrderId ? true : false
   )
 
+  //need to tweak this to use the depth preview
   const listings = useMemo(
     () => listingsData.filter((listing) => listing.maker !== address),
     [listingsData]
@@ -200,6 +205,62 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
 
+  useEffect(() => {
+    setDepth([])
+    if (
+      !open ||
+      !client ||
+      !tokenId ||
+      !contract ||
+      !signer ||
+      !is1155 ||
+      orderId
+    ) {
+      return
+    }
+
+    const options: BuyTokenOptions = {
+      preview: 'depth',
+    }
+
+    if (normalizeRoyalties !== undefined) {
+      options.normalizeRoyalties = normalizeRoyalties
+    }
+    client.actions
+      .buyToken({
+        options,
+        items: [
+          {
+            token: `${contract}:${tokenId}`,
+          },
+        ],
+        signer,
+        onProgress: () => {},
+        precheck: true,
+      })
+      .then((response) => {
+        if (
+          response &&
+          response.preview &&
+          response.preview.length > 0 &&
+          response.preview[0].depth
+        ) {
+          setDepth(response.preview[0].depth)
+        } else {
+          setDepth([])
+        }
+      })
+  }, [
+    open,
+    client,
+    signer,
+    tokenId,
+    contract,
+    is1155,
+    orderId,
+    normalizeRoyalties,
+  ])
+
   const buyToken = useCallback(() => {
     if (!signer) {
       const error = new Error('Missing a signer')
@@ -221,9 +282,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
     const contract = collectionId?.split(':')[0]
 
-    let options: Parameters<
-      ReservoirClientActions['buyToken']
-    >['0']['options'] = {}
+    let options: BuyTokenOptions = {}
 
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
