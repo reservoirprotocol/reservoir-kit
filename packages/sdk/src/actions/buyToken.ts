@@ -2,6 +2,7 @@ import { Execute, paths } from '../types'
 import { WalletClient } from 'viem'
 import { getClient } from '.'
 import { executeSteps, request } from '../utils'
+import axios, { AxiosRequestConfig } from 'axios'
 
 type BuyTokenBodyParameters = NonNullable<
   paths['/execute/buy/v7']['post']['parameters']['body']['body']
@@ -18,6 +19,7 @@ type Data = {
   signer: WalletClient
   chainId?: number
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
+  precheck?: boolean
 }
 
 /**
@@ -28,9 +30,10 @@ type Data = {
  * @param data.signer Ethereum signer object provided by the browser
  * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state as execution progresses
+ * @param data.precheck Set to true to skip executing steps and just to get the initial steps/path
  */
 export async function buyToken(data: Data) {
-  const { items, expectedPrice, signer, chainId, onProgress } = data
+  const { items, expectedPrice, signer, chainId, onProgress, precheck } = data
   const [taker] = await signer.getAddresses()
   const client = getClient()
   const options = data.options || {}
@@ -74,21 +77,34 @@ export async function buyToken(data: Data) {
     ) {
       params.normalizeRoyalties = client.normalizeRoyalties
     }
-    return executeSteps(
-      {
-        url: `${baseApiUrl}/execute/buy/v7`,
-        method: 'post',
-        data: params,
-      },
-      signer,
-      onProgress,
-      undefined,
-      expectedPrice,
-      chainId
-    ).catch((err: any) => {
-      errHandler()
-      throw err
-    })
+
+    const request: AxiosRequestConfig = {
+      url: `${baseApiUrl}/execute/buy/v7`,
+      method: 'post',
+      data: params,
+    }
+
+    if (precheck) {
+      const apiKey = client.currentChain()?.apiKey
+      if (!request.headers) {
+        request.headers = {}
+      }
+
+      if (apiKey && request.headers) {
+        request.headers['x-api-key'] = apiKey
+      }
+      if (client?.uiVersion && request.headers) {
+        request.headers['x-rkui-version'] = client.uiVersion
+      }
+
+      const res = await axios.request(request)
+      if (res.status !== 200) throw res.data
+      const data = res.data as Execute
+      onProgress(data['steps'], data['path'])
+      return data
+    } else {
+      return executeSteps(request, signer, onProgress, undefined, expectedPrice, chainId)
+    }
   } catch (err: any) {
     errHandler()
     throw err
