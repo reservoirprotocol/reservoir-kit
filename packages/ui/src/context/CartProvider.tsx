@@ -304,9 +304,7 @@ function cartStore({
         params.push(client.version)
       }
 
-      const promises = await Promise.allSettled([defaultFetcher(params)])
-      const response: TokensSchema =
-        promises[0].status === 'fulfilled' ? promises[0].value : {}
+      const response: TokensSchema = await defaultFetcher(params)
 
       return { tokens: response.tokens }
     },

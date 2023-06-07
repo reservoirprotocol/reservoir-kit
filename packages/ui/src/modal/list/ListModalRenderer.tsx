@@ -98,6 +98,8 @@ const isCurrencyAllowed = (currency: Currency, marketplace: Marketplace) => {
     switch (marketplace.orderbook) {
       case 'reservoir':
         return true
+
+      // Will fix this properly soon once backend stores opensea collection payment_tokens
       case 'opensea':
         return false
     }
