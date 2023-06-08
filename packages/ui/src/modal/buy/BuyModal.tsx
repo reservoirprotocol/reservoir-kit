@@ -36,6 +36,19 @@ type PurchaseData = {
   steps?: Execute['steps']
 }
 
+const ModalCopy = {
+  titleInsufficientFunds: 'Add Funds',
+  titleUnavilable: 'Selected item is no longer Available',
+  titleDefault: 'Complete Checkout',
+  ctaClose: 'Close',
+  ctaCheckout: 'Checkout',
+  ctaInsufficientFunds: 'Add Funds',
+  ctaGoToToken: '',
+  ctaAwaitingValidation: 'Waiting for transaction to be validated',
+  ctaAwaitingApproval: 'Waiting for approval...',
+  ctaCopyAddress: 'Copy Wallet Address',
+}
+
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
@@ -44,6 +57,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   feesOnTopBps?: string[] | null
   feesOnTopFixed?: string[] | null
   normalizeRoyalties?: boolean
+  copyOverrides?: Partial<typeof ModalCopy>
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
   onPurchaseError?: (error: Error, data: PurchaseData) => void
@@ -54,14 +68,14 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   ) => void
 }
 
-function titleForStep(step: BuyStep) {
+function titleForStep(step: BuyStep, copy: typeof ModalCopy) {
   switch (step) {
     case BuyStep.AddFunds:
-      return 'Add Funds'
+      return copy.titleInsufficientFunds
     case BuyStep.Unavailable:
-      return 'Selected item is no longer Available'
+      return copy.titleUnavilable
     default:
-      return 'Complete Checkout'
+      return copy.titleDefault
   }
 }
 
@@ -74,11 +88,13 @@ export function BuyModal({
   feesOnTopBps,
   feesOnTopFixed,
   normalizeRoyalties,
+  copyOverrides,
   onPurchaseComplete,
   onPurchaseError,
   onClose,
   onGoToToken,
 }: Props): ReactElement {
+  const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
     openState
@@ -124,7 +140,7 @@ export function BuyModal({
         setBuyStep,
         buyToken,
       }) => {
-        const title = titleForStep(buyStep)
+        const title = titleForStep(buyStep, copy)
 
         useEffect(() => {
           if (buyStep === BuyStep.Complete && onPurchaseComplete) {
@@ -165,9 +181,9 @@ export function BuyModal({
             })
             return txHashes
           }, new Set<string>()) || []
-          
+
         const totalPurchases = Array.from(purchaseTxHashes).length
-        
+
         const failedPurchases =
           totalPurchases - (stepData?.currentStep?.items?.length || 0)
 
@@ -225,7 +241,7 @@ export function BuyModal({
                   }}
                   css={{ m: '$4' }}
                 >
-                  Close
+                  {copy.ctaClose}
                 </Button>
               </Flex>
             )}
@@ -359,7 +375,7 @@ export function BuyModal({
                       css={{ width: '100%' }}
                       color="primary"
                     >
-                      Checkout
+                      {copy.ctaCheckout}
                     </Button>
                   ) : (
                     <Flex direction="column" align="center">
@@ -383,7 +399,7 @@ export function BuyModal({
                         }}
                         css={{ width: '100%' }}
                       >
-                        Add Funds
+                        {copy.ctaInsufficientFunds}
                       </Button>
                     </Flex>
                   )}
@@ -421,8 +437,8 @@ export function BuyModal({
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
                   {stepData?.currentStepItem.txHash
-                    ? 'Waiting for transaction to be validated'
-                    : 'Waiting for approval...'}
+                    ? copy.ctaAwaitingValidation
+                    : copy.ctaAwaitingApproval}
                 </Button>
               </Flex>
             )}
@@ -578,7 +594,7 @@ export function BuyModal({
                         css={{ flex: 1 }}
                         color="ghost"
                       >
-                        Close
+                        {copy.ctaClose}
                       </Button>
                       <Button
                         style={{ flex: 1 }}
@@ -587,7 +603,11 @@ export function BuyModal({
                           onGoToToken()
                         }}
                       >
-                        Go to {successfulPurchases > 1 ? 'Tokens' : 'Token'}
+                        {copy.ctaGoToToken.length > 0
+                          ? copy.ctaGoToToken
+                          : `Go to ${
+                              successfulPurchases > 1 ? 'Tokens' : 'Token'
+                            }`}
                       </Button>
                     </>
                   ) : (
@@ -598,7 +618,7 @@ export function BuyModal({
                       style={{ flex: 1 }}
                       color="primary"
                     >
-                      Close
+                      {copy.ctaClose}
                     </Button>
                   )}
                 </Flex>
@@ -707,7 +727,7 @@ export function BuyModal({
                   color="primary"
                   onClick={() => copyToClipboard(address as string)}
                 >
-                  Copy Wallet Address
+                  {copy.ctaCopyAddress}
                 </Button>
               </Flex>
             )}

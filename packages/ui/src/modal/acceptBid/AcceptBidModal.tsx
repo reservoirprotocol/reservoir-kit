@@ -46,10 +46,19 @@ type BidData = {
   maker?: string
 }
 
+const ModalCopy = {
+  title: 'Accept Offer',
+  ctaAccept: 'Accept',
+  ctaAwaitingApproval: 'Waiting for Approval',
+  ctaClose: 'Close',
+  ctaDone: 'Done',
+}
+
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokens: AcceptBidTokenData[]
   normalizeRoyalties?: boolean
+  copyOverrides?: Partial<typeof ModalCopy>
   onBidAccepted?: (data: BidData) => void
   onClose?: (
     data: BidData,
@@ -65,6 +74,7 @@ export function AcceptBidModal({
   trigger,
   tokens,
   normalizeRoyalties,
+  copyOverrides,
   onBidAccepted,
   onClose,
   onBidAcceptError,
@@ -74,6 +84,7 @@ export function AcceptBidModal({
     openState ? openState[0] : false,
     openState
   )
+  const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
 
   return (
     <AcceptBidModalRenderer
@@ -152,7 +163,7 @@ export function AcceptBidModal({
         return (
           <Modal
             trigger={trigger}
-            title={'Accept Offer'}
+            title={copy.title}
             open={open}
             onOpenChange={(open) => {
               if (!open && onClose) {
@@ -187,7 +198,7 @@ export function AcceptBidModal({
                     flex: 1,
                   }}
                 >
-                  Close
+                  {copy.ctaClose}
                 </Button>
               </Flex>
             )}
@@ -387,7 +398,7 @@ export function AcceptBidModal({
                   color="primary"
                   onClick={acceptBid}
                 >
-                  Accept
+                  {copy.ctaAccept}
                 </Button>
               </Flex>
             )}
@@ -402,7 +413,7 @@ export function AcceptBidModal({
                 <SigninStep css={{ mt: 48, mb: 60, gap: 20 }} />
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
-                  Waiting for Approval...
+                  {copy.ctaAwaitingApproval}
                 </Button>
               </Flex>
             )}
@@ -432,7 +443,7 @@ export function AcceptBidModal({
 
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
-                  Waiting for Approval...
+                  {copy.ctaAwaitingApproval}
                 </Button>
               </Flex>
             )}
@@ -546,7 +557,7 @@ export function AcceptBidModal({
                       setOpen(false)
                     }}
                   >
-                    Done
+                    {copy.ctaDone}
                   </Button>
                 </Flex>
               </Flex>

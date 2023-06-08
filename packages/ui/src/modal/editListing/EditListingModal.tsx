@@ -17,6 +17,16 @@ import PriceInput from './PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { zeroAddress } from 'viem'
 
+const ModalCopy = {
+  title: 'Edit Listing',
+  ctaClose: 'Close',
+  ctaConfirm: 'Confirm',
+  ctaConvertManually: 'Convert Manually',
+  ctaConvertAutomatically: '',
+  ctaAwaitingApproval: 'Waiting for approval...',
+  ctaAwaitingValidation: 'Waiting for transaction to be validated',
+}
+
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   listingId?: string
@@ -24,6 +34,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
+  copyOverrides?: Partial<typeof ModalCopy>
   onClose?: (data: any, currentStep: EditListingStep) => void
   onEditListingComplete?: (data: any) => void
   onEditListingError?: (error: Error, data: any) => void
@@ -39,10 +50,12 @@ export function EditListingModal({
   trigger,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
+  copyOverrides,
   onClose,
   onEditListingComplete,
   onEditListingError,
 }: Props): ReactElement {
+  const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
     openState
@@ -124,7 +137,7 @@ export function EditListingModal({
         return (
           <Modal
             trigger={trigger}
-            title="Edit Listing"
+            title={copy.title}
             open={open}
             onOpenChange={(open) => {
               if (!open && onClose) {
@@ -343,7 +356,7 @@ export function EditListingModal({
                       color="secondary"
                       css={{ flex: 1 }}
                     >
-                      Close
+                      {copy.ctaClose}
                     </Button>
                     <Button
                       disabled={
@@ -354,7 +367,7 @@ export function EditListingModal({
                       onClick={editListing}
                       css={{ flex: 1 }}
                     >
-                      Confirm
+                      {copy.ctaConfirm}
                     </Button>
                   </Flex>
                 </Flex>
@@ -393,8 +406,8 @@ export function EditListingModal({
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
                   {stepData?.currentStepItem.txHash
-                    ? 'Waiting for transaction to be validated'
-                    : 'Waiting for approval...'}
+                    ? copy.ctaAwaitingValidation
+                    : copy.ctaAwaitingApproval}
                 </Button>
               </Flex>
             )}
@@ -429,7 +442,7 @@ export function EditListingModal({
                   }}
                   css={{ m: '$4' }}
                 >
-                  Close
+                  {copy.ctaClose}
                 </Button>
               </Flex>
             )}
