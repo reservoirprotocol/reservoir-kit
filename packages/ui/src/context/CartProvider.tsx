@@ -515,7 +515,7 @@ function cartStore({
         const tokens: Token[] = []
         const ordersToFetch: string[] = []
 
-        const erc1155sByMaker = updatedItems.reduce((map, item) => {
+        const tokensByMaker = updatedItems.reduce((map, item) => {
           if (item.order) {
             const maker = item.order?.maker
             if (!map[maker]) {
@@ -569,8 +569,8 @@ function cartStore({
                 const duplicateListingDetected =
                   item &&
                   maker &&
-                  erc1155sByMaker[maker] &&
-                  erc1155sByMaker[maker].includes(id)
+                  tokensByMaker[maker] &&
+                  tokensByMaker[maker].includes(id)
                 if (duplicateListingDetected) {
                   client?.log(
                     [
@@ -602,8 +602,8 @@ function cartStore({
                 const id = `${item?.collection.id}:${item?.token.id}`
                 const duplicateListingDetected =
                   item &&
-                  erc1155sByMaker[orderData.maker] &&
-                  erc1155sByMaker[orderData.maker].includes(id)
+                  tokensByMaker[orderData.maker] &&
+                  tokensByMaker[orderData.maker].includes(id)
                 if (duplicateListingDetected) {
                   client?.log(
                     [
