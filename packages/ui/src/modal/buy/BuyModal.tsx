@@ -132,7 +132,6 @@ export function BuyModal({
         feeUsd,
         totalUsd,
         usdPrice,
-        isBanned,
         balance,
         address,
         blockExplorerBaseUrl,
@@ -227,7 +226,6 @@ export function BuyModal({
                 <TokenLineItem
                   tokenDetails={token}
                   collection={collection}
-                  isSuspicious={isBanned}
                   usdConversion={usdPrice || 0}
                   isUnavailable={true}
                   price={quantity > 1 ? averageUnitPrice : price}
@@ -293,7 +291,6 @@ export function BuyModal({
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
-                  isSuspicious={isBanned}
                   price={quantity > 1 ? averageUnitPrice : price}
                   currency={currency}
                   css={{ border: 0 }}
@@ -413,7 +410,6 @@ export function BuyModal({
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
-                  isSuspicious={isBanned}
                   price={quantity > 1 ? averageUnitPrice : price}
                   currency={currency}
                   priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
