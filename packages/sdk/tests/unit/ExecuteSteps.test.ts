@@ -5,7 +5,7 @@ import {
   ReservoirClient,
 } from '@reservoir0x/reservoir-sdk'
 import axios from 'axios'
-import { createWalletClient, http, WalletClient } from 'viem'
+import { createWalletClient, hexToBigInt, http, WalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { mainnet } from 'viem/chains'
 
@@ -522,9 +522,9 @@ describe(`It should test the executeSteps Method.`, (): void => {
 
         expect(firstArg).toEqual(
           expect.objectContaining({
-            account: '0xd6044091d0b41efb3402ca05ba4068f969fdd9e4',
+            account: wallet.account,
             to: '0x00000000000000adc04c56bf30ac9d3c0aaf14dc',
-            value: '0x08e1bc9bf04000',
+            value: hexToBigInt('0x08e1bc9bf04000'),
           })
         )
       })
