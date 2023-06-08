@@ -1,4 +1,4 @@
-import { PublicClient, Transaction, WalletClient } from 'viem'
+import { PublicClient, Transaction, WalletClient, hexToBigInt } from 'viem'
 import { LogLevel, getClient } from '..'
 import { Chain } from 'viem'
 
@@ -17,9 +17,11 @@ export async function sendTransactionSafely(
   const transaction = await signer.sendTransaction({
     chain: viemChain,
     data: data.data,
-    account: data.from,
+    account: signer.account ?? data.from, // use signer.account if it's defined
     to: data.to,
-    value: data.value,
+    value: hexToBigInt(data.value),
+    ...(data.maxFeePerGas && {maxFeePerGas: hexToBigInt(data.maxFeePerGas)}),
+    ...(data.maxPriorityFeePerGas && {maxPriorityFeePerGas: hexToBigInt(data.maxPriorityFeePerGas)}),
   })
   setTx(transaction)
 
