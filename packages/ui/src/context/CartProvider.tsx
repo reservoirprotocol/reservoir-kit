@@ -1,5 +1,6 @@
 import {
   Execute,
+  LogLevel,
   ReservoirChain,
   ReservoirClientActions,
   isOpenSeaBanned,
@@ -358,7 +359,8 @@ function cartStore({
 
       let flaggedStatuses = undefined
       if (tokenIds) {
-        flaggedStatuses = (await isOpenSeaBanned(tokenIds, client?.currentChain()?.id)) || {}
+        flaggedStatuses =
+          (await isOpenSeaBanned(tokenIds, client?.currentChain()?.id)) || {}
       }
 
       return { orders: response.orders, flaggedStatuses }
@@ -535,6 +537,17 @@ function cartStore({
         const tokens: Token[] = []
         const ordersToFetch: string[] = []
 
+        const tokensByMaker = updatedItems.reduce((map, item) => {
+          if (item.order) {
+            const maker = item.order?.maker
+            if (!map[maker]) {
+              map[maker] = []
+            }
+            map[maker].push(`${item.collection.id}:${item.token.id}`)
+          }
+          return map
+        }, {} as Record<string, string[]>)
+
         items.forEach((item) => {
           const token = item as Token
           const asyncToken = item as AsyncAddToCartToken
@@ -571,8 +584,23 @@ function cartStore({
                 await fetchTokens(tokensToFetch, chainId)
               fetchedTokens?.forEach((tokenData) => {
                 const item = convertTokenToItem(tokenData)
-                if (item) {
-                  const id = `${item.collection.id}:${item.token.id}`
+                const id = `${item?.collection.id}:${item?.token.id}`
+                const maker = tokenData.market?.floorAsk?.maker
+                const duplicateListingDetected =
+                  item &&
+                  maker &&
+                  tokensByMaker[maker] &&
+                  tokensByMaker[maker].includes(id)
+                if (duplicateListingDetected) {
+                  client?.log(
+                    [
+                      'Detected adding duplicate listing to cart, aborting',
+                      tokenData,
+                      updatedItems,
+                    ],
+                    LogLevel.Error
+                  )
+                } else if (item) {
                   item.isBannedOnOpensea = flaggedStatuses[id]
                     ? flaggedStatuses[id]
                     : item.isBannedOnOpensea
@@ -592,8 +620,21 @@ function cartStore({
                 await fetchOrders(ordersToFetch, chainId)
               fetchedOrders?.forEach((orderData) => {
                 const item = convertOrderToItem(orderData)
-                if (item) {
-                  const id = `${item.collection.id}:${item.token.id}`
+                const id = `${item?.collection.id}:${item?.token.id}`
+                const duplicateListingDetected =
+                  item &&
+                  tokensByMaker[orderData.maker] &&
+                  tokensByMaker[orderData.maker].includes(id)
+                if (duplicateListingDetected) {
+                  client?.log(
+                    [
+                      'Detected adding duplicate listing to cart, aborting',
+                      orderData,
+                      updatedItems,
+                    ],
+                    LogLevel.Error
+                  )
+                } else if (item) {
                   item.isBannedOnOpensea = flaggedStatuses?.[id]
                     ? flaggedStatuses[id]
                     : item.isBannedOnOpensea
