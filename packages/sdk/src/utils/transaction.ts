@@ -17,7 +17,7 @@ export async function sendTransactionSafely(
   const transaction = await signer.sendTransaction({
     chain: viemChain,
     data: data.data,
-    account: data.from,
+    account: signer.account ?? data.from, // use signer.account if it's defined
     to: data.to,
     value: data.value,
   })
