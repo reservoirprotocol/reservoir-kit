@@ -69,7 +69,7 @@ export function CancelBidModal({
         const expires = useTimeSince(bid?.expiration)
         const collectionId = bid?.criteria?.data?.collection?.id
         const bidImg = tokenId
-          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${collectionId}:${tokenId}/image/v1`
+          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${collectionId}:${tokenId}/image/v1?imageSize=small`
           : `${reservoirChain?.baseApiUrl}/redirect/collections/${collectionId}/image/v1`
         const isAttributeOffer = (bid?.criteria?.kind as any) === 'attribute'
 

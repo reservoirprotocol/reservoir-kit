@@ -124,7 +124,7 @@ export function EditBidModal({
           : undefined
 
         const itemImage = isTokenBid
-          ? bid?.criteria?.data?.token?.image || token?.token?.image
+          ? bid?.criteria?.data?.token?.image || token?.token?.imageSmall
           : bid?.criteria?.data?.collection?.image || collection?.image
 
         const previousBidsExpiration = useTimeSince(bid?.expiration)

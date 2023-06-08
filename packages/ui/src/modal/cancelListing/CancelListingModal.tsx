@@ -72,7 +72,7 @@ export function CancelListingModal({
       }) => {
         const expires = useTimeSince(listing?.expiration)
         const listingImg = tokenId
-          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${tokenId}/image/v1`
+          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${tokenId}/image/v1?imageSize=small`
           : `${reservoirChain?.baseApiUrl}/redirect/collections/${contract}/image/v1`
 
         useEffect(() => {

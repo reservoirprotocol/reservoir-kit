@@ -197,7 +197,7 @@ export function EditListingModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    img={token?.token?.image}
+                    img={token?.token?.imageSmall}
                     name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
                     priceSubtitle="Price"
@@ -377,7 +377,7 @@ export function EditListingModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    img={token?.token?.image}
+                    img={token?.token?.imageSmall}
                     name={token?.token?.name}
                     price={profit}
                     usdPrice={updatedTotalUsd}

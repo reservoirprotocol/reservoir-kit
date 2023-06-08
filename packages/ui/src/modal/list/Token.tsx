@@ -20,7 +20,9 @@ type Props = {
 
 const Token: FC<Props> = ({ token, collection }) => {
   const img = optimizeImage(
-    token?.token?.image ? token.token.image : (collection?.image as string),
+    token?.token?.imageSmall
+      ? token.token.imageSmall
+      : (collection?.image as string),
     600
   )
   return (

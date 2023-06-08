@@ -128,7 +128,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
       >
         <Flex css={{ position: 'relative', minWidth: 0, flexShrink: 0 }}>
           <CartItemImage
-            src={`${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1`}
+            src={`${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1?imageSize=small`}
             css={!price ? { filter: 'grayscale(1)' } : {}}
             onError={({ currentTarget }) => {
               const collectionImage = `${reservoirChain?.baseApiUrl}/redirect/collections/${collection.id}/image/v1`
