@@ -3,7 +3,6 @@ import {
   useTokens,
   useCoinConversion,
   useReservoirClient,
-  useTokenOpenseaBanned,
   useCollections,
   useAttributes,
   useChainCurrency,
@@ -62,7 +61,6 @@ type ChildrenProps = {
   hasEnoughWrappedCurrency: boolean
   amountToWrap: string
   usdPrice: number | null
-  isBanned: boolean
   balance?: ReturnType<typeof useBalance>['data']
   wrappedBalance?: ReturnType<typeof useBalance>['data']
   wrappedContractName: string
@@ -297,12 +295,6 @@ export const BidModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
-  const isBanned = useTokenOpenseaBanned(
-    open ? contract : undefined,
-    tokenId,
-    client?.currentChain()?.id
-  )
-
   const placeBid = useCallback(
     (options?: { quantity?: number }) => {
       if (!signer) {
@@ -443,7 +435,6 @@ export const BidModalRenderer: FC<Props> = ({
         collection,
         attributes,
         usdPrice,
-        isBanned,
         balance,
         wrappedBalance,
         wrappedContractName,

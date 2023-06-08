@@ -14,7 +14,6 @@ export {
   useSearchActivities,
   useTokenActivity,
   useCoinConversion,
-  useTokenOpenseaBanned,
   useListings,
   useOwnerListings,
   useAttributes,

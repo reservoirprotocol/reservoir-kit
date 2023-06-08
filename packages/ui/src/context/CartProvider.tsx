@@ -3,7 +3,6 @@ import {
   LogLevel,
   ReservoirChain,
   ReservoirClientActions,
-  isOpenSeaBanned,
   paths,
   setParams,
 } from '@reservoir0x/reservoir-sdk'
@@ -68,7 +67,6 @@ type CartItem = {
   poolId?: string
   poolPrices?: CartItemPrice[]
   previousPrice?: CartItemPrice
-  isBannedOnOpensea?: boolean
 }
 
 export type Cart = {
@@ -282,7 +280,7 @@ function cartStore({
   const fetchTokens = useCallback(
     async (tokenIds: string[], chainId: number) => {
       if (!tokenIds || tokenIds.length === 0) {
-        return { tokens: [], flaggedStatuses: {} }
+        return { tokens: [] }
       }
 
       const reservoirChain = client?.chains.find(
@@ -307,16 +305,9 @@ function cartStore({
         params.push(client.version)
       }
 
-      const promises = await Promise.allSettled([
-        defaultFetcher(params),
-        isOpenSeaBanned(tokenIds, reservoirChain?.id),
-      ])
-      const response: TokensSchema =
-        promises[0].status === 'fulfilled' ? promises[0].value : {}
-      const flaggedStatuses =
-        promises[1].status === 'fulfilled' ? promises[1].value : {}
+      const response: TokensSchema = await defaultFetcher(params)
 
-      return { tokens: response.tokens, flaggedStatuses }
+      return { tokens: response.tokens }
     },
     [client]
   )
@@ -324,7 +315,7 @@ function cartStore({
   const fetchOrders = useCallback(
     async (orderIds: string[], chainId: number) => {
       if (!orderIds || orderIds.length === 0) {
-        return { orders: [], flaggedStatuses: {} }
+        return { orders: [] }
       }
 
       const reservoirChain = client?.chains.find(
@@ -352,18 +343,7 @@ function cartStore({
 
       const response: OrdersSchema = await defaultFetcher(params)
 
-      const tokenIds = response?.orders?.map(
-        ({ criteria }) =>
-          `${criteria?.data?.collection?.id}:${criteria?.data?.token?.tokenId}`
-      )
-
-      let flaggedStatuses = undefined
-      if (tokenIds) {
-        flaggedStatuses =
-          (await isOpenSeaBanned(tokenIds, client?.currentChain()?.id)) || {}
-      }
-
-      return { orders: response.orders, flaggedStatuses }
+      return { orders: response.orders }
     },
     [client]
   )
@@ -378,7 +358,7 @@ function cartStore({
       }
       const dynamicPricing = market?.floorAsk?.dynamicPricing
 
-      let order = undefined
+      let order: undefined | {id: string, quantityRemaining: number, quantity: number, maker: string} = undefined
       if (token.kind === 'erc1155' && market?.floorAsk) {
         order = {
           id: market?.floorAsk?.id || '',
@@ -408,7 +388,6 @@ function cartStore({
           dynamicPricing?.kind === 'pool'
             ? (dynamicPricing.data?.prices as CartItemPrice[])
             : undefined,
-        isBannedOnOpensea: token.isFlagged,
       }
     },
     []
@@ -438,7 +417,6 @@ function cartStore({
         price: orderData.price,
         poolId: undefined,
         poolPrices: undefined,
-        isBannedOnOpensea: undefined,
       }
     },
     []
@@ -580,8 +558,10 @@ function cartStore({
         if (tokensToFetch.length > 0) {
           promises.push(
             new Promise(async (resolve) => {
-              const { tokens: fetchedTokens, flaggedStatuses } =
-                await fetchTokens(tokensToFetch, chainId)
+              const { tokens: fetchedTokens } = await fetchTokens(
+                tokensToFetch,
+                chainId
+              )
               fetchedTokens?.forEach((tokenData) => {
                 const item = convertTokenToItem(tokenData)
                 const id = `${item?.collection.id}:${item?.token.id}`
@@ -601,9 +581,6 @@ function cartStore({
                     LogLevel.Error
                   )
                 } else if (item) {
-                  item.isBannedOnOpensea = flaggedStatuses[id]
-                    ? flaggedStatuses[id]
-                    : item.isBannedOnOpensea
                   updatedItems.push(item)
                 }
               })
@@ -616,8 +593,10 @@ function cartStore({
         if (ordersToFetch.length > 0) {
           promises.push(
             new Promise(async (resolve) => {
-              const { orders: fetchedOrders, flaggedStatuses } =
-                await fetchOrders(ordersToFetch, chainId)
+              const { orders: fetchedOrders } = await fetchOrders(
+                ordersToFetch,
+                chainId
+              )
               fetchedOrders?.forEach((orderData) => {
                 const item = convertOrderToItem(orderData)
                 const id = `${item?.collection.id}:${item?.token.id}`
@@ -635,9 +614,6 @@ function cartStore({
                     LogLevel.Error
                   )
                 } else if (item) {
-                  item.isBannedOnOpensea = flaggedStatuses?.[id]
-                    ? flaggedStatuses[id]
-                    : item.isBannedOnOpensea
                   updatedItems.push(item)
                 }
               })
@@ -837,21 +813,9 @@ function cartStore({
               ) {
                 itemsToRemove[order.id] = index
               } else if (order.status !== 'active') {
-                const flaggedStatuses = response.value.flaggedStatuses
-                const criteria = order?.criteria?.data
-
-                const flaggedStatus = flaggedStatuses
-                  ? flaggedStatuses[
-                      `${criteria?.collection?.id}:${criteria?.token?.tokenId}`
-                    ]
-                  : undefined
-
                 items[index] = {
                   ...items[index],
                   price: undefined,
-                }
-                if (flaggedStatus !== undefined) {
-                  items[index].isBannedOnOpensea = flaggedStatus
                 }
               }
             })
@@ -874,14 +838,6 @@ function cartStore({
               } else {
                 const dynamicPricing = market?.floorAsk?.dynamicPricing
 
-                const flaggedStatuses = response.value.flaggedStatuses
-
-                const flaggedStatus = flaggedStatuses
-                  ? flaggedStatuses[
-                      `${token?.collection?.id}:${token?.tokenId}`
-                    ]
-                  : undefined
-
                 items[index] = {
                   ...items[index],
                   previousPrice: items[index].price,
@@ -900,9 +856,6 @@ function cartStore({
                 }
                 if (token?.collection?.name) {
                   items[index].collection.name = token.collection.name
-                }
-                if (flaggedStatus !== undefined) {
-                  items[index].isBannedOnOpensea = flaggedStatus
                 }
               }
             })

@@ -15,10 +15,19 @@ import {
   faGasPump,
 } from '@fortawesome/free-solid-svg-icons'
 
+const ModalCopy = {
+  title: 'Cancel Listing',
+  ctaCancel: 'Continue to Cancel',
+  ctaAwaitingApproval: 'Waiting for approval...',
+  ctaAwaitingValidation: 'Waiting for transaction to be validated',
+  ctaClose: 'Close',
+}
+
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   listingId?: string
   normalizeRoyalties?: boolean
+  copyOverrides?: Partial<typeof ModalCopy>
   onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
@@ -29,10 +38,12 @@ export function CancelListingModal({
   listingId,
   trigger,
   normalizeRoyalties,
+  copyOverrides,
   onClose,
   onCancelComplete,
   onCancelError,
 }: Props): ReactElement {
+  const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
     openState
@@ -94,7 +105,7 @@ export function CancelListingModal({
         return (
           <Modal
             trigger={trigger}
-            title="Cancel Listing"
+            title={copy.title}
             open={open}
             onOpenChange={(open) => {
               if (!open && onClose) {
@@ -168,7 +179,7 @@ export function CancelListingModal({
                   {!isOracleOrder && (
                     <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
                   )}
-                  Continue to Cancel
+                  {copy.ctaCancel}
                 </Button>
               </Flex>
             )}
@@ -205,8 +216,8 @@ export function CancelListingModal({
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
                   {stepData?.currentStepItem.txHash
-                    ? 'Waiting for transaction to be validated'
-                    : 'Waiting for approval...'}
+                    ? copy.ctaAwaitingValidation
+                    : copy.ctaAwaitingApproval}
                 </Button>
               </Flex>
             )}
@@ -257,7 +268,7 @@ export function CancelListingModal({
                   }}
                   css={{ m: '$4' }}
                 >
-                  Close
+                  {copy.ctaClose}
                 </Button>
               </Flex>
             )}

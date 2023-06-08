@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, ErrorWell } from '../primitives'
+import { Box } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 import { useCollections, useTokens } from '../hooks'
 import { CSSProperties } from '@stitches/react'
@@ -13,7 +13,6 @@ type TokenLineItemProps = {
     'name' | 'royalties' | 'image'
   >
   usdConversion?: number
-  isSuspicious?: Boolean
   isUnavailable?: boolean
   warning?: string
   price: number
@@ -34,7 +33,6 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   tokenDetails,
   collection,
   usdConversion = 0,
-  isSuspicious,
   isUnavailable,
   price,
   priceSubtitle,
@@ -84,12 +82,6 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         royaltiesBps={royaltiesBps}
         quantity={quantity}
       />
-      {!!isSuspicious && (
-        <ErrorWell
-          css={{ p: '$3', mt: '$3', borderRadius: 4 }}
-          message="Token is not tradable on OpenSea"
-        />
-      )}
     </Box>
   )
 }
