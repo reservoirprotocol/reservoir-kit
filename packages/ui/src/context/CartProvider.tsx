@@ -358,8 +358,15 @@ function cartStore({
       }
       const dynamicPricing = market?.floorAsk?.dynamicPricing
 
-      let order: undefined | {id: string, quantityRemaining: number, quantity: number, maker: string} = undefined
-      if (token.kind === 'erc1155' && market?.floorAsk) {
+      let order:
+        | undefined
+        | {
+            id: string
+            quantityRemaining: number
+            quantity: number
+            maker: string
+          } = undefined
+      if (market?.floorAsk) {
         order = {
           id: market?.floorAsk?.id || '',
           quantityRemaining: market?.floorAsk?.quantityRemaining || 1,
