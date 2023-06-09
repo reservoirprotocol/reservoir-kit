@@ -1,84 +1,71 @@
-
 ## [v1.1.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/feddb9c7b3ea63d0c45c47f295a1c357c580a6e9) (2023-06-09)
 
-* Extend support for local accounts [1e5de9f](https://github.com/reservoirprotocol/reservoir-kit/commit/1e5de9fb964a99366de63394fb82aab134049ca8)
+- Extend support for local accounts [1e5de9f](https://github.com/reservoirprotocol/reservoir-kit/commit/1e5de9fb964a99366de63394fb82aab134049ca8)
+
 ## [v1.1.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/bf694150c615ba69bfe604e39381a357b6ded7be) (2023-06-08)
 
-* fix test [ae79ac9](https://github.com/reservoirprotocol/reservoir-kit/commit/ae79ac960f2a2cf1d3b523c3ac6e8a2a4b684af3)
-* convert value to bigint from hex [2023-06-08](https://github.com/reservoirprotocol/reservoir-kit/commit/06f2771)
-* fix sendTransaction to allow privateKeyAccounts [5cdeb4e](https://github.com/reservoirprotocol/reservoir-kit/commit/5cdeb4e3e20e2e8279a261c37b7198ce4bd46b1e)
+- fix sendTransaction to allow privateKeyAccounts [5cdeb4e](https://github.com/reservoirprotocol/reservoir-kit/commit/5cdeb4e3e20e2e8279a261c37b7198ce4bd46b1e)
+
 ## [v1.1.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/aab81ad978dc73758f49d3e7c305992e3b5b99b8) (2023-06-08)
 
-* Merge pull request #271 from reservoirprotocol/ted/grwth-2775-strip-out-flagged-status-api-calls [9afae7f](https://github.com/reservoirprotocol/reservoir-kit/commit/9afae7f3e3bd9eb1ddcc2eef33913cc18530345d)
+- Strip out flagged status api calls [9afae7f](https://github.com/reservoirprotocol/reservoir-kit/commit/9afae7f3e3bd9eb1ddcc2eef33913cc18530345d)
+
 ## [v1.0.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/184ae12361a0b8fe11a3beeb37e14489ddb94730) (2023-06-07)
 
-* Merge pull request #264 from reservoirprotocol/ted/grwth-2811-handle-sweep-price-changes [4955f8c](https://github.com/reservoirprotocol/reservoir-kit/commit/4955f8c20d7bf75603be3354554fffc211a59b2e)
+- Handle sweep price changes [4955f8c](https://github.com/reservoirprotocol/reservoir-kit/commit/4955f8c20d7bf75603be3354554fffc211a59b2e)
+
 ## [v1.0.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/7b5a62277d1439f728afbdadf394cad20e7a1d2e) (2023-06-06)
 
-* QA fixes [dad4bfc](https://github.com/reservoirprotocol/reservoir-kit/commit/dad4bfc53646352baca7671978e5d3dbed611daa)
-* Remove all opensea api methods and hooks [3d131a5](https://github.com/reservoirprotocol/reservoir-kit/commit/3d131a5882ee4dbae39a3c52b40b51223522882a)
-* feat: rm console statements [c601a33](https://github.com/reservoirprotocol/reservoir-kit/commit/c601a3332e9527558e7ef4f0cbdf1adf016f07da)
-* feat: Mock all requests and fix type [2da5e38](https://github.com/reservoirprotocol/reservoir-kit/commit/2da5e38e9491edc2408f8d4918c88ae924db0c9f)
-* Feat: All tests working [01141da](https://github.com/reservoirprotocol/reservoir-kit/commit/01141da5f117414d0d06aec0fc9801a9db088c3a)
-* Update ndoe version [1c347d2](https://github.com/reservoirprotocol/reservoir-kit/commit/1c347d25e58f965997e1e3c9e5d0c49e9685a091)
-* feat: updaet path [c33fe78](https://github.com/reservoirprotocol/reservoir-kit/commit/c33fe78e0bb6d53f10333cac994c2b8edd55c781)
-* feat: Fix returns [143e1e6](https://github.com/reservoirprotocol/reservoir-kit/commit/143e1e66f744014d1051c7429a9d394e0045eedc)
-* feat: Retry [1135b37](https://github.com/reservoirprotocol/reservoir-kit/commit/1135b3706226648aba9400c76049cc14219c38ad)
-* feat: Update params [ab56280](https://github.com/reservoirprotocol/reservoir-kit/commit/ab562801c06c44d76592686783510ddda0b2683c)
-* feat: sendTransaction test [8f9ba11](https://github.com/reservoirprotocol/reservoir-kit/commit/8f9ba11025e97b75bf292d95150ed93f6a481092)
-* feat: sendTransactionTest [0aa5cdb](https://github.com/reservoirprotocol/reservoir-kit/commit/0aa5cdb91e2fc3ec6b7521775a525d453c6e2b1f)
-* feat: Add EIP191 test [c8f221c](https://github.com/reservoirprotocol/reservoir-kit/commit/c8f221c940d54d724b2a47c21ef8946bc1a435a1)
-* feat: Fix tests failing [4b6073e](https://github.com/reservoirprotocol/reservoir-kit/commit/4b6073e7d5fc9b809ae359c1770e06de238c91d2)
-* fix: Update scripts [e177f9b](https://github.com/reservoirprotocol/reservoir-kit/commit/e177f9b6ea2ec076557d1e79dc40e5e98a4d8150)
-* feat: gh actions [ee759a4](https://github.com/reservoirprotocol/reservoir-kit/commit/ee759a4761865e9d2301b655a1b0e95fd8bd57ac)
-* feat: rm console log [096d16b](https://github.com/reservoirprotocol/reservoir-kit/commit/096d16ba5671b5ead6bd657c2963da950bb79613)
-* feat: rm uneed comments [fdc0258](https://github.com/reservoirprotocol/reservoir-kit/commit/fdc02588ca11df0124d6038319d2aa4c7fabf8d5)
-* feat: Type updates [0c56ed3](https://github.com/reservoirprotocol/reservoir-kit/commit/0c56ed377831692dc49b975e678c2107bad79063)
-* feat: Method tests [3912d29](https://github.com/reservoirprotocol/reservoir-kit/commit/3912d29d393456a9120de5d40e1ff46de47a6cdc)
+- Remove all opensea api methods and hooks [3d131a5](https://github.com/reservoirprotocol/reservoir-kit/commit/3d131a5882ee4dbae39a3c52b40b51223522882a)
+
 ## [v1.0.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/11b74c5d5af10f57d83e6d009103732b242140bf) (2023-06-01)
 
-* Replace useTokens with execute/buy precheck [8948876](https://github.com/reservoirprotocol/reservoir-kit/commit/894887652e47d5065f08db77d788081c19944c41)
-* Update buyToken with precheck logic [0e55942](https://github.com/reservoirprotocol/reservoir-kit/commit/0e5594251b9cb33f1cdbd6b01bdc475cb0a6fef3)
-* Allow overriding chain when triggering SDK actions [4e01f24](https://github.com/reservoirprotocol/reservoir-kit/commit/4e01f24eabbccfb31639b68c368722479fba2f5a)
-* Moved viem client to executeSteps [aa6a6fd](https://github.com/reservoirprotocol/reservoir-kit/commit/aa6a6fd28f667c55fefefc5a9c85b03d28180f72)
-* Merge branch 'ted/sync-api-types' into ted/uprade-wagmi [5164f2e](https://github.com/reservoirprotocol/reservoir-kit/commit/5164f2ee95da4e55e60d1bb6b78605a6fb7fbafa)
-* Sync api [09afad4](https://github.com/reservoirprotocol/reservoir-kit/commit/09afad4c3641f179b7ff3a57aae8ac9eb01b5fd4)
+- Replace useTokens with execute/buy precheck [8948876](https://github.com/reservoirprotocol/reservoir-kit/commit/894887652e47d5065f08db77d788081c19944c41)
+- Update buyToken with precheck logic [0e55942](https://github.com/reservoirprotocol/reservoir-kit/commit/0e5594251b9cb33f1cdbd6b01bdc475cb0a6fef3)
+- Allow overriding chain when triggering SDK actions [4e01f24](https://github.com/reservoirprotocol/reservoir-kit/commit/4e01f24eabbccfb31639b68c368722479fba2f5a)
+- Moved viem client to executeSteps [aa6a6fd](https://github.com/reservoirprotocol/reservoir-kit/commit/aa6a6fd28f667c55fefefc5a9c85b03d28180f72)
+- Sync api [09afad4](https://github.com/reservoirprotocol/reservoir-kit/commit/09afad4c3641f179b7ff3a57aae8ac9eb01b5fd4)
+
 ## [v0.11.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/dc00e0e655c95db43da184ef3522792772ff64d0) (2023-05-30)
 
-* Add block number to error log [29d345e](https://github.com/reservoirprotocol/reservoir-kit/commit/29d345e0de3fd904c01938514e176173ff8759b6)
+- Add block number to error log [29d345e](https://github.com/reservoirprotocol/reservoir-kit/commit/29d345e0de3fd904c01938514e176173ff8759b6)
+
 ## [v0.10.7-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/668bc1fd1e2f144868bb0c8371b08e9c89722031) (2023-05-27)
 
-* Merge pull request #244 from reservoirprotocol/pedro/grwth-2551-support-batch-selling-in-rk [48d2ba4](https://github.com/reservoirprotocol/reservoir-kit/commit/48d2ba44c74877f353e1b38d0e6781aec1ca7408)
-* Revert back to importing allChains from viem [47696f3](https://github.com/reservoirprotocol/reservoir-kit/commit/47696f3f25cccc4319e2b55cb0d509b89a7fe8ff)
-* Got speeding up a transaction to work [f2aedb1](https://github.com/reservoirprotocol/reservoir-kit/commit/f2aedb101d7cbb4a04f92194ce4aca5ef9bb559e)
+- Merge pull request #244 from reservoirprotocol/pedro/grwth-2551-support-batch-selling-in-rk [48d2ba4](https://github.com/reservoirprotocol/reservoir-kit/commit/48d2ba44c74877f353e1b38d0e6781aec1ca7408)
+- Revert back to importing allChains from viem [47696f3](https://github.com/reservoirprotocol/reservoir-kit/commit/47696f3f25cccc4319e2b55cb0d509b89a7fe8ff)
+- Got speeding up a transaction to work [f2aedb1](https://github.com/reservoirprotocol/reservoir-kit/commit/f2aedb101d7cbb4a04f92194ce4aca5ef9bb559e)
+
 ## [v0.10.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/63c59e0da409013f57823945f85e69c08f4da306) (2023-05-23)
 
-* Merge pull request #251 from reservoirprotocol/armando/grwth-2747-add-hook-for-activity-search [7acbc47](https://github.com/reservoirprotocol/reservoir-kit/commit/7acbc47b899d9b71bdf0e6a7ede24fb2653a0b8f)
-* Merge pull request #238 from reservoirprotocol/armando/grwth-2582-use-opensea-testnet-api [b8023c0](https://github.com/reservoirprotocol/reservoir-kit/commit/b8023c0b0f55da699afec8b07f1777e35247fa6b)
-* feat: Sync APIs [af5529a](https://github.com/reservoirprotocol/reservoir-kit/commit/af5529af47bdee8a435009981d38d5a805bcbb47)
-* Fixed signTypedData in executeSteps [2023-05-22](https://github.com/reservoirprotocol/reservoir-kit/commit/c2b71db)
-* fix: add data to sendTransaction [98e9e26](https://github.com/reservoirprotocol/reservoir-kit/commit/98e9e264b71139b51aa716496b7b67138c31642a)
-* Fix http url error [53a1c73](https://github.com/reservoirprotocol/reservoir-kit/commit/53a1c73ad0261bbc2fe9b9d8e971c9a56cf808a0)
-* moved wagmi to peer dependencies [2023-05-16](https://github.com/reservoirprotocol/reservoir-kit/commit/ae63a9c)
-* attempting to fix build errors [52ec0f9](https://github.com/reservoirprotocol/reservoir-kit/commit/52ec0f976073baf041cee1995649c414976b78c8)
-* wip [ffbdcaf](https://github.com/reservoirprotocol/reservoir-kit/commit/ffbdcaf018b247209cb3b25da889f36217d16bf0)
-* Switch sdk to viem [d35f183](https://github.com/reservoirprotocol/reservoir-kit/commit/d35f18338dba5966a841c3bc10791eb3205fbd82)
-* wip batch accepting bids [dac02e1](https://github.com/reservoirprotocol/reservoir-kit/commit/dac02e1f319ccbfa4aaccf6e299f6d2dfa30df5e)
-* feat: Resolve review [de5cc74](https://github.com/reservoirprotocol/reservoir-kit/commit/de5cc74d6662d9768f136ed1ab8aba440aba03f0)
-* feat: Add overriding [86e476b](https://github.com/reservoirprotocol/reservoir-kit/commit/86e476b297f7e88c8b47df6c9d0f3cfea932aba5)
-* feat: Small improvement [ed45401](https://github.com/reservoirprotocol/reservoir-kit/commit/ed4540187a79a768dadaaa927beee2cd013eb9b2)
-* feat: Hardcode chain value [f2ef440](https://github.com/reservoirprotocol/reservoir-kit/commit/f2ef440dd1541ebe6f720be92404b36a82262a33)
-* feat: Use testnet api on goerli [ee898e0](https://github.com/reservoirprotocol/reservoir-kit/commit/ee898e09b9b4c2e8fbff1784983ddd1cebeb0c4e)
+- Merge pull request #251 from reservoirprotocol/armando/grwth-2747-add-hook-for-activity-search [7acbc47](https://github.com/reservoirprotocol/reservoir-kit/commit/7acbc47b899d9b71bdf0e6a7ede24fb2653a0b8f)
+- Merge pull request #238 from reservoirprotocol/armando/grwth-2582-use-opensea-testnet-api [b8023c0](https://github.com/reservoirprotocol/reservoir-kit/commit/b8023c0b0f55da699afec8b07f1777e35247fa6b)
+- feat: Sync APIs [af5529a](https://github.com/reservoirprotocol/reservoir-kit/commit/af5529af47bdee8a435009981d38d5a805bcbb47)
+- Fixed signTypedData in executeSteps [2023-05-22](https://github.com/reservoirprotocol/reservoir-kit/commit/c2b71db)
+- fix: add data to sendTransaction [98e9e26](https://github.com/reservoirprotocol/reservoir-kit/commit/98e9e264b71139b51aa716496b7b67138c31642a)
+- Fix http url error [53a1c73](https://github.com/reservoirprotocol/reservoir-kit/commit/53a1c73ad0261bbc2fe9b9d8e971c9a56cf808a0)
+- moved wagmi to peer dependencies [2023-05-16](https://github.com/reservoirprotocol/reservoir-kit/commit/ae63a9c)
+- attempting to fix build errors [52ec0f9](https://github.com/reservoirprotocol/reservoir-kit/commit/52ec0f976073baf041cee1995649c414976b78c8)
+- wip [ffbdcaf](https://github.com/reservoirprotocol/reservoir-kit/commit/ffbdcaf018b247209cb3b25da889f36217d16bf0)
+- Switch sdk to viem [d35f183](https://github.com/reservoirprotocol/reservoir-kit/commit/d35f18338dba5966a841c3bc10791eb3205fbd82)
+- wip batch accepting bids [dac02e1](https://github.com/reservoirprotocol/reservoir-kit/commit/dac02e1f319ccbfa4aaccf6e299f6d2dfa30df5e)
+- feat: Resolve review [de5cc74](https://github.com/reservoirprotocol/reservoir-kit/commit/de5cc74d6662d9768f136ed1ab8aba440aba03f0)
+- feat: Add overriding [86e476b](https://github.com/reservoirprotocol/reservoir-kit/commit/86e476b297f7e88c8b47df6c9d0f3cfea932aba5)
+- feat: Small improvement [ed45401](https://github.com/reservoirprotocol/reservoir-kit/commit/ed4540187a79a768dadaaa927beee2cd013eb9b2)
+- feat: Hardcode chain value [f2ef440](https://github.com/reservoirprotocol/reservoir-kit/commit/f2ef440dd1541ebe6f720be92404b36a82262a33)
+- feat: Use testnet api on goerli [ee898e0](https://github.com/reservoirprotocol/reservoir-kit/commit/ee898e09b9b4c2e8fbff1784983ddd1cebeb0c4e)
 
 ## [v0.10.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/ae3b3aa61933b6ec64b8743afa5e7f59082ca514) (2023-05-18)
 
 ## [v0.10.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/61f26707b30936b517d84b5a21e286a45ca60715) (2023-05-16)
 
-* Sync api [b43c772](https://github.com/reservoirprotocol/reservoir-kit/commit/b43c772de1928fe1d102052fc8e87b8c6c70e15d)
+- Sync api [b43c772](https://github.com/reservoirprotocol/reservoir-kit/commit/b43c772de1928fe1d102052fc8e87b8c6c70e15d)
+
 ## [v0.10.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/7a221f668302c45f48185ed630dc0482bc3c37cc) (2023-05-15)
 
-* Sync api [e4a5184](https://github.com/reservoirprotocol/reservoir-kit/commit/e4a5184b02a7fbd54bad62129ccce294f5ee2e26)
-* feat: Use baseApiUrl [3ff1b50](https://github.com/reservoirprotocol/reservoir-kit/commit/3ff1b501993d3e42f776d4f3691e50494de3fe93)
+- Sync api [e4a5184](https://github.com/reservoirprotocol/reservoir-kit/commit/e4a5184b02a7fbd54bad62129ccce294f5ee2e26)
+- feat: Use baseApiUrl [3ff1b50](https://github.com/reservoirprotocol/reservoir-kit/commit/3ff1b501993d3e42f776d4f3691e50494de3fe93)
+
 ## [v0.10.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/ab6cc02aea8ad246d5344324949ccdb35171d338) (2023-05-09)
 
 ## [v0.10.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/5035eb2d3895caff0c55feb1fdb84d477a3b1495) (2023-05-05)
