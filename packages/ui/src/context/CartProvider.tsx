@@ -57,7 +57,7 @@ type CartItem = {
     id: string
     name: string
   }
-  order?: {
+  order: {
     id: string
     quantityRemaining: number
     quantity: number
@@ -358,23 +358,6 @@ function cartStore({
       }
       const dynamicPricing = market?.floorAsk?.dynamicPricing
 
-      let order:
-        | undefined
-        | {
-            id: string
-            quantityRemaining: number
-            quantity: number
-            maker: string
-          } = undefined
-      if (market?.floorAsk) {
-        order = {
-          id: market?.floorAsk?.id || '',
-          quantityRemaining: market?.floorAsk?.quantityRemaining || 1,
-          quantity: 1,
-          maker: market?.floorAsk?.maker || '',
-        }
-      }
-
       return {
         token: {
           id: token.tokenId,
@@ -384,7 +367,12 @@ function cartStore({
           id: token.collection.id,
           name: token.collection.name || '',
         },
-        order: order,
+        order: {
+          id: market?.floorAsk?.id || '',
+          quantityRemaining: market?.floorAsk?.quantityRemaining || 1,
+          quantity: 1,
+          maker: market?.floorAsk?.maker || '',
+        },
         price:
           dynamicPricing?.kind === 'pool' ? undefined : market?.floorAsk?.price,
         poolId:
