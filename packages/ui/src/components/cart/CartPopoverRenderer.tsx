@@ -20,7 +20,6 @@ type ChildrenProps = {
   balance?: bigint
   hasEnoughCurrency: boolean
   items: Cart['items']
-  flaggedItems: Cart['items']
   unavailableItems: Cart['items']
   priceChangeItems: Cart['items']
   transaction?: Cart['transaction']
@@ -78,10 +77,6 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     }
   }, [open])
 
-  const flaggedItems = useMemo(
-    () => items.filter((item) => item.isBannedOnOpensea),
-    [items]
-  )
   const unavailableItems = useMemo(
     () => items.filter((item) => !item.price),
     [items]
@@ -138,7 +133,6 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
       {children({
         loading: isValidating,
         items,
-        flaggedItems,
         unavailableItems,
         priceChangeItems,
         currency,

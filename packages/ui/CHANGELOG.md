@@ -1,3 +1,103 @@
+## [v1.1.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a60d63eb565ced9d8a4f8adcd3022a6a398fea05) (2023-06-09)
+
+- Update SDK
+
+## [v1.1.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/8fd414ce9a939ba11ad62de163462e4e6ef8606b) (2023-06-08)
+
+- Update SDK
+
+## [v1.1.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3989fa9e5cea1e2188609ca1e036c3eca0bd283d) (2023-06-08)
+
+- Strip out flagged status api calls [9afae7f](https://github.com/reservoirprotocol/reservoir-kit/commit/9afae7f3e3bd9eb1ddcc2eef33913cc18530345d)
+- Allow customizing modal title and CTA copy [26fec99](https://github.com/reservoirprotocol/reservoir-kit/commit/26fec999129fa320517fe9655bb469224c157520)
+- Block adding multiple listings of the same 1155 token from the same maker [b309cd8](https://github.com/reservoirprotocol/reservoir-kit/commit/b309cd8562c18c1f4f9f192b0c097993cd855534)
+- Upgrade radix libraries to latest [53a1801](https://github.com/reservoirprotocol/reservoir-kit/commit/53a180187befc037ed3e9e40ee7eef9bff24a742)
+
+## [v1.0.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/fdb6d652d5864cbca64f1000b3a68b328e55939d) (2023-06-07)
+
+- Handle sweep price changes [4955f8c](https://github.com/reservoirprotocol/reservoir-kit/commit/4955f8c20d7bf75603be3354554fffc211a59b2e)
+
+## [v1.0.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/24b0975b8ae9b6b5946402b5ced4d8b44fb50058) (2023-06-06)
+
+- Add weth contract for zoratestnet [508a190](https://github.com/reservoirprotocol/reservoir-kit/commit/508a19001309d97d038f4d782ea4d663b0ae7d21)
+- add wrapped contract details for testnet chains [745c17e](https://github.com/reservoirprotocol/reservoir-kit/commit/745c17eaaeafb7c00a6c74a7406eab0583af954a)
+
+## [v1.0.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/18b91b6b5bc879b270b3d31452b061a45ed10d37) (2023-06-02)
+
+- Fix bid quantity total calculating in custom modal [4022c80](https://github.com/reservoirprotocol/reservoir-kit/commit/4022c80fb37a8197dfed85a82959172219bfdb99)
+- Transaction result ui in Sweep/CartCheckout modals [933e906](https://github.com/reservoirprotocol/reservoir-kit/commit/933e9065b3fbc1c73dc5f5efa2b1edc274746b14)
+- Add fee variables to sweepTokens dependency [2023-06-02](https://github.com/reservoirprotocol/reservoir-kit/commit/ae4f16c)
+- Fix: bps takes precedence over fixed fees [e88b60a](https://github.com/reservoirprotocol/reservoir-kit/commit/e88b60a84d5f18989b9ccd774c9f1c4670731ed5)
+- Merge pull request #239 from reservoirprotocol/armando/grwth-2504-partial-sweeping-1155s-in-the-buymodal [c2af048](https://github.com/reservoirprotocol/reservoir-kit/commit/c2af048fc86b1986259713414eec0ad399fc3d3f)
+- Fixed price used for mixed currencies [e53ca06](https://github.com/reservoirprotocol/reservoir-kit/commit/e53ca069a54744a466c1212de655123ef9a87c03)
+
+## [v1.0.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/9b3ad6057c63c7b1f44fd83c231644720a9cff3c) (2023-06-01)
+
+- wip [6743ea7](https://github.com/reservoirprotocol/reservoir-kit/commit/6743ea79cd76c19e44aa8bfd9335d11c61ea6485)
+- Fixed add by eth [bdcba34](https://github.com/reservoirprotocol/reservoir-kit/commit/bdcba341163fb7d9fbe0192923c6a3b688cdf952)
+- Replace useTokens with execute/buy precheck [8948876](https://github.com/reservoirprotocol/reservoir-kit/commit/894887652e47d5065f08db77d788081c19944c41)
+- Fix error message ui in sweep modal [44d5b2d](https://github.com/reservoirprotocol/reservoir-kit/commit/44d5b2d521ac5fda38cb6b66daa568549c3bbacf)
+
+## [v0.18.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a88545a1fab211f618d1a7c0efdbef0e4ad37cb2) (2023-05-30)
+
+- Merge pull request #260 from reservoirprotocol/fixes/accept-bid-modal [9d55677](https://github.com/reservoirprotocol/reservoir-kit/commit/9d5567753d95ca96b559a6f0b50cfed5a83407a6)
+- Merge pull request #259 from reservoirprotocol/pedro/grwth-2753-buymodalcustom-allow-for-feesontop-to-be-specified [e988a1c](https://github.com/reservoirprotocol/reservoir-kit/commit/e988a1c1647205fbc7a40513c831c4ffb56ad123)
+- Fix some AcceptBidModal errors [041026b](https://github.com/reservoirprotocol/reservoir-kit/commit/041026bd98f8a0e6c81ad887095dc5bca063b7a7)
+- Fix error in AcceptBidLineItem due to keys not set in repeatable elements [5218394](https://github.com/reservoirprotocol/reservoir-kit/commit/521839415941dfe678c7fe5269719a01fa491e36)
+
+## [v0.17.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/9c4c7af78798d325f63b1f16ac39af62949ade80) (2023-05-27)
+
+- Tweak BuyModal referrerFee props to support passing in multiple receipients and fees [b0bec2d](https://github.com/reservoirprotocol/reservoir-kit/commit/b0bec2d23ffbff6df811d8ed26377c259366c7f1)
+- Add fees on top to BuyModalRenderer [4a22aed](https://github.com/reservoirprotocol/reservoir-kit/commit/4a22aedf16c82f052d17df1b4862d06552f0b0b9)
+- Merge pull request #244 from reservoirprotocol/pedro/grwth-2551-support-batch-selling-in-rk [48d2ba4](https://github.com/reservoirprotocol/reservoir-kit/commit/48d2ba44c74877f353e1b38d0e6781aec1ca7408)
+
+## [v0.16.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/223f3799815dd0e6586db5a4ac9be39440165a2a) (2023-05-25)
+
+- feat: finalize [2dcc49f](https://github.com/reservoirprotocol/reservoir-kit/commit/2dcc49fe225662f2f16dea68583e58f964c780d8)
+- feat: Updaete UI [0d64d94](https://github.com/reservoirprotocol/reservoir-kit/commit/0d64d94751da91ee1181984d83c884b0c74d347d)
+- fixed default currency [2023-05-25](https://github.com/reservoirprotocol/reservoir-kit/commit/95d7a57)
+- Allow passing in multiple currencies to the bid modal [b07de01](https://github.com/reservoirprotocol/reservoir-kit/commit/b07de01a1beb2f111dad2aab9dcd2a8d38ee1378)
+- Fix issues with determining if a purchase was successful not when sweeping/selling/checking out the cart [e26ed64](https://github.com/reservoirprotocol/reservoir-kit/commit/e26ed6426a61039030d1c61ccfdfeee2f8bcef1d)
+- Revert back to importing allChains from viem [47696f3](https://github.com/reservoirprotocol/reservoir-kit/commit/47696f3f25cccc4319e2b55cb0d509b89a7fe8ff)
+- Got speeding up a transaction to work [f2aedb1](https://github.com/reservoirprotocol/reservoir-kit/commit/f2aedb101d7cbb4a04f92194ce4aca5ef9bb559e)
+- Fix issue with accept bid modal not fetching bids when normalize royalty changes [5a13cbe](https://github.com/reservoirprotocol/reservoir-kit/commit/5a13cbe723c18a8e21c8ba384ced7ec2bd362da9)
+
+## [v0.16.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/68c64f3595e18f44995e485a5201210d5c6ec985) (2023-05-23)
+
+- Merge pull request #251 from reservoirprotocol/armando/grwth-2747-add-hook-for-activity-search [7acbc47](https://github.com/reservoirprotocol/reservoir-kit/commit/7acbc47b899d9b71bdf0e6a7ede24fb2653a0b8f)
+- Merge pull request #238 from reservoirprotocol/armando/grwth-2582-use-opensea-testnet-api [b8023c0](https://github.com/reservoirprotocol/reservoir-kit/commit/b8023c0b0f55da699afec8b07f1777e35247fa6b)
+- feat: Add false [80a1004](https://github.com/reservoirprotocol/reservoir-kit/commit/80a10041bb238f41eef3382346d7e45edc9365f5)
+- feat: Fix options stuff [979479c](https://github.com/reservoirprotocol/reservoir-kit/commit/979479c3c7097b6034814e3047b1a30da39d9083)
+- feat: Update search check [9b05e4c](https://github.com/reservoirprotocol/reservoir-kit/commit/9b05e4ce2d0bb9bae11de39a231b32ab83002ff3)
+- feat: Export hook [a51f7c0](https://github.com/reservoirprotocol/reservoir-kit/commit/a51f7c0a7f4660a27e97b796bf29221772bf8607)
+- feat: add useSearchActivities hook [cdb1043](https://github.com/reservoirprotocol/reservoir-kit/commit/cdb10438fd8c2325ef0064b9f26d699ec9c1710a)
+- feat: More ids stuff [d62942b](https://github.com/reservoirprotocol/reservoir-kit/commit/d62942bfd6fc26c11ced57f1d0e64b3492036d28)
+- Fixed signTypedData in executeSteps [2023-05-22](https://github.com/reservoirprotocol/reservoir-kit/commit/c2b71db)
+- feat: pass id into UseTokenOpenSea [9fc1431](https://github.com/reservoirprotocol/reservoir-kit/commit/9fc1431a1f6372dc948425eeba57270099239991)
+- feat: Use id in cartProvider [b9f6e88](https://github.com/reservoirprotocol/reservoir-kit/commit/b9f6e8881c9957bec8c2ad39b506798da67ab49d)
+- Fix import issue with wagmi/chains and parcel [91e80f1](https://github.com/reservoirprotocol/reservoir-kit/commit/91e80f1870f5073b2301878e94e638a0aa589471)
+- Fix http url error [53a1c73](https://github.com/reservoirprotocol/reservoir-kit/commit/53a1c73ad0261bbc2fe9b9d8e971c9a56cf808a0)
+- moved wagmi to peer dependencies [2023-05-16](https://github.com/reservoirprotocol/reservoir-kit/commit/ae63a9c)
+- attempting to fix build errors [52ec0f9](https://github.com/reservoirprotocol/reservoir-kit/commit/52ec0f976073baf041cee1995649c414976b78c8)
+- removed ethers from demo [2023-05-16](https://github.com/reservoirprotocol/reservoir-kit/commit/a6e5e69)
+- updated format currency comnponent to use bigint [c3c2751](https://github.com/reservoirprotocol/reservoir-kit/commit/c3c2751d5863ca7fb41d9b622091f91864d31820)
+- resolve conflicts [5a48f36](https://github.com/reservoirprotocol/reservoir-kit/commit/5a48f36a459b9b31ce0b8fdbb497043e1e17a737)
+- wip [ffbdcaf](https://github.com/reservoirprotocol/reservoir-kit/commit/ffbdcaf018b247209cb3b25da889f36217d16bf0)
+- upgraded wagmi and rainbowkit in demo app [11082b5](https://github.com/reservoirprotocol/reservoir-kit/commit/11082b5db10cc3bf2660b4f4286da8bdfb4ff307)
+- Batch selling in the AcceptBidModal [d1ad38b](https://github.com/reservoirprotocol/reservoir-kit/commit/d1ad38b57db27ff583f77502c1c89fa612cbef69)
+- feat: Formatting [bef2b2f](https://github.com/reservoirprotocol/reservoir-kit/commit/bef2b2f9781f9ca708d1c9c8a8e01f80e223d400)
+- feat: Update map [783408c](https://github.com/reservoirprotocol/reservoir-kit/commit/783408cd09562f6323fce0957fa6458e02944b97)
+- wip batch accepting bids [dac02e1](https://github.com/reservoirprotocol/reservoir-kit/commit/dac02e1f319ccbfa4aaccf6e299f6d2dfa30df5e)
+- feat: Add override [d69c290](https://github.com/reservoirprotocol/reservoir-kit/commit/d69c290ee8cecd02ccf01321ddbce4130f521d52)
+- feat: Resolve review [de5cc74](https://github.com/reservoirprotocol/reservoir-kit/commit/de5cc74d6662d9768f136ed1ab8aba440aba03f0)
+- feat: Partial styling [fe4c9e1](https://github.com/reservoirprotocol/reservoir-kit/commit/fe4c9e1b6e6dd0adad2f28db49b8b079533c9727)
+- feat: Add tx map [a4c12f5](https://github.com/reservoirprotocol/reservoir-kit/commit/a4c12f5b95bd8f6e10be404dd15e2b630e233178)
+- feat: Remove logging [eb4686d](https://github.com/reservoirprotocol/reservoir-kit/commit/eb4686d8958b74e1caa93f9b78c8e765a2a47460)
+- feat: Update use partial options [b1d3d3a](https://github.com/reservoirprotocol/reservoir-kit/commit/b1d3d3ac1ea233985999312db37292be2d757dcd)
+- feat: Partial logic [27a01a8](https://github.com/reservoirprotocol/reservoir-kit/commit/27a01a8624fa8a26fa2d5727bd8aa7576d575968)
+- feat: Hardcode chain value [f2ef440](https://github.com/reservoirprotocol/reservoir-kit/commit/f2ef440dd1541ebe6f720be92404b36a82262a33)
+- feat: Use testnet api on goerli [ee898e0](https://github.com/reservoirprotocol/reservoir-kit/commit/ee898e09b9b4c2e8fbff1784983ddd1cebeb0c4e)
+
 ## [v0.16.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/75011b90a46da0cf7ed171c39dde775c88240efa) (2023-05-18)
 
 - Display prices for mints in activity [874fd2e](https://github.com/reservoirprotocol/reservoir-kit/commit/874fd2e51b136491df7d85eecf56e02536ff725f)

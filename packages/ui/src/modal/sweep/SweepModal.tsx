@@ -40,12 +40,22 @@ type SweepCallbackData = {
   stepData: SweepModalStepData | null
 }
 
+const ModalCopy = {
+  title: 'Buy',
+  ctaClose: 'Close',
+  ctaBuy: 'Buy',
+  ctaBuyDisabled: 'Select Items to Buy',
+  ctaInsufficientFunds: 'Add Funds to Purchase',
+  ctaAwaitingApproval: 'Waiting for Approval...',
+}
+
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
   feesOnTopBps?: string[] | null
   feesOnTopFixed?: string[] | null
   normalizeRoyalties?: boolean
+  copyOverrides?: Partial<typeof ModalCopy>
   onSweepComplete?: (data: SweepCallbackData) => void
   onSweepError?: (error: Error, data: SweepCallbackData) => void
   onClose?: (data: SweepCallbackData, currentStep: SweepStep) => void
@@ -58,10 +68,12 @@ export function SweepModal({
   feesOnTopBps,
   feesOnTopFixed,
   normalizeRoyalties,
+  copyOverrides,
   onSweepComplete,
   onSweepError,
   onClose,
 }: Props): ReactElement {
+  const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
     openState
@@ -163,7 +175,7 @@ export function SweepModal({
         return (
           <Modal
             trigger={trigger}
-            title="Buy"
+            title={copy.title}
             open={open}
             loading={loading}
             onOpenChange={(open) => {
@@ -335,7 +347,9 @@ export function SweepModal({
                     }
                     onClick={sweepTokens}
                   >
-                    {selectedTokens.length > 0 ? 'Buy' : 'Select Items to Buy'}
+                    {selectedTokens.length > 0
+                      ? copy.ctaBuy
+                      : copy.ctaBuyDisabled}
                   </Button>
                 ) : (
                   <Flex direction="column" align="center" css={{ px: '$3' }}>
@@ -357,7 +371,7 @@ export function SweepModal({
                       disabled={true}
                       onClick={sweepTokens}
                     >
-                      Add Funds to Purchase
+                      {copy.ctaInsufficientFunds}
                     </Button>
                   </Flex>
                 )}
@@ -397,7 +411,7 @@ export function SweepModal({
                       <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
                       <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                         <Loader />
-                        Waiting for Approval...
+                        {copy.ctaAwaitingApproval}
                       </Button>
                     </>
                   ) : null}
@@ -454,7 +468,7 @@ export function SweepModal({
                             css={{ mt: '$4', width: '100%' }}
                           >
                             <Loader />
-                            Waiting for Approval...
+                            {copy.ctaAwaitingApproval}
                           </Button>
                         </Flex>
                       )}
@@ -563,7 +577,7 @@ export function SweepModal({
                   </Flex>
                 </Flex>
                 <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
-                  Close
+                  {copy.ctaClose}
                 </Button>
               </Flex>
             )}

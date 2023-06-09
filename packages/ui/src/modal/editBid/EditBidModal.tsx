@@ -34,6 +34,16 @@ import {
   faClose,
 } from '@fortawesome/free-solid-svg-icons'
 
+const ModalCopy = {
+  title: 'Edit Offer',
+  ctaClose: 'Close',
+  ctaConfirm: 'Confirm',
+  ctaConvertManually: 'Convert Manually',
+  ctaConvertAutomatically: '',
+  ctaAwaitingApproval: 'Waiting for approval...',
+  ctaAwaitingValidation: 'Waiting for transaction to be validated',
+}
+
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   bidId?: string
@@ -41,6 +51,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
+  copyOverrides?: Partial<typeof ModalCopy>
   onClose?: (data: any, currentStep: EditBidStep) => void
   onEditBidComplete?: (data: any) => void
   onEditBidError?: (error: Error, data: any) => void
@@ -53,10 +64,12 @@ export function EditBidModal({
   collectionId,
   trigger,
   normalizeRoyalties,
+  copyOverrides,
   onClose,
   onEditBidComplete,
   onEditBidError,
 }: Props): ReactElement {
+  const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
     openState
@@ -163,7 +176,7 @@ export function EditBidModal({
         return (
           <Modal
             trigger={trigger}
-            title="Edit Offer"
+            title={copy.title}
             open={open}
             onOpenChange={(open) => {
               if (!open && onClose) {
@@ -453,14 +466,14 @@ export function EditBidModal({
                           color="secondary"
                           css={{ flex: 1 }}
                         >
-                          Close
+                          {copy.ctaClose}
                         </Button>
                         <Button
                           disabled={bidAmount === '' || bidAmount === '0'}
                           onClick={editBid}
                           css={{ flex: 1 }}
                         >
-                          Confirm
+                          {copy.ctaConfirm}
                         </Button>
                       </>
                     ) : (
@@ -494,7 +507,7 @@ export function EditBidModal({
                               window.open(convertLink, '_blank')
                             }}
                           >
-                            Convert Manually
+                            {copy.ctaConvertManually}
                           </Button>
 
                           {canAutomaticallyConvert && (
@@ -504,8 +517,11 @@ export function EditBidModal({
                               onClick={editBid}
                             >
                               <Text style="h6" color="button" ellipsify>
-                                Convert {amountToWrap}{' '}
-                                {balance?.symbol || 'ETH'} for me
+                                {copy.ctaConvertAutomatically.length > 0
+                                  ? copy.ctaConvertAutomatically
+                                  : `Convert ${amountToWrap} ${
+                                      balance?.symbol || 'ETH'
+                                    } for me`}
                               </Text>
                             </Button>
                           )}
@@ -548,8 +564,8 @@ export function EditBidModal({
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
                   {stepData?.currentStepItem.txHash
-                    ? 'Waiting for transaction to be validated'
-                    : 'Waiting for approval...'}
+                    ? copy.ctaAwaitingValidation
+                    : copy.ctaAwaitingApproval}
                 </Button>
               </Flex>
             )}
@@ -584,7 +600,7 @@ export function EditBidModal({
                   }}
                   css={{ m: '$4' }}
                 >
-                  Close
+                  {copy.ctaClose}
                 </Button>
               </Flex>
             )}

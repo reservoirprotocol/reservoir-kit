@@ -105,7 +105,6 @@ export function CartPopover({
       {({
         loading,
         items,
-        flaggedItems,
         unavailableItems,
         priceChangeItems,
         totalPrice,
@@ -129,7 +128,6 @@ export function CartPopover({
           }
         }, [transaction?.status])
 
-        const flaggedItemsSubject = flaggedItems.length > 1 ? 'items' : 'item'
         const unavailableItemsSubject =
           unavailableItems.length > 1 ? 'items' : 'item'
         const priceChangeItemsSubject =
@@ -229,29 +227,6 @@ export function CartPopover({
                 <CartToast
                   kind="warning"
                   message={`Mixed currency items are only available to be checked out with ${currency?.symbol}`}
-                />
-              )}
-              {flaggedItems.length > 0 && (
-                <CartToast
-                  kind="warning"
-                  message={`${flaggedItems.length} ${flaggedItemsSubject} not tradeable on OpenSea`}
-                  link={
-                    <Text
-                      color="accent"
-                      style="subtitle2"
-                      css={{ ml: 'auto', mt: 3, cursor: 'pointer' }}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        remove(
-                          flaggedItems.map(
-                            (item) => `${item.collection.id}:${item.token.id}`
-                          )
-                        )
-                      }}
-                    >
-                      Remove {flaggedItemsSubject}
-                    </Text>
-                  }
                 />
               )}
               {unavailableItems.length > 0 && (
