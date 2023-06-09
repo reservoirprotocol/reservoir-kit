@@ -23,7 +23,10 @@ type Data = {
  */
 export async function placeBid({ bids, signer, chainId, onProgress }: Data) {
   const client = getClient()
-  const [maker] = await signer.getAddresses()
+  let maker = signer.account?.address
+  if (!maker) {
+    [maker] = await signer.getAddresses()
+  }
   let baseApiUrl = client.currentChain()?.baseApiUrl
 
   if (chainId) {

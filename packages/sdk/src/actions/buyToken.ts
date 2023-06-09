@@ -34,7 +34,10 @@ type Data = {
  */
 export async function buyToken(data: Data) {
   const { items, expectedPrice, signer, chainId, onProgress, precheck } = data
-  const [taker] = await signer.getAddresses()
+  let taker = signer.account?.address
+  if (!taker) {
+    [taker] = await signer.getAddresses()
+  }
   const client = getClient()
   const options = data.options || {}
   let baseApiUrl = client.currentChain()?.baseApiUrl
