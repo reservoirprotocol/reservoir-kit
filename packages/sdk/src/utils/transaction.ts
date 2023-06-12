@@ -19,9 +19,11 @@ export async function sendTransactionSafely(
     data: data.data,
     account: signer.account ?? data.from, // use signer.account if it's defined
     to: data.to,
-    value: hexToBigInt(data.value),
-    ...(data.maxFeePerGas && {maxFeePerGas: hexToBigInt(data.maxFeePerGas)}),
-    ...(data.maxPriorityFeePerGas && {maxPriorityFeePerGas: hexToBigInt(data.maxPriorityFeePerGas)}),
+    value: hexToBigInt(data.value || 0),
+    ...(data.maxFeePerGas && { maxFeePerGas: hexToBigInt(data.maxFeePerGas) }),
+    ...(data.maxPriorityFeePerGas && {
+      maxPriorityFeePerGas: hexToBigInt(data.maxPriorityFeePerGas),
+    }),
   })
   setTx(transaction)
 
