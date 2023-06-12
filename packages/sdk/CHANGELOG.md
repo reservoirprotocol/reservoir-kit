@@ -1,3 +1,7 @@
+
+## [v1.1.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e020c0b5011162cee58b346c968f23201e5bd664) (2023-06-12)
+
+* Fix value being undefined when trying to submit transaction [4894bab](https://github.com/reservoirprotocol/reservoir-kit/commit/4894bab779c20d0c59d41ed987669ef4bd140a8c)
 ## [v1.1.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/feddb9c7b3ea63d0c45c47f295a1c357c580a6e9) (2023-06-09)
 
 - Extend support for local accounts [1e5de9f](https://github.com/reservoirprotocol/reservoir-kit/commit/1e5de9fb964a99366de63394fb82aab134049ca8)
