@@ -54,8 +54,8 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   const collectionName =
     tokenDetails?.token?.collection?.name || collection?.name || ''
 
-  const img = tokenDetails?.token?.image
-    ? tokenDetails.token.image
+  const img = tokenDetails?.token?.imageSmall
+    ? tokenDetails.token.imageSmall
     : (collection?.image as string)
 
   const royaltiesBps =

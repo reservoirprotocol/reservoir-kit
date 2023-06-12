@@ -56,7 +56,7 @@ export function CartCheckoutModal({
     const { token, collection } = item
     const contract = collection.id.split(':')[0]
 
-    return `${cartChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1`
+    return `${cartChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1?imageSize=small`
   })
 
   const salesTxHashes =

@@ -114,8 +114,8 @@ export const ApproveBidCollapsible: FC<Props> = ({
               const tokenKey = `${path?.contract}:${path?.tokenId}`
               const tokenData = tokensMap[tokenKey]?.tokenData
               const image =
-                tokenData?.token?.image || baseApiUrl
-                  ? `${baseApiUrl}/redirect/tokens/${tokenKey}/image/v1`
+                tokenData?.token?.imageSmall || baseApiUrl
+                  ? `${baseApiUrl}/redirect/tokens/${tokenKey}/image/v1?imageSize=small`
                   : null
               if (image && images.length < 4) {
                 images.push(image)

@@ -142,7 +142,7 @@ export function SweepModal({
         const hasTokens = availableTokens && availableTokens.length > 0
 
         const images = selectedTokens.slice(0, 2).map((token) => {
-          return `${currentChain?.baseApiUrl}/redirect/tokens/${token.contract}:${token.tokenId}/image/v1`
+          return `${currentChain?.baseApiUrl}/redirect/tokens/${token.contract}:${token.tokenId}/image/v1?imageSize=small`
         }) as string[]
 
         const pathMap = stepData?.path
@@ -280,7 +280,7 @@ export function SweepModal({
                           <SweepItem
                             key={`${token?.tokenId}-${i}`}
                             name={`#${token.tokenId}`}
-                            image={`${currentChain?.baseApiUrl}/redirect/tokens/${token.contract}:${token.tokenId}/image/v1`}
+                            image={`${currentChain?.baseApiUrl}/redirect/tokens/${token.contract}:${token.tokenId}/image/v1?imageSize=small`}
                             currency={currency}
                             amount={
                               token?.currency != chainCurrency.address &&

@@ -45,8 +45,10 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
       const token = tokensData[i]
       const contract = (token?.collectionId || '').split(':')[0]
       const tokenId = `${contract}:${token?.tokenId}`
-      if (token?.tokenData?.token?.image || baseApiUrl) {
-        imgs.push(`${baseApiUrl}/redirect/tokens/${tokenId}/image/v1`)
+      if (token?.tokenData?.token?.imageSmall || baseApiUrl) {
+        imgs.push(
+          `${baseApiUrl}/redirect/tokens/${tokenId}/image/v1?imageSize=small`
+        )
       }
       if (imgs.length > 2) {
         break
