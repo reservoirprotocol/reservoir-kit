@@ -19,7 +19,7 @@ type Props = {
 }
 
 const TokenStatsHeader: FC<Props> = ({ token, collection }) => {
-  const img = token?.token?.image
+  const img = token?.token?.imageSmall
     ? token.token.imageSmall
     : optimizeImage(collection?.image as string, 250)
 
