@@ -187,14 +187,10 @@ export function BuyModal({
           totalPurchases - (stepData?.currentStep?.items?.length || 0)
 
         const successfulPurchases = totalPurchases - failedPurchases
+        const finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
-        let finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
-
-        let price = listing?.price?.amount?.decimal || 0
-
-        if (!price && token?.token?.lastSale?.price?.amount?.decimal) {
-          price = token?.token.lastSale?.price.amount.decimal
-        }
+        const price =
+          totalPrice || token?.token?.lastSale?.price?.amount?.decimal || 0
 
         return (
           <Modal

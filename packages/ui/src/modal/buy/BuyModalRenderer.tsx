@@ -16,7 +16,11 @@ import {
 } from '../../hooks'
 import { useAccount, useBalance, useWalletClient, useNetwork } from 'wagmi'
 
-import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
+import {
+  BuyPath,
+  Execute,
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-sdk'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
@@ -101,9 +105,8 @@ export const BuyModalRenderer: FC<Props> = ({
   const { data: signer } = useWalletClient()
   const [totalPrice, setTotalPrice] = useState(0)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0)
-  const [depth, setDepth] = useState<
-    NonNullable<Execute['preview']>[0]['depth']
-  >([])
+  const [path, setPath] = useState<BuyPath>([])
+  const [isFetchingPath, setIsFetchingPath] = useState(false)
   const [listingsToBuy, setListingsToBuy] = useState<Record<string, number>>({})
   const [currency, setCurrency] = useState<undefined | Currency>()
   const [mixedCurrencies, setMixedCurrencies] = useState(false)
@@ -125,6 +128,7 @@ export const BuyModalRenderer: FC<Props> = ({
     open && {
       tokens: [`${contract}:${tokenId}`],
       includeLastSale: true,
+      includeQuantity: true,
       normalizeRoyalties,
     },
     {
@@ -151,11 +155,6 @@ export const BuyModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
   const is1155 = token?.token?.kind === 'erc1155'
-  let listingOrderId = orderId && orderId.length > 0 ? orderId : undefined
-
-  if (!listingOrderId && !is1155) {
-    listingOrderId = token?.market?.floorAsk?.id
-  }
 
   const {
     data: listingsData,
@@ -164,34 +163,33 @@ export const BuyModalRenderer: FC<Props> = ({
   } = useListings(
     {
       token: `${contract}:${tokenId}`,
-      ids: listingOrderId,
+      ids: orderId,
       normalizeRoyalties,
       status: 'active',
-      limit: 1000,
+      limit: 1,
       sortBy: 'price',
     },
     {
       revalidateFirstPage: true,
     },
-    open && listingOrderId ? true : false
+    open && orderId && orderId.length > 0 ? true : false
   )
 
-  //need to tweak this to use the depth preview
-  const listings = useMemo(
-    () => listingsData.filter((listing) => listing.maker !== address),
+  const listing = useMemo(
+    () => listingsData.find((listing) => listing.maker !== address),
     [listingsData]
   )
-  const listing =
-    listings && listings[0] && listings[0].status === 'active'
-      ? listings[0]
-      : undefined
-  const quantityRemaining =
-    listings.length > 1
-      ? listings.reduce(
-          (total, listing) => total + (listing.quantityRemaining || 0),
-          0
-        )
-      : listing?.quantityRemaining
+  const quantityRemaining = useMemo(() => {
+    if (orderId) {
+      return listing?.quantityRemaining || 0
+    } else if (is1155) {
+      return path
+        ? path.reduce((total, pathItem) => total + (pathItem.quantity || 0), 0)
+        : 0
+    } else {
+      return token?.market?.floorAsk?.quantityRemaining || 0
+    }
+  }, [listing, token, path, is1155, orderId])
 
   const usdConversion = useCoinConversion(
     open && token ? 'USD' : undefined,
@@ -204,7 +202,6 @@ export const BuyModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
 
   useEffect(() => {
-    setDepth([])
     if (
       !open ||
       !client ||
@@ -214,11 +211,15 @@ export const BuyModalRenderer: FC<Props> = ({
       !is1155 ||
       orderId
     ) {
+      setPath(undefined)
       return
     }
 
+    setIsFetchingPath(true)
+
     const options: BuyTokenOptions = {
-      preview: 'depth',
+      onlyPath: true,
+      partial: true,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -230,6 +231,8 @@ export const BuyModalRenderer: FC<Props> = ({
         items: [
           {
             token: `${contract}:${tokenId}`,
+            quantity: 1000,
+            fillType: 'trade',
           },
         ],
         signer,
@@ -237,16 +240,14 @@ export const BuyModalRenderer: FC<Props> = ({
         precheck: true,
       })
       .then((response) => {
-        if (
-          response &&
-          response.preview &&
-          response.preview.length > 0 &&
-          response.preview[0].depth
-        ) {
-          setDepth(response.preview[0].depth)
+        if (response && response.path) {
+          setPath(response.path)
         } else {
-          setDepth([])
+          setPath(undefined)
         }
+      })
+      .finally(() => {
+        setIsFetchingPath(false)
       })
   }, [
     open,
@@ -320,6 +321,7 @@ export const BuyModalRenderer: FC<Props> = ({
         items.push({
           orderId: listingId,
           quantity: listingsToBuy[listingId],
+          fillType: 'trade',
         })
       })
     } else {
@@ -425,6 +427,7 @@ export const BuyModalRenderer: FC<Props> = ({
     feesOnTopFixed,
     quantity,
     normalizeRoyalties,
+    is1155,
     client,
     currency,
     totalPrice,
@@ -436,41 +439,60 @@ export const BuyModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     let currency: Currency | undefined
-    if (listing) {
-      let total = 0
-      if (quantity > 1) {
-        let orders: Record<string, number> = {}
-        let mixedCurrencies = false
-        let currencies: string[] = []
-        let nativeTotal = 0
-        let orderCurrencyTotal = 0
-        let totalQuantity = 0
-        for (let i = 0; i < listings.length; i++) {
-          const listingQuantity = listings[i].quantityRemaining
-          const listingPrice = listings[i].price
-          const listingAmount = listingPrice?.amount
-          const listingId = listings[i].id
-          if (
-            !listingPrice?.currency?.contract ||
-            !listingAmount ||
-            !listingQuantity
-          ) {
+
+    if (
+      !token ||
+      (orderId && !listing && isValidatingListing) ||
+      (is1155 && !path && isFetchingPath)
+    ) {
+      setBuyStep(BuyStep.Unavailable)
+      setTotalPrice(0)
+      setAverageUnitPrice(0)
+      setListingsToBuy({})
+      setCurrency(undefined)
+      setMixedCurrencies(false)
+      return
+    }
+
+    let total = 0
+    if (orderId) {
+      total = (listing?.price?.amount?.decimal || 0) * quantity
+      if (listing?.price?.currency) {
+        currency = listing?.price?.currency as Currency
+        setCurrency(currency)
+      }
+      setMixedCurrencies(false)
+    } else if (is1155) {
+      let orders: Record<string, number> = {}
+      let mixedCurrencies = false
+      let currencies: string[] = []
+      let nativeTotal = 0
+      let orderCurrencyTotal = 0
+      let totalQuantity = 0
+      if (path && path.length > 0) {
+        debugger
+        for (let i = 0; i < path.length; i++) {
+          const pathItem = path[i]
+          const pathQuantity = pathItem.quantity || 0
+          const pathPrice = pathItem.totalPrice || 0
+          const listingId = pathItem.orderId
+          if (!pathItem?.currency || !listingId) {
             continue
           }
           const quantityLeft = quantity - totalQuantity
-          if (!currencies.includes(listingPrice.currency.contract)) {
-            currencies.push(listingPrice.currency.contract)
+          if (!currencies.includes(pathItem.currency)) {
+            currencies.push(pathItem.currency)
             mixedCurrencies = currencies.length >= 2
           }
           let quantityToTake = 0
-          if (quantityLeft >= listingQuantity) {
-            quantityToTake = listingQuantity
+          if (quantityLeft >= pathQuantity) {
+            quantityToTake = pathQuantity
           } else {
             quantityToTake = quantityLeft
           }
 
-          nativeTotal += (listingAmount.native || 0) * quantityToTake
-          orderCurrencyTotal += (listingAmount.decimal || 0) * quantityToTake
+          nativeTotal += (pathItem.buyInQuote || pathPrice) * quantityToTake
+          orderCurrencyTotal += pathPrice * quantityToTake
           orders[listingId] = quantityToTake
           totalQuantity += quantityToTake
 
@@ -485,46 +507,44 @@ export const BuyModalRenderer: FC<Props> = ({
               contract: chainCurrency.address,
               symbol: chainCurrency.symbol,
               decimals: chainCurrency.decimals,
-              name: chainCurrency.name,
             }
-          : (listing.price?.currency as any)
+          : {
+              contract: path[0].currency as string,
+              symbol: path[0].currencySymbol as string,
+              decimals: path[0].currencyDecimals as number,
+            }
         setCurrency(currency)
         setMixedCurrencies(mixedCurrencies)
-      } else if (listing.price?.amount?.decimal) {
-        total = listing.price.amount.decimal
-        currency = listing.price.currency as Currency
+      }
+    } else if (token?.market?.floorAsk) {
+      total = token.market.floorAsk.price?.amount?.decimal || 0
+      if (token.market.floorAsk.price?.currency) {
+        currency = token.market.floorAsk.price?.currency as Currency
         setCurrency(currency)
-        setMixedCurrencies(false)
       }
-      if (total > 0) {
-        if (feesOnTopBps && feesOnTopBps.length > 0) {
-          const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
-            const [_, fee] = feeOnTop.split(':')
-            return totalFees + (Number(fee) / 10000) * total
-          }, 0)
-          total += fees
-          setFeeOnTop(fees)
-        } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
-          const fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
-            const [_, fee] = feeOnTop.split(':')
-            const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
-            return totalFees + Number(parsedFee)
-          }, 0)
-          total += fees
-          setFeeOnTop(fees)
-        }
-        setTotalPrice(total)
-        setAverageUnitPrice(total / quantity)
-        setBuyStep(BuyStep.Checkout)
-      } else {
-        setBuyStep(BuyStep.Unavailable)
-        setTotalPrice(0)
-        setAverageUnitPrice(0)
-        setListingsToBuy({})
-        setCurrency(undefined)
-        setMixedCurrencies(false)
+      setMixedCurrencies(false)
+    }
+    if (total > 0) {
+      if (feesOnTopBps && feesOnTopBps.length > 0) {
+        const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
+          const [_, fee] = feeOnTop.split(':')
+          return totalFees + (Number(fee) / 10000) * total
+        }, 0)
+        total += fees
+        setFeeOnTop(fees)
+      } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
+        const fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
+          const [_, fee] = feeOnTop.split(':')
+          const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
+          return totalFees + Number(parsedFee)
+        }, 0)
+        total += fees
+        setFeeOnTop(fees)
       }
-    } else if (!listing && !isValidatingListing && token) {
+      setTotalPrice(total)
+      setAverageUnitPrice(total / quantity)
+      setBuyStep(BuyStep.Checkout)
+    } else {
       setBuyStep(BuyStep.Unavailable)
       setTotalPrice(0)
       setAverageUnitPrice(0)
@@ -534,7 +554,11 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   }, [
     listing,
+    path,
     isValidatingListing,
+    isFetchingPath,
+    is1155,
+    orderId,
     feesOnTopBps,
     feesOnTopFixed,
     feeOnTop,
@@ -567,6 +591,7 @@ export const BuyModalRenderer: FC<Props> = ({
       setStepData(null)
       setSteps(null)
       setQuantity(1)
+      setPath(undefined)
     }
   }, [open])
 
