@@ -415,8 +415,7 @@ export const BuyModalRenderer: FC<Props> = ({
           }
           mutateCollection()
           mutateTokens()
-          if (is1155) {
-          }
+          fetchPath()
         }
         setBuyStep(BuyStep.Checkout)
         setStepData(null)
