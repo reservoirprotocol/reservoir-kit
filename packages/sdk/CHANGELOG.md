@@ -1,9 +1,8 @@
-
 ## [v1.1.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0beba7d7841d59650a393d8b0e95f92395d09ee5) (2023-06-13)
 
-* Merge pull request #280 from reservoirprotocol/ted/upgrade-viem [8450dd9](https://github.com/reservoirprotocol/reservoir-kit/commit/8450dd9186dd50222dfc0d4f485c874553475fcb)
-* Merge pull request #279 from reservoirprotocol/pedro/grwth-2754-buymodal-1155-sweeping-duplicate-listings [a8866c1](https://github.com/reservoirprotocol/reservoir-kit/commit/a8866c10ccb6bdd7f819413334909163fb610ce0)
-* Upgrade viem to v~0.3.35 [2023-06-13](https://github.com/reservoirprotocol/reservoir-kit/commit/df12322)
+- Upgrade viem dependency to ~0.3.35 [8450dd9](https://github.com/reservoirprotocol/reservoir-kit/commit/8450dd9186dd50222dfc0d4f485c874553475fcb)
+- Sync api [a8866c1](https://github.com/reservoirprotocol/reservoir-kit/commit/a8866c10ccb6bdd7f819413334909163fb610ce0)
+
 ## [v1.1.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/f8d10590c54535b3cee1b1ade23f4d05db0286e3) (2023-06-12)
 
 - Sync api [ebaeb06](https://github.com/reservoirprotocol/reservoir-kit/commit/ebaeb0678344f800f396fc7abef33ab89f22c566)
