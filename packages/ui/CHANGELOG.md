@@ -1,3 +1,10 @@
+
+## [v1.1.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/98620013a6d7768ee76bc0fb7bb4b9dd918ef933) (2023-06-12)
+
+* Merge pull request #276 from reservoirprotocol/ted/grwth-2428-update-rk-to-use-better-sized-images-for-the-various-use [c149e06](https://github.com/reservoirprotocol/reservoir-kit/commit/c149e0650faf31a8c5173a9675a910d385cd292c)
+* Fix image check in TokenStatsHeader [6e50f5e](https://github.com/reservoirprotocol/reservoir-kit/commit/6e50f5ec6a1cb3928720e02b421de6200f372e5e)
+* Only use optimizeImage on collection image [e645444](https://github.com/reservoirprotocol/reservoir-kit/commit/e6454446d6f462eef49feb6588ebbfe922da53b9)
+* Updated RK with better-sized images [9c04550](https://github.com/reservoirprotocol/reservoir-kit/commit/9c0455077a2d703a37dd1b4ba9452a301b7663a2)
 ## [v1.1.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/878ca89a048ac81307fed32be8866450b50929cf) (2023-06-12)
 
 - Update SDK
