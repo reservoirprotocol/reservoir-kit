@@ -11,7 +11,7 @@ export type Preview =
 
 export type Execute = {
   errors?: { message?: string; orderId?: string }[]
-  preview: Preview
+  preview?: Preview
   path: BuyPath | SellPath
   error?: string // Manually added client error
   steps: {
