@@ -26,6 +26,8 @@ import { toFixed } from '../../lib/numbers'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { Currency } from '../../types/Currency'
 
+type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
+
 export enum BuyStep {
   Checkout,
   Approving,
@@ -75,7 +77,6 @@ type ChildrenProps = {
   steps: Execute['steps'] | null
   stepData: BuyModalStepData | null
   quantity: number
-  listingsToBuy: Record<string, number>
   setBuyStep: React.Dispatch<React.SetStateAction<BuyStep>>
   setQuantity: React.Dispatch<React.SetStateAction<number>>
   buyToken: () => void
@@ -107,7 +108,6 @@ export const BuyModalRenderer: FC<Props> = ({
   const [averageUnitPrice, setAverageUnitPrice] = useState(0)
   const [path, setPath] = useState<BuyPath>([])
   const [isFetchingPath, setIsFetchingPath] = useState(false)
-  const [listingsToBuy, setListingsToBuy] = useState<Record<string, number>>({})
   const [currency, setCurrency] = useState<undefined | Currency>()
   const [mixedCurrencies, setMixedCurrencies] = useState(false)
   const [feeOnTop, setFeeOnTop] = useState(0)
@@ -179,6 +179,7 @@ export const BuyModalRenderer: FC<Props> = ({
     () => listingsData.find((listing) => listing.maker !== address),
     [listingsData]
   )
+
   const quantityRemaining = useMemo(() => {
     if (orderId) {
       return listing?.quantityRemaining || 0
@@ -201,7 +202,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
 
-  useEffect(() => {
+  const fetchPath = useCallback(() => {
     if (
       !open ||
       !client ||
@@ -243,8 +244,12 @@ export const BuyModalRenderer: FC<Props> = ({
         if (response && response.path) {
           setPath(response.path)
         } else {
-          setPath(undefined)
+          setPath([])
         }
+      })
+      .catch((err) => {
+        setPath([])
+        throw err
       })
       .finally(() => {
         setIsFetchingPath(false)
@@ -259,6 +264,10 @@ export const BuyModalRenderer: FC<Props> = ({
     orderId,
     normalizeRoyalties,
   ])
+
+  useEffect(() => {
+    fetchPath()
+  }, [fetchPath])
 
   const buyToken = useCallback(() => {
     if (!signer) {
@@ -312,30 +321,22 @@ export const BuyModalRenderer: FC<Props> = ({
     }
 
     setBuyStep(BuyStep.Approving)
-    type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
     const items: Item[] = []
-
-    if (quantity > 1) {
-      if (is1155) options.partial = true
-      Object.keys(listingsToBuy).forEach((listingId) => {
-        items.push({
-          orderId: listingId,
-          quantity: listingsToBuy[listingId],
-          fillType: 'trade',
-        })
-      })
-    } else {
-      const item: Item = {
-        quantity: 1,
-      }
-
-      if (orderId) {
-        item.orderId = orderId
-      } else {
-        item.token = `${contract}:${tokenId}`
-      }
-      items.push(item)
+    const item: Item = {
+      fillType: 'trade',
+      quantity,
     }
+
+    if (is1155) {
+      options.partial = true
+    }
+
+    if (orderId) {
+      item.orderId = orderId
+    } else {
+      item.token = `${contract}:${tokenId}`
+    }
+    items.push(item)
 
     client.actions
       .buyToken({
@@ -414,6 +415,8 @@ export const BuyModalRenderer: FC<Props> = ({
           }
           mutateCollection()
           mutateTokens()
+          if (is1155) {
+          }
         }
         setBuyStep(BuyStep.Checkout)
         setStepData(null)
@@ -431,7 +434,6 @@ export const BuyModalRenderer: FC<Props> = ({
     client,
     currency,
     totalPrice,
-    listingsToBuy,
     mutateListings,
     mutateTokens,
     mutateCollection,
@@ -448,7 +450,6 @@ export const BuyModalRenderer: FC<Props> = ({
       setBuyStep(BuyStep.Unavailable)
       setTotalPrice(0)
       setAverageUnitPrice(0)
-      setListingsToBuy({})
       setCurrency(undefined)
       setMixedCurrencies(false)
       return
@@ -470,7 +471,6 @@ export const BuyModalRenderer: FC<Props> = ({
       let orderCurrencyTotal = 0
       let totalQuantity = 0
       if (path && path.length > 0) {
-        debugger
         for (let i = 0; i < path.length; i++) {
           const pathItem = path[i]
           const pathQuantity = pathItem.quantity || 0
@@ -501,7 +501,6 @@ export const BuyModalRenderer: FC<Props> = ({
           }
         }
         total = mixedCurrencies ? nativeTotal : orderCurrencyTotal
-        setListingsToBuy(orders)
         currency = mixedCurrencies
           ? {
               contract: chainCurrency.address,
@@ -548,7 +547,6 @@ export const BuyModalRenderer: FC<Props> = ({
       setBuyStep(BuyStep.Unavailable)
       setTotalPrice(0)
       setAverageUnitPrice(0)
-      setListingsToBuy({})
       setCurrency(undefined)
       setMixedCurrencies(false)
     }
@@ -598,7 +596,11 @@ export const BuyModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
-        loading: (!listing && isValidatingListing) || !token,
+        loading:
+          (!listing && isValidatingListing) ||
+          !token ||
+          isFetchingPath ||
+          (is1155 && !path && !orderId),
         token,
         collection,
         listing,
@@ -620,7 +622,6 @@ export const BuyModalRenderer: FC<Props> = ({
         steps,
         stepData,
         quantity,
-        listingsToBuy,
         setQuantity,
         setBuyStep,
         buyToken,

@@ -116,7 +116,6 @@ export function BuyModal({
         loading,
         token,
         collection,
-        listing,
         quantityAvailable,
         quantity,
         averageUnitPrice,
