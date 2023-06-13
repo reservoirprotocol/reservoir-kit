@@ -1,12 +1,11 @@
-
 ## [v1.1.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/f8d10590c54535b3cee1b1ade23f4d05db0286e3) (2023-06-12)
 
-* Merge pull request #276 from reservoirprotocol/ted/grwth-2428-update-rk-to-use-better-sized-images-for-the-various-use [c149e06](https://github.com/reservoirprotocol/reservoir-kit/commit/c149e0650faf31a8c5173a9675a910d385cd292c)
-* Sync api [ebaeb06](https://github.com/reservoirprotocol/reservoir-kit/commit/ebaeb0678344f800f396fc7abef33ab89f22c566)
+- Sync api [ebaeb06](https://github.com/reservoirprotocol/reservoir-kit/commit/ebaeb0678344f800f396fc7abef33ab89f22c566)
 
 ## [v1.1.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e020c0b5011162cee58b346c968f23201e5bd664) (2023-06-12)
 
-* Fix value being undefined when trying to submit transaction [4894bab](https://github.com/reservoirprotocol/reservoir-kit/commit/4894bab779c20d0c59d41ed987669ef4bd140a8c)
+- Fix value being undefined when trying to submit transaction [4894bab](https://github.com/reservoirprotocol/reservoir-kit/commit/4894bab779c20d0c59d41ed987669ef4bd140a8c)
+
 ## [v1.1.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/feddb9c7b3ea63d0c45c47f295a1c357c580a6e9) (2023-06-09)
 
 - Extend support for local accounts [1e5de9f](https://github.com/reservoirprotocol/reservoir-kit/commit/1e5de9fb964a99366de63394fb82aab134049ca8)
