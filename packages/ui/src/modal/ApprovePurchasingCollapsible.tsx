@@ -33,7 +33,7 @@ export const ApprovePurchasingCollapsible: FC<Props> = ({
       const path = pathMap[orderId]
 
       if (path) {
-        let imageRedirect = `${chain?.baseApiUrl}/redirect/tokens/${path.contract}:${path.tokenId}/image/v1`
+        let imageRedirect = `${chain?.baseApiUrl}/redirect/tokens/${path.contract}:${path.tokenId}/image/v1?imageSize=small`
         images.push(imageRedirect)
         totalPrice += path.quote || 0
       }

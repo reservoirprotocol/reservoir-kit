@@ -247,7 +247,7 @@ export function AcceptBidModal({
                           name: tokenData?.token?.collection?.name || '',
                         }}
                         img={
-                          tokenData?.token?.image ||
+                          tokenData?.token?.imageSmall ||
                           tokenData?.token?.collection?.image ||
                           ''
                         }
@@ -266,7 +266,7 @@ export function AcceptBidModal({
                           name: tokenData?.token?.collection?.name || '',
                         }}
                         img={
-                          tokenData?.token?.image ||
+                          tokenData?.token?.imageSmall ||
                           tokenData?.token?.collection?.image ||
                           ''
                         }

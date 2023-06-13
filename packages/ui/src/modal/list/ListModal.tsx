@@ -179,8 +179,8 @@ export function ListModal({
         setQuantity,
       }) => {
         const tokenImage =
-          token && token.token?.image
-            ? token.token.image
+          token && token.token?.imageSmall
+            ? token.token.imageSmall
             : (collection?.image as string)
 
         useEffect(() => {

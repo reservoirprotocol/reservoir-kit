@@ -488,7 +488,7 @@ export function BuyModal({
                   )}
                   {totalPurchases === 1 && (
                     <img
-                      src={token?.token?.image}
+                      src={token?.token?.imageSmall}
                       style={{ width: 100, height: 100 }}
                     />
                   )}

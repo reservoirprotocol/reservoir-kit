@@ -19,10 +19,9 @@ type Props = {
 }
 
 const TokenStatsItem: FC<Props> = ({ token, collection }) => {
-  const img = optimizeImage(
-    token?.token?.image ? token.token.image : (collection?.image as string),
-    600
-  )
+  const img = token?.token?.imageSmall
+    ? token.token.imageSmall
+    : optimizeImage(collection?.image as string, 250)
   return (
     <Box
       css={{
