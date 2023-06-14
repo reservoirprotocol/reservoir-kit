@@ -7,8 +7,8 @@ import React, {
   useMemo,
 } from 'react'
 import {
-  useChainCurrency,
   useCoinConversion,
+  useCollections,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
@@ -22,10 +22,11 @@ import {
 } from '@reservoir0x/reservoir-sdk'
 import { toFixed } from '../../lib/numbers'
 import { UseBalanceToken } from '../../types/wagmi'
-import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { formatUnits, parseUnits, zeroAddress } from 'viem'
 
 export enum MintStep {
   Idle,
+  AddFunds,
   Approving,
   Finalizing,
   Complete,
@@ -45,30 +46,27 @@ type BuyTokenOptions = Parameters<
   ReservoirClientActions['buyToken']
 >['0']['options']
 
-type Currency = NonNullable<
+export type MintCurrency = NonNullable<
   NonNullable<NonNullable<Token['market']>['floorAsk']>['price']
 >['currency']
 
 type ChildrenProps = {
   loading: boolean
-  selectedTokens: NonNullable<BuyPath>
-  setSelectedTokens: React.Dispatch<React.SetStateAction<NonNullable<BuyPath>>>
-  itemAmount?: number
-  setItemAmount: React.Dispatch<React.SetStateAction<number | undefined>>
-  maxInput: number
-  setMaxInput: React.Dispatch<React.SetStateAction<number>>
-  currency: ReturnType<typeof useChainCurrency>
-  chainCurrency: ReturnType<typeof useChainCurrency>
-  isChainCurrency: boolean
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  quantity: number
+  setQuantity: React.Dispatch<React.SetStateAction<number>>
+  maxQuantity: number
+  setMaxQuantity: React.Dispatch<React.SetStateAction<number>>
+  currency?: MintCurrency
   total: number
   totalUsd: number
   feeOnTop: number
   feeUsd: number
   usdPrice: number
   currentChain: ReservoirChain | null | undefined
-  availableTokens: BuyPath
   address?: string
-  tokens: BuyPath
+  mintData: BuyPath
+  mintPrice: number
   balance?: bigint
   hasEnoughCurrency: boolean
   blockExplorerBaseUrl: string
@@ -99,9 +97,9 @@ export const MintModalRenderer: FC<Props> = ({
 }) => {
   const { data: signer } = useWalletClient()
   const account = useAccount()
-  const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
-  const [itemAmount, setItemAmount] = useState<number | undefined>(undefined)
-  const [maxInput, setMaxInput] = useState<number>(0)
+  const [mintData, setMintData] = useState<BuyPath | undefined>(undefined)
+  const [quantity, setQuantity] = useState(1)
+  const [maxQuantity, setMaxQuantity] = useState<number>(50)
   const [mintStep, setMintStep] = useState<MintStep>(MintStep.Idle)
   const [stepData, setStepData] = useState<MintModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -109,10 +107,7 @@ export const MintModalRenderer: FC<Props> = ({
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0)
 
-  const chainCurrency = useChainCurrency()
-  const [currency, setCurrency] = useState(chainCurrency)
-
-  const isChainCurrency = currency.address === chainCurrency.address
+  const [currency, setCurrency] = useState<MintCurrency | undefined>(undefined)
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -124,7 +119,18 @@ export const MintModalRenderer: FC<Props> = ({
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   const [fetchedInitialTokens, setFetchedInitialTokens] = useState(false)
-  const [tokens, setTokens] = useState<BuyPath | undefined>(undefined)
+
+  const mintPrice = mintData?.[0].totalPrice || 0
+
+  const { data: collections, mutate: mutateCollection } = useCollections(
+    open && {
+      id: collectionId,
+      normalizeRoyalties,
+      includeMintStages: true,
+    }
+  )
+
+  const collection = collections && collections[0] ? collections[0] : undefined
 
   const fetchBuyPath = useCallback(() => {
     if (!signer || !client) {
@@ -155,11 +161,15 @@ export const MintModalRenderer: FC<Props> = ({
         onProgress: () => {},
       })
       .then((data) => {
-        setTokens(
-          'path' in (data as any)
-            ? ((data as Execute)['path'] as BuyPath)
-            : undefined
-        )
+        if ('path' in (data as any)) {
+          const buyPath = (data as Execute)['path'] as BuyPath
+          setMintData(buyPath)
+          setCurrency({
+            contract: buyPath?.[0]?.currency,
+            symbol: buyPath?.[0]?.currencySymbol,
+            decimals: buyPath?.[0]?.currencyDecimals,
+          })
+        }
       })
       .finally(() => {
         setFetchedInitialTokens(true)
@@ -173,14 +183,7 @@ export const MintModalRenderer: FC<Props> = ({
   }, [client, signer, open])
 
   const total = useMemo(() => {
-    const updatedTotal = selectedTokens?.reduce((total, token) => {
-      return (
-        total +
-        (token?.currency != chainCurrency.address && isChainCurrency
-          ? token?.buyInQuote || 0
-          : token?.totalPrice || 0)
-      )
-    }, 0)
+    const updatedTotal = mintPrice * (Math.max(0, quantity) || 0)
 
     let fees = 0
     if (feesOnTopBps && feesOnTopBps.length > 0) {
@@ -198,7 +201,7 @@ export const MintModalRenderer: FC<Props> = ({
     setFeeOnTop(fees)
 
     return updatedTotal + fees
-  }, [selectedTokens, feesOnTopBps, feesOnTopFixed, currency, isChainCurrency])
+  }, [mintPrice, quantity, feesOnTopBps, feesOnTopFixed, currency])
 
   const coinConversion = useCoinConversion(
     open ? 'USD' : undefined,
@@ -212,8 +215,8 @@ export const MintModalRenderer: FC<Props> = ({
     chainId: chain?.id,
     address: account.address,
     token:
-      currency?.address !== zeroAddress
-        ? (currency?.address as UseBalanceToken)
+      currency?.contract !== zeroAddress
+        ? (currency?.contract as UseBalanceToken)
         : undefined,
     watch: open,
     formatUnits: currency?.decimals,
@@ -236,21 +239,11 @@ export const MintModalRenderer: FC<Props> = ({
     }
   }, [total, balance, currency])
 
-  const availableTokens = useMemo(() => {
-    if (!tokens) return []
-    return tokens
-  }, [tokens, account])
-
-  useEffect(() => {
-    setItemAmount(1)
-  }, [availableTokens.length])
-
   // reset state on close
   useEffect(() => {
     if (!open) {
-      setSelectedTokens([])
-      setTokens(undefined)
-      setItemAmount(undefined)
+      setMintData(undefined)
+      setQuantity(1)
       setMintStep(MintStep.Idle)
       setTransactionError(null)
       setFetchedInitialTokens(false)
@@ -305,7 +298,7 @@ export const MintModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
-    if (!selectedTokens || selectedTokens.length === 0) {
+    if (!mintData) {
       const error = new Error('No tokens to mint')
       setTransactionError(error)
       throw error
@@ -318,7 +311,7 @@ export const MintModalRenderer: FC<Props> = ({
         items: [
           {
             collection: collectionId,
-            quantity: selectedTokens.length,
+            quantity: quantity,
             fillType: 'mint',
           },
         ],
@@ -385,10 +378,12 @@ export const MintModalRenderer: FC<Props> = ({
         })
         setTransactionError(transactionError)
         setMintStep(MintStep.Idle)
+        mutateCollection()
         fetchBuyPath()
       })
   }, [
-    selectedTokens,
+    mintData,
+    quantity,
     client,
     signer,
     total,
@@ -403,25 +398,22 @@ export const MintModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
-        loading: !fetchedInitialTokens,
+        loading: !fetchedInitialTokens || !collection,
         address: account?.address,
-        selectedTokens,
-        setSelectedTokens,
-        itemAmount,
-        setItemAmount,
-        maxInput,
-        setMaxInput,
+        collection,
+        quantity,
+        setQuantity,
+        maxQuantity,
+        setMaxQuantity,
         currency,
-        chainCurrency,
-        isChainCurrency,
         total,
         totalUsd,
         feeOnTop,
         feeUsd,
         usdPrice,
         currentChain,
-        availableTokens,
-        tokens,
+        mintData,
+        mintPrice,
         balance: balance?.value,
         hasEnoughCurrency,
         blockExplorerBaseUrl,
