@@ -397,14 +397,8 @@ export const ListModalRenderer: FC<Props> = ({
           })
           listing.automatedRoyalties = false
           listing.fees = [...royalties]
-          if (
-            client.marketplaceFee &&
-            client.marketplaceFeeRecipient &&
-            listing.orderbook === 'reservoir'
-          ) {
-            listing.fees.push(
-              `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`
-            )
+          if (client.marketplaceFees && listing.orderbook === 'reservoir') {
+            listing.fees = listing.fees.concat(client.marketplaceFees)
           }
         }
 
@@ -511,6 +505,7 @@ export const ListModalRenderer: FC<Props> = ({
       })
       .catch((e: any) => {
         const error = e as Error
+        //@ts-ignore
         const transactionError = new Error(error?.message || '', {
           cause: error,
         })

@@ -51,9 +51,14 @@ export default function (
           const data = getLocalMarketplaceData()
           marketplace.name = data.title
           marketplace.domain = client?.source
+          const feeBps = client?.marketplaceFees?.reduce((total, fee) => {
+            const bps = Number(fee.split(':')[1])
+            total += bps
+            return total
+          }, 0)
           marketplace.fee = {
-            bps: client?.marketplaceFee || 0,
-            percent: (client?.marketplaceFee || 0) / 100,
+            bps: feeBps || 0,
+            percent: (feeBps || 0) / 100,
           }
           if (data.icon) {
             marketplace.imageUrl = data.icon

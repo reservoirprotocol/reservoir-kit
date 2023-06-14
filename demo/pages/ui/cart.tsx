@@ -50,6 +50,12 @@ const CartPage: NextPage = () => {
         }}
       />
       <div>
+        <i>
+          Add ?cartFeeFixed=["0xabc:123"] or ?cartFeeBps=["0xabc:123"] to add a
+          fee to the cart
+        </i>
+      </div>
+      <div>
         <label>Collection Id: </label>
         <input
           placeholder="Collection Id"
@@ -59,6 +65,7 @@ const CartPage: NextPage = () => {
           style={{ width: 250 }}
         />
       </div>
+
       <div>
         <label>Add by Order Id: </label>
         <input

@@ -108,7 +108,7 @@ export function CartPopover({
         unavailableItems,
         priceChangeItems,
         totalPrice,
-        referrerFee,
+        feeOnTop,
         usdPrice,
         hasEnoughCurrency,
         balance,
@@ -323,7 +323,7 @@ export function CartPopover({
                   </Flex>
                 )}
               <Flex direction="column" css={{ mt: 'auto', pb: 10 }}>
-                {!isCartEmpty && referrerFee ? (
+                {!isCartEmpty && feeOnTop ? (
                   <Flex css={{ mb: '$4' }}>
                     <Text style="subtitle2">Referrer Fee</Text>
                     <Flex
@@ -333,7 +333,7 @@ export function CartPopover({
                     >
                       <FormatCryptoCurrency
                         textStyle="subtitle2"
-                        amount={referrerFee}
+                        amount={feeOnTop}
                         address={currency?.contract}
                         decimals={currency?.decimals}
                         symbol={currency?.symbol}
@@ -342,7 +342,7 @@ export function CartPopover({
                       />
                       {usdPrice && (
                         <FormatCurrency
-                          amount={usdPrice * referrerFee}
+                          amount={usdPrice * feeOnTop}
                           style="subtitle2"
                           color="subtle"
                           css={{ textAlign: 'end' }}

@@ -36,7 +36,7 @@ export async function acceptOffer(data: Data) {
   const { items, expectedPrice, signer, chainId, onProgress, precheck } = data
   let taker = signer.account?.address
   if (!taker) {
-    [taker] = await signer.getAddresses()
+    ;[taker] = await signer.getAddresses()
   }
 
   const client = getClient()
@@ -66,6 +66,10 @@ export async function acceptOffer(data: Data) {
       params.normalizeRoyalties === undefined
     ) {
       params.normalizeRoyalties = client.normalizeRoyalties
+    }
+
+    if (!('feesOnTop' in params) && client.feesOnTop) {
+      params.feesOnTop = client.feesOnTop
     }
 
     const request: AxiosRequestConfig = {

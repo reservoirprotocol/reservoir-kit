@@ -25,7 +25,7 @@ export async function placeBid({ bids, signer, chainId, onProgress }: Data) {
   const client = getClient()
   let maker = signer.account?.address
   if (!maker) {
-    [maker] = await signer.getAddresses()
+    ;[maker] = await signer.getAddresses()
   }
   let baseApiUrl = client.currentChain()?.baseApiUrl
 
@@ -59,13 +59,10 @@ export async function placeBid({ bids, signer, chainId, onProgress }: Data) {
       }
       if (
         (!bid.orderbook || bid.orderbook === 'reservoir') &&
-        client.marketplaceFee &&
-        client.marketplaceFeeRecipient &&
+        client.marketplaceFees &&
         !('fees' in bid)
       ) {
-        bid.fees = [
-          `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`,
-        ]
+        bid.fees = client.marketplaceFees
       }
 
       if (!('automatedRoyalties' in bid) && 'automatedRoyalties' in client) {

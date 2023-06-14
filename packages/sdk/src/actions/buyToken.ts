@@ -36,7 +36,7 @@ export async function buyToken(data: Data) {
   const { items, expectedPrice, signer, chainId, onProgress, precheck } = data
   let taker = signer.account?.address
   if (!taker) {
-    [taker] = await signer.getAddresses()
+    ;[taker] = await signer.getAddresses()
   }
   const client = getClient()
   const options = data.options || {}
@@ -81,6 +81,10 @@ export async function buyToken(data: Data) {
       params.normalizeRoyalties = client.normalizeRoyalties
     }
 
+    if (!('feesOnTop' in params) && client.feesOnTop) {
+      params.feesOnTop = client.feesOnTop
+    }
+
     const request: AxiosRequestConfig = {
       url: `${baseApiUrl}/execute/buy/v7`,
       method: 'post',
@@ -106,7 +110,14 @@ export async function buyToken(data: Data) {
       onProgress(data['steps'], data['path'])
       return data
     } else {
-      return executeSteps(request, signer, onProgress, undefined, expectedPrice, chainId)
+      return executeSteps(
+        request,
+        signer,
+        onProgress,
+        undefined,
+        expectedPrice,
+        chainId
+      )
     }
   } catch (err: any) {
     errHandler()

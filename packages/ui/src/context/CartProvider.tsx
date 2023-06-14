@@ -18,7 +18,7 @@ import React, {
   FC,
 } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { parseUnits, zeroAddress } from 'viem'
+import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { version } from '../../package.json'
 import { getNetwork, getWalletClient } from 'wagmi/actions'
 
@@ -72,9 +72,9 @@ type CartItem = {
 export type Cart = {
   totalPrice: number
   currency?: NonNullable<CartItemPrice>['currency']
-  referrer?: string
-  referrerFeeBps?: number
-  referrerFee?: number
+  feeOnTop?: number
+  feesOnTopBps?: string[]
+  feesOnTopFixed?: string[]
   items: CartItem[]
   pools: Record<string, { prices: CartItemPrice[]; itemCount: number }>
   isValidating: boolean
@@ -97,14 +97,14 @@ export type Cart = {
 const CartStorageKey = `reservoirkit.cart.${version}`
 
 type CartStoreProps = {
-  referrer?: string
-  referrerFeeBps?: number
+  feesOnTopBps?: string[]
+  feesOnTopFixed?: string[]
   persist?: boolean
 }
 
 function cartStore({
-  referrer,
-  referrerFeeBps,
+  feesOnTopBps,
+  feesOnTopFixed,
   persist = true,
 }: CartStoreProps) {
   const { address } = useAccount()
@@ -112,7 +112,8 @@ function cartStore({
   const { switchNetworkAsync } = useSwitchNetwork()
   const cartData = useRef<Cart>({
     totalPrice: 0,
-    referrerFee: 0,
+    feesOnTopBps: undefined,
+    feesOnTopFixed: undefined,
     items: [],
     pools: {},
     isValidating: false,
@@ -132,10 +133,11 @@ function cartStore({
           rehydratedCart.chain?.id || 1
         )
         const pools = calculatePools(rehydratedCart.items)
-        const { totalPrice, referrerFee } = calculatePricing(
+        const { totalPrice, feeOnTop } = calculatePricing(
           rehydratedCart.items,
           currency,
-          cartData.current.referrerFeeBps
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopFixed
         )
         cartData.current = {
           ...cartData.current,
@@ -144,7 +146,7 @@ function cartStore({
           items: rehydratedCart.items,
           pools,
           totalPrice,
-          referrerFee,
+          feeOnTop,
           currency,
         }
         subscribers.current.forEach((callback) => callback())
@@ -154,35 +156,28 @@ function cartStore({
   }, [])
 
   useEffect(() => {
-    const feeBps =
-      referrer !== undefined && referrerFeeBps !== undefined
-        ? referrerFeeBps
-        : undefined
-    const referrerAddress =
-      referrer !== undefined && referrerFeeBps !== undefined
-        ? referrer
-        : undefined
     const currency = getCartCurrency(
       cartData.current.items,
       cartData.current.chain?.id || 1
     )
     const pools = calculatePools(cartData.current.items)
-    const { totalPrice, referrerFee } = calculatePricing(
+    const { totalPrice, feeOnTop } = calculatePricing(
       cartData.current.items,
       currency,
-      feeBps
+      feesOnTopBps,
+      feesOnTopFixed
     )
     cartData.current = {
       ...cartData.current,
       pools,
       totalPrice,
-      referrerFee,
+      feesOnTopBps,
+      feesOnTopFixed,
+      feeOnTop,
       currency,
-      referrer: referrerAddress,
-      referrerFeeBps: feeBps,
     }
     commit()
-  }, [referrer, referrerFeeBps])
+  }, [feesOnTopBps, feesOnTopFixed])
 
   const get = useCallback(() => cartData.current, [])
   const set = useCallback((value: Partial<Cart>) => {
@@ -228,9 +223,10 @@ function cartStore({
     (
       items: Cart['items'],
       currency?: Cart['currency'],
-      referrerFeeBps?: Cart['referrerFeeBps']
+      feesOnTopBps?: Cart['feesOnTopBps'],
+      feesOnTopFixed?: Cart['feesOnTopFixed']
     ) => {
-      let referrerFee = 0
+      let feeOnTop = 0
       let subtotal = items.reduce((total, { price, order }) => {
         let amount = price?.amount?.decimal
         if (price?.currency?.contract !== currency?.contract) {
@@ -242,13 +238,24 @@ function cartStore({
         }
         return (total += amount || 0)
       }, 0)
-      if (referrerFeeBps) {
-        referrerFee = (referrerFeeBps / 10000) * subtotal
-        subtotal = subtotal + referrerFee
+      if (feesOnTopBps) {
+        feeOnTop = feesOnTopBps.reduce((total, feeOnTopBps) => {
+          const [_, feeBps] = feeOnTopBps.split(':')
+          total += (Number(feeBps || 0) / 10000) * subtotal
+          return total
+        }, 0)
+      } else if (feesOnTopFixed) {
+        const atomicFee = feesOnTopFixed.reduce((total, feeOnTopBps) => {
+          const [_, feeFixed] = feeOnTopBps.split(':')
+          total += BigInt(feeFixed)
+          return total
+        }, BigInt(0))
+        feeOnTop = +formatUnits(atomicFee, currency?.decimals || 18)
       }
+      subtotal = subtotal + feeOnTop
       return {
         totalPrice: subtotal,
-        referrerFee,
+        feeOnTop,
       }
     },
     []
@@ -358,7 +365,14 @@ function cartStore({
       }
       const dynamicPricing = market?.floorAsk?.dynamicPricing
 
-      let order: undefined | {id: string, quantityRemaining: number, quantity: number, maker: string} = undefined
+      let order:
+        | undefined
+        | {
+            id: string
+            quantityRemaining: number
+            quantity: number
+            maker: string
+          } = undefined
       if (token.kind === 'erc1155' && market?.floorAsk) {
         order = {
           id: market?.floorAsk?.id || '',
@@ -428,7 +442,7 @@ function cartStore({
       items: [],
       pools: {},
       totalPrice: 0,
-      referrerFee: 0,
+      feeOnTop: 0,
       chain: undefined,
     }
     commit()
@@ -469,17 +483,18 @@ function cartStore({
           updatedItems,
           cartData.current.chain?.id || 1
         )
-        const { totalPrice, referrerFee } = calculatePricing(
+        const { totalPrice, feeOnTop } = calculatePricing(
           updatedItems,
           currency,
-          cartData.current.referrerFeeBps
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopFixed
         )
 
         cartData.current = {
           ...cartData.current,
           items: updatedItems,
           totalPrice,
-          referrerFee,
+          feeOnTop,
           currency,
         }
       }
@@ -647,10 +662,11 @@ function cartStore({
 
         const pools = calculatePools(updatedItems)
         const currency = getCartCurrency(updatedItems, chainId)
-        const { totalPrice, referrerFee } = calculatePricing(
+        const { totalPrice, feeOnTop } = calculatePricing(
           updatedItems,
           currency,
-          cartData.current.referrerFeeBps
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopFixed
         )
 
         cartData.current = {
@@ -658,7 +674,7 @@ function cartStore({
           isValidating: false,
           items: updatedItems,
           totalPrice,
-          referrerFee,
+          feeOnTop,
           currency,
           pools,
         }
@@ -708,10 +724,11 @@ function cartStore({
       updatedItems,
       cartData.current.chain?.id || 1
     )
-    const { totalPrice, referrerFee } = calculatePricing(
+    const { totalPrice, feeOnTop } = calculatePricing(
       updatedItems,
       currency,
-      cartData.current.referrerFeeBps
+      cartData.current.feesOnTopBps,
+      cartData.current.feesOnTopFixed
     )
 
     //Suppress pool price changes if the removed item was from the pool
@@ -733,7 +750,7 @@ function cartStore({
       items: updatedItems,
       pools,
       totalPrice,
-      referrerFee,
+      feeOnTop,
       currency,
     }
     if (updatedItems.length === 0) {
@@ -872,10 +889,11 @@ function cartStore({
 
       const pools = calculatePools(items)
       const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
-      const { totalPrice, referrerFee } = calculatePricing(
+      const { totalPrice, feeOnTop } = calculatePricing(
         items,
         currency,
-        cartData.current.referrerFeeBps
+        cartData.current.feesOnTopBps,
+        cartData.current.feesOnTopFixed
       )
       cartData.current = {
         ...cartData.current,
@@ -883,7 +901,7 @@ function cartStore({
         pools,
         isValidating: false,
         totalPrice,
-        referrerFee,
+        feeOnTop,
         currency,
       }
 
@@ -955,22 +973,31 @@ function cartStore({
       const currencyChain = client.chains.find(
         (chain) => (chainCurrency.chainId = chain.id)
       )
-      const referrerFee =
-        cartData.current.referrer && cartData.current.referrerFee
-          ? cartData.current.referrerFee
-          : 0
-      const expectedPrice = cartData.current.totalPrice - referrerFee
+      const feeOnTop = cartData.current.feeOnTop ? cartData.current.feeOnTop : 0
+      const expectedPrice = cartData.current.totalPrice - feeOnTop
+      let currencyDecimals = cartData.current.currency?.decimals || 18
 
       if (isMixedCurrency) {
         options.currency = zeroAddress
+        currencyDecimals = chainCurrency.decimals
       }
 
-      if (referrerFee) {
-        const atomicUnitsFee = parseUnits(
-          `${referrerFee}`,
-          cartData.current.currency?.decimals || 18
-        )
-        options.feesOnTop = [`${cartData.current.referrer}:${atomicUnitsFee}`]
+      if (feeOnTop) {
+        if (cartData.current.feesOnTopBps) {
+          const fixedFees = cartData.current.feesOnTopBps.map((fullFee) => {
+            const [referrer, feeBps] = fullFee.split(':')
+            const fee =
+              Number(
+                parseUnits(`${expectedPrice}`, currencyDecimals) *
+                  BigInt(feeBps)
+              ) / 10000
+            const atomicUnitsFee = formatUnits(BigInt(fee), 0)
+            return `${referrer}:${atomicUnitsFee}`
+          })
+          options.feesOnTop = fixedFees
+        } else if (cartData.current.feesOnTopFixed) {
+          options.feesOnTop = cartData.current.feesOnTopFixed
+        }
       }
 
       if (options.partial === undefined) {
@@ -1126,16 +1153,17 @@ function cartStore({
                 items,
                 cartData.current.transaction.chain.id
               )
-              const { totalPrice, referrerFee } = calculatePricing(
+              const { totalPrice, feeOnTop } = calculatePricing(
                 items,
                 currency,
-                cartData.current.referrerFeeBps
+                cartData.current.feesOnTopBps,
+                cartData.current.feesOnTopFixed
               )
               cartData.current.items = items
               cartData.current.pools = pools
               cartData.current.currency = currency
               cartData.current.totalPrice = totalPrice
-              cartData.current.referrerFee = referrerFee
+              cartData.current.feeOnTop = feeOnTop
               cartData.current.chain = cartData.current.transaction.chain
             }
             commit()
@@ -1166,20 +1194,20 @@ export const CartContext = createContext<ReturnType<typeof cartStore> | null>(
 
 type CartProviderProps = {
   children: ReactNode
-  referrer?: string
-  referrerFeeBps?: number
+  feesOnTopBps?: string[]
+  feesOnTopFixed?: string[]
   persist?: boolean
 }
 
 export const CartProvider: FC<CartProviderProps> = function ({
   children,
-  referrer,
-  referrerFeeBps,
+  feesOnTopBps,
+  feesOnTopFixed,
   persist,
 }) {
   return (
     <CartContext.Provider
-      value={cartStore({ referrer, referrerFeeBps, persist })}
+      value={cartStore({ feesOnTopBps, feesOnTopFixed, persist })}
     >
       {children}
     </CartContext.Provider>

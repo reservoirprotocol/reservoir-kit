@@ -23,14 +23,16 @@ import {
   CartProvider,
 } from '@reservoir0x/reservoir-kit-ui'
 import { LogLevel } from '@reservoir0x/reservoir-sdk'
+import { useRouter } from 'next/router'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
 const SOURCE = process.env.NEXT_PUBLIC_SOURCE || 'reservoirkit.demo'
-const FEE = process.env.NEXT_PUBLIC_MARKETPLACE_FEE
-  ? +process.env.NEXT_PUBLIC_MARKETPLACE_FEE
+const MARKETPLACE_FEES = process.env.NEXT_PUBLIC_MARKETPLACE_FEES
+  ? (JSON.parse(process.env.NEXT_PUBLIC_MARKETPLACE_FEES) as string[])
   : undefined
-const FEE_RECIPIENT =
-  process.env.NEXT_PUBLIC_MARKETPLACE_FEE_RECIPIENT || undefined
+const FEES_ON_TOP = process.env.NEXT_PUBLIC_FEES_ON_TOP
+  ? (JSON.parse(process.env.NEXT_PUBLIC_FEES_ON_TOP) as string[])
+  : undefined
 const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
@@ -82,6 +84,14 @@ type AppWrapperProps = {
 
 const AppWrapper: FC<any> = ({ children }) => {
   const { theme } = useContext(ThemeSwitcherContext)
+  const router = useRouter()
+  const cartFeeBps = router.query.cartFeeBps
+    ? JSON.parse(router.query.cartFeeBps as string)
+    : undefined
+  const cartFeeFixed = router.query.cartFeeFixed
+    ? JSON.parse(router.query.cartFeeFixed as string)
+    : undefined
+
   return (
     <WagmiConfig config={wagmiConfig}>
       <ReservoirKitProvider
@@ -118,15 +128,15 @@ const AppWrapper: FC<any> = ({ children }) => {
               apiKey: API_KEY,
             },
           ],
-          marketplaceFee: FEE,
-          marketplaceFeeRecipient: FEE_RECIPIENT,
+          marketplaceFees: MARKETPLACE_FEES,
+          feesOnTop: FEES_ON_TOP,
           source: SOURCE,
           normalizeRoyalties: NORMALIZE_ROYALTIES,
           logLevel: LogLevel.Verbose,
         }}
         theme={theme}
       >
-        <CartProvider>
+        <CartProvider feesOnTopBps={cartFeeBps} feesOnTopFixed={cartFeeFixed}>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"

@@ -34,7 +34,7 @@ export async function listToken(
   const client = getClient()
   let maker = signer.account?.address
   if (!maker) {
-    [maker] = await signer.getAddresses()
+    ;[maker] = await signer.getAddresses()
   }
   let baseApiUrl = client.currentChain()?.baseApiUrl
 
@@ -57,13 +57,10 @@ export async function listToken(
     listings.forEach((listing) => {
       if (
         (!listing.orderbook || listing.orderbook === 'reservoir') &&
-        client.marketplaceFee &&
-        client.marketplaceFeeRecipient &&
+        client.marketplaceFees &&
         !('fees' in listing)
       ) {
-        listing.fees = [
-          `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`,
-        ]
+        listing.fees = client.marketplaceFees
       }
 
       if (
