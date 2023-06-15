@@ -83,7 +83,6 @@ type Props = {
   collectionId?: string
   feesOnTopBps?: string[] | null
   feesOnTopFixed?: string[] | null
-  normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -92,7 +91,6 @@ export const MintModalRenderer: FC<Props> = ({
   collectionId,
   feesOnTopBps,
   feesOnTopFixed,
-  normalizeRoyalties,
   children,
 }) => {
   const { data: signer } = useWalletClient()
@@ -125,7 +123,6 @@ export const MintModalRenderer: FC<Props> = ({
   const { data: collections, mutate: mutateCollection } = useCollections(
     open && {
       id: collectionId,
-      normalizeRoyalties,
       includeMintStages: true,
     }
   )
@@ -140,10 +137,6 @@ export const MintModalRenderer: FC<Props> = ({
     let options: BuyTokenOptions = {
       partial: true,
       onlyPath: true,
-    }
-
-    if (normalizeRoyalties !== undefined) {
-      options.normalizeRoyalties = normalizeRoyalties
     }
 
     client?.actions
@@ -176,7 +169,7 @@ export const MintModalRenderer: FC<Props> = ({
       .finally(() => {
         setFetchedInitialTokens(true)
       })
-  }, [client, signer, normalizeRoyalties, collectionId, currency])
+  }, [client, signer, collectionId, currency])
 
   useEffect(() => {
     if (open) {
@@ -296,10 +289,6 @@ export const MintModalRenderer: FC<Props> = ({
       delete options.feesOnTop
     }
 
-    if (normalizeRoyalties !== undefined) {
-      options.normalizeRoyalties = normalizeRoyalties
-    }
-
     if (!mintData) {
       const error = new Error('No tokens to mint')
       setTransactionError(error)
@@ -389,7 +378,6 @@ export const MintModalRenderer: FC<Props> = ({
     client,
     signer,
     total,
-    normalizeRoyalties,
     chain,
     collectionId,
     currency,

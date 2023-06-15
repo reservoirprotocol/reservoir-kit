@@ -57,7 +57,6 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   feesOnTopBps?: string[] | null
   feesOnTopFixed?: string[] | null
-  normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   onMintComplete?: (data: MintCallbackData) => void
   onMintError?: (error: Error, data: MintCallbackData) => void
@@ -70,7 +69,6 @@ export function MintModal({
   collectionId,
   feesOnTopBps,
   feesOnTopFixed,
-  normalizeRoyalties,
   copyOverrides,
   onMintComplete,
   onMintError,
@@ -90,7 +88,6 @@ export function MintModal({
       collectionId={collectionId}
       feesOnTopBps={feesOnTopBps}
       feesOnTopFixed={feesOnTopFixed}
-      normalizeRoyalties={normalizeRoyalties}
     >
       {({
         loading,
@@ -484,6 +481,14 @@ export function MintModal({
                   }}
                 >
                   <Text style="h6">Finalizing on blockchain</Text>
+                  <Text
+                    style="subtitle2"
+                    color="subtle"
+                    css={{ textAlign: 'center' }}
+                  >
+                    You can close this modal while it finalizes on the
+                    blockchain. The transaction will continue in the background.
+                  </Text>
                   <Box css={{ color: '$neutralSolid' }}>
                     <FontAwesomeIcon
                       icon={faCube}

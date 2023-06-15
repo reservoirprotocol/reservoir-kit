@@ -9,9 +9,6 @@ import { useRouter } from 'next/router'
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
   '0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e'
-const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
-  ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
-  : false
 
 const MintPage: NextPage = () => {
   const router = useRouter()
@@ -20,8 +17,7 @@ const MintPage: NextPage = () => {
   const [feesOnTop, setFeesOnTop] = useState<string[]>([])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
-  const [normalizeRoyalties, setNormalizeRoyalties] =
-    useState(NORMALIZE_ROYALTIES)
+
   return (
     <div
       style={{
@@ -85,16 +81,6 @@ const MintPage: NextPage = () => {
         />
       </div>
       <DeeplinkCheckbox />
-      <div>
-        <label>Normalize Royalties: </label>
-        <input
-          type="checkbox"
-          checked={normalizeRoyalties}
-          onChange={(e) => {
-            setNormalizeRoyalties(e.target.checked)
-          }}
-        />
-      </div>
 
       <MintModal
         trigger={
@@ -118,7 +104,6 @@ const MintPage: NextPage = () => {
         feesOnTopBps={feesOnTopBps}
         feesOnTopFixed={feesOnTop}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
-        normalizeRoyalties={normalizeRoyalties}
         onMintComplete={(data) => {
           console.log('Mint Complete', data)
         }}
