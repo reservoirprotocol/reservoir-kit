@@ -164,7 +164,7 @@ export function MintModal({
 
         const totalMints = Array.from(salesTokenIds).length
         const failedMints = quantity - totalMints
-        const successfulMints = totalMints - failedMints
+        const successfulMints = quantity - failedMints
 
         const quantitySubject = quantity > 1 ? 'Items' : 'Item'
 
