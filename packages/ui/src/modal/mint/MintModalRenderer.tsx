@@ -152,6 +152,7 @@ export const MintModalRenderer: FC<Props> = ({
           {
             collection: collectionId,
             fillType: 'mint',
+            quantity: 50,
           },
         ],
         expectedPrice: undefined,
