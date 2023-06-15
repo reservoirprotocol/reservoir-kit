@@ -10,6 +10,7 @@ import { LogLevel } from '../utils/logger'
 import { generateEvent } from '../utils/events'
 import { sendTransactionSafely } from './transaction'
 import * as allChains from 'viem/chains'
+import { executeResults } from './executeResults'
 
 function checkExpectedPrice(
   quote: number,
@@ -266,115 +267,134 @@ export async function executeSteps(
             switch (kind) {
               // Make an on-chain transaction
               case 'transaction': {
-                client.log(
-                  [
-                    'Execute Steps: Begin transaction step for, sending transaction',
-                  ],
-                  LogLevel.Verbose
-                )
-
-                await sendTransactionSafely(
-                  viemChain,
-                  viemClient,
-                  stepData,
-                  signer,
-                  (tx) => {
-                    client.log(
-                      ['Execute Steps: Transaction step, got transaction', tx],
-                      LogLevel.Verbose
-                    )
-                    stepItem.txHash = tx
-                    if (json) {
-                      setState([...json.steps], path)
-                    }
-                  }
-                )
-                client.log(
-                  [
-                    'Execute Steps: Transaction finished, starting to poll for confirmation',
-                  ],
-                  LogLevel.Verbose
-                )
-
-                //Implicitly poll the confirmation url to confirm the transaction went through
-                const confirmationUrl = new URL(
-                  `${request.baseURL}/transactions/${stepItem.txHash}/synced/v1`
-                )
-                const headers: AxiosRequestHeaders = {
-                  'x-rkc-version': version,
-                }
-
-                if (request.headers && request.headers['x-api-key']) {
-                  headers['x-api-key'] = request.headers['x-api-key']
-                }
-
-                if (request.headers && client?.uiVersion) {
-                  request.headers['x-rkui-version'] = client.uiVersion
-                }
-                await pollUntilOk(
-                  {
-                    url: confirmationUrl.href,
-                    method: 'get',
-                    headers: headers,
-                  },
-                  (res) => {
-                    client.log(
-                      ['Execute Steps: Polling for confirmation', res],
-                      LogLevel.Verbose
-                    )
-                    return res && res.data.synced
-                  }
-                )
-
-                //Confirm that on-chain tx has been picked up by the indexer
-                if (
-                  step.id === 'sale' &&
-                  stepItem.txHash &&
-                  (isSell || isBuy)
-                ) {
+                try {
                   client.log(
                     [
-                      'Execute Steps: Polling sales to verify transaction was indexed',
+                      'Execute Steps: Begin transaction step for, sending transaction',
                     ],
                     LogLevel.Verbose
                   )
-                  const indexerConfirmationUrl = new URL(
-                    `${request.baseURL}/sales/v4`
-                  )
-                  const queryParams: paths['/sales/v4']['get']['parameters']['query'] =
-                    {
-                      txHash: stepItem.txHash,
+
+                  await sendTransactionSafely(
+                    viemChain,
+                    viemClient,
+                    stepData,
+                    signer,
+                    (tx) => {
+                      client.log(
+                        [
+                          'Execute Steps: Transaction step, got transaction',
+                          tx,
+                        ],
+                        LogLevel.Verbose
+                      )
+                      stepItem.txHash = tx
+                      if (json) {
+                        setState([...json.steps], path)
+                      }
                     }
-                  setParams(indexerConfirmationUrl, queryParams)
-                  let salesData: paths['/sales/v4']['get']['responses']['200']['schema'] =
-                    {}
+                  )
+                  client.log(
+                    [
+                      'Execute Steps: Transaction finished, starting to poll for confirmation',
+                    ],
+                    LogLevel.Verbose
+                  )
+
+                  //Implicitly poll the confirmation url to confirm the transaction went through
+                  const confirmationUrl = new URL(
+                    `${request.baseURL}/transactions/${stepItem.txHash}/synced/v1`
+                  )
+                  const headers: AxiosRequestHeaders = {
+                    'x-rkc-version': version,
+                  }
+
+                  if (request.headers && request.headers['x-api-key']) {
+                    headers['x-api-key'] = request.headers['x-api-key']
+                  }
+
+                  if (request.headers && client?.uiVersion) {
+                    request.headers['x-rkui-version'] = client.uiVersion
+                  }
                   await pollUntilOk(
                     {
-                      url: indexerConfirmationUrl.href,
+                      url: confirmationUrl.href,
                       method: 'get',
                       headers: headers,
                     },
                     (res) => {
                       client.log(
-                        [
-                          'Execute Steps: Polling sales to check if indexed',
-                          res,
-                        ],
+                        ['Execute Steps: Polling for confirmation', res],
                         LogLevel.Verbose
                       )
-                      if (res.status === 200) {
-                        salesData = res.data
-                        return salesData.sales && salesData.sales.length > 0
-                          ? true
-                          : false
-                      }
-                      return false
+                      return res && res.data.synced
                     }
                   )
-                  stepItem.salesData = salesData.sales
-                  setState([...json?.steps], path)
-                }
 
+                  //Confirm that on-chain tx has been picked up by the indexer
+                  if (
+                    step.id === 'sale' &&
+                    stepItem.txHash &&
+                    (isSell || isBuy)
+                  ) {
+                    client.log(
+                      [
+                        'Execute Steps: Polling sales to verify transaction was indexed',
+                      ],
+                      LogLevel.Verbose
+                    )
+                    const indexerConfirmationUrl = new URL(
+                      `${request.baseURL}/sales/v4`
+                    )
+                    const queryParams: paths['/sales/v4']['get']['parameters']['query'] =
+                      {
+                        txHash: stepItem.txHash,
+                      }
+                    setParams(indexerConfirmationUrl, queryParams)
+                    let salesData: paths['/sales/v4']['get']['responses']['200']['schema'] =
+                      {}
+                    await pollUntilOk(
+                      {
+                        url: indexerConfirmationUrl.href,
+                        method: 'get',
+                        headers: headers,
+                      },
+                      (res) => {
+                        client.log(
+                          [
+                            'Execute Steps: Polling sales to check if indexed',
+                            res,
+                          ],
+                          LogLevel.Verbose
+                        )
+                        if (res.status === 200) {
+                          salesData = res.data
+                          return salesData.sales && salesData.sales.length > 0
+                            ? true
+                            : false
+                        }
+                        return false
+                      }
+                    )
+                    stepItem.salesData = salesData.sales
+                    setState([...json?.steps], path)
+                  }
+                  executeResults({
+                    request,
+                    stepId: step.id,
+                    requestId: json?.requestId,
+                    txHash: stepItem.txHash,
+                  })
+                } catch (e) {
+                  executeResults({
+                    request,
+                    stepId: step.id,
+                    requestId: json?.requestId,
+                    txHash: stepItem.txHash,
+                    error: e,
+                  })
+                  throw e
+                }
                 break
               }
 

@@ -10,6 +10,7 @@ export type Preview =
   paths['/execute/buy/v7']['post']['responses']['200']['schema']['preview']
 
 export type Execute = {
+  requestId?: string
   errors?: { message?: string; orderId?: string }[]
   preview?: Preview
   path: BuyPath | SellPath
