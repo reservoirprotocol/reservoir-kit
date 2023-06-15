@@ -23,7 +23,6 @@ import {
   ErrorWell,
   Popover,
   Input,
-  Img,
 } from '../../primitives'
 import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
 import { Modal } from '../Modal'
@@ -511,42 +510,6 @@ export function MintModal({
                   css={{ px: '$4', py: '$5', gap: 24, maxWidth: '100%' }}
                 >
                   <Text style="h5">Your mint is complete!</Text>
-                  <Flex
-                    align="center"
-                    css={{ width: '100%', overflowX: 'scroll', gap: '$2' }}
-                  >
-                    {stepData?.currentStep?.items?.map((item, itemIndex) => (
-                      <React.Fragment key={`item-${itemIndex}`}>
-                        {item?.salesData?.map((mint, mintIndex) => {
-                          const tokenImage = `${currentChain?.baseApiUrl}/redirect/tokens/${collection?.id}:${mint?.token?.tokenId}/image/v1?imageSize=small`
-
-                          console.log(tokenImage)
-
-                          return (
-                            <Flex
-                              direction="column"
-                              align="center"
-                              key={`mint-${mintIndex}`}
-                              css={{ gap: '$1' }}
-                            >
-                              <Img
-                                src={tokenImage}
-                                css={{
-                                  borderRadius: 4,
-                                  objectFit: 'cover',
-                                  height: 100,
-                                  width: 100,
-                                }}
-                              />
-                              <Text style="subtitle2">
-                                #{mint?.token?.tokenId}
-                              </Text>
-                            </Flex>
-                          )
-                        })}
-                      </React.Fragment>
-                    ))}
-                  </Flex>
                   <Flex align="center" css={{ gap: '$2' }}>
                     <Box
                       css={{
@@ -558,14 +521,26 @@ export function MintModal({
                         fontSize={16}
                       />
                     </Box>
-                    <Text style="h5" css={{ textAlign: 'center' }}>
+                    <Text style="body1" css={{ textAlign: 'center' }}>
                       {failedMints
                         ? `${successfulSales} ${
                             successfulSales > 1 ? 'items' : 'item'
                           } minted, ${failedMints} ${
                             failedMints > 1 ? 'items' : 'item'
                           } failed`
-                        : 'Congrats! Mint was successful.'}
+                        : `Successfully minted ${successfulSales} ${
+                            successfulSales > 1 ? 'items' : 'item'
+                          }`}
+                      {collection?.name ? (
+                        <>
+                          {' '}
+                          from
+                          <Text style="body1" color="accent">
+                            {' '}
+                            {collection?.name}
+                          </Text>
+                        </>
+                      ) : null}
                     </Text>
                   </Flex>
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>

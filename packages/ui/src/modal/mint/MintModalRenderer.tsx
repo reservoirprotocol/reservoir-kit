@@ -170,6 +170,7 @@ export const MintModalRenderer: FC<Props> = ({
             symbol: buyPath?.[0]?.currencySymbol,
             decimals: buyPath?.[0]?.currencyDecimals,
           })
+          setMaxQuantity(buyPath?.[0]?.quantity || 50)
         }
       })
       .finally(() => {
