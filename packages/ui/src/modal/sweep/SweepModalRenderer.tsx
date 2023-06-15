@@ -319,7 +319,7 @@ export const SweepModalRenderer: FC<Props> = ({
 
   const calculateTokensToAdd = useCallback(() => {
     let totalEthPrice = 0
-    let tokensToAdd = []
+    let tokensToAdd: BuyPath = []
     for (let token of availableTokens) {
       if (
         ethAmount &&

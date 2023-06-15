@@ -23,6 +23,7 @@ import {
   ErrorWell,
   Popover,
   Input,
+  Img,
 } from '../../primitives'
 import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
 import { Modal } from '../Modal'
@@ -43,12 +44,12 @@ type MintCallbackData = {
 }
 
 const ModalCopy = {
-  title: 'Mint',
+  title: 'Complete Mint',
   ctaClose: 'Close',
-  ctaBuy: 'Mint',
-  ctaBuyDisabled: 'Select Items to Buy',
+  ctaMint: 'Mint',
   ctaInsufficientFunds: 'Add Funds to Purchase',
   ctaAwaitingApproval: 'Waiting for Approval...',
+  ctaAwaitingValidation: 'Waiting to be validated...',
   ctaCopyAddress: 'Copy Wallet Address',
 }
 
@@ -164,10 +165,10 @@ export function MintModal({
             })
             return txHashes
           }, new Set<string>()) || []
-        const totalSales = Array.from(salesTxHashes).length
-        const failedSales =
-          totalSales - (stepData?.currentStep?.items?.length || 0)
-        const successfulSales = totalSales - failedSales
+        const totalMints = Array.from(salesTxHashes).length
+        const failedMints =
+          totalMints - (stepData?.currentStep?.items?.length || 0)
+        const successfulSales = totalMints - failedMints
 
         const quantitySubject = quantity > 1 ? 'Items' : 'Item'
 
@@ -250,46 +251,52 @@ export function MintModal({
                   direction="column"
                   css={{ px: '$4', pt: '$4', pb: '$2', gap: '$4' }}
                 >
-                  {hasQuantitySet ? (
-                    <Flex justify="between" align="center" css={{ gap: '$4' }}>
-                      <Text style="subtitle2" color="subtle">
-                        {quantity} {quantitySubject}
-                      </Text>
-                      <Flex css={{ gap: '$1' }}>
-                        <FormatCryptoCurrency
-                          amount={mintPrice}
-                          address={currency?.contract}
-                          decimals={currency?.decimals}
-                          symbol={currency?.symbol}
-                          css={{ color: '$neutralText' }}
-                        />
+                  <Flex direction="column" css={{ gap: 10 }}>
+                    {hasQuantitySet ? (
+                      <Flex
+                        justify="between"
+                        align="center"
+                        css={{ gap: '$4' }}
+                      >
                         <Text style="subtitle2" color="subtle">
-                          x {quantity}
+                          {quantity} {quantitySubject}
                         </Text>
+                        <Flex css={{ gap: '$1' }}>
+                          <FormatCryptoCurrency
+                            amount={mintPrice}
+                            address={currency?.contract}
+                            decimals={currency?.decimals}
+                            symbol={currency?.symbol}
+                            logoWidth={12}
+                            css={{ color: '$neutralText' }}
+                          />
+                          <Text style="subtitle2" color="subtle">
+                            x {quantity}
+                          </Text>
+                        </Flex>
                       </Flex>
-                    </Flex>
-                  ) : null}
-                  {feeOnTop > 0 && (
-                    <Flex
-                      direction="column"
-                      css={{ width: '100%', py: '$4', gap: '$1' }}
-                    >
-                      <Flex align="center" justify="between">
-                        <Text style="subtitle2" color="subtle">
-                          Referral Fee
-                        </Text>
-                        <FormatCryptoCurrency
-                          amount={feeOnTop}
-                          address={currency?.contract}
-                          decimals={currency?.decimals}
-                          symbol={currency?.symbol}
-                        />
+                    ) : null}
+                    {feeOnTop > 0 && (
+                      <Flex
+                        direction="column"
+                        css={{ width: '100%', gap: '$1' }}
+                      >
+                        <Flex align="center" justify="between">
+                          <Text style="subtitle2" color="subtle">
+                            Referral Fee
+                          </Text>
+                          <FormatCryptoCurrency
+                            amount={feeOnTop}
+                            address={currency?.contract}
+                            decimals={currency?.decimals}
+                            symbol={currency?.symbol}
+                            logoWidth={12}
+                            css={{ color: '$neutralText' }}
+                          />
+                        </Flex>
                       </Flex>
-                      <Flex justify="end">
-                        <FormatCurrency amount={feeUsd} color="subtle" />
-                      </Flex>
-                    </Flex>
-                  )}
+                    )}
+                  </Flex>
                   <Flex justify="between" align="start" css={{ height: 34 }}>
                     <Text style="h6">Total</Text>
                     <Flex direction="column" align="end" css={{ gap: '$1' }}>
@@ -303,7 +310,7 @@ export function MintModal({
                       />
                       <FormatCurrency
                         amount={totalUsd}
-                        style="tiny"
+                        style="subtitle2"
                         color="subtle"
                       />
                     </Flex>
@@ -315,7 +322,7 @@ export function MintModal({
                     disabled={!hasEnoughCurrency}
                     onClick={mintTokens}
                   >
-                    {hasEnoughCurrency ? copy.ctaBuy : copy.ctaBuyDisabled}
+                    {copy.ctaMint}
                   </Button>
                 ) : (
                   <Flex
@@ -405,8 +412,9 @@ export function MintModal({
                             {stepData?.currentStep?.items.length} separate
                             transactions.
                           </Text>
-                          {stepData?.currentStep?.items.map((item) => (
+                          {stepData?.currentStep?.items.map((item, index) => (
                             <ApprovePurchasingCollapsible
+                              key={index}
                               item={item}
                               pathMap={pathMap}
                               usdPrice={totalUsd}
@@ -484,6 +492,10 @@ export function MintModal({
                     />
                   </Box>
                 </Flex>
+                <Button disabled={true} css={{ m: '$4' }}>
+                  <Loader />
+                  {copy.ctaAwaitingValidation}
+                </Button>
               </Flex>
             )}
 
@@ -496,29 +508,68 @@ export function MintModal({
                 <Flex
                   direction="column"
                   align="center"
-                  css={{ px: '$4', py: '$5', gap: 24 }}
+                  css={{ px: '$4', py: '$5', gap: 24, maxWidth: '100%' }}
                 >
-                  <Box
-                    css={{
-                      color: failedSales ? '$errorAccent' : '$successAccent',
-                    }}
+                  <Text style="h5">Your mint is complete!</Text>
+                  <Flex
+                    align="center"
+                    css={{ width: '100%', overflowX: 'scroll', gap: '$2' }}
                   >
-                    <FontAwesomeIcon
-                      icon={failedSales ? faCircleExclamation : faCheckCircle}
-                      fontSize={32}
-                    />
-                  </Box>
-                  <Text style="h5" css={{ textAlign: 'center' }}>
-                    {failedSales
-                      ? `${successfulSales} ${
-                          successfulSales > 1 ? 'items' : 'item'
-                        } purchased, ${failedSales} ${
-                          failedSales > 1 ? 'items' : 'item'
-                        } failed`
-                      : 'Congrats! Purchase was successful.'}
-                  </Text>
+                    {stepData?.currentStep?.items?.map((item, itemIndex) => (
+                      <React.Fragment key={`item-${itemIndex}`}>
+                        {item?.salesData?.map((mint, mintIndex) => {
+                          const tokenImage = `${currentChain?.baseApiUrl}/redirect/tokens/${collection?.id}:${mint?.token?.tokenId}/image/v1?imageSize=small`
+
+                          console.log(tokenImage)
+
+                          return (
+                            <Flex
+                              direction="column"
+                              align="center"
+                              key={`mint-${mintIndex}`}
+                              css={{ gap: '$1' }}
+                            >
+                              <Img
+                                src={tokenImage}
+                                css={{
+                                  borderRadius: 4,
+                                  objectFit: 'cover',
+                                  height: 100,
+                                  width: 100,
+                                }}
+                              />
+                              <Text style="subtitle2">
+                                #{mint?.token?.tokenId}
+                              </Text>
+                            </Flex>
+                          )
+                        })}
+                      </React.Fragment>
+                    ))}
+                  </Flex>
+                  <Flex align="center" css={{ gap: '$2' }}>
+                    <Box
+                      css={{
+                        color: failedMints ? '$errorAccent' : '$successAccent',
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={failedMints ? faCircleExclamation : faCheckCircle}
+                        fontSize={16}
+                      />
+                    </Box>
+                    <Text style="h5" css={{ textAlign: 'center' }}>
+                      {failedMints
+                        ? `${successfulSales} ${
+                            successfulSales > 1 ? 'items' : 'item'
+                          } minted, ${failedMints} ${
+                            failedMints > 1 ? 'items' : 'item'
+                          } failed`
+                        : 'Congrats! Mint was successful.'}
+                    </Text>
+                  </Flex>
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-                    {stepData?.currentStep?.items?.map((item) => {
+                    {stepData?.currentStep?.items?.map((item, index) => {
                       const txHash = item.txHash
                         ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
                             -4
@@ -527,6 +578,7 @@ export function MintModal({
 
                       return (
                         <Anchor
+                          key={index}
                           href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
                           color="primary"
                           weight="medium"
