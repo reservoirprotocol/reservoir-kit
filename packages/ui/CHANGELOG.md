@@ -1,3 +1,8 @@
+## [v1.1.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4f30eb8a8663f324e47f3ea3757a15c43bdf8119) (2023-06-13)
+
+- Upgrade viem dependency to ~0.3.35 [8450dd9](https://github.com/reservoirprotocol/reservoir-kit/commit/8450dd9186dd50222dfc0d4f485c874553475fcb)
+- BuyModal: Fix issues with 1155 multi buy [a8866c1](https://github.com/reservoirprotocol/reservoir-kit/commit/a8866c10ccb6bdd7f819413334909163fb610ce0)
+
 ## [v1.1.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/98620013a6d7768ee76bc0fb7bb4b9dd918ef933) (2023-06-12)
 
 - Reduce token image sizes to improve performance [c149e06](https://github.com/reservoirprotocol/reservoir-kit/commit/c149e0650faf31a8c5173a9675a910d385cd292c)

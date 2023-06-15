@@ -152,7 +152,6 @@ export const SweepModalRenderer: FC<Props> = ({
           {
             collection: collectionId,
             quantity: 50,
-            // @ts-ignore // TODO: Remove once changed our moved into indexer on prod
             fillType: 'trade',
           },
         ],
