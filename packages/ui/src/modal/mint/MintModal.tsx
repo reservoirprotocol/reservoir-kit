@@ -152,19 +152,19 @@ export function MintModal({
             )
           : {}
 
-        const salesTxHashes =
-          stepData?.currentStep?.items?.reduce((txHashes, item) => {
+        const salesTokenIds =
+          stepData?.currentStep?.items?.reduce((tokenIds, item) => {
             item.salesData?.forEach((saleData) => {
-              if (saleData.txHash) {
-                txHashes.add(saleData.txHash)
+              if (saleData?.token?.tokenId) {
+                tokenIds.add(saleData?.token?.tokenId)
               }
             })
-            return txHashes
+            return tokenIds
           }, new Set<string>()) || []
-        const totalMints = Array.from(salesTxHashes).length
-        const failedMints =
-          totalMints - (stepData?.currentStep?.items?.length || 0)
-        const successfulSales = totalMints - failedMints
+
+        const totalMints = Array.from(salesTokenIds).length
+        const failedMints = quantity - totalMints
+        const successfulMints = totalMints - failedMints
 
         const quantitySubject = quantity > 1 ? 'Items' : 'Item'
 
@@ -528,13 +528,13 @@ export function MintModal({
                     </Box>
                     <Text style="body1" css={{ textAlign: 'center' }}>
                       {failedMints
-                        ? `${successfulSales} ${
-                            successfulSales > 1 ? 'items' : 'item'
+                        ? `${successfulMints} ${
+                            successfulMints > 1 ? 'items' : 'item'
                           } minted, ${failedMints} ${
                             failedMints > 1 ? 'items' : 'item'
                           } failed`
-                        : `Successfully minted ${successfulSales} ${
-                            successfulSales > 1 ? 'items' : 'item'
+                        : `Successfully minted ${successfulMints} ${
+                            successfulMints > 1 ? 'items' : 'item'
                           }`}
                       {collection?.name ? (
                         <>
