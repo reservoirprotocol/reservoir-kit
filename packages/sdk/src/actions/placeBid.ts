@@ -1,7 +1,9 @@
 import { Execute, paths } from '../types'
-import { WalletClient } from 'viem'
-import { executeSteps } from '../utils'
+import { ReservoirWallet } from '../types/reservoirWallet'
+import { executeSteps, adaptViemWallet } from '../utils'
 import { getClient } from '.'
+import { WalletClient } from 'viem'
+import { isViemWalletClient } from '../utils/viemWallet'
 
 type PlaceBidBody = NonNullable<
   paths['/execute/bid/v5']['post']['parameters']['body']['body']
@@ -9,7 +11,7 @@ type PlaceBidBody = NonNullable<
 
 type Data = {
   bids: Required<PlaceBidBody>['params']
-  signer: WalletClient
+  wallet: ReservoirWallet | WalletClient
   chainId?: number
   onProgress: (steps: Execute['steps']) => any
 }
@@ -17,16 +19,16 @@ type Data = {
 /**
  * Place a bid on a token
  * @param data.bids Bidding data to be processed
- * @param data.signer Ethereum signer object provided by the browser
+ * @param data.wallet ReservoirWallet object that adheres to the ReservoirWallet interface or a viem WalletClient
  * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state as execution progresses
  */
-export async function placeBid({ bids, signer, chainId, onProgress }: Data) {
+export async function placeBid({ bids, wallet, chainId, onProgress }: Data) {
   const client = getClient()
-  let maker = signer.account?.address
-  if (!maker) {
-    [maker] = await signer.getAddresses()
-  }
+  const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
+    ? adaptViemWallet(wallet)
+    : wallet
+  const maker = await reservoirWallet.address()
   let baseApiUrl = client.currentChain()?.baseApiUrl
 
   if (chainId) {
@@ -77,7 +79,7 @@ export async function placeBid({ bids, signer, chainId, onProgress }: Data) {
 
     await executeSteps(
       { url: `${baseApiUrl}/execute/bid/v5`, method: 'post', data },
-      signer,
+      reservoirWallet,
       onProgress,
       undefined,
       undefined,

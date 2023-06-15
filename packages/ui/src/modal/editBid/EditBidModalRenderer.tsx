@@ -94,7 +94,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
   const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<EditBidStepData | null>(null)
@@ -285,8 +285,8 @@ export const EditBidModalRenderer: FC<Props> = ({
   }, [open])
 
   const editBid = useCallback(() => {
-    if (!signer) {
-      const error = new Error('Missing a signer')
+    if (!wallet) {
+      const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
@@ -358,7 +358,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     client.actions
       .placeBid({
         bids: [bid],
-        signer,
+        wallet,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
             return
@@ -418,7 +418,7 @@ export const EditBidModalRenderer: FC<Props> = ({
       })
   }, [
     client,
-    signer,
+    wallet,
     collectionId,
     tokenId,
     expirationOption,

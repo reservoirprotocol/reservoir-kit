@@ -44,7 +44,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
   const [cancelStep, setCancelStep] = useState<CancelStep>(CancelStep.Cancel)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<CancelBidStepData | null>(null)
@@ -79,8 +79,8 @@ export const CancelBidModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
 
   const cancelOrder = useCallback(() => {
-    if (!signer) {
-      const error = new Error('Missing a signer')
+    if (!wallet) {
+      const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
@@ -102,7 +102,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
     client.actions
       .cancelOrder({
         ids: [bidId],
-        signer,
+        wallet,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
             return
@@ -165,7 +165,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
         setStepData(null)
         setSteps(null)
       })
-  }, [bidId, client, signer])
+  }, [bidId, client, wallet])
 
   useEffect(() => {
     if (!open) {

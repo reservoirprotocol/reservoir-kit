@@ -1,8 +1,10 @@
 import { Execute, paths } from '../types'
-import { WalletClient } from 'viem'
 import { getClient } from '.'
-import { executeSteps, request } from '../utils'
+import { executeSteps, request, adaptViemWallet } from '../utils'
 import axios, { AxiosRequestConfig } from 'axios'
+import { ReservoirWallet } from '../types/reservoirWallet'
+import { WalletClient } from 'viem'
+import { isViemWalletClient } from '../utils/viemWallet'
 
 type BuyTokenBodyParameters = NonNullable<
   paths['/execute/buy/v7']['post']['parameters']['body']['body']
@@ -16,7 +18,7 @@ type Data = {
   items: BuyTokenBodyParameters['items']
   expectedPrice?: number
   options?: BuyTokenOptions
-  signer: WalletClient
+  wallet: ReservoirWallet | WalletClient
   chainId?: number
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
   precheck?: boolean
@@ -27,18 +29,18 @@ type Data = {
  * @param data.items Array of tokens to be purchased, can also supply an order id or rawOrders to execute
  * @param data.expectedPrice Total price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
  * @param data.options Additional options to pass into the buy request
- * @param data.signer Ethereum signer object provided by the browser
+ * @param data.wallet ReservoirWallet object that adheres to the ReservoirWallet interface or a viem WalletClient
  * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state as execution progresses
  * @param data.precheck Set to true to skip executing steps and just to get the initial steps/path
  */
 export async function buyToken(data: Data) {
-  const { items, expectedPrice, signer, chainId, onProgress, precheck } = data
-  let taker = signer.account?.address
-  if (!taker) {
-    [taker] = await signer.getAddresses()
-  }
+  const { items, expectedPrice, wallet, chainId, onProgress, precheck } = data
   const client = getClient()
+  const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
+    ? adaptViemWallet(wallet)
+    : wallet
+  const taker = await reservoirWallet.address()
   const options = data.options || {}
   let baseApiUrl = client.currentChain()?.baseApiUrl
   if (chainId) {
@@ -106,7 +108,14 @@ export async function buyToken(data: Data) {
       onProgress(data['steps'], data['path'])
       return data
     } else {
-      return executeSteps(request, signer, onProgress, undefined, expectedPrice, chainId)
+      return executeSteps(
+        request,
+        reservoirWallet,
+        onProgress,
+        undefined,
+        expectedPrice,
+        chainId
+      )
     }
   } catch (err: any) {
     errHandler()
