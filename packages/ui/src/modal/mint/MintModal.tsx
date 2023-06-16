@@ -55,8 +55,6 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
-  feesOnTopBps?: string[] | null
-  feesOnTopFixed?: string[] | null
   copyOverrides?: Partial<typeof ModalCopy>
   onMintComplete?: (data: MintCallbackData) => void
   onMintError?: (error: Error, data: MintCallbackData) => void
@@ -67,8 +65,6 @@ export function MintModal({
   openState,
   trigger,
   collectionId,
-  feesOnTopBps,
-  feesOnTopFixed,
   copyOverrides,
   onMintComplete,
   onMintError,
@@ -83,12 +79,7 @@ export function MintModal({
   const { copy: copyToClipboard, copied } = useCopyToClipboard()
 
   return (
-    <MintModalRenderer
-      open={open}
-      collectionId={collectionId}
-      feesOnTopBps={feesOnTopBps}
-      feesOnTopFixed={feesOnTopFixed}
-    >
+    <MintModalRenderer open={open} collectionId={collectionId}>
       {({
         loading,
         address,
@@ -100,8 +91,6 @@ export function MintModal({
         currency,
         total,
         totalUsd,
-        feeOnTop,
-        feeUsd,
         usdPrice,
         currentChain,
         mintData,
@@ -272,26 +261,6 @@ export function MintModal({
                         </Flex>
                       </Flex>
                     ) : null}
-                    {feeOnTop > 0 && (
-                      <Flex
-                        direction="column"
-                        css={{ width: '100%', gap: '$1' }}
-                      >
-                        <Flex align="center" justify="between">
-                          <Text style="subtitle2" color="subtle">
-                            Referral Fee
-                          </Text>
-                          <FormatCryptoCurrency
-                            amount={feeOnTop}
-                            address={currency?.contract}
-                            decimals={currency?.decimals}
-                            symbol={currency?.symbol}
-                            logoWidth={12}
-                            css={{ color: '$neutralText' }}
-                          />
-                        </Flex>
-                      </Flex>
-                    )}
                   </Flex>
                   <Flex justify="between" align="start" css={{ height: 34 }}>
                     <Text style="h6">Total</Text>

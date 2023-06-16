@@ -60,8 +60,6 @@ type ChildrenProps = {
   currency?: MintCurrency
   total: number
   totalUsd: number
-  feeOnTop: number
-  feeUsd: number
   usdPrice: number
   currentChain: ReservoirChain | null | undefined
   address?: string
@@ -81,16 +79,12 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   collectionId?: string
-  feesOnTopBps?: string[] | null
-  feesOnTopFixed?: string[] | null
   children: (props: ChildrenProps) => ReactNode
 }
 
 export const MintModalRenderer: FC<Props> = ({
   open,
   collectionId,
-  feesOnTopBps,
-  feesOnTopFixed,
   children,
 }) => {
   const { data: signer } = useWalletClient()
@@ -103,7 +97,6 @@ export const MintModalRenderer: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
 
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
-  const [feeOnTop, setFeeOnTop] = useState(0)
 
   const [currency, setCurrency] = useState<MintCurrency | undefined>(undefined)
 
@@ -180,30 +173,14 @@ export const MintModalRenderer: FC<Props> = ({
   const total = useMemo(() => {
     const updatedTotal = mintPrice * (Math.max(0, quantity) || 0)
 
-    let fees = 0
-    if (feesOnTopBps && feesOnTopBps.length > 0) {
-      fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
-        const [_, fee] = feeOnTop.split(':')
-        return totalFees + (Number(fee) / 10000) * updatedTotal
-      }, 0)
-    } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
-      fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
-        const [_, fee] = feeOnTop.split(':')
-        const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
-        return totalFees + Number(parsedFee)
-      }, 0)
-    }
-    setFeeOnTop(fees)
-
-    return updatedTotal + fees
-  }, [mintPrice, quantity, feesOnTopBps, feesOnTopFixed, currency])
+    return updatedTotal
+  }, [mintPrice, quantity, currency])
 
   const coinConversion = useCoinConversion(
     open ? 'USD' : undefined,
     currency?.symbol
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
-  const feeUsd = feeOnTop * usdPrice
   const totalUsd = usdPrice * (total || 0)
 
   const { data: balance } = useBalance({
@@ -264,31 +241,6 @@ export const MintModalRenderer: FC<Props> = ({
       partial: true,
     }
 
-    if (feesOnTopBps && feesOnTopBps?.length > 0) {
-      const fixedFees = feesOnTopBps.map((fullFee) => {
-        const [referrer, feeBps] = fullFee.split(':')
-        const totalFeeTruncated = toFixed(
-          total - feeOnTop,
-          currency?.decimals || 18
-        )
-        const fee =
-          Number(
-            parseUnits(
-              `${Number(totalFeeTruncated)}`,
-              currency?.decimals || 18
-            ) * BigInt(feeBps)
-          ) / 10000
-        const atomicUnitsFee = formatUnits(BigInt(fee), 0)
-        return `${referrer}:${atomicUnitsFee}`
-      })
-      options.feesOnTop = fixedFees
-    }
-    if (feesOnTopFixed && feesOnTopFixed.length > 0) {
-      options.feesOnTop = feesOnTopFixed
-    } else if (!feesOnTopFixed && !feesOnTopBps) {
-      delete options.feesOnTop
-    }
-
     if (!mintData) {
       const error = new Error('No tokens to mint')
       setTransactionError(error)
@@ -306,7 +258,7 @@ export const MintModalRenderer: FC<Props> = ({
             fillType: 'mint',
           },
         ],
-        expectedPrice: total - feeOnTop,
+        expectedPrice: total,
         signer,
         options,
         onProgress: (steps: Execute['steps'], path: Execute['path']) => {
@@ -372,18 +324,7 @@ export const MintModalRenderer: FC<Props> = ({
         mutateCollection()
         fetchBuyPath()
       })
-  }, [
-    mintData,
-    quantity,
-    client,
-    signer,
-    total,
-    chain,
-    collectionId,
-    currency,
-    feesOnTopBps,
-    feesOnTopFixed,
-  ])
+  }, [mintData, quantity, client, signer, total, chain, collectionId, currency])
 
   return (
     <>
@@ -398,8 +339,6 @@ export const MintModalRenderer: FC<Props> = ({
         currency,
         total,
         totalUsd,
-        feeOnTop,
-        feeUsd,
         usdPrice,
         currentChain,
         mintData,
