@@ -13,8 +13,6 @@ const DEFAULT_COLLECTION_ID =
 const MintPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
-  const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
-  const [feesOnTop, setFeesOnTop] = useState<string[]>([])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
 
@@ -42,44 +40,6 @@ const MintPage: NextPage = () => {
         />
       </div>
 
-      <div>
-        <label>Fees on top (BPS): </label>
-        <textarea
-          onChange={() => {}}
-          onBlur={(e) => {
-            if (e.target.value && e.target.value.length > 0) {
-              try {
-                setFeesOnTopBps(JSON.parse(e.target.value))
-              } catch (err) {
-                e.target.value = ''
-                setFeesOnTopBps([])
-              }
-            } else {
-              e.target.value = ''
-              setFeesOnTopBps([])
-            }
-          }}
-        />
-      </div>
-      <div>
-        <label>Fees on top (Flat): </label>
-        <textarea
-          onChange={() => {}}
-          onBlur={(e) => {
-            if (e.target.value && e.target.value.length > 0) {
-              try {
-                setFeesOnTop(JSON.parse(e.target.value))
-              } catch (err) {
-                e.target.value = ''
-                setFeesOnTop([])
-              }
-            } else {
-              e.target.value = ''
-              setFeesOnTop([])
-            }
-          }}
-        />
-      </div>
       <DeeplinkCheckbox />
 
       <MintModal
@@ -101,8 +61,6 @@ const MintPage: NextPage = () => {
           </button>
         }
         collectionId={collectionId}
-        feesOnTopBps={feesOnTopBps}
-        feesOnTopFixed={feesOnTop}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onMintComplete={(data) => {
           console.log('Mint Complete', data)
