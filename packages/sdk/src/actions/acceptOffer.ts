@@ -1,9 +1,8 @@
 import { getClient } from '.'
-import { Execute, paths } from '../types'
+import { Execute, paths, ReservoirWallet } from '../types'
 import { executeSteps, request, adaptViemWallet } from '../utils'
 import { WalletClient } from 'viem'
 import axios, { AxiosRequestConfig } from 'axios'
-import { ReservoirWallet } from '../types/reservoirWallet'
 import { isViemWalletClient } from '../utils/viemWallet'
 
 type AcceptOfferBodyParameters =

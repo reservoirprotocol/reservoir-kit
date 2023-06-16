@@ -1,6 +1,6 @@
 import { PublicClient, Transaction } from 'viem'
 import { LogLevel, getClient } from '..'
-import { ReservoirWallet } from '../types/reservoirWallet'
+import { ReservoirWallet } from '../types'
 
 /**
  * Safe txhash.wait which handles replacements when users speed up the transaction

@@ -1,5 +1,4 @@
-import { Execute, paths } from '../types'
-import { ReservoirWallet } from '../types/reservoirWallet'
+import { Execute, paths, ReservoirWallet } from '../types'
 import { executeSteps, adaptViemWallet } from '../utils'
 import { getClient } from '.'
 import { WalletClient } from 'viem'

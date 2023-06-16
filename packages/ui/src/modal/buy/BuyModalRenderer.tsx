@@ -20,7 +20,6 @@ import {
   BuyPath,
   Execute,
   ReservoirClientActions,
-  adaptViemWallet,
 } from '@reservoir0x/reservoir-sdk'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
@@ -227,7 +226,7 @@ export const BuyModalRenderer: FC<Props> = ({
     if (normalizeRoyalties !== undefined) {
       options.normalizeRoyalties = normalizeRoyalties
     }
-    const reservoirWallet = adaptViemWallet(wallet)
+
     client.actions
       .buyToken({
         options,
@@ -238,7 +237,7 @@ export const BuyModalRenderer: FC<Props> = ({
             fillType: 'trade',
           },
         ],
-        wallet: reservoirWallet,
+        wallet,
         onProgress: () => {},
         precheck: true,
       })

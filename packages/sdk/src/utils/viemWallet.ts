@@ -1,4 +1,4 @@
-import { ReservoirWallet } from '../types/reservoirWallet'
+import { ReservoirWallet } from '../types'
 import { LogLevel, getClient } from '../'
 import { Account, WalletClient, hexToBigInt, toBytes } from 'viem'
 import * as allChains from 'viem/chains'
@@ -9,7 +9,7 @@ export function isViemWalletClient(
   return (wallet as WalletClient).transport !== undefined
 }
 
-const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {
+export const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {
   return {
     address: async () => {
       let address = wallet.account?.address
@@ -73,5 +73,3 @@ const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {
     },
   }
 }
-
-export default adaptViemWallet

@@ -1,4 +1,4 @@
-import { Execute, paths } from '../types'
+import { Execute, paths, ReservoirWallet } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { createPublicClient, http } from 'viem'
 import { axios } from '../utils'
@@ -11,7 +11,6 @@ import { generateEvent } from '../utils/events'
 import { sendTransactionSafely } from './transaction'
 import * as allChains from 'viem/chains'
 import { executeResults } from './executeResults'
-import { ReservoirWallet } from '../types/reservoirWallet'
 
 function checkExpectedPrice(
   quote: number,

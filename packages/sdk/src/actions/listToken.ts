@@ -1,10 +1,9 @@
-import { Execute, paths } from '../types'
+import { Execute, paths, ReservoirWallet } from '../types'
 import { getClient } from '.'
 import { executeSteps, adaptViemWallet } from '../utils'
 import { axios } from '../utils'
 import { AxiosRequestConfig } from 'axios'
 import { version } from '../../package.json'
-import { ReservoirWallet } from '../types/reservoirWallet'
 import { isViemWalletClient } from '../utils/viemWallet'
 import { WalletClient } from 'viem'
 
