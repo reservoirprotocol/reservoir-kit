@@ -1,7 +1,7 @@
-
 ## [v1.1.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/3ebb44fd825dcf48fa43391e8f39f73c171589ae) (2023-06-16)
 
-* Post results to execute results when signing transactions [62a347f](https://github.com/reservoirprotocol/reservoir-kit/commit/62a347fa9b93a37e7a6b85e7c7f41ab4e283d9bd)
+- Post results to execute results when signing transactions [62a347f](https://github.com/reservoirprotocol/reservoir-kit/commit/62a347fa9b93a37e7a6b85e7c7f41ab4e283d9bd)
+
 ## [v1.1.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0beba7d7841d59650a393d8b0e95f92395d09ee5) (2023-06-13)
 
 - Upgrade viem dependency to ~0.3.35 [8450dd9](https://github.com/reservoirprotocol/reservoir-kit/commit/8450dd9186dd50222dfc0d4f485c874553475fcb)
