@@ -17,6 +17,7 @@ yarn add ethers viem @reservoir0x/reservoir-sdk
 To use the adapter simply pass in your ethers signer and receive a normalized ReservoirWallet object:
 
 ```
+import { getClient } from '@reservoir0x/reservoir-sdk'
 import { adaptEthersSigner } from '@reservoir0x/ethers-wallet-adapter'
 import { useSigner } from 'wagmi'
 
