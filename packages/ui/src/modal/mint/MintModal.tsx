@@ -141,17 +141,17 @@ export function MintModal({
             )
           : {}
 
-        const salesTokenIds =
+        const transfersTokenIds =
           stepData?.currentStep?.items?.reduce((tokenIds, item) => {
-            item.salesData?.forEach((saleData) => {
-              if (saleData?.token?.tokenId) {
-                tokenIds.add(saleData?.token?.tokenId)
+            item.transfersData?.forEach((transferData) => {
+              if (transferData?.token?.tokenId) {
+                tokenIds.add(transferData?.token?.tokenId)
               }
             })
             return tokenIds
           }, new Set<string>()) || []
 
-        const totalMints = Array.from(salesTokenIds).length
+        const totalMints = Array.from(transfersTokenIds).length
         const failedMints = quantity - totalMints
         const successfulMints = quantity - failedMints
 

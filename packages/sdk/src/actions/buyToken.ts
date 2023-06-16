@@ -36,10 +36,11 @@ export async function buyToken(data: Data) {
   const { items, expectedPrice, signer, chainId, onProgress, precheck } = data
   let taker = signer.account?.address
   if (!taker) {
-    [taker] = await signer.getAddresses()
+    ;[taker] = await signer.getAddresses()
   }
   const client = getClient()
   const options = data.options || {}
+
   let baseApiUrl = client.currentChain()?.baseApiUrl
   if (chainId) {
     baseApiUrl =
@@ -106,7 +107,14 @@ export async function buyToken(data: Data) {
       onProgress(data['steps'], data['path'])
       return data
     } else {
-      return executeSteps(request, signer, onProgress, undefined, expectedPrice, chainId)
+      return executeSteps(
+        request,
+        signer,
+        onProgress,
+        undefined,
+        expectedPrice,
+        chainId
+      )
     }
   } catch (err: any) {
     errHandler()
