@@ -22,7 +22,7 @@ import {
 } from '@reservoir0x/reservoir-sdk'
 import { toFixed } from '../../lib/numbers'
 import { UseBalanceToken } from '../../types/wagmi'
-import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { parseUnits, zeroAddress } from 'viem'
 
 export enum MintStep {
   Idle,

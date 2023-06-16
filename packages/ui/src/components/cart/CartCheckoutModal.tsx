@@ -59,16 +59,16 @@ export function CartCheckoutModal({
     return `${cartChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1?imageSize=small`
   })
 
-  const salesTxHashes =
+  const transfersTxHashes =
     transaction?.currentStep?.items?.reduce((txHashes, item) => {
-      item.salesData?.forEach((saleData) => {
-        if (saleData.txHash) {
-          txHashes.add(saleData.txHash)
+      item.transfersData?.forEach((transferData) => {
+        if (transferData.txHash) {
+          txHashes.add(transferData.txHash)
         }
       })
       return txHashes
     }, new Set<string>()) || []
-  const totalSales = Array.from(salesTxHashes).length
+  const totalSales = Array.from(transfersTxHashes).length
   const failedSales =
     totalSales - (transaction?.currentStep?.items?.length || 0)
   const successfulSales = totalSales - failedSales

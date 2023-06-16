@@ -158,16 +158,16 @@ export function SweepModal({
             )
           : {}
 
-        const salesTxHashes =
+        const transfersTxHashes =
           stepData?.currentStep?.items?.reduce((txHashes, item) => {
-            item.salesData?.forEach((saleData) => {
-              if (saleData.txHash) {
-                txHashes.add(saleData.txHash)
+            item.transfersData?.forEach((transferData) => {
+              if (transferData.txHash) {
+                txHashes.add(transferData.txHash)
               }
             })
             return txHashes
           }, new Set<string>()) || []
-        const totalSales = Array.from(salesTxHashes).length
+        const totalSales = Array.from(transfersTxHashes).length
         const failedSales =
           totalSales - (stepData?.currentStep?.items?.length || 0)
         const successfulSales = totalSales - failedSales
