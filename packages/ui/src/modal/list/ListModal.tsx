@@ -495,7 +495,7 @@ export function ListModal({
                                 <Flex justify="between" css={{ gap: '$4' }}>
                                   <Text style="body3">Marketplace Fee</Text>
                                   <Text style="subtitle2" color="subtle">
-                                    {marketplaces[0].fee?.percent || 0}%
+                                    {localMarketplace?.fee?.percent || 0}%
                                   </Text>
                                 </Flex>
                                 <Flex justify="between" css={{ gap: '$4' }}>
