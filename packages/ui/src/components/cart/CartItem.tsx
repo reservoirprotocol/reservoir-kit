@@ -17,7 +17,7 @@ import {
 import { Cart } from '../../context/CartProvider'
 import { formatNumber } from '../../lib/numbers'
 import QuantitySelector from '../../modal/QuantitySelector'
-import * as allChains from 'viem/chains'
+import * as allChains from '../../lib/supportedChains'
 
 type Props = {
   item: Cart['items'][0]
