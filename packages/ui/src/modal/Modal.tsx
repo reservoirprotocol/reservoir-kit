@@ -7,12 +7,16 @@ import React, {
 } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClose, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import {
+  faClose,
+  faChevronLeft,
+  faLock,
+} from '@fortawesome/free-solid-svg-icons'
 import { Anchor, Button, Flex, Text, Loader, Box } from '../primitives'
 import { styled } from '../../stitches.config'
 import { Dialog } from '../primitives/Dialog'
-import ReservoirLogoWhiteText from '../img/ReservoirLogoWhiteText'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
+import ReservoirText from '../img/ReservoirText'
 
 const Title = styled(DialogPrimitive.Title, {
   margin: 0,
@@ -38,9 +42,10 @@ type Props = {
   | 'onFocusCapture'
 >
 
-export const Logo = styled(ReservoirLogoWhiteText, {
-  '& .letter': {
-    fill: '$reservoirLogoColor',
+export const Logo = styled(ReservoirText, {
+  fill: '$neutralText',
+  '&:hover': {
+    fill: '$neutralSolid',
   },
 })
 
@@ -112,25 +117,51 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
         <Box css={{ maxHeight: '85vh', overflowY: 'auto' }}>{children}</Box>
         {!providerOptionsContext.disablePoweredByReservoir && (
           <Flex
+            align="center"
             css={{
               mx: 'auto',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: '$footerBackground',
-              py: 10.5,
+              py: 10,
+              gap: '$1',
               visibility: '$poweredByReservoirVisibility',
               borderBottomRightRadius: '$borderRadius',
               borderBottomLeftRadius: '$borderRadius',
             }}
           >
-            <Anchor href="https://reservoir.tools/" target="_blank">
-              <Text
-                style="body3"
-                css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+            <Box css={{ color: '$neutralBorderHover' }}>
+              <FontAwesomeIcon icon={faLock} width={9} height={10} />
+            </Box>
+            <Text
+              style="tiny"
+              color="subtle"
+              css={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                fontWeight: 400,
+                lineHeight: '14px',
+                color: '$neutralText',
+              }}
+            >
+              Powered by{' '}
+              <Anchor
+                href="https://reservoir.tools/"
+                target="_blank"
+                weight="heavy"
+                color="gray"
+                css={{
+                  height: 12,
+                  fontSize: 12,
+                  '&:hover': {
+                    color: '$neutralSolid',
+                    fill: '$neutralSolid',
+                  },
+                }}
               >
-                Powered by <Logo />
-              </Text>
-            </Anchor>
+                <Logo />
+              </Anchor>
+            </Text>
           </Flex>
         )}
       </Dialog>
