@@ -87,6 +87,8 @@ const Image = styled('img', {})
 const Span = styled('span', {})
 const ContentContainer = styled(Flex, {
   width: '100%',
+  borderColor: '$borderColor',
+  borderBottomWidth: 1,
   flexDirection: 'column',
   '@bp1': {
     flexDirection: 'row',

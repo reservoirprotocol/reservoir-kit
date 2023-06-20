@@ -454,7 +454,7 @@ export function EditBidModal({
                   <Flex
                     css={{
                       gap: '$3',
-                      py: '$3',
+                      pt: '$3',
                     }}
                   >
                     {hasEnoughWrappedCurrency ? (
@@ -561,7 +561,7 @@ export function EditBidModal({
                     />
                   </>
                 )}
-                <Button disabled={true} css={{ m: '$4' }}>
+                <Button disabled={true} css={{ mx: '$4', mt: '$4' }}>
                   <Loader />
                   {stepData?.currentStepItem.txHash
                     ? copy.ctaAwaitingValidation
@@ -598,7 +598,7 @@ export function EditBidModal({
                   onClick={() => {
                     setOpen(false)
                   }}
-                  css={{ m: '$4' }}
+                  css={{ mx: '$4', mt: '$4' }}
                 >
                   {copy.ctaClose}
                 </Button>

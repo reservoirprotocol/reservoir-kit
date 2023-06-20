@@ -174,7 +174,7 @@ export function CancelBidModal({
                     ? 'This action will cancel your offer. You will be prompted to confirm this cancellation from your wallet. A gas fee is required.'
                     : 'This will cancel your offer for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
-                <Button onClick={cancelOrder} css={{ m: '$4' }}>
+                <Button onClick={cancelOrder} css={{ mx: '$4', mt: '$4' }}>
                   {!isOracleOrder && (
                     <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
                   )}
@@ -225,7 +225,7 @@ export function CancelBidModal({
                     )}
                   </>
                 )}
-                <Button disabled={true} css={{ m: '$4' }}>
+                <Button disabled={true} css={{ mx: '$4', mt: '$4' }}>
                   <Loader />
                   {stepData?.currentStepItem.txHash
                     ? copy.ctaAwaitingValidation
@@ -278,7 +278,7 @@ export function CancelBidModal({
                   onClick={() => {
                     setOpen(false)
                   }}
-                  css={{ m: '$4' }}
+                  css={{ mx: '$4', mt: '$4' }}
                 >
                   {copy.ctaClose}
                 </Button>

@@ -109,6 +109,8 @@ const ContentContainer = styled(Flex, {
   '@bp1': {
     flexDirection: 'row',
   },
+  borderColor: '$borderColor',
+  borderBottomWidth: 1,
 })
 
 const MainContainer = styled(Flex, {
@@ -758,7 +760,11 @@ export function BidModal({
             )}
 
             {bidStep === BidStep.Complete && (
-              <Flex direction="column" align="center" css={{ p: '$4' }}>
+              <Flex
+                direction="column"
+                align="center"
+                css={{ px: '$4', pt: '$4' }}
+              >
                 <Box css={{ color: '$successAccent', mt: 48 }}>
                   <FontAwesomeIcon
                     icon={faCheckCircle}

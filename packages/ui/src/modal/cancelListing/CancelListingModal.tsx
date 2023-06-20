@@ -175,7 +175,7 @@ export function CancelListingModal({
                     ? 'This action will cancel your listing. You will be prompted to confirm this cancellation from your wallet. A gas fee is required.'
                     : 'This will cancel your listing for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
-                <Button onClick={cancelOrder} css={{ m: '$4' }}>
+                <Button onClick={cancelOrder} css={{ mx: '$4', mt: '$4' }}>
                   {!isOracleOrder && (
                     <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
                   )}
@@ -213,7 +213,7 @@ export function CancelListingModal({
                     />
                   </>
                 )}
-                <Button disabled={true} css={{ m: '$4' }}>
+                <Button disabled={true} css={{ mx: '$4', mt: '$4' }}>
                   <Loader />
                   {stepData?.currentStepItem.txHash
                     ? copy.ctaAwaitingValidation
@@ -266,7 +266,7 @@ export function CancelListingModal({
                   onClick={() => {
                     setOpen(false)
                   }}
-                  css={{ m: '$4' }}
+                  css={{ mx: '$4', mt: '$4' }}
                 >
                   {copy.ctaClose}
                 </Button>

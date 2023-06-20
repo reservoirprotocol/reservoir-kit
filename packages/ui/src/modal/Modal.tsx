@@ -140,7 +140,7 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
                 alignItems: 'center',
                 gap: 4,
                 fontWeight: 400,
-                lineHeight: '14px',
+                lineHeight: '12px',
                 color: '$neutralText',
               }}
             >

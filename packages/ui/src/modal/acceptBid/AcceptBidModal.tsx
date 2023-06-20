@@ -194,7 +194,8 @@ export function AcceptBidModal({
                 <Button
                   onClick={() => setOpen(false)}
                   css={{
-                    m: '$4',
+                    mx: '$4',
+                    mt: '$4',
                     flex: 1,
                   }}
                 >
@@ -393,7 +394,8 @@ export function AcceptBidModal({
                 <Button
                   css={{
                     flex: 1,
-                    m: '$4',
+                    mx: '$4',
+                    mt: '$4',
                   }}
                   color="primary"
                   onClick={acceptBid}
@@ -411,7 +413,7 @@ export function AcceptBidModal({
                   chain={chain}
                 />
                 <SigninStep css={{ mt: 48, mb: 60, gap: 20 }} />
-                <Button disabled={true} css={{ m: '$4' }}>
+                <Button disabled={true} css={{ mx: '$4', mt: '$4' }}>
                   <Loader />
                   {copy.ctaAwaitingApproval}
                 </Button>
@@ -441,7 +443,7 @@ export function AcceptBidModal({
                   ) : null
                 )}
 
-                <Button disabled={true} css={{ m: '$4' }}>
+                <Button disabled={true} css={{ mx: '$4', mt: '$4' }}>
                   <Loader />
                   {copy.ctaAwaitingApproval}
                 </Button>
@@ -543,7 +545,8 @@ export function AcceptBidModal({
                 </Flex>
                 <Flex
                   css={{
-                    p: '$4',
+                    px: '$4',
+                    pt: '$4',
                     flexDirection: 'column',
                     gap: '$3',
                     '@bp1': {

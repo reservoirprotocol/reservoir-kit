@@ -93,12 +93,6 @@ export function CartCheckoutModal({
     }
   }, [open])
 
-  useEffect(() => {
-    if (transaction?.status) {
-      transaction.status = CheckoutStatus.Complete
-    }
-  }, [transaction?.status])
-
   return (
     <DialogPrimitive.Root
       onOpenChange={(open) => {
@@ -339,12 +333,14 @@ export function CartCheckoutModal({
                         </Flex>
                       </Flex>
                     </Flex>
-                    <Button
-                      css={{ width: '100%', mx: '$4', mt: '$4' }}
-                      onClick={() => setDialogOpen(false)}
-                    >
-                      Close
-                    </Button>
+                    <Flex css={{ width: '100%', px: '$4', mt: '$4' }}>
+                      <Button
+                        css={{ width: '100%' }}
+                        onClick={() => setDialogOpen(false)}
+                      >
+                        Close
+                      </Button>
+                    </Flex>
                   </Flex>
                 )}
               </Box>
@@ -373,7 +369,7 @@ export function CartCheckoutModal({
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 4,
-                      lineHeight: '14px',
+                      lineHeight: '12px',
                       fontWeight: 400,
                       color: '$neutralText',
                     }}
