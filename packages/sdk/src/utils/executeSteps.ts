@@ -1,7 +1,7 @@
 import { Execute, paths } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { Account, WalletClient, createPublicClient, http, toBytes } from 'viem'
-import { axios } from '../utils'
+import { axios, zora } from '../utils'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions/index'
 import { setParams } from './params'
@@ -9,7 +9,7 @@ import { version } from '../../package.json'
 import { LogLevel } from '../utils/logger'
 import { generateEvent } from '../utils/events'
 import { sendTransactionSafely } from './transaction'
-import * as allChains from '../utils/supportedChains'
+import * as allChains from 'viem/chains'
 import { executeResults } from './executeResults'
 
 function checkExpectedPrice(
@@ -75,10 +75,15 @@ export async function executeSteps(
     reservoirChain = client.chains.find((chain) => chain.id === chainId) || null
   }
 
-  const viemChain =
-    Object.values(allChains).find(
-      (chain) => chain.id === (reservoirChain?.id || 1)
-    ) || allChains.mainnet
+  let viemChain: allChains.Chain = allChains.mainnet
+  if (reservoirChain?.id === zora.id) {
+    viemChain = zora
+  } else {
+    viemChain =
+      Object.values(allChains).find(
+        (chain) => chain.id === (reservoirChain?.id || 1)
+      ) || allChains.mainnet
+  }
 
   const viemClient = createPublicClient({
     chain: viemChain,
