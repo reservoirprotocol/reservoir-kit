@@ -9,7 +9,7 @@ import { version } from '../../package.json'
 import { LogLevel } from '../utils/logger'
 import { generateEvent } from '../utils/events'
 import { sendTransactionSafely } from './transaction'
-import * as allChains from 'viem/chains'
+import * as allChains from '../utils/supportedChains'
 import { executeResults } from './executeResults'
 
 function checkExpectedPrice(
