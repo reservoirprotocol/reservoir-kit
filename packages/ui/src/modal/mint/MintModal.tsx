@@ -35,6 +35,8 @@ import {
 import { MintCollectionInfo } from './MintCollectionInfo'
 import QuantitySelector from '../QuantitySelector'
 import { MintCheckout } from './MintCheckout'
+import { Address } from 'wagmi'
+import { MintImages } from './MintImages'
 
 type MintCallbackData = {
   collectionId?: string
@@ -158,6 +160,8 @@ export function MintModal({
         const quantitySubject = quantity > 1 ? 'Items' : 'Item'
 
         const hasQuantitySet = quantity >= 1
+
+        const contract = collectionId?.split(':')[0] as Address
 
         return (
           <Modal
@@ -476,15 +480,18 @@ export function MintModal({
               <Flex
                 direction="column"
                 align="center"
-                css={{ width: '100%', p: '$4' }}
+                css={{ width: '100%', py: '$4' }}
               >
                 <Flex
                   direction="column"
                   align="center"
-                  css={{ px: '$4', py: '$5', gap: 24, maxWidth: '100%' }}
+                  css={{ py: '$5', gap: 24, maxWidth: '100%' }}
                 >
-                  <Text style="h5">Your mint is complete!</Text>
-                  <Flex align="center" css={{ gap: '$2' }}>
+                  <Text style="h5" css={{ px: '$5' }}>
+                    Your mint is complete!
+                  </Text>
+                  <MintImages stepData={stepData} contract={contract} />
+                  <Flex align="center" css={{ gap: '$2', px: '$5' }}>
                     <Box
                       css={{
                         color: failedMints ? '$errorAccent' : '$successAccent',
@@ -517,7 +524,10 @@ export function MintModal({
                       ) : null}
                     </Text>
                   </Flex>
-                  <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
+                  <Flex
+                    direction="column"
+                    css={{ gap: '$2', mb: '$3', px: '$5' }}
+                  >
                     {stepData?.currentStep?.items?.map((item, index) => {
                       const txHash = item.txHash
                         ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
@@ -540,9 +550,14 @@ export function MintModal({
                     })}
                   </Flex>
                 </Flex>
-                <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
-                  {copy.ctaClose}
-                </Button>
+                <Flex css={{ width: '100%', px: '$4' }}>
+                  <Button
+                    css={{ width: '100%' }}
+                    onClick={() => setOpen(false)}
+                  >
+                    {copy.ctaClose}
+                  </Button>
+                </Flex>
               </Flex>
             )}
             {mintStep === MintStep.AddFunds && (
