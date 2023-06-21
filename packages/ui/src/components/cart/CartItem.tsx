@@ -18,7 +18,7 @@ import { Cart } from '../../context/CartProvider'
 import { formatNumber } from '../../lib/numbers'
 import QuantitySelector from '../../modal/QuantitySelector'
 import * as allChains from 'viem/chains'
-import { zora } from '@reservoir0x/reservoir-sdk'
+import { customChains } from '@reservoir0x/reservoir-sdk'
 
 type Props = {
   item: Cart['items'][0]
@@ -100,8 +100,10 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             (chain) => cartChain?.id === chain.id
           )
 
-          if (!chain && cartChain?.id === zora.id) {
-            chain = zora
+          if (!chain) {
+            chain = Object.values(customChains).find(
+              (chain) => chain.id === (reservoirChain?.id || 1)
+            )
           }
 
           let url: string | undefined = tokenUrl
