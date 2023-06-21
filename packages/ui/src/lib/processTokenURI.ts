@@ -16,9 +16,6 @@ const convertToGatewayUrl = (url: string) => {
 const fetchUri = async (uri: string) => {
   const response = await fetch(convertToGatewayUrl(uri), {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
   })
 
   if (!response.ok) {
