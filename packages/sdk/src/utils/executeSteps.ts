@@ -2,6 +2,7 @@ import { Execute, paths, ReservoirWallet } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { createPublicClient, http } from 'viem'
 import { axios } from '../utils'
+import { customChains } from '../utils/customChains'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions/index'
 import { setParams } from './params'
@@ -75,10 +76,18 @@ export async function executeSteps(
     reservoirChain = client.chains.find((chain) => chain.id === chainId) || null
   }
 
-  const viemChain =
-    Object.values(allChains).find(
-      (chain) => chain.id === (reservoirChain?.id || 1)
-    ) || allChains.mainnet
+  let viemChain: allChains.Chain
+  const customChain = Object.values(customChains).find(
+    (chain) => chain.id === (reservoirChain?.id || 1)
+  )
+  if (customChain) {
+    viemChain = customChain
+  } else {
+    viemChain =
+      Object.values(allChains).find(
+        (chain) => chain.id === (reservoirChain?.id || 1)
+      ) || allChains.mainnet
+  }
 
   const viemClient = createPublicClient({
     chain: viemChain,
