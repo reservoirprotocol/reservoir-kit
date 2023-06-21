@@ -1,7 +1,8 @@
 import { Execute, paths } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { Account, WalletClient, createPublicClient, http, toBytes } from 'viem'
-import { axios, zora } from '../utils'
+import { axios } from '../utils'
+import { customChains } from '../utils/customChains'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions/index'
 import { setParams } from './params'
@@ -75,9 +76,12 @@ export async function executeSteps(
     reservoirChain = client.chains.find((chain) => chain.id === chainId) || null
   }
 
-  let viemChain: allChains.Chain = allChains.mainnet
-  if (reservoirChain?.id === zora.id) {
-    viemChain = zora
+  let viemChain: allChains.Chain
+  const customChain = Object.values(customChains).find(
+    (chain) => chain.id === (reservoirChain?.id || 1)
+  )
+  if (customChain) {
+    viemChain = customChain
   } else {
     viemChain =
       Object.values(allChains).find(
