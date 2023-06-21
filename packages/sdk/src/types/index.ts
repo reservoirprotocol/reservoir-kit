@@ -37,12 +37,14 @@ export type TransactionStepItem = Pick<
   NonNullable<Execute['steps'][0]['items']>[0],
   'status' | 'orderIds' | 'orderIndexes' | 'orderData'
 > & {
-  data: any
-  from: `0x${string}`
-  to: `0x${string}`
-  value: string
-  maxFeePerGas?: string
-  maxPriorityFeePerGas?: string
+  data: {
+    data: any
+    from: `0x${string}`
+    to: `0x${string}`
+    value: string
+    maxFeePerGas?: string
+    maxPriorityFeePerGas?: string
+  }
 }
 
 export type Execute = {
@@ -78,10 +80,14 @@ export type Execute = {
 }
 
 export type ReservoirWallet = {
-  signMessage: (item: SignatureStepItem) => Promise<string | undefined>
-  sendTransaction: (
+  handleSignMessageStep: (
+    item: SignatureStepItem,
+    step: Execute['steps'][0]
+  ) => Promise<string | undefined>
+  handleSendTransactionStep: (
     chainId: number,
-    item: TransactionStepItem
+    item: TransactionStepItem,
+    step: Execute['steps'][0]
   ) => Promise<`0x${string}` | undefined>
   address: () => Promise<string>
 }

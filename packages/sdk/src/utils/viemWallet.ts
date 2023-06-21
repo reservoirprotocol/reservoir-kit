@@ -18,7 +18,7 @@ export const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {
       }
       return address
     },
-    signMessage: async (stepItem) => {
+    handleSignMessageStep: async (stepItem) => {
       const client = getClient()
       const signData = stepItem.data?.sign
       let signature: string | undefined
@@ -50,23 +50,24 @@ export const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {
       }
       return signature
     },
-    sendTransaction: async (chainId, stepItem) => {
+    handleSendTransactionStep: async (chainId, stepItem) => {
       const viemChain =
         Object.values(allChains).find((chain) => chain.id === (chainId || 1)) ||
         allChains.mainnet
+      const stepData = stepItem.data
 
       return await wallet.sendTransaction({
         chain: viemChain,
-        data: stepItem.data,
-        account: wallet.account ?? stepItem.from, // use signer.account if it's defined
-        to: stepItem.to,
-        value: hexToBigInt((stepItem.value as any) || 0),
-        ...(stepItem.maxFeePerGas && {
-          maxFeePerGas: hexToBigInt(stepItem.maxFeePerGas as any),
+        data: stepData.data,
+        account: wallet.account ?? stepData.from, // use signer.account if it's defined
+        to: stepData.to,
+        value: hexToBigInt((stepData.value as any) || 0),
+        ...(stepData.maxFeePerGas && {
+          maxFeePerGas: hexToBigInt(stepData.maxFeePerGas as any),
         }),
-        ...(stepItem.maxPriorityFeePerGas && {
+        ...(stepData.maxPriorityFeePerGas && {
           maxPriorityFeePerGas: hexToBigInt(
-            stepItem.maxPriorityFeePerGas as any
+            stepData.maxPriorityFeePerGas as any
           ),
         }),
       })

@@ -1,4 +1,4 @@
-import { Execute, paths, ReservoirWallet } from '../types'
+import { Execute, paths, ReservoirWallet, TransactionStepItem } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
 import { createPublicClient, http } from 'viem'
 import { axios } from '../utils'
@@ -287,7 +287,8 @@ export async function executeSteps(
                   await sendTransactionSafely(
                     reservoirChain?.id || 1,
                     viemClient,
-                    stepData,
+                    stepItem as TransactionStepItem,
+                    step,
                     wallet,
                     (tx) => {
                       client.log(
@@ -417,7 +418,7 @@ export async function executeSteps(
                   LogLevel.Verbose
                 )
                 if (signData) {
-                  signature = await wallet.signMessage(stepItem)
+                  signature = await wallet.handleSignMessageStep(stepItem, step)
 
                   if (signature) {
                     request.params = {

@@ -12,7 +12,7 @@ export const adaptEthersSigner = (signer: Signer): ReservoirWallet => {
     address: async () => {
       return signer.getAddress()
     },
-    signMessage: async (stepItem) => {
+    handleSignMessageStep: async (stepItem) => {
       const client = getClient()
       const signData = stepItem.data?.sign
       let signature: string | undefined
@@ -35,8 +35,8 @@ export const adaptEthersSigner = (signer: Signer): ReservoirWallet => {
       }
       return signature
     },
-    sendTransaction: async (chainId, stepItem) => {
-      const transaction = await signer.sendTransaction(stepItem)
+    handleSendTransactionStep: async (chainId, stepItem) => {
+      const transaction = await signer.sendTransaction(stepItem.data)
       return transaction.hash as `0x${string}`
     },
   }

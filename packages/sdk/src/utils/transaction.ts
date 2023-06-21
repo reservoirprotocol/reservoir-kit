@@ -1,6 +1,6 @@
 import { PublicClient, Transaction } from 'viem'
 import { LogLevel, getClient } from '..'
-import { ReservoirWallet } from '../types'
+import { Execute, ReservoirWallet, TransactionStepItem } from '../types'
 
 /**
  * Safe txhash.wait which handles replacements when users speed up the transaction
@@ -10,11 +10,12 @@ import { ReservoirWallet } from '../types'
 export async function sendTransactionSafely(
   chainId: number,
   viemClient: PublicClient,
-  data: any,
+  item: TransactionStepItem,
+  step: Execute['steps'][0],
   wallet: ReservoirWallet,
   setTx: (tx: Transaction['hash']) => void
 ) {
-  const txHash = await wallet.sendTransaction(chainId, data)
+  const txHash = await wallet.handleSendTransactionStep(chainId, item, step)
   if (!txHash) {
     throw 'Transaction hash not returned from sendTransaction method'
   }

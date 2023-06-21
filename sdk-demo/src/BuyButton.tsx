@@ -4,7 +4,7 @@ import { useSigner } from 'wagmi'
 
 function BuyButton() {
   const { data: signer } = useSigner()
-  const collectionId = '0x8a77e2b6d75339c5fe7a03cd10c1bbeb34ecc6fd'
+  const collectionId = '0x05a0b0985ba3b7bd9ade8a7478caa2fa4fda24e5'
   return (
     <div
       style={{
