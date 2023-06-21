@@ -75,7 +75,6 @@ export const MintImages: FC<Props> = ({ stepData, contract }) => {
           pb: 10,
           position: 'relative',
           justifyContent: tokenImages.length > 3 ? 'flex-start' : 'center',
-          flexDirection: 'row-reverse',
         }}
       >
         {stepData?.currentStep?.items?.map((item, itemIndex) => (
