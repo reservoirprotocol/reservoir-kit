@@ -1,5 +1,4 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import { Logo } from '../../modal/Modal'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { AnimatePresence } from 'framer-motion'
 import { AnimatedOverlay, StyledAnimatedContent } from '../../primitives/Dialog'
@@ -11,6 +10,7 @@ import {
   faCircleExclamation,
   faClose,
   faCube,
+  faLock,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
@@ -19,6 +19,7 @@ import { Cart, CheckoutStatus } from '../../context/CartProvider'
 import SigninStep from '../../modal/SigninStep'
 import { ApprovePurchasingCollapsible } from '../../modal/ApprovePurchasingCollapsible'
 import { Execute } from '@reservoir0x/reservoir-sdk'
+import { Logo } from '../../modal/Modal'
 
 const Title = styled(DialogPrimitive.Title, {
   margin: 0,
@@ -279,87 +280,118 @@ export function CartCheckoutModal({
                     <Flex
                       direction="column"
                       align="center"
-                      css={{ px: '$4', py: '$5', gap: 24 }}
+                      css={{ width: '100%', p: '$4' }}
                     >
-                      <Box
-                        css={{
-                          color: failedSales
-                            ? '$errorAccent'
-                            : '$successAccent',
-                        }}
+                      <Flex
+                        direction="column"
+                        align="center"
+                        css={{ px: '$4', py: '$5', gap: 24 }}
                       >
-                        <FontAwesomeIcon
-                          icon={
-                            failedSales ? faCircleExclamation : faCheckCircle
-                          }
-                          fontSize={32}
-                        />
-                      </Box>
-                      <Text style="h5" css={{ textAlign: 'center' }}>
-                        {failedSales
-                          ? `${successfulSales} ${
-                              successfulSales > 1 ? 'items' : 'item'
-                            } purchased, ${failedSales} ${
-                              failedSales > 1 ? 'items' : 'item'
-                            } failed`
-                          : 'Congrats! Purchase was successful.'}
-                      </Text>
-                      <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-                        {transaction.currentStep?.items?.map((item) => {
-                          const txHash = item.txHash
-                            ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
-                                -4
-                              )}`
-                            : ''
-                          return (
-                            <Anchor
-                              href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                              color="primary"
-                              weight="medium"
-                              target="_blank"
-                              css={{ fontSize: 12 }}
-                            >
-                              View transaction: {txHash}
-                            </Anchor>
-                          )
-                        })}
+                        <Box
+                          css={{
+                            color: failedSales
+                              ? '$errorAccent'
+                              : '$successAccent',
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={
+                              failedSales ? faCircleExclamation : faCheckCircle
+                            }
+                            fontSize={32}
+                          />
+                        </Box>
+                        <Text style="h5" css={{ textAlign: 'center' }}>
+                          {failedSales
+                            ? `${successfulSales} ${
+                                successfulSales > 1 ? 'items' : 'item'
+                              } purchased, ${failedSales} ${
+                                failedSales > 1 ? 'items' : 'item'
+                              } failed`
+                            : 'Congrats! Purchase was successful.'}
+                        </Text>
+                        <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
+                          {transaction.currentStep?.items?.map((item) => {
+                            const txHash = item.txHash
+                              ? `${item.txHash.slice(
+                                  0,
+                                  4
+                                )}...${item.txHash.slice(-4)}`
+                              : ''
+                            return (
+                              <Anchor
+                                href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
+                                color="primary"
+                                weight="medium"
+                                target="_blank"
+                                css={{ fontSize: 12 }}
+                              >
+                                View transaction: {txHash}
+                              </Anchor>
+                            )
+                          })}
+                        </Flex>
                       </Flex>
                     </Flex>
-                    <Button
-                      css={{ width: '100%' }}
-                      onClick={() => setDialogOpen(false)}
-                    >
-                      Close
-                    </Button>
+                    <Flex css={{ width: '100%', p: '$4' }}>
+                      <Button
+                        css={{ width: '100%' }}
+                        onClick={() => setDialogOpen(false)}
+                      >
+                        Close
+                      </Button>
+                    </Flex>
                   </Flex>
                 )}
               </Box>
 
               {!providerOptionsContext.disablePoweredByReservoir && (
                 <Flex
+                  align="center"
                   css={{
                     mx: 'auto',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: '$footerBackground',
-                    py: 10.5,
+                    pb: 12,
+                    gap: '$1',
                     visibility: '$poweredByReservoirVisibility',
                     borderBottomRightRadius: '$borderRadius',
                     borderBottomLeftRadius: '$borderRadius',
                   }}
                 >
-                  <Anchor href="https://reservoir.tools/" target="_blank">
-                    <Text
-                      style="body3"
+                  <Box css={{ color: '$neutralBorderHover' }}>
+                    <FontAwesomeIcon icon={faLock} width={9} height={10} />
+                  </Box>
+                  <Text
+                    style="tiny"
+                    color="subtle"
+                    css={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      lineHeight: '12px',
+                      fontWeight: 400,
+                      color: '$neutralText',
+                    }}
+                  >
+                    Powered by{' '}
+                    <Anchor
+                      href="https://reservoir.tools/"
+                      target="_blank"
+                      weight="heavy"
+                      color="gray"
                       css={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
+                        height: 12,
+                        fontSize: 12,
+                        '&:hover': {
+                          color: '$neutralSolid',
+                          fill: '$neutralSolid',
+                        },
                       }}
                     >
-                      Powered by <Logo />
-                    </Text>
-                  </Anchor>
+                      <Logo />
+                    </Anchor>
+                  </Text>
                 </Flex>
               )}
             </StyledAnimatedContent>

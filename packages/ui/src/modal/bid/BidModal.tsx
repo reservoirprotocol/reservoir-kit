@@ -5,6 +5,7 @@ import React, {
   useRef,
   Dispatch,
   SetStateAction,
+  useContext,
 } from 'react'
 import { styled } from '../../../stitches.config'
 import {
@@ -51,6 +52,8 @@ import PseudoInput from '../../primitives/PseudoInput'
 import { useFallbackState } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import { CurrencySelector } from '../CurrencySelector'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import { CSS } from '@stitches/react'
 
 type BidCallbackData = {
   tokenId?: string
@@ -109,6 +112,7 @@ const ContentContainer = styled(Flex, {
   '@bp1': {
     flexDirection: 'row',
   },
+  borderColor: '$borderColor',
 })
 
 const MainContainer = styled(Flex, {
@@ -212,6 +216,8 @@ export function BidModal({
             ? token.token?.imageSmall
             : (collection?.image as string)
 
+        const providerOptionsContext = useContext(ProviderOptionsContext)
+
         useEffect(() => {
           if (stepData) {
             switch (stepData.currentStep.kind) {
@@ -288,6 +294,15 @@ export function BidModal({
           }
         }, [open, attributes])
 
+        const contentContainerCss: CSS = {
+          borderBottomWidth: providerOptionsContext.disablePoweredByReservoir
+            ? 0
+            : 1,
+          marginBottom: providerOptionsContext.disablePoweredByReservoir
+            ? 0
+            : 12,
+        }
+
         return (
           <Modal
             size={bidStep !== BidStep.Complete ? ModalSize.LG : ModalSize.MD}
@@ -323,7 +338,11 @@ export function BidModal({
             }}
           >
             {bidStep === BidStep.SetPrice && collection && (
-              <ContentContainer>
+              <ContentContainer
+                css={{
+                  ...contentContainerCss,
+                }}
+              >
                 <TokenStats
                   token={token ? token : undefined}
                   collection={collection}
@@ -667,7 +686,11 @@ export function BidModal({
             )}
 
             {bidStep === BidStep.Offering && collection && (
-              <ContentContainer>
+              <ContentContainer
+                css={{
+                  ...contentContainerCss,
+                }}
+              >
                 <TransactionBidDetails
                   token={token ? token : undefined}
                   collection={collection}
