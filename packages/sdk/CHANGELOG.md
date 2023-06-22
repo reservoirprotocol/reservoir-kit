@@ -1,18 +1,20 @@
-
 ## [v1.1.10-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0c32e8414712a17146e7fdec9f6082637d3259fc) (2023-06-22)
 
-* Rename adapter method names and parameters based on feedback [ef4c7ae](https://github.com/reservoirprotocol/reservoir-kit/commit/ef4c7ae09657cc89560909bd50b54d4928149d70)
+- Add ethers adapter [2023-06-16](https://github.com/reservoirprotocol/reservoir-kit/commit/f6c8865)
+- Add Viem adapter and refactor to normalize wallet clients [d644470](https://github.com/reservoirprotocol/reservoir-kit/commit/d6444706326b846b7bd133acd514dc7423ee7c25)
+
 ## [v1.1.9-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8ad6bce739914a762ee80f83334d311b1b0eac4d) (2023-06-21)
 
-* Add custom chains to fix zora chain transaction detection [4ae8067](https://github.com/reservoirprotocol/reservoir-kit/commit/4ae80673209df5f06ae45403784d4407b1f176f0)
+- Add custom chains to fix zora chain transaction detection [4ae8067](https://github.com/reservoirprotocol/reservoir-kit/commit/4ae80673209df5f06ae45403784d4407b1f176f0)
+
 ## [v1.1.8-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/3b99c6aa4627cf843472d051b1d237daedd39fae) (2023-06-20)
 
-* Fix export issue [a0450b2](https://github.com/reservoirprotocol/reservoir-kit/commit/a0450b297986b74da5548ddb6ee39d9ec1eaf984)
+- Fix export issue [a0450b2](https://github.com/reservoirprotocol/reservoir-kit/commit/a0450b297986b74da5548ddb6ee39d9ec1eaf984)
+
 ## [v1.1.7-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/f1427350fff368c213de7fa1ce0f86b5384e858f) (2023-06-20)
 
-* Add zora support [c068ac4](https://github.com/reservoirprotocol/reservoir-kit/commit/c068ac41ae4e977b5d5af7ab3a684fbd35049e00)
-* Add ethers adapter [2023-06-16](https://github.com/reservoirprotocol/reservoir-kit/commit/f6c8865)
-* Add Viem adapter and refactor to normalize wallet clients [d644470](https://github.com/reservoirprotocol/reservoir-kit/commit/d6444706326b846b7bd133acd514dc7423ee7c25)
+- Add zora support [c068ac4](https://github.com/reservoirprotocol/reservoir-kit/commit/c068ac41ae4e977b5d5af7ab3a684fbd35049e00)
+
 ## [v1.1.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/3ebb44fd825dcf48fa43391e8f39f73c171589ae) (2023-06-16)
 
 - Post results to execute results when signing transactions [62a347f](https://github.com/reservoirprotocol/reservoir-kit/commit/62a347fa9b93a37e7a6b85e7c7f41ab4e283d9bd)
