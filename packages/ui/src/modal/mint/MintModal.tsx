@@ -1,16 +1,14 @@
 import {
   faCheckCircle,
   faCircleExclamation,
-  faCopy,
   faCube,
-  faExchange,
   faEye,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
 import { Path } from '../../components/cart/CartCheckoutModal'
-import { useCopyToClipboard, useFallbackState } from '../../hooks'
+import { useFallbackState } from '../../hooks'
 import {
   Button,
   Flex,
@@ -21,8 +19,6 @@ import {
   Loader,
   Anchor,
   ErrorWell,
-  Popover,
-  Input,
 } from '../../primitives'
 import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
 import { Modal } from '../Modal'
@@ -78,8 +74,6 @@ export function MintModal({
     openState
   )
 
-  const { copy: copyToClipboard, copied } = useCopyToClipboard()
-
   return (
     <MintModalRenderer open={open} collectionId={collectionId}>
       {({
@@ -99,6 +93,7 @@ export function MintModal({
         mintPrice,
         balance,
         hasEnoughCurrency,
+        addFundsLink,
         blockExplorerBaseUrl,
         transactionError,
         stepData,
@@ -169,13 +164,6 @@ export function MintModal({
             title={copy.title}
             open={open}
             loading={loading}
-            onBack={
-              mintStep == MintStep.AddFunds
-                ? () => {
-                    setMintStep(MintStep.Idle)
-                  }
-                : null
-            }
             onOpenChange={(open) => {
               if (!open && onClose) {
                 const data: MintCallbackData = {
@@ -314,7 +302,7 @@ export function MintModal({
                     </Flex>
                     <Button
                       onClick={() => {
-                        setMintStep(MintStep.AddFunds)
+                        window.open(addFundsLink, '_blank')
                       }}
                       css={{ width: '100%', mb: '$3' }}
                     >
@@ -558,112 +546,6 @@ export function MintModal({
                     {copy.ctaClose}
                   </Button>
                 </Flex>
-              </Flex>
-            )}
-            {mintStep === MintStep.AddFunds && (
-              <Flex direction="column">
-                <Flex
-                  css={{
-                    p: '$4',
-                    py: '$5',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                  }}
-                >
-                  <Box css={{ color: '$neutralText' }}>
-                    <FontAwesomeIcon
-                      icon={faExchange}
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        margin: '12px 0px',
-                      }}
-                    />
-                  </Box>
-                  <Text style="subtitle1" css={{ my: 24 }}>
-                    <Popover
-                      content={
-                        <Text style={'body3'}>
-                          Trade one crypto for another on a crypto exchange.
-                          Popular decentralized exchanges include{' '}
-                          <Anchor
-                            css={{ fontSize: 12 }}
-                            href="https://app.uniswap.org/"
-                            target="_blank"
-                            color="primary"
-                          >
-                            Uniswap
-                          </Anchor>
-                          ,{' '}
-                          <Anchor
-                            css={{ fontSize: 12 }}
-                            href="https://app.sushi.com/"
-                            target="_blank"
-                            color="primary"
-                          >
-                            SushiSwap
-                          </Anchor>{' '}
-                          and many others.
-                        </Text>
-                      }
-                    >
-                      <Text as="span" color="accent">
-                        Exchange currencies
-                      </Text>
-                    </Popover>{' '}
-                    or transfer funds to your
-                    <br /> wallet address below:
-                  </Text>
-                  <Box css={{ width: '100%', position: 'relative' }}>
-                    <Flex
-                      css={{
-                        pointerEvents: 'none',
-                        opacity: copied ? 1 : 0,
-                        position: 'absolute',
-                        inset: 0,
-                        borderRadius: 8,
-                        transition: 'all 200ms ease-in-out',
-                        pl: '$4',
-                        alignItems: 'center',
-                        zIndex: 3,
-                        textAlign: 'left',
-                        background: '$neutralBg',
-                      }}
-                    >
-                      <Text style={'body1'}>Copied Address!</Text>
-                    </Flex>
-                    <Input
-                      readOnly
-                      onClick={() => copyToClipboard(address as string)}
-                      value={address || ''}
-                      css={{
-                        color: '$neutralText',
-                        textAlign: 'left',
-                      }}
-                    />
-                    <Box
-                      css={{
-                        position: 'absolute',
-                        right: '$3',
-                        top: '50%',
-                        touchEvents: 'none',
-                        transform: 'translateY(-50%)',
-                        color: '$neutralText',
-                        pointerEvents: 'none',
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faCopy} width={16} height={16} />
-                    </Box>
-                  </Box>
-                </Flex>
-                <Button
-                  css={{ m: '$4' }}
-                  color="primary"
-                  onClick={() => copyToClipboard(address as string)}
-                >
-                  {copy.ctaCopyAddress}
-                </Button>
               </Flex>
             )}
           </Modal>

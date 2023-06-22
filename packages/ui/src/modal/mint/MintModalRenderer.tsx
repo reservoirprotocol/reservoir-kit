@@ -26,7 +26,6 @@ import { parseUnits, zeroAddress } from 'viem'
 
 export enum MintStep {
   Idle,
-  AddFunds,
   Approving,
   Finalizing,
   Complete,
@@ -67,6 +66,7 @@ type ChildrenProps = {
   mintPrice: number
   balance?: bigint
   hasEnoughCurrency: boolean
+  addFundsLink: string
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
   stepData: MintModalStepData | null
@@ -108,6 +108,10 @@ export const MintModalRenderer: FC<Props> = ({
 
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
+
+  const addFundsLink = currency?.contract
+    ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${currency?.contract}`
+    : `https://jumper.exchange/?toChain=${chain?.id}`
 
   const [fetchedInitialTokens, setFetchedInitialTokens] = useState(false)
 
@@ -345,6 +349,7 @@ export const MintModalRenderer: FC<Props> = ({
         mintPrice,
         balance: balance?.value,
         hasEnoughCurrency,
+        addFundsLink,
         blockExplorerBaseUrl,
         transactionError,
         stepData,
