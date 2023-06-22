@@ -1,3 +1,28 @@
+
+## [v1.1.10-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2eefe64cd5bdbad5d4a2c4a8f13727cb5eac2895) (2023-06-22)
+
+* Merge pull request #287 from reservoirprotocol/ted/grwth-2896-update-the-rk-powered-by-reservoir-design [6ae1ad6](https://github.com/reservoirprotocol/reservoir-kit/commit/6ae1ad68d4e58121f0134b2afd95d0ebbae91449)
+* Merge pull request #290 from reservoirprotocol/ted/grwth-2913-buymodal-redirect-users-to-lifi-when-add-funds-is-clicked [2ad5fa2](https://github.com/reservoirprotocol/reservoir-kit/commit/2ad5fa223e326b67505b25bf707a935394a939cc)
+* Remove copyToClipBoard [1c5539a](https://github.com/reservoirprotocol/reservoir-kit/commit/1c5539a42fc34fdee0bfb32a658d40a733cda19e)
+* Merge pull request #289 from reservoirprotocol/ted/grwth-2913-buymodal-redirect-users-to-lifi-when-add-funds-is-clicked [4702ef7](https://github.com/reservoirprotocol/reservoir-kit/commit/4702ef79d20b44d06cead33d71aaa60a9c02f158)
+* Updated padding around containers [2023-06-22](https://github.com/reservoirprotocol/reservoir-kit/commit/5fc1a75)
+* Remove 'Add funds' screen and redirect to lifi instead [9c491f1](https://github.com/reservoirprotocol/reservoir-kit/commit/9c491f1666bd252fa684c1cfcf614700b058b24c)
+## [v1.1.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4b2343dc6e999c23ef9742383d46668f7054aa44) (2023-06-21)
+
+* Add custom chains to fix zora chain transaction detection [4ae8067](https://github.com/reservoirprotocol/reservoir-kit/commit/4ae80673209df5f06ae45403784d4407b1f176f0)
+## [v1.1.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/400f027c8e2eb46746b36862c45d660713a38036) (2023-06-20)
+
+* Fix export issue [a0450b2](https://github.com/reservoirprotocol/reservoir-kit/commit/a0450b297986b74da5548ddb6ee39d9ec1eaf984)
+* Updated margins and paddings around modal containers [fc553b9](https://github.com/reservoirprotocol/reservoir-kit/commit/fc553b93229acfac2a7028d69704ecc1b70b05c4)
+## [v1.1.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/fa3c46cd797fe9570b21e895ed21691ad5a06cde) (2023-06-20)
+
+* Fix bug with wagmi/chains [cedceb3](https://github.com/reservoirprotocol/reservoir-kit/commit/cedceb34651ab86cf47f4e281a783d8fc8f8b552)
+* Add zora support [c068ac4](https://github.com/reservoirprotocol/reservoir-kit/commit/c068ac41ae4e977b5d5af7ab3a684fbd35049e00)
+* Merge pull request #284 from reservoirprotocol/ted/grwth-2776-listmodal-marketplace-fee-always-05-with-oracle-enabled [f8a591a](https://github.com/reservoirprotocol/reservoir-kit/commit/f8a591a11e547e152be4772f5601c956da16898b)
+* Fix sweep modal bug when slider breaks when using 'by ETH' for small amounts [a5a6e93](https://github.com/reservoirprotocol/reservoir-kit/commit/a5a6e93a9de93d70cbd4744f99c986733a615a65)
+* Fix List modal marketplace fee bug [91a0203](https://github.com/reservoirprotocol/reservoir-kit/commit/91a02037f45761abbb92c2c242685c5ed59f2ac3)
+* Add ethers adapter [2023-06-16](https://github.com/reservoirprotocol/reservoir-kit/commit/f6c8865)
+* Add Viem adapter and refactor to normalize wallet clients [d644470](https://github.com/reservoirprotocol/reservoir-kit/commit/d6444706326b846b7bd133acd514dc7423ee7c25)
 ## [v1.1.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/94ae52b7f7b0a0dcd09e775cb2072c9ae0db7ada) (2023-06-16)
 
 - Post results to execute results when signing transactions
