@@ -15,11 +15,11 @@ export default function (
   >([])
   const [isFetching, setIsFetching] = useState(false)
   const client = useReservoirClient()
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
 
   useEffect(() => {
     if (
-      signer &&
+      wallet &&
       client &&
       tokenId &&
       collectionId &&
@@ -40,7 +40,7 @@ export default function (
       client.actions
         .listToken({
           listings: listings,
-          signer,
+          wallet,
           precheck: true,
         })
         .then((data: any) => {
@@ -81,7 +81,7 @@ export default function (
     } else if (unapprovedMarketplaces.length > 0) {
       setUnapprovedMarketplaces([])
     }
-  }, [client, signer, tokenId, collectionId, marketplaces.length])
+  }, [client, wallet, tokenId, collectionId, marketplaces.length])
 
   return { data: unapprovedMarketplaces, isFetching }
 }

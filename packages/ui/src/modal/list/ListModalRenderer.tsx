@@ -117,7 +117,7 @@ export const ListModalRenderer: FC<Props> = ({
   oracleEnabled = false,
   children,
 }) => {
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
   const account = useAccount()
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
@@ -343,8 +343,8 @@ export const ListModalRenderer: FC<Props> = ({
   }, [currencies])
 
   const listToken = useCallback(() => {
-    if (!signer) {
-      const error = new Error('Missing a signer')
+    if (!wallet) {
+      const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
@@ -441,7 +441,7 @@ export const ListModalRenderer: FC<Props> = ({
     client.actions
       .listToken({
         listings: listingData.map((data) => data.listing),
-        signer,
+        wallet,
         onProgress: (steps: Execute['steps']) => {
           const executableSteps = steps.filter(
             (step) => step.items && step.items.length > 0
@@ -519,7 +519,7 @@ export const ListModalRenderer: FC<Props> = ({
   }, [
     client,
     marketplaces,
-    signer,
+    wallet,
     collectionId,
     tokenId,
     expirationOption,

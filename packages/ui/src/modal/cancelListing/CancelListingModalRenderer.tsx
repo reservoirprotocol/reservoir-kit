@@ -45,7 +45,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
   const [cancelStep, setCancelStep] = useState<CancelStep>(CancelStep.Cancel)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<CancelListingStepData | null>(null)
@@ -80,8 +80,8 @@ export const CancelListingModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
 
   const cancelOrder = useCallback(() => {
-    if (!signer) {
-      const error = new Error('Missing a signer')
+    if (!wallet) {
+      const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
@@ -103,7 +103,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
     client.actions
       .cancelOrder({
         ids: [listingId],
-        signer,
+        wallet,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
             return
@@ -167,7 +167,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
         setStepData(null)
         setSteps(null)
       })
-  }, [listingId, client, signer])
+  }, [listingId, client, wallet])
 
   useEffect(() => {
     if (!open) {

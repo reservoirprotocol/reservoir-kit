@@ -103,7 +103,7 @@ export const BuyModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
   const [totalPrice, setTotalPrice] = useState(0)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0)
   const [path, setPath] = useState<BuyPath>([])
@@ -208,7 +208,7 @@ export const BuyModalRenderer: FC<Props> = ({
       !client ||
       !tokenId ||
       !contract ||
-      !signer ||
+      !wallet ||
       !is1155 ||
       orderId
     ) {
@@ -226,6 +226,7 @@ export const BuyModalRenderer: FC<Props> = ({
     if (normalizeRoyalties !== undefined) {
       options.normalizeRoyalties = normalizeRoyalties
     }
+
     client.actions
       .buyToken({
         options,
@@ -236,7 +237,7 @@ export const BuyModalRenderer: FC<Props> = ({
             fillType: 'trade',
           },
         ],
-        signer,
+        wallet,
         onProgress: () => {},
         precheck: true,
       })
@@ -257,7 +258,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [
     open,
     client,
-    signer,
+    wallet,
     tokenId,
     contract,
     is1155,
@@ -270,8 +271,8 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [fetchPath])
 
   const buyToken = useCallback(() => {
-    if (!signer) {
-      const error = new Error('Missing a signer')
+    if (!wallet) {
+      const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
@@ -342,7 +343,7 @@ export const BuyModalRenderer: FC<Props> = ({
       .buyToken({
         items: items,
         expectedPrice: totalPrice - feeOnTop,
-        signer,
+        wallet,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
             return

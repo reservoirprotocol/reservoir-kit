@@ -113,7 +113,7 @@ export const BidModalRenderer: FC<Props> = ({
   oracleEnabled = false,
   children,
 }) => {
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [bidAmount, setBidAmount] = useState<string>('')
@@ -297,8 +297,8 @@ export const BidModalRenderer: FC<Props> = ({
 
   const placeBid = useCallback(
     (options?: { quantity?: number }) => {
-      if (!signer) {
-        const error = new Error('Missing a signer')
+      if (!wallet) {
+        const error = new Error('Missing a wallet/signer')
         setTransactionError(error)
         throw error
       }
@@ -373,7 +373,7 @@ export const BidModalRenderer: FC<Props> = ({
 
       client.actions
         .placeBid({
-          signer,
+          wallet,
           bids: [bid],
           onProgress: (steps: Execute['steps']) => {
             const executableSteps = steps.filter(
@@ -421,7 +421,7 @@ export const BidModalRenderer: FC<Props> = ({
       collectionId,
       currency,
       client,
-      signer,
+      wallet,
       bidAmount,
       expirationOption,
       trait,
