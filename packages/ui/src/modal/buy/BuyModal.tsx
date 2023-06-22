@@ -232,7 +232,7 @@ export function BuyModal({
                   onClick={() => {
                     setOpen(false)
                   }}
-                  css={{ mx: '$4', mt: '$4' }}
+                  css={{ m: '$4' }}
                 >
                   {copy.ctaClose}
                 </Button>
@@ -360,7 +360,7 @@ export function BuyModal({
                   />
                 </Flex>
 
-                <Box css={{ px: '$4', pt: '$4', width: '100%' }}>
+                <Box css={{ p: '$4', width: '100%' }}>
                   {hasEnoughCurrency ? (
                     <Button
                       onClick={buyToken}
@@ -425,7 +425,7 @@ export function BuyModal({
                     blockExplorerBaseUrl={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
                   />
                 )}
-                <Button disabled={true} css={{ mx: '$4', mt: '$4' }}>
+                <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
                   {stepData?.currentStepItem.txHash
                     ? copy.ctaAwaitingValidation
@@ -568,8 +568,7 @@ export function BuyModal({
                 </Flex>
                 <Flex
                   css={{
-                    px: '$4',
-                    pt: '$4',
+                    p: '$4',
                     flexDirection: 'column',
                     gap: '$3',
                     '@bp1': {
@@ -715,7 +714,7 @@ export function BuyModal({
                   </Box>
                 </Flex>
                 <Button
-                  css={{ mx: '$4', mt: '$4' }}
+                  css={{ m: '$4' }}
                   color="primary"
                   onClick={() => copyToClipboard(address as string)}
                 >

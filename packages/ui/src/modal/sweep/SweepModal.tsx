@@ -341,7 +341,7 @@ export function SweepModal({
                 </Flex>
                 {hasEnoughCurrency ? (
                   <Button
-                    css={{ mx: '$4', mt: '$4' }}
+                    css={{ m: '$4' }}
                     disabled={
                       !(selectedTokens.length > 0) || !hasEnoughCurrency
                     }
@@ -367,7 +367,7 @@ export function SweepModal({
                       />
                     </Flex>
                     <Button
-                      css={{ mt: '$4', width: '100%' }}
+                      css={{ my: '$4', width: '100%' }}
                       disabled={true}
                       onClick={sweepTokens}
                     >
@@ -398,7 +398,7 @@ export function SweepModal({
                 <Flex
                   direction="column"
                   align="center"
-                  css={{ px: '$4', pt: '$4', overflowY: 'auto' }}
+                  css={{ p: '$4', overflowY: 'auto' }}
                 >
                   {stepData?.currentStep == undefined ? (
                     <Flex css={{ py: '$5' }}>
@@ -528,7 +528,7 @@ export function SweepModal({
               <Flex
                 direction="column"
                 align="center"
-                css={{ width: '100%', px: '$4', pt: '$4' }}
+                css={{ width: '100%', p: '$4' }}
               >
                 <Flex
                   direction="column"

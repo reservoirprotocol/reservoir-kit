@@ -230,7 +230,7 @@ export function CartCheckoutModal({
                         ) : null}
                       </Flex>
                     </Flex>
-                    <Button disabled={true} css={{ mx: '$4', mt: '$4' }}>
+                    <Button disabled={true} css={{ m: '$4' }}>
                       <Loader />
                       Waiting for Approval...
                     </Button>
@@ -264,7 +264,7 @@ export function CartCheckoutModal({
                         />
                       </Flex>
                     </Flex>
-                    <Button disabled={true} css={{ mx: '$4', mt: '$4' }}>
+                    <Button disabled={true} css={{ m: '$4' }}>
                       <Loader />
                       Waiting to be Validated...
                     </Button>
@@ -275,7 +275,7 @@ export function CartCheckoutModal({
                   <Flex
                     direction="column"
                     align="center"
-                    css={{ width: '100%' }}
+                    css={{ width: '100%', p: '$4' }}
                   >
                     <Flex
                       direction="column"
@@ -333,7 +333,7 @@ export function CartCheckoutModal({
                         </Flex>
                       </Flex>
                     </Flex>
-                    <Flex css={{ width: '100%', px: '$4', mt: '$4' }}>
+                    <Flex css={{ width: '100%', p: '$4' }}>
                       <Button
                         css={{ width: '100%' }}
                         onClick={() => setDialogOpen(false)}
@@ -352,7 +352,7 @@ export function CartCheckoutModal({
                     mx: 'auto',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    py: 10,
+                    pb: 12,
                     gap: '$1',
                     visibility: '$poweredByReservoirVisibility',
                     borderBottomRightRadius: '$borderRadius',

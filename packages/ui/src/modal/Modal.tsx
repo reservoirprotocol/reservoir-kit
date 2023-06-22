@@ -122,7 +122,7 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
               mx: 'auto',
               alignItems: 'center',
               justifyContent: 'center',
-              py: 10,
+              pb: 12,
               gap: '$1',
               visibility: '$poweredByReservoirVisibility',
               borderBottomRightRadius: '$borderRadius',
