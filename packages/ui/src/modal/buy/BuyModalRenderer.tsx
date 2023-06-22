@@ -31,7 +31,6 @@ type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 export enum BuyStep {
   Checkout,
   Approving,
-  AddFunds,
   Complete,
   Unavailable,
 }
@@ -68,6 +67,7 @@ type ChildrenProps = {
   buyStep: BuyStep
   transactionError?: Error | null
   hasEnoughCurrency: boolean
+  addFundsLink: string
   feeUsd: number
   totalUsd: number
   usdPrice: number
@@ -201,6 +201,12 @@ export const BuyModalRenderer: FC<Props> = ({
   const totalUsd = totalPrice * usdPrice
 
   const client = useReservoirClient()
+
+  const { chain } = useNetwork()
+
+  const addFundsLink = currency?.contract
+    ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${currency?.contract}`
+    : `https://jumper.exchange/?toChain=${chain?.id}`
 
   const fetchPath = useCallback(() => {
     if (
@@ -613,6 +619,7 @@ export const BuyModalRenderer: FC<Props> = ({
         buyStep,
         transactionError,
         hasEnoughCurrency,
+        addFundsLink,
         feeUsd,
         totalUsd,
         usdPrice,
