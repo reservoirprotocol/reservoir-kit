@@ -3,6 +3,7 @@ import React, {
   Dispatch,
   ReactElement,
   SetStateAction,
+  useContext,
   useEffect,
   useState,
 } from 'react'
@@ -45,6 +46,8 @@ import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'
 import { CurrencySelector } from '../CurrencySelector'
 import { zeroAddress } from 'viem'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import { CSS } from '@stitches/react'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -87,6 +90,7 @@ const Image = styled('img', {})
 const Span = styled('span', {})
 const ContentContainer = styled(Flex, {
   width: '100%',
+  borderColor: '$borderColor',
   flexDirection: 'column',
   '@bp1': {
     flexDirection: 'row',
@@ -136,6 +140,8 @@ export function ListModal({
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
     Marketplace[]
   >([])
+
+  const providerOptionsContext = useContext(ProviderOptionsContext)
 
   if (oracleEnabled) {
     nativeOnly = true
@@ -259,6 +265,15 @@ export function ListModal({
           !collection ||
           (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false)
 
+        const contentContainerCss: CSS = {
+          borderBottomWidth: providerOptionsContext.disablePoweredByReservoir
+            ? 0
+            : 1,
+          marginBottom: providerOptionsContext.disablePoweredByReservoir
+            ? 0
+            : 12,
+        }
+
         return (
           <Modal
             trigger={trigger}
@@ -280,7 +295,11 @@ export function ListModal({
             loading={loading}
           >
             {!loading && listStep == ListStep.SelectMarkets && (
-              <ContentContainer>
+              <ContentContainer
+                css={{
+                  ...contentContainerCss,
+                }}
+              >
                 <TokenStats
                   token={token}
                   collection={collection}
@@ -415,7 +434,11 @@ export function ListModal({
               </ContentContainer>
             )}
             {!loading && listStep == ListStep.SetPrice && (
-              <ContentContainer>
+              <ContentContainer
+                css={{
+                  ...contentContainerCss,
+                }}
+              >
                 <TokenStats
                   token={token}
                   collection={collection}
@@ -629,7 +652,11 @@ export function ListModal({
               </ContentContainer>
             )}
             {!loading && listStep == ListStep.ListItem && (
-              <ContentContainer>
+              <ContentContainer
+                css={{
+                  ...contentContainerCss,
+                }}
+              >
                 <TokenListingDetails
                   token={token}
                   collection={collection}
@@ -710,7 +737,11 @@ export function ListModal({
               </ContentContainer>
             )}
             {!loading && listStep == ListStep.Complete && (
-              <ContentContainer>
+              <ContentContainer
+                css={{
+                  ...contentContainerCss,
+                }}
+              >
                 <TokenListingDetails
                   token={token}
                   collection={collection}

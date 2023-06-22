@@ -1,10 +1,11 @@
-import { Execute, paths } from '../types'
-import { WalletClient } from 'viem'
+import { Execute, paths, ReservoirWallet } from '../types'
 import { getClient } from '.'
-import { executeSteps } from '../utils/executeSteps'
+import { executeSteps, adaptViemWallet } from '../utils'
 import { axios } from '../utils'
 import { AxiosRequestConfig } from 'axios'
 import { version } from '../../package.json'
+import { isViemWalletClient } from '../utils/viemWallet'
+import { WalletClient } from 'viem'
 
 type ListTokenBody = NonNullable<
   paths['/execute/list/v5']['post']['parameters']['body']['body']
@@ -12,7 +13,7 @@ type ListTokenBody = NonNullable<
 
 type Data = {
   listings: Required<ListTokenBody>['params']
-  signer: WalletClient
+  wallet: ReservoirWallet | WalletClient
   chainId?: number
   precheck?: boolean
   onProgress?: (steps: Execute['steps']) => any
@@ -21,7 +22,7 @@ type Data = {
 /**
  * List a token for sale
  * @param data.listings Listings data to be processed
- * @param data.signer Ethereum signer object provided by the browser
+ * @param data.wallet ReservoirWallet object that adheres to the ReservoirWallet interface or a viem WalletClient
  * @param data.chainId Override the current active chain
  * @param data.precheck Set to true to skip executing steps and just to get the initial steps required
  * @param data.onProgress Callback to update UI state as execution progresses
@@ -30,12 +31,12 @@ type Data = {
 export async function listToken(
   data: Data
 ): Promise<Execute['steps'] | boolean> {
-  const { listings, signer, chainId, onProgress = () => {}, precheck } = data
+  const { listings, wallet, chainId, onProgress = () => {}, precheck } = data
   const client = getClient()
-  let maker = signer.account?.address
-  if (!maker) {
-    ;[maker] = await signer.getAddresses()
-  }
+  const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
+    ? adaptViemWallet(wallet)
+    : wallet
+  const maker = await reservoirWallet.address()
   let baseApiUrl = client.currentChain()?.baseApiUrl
 
   if (chainId) {
@@ -99,7 +100,7 @@ export async function listToken(
     } else {
       await executeSteps(
         request,
-        signer,
+        reservoirWallet,
         onProgress,
         undefined,
         undefined,

@@ -1,6 +1,6 @@
-import { Execute, paths } from '../types'
+import { Execute, paths, ReservoirWallet, TransactionStepItem } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
-import { Account, WalletClient, createPublicClient, http, toBytes } from 'viem'
+import { createPublicClient, http } from 'viem'
 import { axios } from '../utils'
 import { customChains } from '../utils/customChains'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
@@ -54,7 +54,7 @@ function checkExpectedPrice(
  * the user. This function executes all transactions, in order, to complete the
  * action.
  * @param request AxiosRequestConfig object with at least a url set
- * @param signer Ethereum signer object provided by the browser
+ * @param wallet ReservoirWallet object that adheres to the ReservoirWallet interface
  * @param setState Callback to update UI state has execution progresses
  * @param newJson Data passed around, which contains steps and items etc
  * @param expectedPrice Expected price to check for price moves before starting to process the steps. Can be a number or an object representing currency contract address to expected price
@@ -64,7 +64,7 @@ function checkExpectedPrice(
 
 export async function executeSteps(
   request: AxiosRequestConfig,
-  signer: WalletClient,
+  wallet: ReservoirWallet,
   setState: (steps: Execute['steps'], path: Execute['path']) => any,
   newJson?: Execute,
   expectedPrice?: number | Record<string, number>,
@@ -285,10 +285,11 @@ export async function executeSteps(
                   )
 
                   await sendTransactionSafely(
-                    viemChain,
+                    reservoirChain?.id || 1,
                     viemClient,
-                    stepData,
-                    signer,
+                    stepItem as TransactionStepItem,
+                    step,
+                    wallet,
                     (tx) => {
                       client.log(
                         [
@@ -417,37 +418,7 @@ export async function executeSteps(
                   LogLevel.Verbose
                 )
                 if (signData) {
-                  // Request user signature
-                  if (signData.signatureKind === 'eip191') {
-                    client.log(
-                      ['Execute Steps: Signing with eip191'],
-                      LogLevel.Verbose
-                    )
-                    if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
-                      // If the message represents a hash, we need to convert it to raw bytes first
-                      signature = await signer.signMessage({
-                        account: signer.account as Account,
-                        message: toBytes(signData.message).toString(),
-                      })
-                    } else {
-                      signature = await signer.signMessage({
-                        account: signer.account as Account,
-                        message: signData.message,
-                      })
-                    }
-                  } else if (signData.signatureKind === 'eip712') {
-                    client.log(
-                      ['Execute Steps: Signing with eip712'],
-                      LogLevel.Verbose
-                    )
-                    signature = await signer.signTypedData({
-                      account: signer.account as Account,
-                      domain: signData.domain,
-                      types: signData.types,
-                      primaryType: signData.primaryType,
-                      message: signData.value,
-                    })
-                  }
+                  signature = await wallet.handleSignMessageStep(stepItem, step)
 
                   if (signature) {
                     request.params = {
@@ -535,7 +506,7 @@ export async function executeSteps(
     await Promise.all(promises)
 
     // Recursively call executeSteps()
-    await executeSteps(request, signer, setState, json)
+    await executeSteps(request, wallet, setState, json)
   } catch (err: any) {
     let blockNumber = 0n
     try {

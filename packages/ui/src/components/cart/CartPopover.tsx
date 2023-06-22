@@ -1,5 +1,5 @@
 import { useFallbackState } from '../../hooks'
-import { keyframes, styled } from '../../../stitches.config'
+import { keyframes } from '../../../stitches.config'
 import {
   Box,
   Flex,
@@ -25,11 +25,11 @@ import React, {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faClose,
+  faLock,
   faRefresh,
   faShoppingCart,
 } from '@fortawesome/free-solid-svg-icons'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import ReservoirLogoWhiteText from '../../img/ReservoirLogoWhiteText'
 import CartItem from './CartItem'
 import CartToast from './CartToast'
 import CartPopoverRenderer from './CartPopoverRenderer'
@@ -39,6 +39,7 @@ import {
 } from '../../context/CartProvider'
 import { useAccount } from 'wagmi'
 import { CartCheckoutModal } from './CartCheckoutModal'
+import { Logo } from '../../modal/Modal'
 
 const scaleUp = keyframes({
   '0%': { opacity: 0, transform: 'scale(0.9) translateY(-10px)' },
@@ -48,12 +49,6 @@ const scaleUp = keyframes({
 const scaleDown = keyframes({
   '0%': { opacity: 1, transform: 'scale(1) translateY(0)' },
   '100%': { opacity: 0, transform: 'scale(0.9) translateY(-10px)' },
-})
-
-const Logo = styled(ReservoirLogoWhiteText, {
-  '& .letter': {
-    fill: '$reservoirLogoColor',
-  },
 })
 
 type Props = {
@@ -458,26 +453,49 @@ export function CartPopover({
 
                 {!providerOptionsContext.disablePoweredByReservoir && (
                   <Flex
+                    align="center"
                     css={{
+                      mx: 'auto',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      visibility: '$poweredByReservoirVisibility',
                       mt: 26,
+                      gap: '$1',
+                      visibility: '$poweredByReservoirVisibility',
                     }}
                   >
-                    <Anchor href="https://reservoir.tools/" target="_blank">
-                      <Text
-                        style="body3"
-                        color="subtle"
+                    <Box css={{ color: '$neutralBorderHover' }}>
+                      <FontAwesomeIcon icon={faLock} width={9} height={10} />
+                    </Box>
+                    <Text
+                      style="tiny"
+                      color="subtle"
+                      css={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        lineHeight: '14px',
+                        fontWeight: 400,
+                        color: '$neutralText',
+                      }}
+                    >
+                      Powered by{' '}
+                      <Anchor
+                        href="https://reservoir.tools/"
+                        target="_blank"
+                        weight="heavy"
+                        color="gray"
                         css={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
+                          height: 12,
+                          fontSize: 12,
+                          '&:hover': {
+                            color: '$neutralSolid',
+                            fill: '$neutralSolid',
+                          },
                         }}
                       >
-                        Powered by <Logo />
-                      </Text>
-                    </Anchor>
+                        <Logo />
+                      </Anchor>
+                    </Text>
                   </Flex>
                 )}
               </Flex>

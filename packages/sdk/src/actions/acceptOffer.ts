@@ -1,8 +1,9 @@
 import { getClient } from '.'
-import { Execute, paths } from '../types'
-import { executeSteps, request } from '../utils'
+import { Execute, paths, ReservoirWallet } from '../types'
+import { executeSteps, request, adaptViemWallet } from '../utils'
 import { WalletClient } from 'viem'
 import axios, { AxiosRequestConfig } from 'axios'
+import { isViemWalletClient } from '../utils/viemWallet'
 
 type AcceptOfferBodyParameters =
   paths['/execute/sell/v7']['post']['parameters']['body']['body']
@@ -16,7 +17,7 @@ type Data = {
   items: NonNullable<AcceptOfferBodyParameters>['items']
   options?: Partial<AcceptOfferOptions>
   expectedPrice?: number | Record<string, number>
-  signer: WalletClient
+  wallet: ReservoirWallet | WalletClient
   chainId?: number
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
   precheck?: boolean
@@ -26,18 +27,19 @@ type Data = {
  * Accept an offer to buy your token
  * @param data.items Items being accepted
  * @param data.expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
- * @param data.signer Ethereum signer object provided by the browser
+ * @param data.wallet ReservoirWallet object that adheres to the ReservoirWallet interface or a viem WalletClient
  * @param data.options Additional options to pass into the accept request
  * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state as execution progresses
  * @param data.precheck Set to true to skip executing steps and just to get the initial steps/path
  */
 export async function acceptOffer(data: Data) {
-  const { items, expectedPrice, signer, chainId, onProgress, precheck } = data
-  let taker = signer.account?.address
-  if (!taker) {
-    ;[taker] = await signer.getAddresses()
-  }
+  const { items, expectedPrice, wallet, chainId, onProgress, precheck } = data
+  const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
+    ? adaptViemWallet(wallet)
+    : wallet
+
+  const taker = await reservoirWallet.address()
 
   const client = getClient()
   const options = data.options || {}
@@ -99,7 +101,7 @@ export async function acceptOffer(data: Data) {
     } else {
       await executeSteps(
         request,
-        signer,
+        reservoirWallet,
         onProgress,
         undefined,
         expectedPrice,

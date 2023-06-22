@@ -934,12 +934,12 @@ function cartStore({
         }
       }
 
-      const signer = await getWalletClient({
+      const wallet = await getWalletClient({
         chainId: cartData.current.chain?.id,
       })
 
-      if (!signer) {
-        throw 'Signer not available'
+      if (!wallet) {
+        throw 'Wallet/Signer not available'
       }
 
       let isMixedCurrency = false
@@ -1020,7 +1020,7 @@ function cartStore({
       client.actions
         .buyToken({
           expectedPrice,
-          signer,
+          wallet,
           items: tokens,
           options,
           onProgress: (steps: Execute['steps'], path: Execute['path']) => {

@@ -1,7 +1,8 @@
-import { Execute, paths } from '../types'
-import { WalletClient } from 'viem'
-import { executeSteps } from '../utils'
+import { Execute, paths, ReservoirWallet } from '../types'
+import { executeSteps, adaptViemWallet } from '../utils'
 import { getClient } from '.'
+import { WalletClient } from 'viem'
+import { isViemWalletClient } from '../utils/viemWallet'
 
 type CancelOrderBodyParameters =
   paths['/execute/cancel/v3']['post']['parameters']['body']
@@ -13,7 +14,7 @@ export type CancelOrderOptions = Omit<
 
 type Data = {
   ids: string[]
-  signer: WalletClient
+  wallet: ReservoirWallet | WalletClient
   options?: CancelOrderOptions
   chainId?: number
   onProgress: (steps: Execute['steps']) => any
@@ -22,14 +23,17 @@ type Data = {
 /**
  * Cancel offers or listings
  * @param data.ids Ids of the orders to cancel
- * @param data.signer Ethereum signer object provided by the browser
+ * @param data.wallet ReservoirWallet object that adheres to the ReservoirWallet interface or a viem WalletClient
  * @param data.options Additional options to pass into the cancel request
  * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state has execution progresses
  */
 export async function cancelOrder(data: Data) {
-  const { ids, signer, chainId, onProgress } = data
+  const { ids, wallet, chainId, onProgress } = data
   const client = getClient()
+  const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
+    ? adaptViemWallet(wallet)
+    : wallet
   const options = data.options || {}
   let baseApiUrl = client.currentChain()?.baseApiUrl
 
@@ -59,7 +63,7 @@ export async function cancelOrder(data: Data) {
           ...options,
         } as NonNullable<CancelOrderBodyParameters['body']>,
       },
-      signer,
+      reservoirWallet,
       onProgress,
       undefined,
       undefined,
