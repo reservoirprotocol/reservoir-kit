@@ -18,7 +18,6 @@ export { default as useCart } from './useCart'
 export { default as useDynamicTokens } from './useDynamicTokens'
 
 //Internal
-export { default as useCopyToClipboard } from './useCopyToClipboard'
 export { default as useMediaQuery } from './useMediaQuery'
 export { default as useTimeSince } from './useTimeSince'
 export { default as useMarketplaces } from './useMarketplaces'
