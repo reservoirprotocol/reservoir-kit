@@ -51,6 +51,7 @@ const BidPage: NextPage = () => {
       decimals: 6,
     },
   ])
+  const [feesBps, setFeesBps] = useState<string[]>([])
   const [attribute, setAttribute] =
     useState<ComponentPropsWithoutRef<typeof BidModal>['attribute']>(undefined)
   const deeplinkOpenState = useState(true)
@@ -142,6 +143,25 @@ const BidPage: NextPage = () => {
           }}
         />
       </div>
+      <div>
+        <label>Fees on top (BPS): </label>
+        <textarea
+          onChange={() => {}}
+          onBlur={(e) => {
+            if (e.target.value && e.target.value.length > 0) {
+              try {
+                setFeesBps(JSON.parse(e.target.value))
+              } catch (err) {
+                e.target.value = ''
+                setFeesBps([])
+              }
+            } else {
+              e.target.value = ''
+              setFeesBps([])
+            }
+          }}
+        />
+      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -189,6 +209,7 @@ const BidPage: NextPage = () => {
         normalizeRoyalties={normalizeRoyalties}
         oracleEnabled={oracleEnabled}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
+        feesBps={feesBps}
         onBidComplete={(data) => {
           console.log('Bid Complete', data)
         }}
