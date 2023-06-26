@@ -61,7 +61,6 @@ export async function listToken(
         client.marketplaceFees &&
         !('fees' in listing)
       ) {
-        debugger
         listing.fees = client.marketplaceFees
       }
 
