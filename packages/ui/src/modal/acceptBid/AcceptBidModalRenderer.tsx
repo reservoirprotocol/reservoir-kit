@@ -113,10 +113,9 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
   const enhancedTokens = useMemo(() => {
     const tokensDataMap = tokensData.reduce((map, data) => {
-      map[`${data.token?.collection?.id}:${data.token?.tokenId}`] = data
+      map[`${data.token?.contract}:${data.token?.tokenId}`] = data
       return map
     }, {} as Record<string, typeof tokensData[0]>)
-
     const tokensBidPathMap =
       bidsPath?.reduce((map, path) => {
         const key = `${path.contract}:${path.tokenId}`
@@ -131,7 +130,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       {}
 
     return tokens.reduce((enhancedTokens, token) => {
-      const dataMapKey = `${token.collectionId}:${token.tokenId}`
+      const contract = token.collectionId.split(':')[0]
+      const dataMapKey = `${contract}:${token.tokenId}`
       const tokenData = tokensDataMap[dataMapKey]
       const bidIds = token.bidIds?.filter((bidId) => bidId.length > 0) || []
       const bidsPath: NonNullable<AcceptBidTokenData['bidsPath']> =
