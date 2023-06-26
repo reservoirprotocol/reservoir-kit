@@ -87,6 +87,7 @@ type Props = {
   normalizeRoyalties?: boolean
   enableOnChainRoyalties: boolean
   oracleEnabled: boolean
+  feesBps?: string[]
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -115,6 +116,7 @@ export const ListModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   enableOnChainRoyalties = false,
   oracleEnabled = false,
+  feesBps,
   children,
 }) => {
   const { data: wallet } = useWalletClient()
@@ -122,7 +124,7 @@ export const ListModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
-  const [allMarketplaces] = useMarketplaces(collectionId, true)
+  const [allMarketplaces] = useMarketplaces(collectionId, true, feesBps)
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<ListModalStepData | null>(null)
@@ -179,6 +181,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [marketplaces, setMarketplaces] = useMarketplaces(
     collectionId,
     true,
+    feesBps,
     royaltyBps
   )
   const {
@@ -397,8 +400,15 @@ export const ListModalRenderer: FC<Props> = ({
           })
           listing.automatedRoyalties = false
           listing.fees = [...royalties]
-          if (client.marketplaceFees && listing.orderbook === 'reservoir') {
-            listing.fees = listing.fees.concat(client.marketplaceFees)
+        }
+
+        if (listing.orderbook === 'reservoir') {
+          const fees = feesBps || client.marketplaceFees
+          if (fees) {
+            if (!listing.fees) {
+              listing.fees = []
+            }
+            listing.fees = listing.fees.concat(fees)
           }
         }
 
@@ -522,6 +532,7 @@ export const ListModalRenderer: FC<Props> = ({
     quantity,
     enableOnChainRoyalties,
     onChainRoyalties,
+    feesBps,
   ])
 
   return (
