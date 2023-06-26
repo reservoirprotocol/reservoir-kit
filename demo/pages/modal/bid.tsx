@@ -51,7 +51,7 @@ const BidPage: NextPage = () => {
       decimals: 6,
     },
   ])
-  const [feesBps, setFeesBps] = useState<string[]>([])
+  const [feesBps, setFeesBps] = useState<string[] | undefined>()
   const [attribute, setAttribute] =
     useState<ComponentPropsWithoutRef<typeof BidModal>['attribute']>(undefined)
   const deeplinkOpenState = useState(true)
@@ -153,11 +153,11 @@ const BidPage: NextPage = () => {
                 setFeesBps(JSON.parse(e.target.value))
               } catch (err) {
                 e.target.value = ''
-                setFeesBps([])
+                setFeesBps(undefined)
               }
             } else {
               e.target.value = ''
-              setFeesBps([])
+              setFeesBps(undefined)
             }
           }}
         />
