@@ -46,6 +46,6 @@
         "ts-jest": "^29.1.0"
     },
     "peerDependencies": {
-        "viem": "~0.3.35"
+        "viem": "~1.0.6"
     }
 }
