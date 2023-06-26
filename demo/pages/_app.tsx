@@ -121,6 +121,12 @@ const AppWrapper: FC<any> = ({ children }) => {
               active: CHAIN_ID === allChains.arbitrum.id,
               apiKey: API_KEY,
             },
+            {
+              baseApiUrl: 'https://api-zora.reservoir.tools',
+              id: allChains.zora.id,
+              active: CHAIN_ID === allChains.zora.id,
+              apiKey: API_KEY,
+            },
           ],
           marketplaceFee: FEE,
           marketplaceFeeRecipient: FEE_RECIPIENT,
