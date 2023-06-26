@@ -101,7 +101,7 @@ export const SweepModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
   const account = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
   const [itemAmount, setItemAmount] = useState<number | undefined>(undefined)
@@ -133,7 +133,7 @@ export const SweepModalRenderer: FC<Props> = ({
   const [tokens, setTokens] = useState<BuyPath | undefined>(undefined)
 
   const fetchBuyPath = useCallback(() => {
-    if (!signer || !client) {
+    if (!wallet || !client) {
       return
     }
 
@@ -157,7 +157,7 @@ export const SweepModalRenderer: FC<Props> = ({
         ],
         expectedPrice: undefined,
         options,
-        signer: signer,
+        wallet,
         precheck: true,
         onProgress: () => {},
       })
@@ -171,13 +171,13 @@ export const SweepModalRenderer: FC<Props> = ({
       .finally(() => {
         setFetchedInitialTokens(true)
       })
-  }, [client, signer, normalizeRoyalties, collectionId, currency])
+  }, [client, wallet, normalizeRoyalties, collectionId, currency])
 
   useEffect(() => {
     if (open) {
       fetchBuyPath()
     }
-  }, [client, signer, open])
+  }, [client, wallet, open])
 
   // Update currency
   const updateCurrency = useCallback(
@@ -365,8 +365,8 @@ export const SweepModalRenderer: FC<Props> = ({
   }, [open])
 
   const sweepTokens = useCallback(() => {
-    if (!signer) {
-      const error = new Error('Missing a signer')
+    if (!wallet) {
+      const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
@@ -424,7 +424,7 @@ export const SweepModalRenderer: FC<Props> = ({
       .buyToken({
         items: [{ collection: collectionId, quantity: selectedTokens.length }],
         expectedPrice: total - feeOnTop,
-        signer,
+        wallet,
         options,
         onProgress: (steps: Execute['steps'], path: Execute['path']) => {
           if (!steps) {
@@ -491,7 +491,7 @@ export const SweepModalRenderer: FC<Props> = ({
   }, [
     selectedTokens,
     client,
-    signer,
+    wallet,
     total,
     normalizeRoyalties,
     chain,

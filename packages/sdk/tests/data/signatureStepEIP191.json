@@ -1,0 +1,30 @@
+{
+  "steps":[
+     {
+        "id":"auth",
+        "action":"Sign in to Blur",
+        "description":"Some marketplaces require signing an auth message before filling",
+        "kind":"signature",
+        "items":[
+           {
+              "status":"incomplete",
+              "data":{
+                 "sign":{
+                    "signatureKind":"eip191",
+                    "message":"Sign in to Blur\n\nChallenge: 734acb6851ba66f83188d8e34c3c8719c1e89e9f8e067c028955581bfde860a8"
+                 },
+                 "post":{
+                    "endpoint":"/execute/auth-signature/v1",
+                    "method":"POST",
+                    "body":{
+                       "kind":"blur",
+                       "id":"blur-auth-challenge:0x00000000219ab540356cbb839cbe05303d7705fa"
+                    }
+                 }
+              }
+           }
+        ]
+     }
+  ],
+  "path":[]
+}

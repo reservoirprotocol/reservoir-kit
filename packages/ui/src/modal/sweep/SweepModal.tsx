@@ -208,7 +208,14 @@ export function SweepModal({
                   <Slider
                     min={0}
                     max={isItemsToggled ? Math.min(50, maxInput) : maxInput}
-                    step={isItemsToggled ? 1 : 0.01}
+                    step={
+                      isItemsToggled
+                        ? 1
+                        : Math.min(
+                            0.01,
+                            availableTokens?.[0]?.totalPrice || 0.01
+                          )
+                    }
                     value={
                       isItemsToggled ? [itemAmount || 0] : [ethAmount || 0]
                     }

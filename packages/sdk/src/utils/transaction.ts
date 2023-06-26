@@ -1,6 +1,6 @@
-import { PublicClient, Transaction, WalletClient, hexToBigInt } from 'viem'
+import { PublicClient, Transaction } from 'viem'
 import { LogLevel, getClient } from '..'
-import { Chain } from 'viem'
+import { Execute, ReservoirWallet, TransactionStepItem } from '../types'
 
 /**
  * Safe txhash.wait which handles replacements when users speed up the transaction
@@ -8,27 +8,21 @@ import { Chain } from 'viem'
  * @returns A Promise to wait on
  */
 export async function sendTransactionSafely(
-  viemChain: Chain,
+  chainId: number,
   viemClient: PublicClient,
-  data: any,
-  signer: WalletClient,
+  item: TransactionStepItem,
+  step: Execute['steps'][0],
+  wallet: ReservoirWallet,
   setTx: (tx: Transaction['hash']) => void
 ) {
-  const transaction = await signer.sendTransaction({
-    chain: viemChain,
-    data: data.data,
-    account: signer.account ?? data.from, // use signer.account if it's defined
-    to: data.to,
-    value: hexToBigInt(data.value || 0),
-    ...(data.maxFeePerGas && { maxFeePerGas: hexToBigInt(data.maxFeePerGas) }),
-    ...(data.maxPriorityFeePerGas && {
-      maxPriorityFeePerGas: hexToBigInt(data.maxPriorityFeePerGas),
-    }),
-  })
-  setTx(transaction)
+  const txHash = await wallet.handleSendTransactionStep(chainId, item, step)
+  if (!txHash) {
+    throw 'Transaction hash not returned from sendTransaction method'
+  }
+  setTx(txHash)
 
   await viemClient.waitForTransactionReceipt({
-    hash: transaction,
+    hash: txHash,
     onReplaced: (replacement) => {
       setTx(replacement.transaction.hash)
       getClient()?.log(['Transaction replaced', replacement], LogLevel.Verbose)

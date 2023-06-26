@@ -9,7 +9,46 @@ export type SellPath =
 export type Preview =
   paths['/execute/buy/v7']['post']['responses']['200']['schema']['preview']
 
+export type SignatureStepItem = Pick<
+  NonNullable<Execute['steps'][0]['items']>[0],
+  'status' | 'orderIds' | 'orderIndexes' | 'orderData'
+> & {
+  data?: {
+    sign?: {
+      signatureKind: 'eip191' | 'eip712'
+    } & {
+      //Available if eip191
+      domain: any
+      types: any
+      primaryType: string
+      value?: any
+    } & {
+      //Available is eip712
+      message: string
+    }
+    post?: {
+      body: any
+      method: string
+      endpoint: string
+    }
+  }
+}
+export type TransactionStepItem = Pick<
+  NonNullable<Execute['steps'][0]['items']>[0],
+  'status' | 'orderIds' | 'orderIndexes' | 'orderData'
+> & {
+  data: {
+    data: any
+    from: `0x${string}`
+    to: `0x${string}`
+    value: string
+    maxFeePerGas?: string
+    maxPriorityFeePerGas?: string
+  }
+}
+
 export type Execute = {
+  requestId?: string
   errors?: { message?: string; orderId?: string }[]
   preview?: Preview
   path: BuyPath | SellPath
@@ -38,4 +77,17 @@ export type Execute = {
       //
     }[]
   }[]
+}
+
+export type ReservoirWallet = {
+  handleSignMessageStep: (
+    item: SignatureStepItem,
+    step: Execute['steps'][0]
+  ) => Promise<string | undefined>
+  handleSendTransactionStep: (
+    chainId: number,
+    item: TransactionStepItem,
+    step: Execute['steps'][0]
+  ) => Promise<`0x${string}` | undefined>
+  address: () => Promise<string>
 }

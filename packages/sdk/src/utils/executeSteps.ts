@@ -1,7 +1,8 @@
-import { Execute, paths } from '../types'
+import { Execute, paths, ReservoirWallet, TransactionStepItem } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
-import { Account, WalletClient, createPublicClient, http, toBytes } from 'viem'
+import { createPublicClient, http } from 'viem'
 import { axios } from '../utils'
+import { customChains } from '../utils/customChains'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 import { getClient } from '../actions/index'
 import { setParams } from './params'
@@ -10,6 +11,7 @@ import { LogLevel } from '../utils/logger'
 import { generateEvent } from '../utils/events'
 import { sendTransactionSafely } from './transaction'
 import * as allChains from 'viem/chains'
+import { executeResults } from './executeResults'
 
 function checkExpectedPrice(
   quote: number,
@@ -52,7 +54,7 @@ function checkExpectedPrice(
  * the user. This function executes all transactions, in order, to complete the
  * action.
  * @param request AxiosRequestConfig object with at least a url set
- * @param signer Ethereum signer object provided by the browser
+ * @param wallet ReservoirWallet object that adheres to the ReservoirWallet interface
  * @param setState Callback to update UI state has execution progresses
  * @param newJson Data passed around, which contains steps and items etc
  * @param expectedPrice Expected price to check for price moves before starting to process the steps. Can be a number or an object representing currency contract address to expected price
@@ -62,7 +64,7 @@ function checkExpectedPrice(
 
 export async function executeSteps(
   request: AxiosRequestConfig,
-  signer: WalletClient,
+  wallet: ReservoirWallet,
   setState: (steps: Execute['steps'], path: Execute['path']) => any,
   newJson?: Execute,
   expectedPrice?: number | Record<string, number>,
@@ -74,10 +76,18 @@ export async function executeSteps(
     reservoirChain = client.chains.find((chain) => chain.id === chainId) || null
   }
 
-  const viemChain =
-    Object.values(allChains).find(
-      (chain) => chain.id === (reservoirChain?.id || 1)
-    ) || allChains.mainnet
+  let viemChain: allChains.Chain
+  const customChain = Object.values(customChains).find(
+    (chain) => chain.id === (reservoirChain?.id || 1)
+  )
+  if (customChain) {
+    viemChain = customChain
+  } else {
+    viemChain =
+      Object.values(allChains).find(
+        (chain) => chain.id === (reservoirChain?.id || 1)
+      ) || allChains.mainnet
+  }
 
   const viemClient = createPublicClient({
     chain: viemChain,
@@ -266,117 +276,136 @@ export async function executeSteps(
             switch (kind) {
               // Make an on-chain transaction
               case 'transaction': {
-                client.log(
-                  [
-                    'Execute Steps: Begin transaction step for, sending transaction',
-                  ],
-                  LogLevel.Verbose
-                )
+                try {
+                  client.log(
+                    [
+                      'Execute Steps: Begin transaction step for, sending transaction',
+                    ],
+                    LogLevel.Verbose
+                  )
 
-                await sendTransactionSafely(
-                  viemChain,
-                  viemClient,
-                  stepData,
-                  signer,
-                  (tx) => {
-                    client.log(
-                      ['Execute Steps: Transaction step, got transaction', tx],
-                      LogLevel.Verbose
-                    )
-                    stepItem.txHash = tx
-                    if (json) {
-                      setState([...json.steps], path)
+                  await sendTransactionSafely(
+                    reservoirChain?.id || 1,
+                    viemClient,
+                    stepItem as TransactionStepItem,
+                    step,
+                    wallet,
+                    (tx) => {
+                      client.log(
+                        [
+                          'Execute Steps: Transaction step, got transaction',
+                          tx,
+                        ],
+                        LogLevel.Verbose
+                      )
+                      stepItem.txHash = tx
+                      if (json) {
+                        setState([...json.steps], path)
+                      }
                     }
+                  )
+                  client.log(
+                    [
+                      'Execute Steps: Transaction finished, starting to poll for confirmation',
+                    ],
+                    LogLevel.Verbose
+                  )
+
+                  //Implicitly poll the confirmation url to confirm the transaction went through
+                  const confirmationUrl = new URL(
+                    `${request.baseURL}/transactions/${stepItem.txHash}/synced/v1`
+                  )
+                  const headers: AxiosRequestHeaders = {
+                    'x-rkc-version': version,
                   }
-                )
-                client.log(
-                  [
-                    'Execute Steps: Transaction finished, starting to poll for confirmation',
-                  ],
-                  LogLevel.Verbose
-                )
 
-                //Implicitly poll the confirmation url to confirm the transaction went through
-                const confirmationUrl = new URL(
-                  `${request.baseURL}/transactions/${stepItem.txHash}/synced/v1`
-                )
-                const headers: AxiosRequestHeaders = {
-                  'x-rkc-version': version,
-                }
-
-                if (request.headers && request.headers['x-api-key']) {
-                  headers['x-api-key'] = request.headers['x-api-key']
-                }
-
-                if (request.headers && client?.uiVersion) {
-                  request.headers['x-rkui-version'] = client.uiVersion
-                }
-                await pollUntilOk(
-                  {
-                    url: confirmationUrl.href,
-                    method: 'get',
-                    headers: headers,
-                  },
-                  (res) => {
-                    client.log(
-                      ['Execute Steps: Polling for confirmation', res],
-                      LogLevel.Verbose
-                    )
-                    return res && res.data.synced
+                  if (request.headers && request.headers['x-api-key']) {
+                    headers['x-api-key'] = request.headers['x-api-key']
                   }
-                )
 
-                //Confirm that on-chain tx has been picked up by the indexer
-                if (
-                  step.id === 'sale' &&
-                  stepItem.txHash &&
-                  (isSell || isBuy)
-                ) {
-                  if (stepItem.data)
+                  if (request.headers && client?.uiVersion) {
+                    request.headers['x-rkui-version'] = client.uiVersion
+                  }
+                  await pollUntilOk(
+                    {
+                      url: confirmationUrl.href,
+                      method: 'get',
+                      headers: headers,
+                    },
+                    (res) => {
+                      client.log(
+                        ['Execute Steps: Polling for confirmation', res],
+                        LogLevel.Verbose
+                      )
+                      return res && res.data.synced
+                    }
+                  )
+
+                  //Confirm that on-chain tx has been picked up by the indexer
+                  if (
+                    step.id === 'sale' &&
+                    stepItem.txHash &&
+                    (isSell || isBuy)
+                  ) {
                     client.log(
                       [
                         'Execute Steps: Polling transfers to verify transaction was indexed',
                       ],
                       LogLevel.Verbose
                     )
-                  const indexerConfirmationUrl = new URL(
-                    `${request.baseURL}/transfers/bulk/v1`
-                  )
-                  const queryParams: paths['/transfers/bulk/v1']['get']['parameters']['query'] =
-                    {
-                      txHash: stepItem.txHash,
-                    }
-                  setParams(indexerConfirmationUrl, queryParams)
-                  let transfersData: paths['/transfers/bulk/v1']['get']['responses']['200']['schema'] =
-                    {}
-                  await pollUntilOk(
-                    {
-                      url: indexerConfirmationUrl.href,
-                      method: 'get',
-                      headers: headers,
-                    },
-                    (res) => {
-                      client.log(
-                        [
-                          'Execute Steps: Polling transfers to check if indexed',
-                          res,
-                        ],
-                        LogLevel.Verbose
-                      )
-                      if (res.status === 200) {
-                        transfersData = res.data
-                        return transfersData.transfers &&
-                          transfersData.transfers.length > 0
-                          ? true
-                          : false
+                    const indexerConfirmationUrl = new URL(
+                      `${request.baseURL}/transfers/bulk/v1`
+                    )
+                    const queryParams: paths['/transfers/bulk/v1']['get']['parameters']['query'] =
+                      {
+                        txHash: stepItem.txHash,
                       }
-                      return false
-                    }
-                  )
-                  stepItem.transfersData = transfersData.transfers
-                  setState([...json?.steps], path)
+                    setParams(indexerConfirmationUrl, queryParams)
+                    let transfersData: paths['/transfers/bulk/v1']['get']['responses']['200']['schema'] =
+                      {}
+                    await pollUntilOk(
+                      {
+                        url: indexerConfirmationUrl.href,
+                        method: 'get',
+                        headers: headers,
+                      },
+                      (res) => {
+                        client.log(
+                          [
+                            'Execute Steps: Polling transfers to check if indexed',
+                            res,
+                          ],
+                          LogLevel.Verbose
+                        )
+                        if (res.status === 200) {
+                          transfersData = res.data
+                          return transfersData.transfers &&
+                            transfersData.transfers.length > 0
+                            ? true
+                            : false
+                        }
+                        return false
+                      }
+                    )
+                    stepItem.transfersData = transfersData.transfers
+                    setState([...json?.steps], path)
+                  }
+                  executeResults({
+                    request,
+                    stepId: step.id,
+                    requestId: json?.requestId,
+                    txHash: stepItem.txHash,
+                  })
+                } catch (e) {
+                  executeResults({
+                    request,
+                    stepId: step.id,
+                    requestId: json?.requestId,
+                    txHash: stepItem.txHash,
+                    error: e,
+                  })
+                  throw e
                 }
-
                 break
               }
 
@@ -390,37 +419,7 @@ export async function executeSteps(
                   LogLevel.Verbose
                 )
                 if (signData) {
-                  // Request user signature
-                  if (signData.signatureKind === 'eip191') {
-                    client.log(
-                      ['Execute Steps: Signing with eip191'],
-                      LogLevel.Verbose
-                    )
-                    if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
-                      // If the message represents a hash, we need to convert it to raw bytes first
-                      signature = await signer.signMessage({
-                        account: signer.account as Account,
-                        message: toBytes(signData.message).toString(),
-                      })
-                    } else {
-                      signature = await signer.signMessage({
-                        account: signer.account as Account,
-                        message: signData.message,
-                      })
-                    }
-                  } else if (signData.signatureKind === 'eip712') {
-                    client.log(
-                      ['Execute Steps: Signing with eip712'],
-                      LogLevel.Verbose
-                    )
-                    signature = await signer.signTypedData({
-                      account: signer.account as Account,
-                      domain: signData.domain,
-                      types: signData.types,
-                      primaryType: signData.primaryType,
-                      message: signData.value,
-                    })
-                  }
+                  signature = await wallet.handleSignMessageStep(stepItem, step)
 
                   if (signature) {
                     request.params = {
@@ -508,7 +507,7 @@ export async function executeSteps(
     await Promise.all(promises)
 
     // Recursively call executeSteps()
-    await executeSteps(request, signer, setState, json)
+    await executeSteps(request, wallet, setState, json)
   } catch (err: any) {
     let blockNumber = 0n
     try {

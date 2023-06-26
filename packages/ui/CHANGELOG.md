@@ -1,3 +1,25 @@
+## [v1.1.10-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2eefe64cd5bdbad5d4a2c4a8f13727cb5eac2895) (2023-06-22)
+
+- Update Powered by Reservoir modal footers [6ae1ad6](https://github.com/reservoirprotocol/reservoir-kit/commit/6ae1ad68d4e58121f0134b2afd95d0ebbae91449)
+- Buymodal: Redirect users to lifi when add funds is clicked [2ad5fa2](https://github.com/reservoirprotocol/reservoir-kit/commit/2ad5fa223e326b67505b25bf707a935394a939cc)
+
+## [v1.1.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4b2343dc6e999c23ef9742383d46668f7054aa44) (2023-06-21)
+
+- Add custom chains to fix zora chain transaction detection [4ae8067](https://github.com/reservoirprotocol/reservoir-kit/commit/4ae80673209df5f06ae45403784d4407b1f176f0)
+
+## [v1.1.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/400f027c8e2eb46746b36862c45d660713a38036) (2023-06-20)
+
+- Fix export issue [a0450b2](https://github.com/reservoirprotocol/reservoir-kit/commit/a0450b297986b74da5548ddb6ee39d9ec1eaf984)
+
+## [v1.1.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/fa3c46cd797fe9570b21e895ed21691ad5a06cde) (2023-06-20)
+
+- ListModal: Fix bug with oracle enabled fees not displaying properly [f8a591a](https://github.com/reservoirprotocol/reservoir-kit/commit/f8a591a11e547e152be4772f5601c956da16898b)
+- Fix sweep modal bug when slider breaks when using 'by ETH' for small amounts [a5a6e93](https://github.com/reservoirprotocol/reservoir-kit/commit/a5a6e93a9de93d70cbd4744f99c986733a615a65)
+
+## [v1.1.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/94ae52b7f7b0a0dcd09e775cb2072c9ae0db7ada) (2023-06-16)
+
+- Post results to execute results when signing transactions
+
 ## [v1.1.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4f30eb8a8663f324e47f3ea3757a15c43bdf8119) (2023-06-13)
 
 - Upgrade viem dependency to ~0.3.35 [8450dd9](https://github.com/reservoirprotocol/reservoir-kit/commit/8450dd9186dd50222dfc0d4f485c874553475fcb)

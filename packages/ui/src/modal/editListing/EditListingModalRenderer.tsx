@@ -86,7 +86,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   enableOnChainRoyalties = false,
   children,
 }) => {
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
   const account = useAccount()
   const [editListingStep, setEditListingStep] = useState<EditListingStep>(
     EditListingStep.Edit
@@ -206,8 +206,8 @@ export const EditListingModalRenderer: FC<Props> = ({
   }
 
   const editListing = useCallback(() => {
-    if (!signer) {
-      const error = new Error('Missing a signer')
+    if (!wallet) {
+      const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
@@ -275,7 +275,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     client.actions
       .listToken({
         listings: [listing],
-        signer,
+        wallet,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
             return
@@ -335,7 +335,7 @@ export const EditListingModalRenderer: FC<Props> = ({
       })
   }, [
     client,
-    signer,
+    wallet,
     collectionId,
     tokenId,
     expirationOption,

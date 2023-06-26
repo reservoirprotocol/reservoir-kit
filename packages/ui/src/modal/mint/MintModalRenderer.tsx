@@ -87,7 +87,7 @@ export const MintModalRenderer: FC<Props> = ({
   collectionId,
   children,
 }) => {
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
   const account = useAccount()
   const [mintData, setMintData] = useState<BuyPath | undefined>(undefined)
   const [quantity, setQuantity] = useState(1)
@@ -127,7 +127,7 @@ export const MintModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
 
   const fetchBuyPath = useCallback(() => {
-    if (!signer || !client) {
+    if (!wallet || !client) {
       return
     }
 
@@ -147,7 +147,7 @@ export const MintModalRenderer: FC<Props> = ({
         ],
         expectedPrice: undefined,
         options,
-        signer: signer,
+        wallet: wallet,
         precheck: true,
         onProgress: () => {},
       })
@@ -166,13 +166,13 @@ export const MintModalRenderer: FC<Props> = ({
       .finally(() => {
         setFetchedInitialTokens(true)
       })
-  }, [client, signer, collectionId, currency])
+  }, [client, wallet, collectionId, currency])
 
   useEffect(() => {
     if (open) {
       fetchBuyPath()
     }
-  }, [client, signer, open])
+  }, [client, wallet, open])
 
   const total = useMemo(() => {
     const updatedTotal = mintPrice * (Math.max(0, quantity) || 0)
@@ -227,8 +227,8 @@ export const MintModalRenderer: FC<Props> = ({
   }, [open])
 
   const mintTokens = useCallback(() => {
-    if (!signer) {
-      const error = new Error('Missing a signer')
+    if (!wallet) {
+      const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
@@ -263,7 +263,7 @@ export const MintModalRenderer: FC<Props> = ({
           },
         ],
         expectedPrice: total,
-        signer,
+        wallet,
         options,
         onProgress: (steps: Execute['steps'], path: Execute['path']) => {
           if (!steps) {
@@ -328,7 +328,7 @@ export const MintModalRenderer: FC<Props> = ({
         mutateCollection()
         fetchBuyPath()
       })
-  }, [mintData, quantity, client, signer, total, chain, collectionId, currency])
+  }, [mintData, quantity, client, wallet, total, chain, collectionId, currency])
 
   return (
     <>

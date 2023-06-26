@@ -79,7 +79,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   children,
 }) => {
   const client = useReservoirClient()
-  const { data: signer } = useWalletClient()
+  const { data: wallet } = useWalletClient()
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [prices, setPrices] = useState<AcceptBidPrice[]>([])
   const [acceptBidStep, setAcceptBidStep] = useState<AcceptBidStep>(
@@ -170,7 +170,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
   const fetchBidsPath = useCallback(
     (tokens: AcceptBidTokenData[]) => {
-      if (!signer || !client) {
+      if (!wallet || !client) {
         setIsFetchingBidPath(false)
         return
       }
@@ -214,7 +214,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       client.actions
         .acceptOffer({
           items: items,
-          signer: signer,
+          wallet,
           options,
           precheck: true,
           onProgress: () => {},
@@ -230,7 +230,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           setIsFetchingBidPath(false)
         })
     },
-    [client, signer, normalizeRoyalties]
+    [client, wallet, normalizeRoyalties]
   )
 
   useEffect(() => {
@@ -270,8 +270,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
   const acceptBid = useCallback(() => {
     setTransactionError(null)
-    if (!signer) {
-      const error = new Error('Missing a signer')
+    if (!wallet) {
+      const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
@@ -322,7 +322,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     client.actions
       .acceptOffer({
         expectedPrice,
-        signer,
+        wallet,
         items,
         onProgress: (steps: Execute['steps'], path: Execute['path']) => {
           if (!steps || hasError) return
@@ -412,7 +412,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         fetchBidsPath(tokens)
         mutateTokens()
       })
-  }, [bidsPath, bidTokenMap, client, signer, prices, mutateTokens])
+  }, [bidsPath, bidTokenMap, client, wallet, prices, mutateTokens])
 
   useEffect(() => {
     if (bidsPath && bidsPath.length > 0) {
