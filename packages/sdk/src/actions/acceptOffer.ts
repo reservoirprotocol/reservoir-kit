@@ -70,11 +70,6 @@ export async function acceptOffer(data: Data) {
       params.normalizeRoyalties = client.normalizeRoyalties
     }
 
-    //TODO: We may want to remove the feesOnTop if accepting multiple offers due to issues with applying feesOnTop in different currencies in the api
-    if (!('feesOnTop' in params) && client.feesOnTop) {
-      params.feesOnTop = client.feesOnTop
-    }
-
     const request: AxiosRequestConfig = {
       url: `${baseApiUrl}/execute/sell/v7`,
       method: 'post',
