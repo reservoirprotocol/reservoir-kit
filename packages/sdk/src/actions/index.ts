@@ -22,7 +22,7 @@ export type ReservoirEventListener = (
  * @param source Used to manually override the source domain used to attribute local orders
  * @param automatedRoyalties If true, royalties will be automatically included, defaults to true. Only relevant for creating orders.
  * @param marketplaceFees A list of fee strings representing a recipient and the fee in BPS delimited by a colon: ["0xabc:100"] used when creating an order (listing or bid)
- * @param feesOnTop A list of fee strings representing a recipient and the fee is a flat fee in the atomic unit of whatever the listing currency will be in (for ether this will be wei), delimited by a colon: ["0xabc:100"] added on top of an order being executed (buy or sell)
+ * @param feesOnTop A list of fee strings representing a recipient and the fee is a flat fee in the atomic unit of whatever the listing currency will be in (for ether this will be wei), delimited by a colon: ["0xabc:100"] added on top of an order being executed (buying)
  * @param normalizeRoyalties Normalize orders that don't have royalties by apply royalties on top of them
  */
 export type ReservoirClientOptions = {
