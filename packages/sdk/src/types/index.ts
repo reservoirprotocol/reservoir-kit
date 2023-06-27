@@ -44,6 +44,7 @@ export type TransactionStepItem = Pick<
     value: string
     maxFeePerGas?: string
     maxPriorityFeePerGas?: string
+    gas?: string
   }
 }
 
@@ -74,7 +75,6 @@ export type Execute = {
         orderIndex: string
       }[]
       salesData?: paths['/sales/v4']['get']['responses']['200']['schema']['sales']
-      //
     }[]
   }[]
 }
