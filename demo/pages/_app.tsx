@@ -35,6 +35,8 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
+const WALLET_CONNECT_PROJECT_ID =
+  process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || ''
 
 const { chains, publicClient } = configureChains(
   [
@@ -43,12 +45,14 @@ const { chains, publicClient } = configureChains(
     allChains.polygon,
     allChains.optimism,
     allChains.arbitrum,
+    allChains.zora,
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
 
 const { connectors } = getDefaultWallets({
   appName: 'Reservoir Kit',
+  projectId: WALLET_CONNECT_PROJECT_ID,
   chains,
 })
 
@@ -115,6 +119,12 @@ const AppWrapper: FC<any> = ({ children }) => {
               baseApiUrl: 'https://api-arbitrum.reservoir.tools',
               id: allChains.arbitrum.id,
               active: CHAIN_ID === allChains.arbitrum.id,
+              apiKey: API_KEY,
+            },
+            {
+              baseApiUrl: 'https://api-zora.reservoir.tools',
+              id: allChains.zora.id,
+              active: CHAIN_ID === allChains.zora.id,
               apiKey: API_KEY,
             },
           ],
