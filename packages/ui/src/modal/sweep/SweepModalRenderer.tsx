@@ -53,12 +53,8 @@ type ChildrenProps = {
   loading: boolean
   selectedTokens: NonNullable<BuyPath>
   setSelectedTokens: React.Dispatch<React.SetStateAction<NonNullable<BuyPath>>>
-  itemAmount?: number
-  setItemAmount: React.Dispatch<React.SetStateAction<number | undefined>>
-  ethAmount?: number
-  setEthAmount: React.Dispatch<React.SetStateAction<number | undefined>>
-  isItemsToggled: boolean
-  setIsItemsToggled: React.Dispatch<React.SetStateAction<boolean>>
+  itemAmount: number
+  setItemAmount: React.Dispatch<React.SetStateAction<number>>
   maxInput: number
   setMaxInput: React.Dispatch<React.SetStateAction<number>>
   currency: ReturnType<typeof useChainCurrency>
@@ -75,6 +71,7 @@ type ChildrenProps = {
   tokens: BuyPath
   balance?: bigint
   hasEnoughCurrency: boolean
+  addFundsLink: string
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
   stepData: SweepModalStepData | null
@@ -104,9 +101,7 @@ export const SweepModalRenderer: FC<Props> = ({
   const { data: wallet } = useWalletClient()
   const account = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
-  const [itemAmount, setItemAmount] = useState<number | undefined>(undefined)
-  const [ethAmount, setEthAmount] = useState<number | undefined>(undefined)
-  const [isItemsToggled, setIsItemsToggled] = useState<boolean>(true)
+  const [itemAmount, setItemAmount] = useState<number>(1)
   const [maxInput, setMaxInput] = useState<number>(0)
   const [sweepStep, setSweepStep] = useState<SweepStep>(SweepStep.Idle)
   const [stepData, setStepData] = useState<SweepModalStepData | null>(null)
@@ -128,6 +123,10 @@ export const SweepModalRenderer: FC<Props> = ({
 
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
+
+  const addFundsLink = currency?.address
+    ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${currency?.address}`
+    : `https://jumper.exchange/?toChain=${chain?.id}`
 
   const [fetchedInitialTokens, setFetchedInitialTokens] = useState(false)
   const [tokens, setTokens] = useState<BuyPath | undefined>(undefined)
@@ -173,11 +172,30 @@ export const SweepModalRenderer: FC<Props> = ({
       })
   }, [client, wallet, normalizeRoyalties, collectionId, currency])
 
-  useEffect(() => {
-    if (open) {
+  const fetchBuyPathIfIdle = useCallback(() => {
+    if (sweepStep === SweepStep.Idle) {
       fetchBuyPath()
     }
-  }, [client, wallet, open])
+  }, [fetchBuyPath, sweepStep])
+
+  useEffect(() => {
+    if (open) {
+      // Immediately fetch at the beginning if the sweepStep is Idle
+      fetchBuyPathIfIdle()
+
+      // Fetch every 1 minute
+      const intervalId = setInterval(fetchBuyPathIfIdle, 60000) // 60000 ms = 1 minute
+
+      // Clear interval on component unmount or when the modal is closed
+      return () => clearInterval(intervalId)
+    }
+  }, [client, wallet, open, fetchBuyPathIfIdle]) // fetchBuyPathIfIdle now replaces fetchBuyPath and sweepStep in the dependency array
+
+  // useEffect(() => {
+  //   if (open) {
+  //     fetchBuyPath()
+  //   }
+  // }, [client, wallet, open])
 
   // Update currency
   const updateCurrency = useCallback(
@@ -292,73 +310,27 @@ export const SweepModalRenderer: FC<Props> = ({
     return tokens
   }, [tokens, account])
 
-  const cheapestAvailablePrice = availableTokens?.[0]?.totalPrice || 0
-
   useEffect(() => {
     setItemAmount(1)
-    setEthAmount(cheapestAvailablePrice)
   }, [availableTokens.length])
 
   // set max input
   useEffect(() => {
-    if (isItemsToggled) {
-      setMaxInput(Math.min(availableTokens.length, 50))
-    } else {
-      const maxEth = availableTokens.slice(0, 50).reduce((total, token) => {
-        total +=
-          token?.currency != chainCurrency.address && isChainCurrency
-            ? token?.buyInQuote || 0
-            : token?.totalPrice || 0
-
-        return total
-      }, 0)
-
-      setMaxInput(maxEth)
-    }
-  }, [availableTokens, isItemsToggled])
-
-  const calculateTokensToAdd = useCallback(() => {
-    let totalEthPrice = 0
-    let tokensToAdd = []
-    for (let token of availableTokens) {
-      if (
-        ethAmount &&
-        totalEthPrice + (token?.totalPrice || 0) <= ethAmount &&
-        tokensToAdd.length < 50
-      ) {
-        totalEthPrice += token?.totalPrice || 0
-        tokensToAdd.push(token)
-      } else {
-        break
-      }
-    }
-    return tokensToAdd
-  }, [availableTokens, ethAmount])
+    setMaxInput(Math.min(availableTokens.length, 50))
+  }, [availableTokens])
 
   useEffect(() => {
-    if (isItemsToggled) {
-      const updatedTokens = availableTokens?.slice(0, itemAmount)
-      setSelectedTokens(updatedTokens)
-    } else {
-      setSelectedTokens(calculateTokensToAdd())
-    }
-  }, [isItemsToggled, ethAmount, itemAmount])
-
-  // reset selectedItems when toggle changes
-  useEffect(() => {
-    setItemAmount(1)
-    setEthAmount(cheapestAvailablePrice)
-  }, [isItemsToggled])
+    const updatedTokens = availableTokens?.slice(0, itemAmount)
+    setSelectedTokens(updatedTokens)
+  }, [itemAmount, availableTokens])
 
   // reset state on close
   useEffect(() => {
     if (!open) {
       setSelectedTokens([])
       setTokens(undefined)
-      setItemAmount(undefined)
-      setEthAmount(undefined)
+      setItemAmount(1)
       setSweepStep(SweepStep.Idle)
-      setIsItemsToggled(true)
       setTransactionError(null)
       setFetchedInitialTokens(false)
     }
@@ -510,10 +482,6 @@ export const SweepModalRenderer: FC<Props> = ({
         setSelectedTokens,
         itemAmount,
         setItemAmount,
-        ethAmount,
-        setEthAmount,
-        isItemsToggled,
-        setIsItemsToggled,
         maxInput,
         setMaxInput,
         currency,
@@ -529,6 +497,7 @@ export const SweepModalRenderer: FC<Props> = ({
         tokens,
         balance: balance?.value,
         hasEnoughCurrency,
+        addFundsLink,
         blockExplorerBaseUrl,
         transactionError,
         stepData,

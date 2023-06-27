@@ -13,9 +13,6 @@ import {
   Flex,
   FormatCryptoCurrency,
   Text,
-  Slider,
-  Input,
-  Grid,
   FormatCurrency,
   Box,
   Loader,
@@ -26,13 +23,12 @@ import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
 import { Modal } from '../Modal'
 import SigninStep from '../SigninStep'
 import { TokenCheckout } from '../TokenCheckout'
-import { ItemToggle } from './ItemToggle'
-import { SweepItem } from './SweepItem'
 import {
   SweepModalRenderer,
   SweepModalStepData,
   SweepStep,
 } from './SweepModalRenderer'
+import QuantitySelector from '../QuantitySelector'
 
 type SweepCallbackData = {
   collectionId?: string
@@ -93,14 +89,8 @@ export function SweepModal({
         selectedTokens,
         itemAmount,
         setItemAmount,
-        ethAmount,
-        setEthAmount,
-        isItemsToggled,
-        setIsItemsToggled,
         maxInput,
         currency,
-        chainCurrency,
-        isChainCurrency,
         total,
         totalUsd,
         feeOnTop,
@@ -110,6 +100,7 @@ export function SweepModal({
         availableTokens,
         balance,
         hasEnoughCurrency,
+        addFundsLink,
         blockExplorerBaseUrl,
         transactionError,
         stepData,
@@ -205,108 +196,14 @@ export function SweepModal({
               <Flex direction="column">
                 <Flex direction="column" css={{ px: '$4', pt: '$4', pb: '$2' }}>
                   {transactionError ? <ErrorWell /> : null}
-                  <Slider
-                    min={0}
-                    max={isItemsToggled ? Math.min(50, maxInput) : maxInput}
-                    step={
-                      isItemsToggled
-                        ? 1
-                        : Math.min(
-                            0.01,
-                            availableTokens?.[0]?.totalPrice || 0.01
-                          )
-                    }
-                    value={
-                      isItemsToggled ? [itemAmount || 0] : [ethAmount || 0]
-                    }
-                    onValueChange={(value) => {
-                      if (isItemsToggled) {
-                        setItemAmount(value[0])
-                      } else {
-                        setEthAmount(value[0])
-                      }
-                    }}
-                    css={{ width: '100%', my: '$3' }}
-                  />
                   <Flex align="center" css={{ gap: '$3', mb: 20 }}>
-                    <Input
-                      value={
-                        isItemsToggled ? itemAmount || '' : ethAmount || ''
-                      }
-                      type="number"
-                      placeholder="0"
-                      step={isItemsToggled ? 1 : 0.01}
-                      onChange={(e) => {
-                        const inputValue = Number(e.target.value)
-
-                        if (e.target.value == '') {
-                          setItemAmount(undefined)
-                          setEthAmount(undefined)
-                        } else if (isItemsToggled) {
-                          setItemAmount(
-                            Math.min(Math.max(inputValue, 0), maxInput) // min: 0, max: maxInput
-                          )
-                        } else {
-                          setEthAmount(
-                            Math.min(Math.max(inputValue, 0), maxInput)
-                          )
-                        }
-                      }}
-                      css={{
-                        textAlign: 'center',
-                        width: '100%',
-                        height: 44,
-                        boxSizing: 'border-box',
-                        '&::placeholder': {
-                          paddingLeft: 12,
-                        },
-                      }}
-                      containerCss={{ width: '100%' }}
+                    <QuantitySelector
+                      quantity={itemAmount}
+                      setQuantity={setItemAmount}
+                      min={1}
+                      max={maxInput}
+                      css={{ width: '100%' }}
                     />
-                    <ItemToggle
-                      isItemsToggled={isItemsToggled}
-                      setIsItemsToggled={setIsItemsToggled}
-                      currency={currency}
-                    />
-                  </Flex>
-                  <Flex
-                    direction="column"
-                    css={{ height: 185, overflowY: 'auto', mb: '$4' }}
-                  >
-                    {selectedTokens && selectedTokens.length > 0 ? (
-                      <Grid
-                        css={{
-                          gridTemplateColumns: 'repeat(5,minmax(0,1fr))',
-                          '@bp1': {
-                            gridTemplateColumns: 'repeat(7,minmax(0,1fr))',
-                          },
-                          gap: 8,
-                        }}
-                      >
-                        {selectedTokens.map((token, i) => (
-                          <SweepItem
-                            key={`${token?.tokenId}-${i}`}
-                            name={`#${token.tokenId}`}
-                            image={`${currentChain?.baseApiUrl}/redirect/tokens/${token.contract}:${token.tokenId}/image/v1?imageSize=small`}
-                            currency={currency}
-                            amount={
-                              token?.currency != chainCurrency.address &&
-                              isChainCurrency
-                                ? token?.buyInQuote
-                                : token?.totalPrice
-                            }
-                          />
-                        ))}
-                      </Grid>
-                    ) : (
-                      <Text
-                        style="body2"
-                        color="subtle"
-                        css={{ textAlign: 'center', my: 'auto' }}
-                      >
-                        Selected items will appear here
-                      </Text>
-                    )}
                   </Flex>
                   {feeOnTop > 0 && (
                     <Flex
@@ -376,7 +273,7 @@ export function SweepModal({
                     <Button
                       css={{ my: '$4', width: '100%' }}
                       disabled={true}
-                      onClick={sweepTokens}
+                      onClick={() => window.open(addFundsLink, '_blank')}
                     >
                       {copy.ctaInsufficientFunds}
                     </Button>
