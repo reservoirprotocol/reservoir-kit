@@ -210,7 +210,7 @@ export const EditBidModalRenderer: FC<Props> = ({
 
   const { data: tokens } = useTokens(
     open && {
-      tokens: [`${collectionId}:${tokenId}`],
+      tokens: [`${contract}:${tokenId}`],
       includeAttributes: true,
       normalizeRoyalties,
     },

@@ -111,6 +111,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   )
 
   const listing = listings && listings[0] ? listings[0] : undefined
+  const contract = listing?.tokenSetId?.split(':')[1]
   const currency = listing?.price?.currency
 
   const isOracleOrder = listing?.isNativeOffChainCancellable as boolean
@@ -134,8 +135,6 @@ export const EditListingModalRenderer: FC<Props> = ({
     expirationOptions[5]
   )
 
-  const contract = listing?.tokenSetId?.split(':')[1]
-
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
@@ -157,7 +156,7 @@ export const EditListingModalRenderer: FC<Props> = ({
 
   const { data: tokens } = useTokens(
     open && {
-      tokens: [`${collectionId}:${tokenId}`],
+      tokens: [`${contract}:${tokenId}`],
       includeAttributes: true,
       normalizeRoyalties,
     },
@@ -172,7 +171,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   const { data: userTokens } = useUserTokens(
     open && is1155 ? account.address : undefined,
     {
-      tokens: [`${collectionId}:${tokenId}`],
+      tokens: [`${contract}:${tokenId}`],
     }
   )
 
@@ -342,6 +341,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     price,
     currency,
     quantity,
+    contract,
   ])
 
   useEffect(() => {
