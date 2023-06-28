@@ -41,6 +41,7 @@ export async function buyToken(data: Data) {
     : wallet
   const taker = await reservoirWallet.address()
   const options = data.options || {}
+
   let baseApiUrl = client.currentChain()?.baseApiUrl
   if (chainId) {
     baseApiUrl =

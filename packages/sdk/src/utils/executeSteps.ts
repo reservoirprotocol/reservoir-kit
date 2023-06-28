@@ -349,19 +349,19 @@ export async function executeSteps(
                   ) {
                     client.log(
                       [
-                        'Execute Steps: Polling sales to verify transaction was indexed',
+                        'Execute Steps: Polling transfers to verify transaction was indexed',
                       ],
                       LogLevel.Verbose
                     )
                     const indexerConfirmationUrl = new URL(
-                      `${request.baseURL}/sales/v4`
+                      `${request.baseURL}/transfers/bulk/v1`
                     )
-                    const queryParams: paths['/sales/v4']['get']['parameters']['query'] =
+                    const queryParams: paths['/transfers/bulk/v1']['get']['parameters']['query'] =
                       {
                         txHash: stepItem.txHash,
                       }
                     setParams(indexerConfirmationUrl, queryParams)
-                    let salesData: paths['/sales/v4']['get']['responses']['200']['schema'] =
+                    let transfersData: paths['/transfers/bulk/v1']['get']['responses']['200']['schema'] =
                       {}
                     await pollUntilOk(
                       {
@@ -372,21 +372,22 @@ export async function executeSteps(
                       (res) => {
                         client.log(
                           [
-                            'Execute Steps: Polling sales to check if indexed',
+                            'Execute Steps: Polling transfers to check if indexed',
                             res,
                           ],
                           LogLevel.Verbose
                         )
                         if (res.status === 200) {
-                          salesData = res.data
-                          return salesData.sales && salesData.sales.length > 0
+                          transfersData = res.data
+                          return transfersData.transfers &&
+                            transfersData.transfers.length > 0
                             ? true
                             : false
                         }
                         return false
                       }
                     )
-                    stepItem.salesData = salesData.sales
+                    stepItem.transfersData = transfersData.transfers
                     setState([...json?.steps], path)
                   }
                   executeResults({

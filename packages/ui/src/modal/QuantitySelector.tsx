@@ -35,6 +35,7 @@ const QuantityInput = styled('input', {
   fontSize: 16,
   maxWidth: 53,
   textAlign: 'center',
+  color: '$neutralTextContrast',
 })
 
 const QuantitySelector: FC<Props> = ({

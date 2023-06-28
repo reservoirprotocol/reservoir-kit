@@ -57,6 +57,9 @@ export { EditListingStep } from './modal/editListing/EditListingModalRenderer'
 export { SweepModal } from './modal/sweep/SweepModal'
 export { SweepStep } from './modal/sweep/SweepModalRenderer'
 
+export { MintModal } from './modal/mint/MintModal'
+export { MintStep } from './modal/mint/MintModalRenderer'
+
 export {
   default as TokenMedia,
   extractMediaType,
