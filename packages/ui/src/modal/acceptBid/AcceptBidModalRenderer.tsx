@@ -314,7 +314,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
     const expectedPrice: Record<string, number> = {}
     for (let currency in prices) {
-      expectedPrice[currency] = prices[currency].amount
+      expectedPrice[currency] = prices[currency].netAmount
     }
 
     let hasError = false
