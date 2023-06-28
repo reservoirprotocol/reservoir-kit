@@ -28,11 +28,11 @@ import {
   MintModalStepData,
   MintStep,
 } from './MintModalRenderer'
-import { MintCollectionInfo } from './MintCollectionInfo'
+import { MintCollectionInfo } from '../collect/mint/MintCollectionInfo'
 import QuantitySelector from '../QuantitySelector'
 import { MintCheckout } from './MintCheckout'
 import { Address } from 'wagmi'
-import { MintImages } from './MintImages'
+import { MintImages } from '../collect/mint/MintImages'
 
 type MintCallbackData = {
   collectionId?: string

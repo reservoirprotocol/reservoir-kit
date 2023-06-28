@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Address, erc721ABI, useContractReads } from 'wagmi'
-import { convertTokenUriToImage } from '../../lib/processTokenURI'
-import { Box, Flex, Img, Text } from '../../primitives'
-import { MintModalStepData } from './MintModalRenderer'
+import { convertTokenUriToImage } from '../../../lib/processTokenURI'
+import { Box, Flex, Img, Text } from '../../../primitives'
+import { CollectModalStepData } from '../CollectModalRenderer'
 
 type Props = {
-  stepData: MintModalStepData | null
+  stepData: CollectModalStepData | null
   contract: Address
 }
 

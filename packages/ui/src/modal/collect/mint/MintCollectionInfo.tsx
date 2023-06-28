@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
-import { Flex, Img, Text } from '../../primitives'
-import { useCollections, useTimeSince } from '../../hooks'
-import optimizeImage from '../../lib/optimizeImage'
+import { Flex, Img, Text } from '../../../primitives'
+import { useCollections, useTimeSince } from '../../../hooks'
+import optimizeImage from '../../../lib/optimizeImage'
 
 type Props = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
