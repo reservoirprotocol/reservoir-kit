@@ -99,9 +99,13 @@ const isCurrencyAllowed = (currency: Currency, marketplace: Marketplace) => {
       case 'reservoir':
         return true
 
-      // Will fix this properly soon once backend stores opensea collection payment_tokens
-      case 'opensea':
-        return false
+      case 'opensea': {
+        return (
+          marketplace.paymentTokens?.find(
+            (token) => token.address === currency.contract
+          ) !== undefined
+        )
+      }
     }
   }
   return false
