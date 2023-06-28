@@ -2,6 +2,7 @@ const wrappedContractNames: Record<number, string> = {
   1: 'WETH', //mainnet
   5: 'WETH', //goerli
   10: 'WETH', //optimism
+  56: 'WBNB', //bnb
   137: 'WMATIC', //polygon
   42161: 'WETH', //arbitrum
   999: 'WETH', //zoratestnet
