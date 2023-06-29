@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { CollectModal, CollectMode } from '@reservoir0x/reservoir-kit-ui'
+import { CollectModal, CollectModalMode } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
@@ -13,16 +13,17 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
 
-const SweepPage: NextPage = () => {
+const CollectPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
-  const [mode, setMode] = useState<string | undefined>(undefined)
+  const [mode, setMode] = useState('preferMint')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTop, setFeesOnTop] = useState<string[]>([])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
+
   return (
     <div
       style={{
@@ -47,14 +48,37 @@ const SweepPage: NextPage = () => {
         />
       </div>
 
-      <div>
+      <div style={{ display: 'flex', gap: 10 }}>
         <label>Mode: </label>
-        <input
-          type="text"
-          placeholder="'mint' | 'sweep' | 'preferMint'"
-          value={mode}
-          onChange={(e) => setMode(e.target.value)}
-        />
+        <div style={{ display: 'flex', gap: 10 }}>
+          <div>
+            <input
+              type="radio"
+              value="preferMint"
+              checked={mode === 'preferMint'}
+              onChange={() => setMode('preferMint')}
+            />
+            <label>preferMint</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              value="mint"
+              checked={mode === 'mint'}
+              onChange={() => setMode('mint')}
+            />
+            <label>mint</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              value="trade"
+              checked={mode === 'trade'}
+              onChange={() => setMode('trade')}
+            />
+            <label>trade</label>
+          </div>
+        </div>
       </div>
 
       <div>
@@ -126,7 +150,7 @@ const SweepPage: NextPage = () => {
           </button>
         }
         collectionId={collectionId}
-        mode={mode as CollectMode}
+        mode={mode as CollectModalMode}
         feesOnTopBps={feesOnTopBps}
         feesOnTopFixed={feesOnTop}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
@@ -146,4 +170,4 @@ const SweepPage: NextPage = () => {
   )
 }
 
-export default SweepPage
+export default CollectPage

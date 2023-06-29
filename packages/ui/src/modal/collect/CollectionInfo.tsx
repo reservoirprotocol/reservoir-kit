@@ -1,18 +1,22 @@
 import React, { FC, useMemo } from 'react'
-import { Flex, Img, Text } from '../../../primitives'
-import { useCollections, useTimeSince } from '../../../hooks'
-import optimizeImage from '../../../lib/optimizeImage'
+import { Flex, Img, Text } from '../../primitives'
+import { useCollections, useTimeSince } from '../../hooks'
+import optimizeImage from '../../lib/optimizeImage'
+import { CollectModalContentMode } from './CollectModalRenderer'
 
 type Props = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  mode?: CollectModalContentMode
 }
 
-export const MintCollectionInfo: FC<Props> = ({ collection }) => {
-  const mintData = collection?.mintStages?.find(
-    (stage) => stage.kind === 'public'
-  )
+export const CollectionInfo: FC<Props> = ({ collection, mode }) => {
+  const mintData =
+    mode === 'mint'
+      ? collection?.mintStages?.find((stage) => stage.kind === 'public')
+      : undefined
 
-  const mintEndTime = useTimeSince(mintData?.endTime)
+  const mintEndTime =
+    mode === 'mint' ? useTimeSince(mintData?.endTime) : undefined
 
   const sampleImages = useMemo(() => {
     return collection?.sampleImages?.map((image) => optimizeImage(image, 250))

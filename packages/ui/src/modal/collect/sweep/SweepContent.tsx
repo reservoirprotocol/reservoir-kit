@@ -24,17 +24,17 @@ import { CollectCheckout } from '../CollectCheckout'
 import SigninStep from '../../SigninStep'
 import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible'
 import { Path } from '../../../components/cart/CartCheckoutModal'
+import { CollectionInfo } from '../CollectionInfo'
 
-export const MintContent: FC<
+export const SweepContent: FC<
   ChildrenProps & {
     copy: typeof CollectModalCopy
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
   }
 > = ({
-  loading,
   collection,
-  address,
+  orders,
   selectedTokens,
   itemAmount,
   setItemAmount,
@@ -43,12 +43,11 @@ export const MintContent: FC<
   total,
   totalUsd,
   feeOnTop,
-  feeUsd,
   usdPrice,
   currentChain,
-  availableTokens,
   balance,
-  contract,
+  chainCurrency,
+  isChainCurrency,
   hasEnoughCurrency,
   addFundsLink,
   blockExplorerBaseUrl,
@@ -57,14 +56,21 @@ export const MintContent: FC<
   collectStep,
   collectTokens,
   copy,
-  open,
   setOpen,
 }) => {
-  const hasTokens = availableTokens && availableTokens.length > 0
+  const hasTokens = orders && orders.length > 0
 
-  const images = selectedTokens.slice(0, 2).map((token) => {
-    return `${currentChain?.baseApiUrl}/redirect/tokens/${token.contract}:${token.tokenId}/image/v1?imageSize=small`
-  }) as string[]
+  const cheapestToken = selectedTokens?.[0]
+  const cheapestTokenPrice =
+    cheapestToken?.currency != chainCurrency.address && isChainCurrency
+      ? cheapestToken?.buyInQuote
+      : cheapestToken?.totalPrice
+
+  const mostExpensiveToken = selectedTokens?.[selectedTokens.length - 1]
+  const mostExpensiveTokenPrice =
+    mostExpensiveToken?.currency != chainCurrency.address && isChainCurrency
+      ? mostExpensiveToken?.buyInQuote
+      : mostExpensiveToken?.totalPrice
 
   const pathMap = stepData?.path
     ? (stepData.path as Path[]).reduce(
@@ -94,7 +100,7 @@ export const MintContent: FC<
 
   return (
     <>
-      {!loading && !hasTokens ? (
+      {!hasTokens ? (
         <Flex
           direction="column"
           align="center"
@@ -105,36 +111,99 @@ export const MintContent: FC<
           </Text>
         </Flex>
       ) : null}
-      {!loading && hasTokens && collectStep === CollectStep.Idle && (
+      {hasTokens && collectStep === CollectStep.Idle && (
         <Flex direction="column">
-          <Flex direction="column" css={{ px: '$4', pt: '$4', pb: '$2' }}>
+          <Flex
+            direction="column"
+            css={{ borderBottom: '1px solid $neutralBorder' }}
+          >
             {transactionError ? <ErrorWell /> : null}
-            <Flex align="center" css={{ gap: '$3', mb: 20 }}>
-              <QuantitySelector
-                quantity={itemAmount}
-                setQuantity={setItemAmount}
-                min={1}
-                max={maxInput}
-                css={{ width: '100%' }}
-              />
+            <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
+              <CollectionInfo collection={collection} mode="sweep" />
+              <Flex align="center" justify="between" css={{ gap: '$6' }}>
+                <Flex
+                  direction="column"
+                  align="start"
+                  css={{ gap: '$1', flexShrink: 0 }}
+                >
+                  <Text style="subtitle2">Quantity</Text>
+                  <Text style="body3" color="subtle">
+                    {maxInput} {maxInput > 1 ? 'items' : 'item'} available
+                  </Text>
+                </Flex>
+                <Flex
+                  direction="column"
+                  align="start"
+                  css={{ width: '100%', gap: 10 }}
+                >
+                  <QuantitySelector
+                    quantity={itemAmount}
+                    setQuantity={setItemAmount}
+                    min={1}
+                    max={maxInput}
+                    css={{ width: '100%', justifyContent: 'space-between' }}
+                  />
+                  {itemAmount > 1 ? (
+                    <Flex align="center" css={{ gap: '$3' }}>
+                      <Flex align="center" css={{ gap: '$2' }}>
+                        <Text style="subtitle2" color="subtle">
+                          Price Range
+                        </Text>
+                        <FormatCryptoCurrency
+                          amount={cheapestTokenPrice}
+                          address={currency?.address}
+                          decimals={currency?.decimals}
+                          symbol={currency?.symbol}
+                          maximumFractionDigits={2}
+                        />
+                        <Text style="subtitle2" color="subtle">
+                          -
+                        </Text>
+                        <FormatCryptoCurrency
+                          amount={mostExpensiveTokenPrice}
+                          address={currency?.address}
+                          decimals={currency?.decimals}
+                          symbol={currency?.symbol}
+                          maximumFractionDigits={2}
+                        />
+                      </Flex>
+                      <Text style="subtitle2" color="subtle">
+                        |
+                      </Text>
+                      <Flex align="center" css={{ gap: '$2' }}>
+                        <Text style="subtitle2" color="subtle">
+                          Avg Price
+                        </Text>
+                        <FormatCryptoCurrency
+                          amount={total / itemAmount}
+                          address={currency?.address}
+                          decimals={currency?.decimals}
+                          symbol={currency?.symbol}
+                          maximumFractionDigits={2}
+                        />
+                      </Flex>
+                    </Flex>
+                  ) : null}
+                </Flex>
+              </Flex>
             </Flex>
+          </Flex>
+          <Flex direction="column" css={{ px: '$4', pt: '$4', pb: '$2' }}>
             {feeOnTop > 0 && (
               <Flex
-                direction="column"
+                align="center"
+                justify="between"
                 css={{ width: '100%', py: '$4', gap: '$1' }}
               >
-                <Flex align="center" justify="between">
-                  <Text style="subtitle2">Referral Fee</Text>
-                  <FormatCryptoCurrency
-                    amount={feeOnTop}
-                    address={currency?.address}
-                    decimals={currency?.decimals}
-                    symbol={currency?.symbol}
-                  />
-                </Flex>
-                <Flex justify="end">
-                  <FormatCurrency amount={feeUsd} color="subtle" />
-                </Flex>
+                <Text style="subtitle2" color="subtle">
+                  Referral Fee
+                </Text>
+                <FormatCryptoCurrency
+                  amount={feeOnTop}
+                  address={currency?.address}
+                  decimals={currency?.decimals}
+                  symbol={currency?.symbol}
+                />
               </Flex>
             )}
             <Flex justify="between" align="start" css={{ height: 34 }}>
@@ -179,7 +248,6 @@ export const MintContent: FC<
               </Flex>
               <Button
                 css={{ my: '$4', width: '100%' }}
-                disabled={true}
                 onClick={() => window.open(addFundsLink, '_blank')}
               >
                 {copy.sweepCtaInsufficientFunds}
@@ -189,7 +257,7 @@ export const MintContent: FC<
         </Flex>
       )}
 
-      {!loading && collectStep === CollectStep.Approving && (
+      {collectStep === CollectStep.Approving && (
         <Flex direction="column">
           <Box
             css={{
@@ -279,7 +347,7 @@ export const MintContent: FC<
         </Flex>
       )}
 
-      {!loading && collectStep === CollectStep.Finalizing && (
+      {collectStep === CollectStep.Finalizing && (
         <Flex direction="column">
           <Box
             css={{
@@ -322,6 +390,10 @@ export const MintContent: FC<
               />
             </Box>
           </Flex>
+          <Button disabled={true} css={{ m: '$4' }}>
+            <Loader />
+            {copy.sweepCtaAwaitingValidation}
+          </Button>
         </Flex>
       )}
 

@@ -20,13 +20,13 @@ import {
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import QuantitySelector from '../../QuantitySelector'
-import { MintCollectionInfo } from './MintCollectionInfo'
 import { CollectModalCopy } from '../CollectModal'
 import { MintImages } from './MintImages'
 import { CollectCheckout } from '../CollectCheckout'
 import SigninStep from '../../SigninStep'
 import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible'
 import { Path } from '../../../components/cart/CartCheckoutModal'
+import { CollectionInfo } from '../CollectionInfo'
 
 export const MintContent: FC<
   ChildrenProps & {
@@ -35,21 +35,16 @@ export const MintContent: FC<
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
   }
 > = ({
-  loading,
   collection,
-  address,
-  selectedTokens,
+  orders,
+  mintPrice,
   itemAmount,
   setItemAmount,
   maxInput,
   currency,
   total,
   totalUsd,
-  feeOnTop,
-  feeUsd,
-  usdPrice,
   currentChain,
-  availableTokens,
   balance,
   contract,
   hasEnoughCurrency,
@@ -60,7 +55,6 @@ export const MintContent: FC<
   collectStep,
   collectTokens,
   copy,
-  open,
   setOpen,
 }) => {
   const pathMap = stepData?.path
@@ -96,7 +90,7 @@ export const MintContent: FC<
 
   return (
     <>
-      {/* {!loading && !mintData ? (
+      {orders?.length === 0 ? (
         <Flex
           direction="column"
           align="center"
@@ -124,9 +118,9 @@ export const MintContent: FC<
             {copy.mintCtaClose}
           </Button>
         </Flex>
-      ) : null} */}
+      ) : null}
 
-      {/* {!loading && mintData && collectStep === CollectStep.Idle && (
+      {orders.length > 0 && collectStep === CollectStep.Idle && (
         <Flex direction="column">
           <Flex
             direction="column"
@@ -134,7 +128,7 @@ export const MintContent: FC<
           >
             {transactionError ? <ErrorWell /> : null}
             <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
-              <MintCollectionInfo collection={collection} />
+              <CollectionInfo collection={collection} mode="mint" />
               <QuantitySelector
                 min={1}
                 max={maxInput}
@@ -227,9 +221,9 @@ export const MintContent: FC<
             </Flex>
           )}
         </Flex>
-      )} */}
+      )}
 
-      {!loading && collectStep === CollectStep.Approving && (
+      {collectStep === CollectStep.Approving && (
         <Flex direction="column">
           <Box
             css={{
@@ -320,7 +314,7 @@ export const MintContent: FC<
         </Flex>
       )}
 
-      {!loading && collectStep === CollectStep.Finalizing && (
+      {collectStep === CollectStep.Finalizing && (
         <Flex direction="column">
           <Box
             css={{

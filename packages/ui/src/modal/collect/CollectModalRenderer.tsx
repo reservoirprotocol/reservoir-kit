@@ -50,12 +50,15 @@ type Currency = NonNullable<
   NonNullable<NonNullable<Token['market']>['floorAsk']>['price']
 >['currency']
 
-export type CollectMode = 'mint' | 'sweep' | 'preferMint'
+export type CollectModalMode = 'preferMint' | 'mint' | 'trade'
+
+export type CollectModalContentMode = 'mint' | 'sweep'
 
 export type ChildrenProps = {
-  mode: CollectMode
+  contentMode?: CollectModalContentMode
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   loading: boolean
+  orders: NonNullable<BuyPath>
   selectedTokens: NonNullable<BuyPath>
   setSelectedTokens: React.Dispatch<React.SetStateAction<NonNullable<BuyPath>>>
   itemAmount: number
@@ -70,10 +73,9 @@ export type ChildrenProps = {
   feeOnTop: number
   feeUsd: number
   usdPrice: number
+  mintPrice: number
   currentChain: ReservoirChain | null | undefined
-  availableTokens: BuyPath
   address?: string
-  tokens: BuyPath
   balance?: bigint
   contract: Address
   hasEnoughCurrency: boolean
@@ -89,7 +91,7 @@ export type ChildrenProps = {
 
 type Props = {
   open: boolean
-  mode?: 'mint' | 'sweep' | 'preferMint'
+  mode?: CollectModalMode
   collectionId?: string
   feesOnTopBps?: string[] | null
   feesOnTopFixed?: string[] | null
@@ -109,11 +111,29 @@ export const CollectModalRenderer: FC<Props> = ({
   const { data: wallet } = useWalletClient()
   const account = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
+  const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
+  const [orders, setOrders] = useState<NonNullable<BuyPath>>([])
   const [itemAmount, setItemAmount] = useState<number>(1)
-  const [maxInput, setMaxInput] = useState<number>(0)
+  const [maxInput, setMaxInput] = useState<number>(1)
   const [collectStep, setCollectStep] = useState<CollectStep>(CollectStep.Idle)
   const [stepData, setStepData] = useState<CollectModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
+
+  const [contentMode, setContentMode] = useState<
+    CollectModalContentMode | undefined
+  >(() => {
+    switch (mode) {
+      case 'mint':
+        return 'mint'
+      case 'trade':
+        return 'sweep'
+      case 'preferMint':
+      default:
+        return undefined
+    }
+  })
+
+  const mintPrice = orders?.[0]?.totalPrice || 0
 
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0)
@@ -137,9 +157,6 @@ export const CollectModalRenderer: FC<Props> = ({
   const addFundsLink = currency?.address
     ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${currency?.address}`
     : `https://jumper.exchange/?toChain=${chain?.id}`
-
-  const [fetchedInitialTokens, setFetchedInitialTokens] = useState(false)
-  const [tokens, setTokens] = useState<BuyPath | undefined>(undefined)
 
   const { data: collections, mutate: mutateCollection } = useCollections(
     open && {
@@ -170,7 +187,7 @@ export const CollectModalRenderer: FC<Props> = ({
           {
             collection: collectionId,
             quantity: 50,
-            fillType: 'trade',
+            fillType: mode === 'preferMint' ? undefined : mode,
           },
         ],
         expectedPrice: undefined,
@@ -180,16 +197,33 @@ export const CollectModalRenderer: FC<Props> = ({
         onProgress: () => {},
       })
       .then((data) => {
-        setTokens(
-          'path' in (data as any)
-            ? ((data as Execute)['path'] as BuyPath)
-            : undefined
-        )
+        if ('path' in (data as any)) {
+          let pathData = (data as Execute)['path'] as BuyPath
+          setOrders(pathData ?? [])
+          if (mode === 'preferMint') {
+            // check if the path data includes any mints
+            if (
+              pathData?.find((order) => order.orderId?.includes('mint')) !=
+              undefined
+            ) {
+              setContentMode('mint')
+            } else {
+              setContentMode('sweep')
+            }
+          } else {
+            setContentMode(mode === 'mint' ? 'mint' : 'sweep')
+          }
+        } else {
+          setContentMode(undefined)
+        }
+      })
+      .catch(() => {
+        setContentMode(undefined)
       })
       .finally(() => {
-        setFetchedInitialTokens(true)
+        setFetchedInitialOrders(true)
       })
-  }, [client, wallet, normalizeRoyalties, collectionId, currency])
+  }, [client, wallet, normalizeRoyalties, collectionId, currency, mode])
 
   const fetchBuyPathIfIdle = useCallback(() => {
     if (collectStep === CollectStep.Idle) {
@@ -199,16 +233,14 @@ export const CollectModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (open) {
-      // Immediately fetch at the beginning if the collectStep is Idle
       fetchBuyPathIfIdle()
 
-      // Fetch every 1 minute
-      const intervalId = setInterval(fetchBuyPathIfIdle, 60000) // 60000 ms = 1 minute
-
-      // Clear interval on component unmount or when the modal is closed
-      return () => clearInterval(intervalId)
+      if (contentMode === 'sweep') {
+        const intervalId = setInterval(fetchBuyPathIfIdle, 60000) // Poll buy api every 1 minute
+        return () => clearInterval(intervalId)
+      }
     }
-  }, [client, wallet, open, fetchBuyPathIfIdle]) // fetchBuyPathIfIdle now replaces fetchBuyPath and collectStep in the dependency array
+  }, [client, wallet, open, fetchBuyPathIfIdle])
 
   // Update currency
   const updateCurrency = useCallback(
@@ -255,32 +287,45 @@ export const CollectModalRenderer: FC<Props> = ({
   }, [selectedTokens])
 
   const total = useMemo(() => {
-    const updatedTotal = selectedTokens?.reduce((total, token) => {
-      return (
-        total +
-        (token?.currency != chainCurrency.address && isChainCurrency
-          ? token?.buyInQuote || 0
-          : token?.totalPrice || 0)
-      )
-    }, 0)
+    if (contentMode === 'mint') {
+      let updatedTotal = mintPrice * (Math.max(0, itemAmount) || 0)
+      return updatedTotal
+    } else {
+      let updatedTotal = selectedTokens?.reduce((total, token) => {
+        return (
+          total +
+          (token?.currency != chainCurrency.address && isChainCurrency
+            ? token?.buyInQuote || 0
+            : token?.totalPrice || 0)
+        )
+      }, 0)
 
-    let fees = 0
-    if (feesOnTopBps && feesOnTopBps.length > 0) {
-      fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
-        const [_, fee] = feeOnTop.split(':')
-        return totalFees + (Number(fee) / 10000) * updatedTotal
-      }, 0)
-    } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
-      fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
-        const [_, fee] = feeOnTop.split(':')
-        const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
-        return totalFees + Number(parsedFee)
-      }, 0)
+      let fees = 0
+      if (feesOnTopBps && feesOnTopBps.length > 0) {
+        fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
+          const [_, fee] = feeOnTop.split(':')
+          return totalFees + (Number(fee) / 10000) * updatedTotal
+        }, 0)
+      } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
+        fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
+          const [_, fee] = feeOnTop.split(':')
+          const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
+          return totalFees + Number(parsedFee)
+        }, 0)
+      }
+      setFeeOnTop(fees)
+
+      return updatedTotal + fees
     }
-    setFeeOnTop(fees)
-
-    return updatedTotal + fees
-  }, [selectedTokens, feesOnTopBps, feesOnTopFixed, currency, isChainCurrency])
+  }, [
+    selectedTokens,
+    feesOnTopBps,
+    feesOnTopFixed,
+    currency,
+    isChainCurrency,
+    contentMode,
+    itemAmount,
+  ])
 
   const coinConversion = useCoinConversion(
     open ? 'USD' : undefined,
@@ -318,34 +363,32 @@ export const CollectModalRenderer: FC<Props> = ({
     }
   }, [total, balance, currency])
 
-  const availableTokens = useMemo(() => {
-    if (!tokens) return []
-    return tokens
-  }, [tokens, account])
+  // Set max input
+  useEffect(() => {
+    if (contentMode === 'mint') {
+      setMaxInput(orders?.[0]?.quantity || 50)
+    } else {
+      setMaxInput(Math.min(orders.length, 50))
+    }
+  }, [orders, contentMode])
 
   useEffect(() => {
-    setItemAmount(1)
-  }, [availableTokens.length])
+    if (contentMode === 'sweep') {
+      const updatedTokens = orders?.slice(0, itemAmount)
+      setSelectedTokens(updatedTokens)
+    }
+  }, [itemAmount, orders])
 
-  // set max input
-  useEffect(() => {
-    setMaxInput(Math.min(availableTokens.length, 50))
-  }, [availableTokens])
-
-  useEffect(() => {
-    const updatedTokens = availableTokens?.slice(0, itemAmount)
-    setSelectedTokens(updatedTokens)
-  }, [itemAmount, availableTokens])
-
-  // reset state on close
+  // Reset state on close
   useEffect(() => {
     if (!open) {
       setSelectedTokens([])
-      setTokens(undefined)
+      setOrders([])
       setItemAmount(1)
       setCollectStep(CollectStep.Idle)
+      setContentMode(undefined)
       setTransactionError(null)
-      setFetchedInitialTokens(false)
+      setFetchedInitialOrders(false)
     }
   }, [open])
 
@@ -397,17 +440,17 @@ export const CollectModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
-    if (!selectedTokens || selectedTokens.length === 0) {
-      const error = new Error('No tokens to collect')
-      setTransactionError(error)
-      throw error
-    }
-
     setCollectStep(CollectStep.Approving)
 
     client.actions
       .buyToken({
-        items: [{ collection: collectionId, quantity: selectedTokens.length }],
+        items: [
+          {
+            collection: collectionId,
+            quantity: itemAmount,
+            fillType: contentMode === 'mint' ? 'mint' : 'trade',
+          },
+        ],
         expectedPrice: total - feeOnTop,
         wallet,
         options,
@@ -485,13 +528,16 @@ export const CollectModalRenderer: FC<Props> = ({
     currency,
     feesOnTopBps,
     feesOnTopFixed,
+    contentMode,
+    itemAmount,
   ])
 
   return (
     <>
       {children({
-        mode,
-        loading: !fetchedInitialTokens,
+        contentMode,
+        collection,
+        loading: !fetchedInitialOrders,
         address: account?.address,
         selectedTokens,
         setSelectedTokens,
@@ -508,8 +554,8 @@ export const CollectModalRenderer: FC<Props> = ({
         feeUsd,
         usdPrice,
         currentChain,
-        availableTokens,
-        tokens,
+        mintPrice,
+        orders,
         balance: balance?.value,
         contract,
         hasEnoughCurrency,

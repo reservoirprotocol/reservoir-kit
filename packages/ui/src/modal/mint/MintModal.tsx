@@ -28,7 +28,7 @@ import {
   MintModalStepData,
   MintStep,
 } from './MintModalRenderer'
-import { MintCollectionInfo } from '../collect/mint/MintCollectionInfo'
+import { CollectionInfo } from '../collect/CollectionInfo'
 import QuantitySelector from '../QuantitySelector'
 import { MintCheckout } from './MintCheckout'
 import { Address } from 'wagmi'
@@ -214,7 +214,7 @@ export function MintModal({
                 >
                   {transactionError ? <ErrorWell /> : null}
                   <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
-                    <MintCollectionInfo collection={collection} />
+                    <CollectionInfo collection={collection} mode="mint" />
                     <QuantitySelector
                       min={1}
                       max={maxQuantity}

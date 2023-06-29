@@ -4,10 +4,12 @@ import { Modal } from '../Modal'
 import {
   CollectModalRenderer,
   CollectModalStepData,
-  CollectMode,
+  CollectModalMode,
   CollectStep,
 } from './CollectModalRenderer'
 import { MintContent } from './mint/MintContent'
+import { SweepContent } from './sweep/SweepContent'
+import { Flex, Text } from '../../primitives'
 
 type CollectCallbackData = {
   collectionId?: string
@@ -16,10 +18,10 @@ type CollectCallbackData = {
 }
 
 export const CollectModalCopy = {
-  mintTitle: 'Buy',
+  mintTitle: 'Mint',
   mintCtaClose: 'Close',
-  mintCtaBuy: 'Buy',
-  mintCtaBuyDisabled: 'Select Items to Buy',
+  mintCtaBuy: 'Mint',
+  mintCtaBuyDisabled: 'Mint',
   mintCtaInsufficientFunds: 'Add Funds to Purchase',
   mintCtaAwaitingApproval: 'Waiting for approval...',
   mintCtaAwaitingValidation: 'Waiting to be validated...',
@@ -33,7 +35,7 @@ export const CollectModalCopy = {
 }
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
-  mode?: CollectMode
+  mode?: CollectModalMode
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
   feesOnTopBps?: string[] | null
@@ -78,7 +80,7 @@ export function CollectModal({
     >
       {(props) => {
         const {
-          mode,
+          contentMode,
           loading,
           collectStep,
           address,
@@ -111,7 +113,7 @@ export function CollectModal({
         return (
           <Modal
             trigger={trigger}
-            title={mode === 'mint' ? copy.mintTitle : copy.sweepTitle}
+            title={contentMode === 'mint' ? copy.mintTitle : copy.sweepTitle}
             open={open}
             loading={loading}
             onOpenChange={(open) => {
@@ -126,15 +128,34 @@ export function CollectModal({
               setOpen(open)
             }}
           >
-            {mode === 'sweep'}
+            {!loading && contentMode === 'sweep' ? (
+              <SweepContent
+                {...props}
+                copy={copy}
+                open={open}
+                setOpen={setOpen}
+              />
+            ) : null}
 
-            {mode === 'mint' ? (
+            {!loading && contentMode === 'mint' ? (
               <MintContent
                 {...props}
                 copy={copy}
                 open={open}
                 setOpen={setOpen}
               />
+            ) : null}
+
+            {!loading && contentMode === undefined ? (
+              <Flex
+                direction="column"
+                align="center"
+                css={{ py: '$6', px: '$4', gap: '$3' }}
+              >
+                <Text style="h6" css={{ textAlign: 'center' }}>
+                  No available items were found for this collection.
+                </Text>
+              </Flex>
             ) : null}
           </Modal>
         )
