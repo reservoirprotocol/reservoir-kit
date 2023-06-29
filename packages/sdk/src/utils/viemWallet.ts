@@ -79,6 +79,9 @@ export const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {
             stepData.maxPriorityFeePerGas as any
           ),
         }),
+        ...(stepData.gas && {
+          gas: hexToBigInt(stepData.gas as any),
+        }),
       })
     },
   }

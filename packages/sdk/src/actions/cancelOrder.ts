@@ -18,6 +18,7 @@ type Data = {
   options?: CancelOrderOptions
   chainId?: number
   onProgress: (steps: Execute['steps']) => any
+  gas?: string
 }
 
 /**
@@ -27,9 +28,10 @@ type Data = {
  * @param data.options Additional options to pass into the cancel request
  * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state has execution progresses
+ * @param data.gas String of the gas provided for the transaction execution. It will return unused gas
  */
 export async function cancelOrder(data: Data) {
-  const { ids, wallet, chainId, onProgress } = data
+  const { ids, wallet, chainId, onProgress, gas } = data
   const client = getClient()
   const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
     ? adaptViemWallet(wallet)
@@ -67,7 +69,8 @@ export async function cancelOrder(data: Data) {
       onProgress,
       undefined,
       undefined,
-      chainId
+      chainId,
+      gas
     )
     return true
   } catch (err: any) {

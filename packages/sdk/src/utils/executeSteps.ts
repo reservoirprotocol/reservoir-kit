@@ -68,7 +68,8 @@ export async function executeSteps(
   setState: (steps: Execute['steps'], path: Execute['path']) => any,
   newJson?: Execute,
   expectedPrice?: number | Record<string, number>,
-  chainId?: number
+  chainId?: number,
+  gas?: string
 ) {
   const client = getClient()
   let reservoirChain = client?.currentChain()
@@ -283,7 +284,9 @@ export async function executeSteps(
                     ],
                     LogLevel.Verbose
                   )
-
+                  if (gas !== undefined) {
+                    stepItem.data.gas = gas
+                  }
                   await sendTransactionSafely(
                     reservoirChain?.id || 1,
                     viemClient,

@@ -36,7 +36,13 @@ export const adaptEthersSigner = (signer: Signer): ReservoirWallet => {
       return signature
     },
     handleSendTransactionStep: async (chainId, stepItem) => {
-      const transaction = await signer.sendTransaction(stepItem.data)
+      const { gas, ...stepData } = stepItem.data
+      const transaction = await signer.sendTransaction({
+        ...stepData,
+        ...(gas && {
+          gasLimit: gas,
+        }),
+      })
       return transaction.hash as `0x${string}`
     },
   }
