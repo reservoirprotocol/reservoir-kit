@@ -1,5 +1,5 @@
 import { ReservoirWallet } from '../types'
-import { LogLevel, getClient } from '../'
+import { LogLevel, customChains, getClient } from '../'
 import { Account, WalletClient, hexToBigInt, toBytes } from 'viem'
 import * as allChains from 'viem/chains'
 
@@ -51,9 +51,18 @@ export const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {
       return signature
     },
     handleSendTransactionStep: async (chainId, stepItem) => {
-      const viemChain =
-        Object.values(allChains).find((chain) => chain.id === (chainId || 1)) ||
-        allChains.mainnet
+      let viemChain: allChains.Chain
+      const customChain = Object.values(customChains).find(
+        (chain) => chain.id === (chainId || 1)
+      )
+      if (customChain) {
+        viemChain = customChain
+      } else {
+        viemChain =
+          Object.values(allChains).find(
+            (chain) => chain.id === (chainId || 1)
+          ) || allChains.mainnet
+      }
       const stepData = stepItem.data
 
       return await wallet.sendTransaction({
