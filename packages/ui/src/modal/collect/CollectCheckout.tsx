@@ -7,8 +7,7 @@ import {
   Img,
   Text,
 } from '../../primitives'
-import { useCollections } from '../../hooks'
-import { MintCurrency } from '../mint/MintModalRenderer'
+import { useChainCurrency, useCollections } from '../../hooks'
 
 enum Size {
   SM,
@@ -20,7 +19,7 @@ type Props = {
   itemCount: number
   totalPrice: number
   usdPrice: number
-  currency?: MintCurrency
+  currency?: ReturnType<typeof useChainCurrency>
   chain?: ReservoirChain | null
   size?: Size
 }
@@ -77,7 +76,7 @@ export const CollectCheckout: FC<Props> = ({
           <FormatCryptoCurrency
             textStyle={'h6'}
             amount={totalPrice}
-            address={currency?.contract}
+            address={currency?.address}
             decimals={currency?.decimals}
             symbol={currency?.symbol}
             logoWidth={18}
