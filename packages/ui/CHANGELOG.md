@@ -1,23 +1,24 @@
-
 ## [v1.1.14-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/afc556946e46dfb212ec77ecc8903a5e6e85c6af) (2023-06-29)
 
 ## [v1.1.13-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/1c2d07ce6f219dc68f35344b7e158b2d8f457ce3) (2023-06-28)
 
-* Add bnb wrapped contract configuration [798a02d](https://github.com/reservoirprotocol/reservoir-kit/commit/798a02dce17d451b8ce45abfad5466dfcf0c83cc)
-* Merge pull request #293 from reservoirprotocol/pedro/grwth-2923-acceptbidmodal-use-netamount-for-expected-price [d9533d2](https://github.com/reservoirprotocol/reservoir-kit/commit/d9533d2c3f80d69132a60ddcfb26a39ba9bf9f8c)
-* Merge pull request #294 from reservoirprotocol/pedro/grwth-2802-use-new-payment_tokens-property [7d536a4](https://github.com/reservoirprotocol/reservoir-kit/commit/7d536a4a6e65c7e022fbedc8ad844566ebd69f1b)
+- Add bnb wrapped contract configuration [798a02d](https://github.com/reservoirprotocol/reservoir-kit/commit/798a02dce17d451b8ce45abfad5466dfcf0c83cc)
+
+- AcceptBidModal: use netamount to check expected price [d9533d2](https://github.com/reservoirprotocol/reservoir-kit/commit/d9533d2c3f80d69132a60ddcfb26a39ba9bf9f8c)
+- ListModal: Use new payment tokens property from supported marketplaces api [7d536a4](https://github.com/reservoirprotocol/reservoir-kit/commit/7d536a4a6e65c7e022fbedc8ad844566ebd69f1b)
+
 ## [v1.1.12-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/18e39c372780963ae26f5a227c4202371d309046) (2023-06-27)
 
-* Merge pull request #292 from reservoirprotocol/ted/grwth-2853-upgrade-viem-to-10 [0dddd11](https://github.com/reservoirprotocol/reservoir-kit/commit/0dddd1191f59f61929ba1551c9dd5491ac22d6d9)
-* Fix wrapped contract name for mumbai [81c6b1a](https://github.com/reservoirprotocol/reservoir-kit/commit/81c6b1a63f4eb5166c8e1c27d86be4695fa18723)
+- Upgrade Viem & Wagmi Peer dependencies [0dddd11](https://github.com/reservoirprotocol/reservoir-kit/commit/0dddd1191f59f61929ba1551c9dd5491ac22d6d9)
+
 ## [v1.1.11-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/080732333722213800b5621c8f4574b937426508) (2023-06-27)
 
-* Merge pull request #295 from reservoirprotocol/fix/accept-bid-token-range [9fb2989](https://github.com/reservoirprotocol/reservoir-kit/commit/9fb2989b0131318fe46bff5e7eba89834ae0bf11)
-* EditBidModal and EditListingModal: Fix collection range issues [bd21a95](https://github.com/reservoirprotocol/reservoir-kit/commit/bd21a9599eee7483d0657b1bdfda7bfb9b6aeefb)
-* AcceptBidModal: Fix token range lookups [c71f432](https://github.com/reservoirprotocol/reservoir-kit/commit/c71f432b8ddf90d16d2327516dc8dc04ae87b480)
-* Add payment token logic for opensea listing in non native currencies [630f60b](https://github.com/reservoirprotocol/reservoir-kit/commit/630f60b72d011c11617702d802569d187773a0aa)
-* Use net amount when checking expected price quote for selling [ddad809](https://github.com/reservoirprotocol/reservoir-kit/commit/ddad809b6c98a72b709de1694d28a61e4ef70fd7)
-* Upgrade viem to ~1.0.6 [ rainbowkit to ^1.0.3](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-06-26)
+- EditBidModal and EditListingModal: Fix collection range issues [bd21a95](https://github.com/reservoirprotocol/reservoir-kit/commit/bd21a9599eee7483d0657b1bdfda7bfb9b6aeefb)
+- AcceptBidModal: Fix token range lookups [c71f432](https://github.com/reservoirprotocol/reservoir-kit/commit/c71f432b8ddf90d16d2327516dc8dc04ae87b480)
+- Add payment token logic for opensea listing in non native currencies [630f60b](https://github.com/reservoirprotocol/reservoir-kit/commit/630f60b72d011c11617702d802569d187773a0aa)
+- Use net amount when checking expected price quote for selling [ddad809](https://github.com/reservoirprotocol/reservoir-kit/commit/ddad809b6c98a72b709de1694d28a61e4ef70fd7)
+- Upgrade viem to ~1.0.6 [ rainbowkit to ^1.0.3](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-06-26)
+
 ## [v1.1.10-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2eefe64cd5bdbad5d4a2c4a8f13727cb5eac2895) (2023-06-22)
 
 - Update Powered by Reservoir modal footers [6ae1ad6](https://github.com/reservoirprotocol/reservoir-kit/commit/6ae1ad68d4e58121f0134b2afd95d0ebbae91449)
