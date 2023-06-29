@@ -1,5 +1,4 @@
 const gatewayConfig = {
-  // TODO: make the gateway providers configurable
   'ipfs://': 'https://ipfs.io/ipfs/',
   'ar://': 'https://arweave.net/',
 }
