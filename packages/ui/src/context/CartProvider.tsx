@@ -74,7 +74,6 @@ export type Cart = {
   currency?: NonNullable<CartItemPrice>['currency']
   feeOnTop?: number
   feesOnTopBps?: string[]
-  feesOnTopFixed?: string[]
   items: CartItem[]
   pools: Record<string, { prices: CartItemPrice[]; itemCount: number }>
   isValidating: boolean
@@ -98,22 +97,16 @@ const CartStorageKey = `reservoirkit.cart.${version}`
 
 type CartStoreProps = {
   feesOnTopBps?: string[]
-  feesOnTopFixed?: string[]
   persist?: boolean
 }
 
-function cartStore({
-  feesOnTopBps,
-  feesOnTopFixed,
-  persist = true,
-}: CartStoreProps) {
+function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
   const { address } = useAccount()
   const { chains } = useNetwork()
   const { switchNetworkAsync } = useSwitchNetwork()
   const cartData = useRef<Cart>({
     totalPrice: 0,
     feesOnTopBps: undefined,
-    feesOnTopFixed: undefined,
     items: [],
     pools: {},
     isValidating: false,
@@ -136,8 +129,7 @@ function cartStore({
         const { totalPrice, feeOnTop } = calculatePricing(
           rehydratedCart.items,
           currency,
-          cartData.current.feesOnTopBps,
-          cartData.current.feesOnTopFixed
+          cartData.current.feesOnTopBps
         )
         cartData.current = {
           ...cartData.current,
@@ -164,20 +156,18 @@ function cartStore({
     const { totalPrice, feeOnTop } = calculatePricing(
       cartData.current.items,
       currency,
-      feesOnTopBps,
-      feesOnTopFixed
+      feesOnTopBps
     )
     cartData.current = {
       ...cartData.current,
       pools,
       totalPrice,
       feesOnTopBps,
-      feesOnTopFixed,
       feeOnTop,
       currency,
     }
     commit()
-  }, [feesOnTopBps, feesOnTopFixed])
+  }, [feesOnTopBps])
 
   const get = useCallback(() => cartData.current, [])
   const set = useCallback((value: Partial<Cart>) => {
@@ -223,8 +213,7 @@ function cartStore({
     (
       items: Cart['items'],
       currency?: Cart['currency'],
-      feesOnTopBps?: Cart['feesOnTopBps'],
-      feesOnTopFixed?: Cart['feesOnTopFixed']
+      feesOnTopBps?: Cart['feesOnTopBps']
     ) => {
       let feeOnTop = 0
       let subtotal = items.reduce((total, { price, order }) => {
@@ -244,13 +233,6 @@ function cartStore({
           total += (Number(feeBps || 0) / 10000) * subtotal
           return total
         }, 0)
-      } else if (feesOnTopFixed) {
-        const atomicFee = feesOnTopFixed.reduce((total, feeOnTopBps) => {
-          const [_, feeFixed] = feeOnTopBps.split(':')
-          total += BigInt(feeFixed)
-          return total
-        }, BigInt(0))
-        feeOnTop = +formatUnits(atomicFee, currency?.decimals || 18)
       }
       subtotal = subtotal + feeOnTop
       return {
@@ -486,8 +468,7 @@ function cartStore({
         const { totalPrice, feeOnTop } = calculatePricing(
           updatedItems,
           currency,
-          cartData.current.feesOnTopBps,
-          cartData.current.feesOnTopFixed
+          cartData.current.feesOnTopBps
         )
 
         cartData.current = {
@@ -665,8 +646,7 @@ function cartStore({
         const { totalPrice, feeOnTop } = calculatePricing(
           updatedItems,
           currency,
-          cartData.current.feesOnTopBps,
-          cartData.current.feesOnTopFixed
+          cartData.current.feesOnTopBps
         )
 
         cartData.current = {
@@ -727,8 +707,7 @@ function cartStore({
     const { totalPrice, feeOnTop } = calculatePricing(
       updatedItems,
       currency,
-      cartData.current.feesOnTopBps,
-      cartData.current.feesOnTopFixed
+      cartData.current.feesOnTopBps
     )
 
     //Suppress pool price changes if the removed item was from the pool
@@ -892,8 +871,7 @@ function cartStore({
       const { totalPrice, feeOnTop } = calculatePricing(
         items,
         currency,
-        cartData.current.feesOnTopBps,
-        cartData.current.feesOnTopFixed
+        cartData.current.feesOnTopBps
       )
       cartData.current = {
         ...cartData.current,
@@ -995,8 +973,6 @@ function cartStore({
             return `${referrer}:${atomicUnitsFee}`
           })
           options.feesOnTop = fixedFees
-        } else if (cartData.current.feesOnTopFixed) {
-          options.feesOnTop = cartData.current.feesOnTopFixed
         }
       }
 
@@ -1156,8 +1132,7 @@ function cartStore({
               const { totalPrice, feeOnTop } = calculatePricing(
                 items,
                 currency,
-                cartData.current.feesOnTopBps,
-                cartData.current.feesOnTopFixed
+                cartData.current.feesOnTopBps
               )
               cartData.current.items = items
               cartData.current.pools = pools
@@ -1195,20 +1170,16 @@ export const CartContext = createContext<ReturnType<typeof cartStore> | null>(
 type CartProviderProps = {
   children: ReactNode
   feesOnTopBps?: string[]
-  feesOnTopFixed?: string[]
   persist?: boolean
 }
 
 export const CartProvider: FC<CartProviderProps> = function ({
   children,
   feesOnTopBps,
-  feesOnTopFixed,
   persist,
 }) {
   return (
-    <CartContext.Provider
-      value={cartStore({ feesOnTopBps, feesOnTopFixed, persist })}
-    >
+    <CartContext.Provider value={cartStore({ feesOnTopBps, persist })}>
       {children}
     </CartContext.Provider>
   )

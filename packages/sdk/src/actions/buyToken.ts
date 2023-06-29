@@ -82,10 +82,6 @@ export async function buyToken(data: Data) {
       params.normalizeRoyalties = client.normalizeRoyalties
     }
 
-    if (!('feesOnTop' in params) && client.feesOnTop) {
-      params.feesOnTop = client.feesOnTop
-    }
-
     const request: AxiosRequestConfig = {
       url: `${baseApiUrl}/execute/buy/v7`,
       method: 'post',
