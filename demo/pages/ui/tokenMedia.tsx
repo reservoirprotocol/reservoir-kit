@@ -13,6 +13,8 @@ const TokenMediaPage: NextPage = () => {
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [preview, setPreview] = useState(false)
   const [showGrid, setShowGrid] = useState(true)
+  const [enableOnChainImageFallback, setEnableOnChainImageFallback] =
+    useState(false)
 
   const { data: tokens } = useTokens(
     collectionId
@@ -68,6 +70,14 @@ const TokenMediaPage: NextPage = () => {
           style={{ width: 250 }}
         />
       </div>
+      <div>
+        <label>enableOnChainImageFallback: </label>
+        <input
+          type="checkbox"
+          checked={enableOnChainImageFallback}
+          onChange={(e) => setEnableOnChainImageFallback(e.target.checked)}
+        />
+      </div>
       {!showGrid && (
         <div>
           <label>Token Id: </label>
@@ -106,6 +116,7 @@ const TokenMediaPage: NextPage = () => {
               onRefreshToken={() => {
                 window.alert('Token was refreshed!')
               }}
+              enableOnChainImageFallback={enableOnChainImageFallback}
             />
           ))}
         </div>
@@ -120,6 +131,7 @@ const TokenMediaPage: NextPage = () => {
           onRefreshToken={() => {
             window.alert('Token was refreshed!')
           }}
+          enableOnChainImageFallback={enableOnChainImageFallback}
         />
       )}
       <ThemeSwitcher />

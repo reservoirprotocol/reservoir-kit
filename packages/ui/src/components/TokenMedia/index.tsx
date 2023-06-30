@@ -66,6 +66,8 @@ type Props = {
   videoOptions?: VideoHTMLAttributes<HTMLVideoElement>
   audioOptions?: AudioHTMLAttributes<HTMLAudioElement>
   iframeOptions?: IframeHTMLAttributes<HTMLIFrameElement>
+  enableOnChainImageFallback?: boolean
+  prefferedImageSize?: 'small' | 'medium' | 'large'
   fallback?: (mediaType: MediaType | null) => ReactElement | null
   onError?: (e: Event) => void
   onRefreshToken?: () => void
@@ -80,6 +82,7 @@ const TokenMedia: FC<Props> = ({
   videoOptions = {},
   audioOptions = {},
   iframeOptions = {},
+  enableOnChainImageFallback,
   fallback,
   onError = () => {},
   onRefreshToken = () => {},
@@ -129,6 +132,7 @@ const TokenMedia: FC<Props> = ({
           className={className}
           token={token}
           onRefreshClicked={onRefreshToken}
+          enableOnChainImageFallback={enableOnChainImageFallback}
         />
       )
     }
