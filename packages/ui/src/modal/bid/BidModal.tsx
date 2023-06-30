@@ -54,6 +54,7 @@ import { Currency } from '../../types/Currency'
 import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
+import QuantitySelector from '../QuantitySelector'
 
 type BidCallbackData = {
   tokenId?: string
@@ -184,8 +185,11 @@ export function BidModal({
         wrappedBalance,
         wrappedContractName,
         wrappedContractAddress,
-        bidAmount,
-        bidAmountUsd,
+        bidInput,
+        totalBidAmount,
+        totalBidAmountUsd,
+        quantity,
+        setQuantity,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
         amountToWrap,
@@ -198,7 +202,7 @@ export function BidModal({
         currencies,
         currency,
         setCurrency,
-        setBidAmount,
+        setBidInput,
         setExpirationOption,
         setBidStep,
         setTrait,
@@ -217,6 +221,8 @@ export function BidModal({
             : (collection?.image as string)
 
         const providerOptionsContext = useContext(ProviderOptionsContext)
+
+        const quantityEnabled = !tokenId || token?.token?.kind === 'erc1155'
 
         useEffect(() => {
           if (stepData) {
@@ -350,7 +356,9 @@ export function BidModal({
                 />
                 <MainContainer css={{ p: '$4' }}>
                   <Flex justify="between">
-                    <Text style="tiny">Offer Amount</Text>
+                    <Text style="tiny" color="subtle">
+                      Offer Amount {quantityEnabled ? 'and Quantity' : null}
+                    </Text>
                     <Text
                       as={Flex}
                       css={{ gap: '$1' }}
@@ -368,10 +376,10 @@ export function BidModal({
                       />{' '}
                     </Text>
                   </Flex>
-                  <Flex css={{ mt: '$2', gap: 20 }}>
+                  <Flex css={{ mt: '$2', gap: quantityEnabled ? '$2' : 20 }}>
                     <Text
                       as={Flex}
-                      css={{ gap: '$2', ml: '$3', flexShrink: 0 }}
+                      css={{ gap: '$2', '@bp1': { ml: '$3' }, flexShrink: 0 }}
                       align="center"
                       style="body1"
                       color="subtle"
@@ -395,36 +403,111 @@ export function BidModal({
                     </Text>
                     <Input
                       type="number"
-                      value={bidAmount}
+                      value={bidInput}
                       onChange={(e) => {
-                        setBidAmount(e.target.value)
+                        setBidInput(e.target.value)
                       }}
-                      placeholder="Enter price here"
+                      placeholder="Enter price"
                       containerCss={{
                         width: '100%',
                       }}
                       css={{
-                        color: '$neutralText',
-                        textAlign: 'left',
+                        textAlign: 'center',
+                        '@bp1': {
+                          textAlign: 'left',
+                        },
                       }}
                     />
+                    {/* Quantity Selector on Desktop */}
+                    {quantityEnabled ? (
+                      <Flex
+                        css={{ display: 'none', '@bp1': { display: 'flex' } }}
+                      >
+                        <QuantitySelector
+                          quantity={quantity}
+                          setQuantity={setQuantity}
+                          min={1}
+                          max={999999}
+                          css={{
+                            maxWidth: 180,
+                          }}
+                        />
+                      </Flex>
+                    ) : null}
                   </Flex>
-                  <FormatCurrency
-                    css={{
-                      marginLeft: 'auto',
-                      mt: '$2',
-                      display: 'inline-block',
-                      minHeight: 15,
-                    }}
-                    style="tiny"
-                    amount={bidAmountUsd}
-                  />
+                  {/* Quantity Selector on Mobile Devices */}
+                  {quantityEnabled ? (
+                    <Flex
+                      align="center"
+                      css={{
+                        width: '100%',
+                        display: 'flex',
+                        mt: '$2',
+                        gap: '$2',
+                        '@bp1': { display: 'none' },
+                      }}
+                    >
+                      <Text
+                        style="subtitle2"
+                        color="subtle"
+                        css={{ width: 90, flexShrink: 0 }}
+                      >
+                        Quantity
+                      </Text>
+                      <QuantitySelector
+                        quantity={quantity}
+                        setQuantity={setQuantity}
+                        min={1}
+                        max={999999}
+                        css={{ justifyContent: 'space-between', width: '100%' }}
+                      />
+                    </Flex>
+                  ) : null}
+                  {quantityEnabled ? (
+                    <Flex
+                      align="center"
+                      css={{ gap: '$2', mt: '$3', mb: '$4' }}
+                    >
+                      <Text style="subtitle2" color="subtle">
+                        Total Offer Price
+                      </Text>
+                      <FormatWrappedCurrency
+                        logoWidth={16}
+                        textStyle="subtitle2"
+                        amount={totalBidAmount}
+                        address={currency?.contract}
+                        decimals={currency?.decimals}
+                        symbol={currency?.symbol}
+                      />
+                      <FormatCurrency
+                        style="tiny"
+                        color="subtle"
+                        amount={totalBidAmountUsd}
+                      />
+                    </Flex>
+                  ) : (
+                    <FormatCurrency
+                      css={{
+                        marginLeft: 'auto',
+                        mt: '$2',
+                        display: 'inline-block',
+                        minHeight: 15,
+                      }}
+                      style="tiny"
+                      amount={totalBidAmountUsd}
+                    />
+                  )}
                   {attributes &&
                     attributes.length > 0 &&
                     (attributesSelectable || trait) &&
                     !tokenId && (
                       <>
-                        <Text as={Box} css={{ mb: '$2' }} style="tiny">
+                        <Text
+                          as={Box}
+                          css={{ mb: '$2' }}
+                          style="tiny"
+                          color="subtle"
+                        >
                           Attributes
                         </Text>
                         <Popover.Root
@@ -522,7 +605,12 @@ export function BidModal({
                       </>
                     )}
 
-                  <Text as={Box} css={{ mt: '$4', mb: '$2' }} style="tiny">
+                  <Text
+                    as={Box}
+                    css={{ mt: '$4', mb: '$2' }}
+                    style="tiny"
+                    color="subtle"
+                  >
                     Expiration Date
                   </Text>
                   <Flex css={{ gap: '$2', mb: '$4' }}>
@@ -610,12 +698,12 @@ export function BidModal({
                         {localMarketplace?.title}.
                       </Text>
                     )}
-                    {bidAmount === '' && (
+                    {bidInput === '' && (
                       <Button disabled={true} css={{ width: '100%' }}>
                         {copy.ctaBidDisabled}
                       </Button>
                     )}
-                    {bidAmount !== '' && hasEnoughWrappedCurrency && (
+                    {bidInput !== '' && hasEnoughWrappedCurrency && (
                       <Button
                         onClick={() => placeBid()}
                         css={{ width: '100%' }}
@@ -629,7 +717,7 @@ export function BidModal({
                           : 'Make a Collection Offer'}
                       </Button>
                     )}
-                    {bidAmount !== '' && !hasEnoughWrappedCurrency && (
+                    {bidInput !== '' && !hasEnoughWrappedCurrency && (
                       <>
                         {!hasEnoughNativeCurrency && (
                           <Flex css={{ gap: '$2', mt: 10 }} justify="center">

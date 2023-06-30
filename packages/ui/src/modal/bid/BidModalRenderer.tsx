@@ -53,9 +53,12 @@ type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   attributes?: Traits
-  bidAmount: string
+  bidInput: string
+  totalBidAmount: number
+  totalBidAmountUsd: number
+  quantity: number
+  setQuantity: React.Dispatch<React.SetStateAction<number>>
   bidData: BidData | null
-  bidAmountUsd: number
   bidStep: BidStep
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
@@ -75,7 +78,7 @@ type ChildrenProps = {
   currency: Currency
   setCurrency: (currency: Currency) => void
   setBidStep: React.Dispatch<React.SetStateAction<BidStep>>
-  setBidAmount: React.Dispatch<React.SetStateAction<string>>
+  setBidInput: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
   trait: Trait
@@ -116,7 +119,8 @@ export const BidModalRenderer: FC<Props> = ({
   const { data: wallet } = useWalletClient()
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [bidAmount, setBidAmount] = useState<string>('')
+  const [bidInput, setBidInput] = useState<string>('')
+  const [quantity, setQuantity] = useState(1)
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
     expirationOptions[3]
   )
@@ -187,7 +191,8 @@ export const BidModalRenderer: FC<Props> = ({
     wrappedContractName
   )
   const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
-  const bidAmountUsd = +bidAmount * (usdPrice || 0)
+  const totalBidAmount = Number(bidInput) * Math.max(1, quantity)
+  const totalBidAmountUsd = totalBidAmount * (usdPrice || 0)
 
   const client = useReservoirClient()
 
@@ -222,9 +227,9 @@ export const BidModalRenderer: FC<Props> = ({
   }
 
   useEffect(() => {
-    if (bidAmount !== '') {
+    if (totalBidAmount !== 0) {
       const bid = parseUnits(
-        `${Number(bidAmount)}`,
+        `${totalBidAmount}`,
         wrappedBalance?.decimals || 18
       )
 
@@ -249,7 +254,7 @@ export const BidModalRenderer: FC<Props> = ({
       setHasEnoughWrappedCurrency(true)
       setAmountToWrap('')
     }
-  }, [bidAmount, balance, wrappedBalance])
+  }, [totalBidAmount, balance, wrappedBalance])
 
   useEffect(() => {
     const validAttributes = traits
@@ -276,7 +281,8 @@ export const BidModalRenderer: FC<Props> = ({
       setHasEnoughNativeCurrency(false)
       setHasEnoughWrappedCurrency(false)
       setAmountToWrap('')
-      setBidAmount('')
+      setBidInput('')
+      setQuantity(1)
       setStepData(null)
       setBidData(null)
       setTransactionError(null)
@@ -295,138 +301,131 @@ export const BidModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
-  const placeBid = useCallback(
-    (options?: { quantity?: number }) => {
-      if (!wallet) {
-        const error = new Error('Missing a wallet/signer')
-        setTransactionError(error)
-        throw error
+  const placeBid = useCallback(() => {
+    if (!wallet) {
+      const error = new Error('Missing a wallet/signer')
+      setTransactionError(error)
+      throw error
+    }
+
+    if (!tokenId && !collectionId) {
+      const error = new Error('Missing tokenId and collectionId')
+      setTransactionError(error)
+      throw error
+    }
+
+    if (!client) {
+      const error = new Error('ReservoirClient was not initialized')
+      setTransactionError(error)
+      throw error
+    }
+
+    setBidStep(BidStep.Offering)
+    setTransactionError(null)
+    setBidData(null)
+
+    const bid: BidData = {
+      weiPrice: parseUnits(
+        `${totalBidAmount}`,
+        currency?.decimals || 18
+      ).toString(),
+      orderbook: 'reservoir',
+      orderKind: 'seaport',
+      attributeKey: trait?.key,
+      attributeValue: trait?.value,
+    }
+
+    if (currency) {
+      bid.currency = currency.contract
+    }
+
+    if (tokenId && collectionId) {
+      const contract = collectionId ? collectionId?.split(':')[0] : undefined
+      bid.token = `${contract}:${tokenId}`
+    } else if (collectionId) {
+      bid.collection = collectionId
+    }
+
+    if (expirationOption.relativeTime) {
+      if (expirationOption.relativeTimeUnit) {
+        bid.expirationTime = dayjs()
+          .add(expirationOption.relativeTime, expirationOption.relativeTimeUnit)
+          .unix()
+          .toString()
+      } else {
+        bid.expirationTime = `${expirationOption.relativeTime}`
       }
+    }
 
-      if (!tokenId && !collectionId) {
-        const error = new Error('Missing tokenId and collectionId')
-        setTransactionError(error)
-        throw error
+    if (oracleEnabled) {
+      bid.options = {
+        'seaport-v1.4': {
+          useOffChainCancellation: true,
+        },
       }
+    }
 
-      if (!client) {
-        const error = new Error('ReservoirClient was not initialized')
-        setTransactionError(error)
-        throw error
-      }
+    if (quantity > 1) {
+      bid.quantity = quantity
+    }
 
-      setBidStep(BidStep.Offering)
-      setTransactionError(null)
-      setBidData(null)
+    setBidData(bid)
 
-      const quantity = options?.quantity ? options.quantity : 1
+    client.actions
+      .placeBid({
+        wallet,
+        bids: [bid],
+        onProgress: (steps: Execute['steps']) => {
+          const executableSteps = steps.filter(
+            (step) => step.items && step.items.length > 0
+          )
 
-      const bid: BidData = {
-        weiPrice: (
-          parseUnits(`${Number(bidAmount)}`, currency?.decimals || 18) *
-          BigInt(quantity)
-        ).toString(),
-        orderbook: 'reservoir',
-        orderKind: 'seaport',
-        attributeKey: trait?.key,
-        attributeValue: trait?.value,
-      }
+          let stepCount = executableSteps.length
+          let incompleteStepItemIndex: number | null = null
+          let incompleteStepIndex: number | null = null
 
-      if (currency) {
-        bid.currency = currency.contract
-      }
-
-      if (tokenId && collectionId) {
-        const contract = collectionId ? collectionId?.split(':')[0] : undefined
-        bid.token = `${contract}:${tokenId}`
-      } else if (collectionId) {
-        bid.collection = collectionId
-      }
-
-      if (expirationOption.relativeTime) {
-        if (expirationOption.relativeTimeUnit) {
-          bid.expirationTime = dayjs()
-            .add(
-              expirationOption.relativeTime,
-              expirationOption.relativeTimeUnit
-            )
-            .unix()
-            .toString()
-        } else {
-          bid.expirationTime = `${expirationOption.relativeTime}`
-        }
-      }
-
-      if (oracleEnabled) {
-        bid.options = {
-          'seaport-v1.4': {
-            useOffChainCancellation: true,
-          },
-        }
-      }
-
-      if (quantity > 1) {
-        bid.quantity = quantity
-      }
-
-      setBidData(bid)
-
-      client.actions
-        .placeBid({
-          wallet,
-          bids: [bid],
-          onProgress: (steps: Execute['steps']) => {
-            const executableSteps = steps.filter(
-              (step) => step.items && step.items.length > 0
-            )
-
-            let stepCount = executableSteps.length
-            let incompleteStepItemIndex: number | null = null
-            let incompleteStepIndex: number | null = null
-
-            executableSteps.find((step, i) => {
-              if (!step.items) {
-                return false
-              }
-
-              incompleteStepItemIndex = step.items.findIndex(
-                (item) => item.status == 'incomplete'
-              )
-              if (incompleteStepItemIndex !== -1) {
-                incompleteStepIndex = i
-                return true
-              }
-            })
-
-            if (incompleteStepIndex !== null) {
-              setStepData({
-                totalSteps: stepCount,
-                stepProgress: incompleteStepIndex,
-                currentStep: executableSteps[incompleteStepIndex],
-              })
-            } else {
-              setBidStep(BidStep.Complete)
+          executableSteps.find((step, i) => {
+            if (!step.items) {
+              return false
             }
-          },
-        })
-        .catch((e: any) => {
-          const transactionError = new Error(e?.message || '', {
-            cause: e,
+
+            incompleteStepItemIndex = step.items.findIndex(
+              (item) => item.status == 'incomplete'
+            )
+            if (incompleteStepItemIndex !== -1) {
+              incompleteStepIndex = i
+              return true
+            }
           })
-          setTransactionError(transactionError)
+
+          if (incompleteStepIndex !== null) {
+            setStepData({
+              totalSteps: stepCount,
+              stepProgress: incompleteStepIndex,
+              currentStep: executableSteps[incompleteStepIndex],
+            })
+          } else {
+            setBidStep(BidStep.Complete)
+          }
+        },
+      })
+      .catch((e: any) => {
+        const transactionError = new Error(e?.message || '', {
+          cause: e,
         })
-    },
-    [
-      tokenId,
-      collectionId,
-      currency,
-      client,
-      wallet,
-      bidAmount,
-      expirationOption,
-      trait,
-    ]
-  )
+        setTransactionError(transactionError)
+      })
+  }, [
+    tokenId,
+    collectionId,
+    currency,
+    client,
+    wallet,
+    totalBidAmount,
+    expirationOption,
+    trait,
+    quantity,
+  ])
 
   return (
     <>
@@ -441,9 +440,12 @@ export const BidModalRenderer: FC<Props> = ({
         wrappedContractAddress,
         convertLink,
         canAutomaticallyConvert,
-        bidAmount,
+        bidInput,
+        totalBidAmount,
+        quantity,
+        setQuantity,
         bidData,
-        bidAmountUsd,
+        totalBidAmountUsd,
         bidStep,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
@@ -456,7 +458,7 @@ export const BidModalRenderer: FC<Props> = ({
         currency,
         setCurrency,
         setBidStep,
-        setBidAmount,
+        setBidInput,
         setExpirationOption,
         setTrait,
         trait,
