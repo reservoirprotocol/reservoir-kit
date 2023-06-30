@@ -1,4 +1,11 @@
-import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
+import React, {
+  FC,
+  useEffect,
+  useState,
+  useCallback,
+  ReactNode,
+  useMemo,
+} from 'react'
 import {
   useTokens,
   useCoinConversion,
@@ -76,6 +83,7 @@ type ChildrenProps = {
   stepData: BidModalStepData | null
   currencies: Currency[]
   currency: Currency
+  feeBps?: number
   setCurrency: (currency: Currency) => void
   setBidStep: React.Dispatch<React.SetStateAction<BidStep>>
   setBidAmountPerUnit: React.Dispatch<React.SetStateAction<string>>
@@ -93,6 +101,7 @@ type Props = {
   normalizeRoyalties?: boolean
   currencies?: Currency[]
   oracleEnabled: boolean
+  feesBps?: string[] | null
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -114,6 +123,7 @@ export const BidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   currencies,
   oracleEnabled = false,
+  feesBps,
   children,
 }) => {
   const { data: wallet } = useWalletClient()
@@ -226,6 +236,17 @@ export const BidModalRenderer: FC<Props> = ({
     convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${wrappedContractAddress}`
   }
 
+  const feeBps: number | undefined = useMemo(() => {
+    let bpsFees = feesBps || client?.marketplaceFees
+    if (bpsFees) {
+      return bpsFees.reduce((total, fee) => {
+        const bps = Number(fee.split(':')[1])
+        total += bps
+        return total
+      }, 0)
+    }
+  }, [feesBps, client?.marketplaceFees, currency])
+
   useEffect(() => {
     if (totalBidAmount !== 0) {
       const bid = parseUnits(
@@ -324,15 +345,23 @@ export const BidModalRenderer: FC<Props> = ({
     setTransactionError(null)
     setBidData(null)
 
+    const atomicBidAmount = parseUnits(
+      `${totalBidAmount}`,
+      currency?.decimals || 18
+    ).toString()
+
     const bid: BidData = {
-      weiPrice: parseUnits(
-        `${totalBidAmount}`,
-        currency?.decimals || 18
-      ).toString(),
+      weiPrice: atomicBidAmount,
       orderbook: 'reservoir',
       orderKind: 'seaport',
       attributeKey: trait?.key,
       attributeValue: trait?.value,
+    }
+
+    if (feesBps && feesBps?.length > 0) {
+      bid.fees = feesBps
+    } else if (!feesBps) {
+      delete bid.fees
     }
 
     if (currency) {
@@ -425,6 +454,7 @@ export const BidModalRenderer: FC<Props> = ({
     expirationOption,
     trait,
     quantity,
+    feesBps,
   ])
 
   return (
@@ -456,6 +486,7 @@ export const BidModalRenderer: FC<Props> = ({
         stepData,
         currencies: currencies || [defaultCurrency],
         currency,
+        feeBps,
         setCurrency,
         setBidStep,
         setBidAmountPerUnit,

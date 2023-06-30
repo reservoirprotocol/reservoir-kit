@@ -53,6 +53,7 @@ const Index: NextPage = () => {
     useState(NORMALIZE_ROYALTIES)
   const [enableOnChainRoyalties, setEnableOnChainRoyalties] = useState(false)
   const [oracleEnabled, setOracleEnabled] = useState(false)
+  const [feesBps, setFeesBps] = useState<string[] | undefined>()
 
   return (
     <div
@@ -102,6 +103,25 @@ const Index: NextPage = () => {
               }
             } else {
               setCurrencies(undefined)
+            }
+          }}
+        />
+      </div>
+      <div>
+        <label>Fees (BPS):</label>
+        <textarea
+          onChange={() => {}}
+          onBlur={(e) => {
+            if (e.target.value && e.target.value.length > 0) {
+              try {
+                setFeesBps(JSON.parse(e.target.value))
+              } catch (err) {
+                e.target.value = ''
+                setFeesBps(undefined)
+              }
+            } else {
+              e.target.value = ''
+              setFeesBps(undefined)
             }
           }}
         />
@@ -174,6 +194,7 @@ const Index: NextPage = () => {
         enableOnChainRoyalties={enableOnChainRoyalties}
         oracleEnabled={oracleEnabled}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
+        feesBps={feesBps}
         onGoToToken={() => console.log('Awesome!')}
         onListingComplete={(data) => {
           console.log('Listing Complete', data)

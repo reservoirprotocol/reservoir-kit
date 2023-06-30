@@ -76,6 +76,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   enableOnChainRoyalties?: boolean
   oracleEnabled?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  feesBps?: string[]
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
@@ -125,6 +126,7 @@ export function ListModal({
   enableOnChainRoyalties = false,
   oracleEnabled = false,
   copyOverrides,
+  feesBps,
   onGoToToken,
   onListingComplete,
   onListingError,
@@ -156,6 +158,7 @@ export function ListModal({
       normalizeRoyalties={normalizeRoyalties}
       enableOnChainRoyalties={enableOnChainRoyalties}
       oracleEnabled={oracleEnabled}
+      feesBps={feesBps}
     >
       {({
         token,
