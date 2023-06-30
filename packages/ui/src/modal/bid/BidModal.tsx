@@ -185,7 +185,7 @@ export function BidModal({
         wrappedBalance,
         wrappedContractName,
         wrappedContractAddress,
-        bidInput,
+        bidAmountPerUnit,
         totalBidAmount,
         totalBidAmountUsd,
         quantity,
@@ -202,7 +202,7 @@ export function BidModal({
         currencies,
         currency,
         setCurrency,
-        setBidInput,
+        setBidAmountPerUnit,
         setExpirationOption,
         setBidStep,
         setTrait,
@@ -403,9 +403,9 @@ export function BidModal({
                     </Text>
                     <Input
                       type="number"
-                      value={bidInput}
+                      value={bidAmountPerUnit}
                       onChange={(e) => {
-                        setBidInput(e.target.value)
+                        setBidAmountPerUnit(e.target.value)
                       }}
                       placeholder="Enter price"
                       containerCss={{
@@ -698,12 +698,12 @@ export function BidModal({
                         {localMarketplace?.title}.
                       </Text>
                     )}
-                    {bidInput === '' && (
+                    {bidAmountPerUnit === '' && (
                       <Button disabled={true} css={{ width: '100%' }}>
                         {copy.ctaBidDisabled}
                       </Button>
                     )}
-                    {bidInput !== '' && hasEnoughWrappedCurrency && (
+                    {bidAmountPerUnit !== '' && hasEnoughWrappedCurrency && (
                       <Button
                         onClick={() => placeBid()}
                         css={{ width: '100%' }}
@@ -717,7 +717,7 @@ export function BidModal({
                           : 'Make a Collection Offer'}
                       </Button>
                     )}
-                    {bidInput !== '' && !hasEnoughWrappedCurrency && (
+                    {bidAmountPerUnit !== '' && !hasEnoughWrappedCurrency && (
                       <>
                         {!hasEnoughNativeCurrency && (
                           <Flex css={{ gap: '$2', mt: 10 }} justify="center">

@@ -53,7 +53,7 @@ type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   attributes?: Traits
-  bidInput: string
+  bidAmountPerUnit: string
   totalBidAmount: number
   totalBidAmountUsd: number
   quantity: number
@@ -78,7 +78,7 @@ type ChildrenProps = {
   currency: Currency
   setCurrency: (currency: Currency) => void
   setBidStep: React.Dispatch<React.SetStateAction<BidStep>>
-  setBidInput: React.Dispatch<React.SetStateAction<string>>
+  setBidAmountPerUnit: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
   trait: Trait
@@ -119,7 +119,7 @@ export const BidModalRenderer: FC<Props> = ({
   const { data: wallet } = useWalletClient()
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [bidInput, setBidInput] = useState<string>('')
+  const [bidAmountPerUnit, setBidAmountPerUnit] = useState<string>('')
   const [quantity, setQuantity] = useState(1)
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
     expirationOptions[3]
@@ -191,7 +191,7 @@ export const BidModalRenderer: FC<Props> = ({
     wrappedContractName
   )
   const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
-  const totalBidAmount = Number(bidInput) * Math.max(1, quantity)
+  const totalBidAmount = Number(bidAmountPerUnit) * Math.max(1, quantity)
   const totalBidAmountUsd = totalBidAmount * (usdPrice || 0)
 
   const client = useReservoirClient()
@@ -281,7 +281,7 @@ export const BidModalRenderer: FC<Props> = ({
       setHasEnoughNativeCurrency(false)
       setHasEnoughWrappedCurrency(false)
       setAmountToWrap('')
-      setBidInput('')
+      setBidAmountPerUnit('')
       setQuantity(1)
       setStepData(null)
       setBidData(null)
@@ -440,7 +440,7 @@ export const BidModalRenderer: FC<Props> = ({
         wrappedContractAddress,
         convertLink,
         canAutomaticallyConvert,
-        bidInput,
+        bidAmountPerUnit,
         totalBidAmount,
         quantity,
         setQuantity,
@@ -458,7 +458,7 @@ export const BidModalRenderer: FC<Props> = ({
         currency,
         setCurrency,
         setBidStep,
-        setBidInput,
+        setBidAmountPerUnit,
         setExpirationOption,
         setTrait,
         trait,
