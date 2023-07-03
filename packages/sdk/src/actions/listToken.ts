@@ -58,13 +58,10 @@ export async function listToken(
     listings.forEach((listing) => {
       if (
         (!listing.orderbook || listing.orderbook === 'reservoir') &&
-        client.marketplaceFee &&
-        client.marketplaceFeeRecipient &&
+        client.marketplaceFees &&
         !('fees' in listing)
       ) {
-        listing.fees = [
-          `${client.marketplaceFeeRecipient}:${client.marketplaceFee}`,
-        ]
+        listing.fees = client.marketplaceFees
       }
 
       if (

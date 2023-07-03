@@ -77,7 +77,7 @@ export default function ({
     chainId: chainId,
     address: manifoldContract as any,
     abi: MANIFOLD_ABI,
-    args: [contract as any, tokenId as any, amount],
+    args: [contract as any, tokenId as any, amount as any],
     functionName: 'getRoyaltyView',
     enabled: enabled && tokenId && contract && amount ? true : false,
     cacheTime: 60 * 1000,

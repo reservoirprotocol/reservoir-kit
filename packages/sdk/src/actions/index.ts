@@ -21,8 +21,7 @@ export type ReservoirEventListener = (
  * @param chains List of chain objects with configuration (id, baseApiUrl, apiKey and if it's the default)
  * @param source Used to manually override the source domain used to attribute local orders
  * @param automatedRoyalties If true, royalties will be automatically included, defaults to true. Only relevant for creating orders.
- * @param marketplaceFee Fee in bps included when creating an order (listing & bidding)
- * @param marketplaceFeeRecipient Marketplace fee recipient
+ * @param marketplaceFees A list of fee strings representing a recipient and the fee in BPS delimited by a colon: ["0xabc:100"] used when creating an order (listing or bid)
  * @param normalizeRoyalties Normalize orders that don't have royalties by apply royalties on top of them
  */
 export type ReservoirClientOptions = {
@@ -30,8 +29,7 @@ export type ReservoirClientOptions = {
   uiVersion?: string
   source?: string
   automatedRoyalties?: boolean
-  marketplaceFee?: number
-  marketplaceFeeRecipient?: string
+  marketplaceFees?: string[]
   normalizeRoyalties?: boolean
   logLevel?: LogLevel
 }
@@ -46,8 +44,7 @@ export class ReservoirClient {
   chains: ReservoirChain[]
   source?: string
   uiVersion?: string
-  marketplaceFee?: number
-  marketplaceFeeRecipient?: string
+  marketplaceFees?: string[]
   automatedRoyalties?: boolean
   normalizeRoyalties?: boolean
   logLevel: LogLevel
@@ -66,8 +63,7 @@ export class ReservoirClient {
     this.chains = options.chains
     this.uiVersion = options.uiVersion
     this.automatedRoyalties = options.automatedRoyalties
-    this.marketplaceFee = options.marketplaceFee
-    this.marketplaceFeeRecipient = options.marketplaceFeeRecipient
+    this.marketplaceFees = options.marketplaceFees
     this.normalizeRoyalties = options.normalizeRoyalties
     this.source = options.source
     this.logLevel =
@@ -78,12 +74,9 @@ export class ReservoirClient {
     this.source = options.source ? options.source : this.source
     this.uiVersion = options.uiVersion ? options.uiVersion : this.uiVersion
     this.chains = options.chains ? options.chains : this.chains
-    this.marketplaceFee = options.marketplaceFee
-      ? options.marketplaceFee
-      : this.marketplaceFee
-    this.marketplaceFeeRecipient = options.marketplaceFeeRecipient
-      ? options.marketplaceFeeRecipient
-      : this.marketplaceFeeRecipient
+    this.marketplaceFees = options.marketplaceFees
+      ? options.marketplaceFees
+      : this.marketplaceFees
     this.automatedRoyalties = options.automatedRoyalties
     this.normalizeRoyalties =
       options.normalizeRoyalties !== undefined
