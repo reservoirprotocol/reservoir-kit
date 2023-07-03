@@ -188,9 +188,7 @@ const TokenMedia: FC<Props> = ({
               style={{ ...computedStyle }}
               alt="Token Image"
               onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                if (!isFetchingTokenURI && isUpdatingOnChainImage) {
-                  setOnChainImageBroken(true)
-                }
+                setOnChainImageBroken(true)
               }}
             />
           )}
