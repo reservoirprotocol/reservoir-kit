@@ -15,7 +15,7 @@ type ChildrenProps = {
   currency?: NonNullable<Cart['items'][0]['price']>['currency']
   cartCurrencyConverted?: Boolean
   totalPrice: number
-  referrerFee?: number
+  feeOnTop?: number
   usdPrice: number | null
   balance?: bigint
   hasEnoughCurrency: boolean
@@ -48,7 +48,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     items,
     currency,
     transaction,
-    referrerFee,
+    feeOnTop,
     chain: cartChain,
   } = data
   const usdConversion = useCoinConversion(
@@ -138,7 +138,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         currency,
         cartCurrencyConverted,
         totalPrice,
-        referrerFee,
+        feeOnTop,
         usdPrice,
         hasEnoughCurrency,
         balance: balance?.value,

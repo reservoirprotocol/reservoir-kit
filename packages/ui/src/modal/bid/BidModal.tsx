@@ -85,6 +85,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   currencies?: Currency[]
   oracleEnabled?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  feesBps?: string[] | null
   onViewOffers?: () => void
   onClose?: (
     data: BidCallbackData,
@@ -141,6 +142,7 @@ export function BidModal({
   currencies,
   oracleEnabled = false,
   copyOverrides,
+  feesBps,
   onViewOffers,
   onClose,
   onBidComplete,
@@ -173,6 +175,7 @@ export function BidModal({
       normalizeRoyalties={normalizeRoyalties}
       oracleEnabled={oracleEnabled}
       currencies={currencies}
+      feesBps={feesBps}
     >
       {({
         token,
