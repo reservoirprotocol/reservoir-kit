@@ -1,3 +1,11 @@
+
+## [v1.2.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/af6a55c31bbd9748c789e1ab2bd39082ce50003b) (2023-07-03)
+
+* Merge pull request #291 from reservoirprotocol/pedro/grwth-2634-add-global-referrer-fees-that-impact-purchasing-globally [df3c6b4](https://github.com/reservoirprotocol/reservoir-kit/commit/df3c6b47c7ee86455376afcfc3b6f6615f7d7e5e)
+* Remove global feesOnTop until we have a better solution [b3953b1](https://github.com/reservoirprotocol/reservoir-kit/commit/b3953b11eb4c14efeeb055687c64aea49fa7ca48)
+* ListModal override marketplace fees [349a14c](https://github.com/reservoirprotocol/reservoir-kit/commit/349a14c29e73b14d874925506bfc1ab9a696f020)
+* Add feesBps prop to BidModal [46f021e](https://github.com/reservoirprotocol/reservoir-kit/commit/46f021ee981783107a09d551c79125e07163d3cd)
+* Refactor CartProvider fees and add global referrer fees [0023b9a](https://github.com/reservoirprotocol/reservoir-kit/commit/0023b9a1642d51cb0ad4f5fbc70196afa5cf2f5e)
 ## [v1.1.14-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/afc556946e46dfb212ec77ecc8903a5e6e85c6af) (2023-06-29)
 
 ## [v1.1.13-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/1c2d07ce6f219dc68f35344b7e158b2d8f457ce3) (2023-06-28)
