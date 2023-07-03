@@ -10,14 +10,18 @@ import React, {
   VideoHTMLAttributes,
   AudioHTMLAttributes,
   IframeHTMLAttributes,
+  useEffect,
+  ComponentPropsWithoutRef,
 } from 'react'
 import { useTokens } from '../../hooks'
 import { useModelViewer } from '../../hooks'
 import { ThemeContext } from '../../ReservoirKitProvider'
-import { Box } from '../../primitives'
+import { Box, Loader } from '../../primitives'
 import MediaPlayButton from './MediaPlayButton'
 import { useMeasure } from '@react-hookz/web'
 import TokenFallback from './TokenFallback'
+import { Address, erc721ABI, useContractRead } from 'wagmi'
+import { convertTokenUriToImage } from '../../lib/processTokenURI'
 
 type MediaType =
   | 'mp4'
@@ -54,35 +58,40 @@ type Token = NonNullable<
 
 type RequiredTokenProps = Pick<
   NonNullable<Token>,
-  'image' | 'media' | 'collection' | 'tokenId'
+  'image' | 'media' | 'collection' | 'tokenId' | 'imageSmall' | 'imageLarge'
 >
 
 type Props = {
   token?: RequiredTokenProps
-  preview?: boolean
+  staticOnly?: boolean
+  imageResolution?: 'small' | 'medium' | 'large'
   style?: CSSProperties
   className?: string
   modelViewerOptions?: any
   videoOptions?: VideoHTMLAttributes<HTMLVideoElement>
   audioOptions?: AudioHTMLAttributes<HTMLAudioElement>
   iframeOptions?: IframeHTMLAttributes<HTMLIFrameElement>
-  enableOnChainImageFallback?: boolean
-  prefferedImageSize?: 'small' | 'medium' | 'large'
+  disableOnChainRendering?: boolean
+  chainId?: number
+  fallbackMode?: ComponentPropsWithoutRef<typeof TokenFallback>['mode']
   fallback?: (mediaType: MediaType | null) => ReactElement | null
   onError?: (e: Event) => void
   onRefreshToken?: () => void
 }
 
 const TokenMedia: FC<Props> = ({
-  preview,
   token,
+  staticOnly,
+  imageResolution,
   style,
   className,
   modelViewerOptions = {},
   videoOptions = {},
   audioOptions = {},
   iframeOptions = {},
-  enableOnChainImageFallback,
+  disableOnChainRendering,
+  chainId,
+  fallbackMode,
   fallback,
   onError = () => {},
   onRefreshToken = () => {},
@@ -92,7 +101,17 @@ const TokenMedia: FC<Props> = ({
   let borderRadius: string = themeContext?.radii?.borderRadius?.value || '0'
   const [error, setError] = useState<SyntheticEvent | Event | null>(null)
   const media = token?.media
-  const tokenPreview = token?.image
+  const tokenImage = (() => {
+    switch (imageResolution) {
+      case 'small':
+        return token?.imageSmall
+      case 'large':
+        return token?.imageLarge
+      case 'medium':
+      default:
+        return token?.image
+    }
+  })()
   const mediaType = extractMediaType(token)
   const defaultStyle: CSSProperties = {
     width: '150px',
@@ -107,7 +126,7 @@ const TokenMedia: FC<Props> = ({
   }
 
   useModelViewer(
-    !preview && mediaType && (mediaType === 'gltf' || mediaType === 'glb')
+    !staticOnly && mediaType && (mediaType === 'gltf' || mediaType === 'glb')
       ? true
       : false
   )
@@ -115,12 +134,70 @@ const TokenMedia: FC<Props> = ({
   const [measurements, containerRef] = useMeasure<HTMLDivElement>()
   const isContainerLarge = (measurements?.width || 0) >= 360
 
-  if (!token && !preview) {
+  const contract = token?.collection?.id?.split(':')[0] as Address
+
+  const [onChainImage, setOnChainImage] = useState('')
+  const [onChainImageBroken, setOnChainImageBroken] = useState(false)
+  const [isUpdatingOnChainImage, setIsUpdatingOnChainImage] = useState(false)
+
+  const {
+    data: tokenURI,
+    isLoading: isFetchingTokenURI,
+    isError: fetchTokenURIError,
+  } = useContractRead(
+    !disableOnChainRendering && (error || (!media && !tokenImage))
+      ? {
+          address: contract,
+          abi: erc721ABI,
+          functionName: 'tokenURI',
+          args: token?.tokenId ? [BigInt(token?.tokenId)] : undefined,
+          chainId: chainId,
+        }
+      : undefined
+  )
+
+  useEffect(() => {
+    if (tokenURI) {
+      setIsUpdatingOnChainImage(true)
+      ;(async () => {
+        const updatedOnChainImage = await convertTokenUriToImage(tokenURI)
+        setOnChainImage(updatedOnChainImage)
+      })()
+      setIsUpdatingOnChainImage(false)
+    }
+  }, [tokenURI])
+
+  if (!token && !staticOnly) {
     console.warn('A token object or a media url are required!')
     return null
   }
 
-  if (error || (!media && !tokenPreview)) {
+  if (error || (!media && !tokenImage)) {
+    if (
+      !disableOnChainRendering &&
+      !onChainImageBroken &&
+      !fetchTokenURIError
+    ) {
+      return (
+        <>
+          {isFetchingTokenURI || isUpdatingOnChainImage ? (
+            <Loader style={{ ...computedStyle }} />
+          ) : (
+            <img
+              src={onChainImage}
+              style={{ ...computedStyle }}
+              alt="Token Image"
+              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                if (!isFetchingTokenURI && isUpdatingOnChainImage) {
+                  setOnChainImageBroken(true)
+                }
+              }}
+            />
+          )}
+        </>
+      )
+    }
+
     let fallbackElement: ReactElement | null | undefined
     if (fallback) {
       fallbackElement = fallback(mediaType)
@@ -131,8 +208,8 @@ const TokenMedia: FC<Props> = ({
           style={style}
           className={className}
           token={token}
+          mode={fallbackMode}
           onRefreshClicked={onRefreshToken}
-          enableOnChainImageFallback={enableOnChainImageFallback}
         />
       )
     }
@@ -144,15 +221,15 @@ const TokenMedia: FC<Props> = ({
     onError(e.nativeEvent)
   }
 
-  if (preview || !media) {
+  if (staticOnly || !media) {
     return (
       <img
         alt="Token Image"
-        src={tokenPreview}
+        src={tokenImage}
         style={{
           ...computedStyle,
           visibility:
-            !tokenPreview || tokenPreview.length === 0 ? 'hidden' : 'visible',
+            !tokenImage || tokenImage.length === 0 ? 'hidden' : 'visible',
         }}
         className={className}
         onError={onErrorCb}
@@ -168,7 +245,7 @@ const TokenMedia: FC<Props> = ({
         <video
           style={computedStyle}
           className={className}
-          poster={tokenPreview}
+          poster={tokenImage}
           {...videoOptions}
           controls={isContainerLarge}
           loop
@@ -191,13 +268,13 @@ const TokenMedia: FC<Props> = ({
         {!isContainerLarge && <MediaPlayButton mediaRef={mediaRef} />}
         <img
           alt="Audio Poster"
-          src={tokenPreview}
+          src={tokenImage}
           style={{
             position: 'absolute',
             height: '100%',
             width: '100%',
             visibility:
-              !tokenPreview || tokenPreview.length === 0 ? 'hidden' : 'visible',
+              !tokenImage || tokenImage.length === 0 ? 'hidden' : 'visible',
             objectFit: 'cover',
           }}
           onError={onErrorCb}
@@ -229,7 +306,7 @@ const TokenMedia: FC<Props> = ({
         src={media}
         ar
         ar-modes="webxr scene-viewer quick-look"
-        poster={tokenPreview}
+        poster={tokenImage}
         seamless-poster
         shadow-intensity="1"
         camera-controls
@@ -286,11 +363,11 @@ const TokenMedia: FC<Props> = ({
   return (
     <img
       alt="Token Image"
-      src={tokenPreview}
+      src={tokenImage}
       style={{
         ...computedStyle,
         visibility:
-          !tokenPreview || tokenPreview.length === 0 ? 'hidden' : 'visible',
+          !tokenImage || tokenImage.length === 0 ? 'hidden' : 'visible',
       }}
       className={className}
       onError={onErrorCb}

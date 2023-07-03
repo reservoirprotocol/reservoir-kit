@@ -1,6 +1,10 @@
 import { NextPage } from 'next'
-import { TokenMedia, useTokens } from '@reservoir0x/reservoir-kit-ui'
-import { useState } from 'react'
+import {
+  TokenMedia,
+  useReservoirClient,
+  useTokens,
+} from '@reservoir0x/reservoir-kit-ui'
+import { ComponentPropsWithoutRef, useState } from 'react'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 
 const DEFAULT_COLLECTION_ID =
@@ -11,10 +15,16 @@ const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '2'
 const TokenMediaPage: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
-  const [preview, setPreview] = useState(false)
   const [showGrid, setShowGrid] = useState(true)
-  const [enableOnChainImageFallback, setEnableOnChainImageFallback] =
-    useState(false)
+  const [staticOnly, setStaticOnly] = useState(false)
+  const [imageResolution, setImageResolution] = useState('medium')
+  const [disableOnChainRendering, setDisableOnChainRendering] = useState(false)
+  const [fallbackMode, setFallbackMode] =
+    useState<ComponentPropsWithoutRef<typeof TokenMedia>['fallbackMode']>(
+      'default'
+    )
+  const client = useReservoirClient()
+  const chain = client?.currentChain()
 
   const { data: tokens } = useTokens(
     collectionId
@@ -70,14 +80,6 @@ const TokenMediaPage: NextPage = () => {
           style={{ width: 250 }}
         />
       </div>
-      <div>
-        <label>enableOnChainImageFallback: </label>
-        <input
-          type="checkbox"
-          checked={enableOnChainImageFallback}
-          onChange={(e) => setEnableOnChainImageFallback(e.target.checked)}
-        />
-      </div>
       {!showGrid && (
         <div>
           <label>Token Id: </label>
@@ -91,14 +93,54 @@ const TokenMediaPage: NextPage = () => {
         </div>
       )}
       <div>
-        <label>Preview: </label>
+        <label>staticOnly: </label>
         <input
           type="checkbox"
-          checked={preview}
+          checked={staticOnly}
           onChange={(e) => {
-            setPreview(e.target.checked)
+            setStaticOnly(e.target.checked)
           }}
         />
+      </div>
+      <div>
+        <label>imageResolution: </label>
+        <input
+          placeholder="small | medium | large"
+          type="text"
+          value={imageResolution}
+          onChange={(e) => setImageResolution(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>disableOnChainRendering: </label>
+        <input
+          type="checkbox"
+          checked={disableOnChainRendering}
+          onChange={(e) => setDisableOnChainRendering(e.target.checked)}
+        />
+      </div>
+      <div style={{ display: 'flex', gap: 10 }}>
+        <label>fallbackMode: </label>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <div>
+            <input
+              type="radio"
+              value="default"
+              checked={fallbackMode === 'default'}
+              onChange={() => setFallbackMode('default')}
+            />
+            <label>default</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              value="simple"
+              checked={fallbackMode === 'simple'}
+              onChange={() => setFallbackMode('simple')}
+            />
+            <label>simple</label>
+          </div>
+        </div>
       </div>
       {showGrid ? (
         <div
@@ -112,18 +154,30 @@ const TokenMediaPage: NextPage = () => {
             <TokenMedia
               key={i}
               token={token?.token}
-              preview={preview}
+              staticOnly={staticOnly}
+              imageResolution={
+                imageResolution as ComponentPropsWithoutRef<
+                  typeof TokenMedia
+                >['imageResolution']
+              }
               onRefreshToken={() => {
                 window.alert('Token was refreshed!')
               }}
-              enableOnChainImageFallback={enableOnChainImageFallback}
+              disableOnChainRendering={disableOnChainRendering}
+              fallbackMode={fallbackMode}
+              chainId={chain?.id}
             />
           ))}
         </div>
       ) : (
         <TokenMedia
           token={tokens && tokens[0] ? tokens[0].token : undefined}
-          preview={preview}
+          staticOnly={staticOnly}
+          imageResolution={
+            imageResolution as ComponentPropsWithoutRef<
+              typeof TokenMedia
+            >['imageResolution']
+          }
           style={{
             minWidth: '400px',
             minHeight: '400px',
@@ -131,7 +185,8 @@ const TokenMediaPage: NextPage = () => {
           onRefreshToken={() => {
             window.alert('Token was refreshed!')
           }}
-          enableOnChainImageFallback={enableOnChainImageFallback}
+          disableOnChainRendering={disableOnChainRendering}
+          chainId={chain?.id}
         />
       )}
       <ThemeSwitcher />
