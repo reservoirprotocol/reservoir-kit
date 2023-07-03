@@ -1,3 +1,20 @@
+## [v1.1.14-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/098c68371db8c0f6573761ba82ab51d9bcc9740e) (2023-07-03)
+
+- Revamp Fees [df3c6b4](https://github.com/reservoirprotocol/reservoir-kit/commit/df3c6b47c7ee86455376afcfc3b6f6615f7d7e5e)
+
+## [v1.1.13-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/230549791b46b3c4edc4241a59d90940a3f75bac) (2023-06-29)
+
+- Support supplying a gas limit [2b0cf0d](https://github.com/reservoirprotocol/reservoir-kit/commit/2b0cf0d3055bf6cd743bfb1a965b95e6113f633f)
+- Fix issue with viemWallet adapter not properly finding zora chain [e4165a5](https://github.com/reservoirprotocol/reservoir-kit/commit/e4165a5aaac96a3162f1379e48f28a4f24c39fa9)
+
+## [v1.1.12-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/cafabb2243055d78a67fc9bb0b435d4a82737172) (2023-06-28)
+
+- Sync api [60f057e](https://github.com/reservoirprotocol/reservoir-kit/commit/60f057ef75bc9a082931a099077ad8e43c0c51ce)
+
+## [v1.1.11-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/aeab00cf7e2dcfbe68503d0d00224497c2e5357f) (2023-06-27)
+
+- Upgrade viem to ~1.0.6 [ rainbowkit to ^1.0.3](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-06-26)
+
 ## [v1.1.10-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0c32e8414712a17146e7fdec9f6082637d3259fc) (2023-06-22)
 
 - Add ethers adapter [2023-06-16](https://github.com/reservoirprotocol/reservoir-kit/commit/f6c8865)

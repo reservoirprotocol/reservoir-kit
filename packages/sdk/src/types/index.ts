@@ -44,6 +44,7 @@ export type TransactionStepItem = Pick<
     value: string
     maxFeePerGas?: string
     maxPriorityFeePerGas?: string
+    gas?: string
   }
 }
 

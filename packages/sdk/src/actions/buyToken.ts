@@ -21,6 +21,7 @@ type Data = {
   chainId?: number
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
   precheck?: boolean
+  gas?: string
 }
 
 /**
@@ -32,9 +33,11 @@ type Data = {
  * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state as execution progresses
  * @param data.precheck Set to true to skip executing steps and just to get the initial steps/path
+ * @param data.gas String of the gas provided for the transaction execution. It will return unused gas
  */
 export async function buyToken(data: Data) {
-  const { items, expectedPrice, wallet, chainId, onProgress, precheck } = data
+  const { items, expectedPrice, wallet, chainId, onProgress, precheck, gas } =
+    data
   const client = getClient()
   const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
     ? adaptViemWallet(wallet)
@@ -114,7 +117,8 @@ export async function buyToken(data: Data) {
         onProgress,
         undefined,
         expectedPrice,
-        chainId
+        chainId,
+        gas
       )
     }
   } catch (err: any) {
