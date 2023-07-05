@@ -38,8 +38,8 @@ export const CollectionInfo: FC<Props> = ({ collection, mode }) => {
           <Text style="h6">{collection?.name}</Text>
           <Flex align="center" css={{ gap: '$2' }}>
             {mintEndTime ? (
-              <Text style="body2" color="subtle">
-                {mintEndTime}
+              <Text style="body3" color="subtle">
+                Ends {mintEndTime}
               </Text>
             ) : null}
           </Flex>
