@@ -6,6 +6,7 @@ import {
   CollectModalStepData,
   CollectModalMode,
   CollectStep,
+  CollectModalContentMode,
 } from './CollectModalRenderer'
 import { MintContent } from './mint/MintContent'
 import { SweepContent } from './sweep/SweepContent'
@@ -14,6 +15,7 @@ import { Flex, Text } from '../../primitives'
 type CollectCallbackData = {
   collectionId?: string
   maker?: string
+  contentMode?: CollectModalContentMode
   stepData: CollectModalStepData | null
 }
 
@@ -93,6 +95,7 @@ export function CollectModal({
               collectionId: collectionId,
               maker: address,
               stepData,
+              contentMode,
             }
 
             onCollectComplete(data)
@@ -105,6 +108,7 @@ export function CollectModal({
               collectionId: collectionId,
               maker: address,
               stepData,
+              contentMode,
             }
             onCollectError(transactionError, data)
           }
@@ -122,6 +126,7 @@ export function CollectModal({
                   collectionId: collectionId,
                   maker: address,
                   stepData,
+                  contentMode,
                 }
                 onClose(data, collectStep)
               }

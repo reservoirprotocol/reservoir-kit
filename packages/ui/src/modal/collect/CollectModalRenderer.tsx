@@ -240,7 +240,7 @@ export const CollectModalRenderer: FC<Props> = ({
         return () => clearInterval(intervalId)
       }
     }
-  }, [client, wallet, open, fetchBuyPathIfIdle])
+  }, [client, wallet, open, fetchBuyPathIfIdle, contentMode])
 
   // Update currency
   const updateCurrency = useCallback(
