@@ -1,3 +1,30 @@
+## [v1.2.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/af6a55c31bbd9748c789e1ab2bd39082ce50003b) (2023-07-03)
+
+- ListModal: override marketplace fees [349a14c](https://github.com/reservoirprotocol/reservoir-kit/commit/349a14c29e73b14d874925506bfc1ab9a696f020)
+- BidModal: Add feesBps prop [46f021e](https://github.com/reservoirprotocol/reservoir-kit/commit/46f021ee981783107a09d551c79125e07163d3cd)
+- CartProvider: Refactor fees and add global referrer fees [0023b9a](https://github.com/reservoirprotocol/reservoir-kit/commit/0023b9a1642d51cb0ad4f5fbc70196afa5cf2f5e)
+
+## [v1.1.14-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/afc556946e46dfb212ec77ecc8903a5e6e85c6af) (2023-06-29)
+
+## [v1.1.13-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/1c2d07ce6f219dc68f35344b7e158b2d8f457ce3) (2023-06-28)
+
+- Add bnb wrapped contract configuration [798a02d](https://github.com/reservoirprotocol/reservoir-kit/commit/798a02dce17d451b8ce45abfad5466dfcf0c83cc)
+
+- AcceptBidModal: use netamount to check expected price [d9533d2](https://github.com/reservoirprotocol/reservoir-kit/commit/d9533d2c3f80d69132a60ddcfb26a39ba9bf9f8c)
+- ListModal: Use new payment tokens property from supported marketplaces api [7d536a4](https://github.com/reservoirprotocol/reservoir-kit/commit/7d536a4a6e65c7e022fbedc8ad844566ebd69f1b)
+
+## [v1.1.12-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/18e39c372780963ae26f5a227c4202371d309046) (2023-06-27)
+
+- Upgrade Viem & Wagmi Peer dependencies [0dddd11](https://github.com/reservoirprotocol/reservoir-kit/commit/0dddd1191f59f61929ba1551c9dd5491ac22d6d9)
+
+## [v1.1.11-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/080732333722213800b5621c8f4574b937426508) (2023-06-27)
+
+- EditBidModal and EditListingModal: Fix collection range issues [bd21a95](https://github.com/reservoirprotocol/reservoir-kit/commit/bd21a9599eee7483d0657b1bdfda7bfb9b6aeefb)
+- AcceptBidModal: Fix token range lookups [c71f432](https://github.com/reservoirprotocol/reservoir-kit/commit/c71f432b8ddf90d16d2327516dc8dc04ae87b480)
+- Add payment token logic for opensea listing in non native currencies [630f60b](https://github.com/reservoirprotocol/reservoir-kit/commit/630f60b72d011c11617702d802569d187773a0aa)
+- Use net amount when checking expected price quote for selling [ddad809](https://github.com/reservoirprotocol/reservoir-kit/commit/ddad809b6c98a72b709de1694d28a61e4ef70fd7)
+- Upgrade viem to ~1.0.6 [ rainbowkit to ^1.0.3](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-06-26)
+
 ## [v1.1.10-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2eefe64cd5bdbad5d4a2c4a8f13727cb5eac2895) (2023-06-22)
 
 - Update Powered by Reservoir modal footers [6ae1ad6](https://github.com/reservoirprotocol/reservoir-kit/commit/6ae1ad68d4e58121f0134b2afd95d0ebbae91449)
