@@ -118,9 +118,13 @@ export const SweepContent: FC<
             css={{ borderBottom: '1px solid $neutralBorder' }}
           >
             {transactionError ? <ErrorWell /> : null}
-            <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
+            <Flex direction="column" css={{ p: '$4', gap: 10 }}>
               <CollectionInfo collection={collection} mode="sweep" />
-              <Flex align="center" justify="between" css={{ gap: '$6' }}>
+              <Flex
+                align="center"
+                justify="between"
+                css={{ gap: '$6', mt: '$1' }}
+              >
                 <Flex
                   direction="column"
                   align="start"
@@ -131,61 +135,55 @@ export const SweepContent: FC<
                     {maxInput} {maxInput > 1 ? 'items' : 'item'} available
                   </Text>
                 </Flex>
-                <Flex
-                  direction="column"
-                  align="start"
-                  css={{ width: '100%', gap: 10 }}
-                >
-                  <QuantitySelector
-                    quantity={itemAmount}
-                    setQuantity={setItemAmount}
-                    min={1}
-                    max={maxInput}
-                    css={{ width: '100%', justifyContent: 'space-between' }}
-                  />
-                  {itemAmount > 1 ? (
-                    <Flex align="center" css={{ gap: '$3' }}>
-                      <Flex align="center" css={{ gap: '$2' }}>
-                        <Text style="subtitle2" color="subtle">
-                          Price Range
-                        </Text>
-                        <FormatCryptoCurrency
-                          amount={cheapestTokenPrice}
-                          address={currency?.address}
-                          decimals={currency?.decimals}
-                          symbol={currency?.symbol}
-                          maximumFractionDigits={2}
-                        />
-                        <Text style="subtitle2" color="subtle">
-                          -
-                        </Text>
-                        <FormatCryptoCurrency
-                          amount={mostExpensiveTokenPrice}
-                          address={currency?.address}
-                          decimals={currency?.decimals}
-                          symbol={currency?.symbol}
-                          maximumFractionDigits={2}
-                        />
-                      </Flex>
-                      <Text style="subtitle2" color="subtle">
-                        |
-                      </Text>
-                      <Flex align="center" css={{ gap: '$2' }}>
-                        <Text style="subtitle2" color="subtle">
-                          Avg Price
-                        </Text>
-                        <FormatCryptoCurrency
-                          amount={total / itemAmount}
-                          address={currency?.address}
-                          decimals={currency?.decimals}
-                          symbol={currency?.symbol}
-                          maximumFractionDigits={2}
-                        />
-                      </Flex>
-                    </Flex>
-                  ) : null}
-                </Flex>
+                <QuantitySelector
+                  quantity={itemAmount}
+                  setQuantity={setItemAmount}
+                  min={1}
+                  max={maxInput}
+                  css={{ width: '100%', justifyContent: 'space-between' }}
+                />
               </Flex>
+              {itemAmount > 1 ? (
+                <Flex justify="end" css={{ gap: '$3' }}>
+                  <Flex align="center" css={{ gap: '$2' }}>
+                    <Text style="subtitle2" color="subtle">
+                      Price Range
+                    </Text>
+                    <FormatCryptoCurrency
+                      amount={cheapestTokenPrice}
+                      address={currency?.address}
+                      decimals={currency?.decimals}
+                      symbol={currency?.symbol}
+                      maximumFractionDigits={2}
+                    />
+                    <Text style="subtitle2" color="subtle">
+                      -
+                    </Text>
+                    <FormatCryptoCurrency
+                      amount={mostExpensiveTokenPrice}
+                      address={currency?.address}
+                      decimals={currency?.decimals}
+                      symbol={currency?.symbol}
+                      maximumFractionDigits={2}
+                    />
+                  </Flex>
+                  <Text style="subtitle2" color="subtle">
+                    |
+                  </Text>
+                  <Flex align="center" css={{ gap: '$2' }}>
+                    <Text style="subtitle2" color="subtle">
+                      Avg Price
+                    </Text>
+                    <FormatCryptoCurrency
+                      amount={total / itemAmount}
+                      address={currency?.address}
+                      decimals={currency?.decimals}
+                      symbol={currency?.symbol}
+                      maximumFractionDigits={2}
+                    />
+                  </Flex>
+                </Flex>
+              ) : null}
             </Flex>
           </Flex>
           <Flex direction="column" css={{ px: '$4', pt: '$4', pb: '$2' }}>
