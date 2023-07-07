@@ -18,7 +18,12 @@ import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
-import { BidData, Trait, Traits } from '../bid/BidModalRenderer'
+import {
+  BidData,
+  FetchBalanceResult,
+  Trait,
+  Traits,
+} from '../bid/BidModalRenderer'
 import { formatBN } from '../../lib/numbers'
 import { parseUnits } from 'viem'
 
@@ -55,8 +60,8 @@ type ChildrenProps = {
   transactionError?: Error | null
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
-  balance?: ReturnType<typeof useBalance>['data']
-  wrappedBalance?: ReturnType<typeof useBalance>['data']
+  balance?: FetchBalanceResult
+  wrappedBalance?: FetchBalanceResult
   wrappedContractName: string
   wrappedContractAddress: string
   amountToWrap: string
@@ -408,6 +413,7 @@ export const EditBidModalRenderer: FC<Props> = ({
       })
       .catch((e: any) => {
         const error = e as Error
+        //@ts-ignore: Should be fixed in an update to typescript
         const transactionError = new Error(error?.message || '', {
           cause: error,
         })

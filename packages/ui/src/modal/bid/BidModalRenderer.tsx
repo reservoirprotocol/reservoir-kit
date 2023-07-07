@@ -38,6 +38,13 @@ const expirationOptions = [
   },
 ]
 
+export type FetchBalanceResult = {
+  decimals: number
+  formatted: string
+  symbol: string
+  value: bigint
+}
+
 export enum BidStep {
   SetPrice,
   Offering,
@@ -71,8 +78,8 @@ type ChildrenProps = {
   hasEnoughWrappedCurrency: boolean
   amountToWrap: string
   usdPrice: number | null
-  balance?: ReturnType<typeof useBalance>['data']
-  wrappedBalance?: ReturnType<typeof useBalance>['data']
+  balance?: FetchBalanceResult
+  wrappedBalance?: FetchBalanceResult
   wrappedContractName: string
   wrappedContractAddress: string
   canAutomaticallyConvert: boolean
@@ -439,6 +446,7 @@ export const BidModalRenderer: FC<Props> = ({
         },
       })
       .catch((e: any) => {
+        //@ts-ignore
         const transactionError = new Error(e?.message || '', {
           cause: e,
         })
@@ -464,8 +472,8 @@ export const BidModalRenderer: FC<Props> = ({
         collection,
         attributes,
         usdPrice,
-        balance,
-        wrappedBalance,
+        // balance,
+        // wrappedBalance,
         wrappedContractName,
         wrappedContractAddress,
         convertLink,
