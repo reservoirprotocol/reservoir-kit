@@ -513,6 +513,7 @@ export const CollectModalRenderer: FC<Props> = ({
       })
       .catch((e: any) => {
         const error = e as Error
+        //@ts-ignore
         const transactionError = new Error(error?.message || '', {
           cause: error,
         })
