@@ -167,6 +167,10 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const collection = collections && collections[0] ? collections[0] : undefined
 
+  // @TODO - add rest of logic around single token 1155
+  const isOneToken1155 =
+    collection?.contractKind === 'erc1155' && collection?.tokenCount === '1'
+
   const fetchBuyPath = useCallback(() => {
     if (!wallet || !client) {
       return
@@ -186,7 +190,6 @@ export const CollectModalRenderer: FC<Props> = ({
         items: [
           {
             collection: collectionId,
-            quantity: 50,
             fillType: mode === 'preferMint' ? undefined : mode,
           },
         ],
@@ -409,6 +412,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
     let options: BuyTokenOptions = {
       partial: true,
+      onlyPath: true,
     }
 
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
