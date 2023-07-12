@@ -27,6 +27,7 @@ import SigninStep from '../../SigninStep'
 import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible'
 import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
+import { TokenInfo } from '../TokenInfo'
 
 export const MintContent: FC<
   ChildrenProps & {
@@ -36,11 +37,12 @@ export const MintContent: FC<
   }
 > = ({
   collection,
+  token,
   orders,
   mintPrice,
   itemAmount,
   setItemAmount,
-  maxInput,
+  maxItemAmount,
   currency,
   total,
   totalUsd,
@@ -90,7 +92,7 @@ export const MintContent: FC<
 
   return (
     <>
-      {orders?.length === 0 ? (
+      {orders?.length === 0 || maxItemAmount === 0 ? (
         <Flex
           direction="column"
           align="center"
@@ -111,7 +113,8 @@ export const MintContent: FC<
               />
             </Box>
             <Text style="h6" css={{ textAlign: 'center' }}>
-              Oops. Looks like the mint has ended.
+              Oops. Looks like the mint has ended or the maximum minting limit
+              has been reached.
             </Text>
           </Flex>
           <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
@@ -120,108 +123,131 @@ export const MintContent: FC<
         </Flex>
       ) : null}
 
-      {orders.length > 0 && collectStep === CollectStep.Idle && (
-        <Flex direction="column">
-          <Flex
-            direction="column"
-            css={{ borderBottom: '1px solid $neutralBorder' }}
-          >
-            {transactionError ? <ErrorWell /> : null}
-            <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
-              <CollectionInfo collection={collection} mode="mint" />
-              <QuantitySelector
-                min={1}
-                max={maxInput}
-                quantity={itemAmount}
-                setQuantity={setItemAmount}
-                css={{ justifyContent: 'space-between' }}
-              />
-            </Flex>
-          </Flex>
-          <Flex
-            direction="column"
-            css={{ px: '$4', pt: '$4', pb: '$2', gap: '$4' }}
-          >
-            <Flex direction="column" css={{ gap: 10 }}>
-              {hasQuantitySet ? (
-                <Flex justify="between" align="center" css={{ gap: '$4' }}>
-                  <Text style="subtitle2" color="subtle">
-                    {itemAmount} {quantitySubject}
-                  </Text>
-                  <Flex css={{ gap: '$1' }}>
-                    <FormatCryptoCurrency
-                      amount={mintPrice}
-                      address={currency?.address}
-                      decimals={currency?.decimals}
-                      symbol={currency?.symbol}
-                      logoWidth={12}
-                      css={{ color: '$neutralText' }}
-                    />
-                    <Text style="subtitle2" color="subtle">
-                      x {itemAmount}
-                    </Text>
-                  </Flex>
-                </Flex>
-              ) : null}
-            </Flex>
-            <Flex justify="between" align="start" css={{ height: 34 }}>
-              <Text style="h6">Total</Text>
-              <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                <FormatCryptoCurrency
-                  textStyle="h6"
-                  amount={total}
-                  address={currency?.address}
-                  decimals={currency?.decimals}
-                  symbol={currency?.symbol}
-                  logoWidth={18}
-                />
-                <FormatCurrency
-                  amount={totalUsd}
-                  style="subtitle2"
-                  color="subtle"
-                />
-              </Flex>
-            </Flex>
-          </Flex>
-          {hasEnoughCurrency ? (
-            <Button
-              css={{ m: '$4' }}
-              disabled={!hasEnoughCurrency}
-              onClick={collectTokens}
-            >
-              {copy.mintCtaBuy}
-            </Button>
-          ) : (
+      {orders.length > 0 &&
+        maxItemAmount !== 0 &&
+        collectStep === CollectStep.Idle && (
+          <Flex direction="column">
             <Flex
               direction="column"
-              align="center"
-              css={{ px: '$3', gap: '$3' }}
+              css={{ borderBottom: '1px solid $neutralBorder' }}
             >
-              <Flex align="center">
-                <Text css={{ mr: '$3' }} color="error" style="body3">
-                  Insufficient Balance
-                </Text>
-
-                <FormatCryptoCurrency
-                  amount={balance}
-                  address={currency?.address}
-                  decimals={currency?.decimals}
-                  symbol={currency?.symbol}
-                  textStyle="body3"
-                />
+              {transactionError ? <ErrorWell /> : null}
+              <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
+                {token ? (
+                  <TokenInfo token={token} collection={collection} />
+                ) : (
+                  <CollectionInfo collection={collection} mode="mint" />
+                )}
+                <Flex
+                  align="center"
+                  justify="between"
+                  css={{ gap: 24, '@bp1': { gap: '$6' } }}
+                >
+                  <Flex
+                    direction="column"
+                    align="start"
+                    css={{ gap: '$1', flexShrink: 0 }}
+                  >
+                    <Text style="subtitle2">Quantity</Text>
+                    <Text style="body3" color="subtle">
+                      {maxItemAmount} {maxItemAmount > 1 ? 'items' : 'item'}{' '}
+                      available
+                    </Text>
+                  </Flex>
+                  <QuantitySelector
+                    quantity={itemAmount}
+                    setQuantity={setItemAmount}
+                    min={1}
+                    max={maxItemAmount}
+                    css={{ width: '100%', justifyContent: 'space-between' }}
+                  />
+                </Flex>
               </Flex>
-              <Button
-                onClick={() => {
-                  window.open(addFundsLink, '_blank')
-                }}
-                css={{ width: '100%', mb: '$3' }}
-              >
-                {copy.mintCtaInsufficientFunds}
-              </Button>
             </Flex>
-          )}
-        </Flex>
-      )}
+            <Flex
+              direction="column"
+              css={{ px: '$4', pt: '$4', pb: '$2', gap: '$4' }}
+            >
+              <Flex direction="column" css={{ gap: 10 }}>
+                {hasQuantitySet ? (
+                  <Flex justify="between" align="center" css={{ gap: '$4' }}>
+                    <Text style="subtitle2" color="subtle">
+                      {itemAmount} {quantitySubject}
+                    </Text>
+                    <Flex css={{ gap: '$1' }}>
+                      <FormatCryptoCurrency
+                        amount={mintPrice}
+                        address={currency?.address}
+                        decimals={currency?.decimals}
+                        symbol={currency?.symbol}
+                        logoWidth={12}
+                        css={{ color: '$neutralText' }}
+                      />
+                      <Text style="subtitle2" color="subtle">
+                        x {itemAmount}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                ) : null}
+              </Flex>
+              <Flex justify="between" align="start" css={{ height: 34 }}>
+                <Text style="h6">Total</Text>
+                <Flex direction="column" align="end" css={{ gap: '$1' }}>
+                  <FormatCryptoCurrency
+                    textStyle="h6"
+                    amount={total}
+                    address={currency?.address}
+                    decimals={currency?.decimals}
+                    symbol={currency?.symbol}
+                    logoWidth={18}
+                  />
+                  <FormatCurrency
+                    amount={totalUsd}
+                    style="subtitle2"
+                    color="subtle"
+                  />
+                </Flex>
+              </Flex>
+            </Flex>
+            {hasEnoughCurrency ? (
+              <Button
+                css={{ m: '$4' }}
+                disabled={!hasEnoughCurrency}
+                onClick={collectTokens}
+              >
+                {copy.mintCtaBuy}
+              </Button>
+            ) : (
+              <Flex
+                direction="column"
+                align="center"
+                css={{ px: '$3', gap: '$3' }}
+              >
+                <Flex align="center">
+                  <Text css={{ mr: '$3' }} color="error" style="body3">
+                    Insufficient Balance
+                  </Text>
+
+                  <FormatCryptoCurrency
+                    amount={balance}
+                    address={currency?.address}
+                    decimals={currency?.decimals}
+                    symbol={currency?.symbol}
+                    textStyle="body3"
+                  />
+                </Flex>
+                <Button
+                  onClick={() => {
+                    window.open(addFundsLink, '_blank')
+                  }}
+                  css={{ width: '100%', mb: '$3' }}
+                >
+                  {copy.mintCtaInsufficientFunds}
+                </Button>
+              </Flex>
+            )}
+          </Flex>
+        )}
 
       {collectStep === CollectStep.Approving && (
         <Flex direction="column">
@@ -233,6 +259,7 @@ export const MintContent: FC<
           >
             <CollectCheckout
               collection={collection}
+              token={token}
               itemCount={itemAmount}
               totalPrice={total}
               usdPrice={totalUsd}
@@ -324,6 +351,7 @@ export const MintContent: FC<
           >
             <CollectCheckout
               collection={collection}
+              token={token}
               itemCount={itemAmount}
               totalPrice={total}
               usdPrice={totalUsd}

@@ -40,6 +40,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   mode?: CollectModalMode
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
+  tokenId?: string
   feesOnTopBps?: string[] | null
   feesOnTopFixed?: string[] | null
   normalizeRoyalties?: boolean
@@ -54,6 +55,7 @@ export function CollectModal({
   openState,
   trigger,
   collectionId,
+  tokenId,
   feesOnTopBps,
   feesOnTopFixed,
   normalizeRoyalties,
@@ -76,6 +78,7 @@ export function CollectModal({
       open={open}
       mode={mode}
       collectionId={collectionId}
+      tokenId={tokenId}
       feesOnTopBps={feesOnTopBps}
       feesOnTopFixed={feesOnTopFixed}
       normalizeRoyalties={normalizeRoyalties}

@@ -6,6 +6,9 @@ export type BuyPath =
 export type SellPath =
   paths['/execute/sell/v7']['post']['responses']['200']['schema']['path']
 
+export type BuyResponses =
+  paths['/execute/buy/v7']['post']['responses']['200']['schema']
+
 export type Preview =
   paths['/execute/buy/v7']['post']['responses']['200']['schema']['preview']
 

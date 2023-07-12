@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
   '0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e'
+
 const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
@@ -16,6 +17,7 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 const CollectPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
+  const [tokenId, setTokenId] = useState<string | undefined>(undefined)
   const [mode, setMode] = useState('preferMint')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTop, setFeesOnTop] = useState<string[]>([])
@@ -45,6 +47,15 @@ const CollectPage: NextPage = () => {
           type="text"
           value={collectionId}
           onChange={(e) => setCollectionId(e.target.value)}
+        />
+      </div>
+
+      <div>
+        <label>Token Id: </label>
+        <input
+          type="text"
+          value={tokenId}
+          onChange={(e) => setTokenId(e.target.value)}
         />
       </div>
 
@@ -150,6 +161,7 @@ const CollectPage: NextPage = () => {
           </button>
         }
         collectionId={collectionId}
+        tokenId={tokenId}
         mode={mode as CollectModalMode}
         feesOnTopBps={feesOnTopBps}
         feesOnTopFixed={feesOnTop}

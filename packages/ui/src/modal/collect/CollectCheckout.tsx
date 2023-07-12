@@ -7,7 +7,7 @@ import {
   Img,
   Text,
 } from '../../primitives'
-import { useChainCurrency, useCollections } from '../../hooks'
+import { useChainCurrency, useCollections, useTokens } from '../../hooks'
 
 enum Size {
   SM,
@@ -16,6 +16,7 @@ enum Size {
 
 type Props = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  token?: NonNullable<ReturnType<typeof useTokens>['data']>[0]
   itemCount: number
   totalPrice: number
   usdPrice: number
@@ -26,13 +27,14 @@ type Props = {
 
 export const CollectCheckout: FC<Props> = ({
   collection,
+  token,
   itemCount,
   totalPrice,
   usdPrice,
   currency,
   chain,
 }) => {
-  const itemSubject = itemCount > 1 ? 'items' : 'item'
+  const itemSubject = itemCount === 1 ? 'item' : 'items'
 
   return (
     <Flex direction="column">
@@ -48,7 +50,7 @@ export const CollectCheckout: FC<Props> = ({
         <Flex direction="column">
           <Flex align="center" css={{ gap: '$3' }}>
             <Img
-              src={collection?.image}
+              src={token ? token?.token?.image : collection?.image}
               css={{
                 borderRadius: 8,
                 objectFit: 'cover',
@@ -57,7 +59,11 @@ export const CollectCheckout: FC<Props> = ({
               }}
             />
             <Flex direction="column" css={{ gap: '$1' }}>
-              <Text style={'h6'}>{collection?.name}</Text>
+              <Text style={'h6'}>
+                {token
+                  ? token?.token?.name || `#${token?.token?.tokenId}`
+                  : collection?.name}
+              </Text>
               <Text
                 style={'tiny'}
                 css={{

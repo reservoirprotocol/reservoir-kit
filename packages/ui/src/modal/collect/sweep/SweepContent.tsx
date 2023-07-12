@@ -16,6 +16,7 @@ import {
   faCheckCircle,
   faCircleExclamation,
   faCube,
+  faMagnifyingGlass,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import QuantitySelector from '../../QuantitySelector'
@@ -25,6 +26,7 @@ import SigninStep from '../../SigninStep'
 import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible'
 import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
+import { TokenInfo } from '../TokenInfo'
 
 export const SweepContent: FC<
   ChildrenProps & {
@@ -34,11 +36,12 @@ export const SweepContent: FC<
   }
 > = ({
   collection,
+  token,
   orders,
   selectedTokens,
   itemAmount,
   setItemAmount,
-  maxInput,
+  maxItemAmount,
   currency,
   total,
   totalUsd,
@@ -59,6 +62,8 @@ export const SweepContent: FC<
   setOpen,
 }) => {
   const hasTokens = orders && orders.length > 0
+
+  const is1155 = collection?.contractKind === 'erc1155'
 
   const cheapestToken = selectedTokens?.[0]
   const cheapestTokenPrice =
@@ -100,18 +105,36 @@ export const SweepContent: FC<
 
   return (
     <>
-      {!hasTokens ? (
+      {!hasTokens || maxItemAmount === 0 ? (
         <Flex
           direction="column"
           align="center"
-          css={{ py: '$6', px: '$4', gap: '$3' }}
+          css={{ width: '100%', p: '$4' }}
         >
-          <Text style="h6" css={{ textAlign: 'center' }}>
-            No available items were found for this collection.
-          </Text>
+          <Flex
+            direction="column"
+            align="center"
+            css={{ pt: 28, pb: 48, px: '$4', gap: 28 }}
+          >
+            <Box css={{ color: '$neutralSolid' }}>
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                style={{
+                  width: '36px',
+                  height: '32px',
+                }}
+              />
+            </Box>
+            <Text style="h6" css={{ textAlign: 'center' }}>
+              No available items were found for this collection.
+            </Text>
+          </Flex>
+          <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
+            {copy.mintCtaClose}
+          </Button>
         </Flex>
       ) : null}
-      {hasTokens && collectStep === CollectStep.Idle && (
+      {hasTokens && maxItemAmount !== 0 && collectStep === CollectStep.Idle && (
         <Flex direction="column">
           <Flex
             direction="column"
@@ -119,11 +142,15 @@ export const SweepContent: FC<
           >
             {transactionError ? <ErrorWell /> : null}
             <Flex direction="column" css={{ p: '$4', gap: 10 }}>
-              <CollectionInfo collection={collection} mode="sweep" />
+              {token ? (
+                <TokenInfo token={token} collection={collection} />
+              ) : (
+                <CollectionInfo collection={collection} mode="sweep" />
+              )}
               <Flex
                 align="center"
                 justify="between"
-                css={{ gap: '$6', mt: '$1' }}
+                css={{ gap: 24, '@bp1': { gap: '$6' }, mt: '$1' }}
               >
                 <Flex
                   direction="column"
@@ -132,44 +159,49 @@ export const SweepContent: FC<
                 >
                   <Text style="subtitle2">Quantity</Text>
                   <Text style="body3" color="subtle">
-                    {maxInput} {maxInput > 1 ? 'items' : 'item'} available
+                    {maxItemAmount} {maxItemAmount === 1 ? 'item' : 'items'}{' '}
+                    available
                   </Text>
                 </Flex>
                 <QuantitySelector
                   quantity={itemAmount}
                   setQuantity={setItemAmount}
                   min={1}
-                  max={maxInput}
+                  max={maxItemAmount}
                   css={{ width: '100%', justifyContent: 'space-between' }}
                 />
               </Flex>
               {itemAmount > 1 ? (
                 <Flex justify="end" css={{ gap: '$3' }}>
-                  <Flex align="center" css={{ gap: '$2' }}>
-                    <Text style="subtitle2" color="subtle">
-                      Price Range
-                    </Text>
-                    <FormatCryptoCurrency
-                      amount={cheapestTokenPrice}
-                      address={currency?.address}
-                      decimals={currency?.decimals}
-                      symbol={currency?.symbol}
-                      maximumFractionDigits={2}
-                    />
-                    <Text style="subtitle2" color="subtle">
-                      -
-                    </Text>
-                    <FormatCryptoCurrency
-                      amount={mostExpensiveTokenPrice}
-                      address={currency?.address}
-                      decimals={currency?.decimals}
-                      symbol={currency?.symbol}
-                      maximumFractionDigits={2}
-                    />
-                  </Flex>
-                  <Text style="subtitle2" color="subtle">
-                    |
-                  </Text>
+                  {!is1155 ? (
+                    <>
+                      <Flex align="center" css={{ gap: '$2' }}>
+                        <Text style="subtitle2" color="subtle">
+                          Price Range
+                        </Text>
+                        <FormatCryptoCurrency
+                          amount={cheapestTokenPrice}
+                          address={currency?.address}
+                          decimals={currency?.decimals}
+                          symbol={currency?.symbol}
+                          maximumFractionDigits={2}
+                        />
+                        <Text style="subtitle2" color="subtle">
+                          -
+                        </Text>
+                        <FormatCryptoCurrency
+                          amount={mostExpensiveTokenPrice}
+                          address={currency?.address}
+                          decimals={currency?.decimals}
+                          symbol={currency?.symbol}
+                          maximumFractionDigits={2}
+                        />
+                      </Flex>
+                      <Text style="subtitle2" color="subtle">
+                        |
+                      </Text>
+                    </>
+                  ) : null}
                   <Flex align="center" css={{ gap: '$2' }}>
                     <Text style="subtitle2" color="subtle">
                       Avg Price
@@ -265,7 +297,8 @@ export const SweepContent: FC<
           >
             <CollectCheckout
               collection={collection}
-              itemCount={selectedTokens.length}
+              token={token}
+              itemCount={itemAmount}
               totalPrice={total}
               usdPrice={usdPrice}
               currency={currency}
@@ -355,7 +388,8 @@ export const SweepContent: FC<
           >
             <CollectCheckout
               collection={collection}
-              itemCount={selectedTokens.length}
+              token={token}
+              itemCount={itemAmount}
               totalPrice={total}
               usdPrice={totalUsd}
               currency={currency}
