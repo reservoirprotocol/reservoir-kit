@@ -225,7 +225,9 @@ export function BidModal({
 
         const providerOptionsContext = useContext(ProviderOptionsContext)
 
-        const quantityEnabled = !tokenId || token?.token?.kind === 'erc1155'
+        const quantityEnabled =
+          !tokenId ||
+          (token?.token?.kind === 'erc1155' && Number(token?.token?.supply) > 1)
 
         useEffect(() => {
           if (stepData) {
