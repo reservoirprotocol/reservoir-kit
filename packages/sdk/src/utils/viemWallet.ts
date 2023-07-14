@@ -11,6 +11,7 @@ export function isViemWalletClient(
 
 export const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {
   return {
+    transport: wallet.transport,
     address: async () => {
       let address = wallet.account?.address
       if (!address) {

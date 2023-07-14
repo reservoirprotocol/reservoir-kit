@@ -1,6 +1,6 @@
 import { Execute, paths, ReservoirWallet, TransactionStepItem } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
-import { createPublicClient, http } from 'viem'
+import { createPublicClient, custom, http } from 'viem'
 import { axios } from '../utils'
 import { customChains } from '../utils/customChains'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
@@ -92,7 +92,7 @@ export async function executeSteps(
 
   const viemClient = createPublicClient({
     chain: viemChain,
-    transport: http(),
+    transport: wallet.transport ? custom(wallet.transport) : http(),
   })
 
   let json = newJson
