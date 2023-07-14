@@ -74,7 +74,7 @@ export const base = {
       url: 'https://basescan.org',
     },
   },
-} 
+} as const satisfies Chain
 
 export const customChains = {
   zora,
