@@ -50,7 +50,34 @@ export const zoraTestnet = {
   },
 } as const satisfies Chain
 
+
+export const base = {
+  id: 8453,
+  name: 'Base',
+  network: 'base',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://developer-access-mainnet.base.org'],
+    },
+    public: {
+      http: ['https://developer-access-mainnet.base.org'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Basescan',
+      url: 'https://basescan.org',
+    },
+    default: {
+      name: 'BaseScan',
+      url: 'https://basescan.org',
+    },
+  },
+} 
+
 export const customChains = {
   zora,
-  zoraTestnet
+  zoraTestnet,
+  base
 } as const satisfies Record<string, Chain>
