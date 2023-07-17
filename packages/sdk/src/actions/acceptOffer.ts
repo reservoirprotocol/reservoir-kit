@@ -1,6 +1,12 @@
 import { getClient } from '.'
 import { Execute, paths, ReservoirWallet } from '../types'
-import { executeSteps, request, adaptViemWallet } from '../utils'
+import {
+  executeSteps,
+  adaptViemWallet,
+  isAPIError,
+  APIError,
+  refreshLiquidity,
+} from '../utils'
 import { WalletClient } from 'viem'
 import axios, { AxiosRequestConfig } from 'axios'
 import { isViemWalletClient } from '../utils/viemWallet'
@@ -93,7 +99,7 @@ export async function acceptOffer(data: Data) {
       }
 
       const res = await axios.request(request)
-      if (res.status !== 200) throw res.data
+      if (res.status !== 200) throw APIError(res.data)
       const data = res.data as Execute
       onProgress(data['steps'], data['path'])
       return data
@@ -110,17 +116,13 @@ export async function acceptOffer(data: Data) {
       return true
     }
   } catch (err: any) {
-    items.forEach(({ token }) => {
-      const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
-        {
-          token: token,
+    if (isAPIError(err)) {
+      items.forEach(({ token }) => {
+        if (baseApiUrl) {
+          refreshLiquidity(baseApiUrl, token)
         }
-      request({
-        method: 'POST',
-        url: `${baseApiUrl}/tokens/refresh/v1`,
-        data: JSON.stringify(data),
-      }).catch(() => {})
-    })
+      })
+    }
     throw err
   }
 }

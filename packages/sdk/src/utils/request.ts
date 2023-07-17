@@ -15,3 +15,11 @@ export function request(config: AxiosRequestConfig = {}) {
   }
   return axios.request({ headers: headers, ...config })
 }
+
+export function APIError(message: string) {
+  return new Error(message, { cause: 'APIError' })
+}
+
+export function isAPIError(error?: Error) {
+  return error && error.cause === 'APIError'
+}

@@ -1,6 +1,12 @@
 import { Execute, paths, ReservoirWallet } from '../types'
 import { getClient } from '.'
-import { executeSteps, request, adaptViemWallet } from '../utils'
+import {
+  executeSteps,
+  adaptViemWallet,
+  APIError,
+  isAPIError,
+  refreshLiquidity,
+} from '../utils'
 import axios, { AxiosRequestConfig } from 'axios'
 import { WalletClient } from 'viem'
 import { isViemWalletClient } from '../utils/viemWallet'
@@ -50,21 +56,6 @@ export async function buyToken(data: Data) {
       client.chains.find((chain) => chain.id === chainId)?.baseApiUrl ||
       baseApiUrl
   }
-  const errHandler = () => {
-    items.forEach(({ token }) => {
-      if (token) {
-        const data: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
-          {
-            token,
-          }
-        request({
-          method: 'POST',
-          url: `${baseApiUrl}/tokens/refresh/v1`,
-          data: JSON.stringify(data),
-        }).catch(() => {})
-      }
-    })
-  }
 
   if (!baseApiUrl) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
@@ -105,12 +96,12 @@ export async function buyToken(data: Data) {
       }
 
       const res = await axios.request(request)
-      if (res.status !== 200) throw res.data
+      if (res.status !== 200) throw APIError(res.data)
       const data = res.data as Execute
       onProgress(data['steps'], data['path'])
       return data
     } else {
-      return executeSteps(
+      await executeSteps(
         request,
         reservoirWallet,
         onProgress,
@@ -119,9 +110,16 @@ export async function buyToken(data: Data) {
         chainId,
         gas
       )
+      return true
     }
   } catch (err: any) {
-    errHandler()
+    if (isAPIError(err)) {
+      items.forEach(({ token }) => {
+        if (baseApiUrl && token) {
+          refreshLiquidity(baseApiUrl, token)
+        }
+      })
+    }
     throw err
   }
 }
