@@ -9,6 +9,7 @@ import React, {
 import {
   useChainCurrency,
   useCoinConversion,
+  useCollections,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
@@ -23,15 +24,16 @@ import {
 import { toFixed } from '../../lib/numbers'
 import { UseBalanceToken } from '../../types/wagmi'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
 
-export enum SweepStep {
+export enum CollectStep {
   Idle,
   Approving,
   Finalizing,
   Complete,
 }
 
-export type SweepModalStepData = {
+export type CollectModalStepData = {
   totalSteps: number
   stepProgress: number
   currentStep: Execute['steps'][0]
@@ -49,18 +51,22 @@ type Currency = NonNullable<
   NonNullable<NonNullable<Token['market']>['floorAsk']>['price']
 >['currency']
 
-type ChildrenProps = {
+export type CollectModalMode = 'preferMint' | 'mint' | 'trade'
+
+export type CollectModalContentMode = 'mint' | 'sweep'
+
+export type ChildrenProps = {
+  contentMode?: CollectModalContentMode
+  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  token?: NonNullable<ReturnType<typeof useTokens>['data']>[0]
   loading: boolean
+  orders: NonNullable<BuyPath>
   selectedTokens: NonNullable<BuyPath>
   setSelectedTokens: React.Dispatch<React.SetStateAction<NonNullable<BuyPath>>>
-  itemAmount?: number
-  setItemAmount: React.Dispatch<React.SetStateAction<number | undefined>>
-  ethAmount?: number
-  setEthAmount: React.Dispatch<React.SetStateAction<number | undefined>>
-  isItemsToggled: boolean
-  setIsItemsToggled: React.Dispatch<React.SetStateAction<boolean>>
-  maxInput: number
-  setMaxInput: React.Dispatch<React.SetStateAction<number>>
+  itemAmount: number
+  setItemAmount: React.Dispatch<React.SetStateAction<number>>
+  maxItemAmount: number
+  setMaxItemAmount: React.Dispatch<React.SetStateAction<number>>
   currency: ReturnType<typeof useChainCurrency>
   chainCurrency: ReturnType<typeof useChainCurrency>
   isChainCurrency: boolean
@@ -69,33 +75,38 @@ type ChildrenProps = {
   feeOnTop: number
   feeUsd: number
   usdPrice: number
+  mintPrice: number
   currentChain: ReservoirChain | null | undefined
-  availableTokens: BuyPath
   address?: string
-  tokens: BuyPath
   balance?: bigint
+  contract: Address
   hasEnoughCurrency: boolean
+  addFundsLink: string
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
-  stepData: SweepModalStepData | null
-  setStepData: React.Dispatch<React.SetStateAction<SweepModalStepData | null>>
-  sweepStep: SweepStep
-  setSweepStep: React.Dispatch<React.SetStateAction<SweepStep>>
-  sweepTokens: () => void
+  stepData: CollectModalStepData | null
+  setStepData: React.Dispatch<React.SetStateAction<CollectModalStepData | null>>
+  collectStep: CollectStep
+  setCollectStep: React.Dispatch<React.SetStateAction<CollectStep>>
+  collectTokens: () => void
 }
 
 type Props = {
   open: boolean
+  mode?: CollectModalMode
   collectionId?: string
+  tokenId?: string
   feesOnTopBps?: string[] | null
   feesOnTopFixed?: string[] | null
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
-export const SweepModalRenderer: FC<Props> = ({
+export const CollectModalRenderer: FC<Props> = ({
   open,
+  mode = 'preferMint',
   collectionId,
+  tokenId,
   feesOnTopBps,
   feesOnTopFixed,
   normalizeRoyalties,
@@ -104,13 +115,29 @@ export const SweepModalRenderer: FC<Props> = ({
   const { data: wallet } = useWalletClient()
   const account = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
-  const [itemAmount, setItemAmount] = useState<number | undefined>(undefined)
-  const [ethAmount, setEthAmount] = useState<number | undefined>(undefined)
-  const [isItemsToggled, setIsItemsToggled] = useState<boolean>(true)
-  const [maxInput, setMaxInput] = useState<number>(0)
-  const [sweepStep, setSweepStep] = useState<SweepStep>(SweepStep.Idle)
-  const [stepData, setStepData] = useState<SweepModalStepData | null>(null)
+  const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
+  const [orders, setOrders] = useState<NonNullable<BuyPath>>([])
+  const [itemAmount, setItemAmount] = useState<number>(1)
+  const [maxItemAmount, setMaxItemAmount] = useState<number>(1)
+  const [collectStep, setCollectStep] = useState<CollectStep>(CollectStep.Idle)
+  const [stepData, setStepData] = useState<CollectModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
+
+  const [contentMode, setContentMode] = useState<
+    CollectModalContentMode | undefined
+  >(() => {
+    switch (mode) {
+      case 'mint':
+        return 'mint'
+      case 'trade':
+        return 'sweep'
+      case 'preferMint':
+      default:
+        return undefined
+    }
+  })
+
+  const mintPrice = orders?.[0]?.totalPrice || 0
 
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0)
@@ -123,14 +150,40 @@ export const SweepModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
 
+  const contract = collectionId?.split(':')[0] as Address
+
   const { chains } = useNetwork()
   const chain = chains.find((chain) => chain.id === currentChain?.id)
 
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
-  const [fetchedInitialTokens, setFetchedInitialTokens] = useState(false)
-  const [tokens, setTokens] = useState<BuyPath | undefined>(undefined)
+  const addFundsLink = currency?.address
+    ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${currency?.address}`
+    : `https://jumper.exchange/?toChain=${chain?.id}`
+
+  const { data: collections, mutate: mutateCollection } = useCollections(
+    open && {
+      id: collectionId,
+      includeMintStages: true,
+    }
+  )
+
+  const collection = collections && collections[0] ? collections[0] : undefined
+
+  const is1155 = collection?.contractKind === 'erc1155'
+  const isSingleToken1155 = is1155 && collection?.tokenCount === '1'
+
+  const { data: tokens } = useTokens(
+    open && (tokenId || isSingleToken1155)
+      ? {
+          collection: isSingleToken1155 ? collectionId : undefined,
+          tokens: isSingleToken1155 ? undefined : `${collectionId}:${tokenId}`,
+        }
+      : undefined
+  )
+
+  const token = tokens && tokens[0] ? tokens[0] : undefined
 
   const fetchBuyPath = useCallback(() => {
     if (!wallet || !client) {
@@ -150,9 +203,11 @@ export const SweepModalRenderer: FC<Props> = ({
       .buyToken({
         items: [
           {
-            collection: collectionId,
-            quantity: 50,
-            fillType: 'trade',
+            collection: token?.token?.tokenId ? undefined : collectionId,
+            token: token?.token?.tokenId
+              ? `${collectionId}:${token?.token?.tokenId}`
+              : undefined,
+            fillType: mode === 'preferMint' ? undefined : mode,
           },
         ],
         expectedPrice: undefined,
@@ -161,23 +216,70 @@ export const SweepModalRenderer: FC<Props> = ({
         precheck: true,
         onProgress: () => {},
       })
-      .then((data) => {
-        setTokens(
-          'path' in (data as any)
-            ? ((data as Execute)['path'] as BuyPath)
-            : undefined
-        )
+      .then((rawData) => {
+        let data = rawData as BuyResponses
+
+        let intendedContentMode =
+          mode === 'mint' ? 'mint' : ('sweep' as CollectModalContentMode)
+
+        if ('path' in data) {
+          let pathData = data['path']
+          setOrders(pathData ?? [])
+
+          // handle setting max quantity
+          if ('maxQuantities' in data && data.maxQuantities?.[0]) {
+            setMaxItemAmount(Number(data.maxQuantities?.[0].maxQuantity) ?? 50) // if value is null/undefined, we don't know max quantity, so set it to 50
+          } else {
+            setMaxItemAmount(0)
+          }
+
+          if (mode === 'preferMint') {
+            // check if the path data includes any mints
+            if (
+              pathData?.find((order) => order.orderId?.includes('mint')) !=
+              undefined
+            ) {
+              intendedContentMode = 'mint'
+            }
+          }
+        }
+
+        setContentMode(intendedContentMode)
+      })
+      .catch(() => {
+        setContentMode(mode === 'mint' ? 'mint' : 'sweep')
       })
       .finally(() => {
-        setFetchedInitialTokens(true)
+        setFetchedInitialOrders(true)
       })
-  }, [client, wallet, normalizeRoyalties, collectionId, currency])
+  }, [
+    client,
+    wallet,
+    normalizeRoyalties,
+    collectionId,
+    tokenId,
+    currency,
+    mode,
+    token?.token?.tokenId,
+  ])
+
+  const fetchBuyPathIfIdle = useCallback(() => {
+    if (collectStep === CollectStep.Idle) {
+      fetchBuyPath()
+    }
+  }, [fetchBuyPath, collectStep])
 
   useEffect(() => {
     if (open) {
-      fetchBuyPath()
+      console.log(open, contentMode, token?.token?.tokenId)
+      fetchBuyPathIfIdle()
+
+      if (contentMode === 'sweep') {
+        const intervalId = setInterval(fetchBuyPathIfIdle, 60000) // Poll buy api every 1 minute
+        return () => clearInterval(intervalId)
+      }
     }
-  }, [client, wallet, open])
+  }, [client, wallet, open, fetchBuyPathIfIdle, token?.token?.tokenId])
 
   // Update currency
   const updateCurrency = useCallback(
@@ -224,32 +326,69 @@ export const SweepModalRenderer: FC<Props> = ({
   }, [selectedTokens])
 
   const total = useMemo(() => {
-    const updatedTotal = selectedTokens?.reduce((total, token) => {
-      return (
-        total +
-        (token?.currency != chainCurrency.address && isChainCurrency
-          ? token?.buyInQuote || 0
-          : token?.totalPrice || 0)
-      )
-    }, 0)
+    if (contentMode === 'mint') {
+      let updatedTotal = mintPrice * (Math.max(0, itemAmount) || 0)
+      return updatedTotal
+    } else if (is1155) {
+      let updatedTotal = 0
+      let remainingQuantity = itemAmount
 
-    let fees = 0
-    if (feesOnTopBps && feesOnTopBps.length > 0) {
-      fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
-        const [_, fee] = feeOnTop.split(':')
-        return totalFees + (Number(fee) / 10000) * updatedTotal
+      for (const order of orders) {
+        if (remainingQuantity <= 0) {
+          return updatedTotal
+        }
+
+        let orderQuantity = order?.quantity || 1
+        let orderPricePerItem = order?.totalPrice || 0
+
+        if (remainingQuantity >= orderQuantity) {
+          updatedTotal += orderPricePerItem * orderQuantity
+          remainingQuantity -= orderQuantity
+        } else {
+          let fractionalPrice = orderPricePerItem * remainingQuantity
+          updatedTotal += fractionalPrice
+          remainingQuantity = 0
+        }
+      }
+
+      return updatedTotal
+    } else {
+      let updatedTotal = selectedTokens?.reduce((total, token) => {
+        return (
+          total +
+          (token?.currency != chainCurrency.address && isChainCurrency
+            ? token?.buyInQuote || 0
+            : token?.totalPrice || 0)
+        )
       }, 0)
-    } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
-      fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
-        const [_, fee] = feeOnTop.split(':')
-        const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
-        return totalFees + Number(parsedFee)
-      }, 0)
+
+      let fees = 0
+      if (feesOnTopBps && feesOnTopBps.length > 0) {
+        fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
+          const [_, fee] = feeOnTop.split(':')
+          return totalFees + (Number(fee) / 10000) * updatedTotal
+        }, 0)
+      } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
+        fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
+          const [_, fee] = feeOnTop.split(':')
+          const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
+          return totalFees + Number(parsedFee)
+        }, 0)
+      }
+      setFeeOnTop(fees)
+
+      return updatedTotal + fees
     }
-    setFeeOnTop(fees)
-
-    return updatedTotal + fees
-  }, [selectedTokens, feesOnTopBps, feesOnTopFixed, currency, isChainCurrency])
+  }, [
+    selectedTokens,
+    feesOnTopBps,
+    feesOnTopFixed,
+    currency,
+    isChainCurrency,
+    contentMode,
+    itemAmount,
+    orders,
+  ])
 
   const coinConversion = useCoinConversion(
     open ? 'USD' : undefined,
@@ -287,84 +426,28 @@ export const SweepModalRenderer: FC<Props> = ({
     }
   }, [total, balance, currency])
 
-  const availableTokens = useMemo(() => {
-    if (!tokens) return []
-    return tokens
-  }, [tokens, account])
-
-  const cheapestAvailablePrice = availableTokens?.[0]?.totalPrice || 0
-
   useEffect(() => {
-    setItemAmount(1)
-    setEthAmount(cheapestAvailablePrice)
-  }, [availableTokens.length])
-
-  // set max input
-  useEffect(() => {
-    if (isItemsToggled) {
-      setMaxInput(Math.min(availableTokens.length, 50))
-    } else {
-      const maxEth = availableTokens.slice(0, 50).reduce((total, token) => {
-        total +=
-          token?.currency != chainCurrency.address && isChainCurrency
-            ? token?.buyInQuote || 0
-            : token?.totalPrice || 0
-
-        return total
-      }, 0)
-
-      setMaxInput(maxEth)
-    }
-  }, [availableTokens, isItemsToggled])
-
-  const calculateTokensToAdd = useCallback(() => {
-    let totalEthPrice = 0
-    let tokensToAdd = []
-    for (let token of availableTokens) {
-      if (
-        ethAmount &&
-        totalEthPrice + (token?.totalPrice || 0) <= ethAmount &&
-        tokensToAdd.length < 50
-      ) {
-        totalEthPrice += token?.totalPrice || 0
-        tokensToAdd.push(token)
-      } else {
-        break
-      }
-    }
-    return tokensToAdd
-  }, [availableTokens, ethAmount])
-
-  useEffect(() => {
-    if (isItemsToggled) {
-      const updatedTokens = availableTokens?.slice(0, itemAmount)
+    if (contentMode === 'sweep') {
+      const updatedTokens = orders?.slice(0, Math.max(0, itemAmount))
       setSelectedTokens(updatedTokens)
-    } else {
-      setSelectedTokens(calculateTokensToAdd())
     }
-  }, [isItemsToggled, ethAmount, itemAmount])
+  }, [itemAmount, orders])
 
-  // reset selectedItems when toggle changes
-  useEffect(() => {
-    setItemAmount(1)
-    setEthAmount(cheapestAvailablePrice)
-  }, [isItemsToggled])
-
-  // reset state on close
+  // Reset state on close
   useEffect(() => {
     if (!open) {
       setSelectedTokens([])
-      setTokens(undefined)
-      setItemAmount(undefined)
-      setEthAmount(undefined)
-      setSweepStep(SweepStep.Idle)
-      setIsItemsToggled(true)
+      setOrders([])
+      setItemAmount(1)
+      setMaxItemAmount(1)
+      setCollectStep(CollectStep.Idle)
+      setContentMode(undefined)
       setTransactionError(null)
-      setFetchedInitialTokens(false)
+      setFetchedInitialOrders(false)
     }
   }, [open])
 
-  const sweepTokens = useCallback(() => {
+  const collectTokens = useCallback(() => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
@@ -412,17 +495,20 @@ export const SweepModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
-    if (!selectedTokens || selectedTokens.length === 0) {
-      const error = new Error('No tokens to sweep')
-      setTransactionError(error)
-      throw error
-    }
-
-    setSweepStep(SweepStep.Approving)
+    setCollectStep(CollectStep.Approving)
 
     client.actions
       .buyToken({
-        items: [{ collection: collectionId, quantity: selectedTokens.length }],
+        items: [
+          {
+            collection: token?.token?.tokenId ? undefined : collectionId,
+            token: token?.token?.tokenId
+              ? `${collectionId}:${token?.token?.tokenId}`
+              : undefined,
+            quantity: itemAmount,
+            fillType: contentMode === 'mint' ? 'mint' : 'trade',
+          },
+        ],
         expectedPrice: total - feeOnTop,
         wallet,
         options,
@@ -464,7 +550,7 @@ export const SweepModalRenderer: FC<Props> = ({
           }
 
           if (currentStep.items?.every((item) => item.txHash)) {
-            setSweepStep(SweepStep.Finalizing)
+            setCollectStep(CollectStep.Finalizing)
           }
 
           if (
@@ -475,17 +561,19 @@ export const SweepModalRenderer: FC<Props> = ({
                 step.items?.every((item) => item.status === 'complete')
             )
           ) {
-            setSweepStep(SweepStep.Complete)
+            setCollectStep(CollectStep.Complete)
           }
         },
       })
       .catch((e: any) => {
         const error = e as Error
+        //@ts-ignore
         const transactionError = new Error(error?.message || '', {
           cause: error,
         })
         setTransactionError(transactionError)
-        setSweepStep(SweepStep.Idle)
+        setCollectStep(CollectStep.Idle)
+        mutateCollection()
         fetchBuyPath()
       })
   }, [
@@ -496,26 +584,28 @@ export const SweepModalRenderer: FC<Props> = ({
     normalizeRoyalties,
     chain,
     collectionId,
+    tokenId,
     currency,
     feesOnTopBps,
     feesOnTopFixed,
+    contentMode,
+    itemAmount,
   ])
 
   return (
     <>
       {children({
-        loading: !fetchedInitialTokens,
+        contentMode,
+        collection,
+        token,
+        loading: !fetchedInitialOrders,
         address: account?.address,
         selectedTokens,
         setSelectedTokens,
         itemAmount,
         setItemAmount,
-        ethAmount,
-        setEthAmount,
-        isItemsToggled,
-        setIsItemsToggled,
-        maxInput,
-        setMaxInput,
+        maxItemAmount,
+        setMaxItemAmount,
         currency,
         chainCurrency,
         isChainCurrency,
@@ -525,17 +615,19 @@ export const SweepModalRenderer: FC<Props> = ({
         feeUsd,
         usdPrice,
         currentChain,
-        availableTokens,
-        tokens,
+        mintPrice,
+        orders,
         balance: balance?.value,
+        contract,
         hasEnoughCurrency,
+        addFundsLink,
         blockExplorerBaseUrl,
         transactionError,
         stepData,
         setStepData,
-        sweepStep,
-        setSweepStep,
-        sweepTokens,
+        collectStep,
+        setCollectStep,
+        collectTokens,
       })}
     </>
   )

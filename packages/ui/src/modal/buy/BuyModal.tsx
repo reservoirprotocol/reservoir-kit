@@ -166,9 +166,9 @@ export function BuyModal({
 
         const purchaseTxHashes =
           stepData?.currentStep?.items?.reduce((txHashes, item) => {
-            item.salesData?.forEach((saleData) => {
-              if (saleData.txHash) {
-                txHashes.add(saleData.txHash)
+            item.transfersData?.forEach((transferData) => {
+              if (transferData.txHash) {
+                txHashes.add(transferData.txHash)
               }
             })
             return txHashes
