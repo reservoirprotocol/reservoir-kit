@@ -60,7 +60,10 @@ export class ReservoirClient {
 
   constructor(options: ReservoirClientOptions) {
     this.version = version
-    this.chains = options.chains
+    this.chains = options.chains.map((chain) => ({
+      ...chain,
+      baseApiUrl: chain.baseApiUrl.replace(/\/$/, ''),
+    }))
     this.uiVersion = options.uiVersion
     this.automatedRoyalties = options.automatedRoyalties
     this.marketplaceFees = options.marketplaceFees
@@ -73,7 +76,12 @@ export class ReservoirClient {
   configure(options: ReservoirClientOptions) {
     this.source = options.source ? options.source : this.source
     this.uiVersion = options.uiVersion ? options.uiVersion : this.uiVersion
-    this.chains = options.chains ? options.chains : this.chains
+    this.chains = options.chains
+      ? options.chains.map((chain) => ({
+          ...chain,
+          baseApiUrl: chain.baseApiUrl.replace(/\/$/, ''),
+        }))
+      : this.chains
     this.marketplaceFees = options.marketplaceFees
       ? options.marketplaceFees
       : this.marketplaceFees
