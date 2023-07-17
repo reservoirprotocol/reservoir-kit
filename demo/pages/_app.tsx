@@ -22,7 +22,7 @@ import {
   ReservoirKitTheme,
   CartProvider,
 } from '@reservoir0x/reservoir-kit-ui'
-import { LogLevel } from '@reservoir0x/reservoir-sdk'
+import { LogLevel, customChains } from '@reservoir0x/reservoir-sdk'
 import { useRouter } from 'next/router'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
@@ -45,6 +45,7 @@ const { chains, publicClient } = configureChains(
     allChains.optimism,
     allChains.arbitrum,
     allChains.zora,
+    customChains.base,
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
@@ -129,6 +130,12 @@ const AppWrapper: FC<any> = ({ children }) => {
               baseApiUrl: 'https://api-zora.reservoir.tools',
               id: allChains.zora.id,
               active: CHAIN_ID === allChains.zora.id,
+              apiKey: API_KEY,
+            },
+            {
+              baseApiUrl: 'https://api-base.reservoir.tools',
+              id: customChains.base.id,
+              active: CHAIN_ID === customChains.base.id,
               apiKey: API_KEY,
             },
           ],
