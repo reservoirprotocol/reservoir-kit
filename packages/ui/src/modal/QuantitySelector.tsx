@@ -71,9 +71,10 @@ const QuantitySelector: FC<Props> = ({
         />
       </QuantityButton>
       <QuantityInput
-        value={quantity == -1 ? '' : quantity}
+        value={quantity}
         onChange={(e) => {
           if (e.target.value === '') {
+            setQuantity(quantity)
             return
           }
 
