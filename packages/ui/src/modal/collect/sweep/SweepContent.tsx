@@ -334,8 +334,7 @@ export const SweepContent: FC<
                       Approve Purchases
                     </Text>
                     <Text style="subtitle2" color="subtle">
-                      Due to limitations with Blur, the purchase of these items
-                      needs to be split into{' '}
+                      The purchase of these items needs to be split into{' '}
                       {stepData?.currentStep?.items.length} separate
                       transactions.
                     </Text>
