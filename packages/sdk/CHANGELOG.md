@@ -1,3 +1,22 @@
+
+## [v1.1.18-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/3b15a85442fa116deeb8293e6609028d2e695ad1) (2023-07-18)
+
+* Merge pull request #307 from reservoirprotocol/pedro/grwth-2985-liquidity-only-refresh [0fe4d1d](https://github.com/reservoirprotocol/reservoir-kit/commit/0fe4d1d592f66e2fe794674d24225e0a2e6b3e25)
+* Strip additional slashes from chain base urls [55a3a59](https://github.com/reservoirprotocol/reservoir-kit/commit/55a3a59d4a08360ae52c1ddf5370c5cb446f888c)
+* Improve error handling when buying or selling [e2328d0](https://github.com/reservoirprotocol/reservoir-kit/commit/e2328d006a06f1f7ee01a9080499e1b95e6542de)
+## [v1.1.17-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/83f638bce3fbfaf5e5771b60ec5f3ddaedf71e5c) (2023-07-17)
+
+* Sync api [fb8925f](https://github.com/reservoirprotocol/reservoir-kit/commit/fb8925f75dea01aad82094fe5c9d3b4d4777bdd6)
+## [v1.1.16-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b678f61a017d631d5510af9d403ec1cd0a59b400) (2023-07-14)
+
+* Cast type [b858bde](https://github.com/reservoirprotocol/reservoir-kit/commit/b858bde9ffe454dc0e9da4088bc3e0df3b7de3a0)
+* Add base chain to custom chains [3366176](https://github.com/reservoirprotocol/reservoir-kit/commit/336617688aeeab0eeb7a4696b30d36d1292d46fb)
+* Add sweeping support for 1155s [ update ui](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-07-12)
+* Sync api [6492f73](https://github.com/reservoirprotocol/reservoir-kit/commit/6492f73da1cf5c809f3d5345f5226677108f73fc)
+## [v1.1.15-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1dd58facfeb01a5726c2c68796e6327502495c42) (2023-07-05)
+
+* Merge branch 'ted/grwth-2872-mint-modal-for-rk' of https://github.com/reservoirprotocol/reservoir-kit into ted/grwth-2928-sweepmodal-realtime-price-freshness-ui-changes [93774b8](https://github.com/reservoirprotocol/reservoir-kit/commit/93774b81c99665f9a7c543a415750e754096dc4e)
+* Update sdk to poll bulk transfer api [808a4c1](https://github.com/reservoirprotocol/reservoir-kit/commit/808a4c147a63be86b774001d87719a5442a7f029)
 ## [v1.1.14-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/098c68371db8c0f6573761ba82ab51d9bcc9740e) (2023-07-03)
 
 - Revamp Fees [df3c6b4](https://github.com/reservoirprotocol/reservoir-kit/commit/df3c6b47c7ee86455376afcfc3b6f6615f7d7e5e)
