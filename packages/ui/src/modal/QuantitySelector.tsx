@@ -1,9 +1,9 @@
-import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { CSSProperties, FC } from 'react'
-import { styled } from '../../stitches.config'
 import { Button } from '../primitives'
 import PseudoInput from '../primitives/PseudoInput'
+import { styled } from '../../stitches.config'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   max: number
@@ -71,10 +71,10 @@ const QuantitySelector: FC<Props> = ({
         />
       </QuantityButton>
       <QuantityInput
-        value={quantity}
+        value={quantity == -1 ? '' : quantity}
         onChange={(e) => {
           if (e.target.value === '') {
-            setQuantity(quantity)
+            setQuantity(-1)
             return
           }
 
