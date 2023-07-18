@@ -248,8 +248,8 @@ export const BuyModalRenderer: FC<Props> = ({
         precheck: true,
       })
       .then((response) => {
-        if (response && response.path) {
-          setPath(response.path)
+        if (response && (response as Execute).path) {
+          setPath((response as Execute).path)
         } else {
           setPath([])
         }
