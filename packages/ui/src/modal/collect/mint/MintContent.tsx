@@ -46,6 +46,7 @@ export const MintContent: FC<
   currency,
   total,
   totalUsd,
+  usdPrice,
   currentChain,
   balance,
   contract,
@@ -296,8 +297,7 @@ export const MintContent: FC<
                       Approve Purchases
                     </Text>
                     <Text style="subtitle2" color="subtle">
-                      Due to limitations with Blur, the purchase of these items
-                      needs to be split into{' '}
+                      The purchase of these items needs to be split into{' '}
                       {stepData?.currentStep?.items.length} separate
                       transactions.
                     </Text>
@@ -306,7 +306,7 @@ export const MintContent: FC<
                         key={index}
                         item={item}
                         pathMap={pathMap}
-                        usdPrice={totalUsd}
+                        usdPrice={usdPrice}
                         chain={currentChain}
                         open={true}
                       />

@@ -271,7 +271,6 @@ export const CollectModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (open) {
-      console.log(open, contentMode, token?.token?.tokenId)
       fetchBuyPathIfIdle()
 
       if (contentMode === 'sweep') {
