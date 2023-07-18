@@ -69,14 +69,14 @@ export const TokenCheckout: FC<Props> = ({
           logoWidth={size == Size.SM ? 12 : 18}
           chainId={chain?.id}
         />
-        {usdPrice && (
+        {usdPrice ? (
           <FormatCurrency
             amount={usdPrice * totalPrice}
             style="subtitle2"
             color="subtle"
             css={{ textAlign: 'end' }}
           />
-        )}
+        ) : null}
       </Flex>
     </Flex>
   )

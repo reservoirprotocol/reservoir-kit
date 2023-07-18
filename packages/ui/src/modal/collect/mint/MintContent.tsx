@@ -46,6 +46,7 @@ export const MintContent: FC<
   currency,
   total,
   totalUsd,
+  usdPrice,
   currentChain,
   balance,
   contract,
@@ -305,7 +306,7 @@ export const MintContent: FC<
                         key={index}
                         item={item}
                         pathMap={pathMap}
-                        usdPrice={totalUsd}
+                        usdPrice={usdPrice}
                         chain={currentChain}
                         open={true}
                       />

@@ -342,7 +342,7 @@ export const SweepContent: FC<
                       <ApprovePurchasingCollapsible
                         item={item}
                         pathMap={pathMap}
-                        usdPrice={totalUsd}
+                        usdPrice={usdPrice}
                         chain={currentChain}
                         open={true}
                       />
