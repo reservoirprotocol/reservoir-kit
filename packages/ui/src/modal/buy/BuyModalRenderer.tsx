@@ -447,7 +447,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     let currency: Currency | undefined
-
+    if (quantity === -1) return
     if (
       !token ||
       (orderId && !listing && isValidatingListing) ||
