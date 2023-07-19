@@ -236,9 +236,8 @@ export const CollectModalRenderer: FC<Props> = ({
               )
               setMaxItemAmount(totalMaxQuantity)
             } else {
-              setMaxItemAmount(
-                Number(data.maxQuantities?.[0].maxQuantity) ?? 50
-              ) // if value is null/undefined, we don't know max quantity, so set to 50
+              let maxQuantity = data.maxQuantities?.[0].maxQuantity
+              setMaxItemAmount(maxQuantity ? Number(maxQuantity) : 50) // if value is null/undefined, we don't know max quantity, so set it to 50
             }
           } else {
             setMaxItemAmount(0)
