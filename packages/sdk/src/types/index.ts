@@ -1,4 +1,4 @@
-import { EIP1193RequestFn, TransportConfig } from 'viem'
+import { CustomTransport, HttpTransport } from 'viem'
 import { paths } from './api'
 export * from './api'
 
@@ -91,5 +91,5 @@ export type ReservoirWallet = {
     step: Execute['steps'][0]
   ) => Promise<`0x${string}` | undefined>
   address: () => Promise<string>
-  transport?: TransportConfig<string, EIP1193RequestFn> & Record<string, any>
+  transport?: CustomTransport | HttpTransport
 }
