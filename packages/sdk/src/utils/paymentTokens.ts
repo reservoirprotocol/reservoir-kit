@@ -1,7 +1,7 @@
-import { zeroAddress } from 'viem'
+import { Address, zeroAddress } from 'viem'
 
 export type PaymentToken = {
-  address: `0x${string}`
+  address: Address
   symbol: string
   decimals: number
   name?: string
