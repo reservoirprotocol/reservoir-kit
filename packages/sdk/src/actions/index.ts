@@ -3,21 +3,14 @@ import * as utils from '../utils'
 import { version } from '../../package.json'
 import { LogLevel, log as logUtil } from '../utils/logger'
 import { ReservoirEvent } from '../utils/events'
+import { PaymentToken, chainPaymentTokensMap } from '../utils/paymentTokens'
 
 export type ReservoirChain = {
   id: number
   baseApiUrl: string
   active: boolean
   apiKey?: string
-  paymentCurrencies?: [
-    {
-      address: `0x${string}`
-      symbol: string
-      decimals: number
-      name?: string
-      coinGeckoId: string
-    }
-  ]
+  paymentTokens?: PaymentToken[]
 }
 
 export type ReservoirEventListener = (
@@ -72,6 +65,9 @@ export class ReservoirClient {
     this.chains = options.chains.map((chain) => ({
       ...chain,
       baseApiUrl: chain.baseApiUrl.replace(/\/$/, ''),
+      paymentTokens: chain?.paymentTokens
+        ? chain?.paymentTokens
+        : chainPaymentTokensMap[chain.id],
     }))
     this.uiVersion = options.uiVersion
     this.automatedRoyalties = options.automatedRoyalties

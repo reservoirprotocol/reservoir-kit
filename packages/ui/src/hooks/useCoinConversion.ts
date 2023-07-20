@@ -15,7 +15,7 @@ export default function (
   vs_currency?: string,
   symbols: string = 'eth',
   id: string = ''
-): { price: number; symbol: string }[] {
+): { price: number; symbol: string; id: string }[] {
   const providerOptionsContext = useContext(ProviderOptionsContext)
 
   const baseUrl = createBaseUrl(providerOptionsContext?.coinGecko)
