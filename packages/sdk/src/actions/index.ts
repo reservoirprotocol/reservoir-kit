@@ -9,6 +9,15 @@ export type ReservoirChain = {
   baseApiUrl: string
   active: boolean
   apiKey?: string
+  paymentCurrencies?: [
+    {
+      address: `0x${string}`
+      symbol: string
+      decimals: number
+      name?: string
+      coinGeckoId: string
+    }
+  ]
 }
 
 export type ReservoirEventListener = (
