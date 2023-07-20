@@ -463,6 +463,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
     let options: BuyTokenOptions = {
       partial: true,
+      currency: currency?.address,
     }
 
     if (feesOnTopBps && feesOnTopBps?.length > 0) {

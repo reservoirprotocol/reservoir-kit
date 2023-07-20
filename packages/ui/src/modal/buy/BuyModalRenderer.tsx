@@ -227,6 +227,7 @@ export const BuyModalRenderer: FC<Props> = ({
     const options: BuyTokenOptions = {
       onlyPath: true,
       partial: true,
+      currency: currency?.contract,
     }
 
     if (normalizeRoyalties !== undefined) {
