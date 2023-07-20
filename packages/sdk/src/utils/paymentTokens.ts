@@ -9,6 +9,8 @@ export type PaymentToken = {
 }
 
 export const chainPaymentTokensMap = {
+  // @TODO: add rest of chains and payment tokens
+
   // Mainnet
   1: [
     {
