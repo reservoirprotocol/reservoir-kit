@@ -302,11 +302,12 @@ export const SweepContent: FC<
             </Button>
             <Text>Select A Token</Text>
           </Flex>
-          <SelectPaymentToken
+          {/* @TODO: Pass in props, fix currency types */}
+          {/* <SelectPaymentToken
             paymentTokens={}
             currency={currency}
             setCurrency={setCurrency}
-          />
+          /> */}
         </Flex>
       )}
 
