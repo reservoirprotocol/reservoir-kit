@@ -5,7 +5,7 @@ export type PaymentToken = {
   symbol: string
   decimals: number
   name?: string
-  coinGeckoId: string
+  coinGeckoId?: string
 }
 
 export const chainPaymentTokensMap = {

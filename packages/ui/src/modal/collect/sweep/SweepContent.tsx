@@ -54,6 +54,7 @@ export const SweepContent: FC<
   balance,
   chainCurrency,
   isChainCurrency,
+  paymentTokens,
   hasEnoughCurrency,
   addFundsLink,
   blockExplorerBaseUrl,
@@ -291,7 +292,7 @@ export const SweepContent: FC<
         </Flex>
       )}
 
-      {collectStep === CollectStep.SelectPaymentToken && (
+      {collectStep === CollectStep.SelectPayment && (
         <Flex direction="column">
           <Flex>
             <Button
@@ -303,11 +304,11 @@ export const SweepContent: FC<
             <Text>Select A Token</Text>
           </Flex>
           {/* @TODO: Pass in props, fix currency types */}
-          {/* <SelectPaymentToken
-            paymentTokens={}
+          <SelectPaymentToken
+            paymentTokens={paymentTokens}
             currency={currency}
             setCurrency={setCurrency}
-          /> */}
+          />
         </Flex>
       )}
 

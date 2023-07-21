@@ -85,6 +85,9 @@ export class ReservoirClient {
       ? options.chains.map((chain) => ({
           ...chain,
           baseApiUrl: chain.baseApiUrl.replace(/\/$/, ''),
+          paymentTokens: chain?.paymentTokens
+            ? chain?.paymentTokens
+            : chainPaymentTokensMap[chain.id],
         }))
       : this.chains
     this.marketplaceFees = options.marketplaceFees

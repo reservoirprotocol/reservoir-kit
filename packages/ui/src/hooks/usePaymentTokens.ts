@@ -13,18 +13,24 @@ export type EnhancedCurrency =
 
 export default function (
   address: Address,
-  listingCurrencyAddress: Address,
+  preferredCurrencyAddress: Address,
+  preferredCurrencyTotalPrice: number,
   chainId?: number
 ) {
+  if (!address) {
+    return []
+  }
   const client = useReservoirClient()
   const chain =
     chainId !== undefined
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
 
-  const nonNativeCurrencies = chain?.paymentTokens?.filter(
-    (currency) => currency.address !== zeroAddress
-  )
+  const nonNativeCurrencies = useMemo(() => {
+    return chain?.paymentTokens?.filter(
+      (currency) => currency.address !== zeroAddress
+    )
+  }, [chain?.paymentTokens])
 
   const currencySymbols = chain?.paymentTokens
     ?.map((currency) => currency.symbol)
@@ -42,7 +48,7 @@ export default function (
       args: [address],
     })),
     watch: true,
-    enabled: address ? true : false,
+    enabled: true,
     allowFailure: false,
   })
 
@@ -89,9 +95,9 @@ export default function (
 
         const conversion =
           currencyToUsdConversions[
-            currency.coinGeckoId.length > 0
-              ? currency.coinGeckoId
-              : currency.symbol.toLowerCase()
+            currency?.coinGeckoId && currency?.coinGeckoId.length > 0
+              ? currency?.coinGeckoId
+              : currency?.symbol?.toLowerCase()
           ]
         const usdPrice =
           Number(formatUnits(BigInt(balance), currency?.decimals || 18)) *
@@ -104,13 +110,21 @@ export default function (
       })
       .sort((a, b) => {
         // If user has a balance for the listed currency, return first. Otherwise sort currencies by total usdPrice
-        if (a.address === listingCurrencyAddress && Number(a.balance) > 0)
+        if (a.address === preferredCurrencyAddress && Number(a.balance) > 0)
           return -1
-        if (b.address === listingCurrencyAddress && Number(b.balance) > 0)
+        if (b.address === preferredCurrencyAddress && Number(b.balance) > 0)
           return 1
         return b.usdPrice - a.usdPrice
       }) as EnhancedCurrency[]
-  }, [usdConversions, nonNativeBalances, nativeBalance])
+  }, [
+    address,
+    preferredCurrencyAddress,
+    preferredCurrencyTotalPrice,
+    chainId,
+    usdConversions,
+    nonNativeBalances,
+    nativeBalance,
+  ])
 
   return paymentTokens
 }

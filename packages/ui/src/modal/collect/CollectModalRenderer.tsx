@@ -10,6 +10,7 @@ import {
   useChainCurrency,
   useCoinConversion,
   useCollections,
+  usePaymentTokens,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
@@ -25,10 +26,12 @@ import { toFixed } from '../../lib/numbers'
 import { UseBalanceToken } from '../../types/wagmi'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
+import { PaymentToken } from 'packages/sdk/src/utils/paymentTokens'
+import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 
 export enum CollectStep {
   Idle,
-  SelectPaymentToken,
+  SelectPayment,
   Approving,
   Finalizing,
   Complete,
@@ -74,6 +77,7 @@ export type ChildrenProps = {
   >
   chainCurrency: ReturnType<typeof useChainCurrency>
   isChainCurrency: boolean
+  paymentTokens: EnhancedCurrency[]
   total: number
   totalUsd: number
   feeOnTop: number
@@ -401,6 +405,18 @@ export const CollectModalRenderer: FC<Props> = ({
   const feeUsd = feeOnTop * usdPrice
   const totalUsd = usdPrice * (total || 0)
 
+  const [paymentCurrency, setPaymentCurrency] = useState<PaymentToken>(currency)
+
+  // @TODO: only fetch payment token balance when modal is open
+  const paymentTokens = usePaymentTokens(
+    account?.address as Address,
+    currency?.address,
+    total,
+    chain?.id
+  )
+
+  console.log(paymentTokens)
+
   const { data: balance } = useBalance({
     chainId: chain?.id,
     address: account.address,
@@ -613,6 +629,7 @@ export const CollectModalRenderer: FC<Props> = ({
         setCurrency,
         chainCurrency,
         isChainCurrency,
+        paymentTokens,
         total,
         totalUsd,
         feeOnTop,
