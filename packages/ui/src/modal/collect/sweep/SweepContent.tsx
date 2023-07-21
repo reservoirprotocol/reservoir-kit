@@ -14,6 +14,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
+  faChevronLeft,
   faCircleExclamation,
   faCube,
   faMagnifyingGlass,
@@ -27,6 +28,7 @@ import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible
 import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
+import { SelectPaymentToken } from '../../SelectPaymentToken'
 
 export const SweepContent: FC<
   ChildrenProps & {
@@ -43,6 +45,7 @@ export const SweepContent: FC<
   setItemAmount,
   maxItemAmount,
   currency,
+  setCurrency,
   total,
   totalUsd,
   feeOnTop,
@@ -57,6 +60,7 @@ export const SweepContent: FC<
   transactionError,
   stepData,
   collectStep,
+  setCollectStep,
   collectTokens,
   copy,
   setOpen,
@@ -284,6 +288,25 @@ export const SweepContent: FC<
               </Button>
             </Flex>
           )}
+        </Flex>
+      )}
+
+      {collectStep === CollectStep.SelectPaymentToken && (
+        <Flex direction="column">
+          <Flex>
+            <Button
+              onClick={() => setCollectStep(CollectStep.Idle)}
+              color="ghost"
+            >
+              <FontAwesomeIcon icon={faChevronLeft} width={10} />
+            </Button>
+            <Text>Select A Token</Text>
+          </Flex>
+          <SelectPaymentToken
+            paymentTokens={}
+            currency={currency}
+            setCurrency={setCurrency}
+          />
         </Flex>
       )}
 

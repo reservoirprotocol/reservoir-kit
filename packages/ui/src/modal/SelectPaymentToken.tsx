@@ -41,7 +41,7 @@ export const SelectPaymentToken: FC<Props> = ({
               {/* <Text>{currency?.}</Text> */}
               {isSelectedCurrency ? (
                 <Box css={{ color: '$accentSolidHover' }}>
-                  <FontAwesomeIcon icon={faCheck} />
+                  <FontAwesomeIcon icon={faCheck} width={14} />
                 </Box>
               ) : null}
             </Flex>

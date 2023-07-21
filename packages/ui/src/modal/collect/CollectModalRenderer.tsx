@@ -28,6 +28,7 @@ import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
 
 export enum CollectStep {
   Idle,
+  SelectPaymentToken,
   Approving,
   Finalizing,
   Complete,
@@ -68,6 +69,9 @@ export type ChildrenProps = {
   maxItemAmount: number
   setMaxItemAmount: React.Dispatch<React.SetStateAction<number>>
   currency: ReturnType<typeof useChainCurrency>
+  setCurrency: React.Dispatch<
+    React.SetStateAction<ReturnType<typeof useChainCurrency>>
+  >
   chainCurrency: ReturnType<typeof useChainCurrency>
   isChainCurrency: boolean
   total: number
@@ -606,6 +610,7 @@ export const CollectModalRenderer: FC<Props> = ({
         maxItemAmount,
         setMaxItemAmount,
         currency,
+        setCurrency,
         chainCurrency,
         isChainCurrency,
         total,
