@@ -4,7 +4,7 @@ import { useReservoirClient, useCoinConversion } from '.'
 import { useMemo } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
-type EnhancedCurrency =
+export type EnhancedCurrency =
   | (NonNullable<ReservoirChain['paymentTokens']>[0] & {
       usdPrice: number
       balance: string | number | bigint
