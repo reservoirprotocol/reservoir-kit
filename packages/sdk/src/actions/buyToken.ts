@@ -84,7 +84,7 @@ export async function buyToken(data: Data) {
     }
 
     if (precheck) {
-      const apiKey = client.currentChain()?.apiKey
+      const apiKey = client.apiKey
       if (!request.headers) {
         request.headers = {}
       }

@@ -35,7 +35,7 @@ export default function (
 
   const { data } = useSWR<
     paths['/collections/{collection}/supported-marketplaces/v1']['get']['responses'][200]['schema']
-  >(collectionId ? [path.href, chain?.apiKey, client?.version] : null, null)
+  >(collectionId ? [path.href, client?.apiKey, client?.version] : null, null)
 
   useEffect(() => {
     if (data && data.marketplaces) {

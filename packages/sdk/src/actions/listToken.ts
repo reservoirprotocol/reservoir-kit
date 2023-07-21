@@ -84,7 +84,7 @@ export async function listToken(
     }
 
     if (precheck) {
-      const apiKey = client.currentChain()?.apiKey
+      const apiKey = client.apiKey
       if (apiKey && request.headers) {
         request.headers['x-api-key'] = apiKey
       }

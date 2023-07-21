@@ -104,8 +104,8 @@ export async function executeSteps(
     if (reservoirChain?.baseApiUrl) {
       request.baseURL = reservoirChain.baseApiUrl
     }
-    if (reservoirChain?.apiKey) {
-      request.headers['x-api-key'] = reservoirChain.apiKey
+    if (client?.apiKey) {
+      request.headers['x-api-key'] = client.apiKey
     }
     if (client?.uiVersion) {
       request.headers['x-rkui-version'] = client.uiVersion
