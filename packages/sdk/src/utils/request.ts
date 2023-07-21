@@ -5,7 +5,6 @@ import { getClient } from '../'
 
 export function request(config: AxiosRequestConfig = {}) {
   const client = getClient()
-  const currentReservoirChain = client.currentChain()
   const headers: AxiosRequestHeaders = {
     'Content-Type': 'application/json',
     'x-rkc-version': version,
