@@ -1,3 +1,20 @@
+
+## [v1.3.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d2fadca0fe6d761237c7ff1c224ff116f0dc57b0) (2023-07-25)
+
+## [v1.3.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6420f86ce0fb2eeb3b90dffcd74d005f6f5f498f) (2023-07-21)
+
+## [v1.3.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a5aecfc56e5e6cda53fd3a53f1496c6e7c9199d2) (2023-07-21)
+
+* Update Arbitrum Nova wrapped contracts [5c09ede](https://github.com/reservoirprotocol/reservoir-kit/commit/5c09edeb9fac7f1469026331b8d9bfb0778877ce)
+## [v1.3.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/30b452f63dea8b1095061a795ffd9e21d4837543) (2023-07-20)
+
+* Merge pull request #312 from reservoirprotocol/armando/grwth-3028-decreasing-the-quantity-on-the-buy-modal-causes-the-item-to [6112855](https://github.com/reservoirprotocol/reservoir-kit/commit/61128558d0d3b63b3355134d1d5bda10b43f59ea)
+* Fix successful/failed count for 1155s [2023-07-19](https://github.com/reservoirprotocol/reservoir-kit/commit/88ad703)
+* feat: Fix negative quantity bug [95a0427](https://github.com/reservoirprotocol/reservoir-kit/commit/95a0427e93cf747409618bb6e80faa2eb7f82097)
+* Update 1155 max quantity logic and total calucaltion [19102b0](https://github.com/reservoirprotocol/reservoir-kit/commit/19102b03bcedf160a2fb88f1b63c39cbbd67c4f6)
+* feat: Revert changes [77c48c0](https://github.com/reservoirprotocol/reservoir-kit/commit/77c48c0ea003cee5516f50a4ff7371cc1a0a2d2d)
+* fix: Set quantity to prev [5d0a02d](https://github.com/reservoirprotocol/reservoir-kit/commit/5d0a02d6b4dabb380511413e124af1b55ce979be)
+* feat: Fix quantity bug [861e2d2](https://github.com/reservoirprotocol/reservoir-kit/commit/861e2d2252b7d0732eddafc96b564d7e57af4289)
 ## [v1.3.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7092d495b509ceb3b4bed05dbf860e6acb92140d) (2023-07-18)
 
 - TokenMedia: fallback to IPFS if metadata images missing [b1b0156](https://github.com/reservoirprotocol/reservoir-kit/commit/b1b01568660f8675206a808ecedd09e1032e53ca)
