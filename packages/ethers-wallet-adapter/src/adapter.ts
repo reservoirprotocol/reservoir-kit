@@ -6,9 +6,14 @@ import {
 import { Signer } from 'ethers/lib/ethers'
 import { arrayify } from 'ethers/lib/utils'
 import { TypedDataSigner } from '@ethersproject/abstract-signer/lib/index'
+import { CustomTransport, HttpTransport } from 'viem'
 
-export const adaptEthersSigner = (signer: Signer): ReservoirWallet => {
+export const adaptEthersSigner = (
+  signer: Signer,
+  transport?: CustomTransport | HttpTransport
+): ReservoirWallet => {
   return {
+    transport,
     address: async () => {
       return signer.getAddress()
     },
