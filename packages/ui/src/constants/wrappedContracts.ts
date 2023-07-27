@@ -7,6 +7,7 @@ const wrappedContracts: Record<number, string> = {
   42161: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1', //arbitrum
   42170: '0x722e8bdd2ce80a4422e880164f2079488e115365', //arbitrum nova
   43114: '0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7', //avalance
+  59144: '0xe5d7c2a44ffddf6b295a15c148167daaaf5cf34f',
   999: '0x8a5027ea12f45a13deb6CB96A07913c6e192BE84', //zoratestnet
   80001: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889', //mumbai
   8453: '0x4200000000000000000000000000000000000006', //base

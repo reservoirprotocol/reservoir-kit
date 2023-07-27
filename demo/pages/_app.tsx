@@ -47,6 +47,7 @@ const { chains, publicClient } = configureChains(
     allChains.zora,
     customChains.base,
     allChains.avalanche,
+    customChains.linea,
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
