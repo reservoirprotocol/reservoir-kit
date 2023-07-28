@@ -1,3 +1,7 @@
+
+## [v1.3.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/5e6e37028c27b325fd78603718e08cb05d5f94ca) (2023-07-28)
+
+* Add linea chain details for wrapped contract [b77abfd](https://github.com/reservoirprotocol/reservoir-kit/commit/b77abfd2579acc482d2c777abb0614541fd9cbf2)
 ## [v1.3.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d2fadca0fe6d761237c7ff1c224ff116f0dc57b0) (2023-07-25)
 
 ## [v1.3.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6420f86ce0fb2eeb3b90dffcd74d005f6f5f498f) (2023-07-21)

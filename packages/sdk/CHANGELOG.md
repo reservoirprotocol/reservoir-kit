@@ -1,3 +1,7 @@
+
+## [v1.1.21-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e1ca700937a29665b081d80645f6b22f863a553c) (2023-07-28)
+
+* Add linea chain details for wrapped contract [b77abfd](https://github.com/reservoirprotocol/reservoir-kit/commit/b77abfd2579acc482d2c777abb0614541fd9cbf2)
 ## [v1.1.20-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e0a29c67c77284aa287496a13225b6e015695660) (2023-07-25)
 
 - Support passing in custom RPC [79ebe6b](https://github.com/reservoirprotocol/reservoir-kit/commit/79ebe6b3997ea86dfd07c5138626f96d32963003)
