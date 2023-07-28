@@ -24,7 +24,7 @@ import { getNetwork, getWalletClient } from 'wagmi/actions'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
-  paths['/orders/asks/v4']['get']['responses']['200']['schema']
+  paths['/orders/asks/v5']['get']['responses']['200']['schema']
 type Token = NonNullable<ReturnType<typeof useTokens>['data'][0]>
 type TokensSchema = paths['/tokens/v6']['get']['responses']['200']['schema']
 type FloorAsk = NonNullable<NonNullable<Token['market']>['floorAsk']>
@@ -311,9 +311,9 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
         (chain) => chain.id === chainId
       )
 
-      const url = new URL(`${reservoirChain?.baseApiUrl}/orders/asks/v4`)
+      const url = new URL(`${reservoirChain?.baseApiUrl}/orders/asks/v5`)
 
-      const query: paths['/orders/asks/v4']['get']['parameters']['query'] = {
+      const query: paths['/orders/asks/v5']['get']['parameters']['query'] = {
         ids: orderIds,
         limit: 1000,
         includeCriteriaMetadata: true,
