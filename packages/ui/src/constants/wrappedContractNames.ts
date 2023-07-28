@@ -7,6 +7,7 @@ const wrappedContractNames: Record<number, string> = {
   42161: 'WETH', //arbitrum
   42170: 'WETH', //arbitrum nova
   43114: 'WAVAX', //avalance
+  59144: 'WETH',
   999: 'WETH', //zoratestnet
   80001: 'WMATIC', //mumbai
   8453: 'WETH', //base

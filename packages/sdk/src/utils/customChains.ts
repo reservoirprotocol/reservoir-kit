@@ -109,9 +109,35 @@ export const arbitrumNova = {
   },
 } as const satisfies Chain
 
+export const linea = {
+  id: 59144,
+  name: 'Linea',
+  network: 'linea',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://linea-mainnet.infura.io/v3'],
+    },
+    public: {
+      http: ['https://linea-mainnet.infura.io/v3'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Linea Explorer',
+      url: 'https://explorer.linea.build',
+    },
+    default: {
+      name: 'Linea Explorer',
+      url: 'https://explorer.linea.build',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   zora,
   zoraTestnet,
   base,
-  arbitrumNova
+  arbitrumNova,
+  linea
 } as const satisfies Record<string, Chain>
