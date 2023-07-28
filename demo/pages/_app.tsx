@@ -140,6 +140,12 @@ const AppWrapper: FC<any> = ({ children }) => {
               active: CHAIN_ID === customChains.base.id,
               apiKey: API_KEY,
             },
+            {
+              baseApiUrl: 'https://api-linea.reservoir.tools',
+              id: customChains.linea.id,
+              active: CHAIN_ID === customChains.linea.id,
+              apiKey: API_KEY,
+            },
           ],
           marketplaceFees: MARKETPLACE_FEES,
           source: SOURCE,
