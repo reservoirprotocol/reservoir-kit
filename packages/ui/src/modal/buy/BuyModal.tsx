@@ -173,6 +173,7 @@ export function BuyModal({
           }, 0) || 0
         const failedPurchases =
           totalPurchases - (stepData?.currentStep?.items?.length || 0)
+          
         const successfulPurchases = totalPurchases - failedPurchases
         const finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
