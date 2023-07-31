@@ -108,6 +108,8 @@ export function AcceptBidModal({
         const client = useReservoirClient()
         const chain = client?.currentChain()
 
+        const baseApiUrl = chain?.baseApiUrl
+
         useEffect(() => {
           if (acceptBidStep === AcceptBidStep.Complete && onBidAccepted) {
             const data: BidData = {
@@ -277,7 +279,7 @@ export function AcceptBidModal({
                         decimals={bidPath.currencyDecimals}
                         sourceImg={
                           bidPath.source
-                            ? `https://api.reservoir.tools/redirect/sources/${bidPath.source}/logo/v2`
+                            ? `${baseApiUrl}/redirect/sources/${bidPath.source}/logo/v2`
                             : ''
                         }
                       />
