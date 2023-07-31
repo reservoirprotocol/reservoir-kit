@@ -164,22 +164,15 @@ export function BuyModal({
         const lastStepItems =
           executableSteps[executableSteps.length - 1]?.items || []
 
-        const purchaseTxHashes =
-          stepData?.currentStep?.items?.reduce((txHashes, item) => {
+        const totalPurchases =
+          stepData?.currentStep?.items?.reduce((total, item) => {
             item.transfersData?.forEach((transferData) => {
-              if (transferData.txHash) {
-                txHashes.add(transferData.txHash)
-              }
+              total += Number(transferData.amount || 1)
             })
-            return txHashes
-          }, new Set<string>()) || []
-
-        const totalPurchases = Array.from(purchaseTxHashes).length
-
-        const failedPurchases =
-          totalPurchases - (stepData?.currentStep?.items?.length || 0)
-
-        const successfulPurchases = totalPurchases - failedPurchases
+            return total
+          }, 0) || 0
+        const failedPurchases = quantity - totalPurchases
+        const successfulPurchases = quantity - failedPurchases
         const finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
         const price =
