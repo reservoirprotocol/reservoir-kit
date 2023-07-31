@@ -297,7 +297,9 @@ export const BuyModalRenderer: FC<Props> = ({
 
     const contract = collectionId?.split(':')[0]
 
-    let options: BuyTokenOptions = {}
+    let options: BuyTokenOptions = {
+      currency: currency?.contract,
+    }
 
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
