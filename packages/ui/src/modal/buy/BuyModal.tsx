@@ -51,7 +51,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   orderId?: string
   feesOnTopBps?: string[] | null
-  feesOnTopFixed?: string[] | null
+  feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   onGoToToken?: () => any
@@ -80,7 +80,7 @@ export function BuyModal({
   collectionId,
   orderId,
   feesOnTopBps,
-  feesOnTopFixed,
+  feesOnTopUsd,
   normalizeRoyalties,
   copyOverrides,
   onPurchaseComplete,
@@ -102,7 +102,7 @@ export function BuyModal({
       collectionId={collectionId}
       orderId={orderId}
       feesOnTopBps={feesOnTopBps}
-      feesOnTopFixed={feesOnTopFixed}
+      feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
     >
       {({

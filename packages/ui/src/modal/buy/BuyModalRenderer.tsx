@@ -8,11 +8,11 @@ import React, {
 } from 'react'
 import {
   useTokens,
-  useCoinConversion,
   useReservoirClient,
   useCollections,
   useListings,
   useChainCurrency,
+  useCurrencyConversion,
 } from '../../hooks'
 import { useAccount, useBalance, useWalletClient, useNetwork } from 'wagmi'
 
@@ -88,7 +88,7 @@ type Props = {
   collectionId?: string
   orderId?: string
   feesOnTopBps?: string[] | null
-  feesOnTopFixed?: string[] | null
+  feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -99,7 +99,7 @@ export const BuyModalRenderer: FC<Props> = ({
   collectionId,
   orderId,
   feesOnTopBps,
-  feesOnTopFixed,
+  feesOnTopUsd,
   normalizeRoyalties,
   children,
 }) => {
@@ -192,11 +192,12 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   }, [listing, token, path, is1155, orderId])
 
-  const usdConversion = useCoinConversion(
-    open && token ? 'USD' : undefined,
-    currency?.symbol
+  const { data: usdFeeConversion } = useCurrencyConversion(
+    undefined,
+    currency?.contract,
+    'usd'
   )
-  const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : 0
+  const usdPrice = Number(usdFeeConversion?.usd || 0)
   const feeUsd = feeOnTop * usdPrice
   const totalUsd = totalPrice * usdPrice
 
@@ -319,9 +320,11 @@ export const BuyModalRenderer: FC<Props> = ({
         return `${referrer}:${atomicUnitsFee}`
       })
       options.feesOnTop = fixedFees
-    } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
-      options.feesOnTop = feesOnTopFixed
-    } else if (!feesOnTopFixed && !feesOnTopBps) {
+    } else if (feesOnTopUsd && feesOnTopUsd.length > 0) {
+      //convert USD => atomic unit of currency to figure out the atomic value
+
+      options.feesOnTop = feesOnTopUsd
+    } else if (!feesOnTopUsd && !feesOnTopBps) {
       delete options.feesOnTop
     }
 
@@ -435,7 +438,7 @@ export const BuyModalRenderer: FC<Props> = ({
     collectionId,
     orderId,
     feesOnTopBps,
-    feesOnTopFixed,
+    feesOnTopUsd,
     quantity,
     normalizeRoyalties,
     is1155,
@@ -539,10 +542,13 @@ export const BuyModalRenderer: FC<Props> = ({
         }, 0)
         total += fees
         setFeeOnTop(fees)
-      } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
-        const fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
+      } else if (feesOnTopUsd && feesOnTopUsd.length > 0) {
+        const fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
+          const parsedFee = formatUnits(
+            BigInt(fee) / BigInt(usdPrice),
+            currency?.decimals || 18
+          )
           return totalFees + Number(parsedFee)
         }, 0)
         total += fees
@@ -566,7 +572,8 @@ export const BuyModalRenderer: FC<Props> = ({
     is1155,
     orderId,
     feesOnTopBps,
-    feesOnTopFixed,
+    feesOnTopUsd,
+    usdPrice,
     feeOnTop,
     client,
     quantity,
