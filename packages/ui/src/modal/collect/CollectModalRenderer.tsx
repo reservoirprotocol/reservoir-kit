@@ -26,7 +26,6 @@ import { toFixed } from '../../lib/numbers'
 import { UseBalanceToken } from '../../types/wagmi'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
-import { PaymentToken } from 'packages/sdk/src/utils/paymentTokens'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 
 export enum CollectStep {
@@ -75,6 +74,8 @@ export type ChildrenProps = {
   setCurrency: React.Dispatch<
     React.SetStateAction<ReturnType<typeof useChainCurrency>>
   >
+  paymentCurrency: EnhancedCurrency
+  setPaymentCurrency: React.Dispatch<React.SetStateAction<EnhancedCurrency>>
   chainCurrency: ReturnType<typeof useChainCurrency>
   isChainCurrency: boolean
   paymentTokens: EnhancedCurrency[]
@@ -151,6 +152,7 @@ export const CollectModalRenderer: FC<Props> = ({
   const [feeOnTop, setFeeOnTop] = useState(0)
 
   const chainCurrency = useChainCurrency()
+
   const [currency, setCurrency] = useState(chainCurrency)
 
   const isChainCurrency = currency.address === chainCurrency.address
@@ -158,10 +160,10 @@ export const CollectModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
 
-  const contract = collectionId?.split(':')[0] as Address
-
   const { chains } = useNetwork()
   const chain = chains.find((chain) => chain.id === currentChain?.id)
+
+  const contract = collectionId?.split(':')[0] as Address
 
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
@@ -405,17 +407,16 @@ export const CollectModalRenderer: FC<Props> = ({
   const feeUsd = feeOnTop * usdPrice
   const totalUsd = usdPrice * (total || 0)
 
-  const [paymentCurrency, setPaymentCurrency] = useState<PaymentToken>(currency)
-
-  // @TODO: only fetch payment token balance when modal is open
   const paymentTokens = usePaymentTokens(
+    open,
     account?.address as Address,
     currency?.address,
     total,
     chain?.id
   )
 
-  console.log(paymentTokens)
+  const [paymentCurrency, setPaymentCurrency] =
+    useState<EnhancedCurrency>(currency)
 
   const { data: balance } = useBalance({
     chainId: chain?.id,
@@ -627,6 +628,8 @@ export const CollectModalRenderer: FC<Props> = ({
         setMaxItemAmount,
         currency,
         setCurrency,
+        paymentCurrency,
+        setPaymentCurrency,
         chainCurrency,
         isChainCurrency,
         paymentTokens,

@@ -3,23 +3,21 @@ import { Address, formatUnits, zeroAddress } from 'viem'
 import { useReservoirClient, useCoinConversion } from '.'
 import { useMemo } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
 
 export type EnhancedCurrency =
-  | (NonNullable<ReservoirChain['paymentTokens']>[0] & {
-      usdPrice: number
-      balance: string | number | bigint
-    })
-  | undefined
+  | NonNullable<ReservoirChain['paymentTokens']>[0] & {
+      usdPrice?: number
+      balance?: string | number | bigint
+    }
 
 export default function (
+  open: boolean,
   address: Address,
-  preferredCurrencyAddress: Address,
+  preferredCurrency: PaymentToken,
   preferredCurrencyTotalPrice: number,
   chainId?: number
 ) {
-  if (!address) {
-    return []
-  }
   const client = useReservoirClient()
   const chain =
     chainId !== undefined
@@ -27,9 +25,21 @@ export default function (
       : client?.currentChain()
 
   const nonNativeCurrencies = useMemo(() => {
-    return chain?.paymentTokens?.filter(
+    let currencies = chain?.paymentTokens?.filter(
       (currency) => currency.address !== zeroAddress
     )
+
+    // If prefferedCurrency is not the native currency and not already included in paymentTokens, add to nonNativeCurrencies
+    if (
+      preferredCurrency?.address !== zeroAddress &&
+      !currencies
+        ?.map((currency) => currency.address)
+        .includes(preferredCurrency.address)
+    ) {
+      currencies?.push(preferredCurrency)
+    }
+
+    return currencies
   }, [chain?.paymentTokens])
 
   const currencySymbols = chain?.paymentTokens
@@ -40,31 +50,36 @@ export default function (
     .join(',')
 
   const { data: nonNativeBalances } = useContractReads({
-    contracts: nonNativeCurrencies?.map((currency) => ({
-      abi: erc20ABI,
-      address: currency.address as `0x${string}`,
-      chainId: chainId,
-      functionName: 'balanceOf',
-      args: [address],
-    })),
-    watch: true,
-    enabled: true,
+    contracts: open
+      ? nonNativeCurrencies?.map((currency) => ({
+          abi: erc20ABI,
+          address: currency.address as `0x${string}`,
+          chainId: chainId,
+          functionName: 'balanceOf',
+          args: [address],
+        }))
+      : [],
+    watch: open,
+    enabled: open,
     allowFailure: false,
   })
 
   const nativeBalance = useBalance({
-    address,
+    address: open ? address : undefined,
     chainId: chainId,
-    watch: true,
+    watch: open,
   })
 
   const usdConversions = useCoinConversion(
-    'USD',
+    open ? 'USD' : undefined,
     currencySymbols,
     currencyCoingeckoIds
   )
 
   const paymentTokens = useMemo(() => {
+    if (!open) {
+      return []
+    }
     const currencyToUsdConversions = usdConversions.reduce((map, data) => {
       map[data.symbol] = data
       map[data.id] = data
@@ -110,15 +125,15 @@ export default function (
       })
       .sort((a, b) => {
         // If user has a balance for the listed currency, return first. Otherwise sort currencies by total usdPrice
-        if (a.address === preferredCurrencyAddress && Number(a.balance) > 0)
+        if (a.address === preferredCurrency.address && Number(a.balance) > 0)
           return -1
-        if (b.address === preferredCurrencyAddress && Number(b.balance) > 0)
+        if (b.address === preferredCurrency.address && Number(b.balance) > 0)
           return 1
         return b.usdPrice - a.usdPrice
       }) as EnhancedCurrency[]
   }, [
     address,
-    preferredCurrencyAddress,
+    preferredCurrency.address,
     preferredCurrencyTotalPrice,
     chainId,
     usdConversions,

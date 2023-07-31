@@ -4,6 +4,7 @@ import {
   Anchor,
   Box,
   Button,
+  CryptoCurrencyIcon,
   ErrorWell,
   Flex,
   FormatCryptoCurrency,
@@ -15,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
   faChevronLeft,
+  faChevronRight,
   faCircleExclamation,
   faCube,
   faMagnifyingGlass,
@@ -46,6 +48,8 @@ export const SweepContent: FC<
   maxItemAmount,
   currency,
   setCurrency,
+  paymentCurrency,
+  setPaymentCurrency,
   total,
   totalUsd,
   feeOnTop,
@@ -139,6 +143,7 @@ export const SweepContent: FC<
           </Button>
         </Flex>
       ) : null}
+
       {hasTokens && maxItemAmount !== 0 && collectStep === CollectStep.Idle && (
         <Flex direction="column">
           <Flex
@@ -241,8 +246,31 @@ export const SweepContent: FC<
                 />
               </Flex>
             )}
+            <Flex
+              justify="between"
+              align="center"
+              css={{ py: '$4', gap: '$1' }}
+            >
+              <Text style="subtitle2">Payment Method</Text>
+              <Flex
+                align="center"
+                css={{ gap: '$2', cursor: 'pointer' }}
+                onClick={() => setCollectStep(CollectStep.SelectPayment)}
+              >
+                <Flex align="center">
+                  <CryptoCurrencyIcon
+                    address={paymentCurrency?.address}
+                    css={{ width: 16, height: 16, mr: '$1' }}
+                  />
+                  <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                </Flex>
+                <Box css={{ color: '$neutralSolidHover' }}>
+                  <FontAwesomeIcon icon={faChevronRight} width={10} />
+                </Box>
+              </Flex>
+            </Flex>
             <Flex justify="between" align="start" css={{ height: 34 }}>
-              <Text style="h6">Total</Text>
+              <Text style="h6">You Pay</Text>
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
                 <FormatCryptoCurrency
                   textStyle="h6"
@@ -293,21 +321,22 @@ export const SweepContent: FC<
       )}
 
       {collectStep === CollectStep.SelectPayment && (
-        <Flex direction="column">
-          <Flex>
+        <Flex direction="column" css={{ py: 20, gap: '$4' }}>
+          <Flex align="center" css={{ gap: '$4', px: '$4' }}>
             <Button
               onClick={() => setCollectStep(CollectStep.Idle)}
               color="ghost"
+              size="none"
+              css={{ color: '$neutralSolidHover' }}
             >
               <FontAwesomeIcon icon={faChevronLeft} width={10} />
             </Button>
-            <Text>Select A Token</Text>
+            <Text style="subtitle2">Select A Token</Text>
           </Flex>
-          {/* @TODO: Pass in props, fix currency types */}
           <SelectPaymentToken
             paymentTokens={paymentTokens}
-            currency={currency}
-            setCurrency={setCurrency}
+            currency={paymentCurrency}
+            setCurrency={setPaymentCurrency}
           />
         </Flex>
       )}

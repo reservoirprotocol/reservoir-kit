@@ -17,7 +17,7 @@ export const SelectPaymentToken: FC<Props> = ({
   currency,
 }) => {
   return (
-    <Flex direction="column" css={{ width: '100%', gap: '$5' }}>
+    <Flex direction="column" css={{ width: '100%', gap: '$1', px: '$2' }}>
       {paymentTokens.map((paymentToken) => {
         const isSelectedCurrency = currency?.address === paymentToken?.address
         const formattedBalance = formatUnits(
@@ -25,15 +25,34 @@ export const SelectPaymentToken: FC<Props> = ({
           paymentToken?.decimals || 18
         )
         return (
-          <Flex align="center" justify="between" css={{ width: '100%' }}>
-            <Flex css={{ gap: '$3' }}>
+          <Flex
+            key={paymentToken?.address}
+            align="center"
+            justify="between"
+            css={{
+              width: '100%',
+              p: '$2',
+              borderRadius: 4,
+              cursor: 'pointer',
+              '&:hover': {
+                background: '$neutralBgHover',
+              },
+            }}
+            onClick={() => setCurrency(paymentToken)}
+          >
+            <Flex
+              align="center"
+              css={{ gap: '$3', opacity: isSelectedCurrency ? 0.5 : 1 }}
+            >
               <CryptoCurrencyIcon
                 address={paymentToken?.address as string}
-                css={{ width: 24 }}
+                css={{ width: 24, height: 24 }}
               />
-              <Flex direction="column">
+              <Flex direction="column" css={{ gap: '$1' }}>
                 <Text style="subtitle2">{paymentToken?.name}</Text>
-                <Text>Balance: {formattedBalance}</Text>
+                <Text style="body2" color="subtle">
+                  Balance: {formattedBalance}
+                </Text>
               </Flex>
             </Flex>
             <Flex align="center" css={{ gap: '$3' }}>
