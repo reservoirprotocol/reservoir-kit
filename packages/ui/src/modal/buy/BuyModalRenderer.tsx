@@ -63,6 +63,7 @@ type ChildrenProps = {
   >
   mixedCurrencies: boolean
   totalPrice: number
+  totalIncludingFees: number
   feeOnTop: number
   buyStep: BuyStep
   transactionError?: Error | null
@@ -105,6 +106,7 @@ export const BuyModalRenderer: FC<Props> = ({
 }) => {
   const { data: wallet } = useWalletClient()
   const [totalPrice, setTotalPrice] = useState(0)
+  const [totalIncludingFees, setTotalIncludingFees] = useState(0)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0)
   const [path, setPath] = useState<BuyPath>([])
   const [isFetchingPath, setIsFetchingPath] = useState(false)
@@ -199,7 +201,7 @@ export const BuyModalRenderer: FC<Props> = ({
   )
   const usdPrice = Number(usdFeeConversion?.usd || 0)
   const feeUsd = feeOnTop * usdPrice
-  const totalUsd = totalPrice * usdPrice
+  const totalUsd = totalIncludingFees * usdPrice
 
   const client = useReservoirClient()
 
@@ -306,7 +308,7 @@ export const BuyModalRenderer: FC<Props> = ({
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
         const totalFeeTruncated = toFixed(
-          totalPrice - feeOnTop,
+          totalIncludingFees - feeOnTop,
           currency?.decimals || 18
         )
         const fee =
@@ -321,9 +323,16 @@ export const BuyModalRenderer: FC<Props> = ({
       })
       options.feesOnTop = fixedFees
     } else if (feesOnTopUsd && feesOnTopUsd.length > 0) {
-      //convert USD => atomic unit of currency to figure out the atomic value
-
-      options.feesOnTop = feesOnTopUsd
+      const feesOnTopFixed = feesOnTopUsd.map((feeOnTop) => {
+        const [recipient, fee] = feeOnTop.split(':')
+        const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
+        const atomicFee = BigInt(fee)
+        const convertedAtomicFee = atomicFee * BigInt(10 ** currency?.decimals!)
+        const currencyFee = convertedAtomicFee / atomicUsdPrice
+        const parsedFee = formatUnits(currencyFee, 0)
+        return `${recipient}:${parsedFee}`
+      })
+      options.feesOnTop = feesOnTopFixed
     } else if (!feesOnTopUsd && !feesOnTopBps) {
       delete options.feesOnTop
     }
@@ -353,7 +362,7 @@ export const BuyModalRenderer: FC<Props> = ({
     client.actions
       .buyToken({
         items: items,
-        expectedPrice: totalPrice - feeOnTop,
+        expectedPrice: totalPrice,
         wallet,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
@@ -445,6 +454,7 @@ export const BuyModalRenderer: FC<Props> = ({
     client,
     currency,
     totalPrice,
+    totalIncludingFees,
     mutateListings,
     mutateTokens,
     mutateCollection,
@@ -460,6 +470,7 @@ export const BuyModalRenderer: FC<Props> = ({
     ) {
       setBuyStep(BuyStep.Unavailable)
       setTotalPrice(0)
+      setTotalIncludingFees(0)
       setAverageUnitPrice(0)
       setCurrency(undefined)
       setMixedCurrencies(false)
@@ -534,31 +545,38 @@ export const BuyModalRenderer: FC<Props> = ({
       }
       setMixedCurrencies(false)
     }
+    let totalFees = 0
     if (total > 0) {
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
           return totalFees + (Number(fee) / 10000) * total
         }, 0)
-        total += fees
+        totalFees += fees
         setFeeOnTop(fees)
-      } else if (feesOnTopUsd && feesOnTopUsd.length > 0) {
+      } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPrice) {
         const fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          const parsedFee = formatUnits(
-            BigInt(fee) / BigInt(usdPrice),
-            currency?.decimals || 18
-          )
+          const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
+          const atomicFee = BigInt(fee)
+          const convertedAtomicFee =
+            atomicFee * BigInt(10 ** currency?.decimals!)
+          const currencyFee = convertedAtomicFee / atomicUsdPrice
+          const parsedFee = formatUnits(currencyFee, currency?.decimals || 18)
           return totalFees + Number(parsedFee)
         }, 0)
-        total += fees
+        totalFees += fees
         setFeeOnTop(fees)
+      } else {
+        setFeeOnTop(0)
       }
       setTotalPrice(total)
+      setTotalIncludingFees(total + totalFees)
       setAverageUnitPrice(total / quantity)
       setBuyStep(BuyStep.Checkout)
     } else {
       setBuyStep(BuyStep.Unavailable)
+      setTotalIncludingFees(0)
       setTotalPrice(0)
       setAverageUnitPrice(0)
       setCurrency(undefined)
@@ -583,7 +601,10 @@ export const BuyModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (balance) {
-      const totalPriceTruncated = toFixed(totalPrice, currency?.decimals || 18)
+      const totalPriceTruncated = toFixed(
+        totalIncludingFees,
+        currency?.decimals || 18
+      )
       if (!balance.value) {
         setHasEnoughCurrency(false)
       } else if (
@@ -595,7 +616,7 @@ export const BuyModalRenderer: FC<Props> = ({
         setHasEnoughCurrency(true)
       }
     }
-  }, [totalPrice, balance, currency])
+  }, [totalIncludingFees, balance, currency])
 
   useEffect(() => {
     if (!open) {
@@ -623,6 +644,7 @@ export const BuyModalRenderer: FC<Props> = ({
         currency,
         mixedCurrencies,
         totalPrice,
+        totalIncludingFees,
         averageUnitPrice,
         feeOnTop,
         buyStep,

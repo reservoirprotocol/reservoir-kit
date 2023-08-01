@@ -115,6 +115,7 @@ export function BuyModal({
         currency,
         mixedCurrencies,
         totalPrice,
+        totalIncludingFees,
         feeOnTop,
         buyStep,
         transactionError,
@@ -333,7 +334,7 @@ export function BuyModal({
                   <Text style="h6">Total</Text>
                   <FormatCryptoCurrency
                     textStyle="h6"
-                    amount={totalPrice}
+                    amount={totalIncludingFees}
                     address={currency?.contract}
                     decimals={currency?.decimals}
                     symbol={currency?.symbol}
