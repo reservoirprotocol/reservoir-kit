@@ -1,5 +1,5 @@
 import { ComponentPropsWithoutRef } from 'react'
-import { SWRConfig } from 'swr'
+import { Cache, SWRConfig } from 'swr'
 import { version } from '../../package.json'
 
 export const defaultHeaders = (
@@ -47,9 +47,35 @@ export const defaultFetcher = (params: string[] | string) => {
     })
 }
 
+const CACHE_KEY = 'reservoirkit.swr.cache'
+
+export const localStorageProvider = (): Cache<any> => {
+  const map =
+    typeof window !== 'undefined'
+      ? new Map(JSON.parse(localStorage.getItem(CACHE_KEY) || '[]'))
+      : new Map([])
+
+  // Before unloading the app, we write back all the data into `localStorage`.
+  if (typeof window !== 'undefined') {
+    window.addEventListener('beforeunload', () => {
+      for (let url of map.keys()) {
+        if (!(url as string).includes('api.coingecko.com')) {
+          map.delete(url)
+        }
+      }
+      const appCache = JSON.stringify(Array.from(map.entries()))
+      localStorage.setItem(CACHE_KEY, appCache)
+    })
+  }
+
+  // We still use the map for write & read for performance.
+  return map as Cache<any>
+}
+
 export const swrDefaultOptions: ComponentPropsWithoutRef<
   typeof SWRConfig
 >['value'] = {
   fetcher: defaultFetcher,
   revalidateOnFocus: false,
+  provider: localStorageProvider,
 }
