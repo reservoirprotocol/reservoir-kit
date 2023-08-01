@@ -1,15 +1,14 @@
-
 ## [v1.3.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a560cb5ff73c2bc236b5278e1632d94e72b1dad0) (2023-08-01)
 
-* fix coingecko currency filter deprecation issues [cdff5f7](https://github.com/reservoirprotocol/reservoir-kit/commit/cdff5f76151755b382157e6395ba2011d0a88f8a)
+- Patch coingecko currency filter deprecation issues [cdff5f7](https://github.com/reservoirprotocol/reservoir-kit/commit/cdff5f76151755b382157e6395ba2011d0a88f8a)
+
 ## [v1.3.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/78209784c74a7c042bfb512b7b7edf7467549cb1) (2023-07-31)
 
-* Merge pull request #314 from reservoirprotocol/ted/grwth-2952-when-purchasing-always-supply-the-currency-address [76e79c5](https://github.com/reservoirprotocol/reservoir-kit/commit/76e79c506a06963b305ce908d19bd136f5adb4f5)
-* fix: Remove hardcoded path [a583a3d](https://github.com/reservoirprotocol/reservoir-kit/commit/a583a3d931af2623217742432a77fa4db9df7589)
+- Patch when purchasing always supply the currency address [76e79c5](https://github.com/reservoirprotocol/reservoir-kit/commit/76e79c506a06963b305ce908d19bd136f5adb4f5)
+- Remove hardcoded paths [a583a3d](https://github.com/reservoirprotocol/reservoir-kit/commit/a583a3d931af2623217742432a77fa4db9df7589)
+
 ## [v1.3.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7a6d719b8139a02cf40b04f1448e872d7eba410c) (2023-07-28)
 
-* Always pass currency in BuyModal execute request [f33ee81](https://github.com/reservoirprotocol/reservoir-kit/commit/f33ee81214ccef3f38ddaf9bc5db15186c731b2b)
-* Always supply currency to execute buy api [9bfc52f](https://github.com/reservoirprotocol/reservoir-kit/commit/9bfc52fef5e044209834eff19be944d3c89c4d72)
 ## [v1.3.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/5e6e37028c27b325fd78603718e08cb05d5f94ca) (2023-07-28)
 
 - Add linea chain details for wrapped contract [b77abfd](https://github.com/reservoirprotocol/reservoir-kit/commit/b77abfd2579acc482d2c777abb0614541fd9cbf2)
