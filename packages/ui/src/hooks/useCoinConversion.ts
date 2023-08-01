@@ -21,22 +21,24 @@ export default function (
   const { data: coinIds } = useCoinIds()
   const baseUrl = createBaseUrl(providerOptionsContext?.coinGecko)
 
-  id = symbols
-    .split(',')
-    .reduce((ids: string[], symbol: string) => {
-      const normalizedSymbol = symbol.toLowerCase()
-      if (providerOptionsContext.coinGecko?.coinIds?.[normalizedSymbol]) {
-        ids.push(providerOptionsContext.coinGecko.coinIds[normalizedSymbol])
-      } else {
-        const coins = coinIds[normalizedSymbol]
-        if (coins?.length === 1) {
-          ids.push(coins[0].id)
+  if (id.length === 0) {
+    id = symbols
+      .split(',')
+      .reduce((ids: string[], symbol: string) => {
+        const normalizedSymbol = symbol.toLowerCase()
+        if (providerOptionsContext.coinGecko?.coinIds?.[normalizedSymbol]) {
+          ids.push(providerOptionsContext.coinGecko.coinIds[normalizedSymbol])
+        } else {
+          const coins = coinIds[normalizedSymbol]
+          if (coins?.length === 1) {
+            ids.push(coins[0].id)
+          }
         }
-      }
 
-      return ids
-    }, [])
-    .join(',')
+        return ids
+      }, [])
+      .join(',')
+  }
 
   const { data } = useSWR(
     vs_currency ? `${baseUrl}vs_currency=${vs_currency}&ids=${id}` : null,
