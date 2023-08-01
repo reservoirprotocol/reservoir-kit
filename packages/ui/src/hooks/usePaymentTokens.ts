@@ -1,6 +1,6 @@
 import { erc20ABI, useBalance, useContractReads } from 'wagmi'
-import { Address, formatUnits, zeroAddress } from 'viem'
-import { useReservoirClient, useCoinConversion } from '.'
+import { Address, zeroAddress } from 'viem'
+import { useReservoirClient, useCurrencyConversions } from '.'
 import { useMemo } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
@@ -9,6 +9,7 @@ export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
       usdPrice?: number
       balance?: string | number | bigint
+      currencyTotal?: number
     }
 
 export default function (
@@ -24,30 +25,24 @@ export default function (
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
 
-  const nonNativeCurrencies = useMemo(() => {
-    let currencies = chain?.paymentTokens?.filter(
-      (currency) => currency.address !== zeroAddress
-    )
+  const allPaymentTokens = useMemo(() => {
+    let paymentTokens = chain?.paymentTokens
 
-    // If prefferedCurrency is not the native currency and not already included in paymentTokens, add to nonNativeCurrencies
     if (
-      preferredCurrency?.address !== zeroAddress &&
-      !currencies
+      !paymentTokens
         ?.map((currency) => currency.address)
         .includes(preferredCurrency.address)
     ) {
-      currencies?.push(preferredCurrency)
+      paymentTokens?.push(preferredCurrency)
     }
+    return paymentTokens
+  }, [chain?.paymentTokens, preferredCurrency.address])
 
-    return currencies
+  const nonNativeCurrencies = useMemo(() => {
+    return allPaymentTokens?.filter(
+      (currency) => currency.address !== zeroAddress
+    )
   }, [chain?.paymentTokens])
-
-  const currencySymbols = chain?.paymentTokens
-    ?.map((currency) => currency.symbol)
-    .join(',')
-  const currencyCoingeckoIds = chain?.paymentTokens
-    ?.map((currency) => currency.coinGeckoId)
-    .join(',')
 
   const { data: nonNativeBalances } = useContractReads({
     contracts: open
@@ -70,23 +65,18 @@ export default function (
     watch: open,
   })
 
-  const usdConversions = useCoinConversion(
-    open ? 'USD' : undefined,
-    currencySymbols,
-    currencyCoingeckoIds
+  const preferredCurrencyConversions = useCurrencyConversions(
+    preferredCurrency?.address,
+    chain,
+    allPaymentTokens
   )
 
   const paymentTokens = useMemo(() => {
     if (!open) {
       return []
     }
-    const currencyToUsdConversions = usdConversions.reduce((map, data) => {
-      map[data.symbol] = data
-      map[data.id] = data
-      return map
-    }, {} as Record<string, typeof usdConversions[0]>)
 
-    return chain?.paymentTokens
+    return allPaymentTokens
       ?.map((currency, i) => {
         let balance: string | number | bigint = 0n
         if (currency.address === zeroAddress) {
@@ -108,19 +98,18 @@ export default function (
               : 0n
         }
 
-        const conversion =
-          currencyToUsdConversions[
-            currency?.coinGeckoId && currency?.coinGeckoId.length > 0
-              ? currency?.coinGeckoId
-              : currency?.symbol?.toLowerCase()
-          ]
-        const usdPrice =
-          Number(formatUnits(BigInt(balance), currency?.decimals || 18)) *
-          (conversion?.price || 0)
+        const conversionData = preferredCurrencyConversions?.data?.[i]
+
+        const currencyTotal =
+          preferredCurrencyTotalPrice / Number(conversionData?.conversion)
+
+        const usdPrice = currencyTotal * (conversionData?.usd || 0)
+
         return {
           ...currency,
           usdPrice,
           balance,
+          currencyTotal,
         }
       })
       .sort((a, b) => {
@@ -136,7 +125,7 @@ export default function (
     preferredCurrency.address,
     preferredCurrencyTotalPrice,
     chainId,
-    usdConversions,
+    allPaymentTokens,
     nonNativeBalances,
     nativeBalance,
   ])

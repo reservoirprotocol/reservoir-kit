@@ -24,6 +24,7 @@ export const SelectPaymentToken: FC<Props> = ({
           BigInt(paymentToken?.balance || 0),
           paymentToken?.decimals || 18
         )
+
         return (
           <Flex
             key={paymentToken?.address}
@@ -49,15 +50,14 @@ export const SelectPaymentToken: FC<Props> = ({
                 css={{ width: 24, height: 24 }}
               />
               <Flex direction="column" css={{ gap: '$1' }}>
-                <Text style="subtitle2">{paymentToken?.name}</Text>
+                <Text style="subtitle2">{paymentToken?.symbol}</Text>
                 <Text style="body2" color="subtle">
                   Balance: {formattedBalance}
                 </Text>
               </Flex>
             </Flex>
             <Flex align="center" css={{ gap: '$3' }}>
-              {/* @TODO: calculate total in currency */}
-              {/* <Text>{currency?.}</Text> */}
+              <Text style="subtitle2">{paymentToken?.currencyTotal}</Text>
               {isSelectedCurrency ? (
                 <Box css={{ color: '$accentSolidHover' }}>
                   <FontAwesomeIcon icon={faCheck} width={14} />

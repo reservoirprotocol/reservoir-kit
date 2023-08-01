@@ -44,6 +44,13 @@ export const chainPaymentTokensMap = {
       decimals: 18,
       coinGeckoId: 'ethereum',
     },
+    {
+      address: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+      coinGeckoId: 'weth',
+    },
   ],
   // Polygon
   137: [

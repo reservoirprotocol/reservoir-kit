@@ -410,7 +410,7 @@ export const CollectModalRenderer: FC<Props> = ({
   const paymentTokens = usePaymentTokens(
     open,
     account?.address as Address,
-    currency?.address,
+    currency,
     total,
     chain?.id
   )
