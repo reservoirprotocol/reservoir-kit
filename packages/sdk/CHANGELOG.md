@@ -1,3 +1,10 @@
+
+## [v1.1.23-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/5db2f5836956f2fb4d6b9f89e6c98eabe3373818) (2023-07-31)
+
+* Merge pull request #320 from reservoirprotocol/sync-apis [2af5e72](https://github.com/reservoirprotocol/reservoir-kit/commit/2af5e72b628e824a666285d992ec0a1ab881acbe)
+## [v1.1.22-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/fc8753bb862b2e2baecc92a9dda032cb813006bc) (2023-07-28)
+
+* Add public linea rpc [2a1ea26](https://github.com/reservoirprotocol/reservoir-kit/commit/2a1ea265161151cf34a78ac05940ceca37e097af)
 ## [v1.1.21-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e1ca700937a29665b081d80645f6b22f863a553c) (2023-07-28)
 
 - Add linea chain details for wrapped contract [b77abfd](https://github.com/reservoirprotocol/reservoir-kit/commit/b77abfd2579acc482d2c777abb0614541fd9cbf2)
