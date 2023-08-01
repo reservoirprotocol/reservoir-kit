@@ -4,11 +4,14 @@ import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { formatNumber } from '../lib/numbers'
 
 type Props = {
   paymentTokens: EnhancedCurrency[]
-  setCurrency: React.Dispatch<React.SetStateAction<EnhancedCurrency>>
-  currency: EnhancedCurrency
+  setCurrency: React.Dispatch<
+    React.SetStateAction<EnhancedCurrency | undefined>
+  >
+  currency?: EnhancedCurrency
 }
 
 export const SelectPaymentToken: FC<Props> = ({
@@ -18,7 +21,7 @@ export const SelectPaymentToken: FC<Props> = ({
 }) => {
   return (
     <Flex direction="column" css={{ width: '100%', gap: '$1', px: '$2' }}>
-      {paymentTokens.map((paymentToken) => {
+      {paymentTokens?.map((paymentToken) => {
         const isSelectedCurrency = currency?.address === paymentToken?.address
         const formattedBalance = formatUnits(
           BigInt(paymentToken?.balance || 0),
@@ -52,12 +55,14 @@ export const SelectPaymentToken: FC<Props> = ({
               <Flex direction="column" css={{ gap: '$1' }}>
                 <Text style="subtitle2">{paymentToken?.symbol}</Text>
                 <Text style="body2" color="subtle">
-                  Balance: {formattedBalance}
+                  Balance: {formatNumber(Number(formattedBalance), 6)}
                 </Text>
               </Flex>
             </Flex>
             <Flex align="center" css={{ gap: '$3' }}>
-              <Text style="subtitle2">{paymentToken?.currencyTotal}</Text>
+              <Text style="subtitle2">
+                {formatNumber(paymentToken?.currencyTotal, 6)}
+              </Text>
               {isSelectedCurrency ? (
                 <Box css={{ color: '$accentSolidHover' }}>
                   <FontAwesomeIcon icon={faCheck} width={14} />

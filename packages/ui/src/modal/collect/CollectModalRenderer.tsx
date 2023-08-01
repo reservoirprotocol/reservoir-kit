@@ -14,7 +14,7 @@ import {
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import { useAccount, useBalance, useNetwork, useWalletClient } from 'wagmi'
+import { useAccount, useNetwork, useWalletClient } from 'wagmi'
 import Token from '../list/Token'
 import {
   BuyPath,
@@ -23,8 +23,7 @@ import {
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
 import { toFixed } from '../../lib/numbers'
-import { UseBalanceToken } from '../../types/wagmi'
-import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { Address, formatUnits, parseUnits } from 'viem'
 import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 
@@ -70,12 +69,14 @@ export type ChildrenProps = {
   setItemAmount: React.Dispatch<React.SetStateAction<number>>
   maxItemAmount: number
   setMaxItemAmount: React.Dispatch<React.SetStateAction<number>>
-  currency: ReturnType<typeof useChainCurrency>
-  setCurrency: React.Dispatch<
+  listingCurrency: ReturnType<typeof useChainCurrency>
+  setListingCurrency: React.Dispatch<
     React.SetStateAction<ReturnType<typeof useChainCurrency>>
   >
-  paymentCurrency: EnhancedCurrency
-  setPaymentCurrency: React.Dispatch<React.SetStateAction<EnhancedCurrency>>
+  paymentCurrency?: EnhancedCurrency
+  setPaymentCurrency: React.Dispatch<
+    React.SetStateAction<EnhancedCurrency | undefined>
+  >
   chainCurrency: ReturnType<typeof useChainCurrency>
   isChainCurrency: boolean
   paymentTokens: EnhancedCurrency[]
@@ -153,9 +154,9 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const chainCurrency = useChainCurrency()
 
-  const [currency, setCurrency] = useState(chainCurrency)
+  const [listingCurrency, setListingCurrency] = useState(chainCurrency)
 
-  const isChainCurrency = currency.address === chainCurrency.address
+  const isChainCurrency = listingCurrency.address === chainCurrency.address
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -167,10 +168,6 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
-
-  const addFundsLink = currency?.address
-    ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${currency?.address}`
-    : `https://jumper.exchange/?toChain=${chain?.id}`
 
   const { data: collections, mutate: mutateCollection } = useCollections(
     open && {
@@ -268,7 +265,7 @@ export const CollectModalRenderer: FC<Props> = ({
     normalizeRoyalties,
     collectionId,
     tokenId,
-    currency,
+    listingCurrency,
     mode,
     token?.token?.tokenId,
   ])
@@ -290,8 +287,8 @@ export const CollectModalRenderer: FC<Props> = ({
     }
   }, [client, wallet, open, fetchBuyPathIfIdle, token?.token?.tokenId])
 
-  // Update currency
-  const updateCurrency = useCallback(
+  // Update listing currency
+  const updateListingCurrency = useCallback(
     (tokens: typeof selectedTokens) => {
       let currencies = new Set<string>()
       let currenciesData: Record<string, Currency> = {}
@@ -310,13 +307,13 @@ export const CollectModalRenderer: FC<Props> = ({
         }
       }
       if (currencies.size > 1) {
-        if (currency?.address != chainCurrency?.address) {
-          setCurrency(chainCurrency)
+        if (listingCurrency?.address != chainCurrency?.address) {
+          setListingCurrency(chainCurrency)
         }
       } else if (currencies.size > 0) {
         let otherCurrency = Object.values(currenciesData)[0]
-        if (otherCurrency?.contract != currency?.address) {
-          setCurrency({
+        if (otherCurrency?.contract != listingCurrency?.address) {
+          setListingCurrency({
             symbol: otherCurrency?.symbol as string,
             decimals: otherCurrency?.decimals as number,
             name: '',
@@ -329,9 +326,9 @@ export const CollectModalRenderer: FC<Props> = ({
     [chain, chainCurrency]
   )
 
-  // update currency based on selected tokens
+  // update listing currency based on selected tokens
   useEffect(() => {
-    updateCurrency(selectedTokens)
+    updateListingCurrency(selectedTokens)
   }, [selectedTokens])
 
   const total = useMemo(() => {
@@ -380,7 +377,10 @@ export const CollectModalRenderer: FC<Props> = ({
       } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
         fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
+          const parsedFee = formatUnits(
+            BigInt(fee),
+            listingCurrency?.decimals || 18
+          )
           return totalFees + Number(parsedFee)
         }, 0)
       }
@@ -392,7 +392,7 @@ export const CollectModalRenderer: FC<Props> = ({
     selectedTokens,
     feesOnTopBps,
     feesOnTopFixed,
-    currency,
+    listingCurrency,
     isChainCurrency,
     contentMode,
     itemAmount,
@@ -401,7 +401,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const coinConversion = useCoinConversion(
     open ? 'USD' : undefined,
-    currency?.symbol
+    listingCurrency?.symbol
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
   const feeUsd = feeOnTop * usdPrice
@@ -410,41 +410,45 @@ export const CollectModalRenderer: FC<Props> = ({
   const paymentTokens = usePaymentTokens(
     open,
     account?.address as Address,
-    currency,
+    listingCurrency,
     total,
     chain?.id
   )
 
-  const [paymentCurrency, setPaymentCurrency] =
-    useState<EnhancedCurrency>(currency)
+  const [paymentCurrency, setPaymentCurrency] = useState<
+    EnhancedCurrency | undefined
+  >(undefined)
 
-  const { data: balance } = useBalance({
-    chainId: chain?.id,
-    address: account.address,
-    token:
-      currency?.address !== zeroAddress
-        ? (currency?.address as UseBalanceToken)
-        : undefined,
-    watch: open,
-    formatUnits: currency?.decimals,
-  })
-
-  // Determine if user has enough funds
   useEffect(() => {
-    if (balance) {
-      const totalPriceTruncated = toFixed(total, currency?.decimals || 18)
-      if (!balance.value) {
-        setHasEnoughCurrency(false)
-      } else if (
-        balance?.value <
-        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals || 18)
-      ) {
-        setHasEnoughCurrency(false)
-      } else {
-        setHasEnoughCurrency(true)
-      }
+    if (!paymentCurrency && paymentTokens[0]) {
+      setPaymentCurrency(paymentTokens[0])
+    } else {
+      let updatedCurrency = paymentTokens.find(
+        (paymentToken) => paymentToken.address === paymentCurrency?.address
+      )
+      setPaymentCurrency(updatedCurrency)
     }
-  }, [total, balance, currency])
+  }, [paymentTokens])
+
+  // console.log(paymentCurrency)
+  // console.log(paymentTokens)
+
+  const addFundsLink = paymentCurrency?.address
+    ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${paymentCurrency?.address}`
+    : `https://jumper.exchange/?toChain=${chain?.id}`
+
+  // Determine if user has enough funds in paymentToken
+  useEffect(() => {
+    if (
+      paymentCurrency?.balance &&
+      paymentCurrency?.currencyTotal &&
+      Number(paymentCurrency?.balance) >= paymentCurrency?.currencyTotal
+    ) {
+      setHasEnoughCurrency(true)
+    } else {
+      setHasEnoughCurrency(false)
+    }
+  }, [total, paymentCurrency])
 
   useEffect(() => {
     if (contentMode === 'sweep') {
@@ -491,13 +495,13 @@ export const CollectModalRenderer: FC<Props> = ({
         const [referrer, feeBps] = fullFee.split(':')
         const totalFeeTruncated = toFixed(
           total - feeOnTop,
-          currency?.decimals || 18
+          listingCurrency?.decimals || 18
         )
         const fee =
           Number(
             parseUnits(
               `${Number(totalFeeTruncated)}`,
-              currency?.decimals || 18
+              listingCurrency?.decimals || 18
             ) * BigInt(feeBps)
           ) / 10000
         const atomicUnitsFee = formatUnits(BigInt(fee), 0)
@@ -605,7 +609,7 @@ export const CollectModalRenderer: FC<Props> = ({
     chain,
     collectionId,
     tokenId,
-    currency,
+    listingCurrency,
     feesOnTopBps,
     feesOnTopFixed,
     contentMode,
@@ -626,8 +630,8 @@ export const CollectModalRenderer: FC<Props> = ({
         setItemAmount,
         maxItemAmount,
         setMaxItemAmount,
-        currency,
-        setCurrency,
+        listingCurrency,
+        setListingCurrency,
         paymentCurrency,
         setPaymentCurrency,
         chainCurrency,
@@ -641,7 +645,9 @@ export const CollectModalRenderer: FC<Props> = ({
         currentChain,
         mintPrice,
         orders,
-        balance: balance?.value,
+        balance: paymentCurrency?.balance
+          ? BigInt(paymentCurrency.balance)
+          : undefined,
         contract,
         hasEnoughCurrency,
         addFundsLink,

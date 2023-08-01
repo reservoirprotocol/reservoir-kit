@@ -68,7 +68,7 @@ export default function (
   const preferredCurrencyConversions = useCurrencyConversions(
     preferredCurrency?.address,
     chain,
-    allPaymentTokens
+    open ? allPaymentTokens : undefined
   )
 
   const paymentTokens = useMemo(() => {

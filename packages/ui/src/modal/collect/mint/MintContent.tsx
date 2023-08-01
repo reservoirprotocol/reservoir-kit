@@ -43,7 +43,7 @@ export const MintContent: FC<
   itemAmount,
   setItemAmount,
   maxItemAmount,
-  currency,
+  listingCurrency,
   total,
   totalUsd,
   usdPrice,
@@ -178,9 +178,9 @@ export const MintContent: FC<
                     <Flex css={{ gap: '$1' }}>
                       <FormatCryptoCurrency
                         amount={mintPrice}
-                        address={currency?.address}
-                        decimals={currency?.decimals}
-                        symbol={currency?.symbol}
+                        address={listingCurrency?.address}
+                        decimals={listingCurrency?.decimals}
+                        symbol={listingCurrency?.symbol}
                         logoWidth={12}
                         css={{ color: '$neutralText' }}
                       />
@@ -197,9 +197,9 @@ export const MintContent: FC<
                   <FormatCryptoCurrency
                     textStyle="h6"
                     amount={total}
-                    address={currency?.address}
-                    decimals={currency?.decimals}
-                    symbol={currency?.symbol}
+                    address={listingCurrency?.address}
+                    decimals={listingCurrency?.decimals}
+                    symbol={listingCurrency?.symbol}
                     logoWidth={18}
                   />
                   <FormatCurrency
@@ -231,9 +231,9 @@ export const MintContent: FC<
 
                   <FormatCryptoCurrency
                     amount={balance}
-                    address={currency?.address}
-                    decimals={currency?.decimals}
-                    symbol={currency?.symbol}
+                    address={listingCurrency?.address}
+                    decimals={listingCurrency?.decimals}
+                    symbol={listingCurrency?.symbol}
                     textStyle="body3"
                   />
                 </Flex>
@@ -264,7 +264,7 @@ export const MintContent: FC<
               itemCount={itemAmount}
               totalPrice={total}
               usdPrice={totalUsd}
-              currency={currency}
+              currency={listingCurrency}
               chain={currentChain}
             />
           </Box>
@@ -355,7 +355,7 @@ export const MintContent: FC<
               itemCount={itemAmount}
               totalPrice={total}
               usdPrice={totalUsd}
-              currency={currency}
+              currency={listingCurrency}
               chain={currentChain}
             />
           </Box>

@@ -46,8 +46,8 @@ export const SweepContent: FC<
   itemAmount,
   setItemAmount,
   maxItemAmount,
-  currency,
-  setCurrency,
+  listingCurrency,
+  setListingCurrency,
   paymentCurrency,
   setPaymentCurrency,
   total,
@@ -191,9 +191,9 @@ export const SweepContent: FC<
                         </Text>
                         <FormatCryptoCurrency
                           amount={cheapestTokenPrice}
-                          address={currency?.address}
-                          decimals={currency?.decimals}
-                          symbol={currency?.symbol}
+                          address={listingCurrency?.address}
+                          decimals={listingCurrency?.decimals}
+                          symbol={listingCurrency?.symbol}
                           maximumFractionDigits={2}
                         />
                         <Text style="subtitle2" color="subtle">
@@ -201,9 +201,9 @@ export const SweepContent: FC<
                         </Text>
                         <FormatCryptoCurrency
                           amount={mostExpensiveTokenPrice}
-                          address={currency?.address}
-                          decimals={currency?.decimals}
-                          symbol={currency?.symbol}
+                          address={listingCurrency?.address}
+                          decimals={listingCurrency?.decimals}
+                          symbol={listingCurrency?.symbol}
                           maximumFractionDigits={2}
                         />
                       </Flex>
@@ -218,9 +218,9 @@ export const SweepContent: FC<
                     </Text>
                     <FormatCryptoCurrency
                       amount={total / itemAmount}
-                      address={currency?.address}
-                      decimals={currency?.decimals}
-                      symbol={currency?.symbol}
+                      address={listingCurrency?.address}
+                      decimals={listingCurrency?.decimals}
+                      symbol={listingCurrency?.symbol}
                       maximumFractionDigits={2}
                     />
                   </Flex>
@@ -240,9 +240,9 @@ export const SweepContent: FC<
                 </Text>
                 <FormatCryptoCurrency
                   amount={feeOnTop}
-                  address={currency?.address}
-                  decimals={currency?.decimals}
-                  symbol={currency?.symbol}
+                  address={listingCurrency?.address}
+                  decimals={listingCurrency?.decimals}
+                  symbol={listingCurrency?.symbol}
                 />
               </Flex>
             )}
@@ -259,7 +259,7 @@ export const SweepContent: FC<
               >
                 <Flex align="center">
                   <CryptoCurrencyIcon
-                    address={paymentCurrency?.address}
+                    address={paymentCurrency?.address as string}
                     css={{ width: 16, height: 16, mr: '$1' }}
                   />
                   <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
@@ -274,13 +274,17 @@ export const SweepContent: FC<
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
                 <FormatCryptoCurrency
                   textStyle="h6"
-                  amount={total}
-                  address={currency?.address}
-                  decimals={currency?.decimals}
-                  symbol={currency?.symbol}
+                  amount={paymentCurrency?.currencyTotal}
+                  address={paymentCurrency?.address}
+                  decimals={paymentCurrency?.decimals}
+                  symbol={paymentCurrency?.symbol}
                   logoWidth={18}
                 />
-                <FormatCurrency amount={totalUsd} style="tiny" color="subtle" />
+                <FormatCurrency
+                  amount={paymentCurrency?.usdPrice}
+                  style="tiny"
+                  color="subtle"
+                />
               </Flex>
             </Flex>
           </Flex>
@@ -303,9 +307,9 @@ export const SweepContent: FC<
 
                 <FormatCryptoCurrency
                   amount={balance}
-                  address={currency?.address}
-                  decimals={currency?.decimals}
-                  symbol={currency?.symbol}
+                  address={paymentCurrency?.address}
+                  decimals={paymentCurrency?.decimals}
+                  symbol={paymentCurrency?.symbol}
                   textStyle="body3"
                 />
               </Flex>
@@ -353,9 +357,9 @@ export const SweepContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={total}
-              usdPrice={usdPrice}
-              currency={currency}
+              totalPrice={paymentCurrency?.currencyTotal || 0}
+              usdPrice={paymentCurrency?.usdPrice || 0}
+              currency={paymentCurrency}
               chain={currentChain}
             />
           </Box>
@@ -443,9 +447,9 @@ export const SweepContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={total}
-              usdPrice={totalUsd}
-              currency={currency}
+              totalPrice={paymentCurrency?.currencyTotal || 0}
+              usdPrice={paymentCurrency?.usdPrice || 0}
+              currency={paymentCurrency}
               chain={currentChain}
             />
           </Box>
