@@ -97,54 +97,47 @@ const AppWrapper: FC<any> = ({ children }) => {
     <WagmiConfig config={wagmiConfig}>
       <ReservoirKitProvider
         options={{
+          apiKey: API_KEY,
           chains: [
             {
               baseApiUrl: 'https://api.reservoir.tools',
               id: allChains.mainnet.id,
               active: CHAIN_ID === allChains.mainnet.id,
-              apiKey: API_KEY,
             },
             {
               baseApiUrl: 'https://api-goerli.reservoir.tools',
               id: allChains.goerli.id,
               active: CHAIN_ID === allChains.goerli.id,
-              apiKey: API_KEY,
             },
             {
               baseApiUrl: 'https://api-polygon.reservoir.tools',
               id: allChains.polygon.id,
               active: CHAIN_ID === allChains.polygon.id,
-              apiKey: API_KEY,
             },
             {
               baseApiUrl: 'https://api-optimism.reservoir.tools',
               id: allChains.optimism.id,
               active: CHAIN_ID === allChains.optimism.id,
-              apiKey: API_KEY,
             },
             {
               baseApiUrl: 'https://api-arbitrum.reservoir.tools',
               id: allChains.arbitrum.id,
               active: CHAIN_ID === allChains.arbitrum.id,
-              apiKey: API_KEY,
             },
             {
               baseApiUrl: 'https://api-zora.reservoir.tools',
               id: allChains.zora.id,
               active: CHAIN_ID === allChains.zora.id,
-              apiKey: API_KEY,
             },
             {
               baseApiUrl: 'https://api-base.reservoir.tools',
               id: customChains.base.id,
               active: CHAIN_ID === customChains.base.id,
-              apiKey: API_KEY,
             },
             {
               baseApiUrl: 'https://api-linea.reservoir.tools',
               id: customChains.linea.id,
               active: CHAIN_ID === customChains.linea.id,
-              apiKey: API_KEY,
             },
           ],
           marketplaceFees: MARKETPLACE_FEES,
