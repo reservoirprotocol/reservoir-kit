@@ -8,7 +8,6 @@ import React, {
 } from 'react'
 import {
   useChainCurrency,
-  useCoinConversion,
   useCollections,
   usePaymentTokens,
   useReservoirClient,
@@ -399,14 +398,6 @@ export const CollectModalRenderer: FC<Props> = ({
     orders,
   ])
 
-  const coinConversion = useCoinConversion(
-    open ? 'USD' : undefined,
-    listingCurrency?.symbol
-  )
-  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
-  const feeUsd = feeOnTop * usdPrice
-  const totalUsd = usdPrice * (total || 0)
-
   const paymentTokens = usePaymentTokens(
     open,
     account?.address as Address,
@@ -418,6 +409,10 @@ export const CollectModalRenderer: FC<Props> = ({
   const [paymentCurrency, setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
+
+  const usdPrice = paymentCurrency?.usdPrice || 0
+  const feeUsd = feeOnTop * usdPrice
+  const totalUsd = usdPrice * (total || 0)
 
   useEffect(() => {
     if (!paymentTokens[0] || paymentTokens.length <= 1) {
