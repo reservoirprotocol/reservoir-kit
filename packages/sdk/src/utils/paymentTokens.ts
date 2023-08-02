@@ -51,6 +51,13 @@ export const chainPaymentTokensMap = {
       decimals: 18,
       coinGeckoId: 'weth',
     },
+    {
+      address: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+      symbol: 'USDC',
+      name: 'USDC',
+      decimals: 6,
+      coinGeckoId: 'usd-coin',
+    },
   ],
   // Polygon
   137: [
