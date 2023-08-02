@@ -1,14 +1,6 @@
-import React, {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-  useMemo,
-} from 'react'
+import React, { FC, ReactNode, useCallback, useEffect, useState } from 'react'
 import {
   useChainCurrency,
-  useCoinConversion,
   useCollections,
   useCurrencyConversion,
   useReservoirClient,

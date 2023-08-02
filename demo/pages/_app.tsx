@@ -92,6 +92,9 @@ const AppWrapper: FC<any> = ({ children }) => {
   const cartFeeBps = router.query.cartFeeBps
     ? JSON.parse(router.query.cartFeeBps as string)
     : undefined
+  const cartFeeUsd = router.query.cartFeeUsd
+    ? JSON.parse(router.query.cartFeeUsd as string)
+    : undefined
 
   return (
     <WagmiConfig config={wagmiConfig}>
@@ -154,7 +157,7 @@ const AppWrapper: FC<any> = ({ children }) => {
         }}
         theme={theme}
       >
-        <CartProvider feesOnTopBps={cartFeeBps}>
+        <CartProvider feesOnTopBps={cartFeeBps} feesOnTopUsd={cartFeeUsd}>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
