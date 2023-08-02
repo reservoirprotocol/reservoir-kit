@@ -492,6 +492,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
     let options: BuyTokenOptions = {
       partial: true,
+      currency: paymentCurrency?.address,
     }
 
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
@@ -537,7 +538,8 @@ export const CollectModalRenderer: FC<Props> = ({
             fillType: contentMode === 'mint' ? 'mint' : 'trade',
           },
         ],
-        expectedPrice: total - feeOnTop,
+        // expectedPrice: total - feeOnTop,
+        expectedPrice: paymentCurrency?.currencyTotal,
         wallet,
         options,
         onProgress: (steps: Execute['steps'], path: Execute['path']) => {
