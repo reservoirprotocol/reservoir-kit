@@ -20,9 +20,7 @@ const CollectPage: NextPage = () => {
   const [tokenId, setTokenId] = useState<string | undefined>(undefined)
   const [mode, setMode] = useState('preferMint')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
-  const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([
-    '0x03508bB71268BBA25ECaCC8F620e01866650532c:1000000',
-  ])
+  const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
