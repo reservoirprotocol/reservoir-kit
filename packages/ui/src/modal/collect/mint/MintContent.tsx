@@ -4,6 +4,7 @@ import {
   Anchor,
   Box,
   Button,
+  CryptoCurrencyIcon,
   ErrorWell,
   Flex,
   FormatCryptoCurrency,
@@ -14,6 +15,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
+  faChevronLeft,
+  faChevronRight,
   faCircleExclamation,
   faCube,
   faEye,
@@ -28,6 +31,7 @@ import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible
 import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
+import { SelectPaymentToken } from '../../SelectPaymentToken'
 
 export const MintContent: FC<
   ChildrenProps & {
@@ -44,6 +48,9 @@ export const MintContent: FC<
   setItemAmount,
   maxItemAmount,
   listingCurrency,
+  paymentCurrency,
+  setPaymentCurrency,
+  paymentTokens,
   total,
   totalUsd,
   usdPrice,
@@ -56,6 +63,7 @@ export const MintContent: FC<
   transactionError,
   stepData,
   collectStep,
+  setCollectStep,
   collectTokens,
   copy,
   setOpen,
@@ -191,20 +199,50 @@ export const MintContent: FC<
                   </Flex>
                 ) : null}
               </Flex>
+              {paymentTokens.length > 1 ? (
+                <Flex
+                  justify="between"
+                  align="center"
+                  css={{ py: '$4', gap: '$1' }}
+                >
+                  <Text style="subtitle2">Payment Method</Text>
+                  <Flex
+                    align="center"
+                    css={{ gap: '$2', cursor: 'pointer' }}
+                    onClick={() => setCollectStep(CollectStep.SelectPayment)}
+                  >
+                    <Flex align="center">
+                      <CryptoCurrencyIcon
+                        address={paymentCurrency?.address as string}
+                        css={{ width: 16, height: 16, mr: '$1' }}
+                      />
+                      <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                    </Flex>
+                    <Box css={{ color: '$neutralSolidHover' }}>
+                      <FontAwesomeIcon icon={faChevronRight} width={10} />
+                    </Box>
+                  </Flex>
+                </Flex>
+              ) : null}
+              {!hasEnoughCurrency ? (
+                <Text css={{ mr: '$3', pb: '$4' }} color="error" style="body3">
+                  Insufficient balance, select another token or add funds
+                </Text>
+              ) : null}
               <Flex justify="between" align="start" css={{ height: 34 }}>
-                <Text style="h6">Total</Text>
+                <Text style="h6">You Pay</Text>
                 <Flex direction="column" align="end" css={{ gap: '$1' }}>
                   <FormatCryptoCurrency
                     textStyle="h6"
-                    amount={total}
-                    address={listingCurrency?.address}
-                    decimals={listingCurrency?.decimals}
-                    symbol={listingCurrency?.symbol}
+                    amount={paymentCurrency?.currencyTotal}
+                    address={paymentCurrency?.address}
+                    decimals={paymentCurrency?.decimals}
+                    symbol={paymentCurrency?.symbol}
                     logoWidth={18}
                   />
                   <FormatCurrency
-                    amount={totalUsd}
-                    style="subtitle2"
+                    amount={paymentCurrency?.usdPrice}
+                    style="tiny"
                     color="subtle"
                   />
                 </Flex>
@@ -219,36 +257,38 @@ export const MintContent: FC<
                 {copy.mintCtaBuy}
               </Button>
             ) : (
-              <Flex
-                direction="column"
-                align="center"
-                css={{ px: '$3', gap: '$3' }}
+              <Button
+                onClick={() => {
+                  window.open(addFundsLink, '_blank')
+                }}
+                css={{ m: '$4' }}
               >
-                <Flex align="center">
-                  <Text css={{ mr: '$3' }} color="error" style="body3">
-                    Insufficient Balance
-                  </Text>
-
-                  <FormatCryptoCurrency
-                    amount={balance}
-                    address={listingCurrency?.address}
-                    decimals={listingCurrency?.decimals}
-                    symbol={listingCurrency?.symbol}
-                    textStyle="body3"
-                  />
-                </Flex>
-                <Button
-                  onClick={() => {
-                    window.open(addFundsLink, '_blank')
-                  }}
-                  css={{ width: '100%', mb: '$3' }}
-                >
-                  {copy.mintCtaInsufficientFunds}
-                </Button>
-              </Flex>
+                {copy.mintCtaInsufficientFunds}
+              </Button>
             )}
           </Flex>
         )}
+
+      {collectStep === CollectStep.SelectPayment && (
+        <Flex direction="column" css={{ py: 20, gap: '$4' }}>
+          <Flex align="center" css={{ gap: '$4', px: '$4' }}>
+            <Button
+              onClick={() => setCollectStep(CollectStep.Idle)}
+              color="ghost"
+              size="none"
+              css={{ color: '$neutralSolidHover' }}
+            >
+              <FontAwesomeIcon icon={faChevronLeft} width={10} />
+            </Button>
+            <Text style="subtitle2">Select A Token</Text>
+          </Flex>
+          <SelectPaymentToken
+            paymentTokens={paymentTokens}
+            currency={paymentCurrency}
+            setCurrency={setPaymentCurrency}
+          />
+        </Flex>
+      )}
 
       {collectStep === CollectStep.Approving && (
         <Flex direction="column">

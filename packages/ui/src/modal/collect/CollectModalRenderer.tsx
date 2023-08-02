@@ -420,18 +420,22 @@ export const CollectModalRenderer: FC<Props> = ({
   >(undefined)
 
   useEffect(() => {
-    if (!paymentCurrency && paymentTokens[0]) {
+    if (!paymentTokens[0] || paymentTokens.length <= 1) {
+      return
+    } else if (!paymentCurrency) {
       setPaymentCurrency(paymentTokens[0])
     } else {
       let updatedCurrency = paymentTokens.find(
         (paymentToken) => paymentToken.address === paymentCurrency?.address
       )
-      setPaymentCurrency(updatedCurrency)
+      if (
+        updatedCurrency &&
+        updatedCurrency.currencyTotal !== paymentCurrency.currencyTotal
+      ) {
+        setPaymentCurrency(updatedCurrency)
+      }
     }
   }, [paymentTokens])
-
-  // console.log(paymentCurrency)
-  // console.log(paymentTokens)
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${paymentCurrency?.address}`
@@ -442,7 +446,12 @@ export const CollectModalRenderer: FC<Props> = ({
     if (
       paymentCurrency?.balance &&
       paymentCurrency?.currencyTotal &&
-      Number(paymentCurrency?.balance) >= paymentCurrency?.currencyTotal
+      Number(
+        formatUnits(
+          BigInt(paymentCurrency?.balance),
+          paymentCurrency?.decimals || 18
+        )
+      ) >= paymentCurrency?.currencyTotal
     ) {
       setHasEnoughCurrency(true)
     } else {

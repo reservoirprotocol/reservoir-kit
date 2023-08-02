@@ -54,7 +54,6 @@ export default function (
           args: [address],
         }))
       : [],
-    watch: open,
     enabled: open,
     allowFailure: false,
   })
@@ -62,7 +61,7 @@ export default function (
   const nativeBalance = useBalance({
     address: open ? address : undefined,
     chainId: chainId,
-    watch: open,
+    enabled: open,
   })
 
   const preferredCurrencyConversions = useCurrencyConversions(

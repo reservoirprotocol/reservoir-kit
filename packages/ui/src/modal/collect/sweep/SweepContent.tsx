@@ -246,29 +246,37 @@ export const SweepContent: FC<
                 />
               </Flex>
             )}
-            <Flex
-              justify="between"
-              align="center"
-              css={{ py: '$4', gap: '$1' }}
-            >
-              <Text style="subtitle2">Payment Method</Text>
+
+            {paymentTokens.length > 1 ? (
               <Flex
+                justify="between"
                 align="center"
-                css={{ gap: '$2', cursor: 'pointer' }}
-                onClick={() => setCollectStep(CollectStep.SelectPayment)}
+                css={{ py: '$4', gap: '$1' }}
               >
-                <Flex align="center">
-                  <CryptoCurrencyIcon
-                    address={paymentCurrency?.address as string}
-                    css={{ width: 16, height: 16, mr: '$1' }}
-                  />
-                  <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                <Text style="subtitle2">Payment Method</Text>
+                <Flex
+                  align="center"
+                  css={{ gap: '$2', cursor: 'pointer' }}
+                  onClick={() => setCollectStep(CollectStep.SelectPayment)}
+                >
+                  <Flex align="center">
+                    <CryptoCurrencyIcon
+                      address={paymentCurrency?.address as string}
+                      css={{ width: 16, height: 16, mr: '$1' }}
+                    />
+                    <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                  </Flex>
+                  <Box css={{ color: '$neutralSolidHover' }}>
+                    <FontAwesomeIcon icon={faChevronRight} width={10} />
+                  </Box>
                 </Flex>
-                <Box css={{ color: '$neutralSolidHover' }}>
-                  <FontAwesomeIcon icon={faChevronRight} width={10} />
-                </Box>
               </Flex>
-            </Flex>
+            ) : null}
+            {!hasEnoughCurrency ? (
+              <Text css={{ mr: '$3', pb: '$4' }} color="error" style="body3">
+                Insufficient balance, select another token or add funds
+              </Text>
+            ) : null}
             <Flex justify="between" align="start" css={{ height: 34 }}>
               <Text style="h6">You Pay</Text>
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
@@ -299,27 +307,12 @@ export const SweepContent: FC<
                 : copy.sweepCtaBuyDisabled}
             </Button>
           ) : (
-            <Flex direction="column" align="center" css={{ px: '$3' }}>
-              <Flex align="center">
-                <Text css={{ mr: '$3' }} color="error" style="body3">
-                  Insufficient Balance
-                </Text>
-
-                <FormatCryptoCurrency
-                  amount={balance}
-                  address={paymentCurrency?.address}
-                  decimals={paymentCurrency?.decimals}
-                  symbol={paymentCurrency?.symbol}
-                  textStyle="body3"
-                />
-              </Flex>
-              <Button
-                css={{ my: '$4', width: '100%' }}
-                onClick={() => window.open(addFundsLink, '_blank')}
-              >
-                {copy.sweepCtaInsufficientFunds}
-              </Button>
-            </Flex>
+            <Button
+              css={{ m: '$4' }}
+              onClick={() => window.open(addFundsLink, '_blank')}
+            >
+              {copy.sweepCtaInsufficientFunds}
+            </Button>
           )}
         </Flex>
       )}
