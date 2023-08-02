@@ -44,8 +44,10 @@ export const SweepContent: FC<
   maxItemAmount,
   currency,
   total,
+  totalIncludingFees,
   totalUsd,
   feeOnTop,
+  feeUsd,
   usdPrice,
   currentChain,
   balance,
@@ -219,19 +221,20 @@ export const SweepContent: FC<
           <Flex direction="column" css={{ px: '$4', pt: '$4', pb: '$2' }}>
             {feeOnTop > 0 && (
               <Flex
-                align="center"
                 justify="between"
-                css={{ width: '100%', py: '$4', gap: '$1' }}
+                align="start"
+                css={{ py: '$4', width: '100%' }}
               >
-                <Text style="subtitle2" color="subtle">
-                  Referral Fee
-                </Text>
-                <FormatCryptoCurrency
-                  amount={feeOnTop}
-                  address={currency?.address}
-                  decimals={currency?.decimals}
-                  symbol={currency?.symbol}
-                />
+                <Text style="subtitle2">Referral Fee</Text>
+                <Flex direction="column" align="end" css={{ gap: '$1' }}>
+                  <FormatCryptoCurrency
+                    amount={feeOnTop}
+                    address={currency?.address}
+                    decimals={currency?.decimals}
+                    symbol={currency?.symbol}
+                  />
+                  <FormatCurrency amount={feeUsd} color="subtle" style="tiny" />
+                </Flex>
               </Flex>
             )}
             <Flex justify="between" align="start" css={{ height: 34 }}>
@@ -239,7 +242,7 @@ export const SweepContent: FC<
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
                 <FormatCryptoCurrency
                   textStyle="h6"
-                  amount={total}
+                  amount={totalIncludingFees}
                   address={currency?.address}
                   decimals={currency?.decimals}
                   symbol={currency?.symbol}
@@ -297,7 +300,7 @@ export const SweepContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={total}
+              totalPrice={totalIncludingFees}
               usdPrice={usdPrice}
               currency={currency}
               chain={currentChain}
@@ -387,8 +390,8 @@ export const SweepContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={total}
-              usdPrice={totalUsd}
+              totalPrice={totalIncludingFees}
+              usdPrice={usdPrice}
               currency={currency}
               chain={currentChain}
             />

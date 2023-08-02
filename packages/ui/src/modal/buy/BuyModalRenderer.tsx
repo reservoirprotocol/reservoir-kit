@@ -322,7 +322,7 @@ export const BuyModalRenderer: FC<Props> = ({
         return `${referrer}:${atomicUnitsFee}`
       })
       options.feesOnTop = fixedFees
-    } else if (feesOnTopUsd && feesOnTopUsd.length > 0) {
+    } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPrice) {
       const feesOnTopFixed = feesOnTopUsd.map((feeOnTop) => {
         const [recipient, fee] = feeOnTop.split(':')
         const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)

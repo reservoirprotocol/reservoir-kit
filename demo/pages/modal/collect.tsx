@@ -20,7 +20,9 @@ const CollectPage: NextPage = () => {
   const [tokenId, setTokenId] = useState<string | undefined>(undefined)
   const [mode, setMode] = useState('preferMint')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
-  const [feesOnTop, setFeesOnTop] = useState<string[]>([])
+  const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([
+    '0x03508bB71268BBA25ECaCC8F620e01866650532c:1000000',
+  ])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
@@ -118,14 +120,14 @@ const CollectPage: NextPage = () => {
           onBlur={(e) => {
             if (e.target.value && e.target.value.length > 0) {
               try {
-                setFeesOnTop(JSON.parse(e.target.value))
+                setFeesOnTopUsd(JSON.parse(e.target.value))
               } catch (err) {
                 e.target.value = ''
-                setFeesOnTop([])
+                setFeesOnTopUsd([])
               }
             } else {
               e.target.value = ''
-              setFeesOnTop([])
+              setFeesOnTopUsd([])
             }
           }}
         />
@@ -164,7 +166,7 @@ const CollectPage: NextPage = () => {
         tokenId={tokenId}
         mode={mode as CollectModalMode}
         feesOnTopBps={feesOnTopBps}
-        feesOnTopFixed={feesOnTop}
+        feesOnTopUsd={feesOnTopUsd}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         normalizeRoyalties={normalizeRoyalties}
         onCollectComplete={(data) => {

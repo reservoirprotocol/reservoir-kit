@@ -45,6 +45,7 @@ export const MintContent: FC<
   maxItemAmount,
   currency,
   total,
+  totalIncludingFees,
   totalUsd,
   usdPrice,
   currentChain,
@@ -193,7 +194,7 @@ export const MintContent: FC<
                 <Flex direction="column" align="end" css={{ gap: '$1' }}>
                   <FormatCryptoCurrency
                     textStyle="h6"
-                    amount={total}
+                    amount={totalIncludingFees}
                     address={currency?.address}
                     decimals={currency?.decimals}
                     symbol={currency?.symbol}
@@ -259,8 +260,8 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={total}
-              usdPrice={totalUsd}
+              totalPrice={totalIncludingFees}
+              usdPrice={usdPrice}
               currency={currency}
               chain={currentChain}
             />
@@ -350,8 +351,8 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={total}
-              usdPrice={totalUsd}
+              totalPrice={totalIncludingFees}
+              usdPrice={usdPrice}
               currency={currency}
               chain={currentChain}
             />
