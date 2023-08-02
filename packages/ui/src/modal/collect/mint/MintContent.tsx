@@ -81,17 +81,14 @@ export const MintContent: FC<
       )
     : {}
 
-  const transfersTokenIds =
-    stepData?.currentStep?.items?.reduce((tokenIds, item) => {
+  const totalMints =
+    stepData?.currentStep?.items?.reduce((total, item) => {
       item.transfersData?.forEach((transferData) => {
-        if (transferData?.token?.tokenId) {
-          tokenIds.add(transferData?.token?.tokenId)
-        }
+        total += Number(transferData.amount || 1)
       })
-      return tokenIds
-    }, new Set<string>()) || []
+      return total
+    }, 0) || 0
 
-  const totalMints = Array.from(transfersTokenIds).length
   const failedMints = itemAmount - totalMints
   const successfulMints = itemAmount - failedMints
 

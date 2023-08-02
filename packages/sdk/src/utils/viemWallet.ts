@@ -1,6 +1,6 @@
 import { ReservoirWallet } from '../types'
 import { LogLevel, customChains, getClient } from '../'
-import { Account, WalletClient, hexToBigInt, toBytes } from 'viem'
+import { Account, WalletClient, custom, hexToBigInt, toBytes } from 'viem'
 import * as allChains from 'viem/chains'
 
 export function isViemWalletClient(
@@ -11,6 +11,7 @@ export function isViemWalletClient(
 
 export const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {
   return {
+    transport: custom(wallet.transport),
     address: async () => {
       let address = wallet.account?.address
       if (!address) {

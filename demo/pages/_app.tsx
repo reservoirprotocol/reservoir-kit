@@ -47,6 +47,7 @@ const { chains, publicClient } = configureChains(
     allChains.zora,
     customChains.base,
     allChains.avalanche,
+    customChains.linea,
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
@@ -137,6 +138,12 @@ const AppWrapper: FC<any> = ({ children }) => {
               baseApiUrl: 'https://api-base.reservoir.tools',
               id: customChains.base.id,
               active: CHAIN_ID === customChains.base.id,
+              apiKey: API_KEY,
+            },
+            {
+              baseApiUrl: 'https://api-linea.reservoir.tools',
+              id: customChains.linea.id,
+              active: CHAIN_ID === customChains.linea.id,
               apiKey: API_KEY,
             },
           ],

@@ -234,7 +234,17 @@ export const CollectModalRenderer: FC<Props> = ({
 
           // handle setting max quantity
           if ('maxQuantities' in data && data.maxQuantities?.[0]) {
-            setMaxItemAmount(Number(data.maxQuantities?.[0].maxQuantity) ?? 50) // if value is null/undefined, we don't know max quantity, so set it to 50
+            if (is1155) {
+              let totalMaxQuantity = data.maxQuantities.reduce(
+                (total, currentQuantity) =>
+                  total + Number(currentQuantity.maxQuantity),
+                0
+              )
+              setMaxItemAmount(totalMaxQuantity)
+            } else {
+              let maxQuantity = data.maxQuantities?.[0].maxQuantity
+              setMaxItemAmount(maxQuantity ? Number(maxQuantity) : 50) // if value is null/undefined, we don't know max quantity, so set it to 50
+            }
           } else {
             setMaxItemAmount(0)
           }
@@ -267,6 +277,7 @@ export const CollectModalRenderer: FC<Props> = ({
     listingCurrency,
     mode,
     token?.token?.tokenId,
+    is1155,
   ])
 
   const fetchBuyPathIfIdle = useCallback(() => {
@@ -284,7 +295,7 @@ export const CollectModalRenderer: FC<Props> = ({
         return () => clearInterval(intervalId)
       }
     }
-  }, [client, wallet, open, fetchBuyPathIfIdle, token?.token?.tokenId])
+  }, [client, wallet, open, fetchBuyPathIfIdle, token?.token?.tokenId, is1155])
 
   // Update listing currency
   const updateListingCurrency = useCallback(
@@ -330,11 +341,33 @@ export const CollectModalRenderer: FC<Props> = ({
     updateListingCurrency(selectedTokens)
   }, [selectedTokens])
 
+  const calculateFees = useCallback(
+    (totalPrice: number) => {
+      let fees = 0
+      if (feesOnTopBps && feesOnTopBps.length > 0) {
+        fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
+          const [_, fee] = feeOnTop.split(':')
+          return totalFees + (Number(fee) / 10000) * totalPrice
+        }, 0)
+      } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
+        fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
+          const [_, fee] = feeOnTop.split(':')
+          const parsedFee = formatUnits(
+            BigInt(fee),
+            listingCurrency?.decimals || 18
+          )
+          return totalFees + Number(parsedFee)
+        }, 0)
+      }
+
+      return fees
+    },
+    [feesOnTopBps, feeOnTop, feesOnTopFixed, listingCurrency]
+  )
+
   const total = useMemo(() => {
-    if (contentMode === 'mint') {
-      let updatedTotal = mintPrice * (Math.max(0, itemAmount) || 0)
-      return updatedTotal
-    } else if (is1155) {
+    // Mint erc1155
+    if (contentMode === 'mint' && is1155) {
       let updatedTotal = 0
       let remainingQuantity = itemAmount
 
@@ -357,7 +390,44 @@ export const CollectModalRenderer: FC<Props> = ({
       }
 
       return updatedTotal
-    } else {
+    }
+
+    // Mint erc721
+    else if (contentMode === 'mint') {
+      let updatedTotal = mintPrice * (Math.max(0, itemAmount) || 0)
+      return updatedTotal
+    }
+
+    // Sweep erc1155
+    else if (is1155) {
+      let updatedTotal = 0
+      let remainingQuantity = itemAmount
+
+      for (const order of orders) {
+        if (remainingQuantity <= 0) {
+          return updatedTotal
+        }
+
+        let orderQuantity = order?.quantity || 1
+        let orderPricePerItem = order?.totalPrice || 0
+
+        if (remainingQuantity >= orderQuantity) {
+          updatedTotal += orderPricePerItem * orderQuantity
+          remainingQuantity -= orderQuantity
+        } else {
+          let fractionalPrice = orderPricePerItem * remainingQuantity
+          updatedTotal += fractionalPrice
+          remainingQuantity = 0
+        }
+      }
+
+      let fees = calculateFees(updatedTotal)
+      setFeeOnTop(fees)
+
+      return updatedTotal + fees
+    }
+    // Sweep erc721
+    else {
       let updatedTotal = selectedTokens?.reduce((total, token) => {
         return (
           total +
@@ -367,22 +437,7 @@ export const CollectModalRenderer: FC<Props> = ({
         )
       }, 0)
 
-      let fees = 0
-      if (feesOnTopBps && feesOnTopBps.length > 0) {
-        fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
-          const [_, fee] = feeOnTop.split(':')
-          return totalFees + (Number(fee) / 10000) * updatedTotal
-        }, 0)
-      } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
-        fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
-          const [_, fee] = feeOnTop.split(':')
-          const parsedFee = formatUnits(
-            BigInt(fee),
-            listingCurrency?.decimals || 18
-          )
-          return totalFees + Number(parsedFee)
-        }, 0)
-      }
+      let fees = calculateFees(updatedTotal)
       setFeeOnTop(fees)
 
       return updatedTotal + fees

@@ -99,18 +99,16 @@ export const SweepContent: FC<
       )
     : {}
 
-  const transfersTxHashes =
-    stepData?.currentStep?.items?.reduce((txHashes, item) => {
+  const totalSales =
+    stepData?.currentStep?.items?.reduce((total, item) => {
       item.transfersData?.forEach((transferData) => {
-        if (transferData.txHash) {
-          txHashes.add(transferData.txHash)
-        }
+        total += Number(transferData.amount || 1)
       })
-      return txHashes
-    }, new Set<string>()) || []
-  const totalSales = Array.from(transfersTxHashes).length
-  const failedSales = totalSales - (stepData?.currentStep?.items?.length || 0)
-  const successfulSales = totalSales - failedSales
+      return total
+    }, 0) || 0
+
+  const failedSales = itemAmount - totalSales
+  const successfulSales = itemAmount - failedSales
 
   return (
     <>

@@ -958,6 +958,8 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
       if (isMixedCurrency) {
         options.currency = zeroAddress
         currencyDecimals = chainCurrency.decimals
+      } else {
+        options.currency = cartData.current.currency?.contract
       }
 
       if (feeOnTop) {

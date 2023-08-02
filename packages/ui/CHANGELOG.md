@@ -1,8 +1,37 @@
+## [v1.3.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a560cb5ff73c2bc236b5278e1632d94e72b1dad0) (2023-08-01)
+
+- Patch coingecko currency filter deprecation issues [cdff5f7](https://github.com/reservoirprotocol/reservoir-kit/commit/cdff5f76151755b382157e6395ba2011d0a88f8a)
+
+## [v1.3.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/78209784c74a7c042bfb512b7b7edf7467549cb1) (2023-07-31)
+
+- Patch when purchasing always supply the currency address [76e79c5](https://github.com/reservoirprotocol/reservoir-kit/commit/76e79c506a06963b305ce908d19bd136f5adb4f5)
+- Remove hardcoded paths [a583a3d](https://github.com/reservoirprotocol/reservoir-kit/commit/a583a3d931af2623217742432a77fa4db9df7589)
+
+## [v1.3.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7a6d719b8139a02cf40b04f1448e872d7eba410c) (2023-07-28)
+
+## [v1.3.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/5e6e37028c27b325fd78603718e08cb05d5f94ca) (2023-07-28)
+
+- Add linea chain details for wrapped contract [b77abfd](https://github.com/reservoirprotocol/reservoir-kit/commit/b77abfd2579acc482d2c777abb0614541fd9cbf2)
+
+## [v1.3.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d2fadca0fe6d761237c7ff1c224ff116f0dc57b0) (2023-07-25)
+
+## [v1.3.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6420f86ce0fb2eeb3b90dffcd74d005f6f5f498f) (2023-07-21)
+
+## [v1.3.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a5aecfc56e5e6cda53fd3a53f1496c6e7c9199d2) (2023-07-21)
+
+- Update Arbitrum Nova wrapped contracts [5c09ede](https://github.com/reservoirprotocol/reservoir-kit/commit/5c09edeb9fac7f1469026331b8d9bfb0778877ce)
+
+## [v1.3.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/30b452f63dea8b1095061a795ffd9e21d4837543) (2023-07-20)
+
+- BuyModal: Patch bug where decreasing the quantity causes unavailability [6112855](https://github.com/reservoirprotocol/reservoir-kit/commit/61128558d0d3b63b3355134d1d5bda10b43f59ea)
+- CollectModal: Fix successful/failed count for 1155s [2023-07-19](https://github.com/reservoirprotocol/reservoir-kit/commit/88ad703)
+- CollectModal: Update 1155 max quantity logic and total calucaltion [19102b0](https://github.com/reservoirprotocol/reservoir-kit/commit/19102b03bcedf160a2fb88f1b63c39cbbd67c4f6)
+
 ## [v1.3.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7092d495b509ceb3b4bed05dbf860e6acb92140d) (2023-07-18)
 
 - TokenMedia: fallback to IPFS if metadata images missing [b1b0156](https://github.com/reservoirprotocol/reservoir-kit/commit/b1b01568660f8675206a808ecedd09e1032e53ca)
 - Fix token checkout usdPrice when undefined [a5b0447](https://github.com/reservoirprotocol/reservoir-kit/commit/a5b0447b783d29e3d690d20c789c1719b8d92f16)
-- Fix copy for multiple approvals in collect modal [6045ef7](https://github.com/reservoirprotocol/reservoir-kit/commit/6045ef725840294a2f12f1e1344b9fe139e8c672)
+- CollectModal: Fix copy for multiple approvals [6045ef7](https://github.com/reservoirprotocol/reservoir-kit/commit/6045ef725840294a2f12f1e1344b9fe139e8c672)
 - Add avalanche wrapped currency [16db37a](https://github.com/reservoirprotocol/reservoir-kit/commit/16db37a1ca9508fbb5024d1dd4a3843a20c83955)
 
 ## [v1.2.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/b557a40f0f86cdc5a6b94d633a9bb18d833633b5) (2023-07-17)

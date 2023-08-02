@@ -1,3 +1,23 @@
+## [v1.1.23-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/5db2f5836956f2fb4d6b9f89e6c98eabe3373818) (2023-07-31)
+
+- Sync apis [2af5e72](https://github.com/reservoirprotocol/reservoir-kit/commit/2af5e72b628e824a666285d992ec0a1ab881acbe)
+
+## [v1.1.22-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/fc8753bb862b2e2baecc92a9dda032cb813006bc) (2023-07-28)
+
+- Add public linea rpc [2a1ea26](https://github.com/reservoirprotocol/reservoir-kit/commit/2a1ea265161151cf34a78ac05940ceca37e097af)
+
+## [v1.1.21-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e1ca700937a29665b081d80645f6b22f863a553c) (2023-07-28)
+
+- Add linea chain details for wrapped contract [b77abfd](https://github.com/reservoirprotocol/reservoir-kit/commit/b77abfd2579acc482d2c777abb0614541fd9cbf2)
+
+## [v1.1.20-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e0a29c67c77284aa287496a13225b6e015695660) (2023-07-25)
+
+- Support passing in custom RPC [79ebe6b](https://github.com/reservoirprotocol/reservoir-kit/commit/79ebe6b3997ea86dfd07c5138626f96d32963003)
+
+## [v1.1.19-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/f39d92d8dfe266635db6534df49f5eb42e993cde) (2023-07-21)
+
+- Add arbitrum nova to custom chains [2af44cf](https://github.com/reservoirprotocol/reservoir-kit/commit/2af44cf9dfb9f3e9cbfa1b9feea4a37760d05cb7)
+
 ## [v1.1.18-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/3b15a85442fa116deeb8293e6609028d2e695ad1) (2023-07-18)
 
 - Improve error refresh logic when buying/selling [0fe4d1d](https://github.com/reservoirprotocol/reservoir-kit/commit/0fe4d1d592f66e2fe794674d24225e0a2e6b3e25)
