@@ -3,8 +3,8 @@ import useReservoirClient from './useReservoirClient'
 import { SWRInfiniteConfiguration } from 'swr/infinite'
 import useInfiniteApi from './useInfiniteApi'
 
-type Asks = paths['/orders/asks/v4']['get']['responses']['200']['schema']
-type AsksQuery = paths['/orders/asks/v4']['get']['parameters']['query']
+type Asks = paths['/orders/asks/v5']['get']['responses']['200']['schema']
+type AsksQuery = paths['/orders/asks/v5']['get']['parameters']['query']
 
 export default function (
   options: AsksQuery,
@@ -24,7 +24,7 @@ export default function (
         return null
       }
 
-      const url = new URL(`${chain?.baseApiUrl || ''}/orders/asks/v4`)
+      const url = new URL(`${chain?.baseApiUrl || ''}/orders/asks/v5`)
       let query: AsksQuery = options || {}
 
       if (
