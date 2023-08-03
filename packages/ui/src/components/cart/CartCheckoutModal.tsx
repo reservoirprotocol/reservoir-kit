@@ -68,8 +68,13 @@ export function CartCheckoutModal({
       return total
     }, 0) || 0
 
+  const totalQuantity =
+    items.reduce((total, item) => {
+      total += item?.order?.quantity || 1
+      return total
+    }, 0) || 0
 
-  const failedSales = totalSales - (transaction?.currentStep?.items?.length || 0)
+  const failedSales = totalQuantity - totalSales
   const successfulSales = totalSales - failedSales
 
   const pathMap = transaction?.path
