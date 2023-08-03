@@ -368,7 +368,6 @@ export const CollectModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     let updatedTotal = 0
-    let fees = 0
     // Mint erc1155
     if (contentMode === 'mint' && is1155) {
       let remainingQuantity = itemAmount
@@ -415,8 +414,6 @@ export const CollectModalRenderer: FC<Props> = ({
           remainingQuantity = 0
         }
       }
-
-      fees = calculateFees(updatedTotal)
     }
     // Sweep erc721
     else {
@@ -428,9 +425,8 @@ export const CollectModalRenderer: FC<Props> = ({
             : token?.totalPrice || 0)
         )
       }, 0)
-
-      fees = calculateFees(updatedTotal)
     }
+    const fees = calculateFees(updatedTotal)
     setFeeOnTop(fees)
     setTotal(updatedTotal)
     setTotalIncludingFees(updatedTotal + fees)
