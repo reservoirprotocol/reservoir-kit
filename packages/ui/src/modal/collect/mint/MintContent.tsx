@@ -268,7 +268,7 @@ export const MintContent: FC<
                       logoWidth={18}
                     />
                     <FormatCurrency
-                      amount={paymentCurrency?.usdPrice}
+                      amount={paymentCurrency?.usdTotal}
                       style="subtitle2"
                       color="subtle"
                     />

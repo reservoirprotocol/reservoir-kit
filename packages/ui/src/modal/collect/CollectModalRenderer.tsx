@@ -202,7 +202,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const usdPrice = Number(paymentCurrency?.usdPrice || 0)
   const feeUsd = feeOnTop * usdPrice
-  const totalUsd = usdPrice * (totalIncludingFees || 0)
+  const totalUsd = paymentCurrency?.usdTotal || 0
 
   const fetchBuyPath = useCallback(() => {
     if (!wallet || !client) {

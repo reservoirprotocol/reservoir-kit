@@ -8,6 +8,7 @@ import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
       usdPrice?: number
+      usdTotal?: number
       balance?: string | number | bigint
       currencyTotal?: number
     }
@@ -102,11 +103,13 @@ export default function (
         const currencyTotal =
           preferredCurrencyTotalPrice / Number(conversionData?.conversion)
 
-        const usdPrice = currencyTotal * (conversionData?.usd || 0)
+        const usdPrice = conversionData?.usd || 0
+        const usdTotal = currencyTotal * usdPrice
 
         return {
           ...currency,
           usdPrice,
+          usdTotal,
           balance,
           currencyTotal,
         }
