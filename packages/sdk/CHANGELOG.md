@@ -1,11 +1,9 @@
-
 ## [v1.1.24-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/06b76ff3e18a32654df42d82a45650a76f75b1b4) (2023-08-03)
 
-* Merge pull request #323 from reservoirprotocol/pedro/grwth-3058-add-usd-flat-fee-on-top-to-rk-modals [290e27b](https://github.com/reservoirprotocol/reservoir-kit/commit/290e27b4558aaaacdf06668af77a7a631d6abe4e)
-* Merge pull request #326 from reservoirprotocol/armando/grwth-2557-improve-attribute-type-in-sdk-types [e3bc647](https://github.com/reservoirprotocol/reservoir-kit/commit/e3bc647f5e1c9e4efce9ff9bfd7a6d04fbbccbbf)
-* CollectModal: add support for usd based fixed fee [573357d](https://github.com/reservoirprotocol/reservoir-kit/commit/573357d558357c09175f2ddba686a31f49ee8193)
-* feat: Improve object typings [2d0bc5d](https://github.com/reservoirprotocol/reservoir-kit/commit/2d0bc5db1e3332a7d5695523e36cd67ef857b74c)
-* BuyModal: add support for usd based fixed fee [ed3a2cd](https://github.com/reservoirprotocol/reservoir-kit/commit/ed3a2cdf765c30e48db2395edcd0d77b5dc6a0e0)
+- Upgrade to typescript v5
+- Sync api
+- Improve object typings [2d0bc5d](https://github.com/reservoirprotocol/reservoir-kit/commit/2d0bc5db1e3332a7d5695523e36cd67ef857b74c)
+
 ## [v1.1.23-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/5db2f5836956f2fb4d6b9f89e6c98eabe3373818) (2023-07-31)
 
 - Sync apis [2af5e72](https://github.com/reservoirprotocol/reservoir-kit/commit/2af5e72b628e824a666285d992ec0a1ab881acbe)

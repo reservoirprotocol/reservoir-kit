@@ -1,17 +1,16 @@
-
 ## [v1.4.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/588afefec402669059780df6f291b300045ece30) (2023-08-03)
 
-* Merge pull request #318 from reservoirprotocol/pedro/grwth-3060-upgrade-uselistings-hook-to-ordersbidv6 [37247fd](https://github.com/reservoirprotocol/reservoir-kit/commit/37247fdac7d57be294b3e7b4daf456ebc0ef5052)
-* Merge pull request #319 from reservoirprotocol/pedro/grwth-3059-upgrade-uselistings-hook-to-ordersasksv5 [30134c3](https://github.com/reservoirprotocol/reservoir-kit/commit/30134c384a627be127221e52f21fe0c28cbfd8c9)
-* CollectModal: Display fees for mints [d30d0ee](https://github.com/reservoirprotocol/reservoir-kit/commit/d30d0eea6d19073fc86a7543113fe1ea1bb2c7d1)
-* CartProvider: add support for usd based fixed fee [8a3924a](https://github.com/reservoirprotocol/reservoir-kit/commit/8a3924afd9edbeca7270bbb4c1bfab0e663b2b65)
-* CollectModal: add support for usd based fixed fee [573357d](https://github.com/reservoirprotocol/reservoir-kit/commit/573357d558357c09175f2ddba686a31f49ee8193)
+- Upgrade useBids hook to v6 [37247fd](https://github.com/reservoirprotocol/reservoir-kit/commit/37247fdac7d57be294b3e7b4daf456ebc0ef5052)
+- Upgrade useListings hook to v5 [30134c3](https://github.com/reservoirprotocol/reservoir-kit/commit/30134c384a627be127221e52f21fe0c28cbfd8c9)
+- CollectModal: Display fees for mints [d30d0ee](https://github.com/reservoirprotocol/reservoir-kit/commit/d30d0eea6d19073fc86a7543113fe1ea1bb2c7d1)
+- CartProvider: add support for usd based fixed fee [8a3924a](https://github.com/reservoirprotocol/reservoir-kit/commit/8a3924afd9edbeca7270bbb4c1bfab0e663b2b65)
+- CollectModal: add support for usd based fixed fee [573357d](https://github.com/reservoirprotocol/reservoir-kit/commit/573357d558357c09175f2ddba686a31f49ee8193)
+- BuyModal: add support for usd based fixed fee [ed3a2cd](https://github.com/reservoirprotocol/reservoir-kit/commit/ed3a2cdf765c30e48db2395edcd0d77b5dc6a0e0)
+
 ## [v1.3.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e51b91d48a59711358969fcfd54dcef2f3c06d4d) (2023-08-01)
 
-* Dont override ids if already supplied [8755396](https://github.com/reservoirprotocol/reservoir-kit/commit/87553965b05b311cceac3fac58a24910bc013ba2)
-* BuyModal: add support for usd based fixed fee [ed3a2cd](https://github.com/reservoirprotocol/reservoir-kit/commit/ed3a2cdf765c30e48db2395edcd0d77b5dc6a0e0)
-* Upgrade useListings/useOwnerListings hook and CartProvider to v5 of asks api [c263ba4](https://github.com/reservoirprotocol/reservoir-kit/commit/c263ba404c8e8c282d81e52ed3517911d8b435df)
-* Upgrade useBids hook to v6 of bids api [df34624](https://github.com/reservoirprotocol/reservoir-kit/commit/df346244a941426b15eab5ce785bab8006e69b42)
+- Dont override ids if already supplied [8755396](https://github.com/reservoirprotocol/reservoir-kit/commit/87553965b05b311cceac3fac58a24910bc013ba2)
+
 ## [v1.3.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a560cb5ff73c2bc236b5278e1632d94e72b1dad0) (2023-08-01)
 
 - Patch coingecko currency filter deprecation issues [cdff5f7](https://github.com/reservoirprotocol/reservoir-kit/commit/cdff5f76151755b382157e6395ba2011d0a88f8a)
