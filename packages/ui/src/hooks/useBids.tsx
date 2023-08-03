@@ -3,8 +3,8 @@ import { SWRInfiniteConfiguration } from 'swr/infinite'
 import { useInfiniteApi, useReservoirClient } from './'
 import { useMemo } from 'react'
 
-type Bids = paths['/orders/bids/v5']['get']['responses']['200']['schema']
-type BidsQuery = paths['/orders/bids/v5']['get']['parameters']['query']
+type Bids = paths['/orders/bids/v6']['get']['responses']['200']['schema']
+type BidsQuery = paths['/orders/bids/v6']['get']['parameters']['query']
 
 export default function (
   options: BidsQuery,
@@ -25,7 +25,7 @@ export default function (
           ? client?.chains.find((chain) => chain.id === chainId)
           : client?.currentChain()
 
-      const url = new URL(`${chain?.baseApiUrl || ''}/orders/bids/v5`)
+      const url = new URL(`${chain?.baseApiUrl || ''}/orders/bids/v6`)
       let query = options || {}
 
       if (
