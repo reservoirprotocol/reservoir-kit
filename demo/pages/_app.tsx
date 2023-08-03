@@ -12,6 +12,7 @@ import { ThemeProvider } from 'next-themes'
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { WagmiConfig, createConfig, configureChains } from 'wagmi'
 import * as allChains from 'wagmi/chains'
+
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import '../fonts.css'
@@ -22,7 +23,11 @@ import {
   ReservoirKitTheme,
   CartProvider,
 } from '@reservoir0x/reservoir-kit-ui'
-import { LogLevel, customChains } from '@reservoir0x/reservoir-sdk'
+import {
+  LogLevel,
+  customChains,
+  reservoirChains,
+} from '@reservoir0x/reservoir-sdk'
 import { useRouter } from 'next/router'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
@@ -100,43 +105,35 @@ const AppWrapper: FC<any> = ({ children }) => {
           apiKey: API_KEY,
           chains: [
             {
-              baseApiUrl: 'https://api.reservoir.tools',
-              id: allChains.mainnet.id,
+              ...reservoirChains.mainnet,
               active: CHAIN_ID === allChains.mainnet.id,
             },
             {
-              baseApiUrl: 'https://api-goerli.reservoir.tools',
-              id: allChains.goerli.id,
+              ...reservoirChains.goerli,
               active: CHAIN_ID === allChains.goerli.id,
             },
             {
-              baseApiUrl: 'https://api-polygon.reservoir.tools',
-              id: allChains.polygon.id,
+              ...reservoirChains.polygon,
               active: CHAIN_ID === allChains.polygon.id,
             },
             {
-              baseApiUrl: 'https://api-optimism.reservoir.tools',
-              id: allChains.optimism.id,
+              ...reservoirChains.optimism,
               active: CHAIN_ID === allChains.optimism.id,
             },
             {
-              baseApiUrl: 'https://api-arbitrum.reservoir.tools',
-              id: allChains.arbitrum.id,
+              ...reservoirChains.arbitrum,
               active: CHAIN_ID === allChains.arbitrum.id,
             },
             {
-              baseApiUrl: 'https://api-zora.reservoir.tools',
-              id: allChains.zora.id,
+              ...reservoirChains.zora,
               active: CHAIN_ID === allChains.zora.id,
             },
             {
-              baseApiUrl: 'https://api-base.reservoir.tools',
-              id: customChains.base.id,
+              ...reservoirChains.base,
               active: CHAIN_ID === customChains.base.id,
             },
             {
-              baseApiUrl: 'https://api-linea.reservoir.tools',
-              id: customChains.linea.id,
+              ...reservoirChains.linea,
               active: CHAIN_ID === customChains.linea.id,
             },
           ],
