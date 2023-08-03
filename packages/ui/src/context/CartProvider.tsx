@@ -6,7 +6,12 @@ import {
   paths,
   setParams,
 } from '@reservoir0x/reservoir-sdk'
-import { useListings, useReservoirClient, useTokens } from '../hooks'
+import {
+  useCurrencyConversion,
+  useListings,
+  useReservoirClient,
+  useTokens,
+} from '../hooks'
 import { getChainCurrency } from '../hooks/useChainCurrency'
 import { defaultFetcher } from '../lib/swr'
 import React, {
@@ -16,6 +21,7 @@ import React, {
   ReactNode,
   useEffect,
   FC,
+  useState,
 } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
@@ -24,7 +30,7 @@ import { getNetwork, getWalletClient } from 'wagmi/actions'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
-  paths['/orders/asks/v4']['get']['responses']['200']['schema']
+  paths['/orders/asks/v5']['get']['responses']['200']['schema']
 type Token = NonNullable<ReturnType<typeof useTokens>['data'][0]>
 type TokensSchema = paths['/tokens/v6']['get']['responses']['200']['schema']
 type FloorAsk = NonNullable<NonNullable<Token['market']>['floorAsk']>
@@ -74,6 +80,7 @@ export type Cart = {
   currency?: NonNullable<CartItemPrice>['currency']
   feeOnTop?: number
   feesOnTopBps?: string[]
+  feesOnTopUsd?: string[]
   items: CartItem[]
   pools: Record<string, { prices: CartItemPrice[]; itemCount: number }>
   isValidating: boolean
@@ -97,16 +104,24 @@ const CartStorageKey = `reservoirkit.cart.${version}`
 
 type CartStoreProps = {
   feesOnTopBps?: string[]
+  feesOnTopUsd?: string[]
   persist?: boolean
 }
 
-function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
+function cartStore({
+  feesOnTopBps,
+  feesOnTopUsd,
+  persist = true,
+}: CartStoreProps) {
   const { address } = useAccount()
   const { chains } = useNetwork()
   const { switchNetworkAsync } = useSwitchNetwork()
+  const [cartCurrency, setCartCurrency] = useState<Cart['currency']>()
+  const [cartChain, setCartChain] = useState<Cart['chain']>()
   const cartData = useRef<Cart>({
     totalPrice: 0,
     feesOnTopBps: undefined,
+    feesOnTopUsd: undefined,
     items: [],
     pools: {},
     isValidating: false,
@@ -115,8 +130,19 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
 
   const subscribers = useRef(new Set<() => void>())
   const client = useReservoirClient()
+  const { data: usdFeeConversion } = useCurrencyConversion(
+    cartChain?.id,
+    cartCurrency?.contract,
+    'usd'
+  )
+  const usdPrice = Number(usdFeeConversion?.usd || 0)
 
   useEffect(() => {
+    subscribe(() => {
+      setCartCurrency(cartData.current.currency)
+      setCartChain(cartData.current.chain)
+    })
+
     if (persist && typeof window !== 'undefined' && window.localStorage) {
       const storedCart = window.localStorage.getItem(CartStorageKey)
       if (storedCart) {
@@ -129,7 +155,9 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
         const { totalPrice, feeOnTop } = calculatePricing(
           rehydratedCart.items,
           currency,
-          cartData.current.feesOnTopBps
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopUsd,
+          usdPrice
         )
         cartData.current = {
           ...cartData.current,
@@ -156,18 +184,21 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
     const { totalPrice, feeOnTop } = calculatePricing(
       cartData.current.items,
       currency,
-      feesOnTopBps
+      feesOnTopBps,
+      feesOnTopUsd,
+      usdPrice
     )
     cartData.current = {
       ...cartData.current,
       pools,
       totalPrice,
       feesOnTopBps,
+      feesOnTopUsd,
       feeOnTop,
       currency,
     }
     commit()
-  }, [feesOnTopBps])
+  }, [feesOnTopBps, feesOnTopUsd, usdPrice])
 
   const get = useCallback(() => cartData.current, [])
   const set = useCallback((value: Partial<Cart>) => {
@@ -213,7 +244,9 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
     (
       items: Cart['items'],
       currency?: Cart['currency'],
-      feesOnTopBps?: Cart['feesOnTopBps']
+      feesOnTopBps?: Cart['feesOnTopBps'],
+      feesOnTopUsd?: Cart['feesOnTopUsd'],
+      usdPrice?: number
     ) => {
       let feeOnTop = 0
       let subtotal = items.reduce((total, { price, order }) => {
@@ -232,6 +265,17 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
           const [_, feeBps] = feeOnTopBps.split(':')
           total += (Number(feeBps || 0) / 10000) * subtotal
           return total
+        }, 0)
+      } else if (feesOnTopUsd && usdPrice && currency && currency?.decimals) {
+        feeOnTop = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
+          const [_, fee] = feeOnTop.split(':')
+          const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
+          const atomicFee = BigInt(fee)
+          const convertedAtomicFee =
+            atomicFee * BigInt(10 ** (currency?.decimals || 18))
+          const currencyFee = convertedAtomicFee / atomicUsdPrice
+          const parsedFee = formatUnits(currencyFee, currency.decimals || 18)
+          return totalFees + Number(parsedFee)
         }, 0)
       }
       subtotal = subtotal + feeOnTop
@@ -258,7 +302,11 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
         }
       }
       if (currencies.size > 1) {
-        return getChainCurrency(chains, chainId)
+        const chainCurrency = getChainCurrency(chains, chainId)
+        return {
+          ...chainCurrency,
+          contract: chainCurrency.address,
+        }
       } else if (currencies.size > 0) {
         return Object.values(currenciesData)[0]
       }
@@ -311,9 +359,9 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
         (chain) => chain.id === chainId
       )
 
-      const url = new URL(`${reservoirChain?.baseApiUrl}/orders/asks/v4`)
+      const url = new URL(`${reservoirChain?.baseApiUrl}/orders/asks/v5`)
 
-      const query: paths['/orders/asks/v4']['get']['parameters']['query'] = {
+      const query: paths['/orders/asks/v5']['get']['parameters']['query'] = {
         ids: orderIds,
         limit: 1000,
         includeCriteriaMetadata: true,
@@ -468,7 +516,9 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
         const { totalPrice, feeOnTop } = calculatePricing(
           updatedItems,
           currency,
-          cartData.current.feesOnTopBps
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopUsd,
+          usdPrice
         )
 
         cartData.current = {
@@ -482,7 +532,7 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
 
       commit()
     },
-    [commit]
+    [commit, usdPrice]
   )
 
   type AsyncAddToCartOrder = { orderId: string }
@@ -646,7 +696,9 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
         const { totalPrice, feeOnTop } = calculatePricing(
           updatedItems,
           currency,
-          cartData.current.feesOnTopBps
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopUsd,
+          usdPrice
         )
 
         cartData.current = {
@@ -674,69 +726,76 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
         throw e
       }
     },
-    [fetchTokens, commit, address]
+    [fetchTokens, commit, address, usdPrice]
   )
 
   /**
    * @param ids An array of order ids or token keys. Tokens should be in the format `collection:token`
    */
 
-  const remove = useCallback((ids: string[]) => {
-    if (cartData.current.isValidating) {
-      console.warn('Currently validating, removing items temporarily disabled')
-      return
-    }
-    const updatedItems: CartItem[] = []
-    const removedItems: CartItem[] = []
-    cartData.current.items.forEach((item) => {
-      const key = `${item.collection.id}:${item.token.id}`
-      const orderId = item.order?.id
-      if (orderId && ids.includes(orderId)) {
-        removedItems.push(item)
-      } else if (ids.includes(key)) {
-        removedItems.push(item)
-      } else {
-        updatedItems.push(item)
+  const remove = useCallback(
+    (ids: string[]) => {
+      if (cartData.current.isValidating) {
+        console.warn(
+          'Currently validating, removing items temporarily disabled'
+        )
+        return
       }
-    })
-    const pools = calculatePools(updatedItems)
-    const currency = getCartCurrency(
-      updatedItems,
-      cartData.current.chain?.id || 1
-    )
-    const { totalPrice, feeOnTop } = calculatePricing(
-      updatedItems,
-      currency,
-      cartData.current.feesOnTopBps
-    )
+      const updatedItems: CartItem[] = []
+      const removedItems: CartItem[] = []
+      cartData.current.items.forEach((item) => {
+        const key = `${item.collection.id}:${item.token.id}`
+        const orderId = item.order?.id
+        if (orderId && ids.includes(orderId)) {
+          removedItems.push(item)
+        } else if (ids.includes(key)) {
+          removedItems.push(item)
+        } else {
+          updatedItems.push(item)
+        }
+      })
+      const pools = calculatePools(updatedItems)
+      const currency = getCartCurrency(
+        updatedItems,
+        cartData.current.chain?.id || 1
+      )
+      const { totalPrice, feeOnTop } = calculatePricing(
+        updatedItems,
+        currency,
+        cartData.current.feesOnTopBps,
+        cartData.current.feesOnTopUsd,
+        usdPrice
+      )
 
-    //Suppress pool price changes if the removed item was from the pool
-    const removedPoolIds = removedItems.reduce((poolIds, item) => {
-      if (item.poolId) {
-        poolIds.push(item.poolId)
+      //Suppress pool price changes if the removed item was from the pool
+      const removedPoolIds = removedItems.reduce((poolIds, item) => {
+        if (item.poolId) {
+          poolIds.push(item.poolId)
+        }
+        return poolIds
+      }, [] as string[])
+
+      updatedItems.forEach((item) => {
+        if (item.poolId && removedPoolIds.includes(item.poolId)) {
+          item.previousPrice = item.price
+        }
+      })
+
+      cartData.current = {
+        ...cartData.current,
+        items: updatedItems,
+        pools,
+        totalPrice,
+        feeOnTop,
+        currency,
       }
-      return poolIds
-    }, [] as string[])
-
-    updatedItems.forEach((item) => {
-      if (item.poolId && removedPoolIds.includes(item.poolId)) {
-        item.previousPrice = item.price
+      if (updatedItems.length === 0) {
+        cartData.current.chain = undefined
       }
-    })
-
-    cartData.current = {
-      ...cartData.current,
-      items: updatedItems,
-      pools,
-      totalPrice,
-      feeOnTop,
-      currency,
-    }
-    if (updatedItems.length === 0) {
-      cartData.current.chain = undefined
-    }
-    commit()
-  }, [])
+      commit()
+    },
+    [usdPrice]
+  )
 
   const validate = useCallback(async () => {
     try {
@@ -871,7 +930,9 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
       const { totalPrice, feeOnTop } = calculatePricing(
         items,
         currency,
-        cartData.current.feesOnTopBps
+        cartData.current.feesOnTopBps,
+        cartData.current.feesOnTopUsd,
+        usdPrice
       )
       cartData.current = {
         ...cartData.current,
@@ -892,7 +953,7 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
       }
       throw e
     }
-  }, [fetchTokens, fetchOrders, address])
+  }, [fetchTokens, fetchOrders, address, usdPrice])
 
   const checkout = useCallback(
     async (options: BuyTokenOptions = {}) => {
@@ -975,6 +1036,17 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
             return `${referrer}:${atomicUnitsFee}`
           })
           options.feesOnTop = fixedFees
+        } else if (cartData.current.feesOnTopUsd && usdPrice) {
+          options.feesOnTop = cartData.current.feesOnTopUsd.map((feeOnTop) => {
+            const [recipient, fee] = feeOnTop.split(':')
+            const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
+            const atomicFee = BigInt(fee)
+            const convertedAtomicFee =
+              atomicFee * BigInt(10 ** cartData.current?.currency?.decimals!)
+            const currencyFee = convertedAtomicFee / atomicUsdPrice
+            const parsedFee = formatUnits(currencyFee, 0)
+            return `${recipient}:${parsedFee}`
+          })
         }
       }
 
@@ -1134,7 +1206,9 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
               const { totalPrice, feeOnTop } = calculatePricing(
                 items,
                 currency,
-                cartData.current.feesOnTopBps
+                cartData.current.feesOnTopBps,
+                cartData.current.feesOnTopUsd,
+                usdPrice
               )
               cartData.current.items = items
               cartData.current.pools = pools
@@ -1148,7 +1222,7 @@ function cartStore({ feesOnTopBps, persist = true }: CartStoreProps) {
           }
         })
     },
-    [client, switchNetworkAsync]
+    [client, switchNetworkAsync, usdPrice]
   )
 
   return {
@@ -1172,16 +1246,20 @@ export const CartContext = createContext<ReturnType<typeof cartStore> | null>(
 type CartProviderProps = {
   children: ReactNode
   feesOnTopBps?: string[]
+  feesOnTopUsd?: string[]
   persist?: boolean
 }
 
 export const CartProvider: FC<CartProviderProps> = function ({
   children,
   feesOnTopBps,
+  feesOnTopUsd,
   persist,
 }) {
   return (
-    <CartContext.Provider value={cartStore({ feesOnTopBps, persist })}>
+    <CartContext.Provider
+      value={cartStore({ feesOnTopBps, feesOnTopUsd, persist })}
+    >
       {children}
     </CartContext.Provider>
   )

@@ -42,7 +42,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   tokenId?: string
   feesOnTopBps?: string[] | null
-  feesOnTopFixed?: string[] | null
+  feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof CollectModalCopy>
   onCollectComplete?: (data: CollectCallbackData) => void
@@ -57,7 +57,7 @@ export function CollectModal({
   collectionId,
   tokenId,
   feesOnTopBps,
-  feesOnTopFixed,
+  feesOnTopUsd,
   normalizeRoyalties,
   copyOverrides,
   onCollectComplete,
@@ -80,7 +80,7 @@ export function CollectModal({
       collectionId={collectionId}
       tokenId={tokenId}
       feesOnTopBps={feesOnTopBps}
-      feesOnTopFixed={feesOnTopFixed}
+      feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
     >
       {(props) => {

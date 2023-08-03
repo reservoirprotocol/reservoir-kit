@@ -1,3 +1,9 @@
+## [v1.1.24-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/06b76ff3e18a32654df42d82a45650a76f75b1b4) (2023-08-03)
+
+- Upgrade to typescript v5
+- Sync api
+- Improve object typings [2d0bc5d](https://github.com/reservoirprotocol/reservoir-kit/commit/2d0bc5db1e3332a7d5695523e36cd67ef857b74c)
+
 ## [v1.1.23-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/5db2f5836956f2fb4d6b9f89e6c98eabe3373818) (2023-07-31)
 
 - Sync apis [2af5e72](https://github.com/reservoirprotocol/reservoir-kit/commit/2af5e72b628e824a666285d992ec0a1ab881acbe)

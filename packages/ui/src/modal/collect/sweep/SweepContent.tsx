@@ -51,8 +51,10 @@ export const SweepContent: FC<
   paymentCurrency,
   setPaymentCurrency,
   total,
+  totalIncludingFees,
   totalUsd,
   feeOnTop,
+  feeUsd,
   usdPrice,
   currentChain,
   balance,
@@ -229,19 +231,20 @@ export const SweepContent: FC<
           <Flex direction="column" css={{ px: '$4', pt: '$4', pb: '$2' }}>
             {feeOnTop > 0 && (
               <Flex
-                align="center"
                 justify="between"
-                css={{ width: '100%', py: '$4', gap: '$1' }}
+                align="start"
+                css={{ py: '$4', width: '100%' }}
               >
-                <Text style="subtitle2" color="subtle">
-                  Referral Fee
-                </Text>
-                <FormatCryptoCurrency
-                  amount={feeOnTop}
-                  address={listingCurrency?.address}
-                  decimals={listingCurrency?.decimals}
-                  symbol={listingCurrency?.symbol}
-                />
+                <Text style="subtitle2">Referral Fee</Text>
+                <Flex direction="column" align="end" css={{ gap: '$1' }}>
+                  <FormatCryptoCurrency
+                    amount={feeOnTop}
+                    address={listingCurrency?.address}
+                    decimals={listingCurrency?.decimals}
+                    symbol={listingCurrency?.symbol}
+                  />
+                  <FormatCurrency amount={feeUsd} color="subtle" style="tiny" />
+                </Flex>
               </Flex>
             )}
 
@@ -349,8 +352,8 @@ export const SweepContent: FC<
               token={token}
               itemCount={itemAmount}
               totalPrice={paymentCurrency?.currencyTotal || 0}
-              usdPrice={paymentCurrency?.usdPrice || 0}
               currency={paymentCurrency}
+              usdPrice={usdPrice}
               chain={currentChain}
             />
           </Box>
@@ -439,8 +442,8 @@ export const SweepContent: FC<
               token={token}
               itemCount={itemAmount}
               totalPrice={paymentCurrency?.currencyTotal || 0}
-              usdPrice={paymentCurrency?.usdPrice || 0}
               currency={paymentCurrency}
+              usdPrice={usdPrice}
               chain={currentChain}
             />
           </Box>

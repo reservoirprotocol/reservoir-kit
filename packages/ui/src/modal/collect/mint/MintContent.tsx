@@ -52,8 +52,11 @@ export const MintContent: FC<
   setPaymentCurrency,
   paymentTokens,
   total,
+  totalIncludingFees,
   totalUsd,
   usdPrice,
+  feeOnTop,
+  feeUsd,
   currentChain,
   balance,
   contract,
@@ -196,52 +199,80 @@ export const MintContent: FC<
                   </Flex>
                 ) : null}
               </Flex>
-              {paymentTokens.length > 1 ? (
-                <Flex
-                  justify="between"
-                  align="center"
-                  css={{ py: '$4', gap: '$1' }}
-                >
-                  <Text style="subtitle2">Payment Method</Text>
+              <Flex direction="column">
+                {feeOnTop > 0 && (
                   <Flex
-                    align="center"
-                    css={{ gap: '$2', cursor: 'pointer' }}
-                    onClick={() => setCollectStep(CollectStep.SelectPayment)}
+                    justify="between"
+                    align="start"
+                    css={{ py: '$4', width: '100%' }}
                   >
-                    <Flex align="center">
-                      <CryptoCurrencyIcon
-                        address={paymentCurrency?.address as string}
-                        css={{ width: 16, height: 16, mr: '$1' }}
+                    <Text style="subtitle2">Referral Fee</Text>
+                    <Flex direction="column" align="end" css={{ gap: '$1' }}>
+                      <FormatCryptoCurrency
+                        amount={feeOnTop}
+                        address={listingCurrency?.address}
+                        decimals={listingCurrency?.decimals}
+                        symbol={listingCurrency?.symbol}
                       />
-                      <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                      <FormatCurrency
+                        amount={feeUsd}
+                        color="subtle"
+                        style="tiny"
+                      />
                     </Flex>
-                    <Box css={{ color: '$neutralSolidHover' }}>
-                      <FontAwesomeIcon icon={faChevronRight} width={10} />
-                    </Box>
                   </Flex>
-                </Flex>
-              ) : null}
-              {!hasEnoughCurrency ? (
-                <Text css={{ mr: '$3', pb: '$4' }} color="error" style="body3">
-                  Insufficient balance, select another token or add funds
-                </Text>
-              ) : null}
-              <Flex justify="between" align="start" css={{ height: 34 }}>
-                <Text style="h6">You Pay</Text>
-                <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                  <FormatCryptoCurrency
-                    textStyle="h6"
-                    amount={paymentCurrency?.currencyTotal}
-                    address={paymentCurrency?.address}
-                    decimals={paymentCurrency?.decimals}
-                    symbol={paymentCurrency?.symbol}
-                    logoWidth={18}
-                  />
-                  <FormatCurrency
-                    amount={paymentCurrency?.usdPrice}
-                    style="tiny"
-                    color="subtle"
-                  />
+                )}
+                {paymentTokens.length > 1 ? (
+                  <Flex
+                    justify="between"
+                    align="center"
+                    css={{ py: '$4', gap: '$1' }}
+                  >
+                    <Text style="subtitle2">Payment Method</Text>
+                    <Flex
+                      align="center"
+                      css={{ gap: '$2', cursor: 'pointer' }}
+                      onClick={() => setCollectStep(CollectStep.SelectPayment)}
+                    >
+                      <Flex align="center">
+                        <CryptoCurrencyIcon
+                          address={paymentCurrency?.address as string}
+                          css={{ width: 16, height: 16, mr: '$1' }}
+                        />
+                        <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                      </Flex>
+                      <Box css={{ color: '$neutralSolidHover' }}>
+                        <FontAwesomeIcon icon={faChevronRight} width={10} />
+                      </Box>
+                    </Flex>
+                  </Flex>
+                ) : null}
+                {!hasEnoughCurrency ? (
+                  <Text
+                    css={{ mr: '$3', pb: '$4' }}
+                    color="error"
+                    style="body3"
+                  >
+                    Insufficient balance, select another token or add funds
+                  </Text>
+                ) : null}
+                <Flex justify="between" align="start" css={{ height: 34 }}>
+                  <Text style="h6">You Pay</Text>
+                  <Flex direction="column" align="end" css={{ gap: '$1' }}>
+                    <FormatCryptoCurrency
+                      textStyle="h6"
+                      amount={paymentCurrency?.currencyTotal}
+                      address={paymentCurrency?.address}
+                      decimals={paymentCurrency?.decimals}
+                      symbol={paymentCurrency?.symbol}
+                      logoWidth={18}
+                    />
+                    <FormatCurrency
+                      amount={paymentCurrency?.usdPrice}
+                      style="subtitle2"
+                      color="subtle"
+                    />
+                  </Flex>
                 </Flex>
               </Flex>
             </Flex>
@@ -299,9 +330,9 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={total}
-              usdPrice={totalUsd}
+              totalPrice={paymentCurrency?.currencyTotal || 0}
               currency={listingCurrency}
+              usdPrice={usdPrice}
               chain={currentChain}
             />
           </Box>
@@ -390,9 +421,9 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={total}
-              usdPrice={totalUsd}
+              totalPrice={paymentCurrency?.currencyTotal || 0}
               currency={listingCurrency}
+              usdPrice={usdPrice}
               chain={currentChain}
             />
           </Box>
