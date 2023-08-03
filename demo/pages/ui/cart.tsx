@@ -50,7 +50,10 @@ const CartPage: NextPage = () => {
         }}
       />
       <div>
-        <i>Add ?cartFeeBps=["0xabc:123"] to add a fee to the cart</i>
+        <i>
+          Add ?cartFeeBps=["0xabc:123"] or ?cartFeeUsd=["0xabc:1000000"] to add
+          a fee to the cart
+        </i>
       </div>
       <div>
         <label>Collection Id: </label>

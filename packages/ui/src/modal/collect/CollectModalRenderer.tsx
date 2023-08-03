@@ -1,15 +1,8 @@
-import React, {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-  useMemo,
-} from 'react'
+import React, { FC, ReactNode, useCallback, useEffect, useState } from 'react'
 import {
   useChainCurrency,
-  useCoinConversion,
   useCollections,
+  useCurrencyConversion,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
@@ -71,6 +64,7 @@ export type ChildrenProps = {
   chainCurrency: ReturnType<typeof useChainCurrency>
   isChainCurrency: boolean
   total: number
+  totalIncludingFees: number
   totalUsd: number
   feeOnTop: number
   feeUsd: number
@@ -97,7 +91,7 @@ type Props = {
   collectionId?: string
   tokenId?: string
   feesOnTopBps?: string[] | null
-  feesOnTopFixed?: string[] | null
+  feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -108,7 +102,7 @@ export const CollectModalRenderer: FC<Props> = ({
   collectionId,
   tokenId,
   feesOnTopBps,
-  feesOnTopFixed,
+  feesOnTopUsd,
   normalizeRoyalties,
   children,
 }) => {
@@ -122,6 +116,8 @@ export const CollectModalRenderer: FC<Props> = ({
   const [collectStep, setCollectStep] = useState<CollectStep>(CollectStep.Idle)
   const [stepData, setStepData] = useState<CollectModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
+  const [total, setTotal] = useState(0)
+  const [totalIncludingFees, setTotalIncludingFees] = useState(0)
 
   const [contentMode, setContentMode] = useState<
     CollectModalContentMode | undefined
@@ -184,6 +180,15 @@ export const CollectModalRenderer: FC<Props> = ({
   )
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
+
+  const { data: usdFeeConversion } = useCurrencyConversion(
+    undefined,
+    currency?.address,
+    'usd'
+  )
+  const usdPrice = Number(usdFeeConversion?.usd || 0)
+  const feeUsd = feeOnTop * usdPrice
+  const totalUsd = usdPrice * (totalIncludingFees || 0)
 
   const fetchBuyPath = useCallback(() => {
     if (!wallet || !client) {
@@ -343,62 +348,60 @@ export const CollectModalRenderer: FC<Props> = ({
           const [_, fee] = feeOnTop.split(':')
           return totalFees + (Number(fee) / 10000) * totalPrice
         }, 0)
-      } else if (feesOnTopFixed && feesOnTopFixed.length > 0) {
-        fees = feesOnTopFixed.reduce((totalFees, feeOnTop) => {
+      } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPrice) {
+        fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          const parsedFee = formatUnits(BigInt(fee), currency?.decimals || 18)
+          const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
+          const atomicFee = BigInt(fee)
+          const convertedAtomicFee =
+            atomicFee * BigInt(10 ** currency?.decimals!)
+          const currencyFee = convertedAtomicFee / atomicUsdPrice
+          const parsedFee = formatUnits(currencyFee, currency?.decimals || 18)
           return totalFees + Number(parsedFee)
         }, 0)
       }
 
       return fees
     },
-    [feesOnTopBps, feeOnTop, feesOnTopFixed, currency]
+    [feesOnTopBps, feeOnTop, usdPrice, feesOnTopUsd, currency]
   )
 
-  const total = useMemo(() => {
+  useEffect(() => {
+    let updatedTotal = 0
     // Mint erc1155
     if (contentMode === 'mint' && is1155) {
-      let updatedTotal = 0
       let remainingQuantity = itemAmount
 
       for (const order of orders) {
-        if (remainingQuantity <= 0) {
-          return updatedTotal
-        }
+        if (remainingQuantity >= 0) {
+          let orderQuantity = order?.quantity || 1
+          let orderPricePerItem = order?.totalPrice || 0
 
-        let orderQuantity = order?.quantity || 1
-        let orderPricePerItem = order?.totalPrice || 0
-
-        if (remainingQuantity >= orderQuantity) {
-          updatedTotal += orderPricePerItem * orderQuantity
-          remainingQuantity -= orderQuantity
-        } else {
-          let fractionalPrice = orderPricePerItem * remainingQuantity
-          updatedTotal += fractionalPrice
-          remainingQuantity = 0
+          if (remainingQuantity >= orderQuantity) {
+            updatedTotal += orderPricePerItem * orderQuantity
+            remainingQuantity -= orderQuantity
+          } else {
+            let fractionalPrice = orderPricePerItem * remainingQuantity
+            updatedTotal += fractionalPrice
+            remainingQuantity = 0
+          }
         }
       }
-
-      return updatedTotal
     }
 
     // Mint erc721
     else if (contentMode === 'mint') {
-      let updatedTotal = mintPrice * (Math.max(0, itemAmount) || 0)
-      return updatedTotal
+      updatedTotal = mintPrice * (Math.max(0, itemAmount) || 0)
     }
 
     // Sweep erc1155
     else if (is1155) {
-      let updatedTotal = 0
       let remainingQuantity = itemAmount
 
       for (const order of orders) {
         if (remainingQuantity <= 0) {
-          return updatedTotal
+          break
         }
-
         let orderQuantity = order?.quantity || 1
         let orderPricePerItem = order?.totalPrice || 0
 
@@ -411,15 +414,10 @@ export const CollectModalRenderer: FC<Props> = ({
           remainingQuantity = 0
         }
       }
-
-      let fees = calculateFees(updatedTotal)
-      setFeeOnTop(fees)
-
-      return updatedTotal + fees
     }
     // Sweep erc721
     else {
-      let updatedTotal = selectedTokens?.reduce((total, token) => {
+      updatedTotal = selectedTokens?.reduce((total, token) => {
         return (
           total +
           (token?.currency != chainCurrency.address && isChainCurrency
@@ -427,30 +425,21 @@ export const CollectModalRenderer: FC<Props> = ({
             : token?.totalPrice || 0)
         )
       }, 0)
-
-      let fees = calculateFees(updatedTotal)
-      setFeeOnTop(fees)
-
-      return updatedTotal + fees
     }
+    const fees = calculateFees(updatedTotal)
+    setFeeOnTop(fees)
+    setTotal(updatedTotal)
+    setTotalIncludingFees(updatedTotal + fees)
   }, [
     selectedTokens,
     feesOnTopBps,
-    feesOnTopFixed,
+    feesOnTopUsd,
     currency,
     isChainCurrency,
     contentMode,
     itemAmount,
     orders,
   ])
-
-  const coinConversion = useCoinConversion(
-    open ? 'USD' : undefined,
-    currency?.symbol
-  )
-  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
-  const feeUsd = feeOnTop * usdPrice
-  const totalUsd = usdPrice * (total || 0)
 
   const { data: balance } = useBalance({
     chainId: chain?.id,
@@ -539,10 +528,18 @@ export const CollectModalRenderer: FC<Props> = ({
         return `${referrer}:${atomicUnitsFee}`
       })
       options.feesOnTop = fixedFees
-    }
-    if (feesOnTopFixed && feesOnTopFixed.length > 0) {
+    } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPrice) {
+      const feesOnTopFixed = feesOnTopUsd.map((feeOnTop) => {
+        const [recipient, fee] = feeOnTop.split(':')
+        const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
+        const atomicFee = BigInt(fee)
+        const convertedAtomicFee = atomicFee * BigInt(10 ** currency?.decimals!)
+        const currencyFee = convertedAtomicFee / atomicUsdPrice
+        const parsedFee = formatUnits(currencyFee, 0)
+        return `${recipient}:${parsedFee}`
+      })
       options.feesOnTop = feesOnTopFixed
-    } else if (!feesOnTopFixed && !feesOnTopBps) {
+    } else if (!feesOnTopUsd && !feesOnTopBps) {
       delete options.feesOnTop
     }
 
@@ -564,7 +561,7 @@ export const CollectModalRenderer: FC<Props> = ({
             fillType: contentMode === 'mint' ? 'mint' : 'trade',
           },
         ],
-        expectedPrice: total - feeOnTop,
+        expectedPrice: total,
         wallet,
         options,
         onProgress: (steps: Execute['steps'], path: Execute['path']) => {
@@ -642,7 +639,7 @@ export const CollectModalRenderer: FC<Props> = ({
     tokenId,
     currency,
     feesOnTopBps,
-    feesOnTopFixed,
+    feesOnTopUsd,
     contentMode,
     itemAmount,
   ])
@@ -665,6 +662,7 @@ export const CollectModalRenderer: FC<Props> = ({
         chainCurrency,
         isChainCurrency,
         total,
+        totalIncludingFees,
         totalUsd,
         feeOnTop,
         feeUsd,

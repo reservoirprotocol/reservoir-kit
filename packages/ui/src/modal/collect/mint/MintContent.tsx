@@ -44,9 +44,11 @@ export const MintContent: FC<
   setItemAmount,
   maxItemAmount,
   currency,
-  total,
+  totalIncludingFees,
   totalUsd,
   usdPrice,
+  feeOnTop,
+  feeUsd,
   currentChain,
   balance,
   contract,
@@ -188,22 +190,46 @@ export const MintContent: FC<
                   </Flex>
                 ) : null}
               </Flex>
-              <Flex justify="between" align="start" css={{ height: 34 }}>
-                <Text style="h6">Total</Text>
-                <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                  <FormatCryptoCurrency
-                    textStyle="h6"
-                    amount={total}
-                    address={currency?.address}
-                    decimals={currency?.decimals}
-                    symbol={currency?.symbol}
-                    logoWidth={18}
-                  />
-                  <FormatCurrency
-                    amount={totalUsd}
-                    style="subtitle2"
-                    color="subtle"
-                  />
+              <Flex direction="column">
+                {feeOnTop > 0 && (
+                  <Flex
+                    justify="between"
+                    align="start"
+                    css={{ py: '$4', width: '100%' }}
+                  >
+                    <Text style="subtitle2">Referral Fee</Text>
+                    <Flex direction="column" align="end" css={{ gap: '$1' }}>
+                      <FormatCryptoCurrency
+                        amount={feeOnTop}
+                        address={currency?.address}
+                        decimals={currency?.decimals}
+                        symbol={currency?.symbol}
+                      />
+                      <FormatCurrency
+                        amount={feeUsd}
+                        color="subtle"
+                        style="tiny"
+                      />
+                    </Flex>
+                  </Flex>
+                )}
+                <Flex justify="between" align="start" css={{ height: 34 }}>
+                  <Text style="h6">Total</Text>
+                  <Flex direction="column" align="end" css={{ gap: '$1' }}>
+                    <FormatCryptoCurrency
+                      textStyle="h6"
+                      amount={totalIncludingFees}
+                      address={currency?.address}
+                      decimals={currency?.decimals}
+                      symbol={currency?.symbol}
+                      logoWidth={18}
+                    />
+                    <FormatCurrency
+                      amount={totalUsd}
+                      style="subtitle2"
+                      color="subtle"
+                    />
+                  </Flex>
                 </Flex>
               </Flex>
             </Flex>
@@ -259,8 +285,8 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={total}
-              usdPrice={totalUsd}
+              totalPrice={totalIncludingFees}
+              usdPrice={usdPrice}
               currency={currency}
               chain={currentChain}
             />
@@ -350,8 +376,8 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={total}
-              usdPrice={totalUsd}
+              totalPrice={totalIncludingFees}
+              usdPrice={usdPrice}
               currency={currency}
               chain={currentChain}
             />

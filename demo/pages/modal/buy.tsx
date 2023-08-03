@@ -20,7 +20,7 @@ const BuyPage: NextPage = () => {
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [orderId, setOrderId] = useState('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
-  const [feesOnTop, setFeesOnTop] = useState<string[]>([])
+  const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
@@ -85,20 +85,20 @@ const BuyPage: NextPage = () => {
         />
       </div>
       <div>
-        <label>Fees on top (Flat): </label>
+        <label>Fees on top (USD): </label>
         <textarea
           onChange={() => {}}
           onBlur={(e) => {
             if (e.target.value && e.target.value.length > 0) {
               try {
-                setFeesOnTop(JSON.parse(e.target.value))
+                setFeesOnTopUsd(JSON.parse(e.target.value))
               } catch (err) {
                 e.target.value = ''
-                setFeesOnTop([])
+                setFeesOnTopUsd([])
               }
             } else {
               e.target.value = ''
-              setFeesOnTop([])
+              setFeesOnTopUsd([])
             }
           }}
         />
@@ -137,7 +137,7 @@ const BuyPage: NextPage = () => {
         tokenId={tokenId}
         orderId={orderId}
         feesOnTopBps={feesOnTopBps}
-        feesOnTopFixed={feesOnTop}
+        feesOnTopUsd={feesOnTopUsd}
         normalizeRoyalties={normalizeRoyalties}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onGoToToken={() => console.log('Go to token')}
