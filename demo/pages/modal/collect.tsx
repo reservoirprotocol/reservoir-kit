@@ -112,7 +112,7 @@ const CollectPage: NextPage = () => {
         />
       </div>
       <div>
-        <label>Fees on top (Flat): </label>
+        <label>Fees on top (USD): </label>
         <textarea
           onChange={() => {}}
           onBlur={(e) => {

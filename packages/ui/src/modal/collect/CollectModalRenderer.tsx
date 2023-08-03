@@ -400,18 +400,19 @@ export const CollectModalRenderer: FC<Props> = ({
       let remainingQuantity = itemAmount
 
       for (const order of orders) {
-        if (remainingQuantity >= 0) {
-          let orderQuantity = order?.quantity || 1
-          let orderPricePerItem = order?.totalPrice || 0
+        if (remainingQuantity <= 0) {
+          break
+        }
+        let orderQuantity = order?.quantity || 1
+        let orderPricePerItem = order?.totalPrice || 0
 
-          if (remainingQuantity >= orderQuantity) {
-            updatedTotal += orderPricePerItem * orderQuantity
-            remainingQuantity -= orderQuantity
-          } else {
-            let fractionalPrice = orderPricePerItem * remainingQuantity
-            updatedTotal += fractionalPrice
-            remainingQuantity = 0
-          }
+        if (remainingQuantity >= orderQuantity) {
+          updatedTotal += orderPricePerItem * orderQuantity
+          remainingQuantity -= orderQuantity
+        } else {
+          let fractionalPrice = orderPricePerItem * remainingQuantity
+          updatedTotal += fractionalPrice
+          remainingQuantity = 0
         }
       }
 
