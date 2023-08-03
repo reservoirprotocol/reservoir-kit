@@ -4,6 +4,17 @@ import openapiTS from 'openapi-typescript'
 const generateTypes = async () => {
   const options = {
     formatter: (schemaObject, metadata) => {
+      if (
+        schemaObject['x-type'] === 'object' &&
+        schemaObject.name &&
+        schemaObject.type
+      ) {
+        const typeName = `\`${schemaObject.name}[\${string}]\` | \`${schemaObject.name}[\${string}]\`[]`
+        console.log('Generated custom type for:', schemaObject.name)
+        console.log('Output:', typeName)
+        return typeName
+      }
+
       const alternatives = schemaObject['x-alternatives']
       if (alternatives && alternatives[0] && alternatives[0].items) {
         const types = alternatives
