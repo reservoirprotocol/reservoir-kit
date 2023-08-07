@@ -75,7 +75,7 @@ export function CartCheckoutModal({
     }, 0) || 0
 
   const failedSales = totalQuantity - totalSales
-  const successfulSales = totalSales - failedSales
+  const successfulSales = totalQuantity - failedSales
 
   const pathMap = transaction?.path
     ? (transaction.path as Path[]).reduce(
