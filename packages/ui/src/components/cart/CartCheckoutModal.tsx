@@ -60,19 +60,22 @@ export function CartCheckoutModal({
     return `${cartChain?.baseApiUrl}/redirect/tokens/${contract}:${token.id}/image/v1?imageSize=small`
   })
 
-  const transfersTxHashes =
-    transaction?.currentStep?.items?.reduce((txHashes, item) => {
+  const totalSales =
+    transaction?.currentStep?.items?.reduce((total, item) => {
       item.transfersData?.forEach((transferData) => {
-        if (transferData.txHash) {
-          txHashes.add(transferData.txHash)
-        }
+        total += Number(transferData.amount || 1)
       })
-      return txHashes
-    }, new Set<string>()) || []
-  const totalSales = Array.from(transfersTxHashes).length
-  const failedSales =
-    totalSales - (transaction?.currentStep?.items?.length || 0)
-  const successfulSales = totalSales - failedSales
+      return total
+    }, 0) || 0
+
+  const totalQuantity =
+    items.reduce((total, item) => {
+      total += item?.order?.quantity || 1
+      return total
+    }, 0) || 0
+
+  const failedSales = totalQuantity - totalSales
+  const successfulSales = totalQuantity - failedSales
 
   const pathMap = transaction?.path
     ? (transaction.path as Path[]).reduce(
