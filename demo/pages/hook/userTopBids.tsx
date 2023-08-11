@@ -81,7 +81,7 @@ const UserTopBids: NextPage = () => {
       {bids.map((bid, i) => (
         <div key={`${bid?.id}:${i}`}>
           <div>Id: {bid?.id}</div>
-          <div>Price: {bid?.price}</div>
+          <div>Price: {bid?.price?.amount?.decimal}</div>
           <div>Source: {bid?.source?.name as string}</div>
         </div>
       ))}
