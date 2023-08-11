@@ -1,3 +1,16 @@
+
+## [v1.5.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/73392b542bd097f00fcf68558e13221fc5c9875f) (2023-08-11)
+
+* Merge pull request #328 from zSlammin/update_user_top_bids [596c732](https://github.com/reservoirprotocol/reservoir-kit/commit/596c732d9e843334f6e0b2400993f6f2c91d9b04)
+* Merge pull request #322 from reservoirprotocol/armando/grwth-3033-update-successfulfailed-purchases-logic-in-buymodal-and-cart [38def47](https://github.com/reservoirprotocol/reservoir-kit/commit/38def47379182dcc304eb67c31275de99f596196)
+* feat: Fix ted comment [b4bab79](https://github.com/reservoirprotocol/reservoir-kit/commit/b4bab797795cfed291ca0021c5758c8cb4bc938b)
+* update userTopBids hook to use latest endpoint [a15ff82](https://github.com/reservoirprotocol/reservoir-kit/commit/a15ff82bef3b2af067d2f21477eec1a4a2183d02)
+* feat: Address review [2bcbbe7](https://github.com/reservoirprotocol/reservoir-kit/commit/2bcbbe715b174ce192075091c85352d8c7a40b2f)
+* feat: More formatting [2e02efd](https://github.com/reservoirprotocol/reservoir-kit/commit/2e02efd3c7102662e4981830bae818e2654a5bca)
+* feat: Spacing [e450d89](https://github.com/reservoirprotocol/reservoir-kit/commit/e450d89395c2ad53c4874a92c72842384258aea0)
+* fix: Update purchase count [eb5d444](https://github.com/reservoirprotocol/reservoir-kit/commit/eb5d44407f50900b055de7bc794db11e91206421)
+* feat: Update CartModal [75eafb7](https://github.com/reservoirprotocol/reservoir-kit/commit/75eafb72e4b66bf9f0f9713712a65b09df9cd3b1)
+* feat: Update BuyModal [8c2d1be](https://github.com/reservoirprotocol/reservoir-kit/commit/8c2d1be707356f036dfe7da402830ce2bbe21cf5)
 ## [v1.4.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/588afefec402669059780df6f291b300045ece30) (2023-08-03)
 
 - Upgrade useBids hook to v6 [37247fd](https://github.com/reservoirprotocol/reservoir-kit/commit/37247fdac7d57be294b3e7b4daf456ebc0ef5052)
