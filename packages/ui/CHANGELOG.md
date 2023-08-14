@@ -1,3 +1,14 @@
+
+* CollectModal: fix a few bugs with total usd when sweeping [8dbac89](https://github.com/reservoirprotocol/reservoir-kit/commit/8dbac89b3873b63d1a407cf37782522510f24c97)
+* Fix usdPrice and usdTotal [ea5109e](https://github.com/reservoirprotocol/reservoir-kit/commit/ea5109ebc42ff15d22668c6461f43f12bbc202e4)
+* BREAKING: move api key configuration from chain to client [dc879c3](https://github.com/reservoirprotocol/reservoir-kit/commit/dc879c3c1f4ad2321be747cfb54f1fcb6ec92e9e)
+* Pass paymentCurrency as currency to execute buy [48d8031](https://github.com/reservoirprotocol/reservoir-kit/commit/48d8031c709b41a36606a003c57a18e11e620098)
+* Remove usdCoinConversion from CollectRenderer [c8db911](https://github.com/reservoirprotocol/reservoir-kit/commit/c8db911e4147b58e97776f68ed64985178fac2a9)
+* Fixed hasEnoughBalance calculation [a44574f](https://github.com/reservoirprotocol/reservoir-kit/commit/a44574f559c753195bcd0b857d4d672835d585d6)
+* Add useCurrencyConversion hook [ and payment tokens logic](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-01)
+* Updated select payment tokens ui [2023-07-31](https://github.com/reservoirprotocol/reservoir-kit/commit/15b8bfa)
+* Updated collect modal renderer currency logic [302f1b2](https://github.com/reservoirprotocol/reservoir-kit/commit/302f1b2295b2792d19b1b03963e001090fb91d36)
+* Add todo to Sweep content [fd1d06e](https://github.com/reservoirprotocol/reservoir-kit/commit/fd1d06e2117c6c6cbf687991f009c1bc7fabf17a)
 ## [v1.5.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/73392b542bd097f00fcf68558e13221fc5c9875f) (2023-08-11)
 
 - useUserTopBids update from v2 -> v4 of the api [596c732](https://github.com/reservoirprotocol/reservoir-kit/commit/596c732d9e843334f6e0b2400993f6f2c91d9b04)

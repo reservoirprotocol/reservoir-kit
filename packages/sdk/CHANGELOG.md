@@ -1,3 +1,12 @@
+
+* Finished reservoirChains configuration [2023-08-03](https://github.com/reservoirprotocol/reservoir-kit/commit/ef9a655)
+* BREAKING: move api key configuration from chain to client [dc879c3](https://github.com/reservoirprotocol/reservoir-kit/commit/dc879c3c1f4ad2321be747cfb54f1fcb6ec92e9e)
+* Add usdc to goerli payment tokens [980049d](https://github.com/reservoirprotocol/reservoir-kit/commit/980049dc8a67a2f2858d94fe123c556fbb16db77)
+* Add useCurrencyConversion hook [ and payment tokens logic](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-01)
+* Sync api [aac112e](https://github.com/reservoirprotocol/reservoir-kit/commit/aac112e9b81233b664624edfdbafe33d46d5dbdb)
+* Updated collect modal renderer currency logic [302f1b2](https://github.com/reservoirprotocol/reservoir-kit/commit/302f1b2295b2792d19b1b03963e001090fb91d36)
+* Add todo [15c3ea1](https://github.com/reservoirprotocol/reservoir-kit/commit/15c3ea10c1b5dcc747b89fbeace149f2a5b3b41b)
+* update PaymentToken address type [e9de589](https://github.com/reservoirprotocol/reservoir-kit/commit/e9de589b7ac2531038c0f4c7d0e73d38b82607fd)
 ## [v1.1.24-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/06b76ff3e18a32654df42d82a45650a76f75b1b4) (2023-08-03)
 
 - Upgrade to typescript v5
