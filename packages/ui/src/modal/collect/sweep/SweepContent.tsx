@@ -47,17 +47,13 @@ export const SweepContent: FC<
   setItemAmount,
   maxItemAmount,
   listingCurrency,
-  setListingCurrency,
   paymentCurrency,
   setPaymentCurrency,
   total,
-  totalIncludingFees,
-  totalUsd,
   feeOnTop,
   feeUsd,
   usdPrice,
   currentChain,
-  balance,
   chainCurrency,
   isChainCurrency,
   paymentTokens,
@@ -290,7 +286,7 @@ export const SweepContent: FC<
                   logoWidth={18}
                 />
                 <FormatCurrency
-                  amount={paymentCurrency?.usdPrice}
+                  amount={paymentCurrency?.usdTotal}
                   style="tiny"
                   color="subtle"
                 />
