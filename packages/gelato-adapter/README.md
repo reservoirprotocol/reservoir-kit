@@ -43,6 +43,6 @@ getClient().actions.buyToken({
 
 In the code snippet above we use the wagmi `useSigner` method, which is not required, you can create your ethers signer however you wish. We then adapt the signer to the ReservoirWallet object and pass this into any of the SDK methods. Here we pass it into the buyToken method along with the other required parameters. In order for the purchase to be successful you'll need the following:
 
-- Configure your gelato application to whitelist Reservoir's PermitProxy.
+- Configure your gelato application to whitelist Reservoir's [PermitProxy](https://github.com/reservoirprotocol/indexer/blob/b82284e67c9995f39d8274a93e73e61bd08fa6a3/packages/contracts/deployments.json#L260).
 - Pass usePermit: true to make the API return calldata that routes to the permit proxy
 - Make sure the erc20 used for purchase is compatible with Permit2. (USDC, etc)
