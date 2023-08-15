@@ -48,12 +48,12 @@ function BuyButton() {
           getClient().actions.buyToken({
             items: [
               {
-                token:
-                  '0xd8560c88d1dc85f9ed05b25878e366c49b68bef9:49747628545197382053017122286397645687927964522455780973462059915358020567043',
+                collection: '0xd8560c88d1dc85f9ed05b25878e366c49b68bef9',
               },
             ],
             options: {
               usePermit: true,
+              currency: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
             },
             wallet: adaptGelatoRelayer(
               signer,
