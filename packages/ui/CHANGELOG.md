@@ -1,3 +1,8 @@
+## [v1.5.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/73392b542bd097f00fcf68558e13221fc5c9875f) (2023-08-11)
+
+- useUserTopBids update from v2 -> v4 of the api [596c732](https://github.com/reservoirprotocol/reservoir-kit/commit/596c732d9e843334f6e0b2400993f6f2c91d9b04)
+- BuyModal & Cart: Update successfull/failed purchases logic [38def47](https://github.com/reservoirprotocol/reservoir-kit/commit/38def47379182dcc304eb67c31275de99f596196)
+
 ## [v1.4.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/588afefec402669059780df6f291b300045ece30) (2023-08-03)
 
 - Upgrade useBids hook to v6 [37247fd](https://github.com/reservoirprotocol/reservoir-kit/commit/37247fdac7d57be294b3e7b4daf456ebc0ef5052)

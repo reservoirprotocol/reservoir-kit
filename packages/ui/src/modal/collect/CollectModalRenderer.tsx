@@ -3,7 +3,6 @@ import {
   useChainCurrency,
   useCollections,
   usePaymentTokens,
-  useCurrencyConversion,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
@@ -533,7 +532,6 @@ export const CollectModalRenderer: FC<Props> = ({
     }
 
     setTransactionError(null)
-
     let options: BuyTokenOptions = {
       partial: true,
       currency: paymentCurrency?.address,
@@ -672,6 +670,7 @@ export const CollectModalRenderer: FC<Props> = ({
     feesOnTopUsd,
     contentMode,
     itemAmount,
+    paymentCurrency,
   ])
 
   return (
