@@ -11,12 +11,14 @@ type Props = {
   setCurrency: React.Dispatch<
     React.SetStateAction<EnhancedCurrency | undefined>
   >
+  goBack: () => void
   currency?: EnhancedCurrency
 }
 
 export const SelectPaymentToken: FC<Props> = ({
   paymentTokens,
   setCurrency,
+  goBack,
   currency,
 }) => {
   return (
@@ -42,7 +44,10 @@ export const SelectPaymentToken: FC<Props> = ({
                 background: '$neutralBgHover',
               },
             }}
-            onClick={() => setCurrency(paymentToken)}
+            onClick={() => {
+              setCurrency(paymentToken)
+              goBack()
+            }}
           >
             <Flex
               align="center"
