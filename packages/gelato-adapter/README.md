@@ -45,4 +45,4 @@ In the code snippet above we use the wagmi `useSigner` method, which is not requ
 
 - Configure your gelato application to whitelist Reservoir's [PermitProxy](https://github.com/reservoirprotocol/indexer/blob/b82284e67c9995f39d8274a93e73e61bd08fa6a3/packages/contracts/deployments.json#L260).
 - Pass usePermit: true to make the API return calldata that routes to the permit proxy
-- Make sure the erc20 used for purchase is compatible with Permit2. (USDC, etc)
+- Make sure the erc20 used for purchase supports permit (USDC, etc)
