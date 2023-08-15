@@ -1,0 +1,46 @@
+{
+    "name": "@reservoir0x/gelato-adapter",
+    "version": "0.0.1",
+    "description": "An adapter used to enhance a ethers wallet adapter with the gelato SDK for use in the @reservoir0x/reservoir-sdk to enable gasless transactions",
+    "source": "src/index.ts",
+    "main": "dist/index.js",
+    "module": "dist/index.module.js",
+    "types": "dist/index.d.ts",
+    "author": "Reservoir Protocol",
+    "license": "MIT",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "clean": "rm -rf dist",
+        "version": "yarn version",
+        "version:package": "sh ../../scripts/package-version.sh",
+        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release ethers wallet adapter package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-ETHERS; git push --tags;",
+        "syncApi": "node ./sync-api.mjs"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/reservoirprotocol/reservoir-kit"
+    },
+    "sideEffects": false,
+    "keywords": [
+        "nft",
+        "reservoir",
+        "reservoir-gelato-adapter",
+        "reservoirkit",
+        "protocol",
+        "sdk-adapter"
+    ],
+    "dependencies": {
+        "@gelatonetwork/relay-sdk": "^5.0.0",
+        "axios": "^0.27.2"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "peerDependencies": {
+        "@reservoir0x/reservoir-sdk": "workspace:*",
+        "ethers": "^5.6.1",
+        "viem": "~1.0.6"
+    }
+}
