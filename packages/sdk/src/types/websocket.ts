@@ -20,3 +20,7 @@ export interface WebSocketCollectionCreatedPayload {}
 export interface WebSocketCollectionDeletedPayload {}
 
 export interface WebSocketTopBidChangedPayload {}
+
+export interface MasterPayload {
+    
+}
