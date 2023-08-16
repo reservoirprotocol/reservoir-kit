@@ -175,7 +175,7 @@ export const MintContent: FC<
             </Flex>
             <Flex
               direction="column"
-              css={{ px: '$4', pt: '$4', pb: '$2', gap: '$4' }}
+              css={{ px: '$4', pt: '$4', pb: '$2', gap: '$5' }}
             >
               <Flex direction="column" css={{ gap: 10 }}>
                 {hasQuantitySet ? (
@@ -199,13 +199,9 @@ export const MintContent: FC<
                   </Flex>
                 ) : null}
               </Flex>
-              <Flex direction="column">
+              <Flex direction="column" css={{ gap: '$5' }}>
                 {feeOnTop > 0 && (
-                  <Flex
-                    justify="between"
-                    align="start"
-                    css={{ py: '$4', width: '100%' }}
-                  >
+                  <Flex justify="between" align="start" css={{ width: '100%' }}>
                     <Text style="subtitle2">Referral Fee</Text>
                     <Flex direction="column" align="end" css={{ gap: '$1' }}>
                       <FormatCryptoCurrency
@@ -223,39 +219,38 @@ export const MintContent: FC<
                   </Flex>
                 )}
                 {paymentTokens.length > 1 ? (
-                  <Flex
-                    justify="between"
-                    align="center"
-                    css={{ py: '$4', gap: '$1' }}
-                  >
-                    <Text style="subtitle2">Payment Method</Text>
-                    <Flex
-                      align="center"
-                      css={{ gap: '$2', cursor: 'pointer' }}
-                      onClick={() => setCollectStep(CollectStep.SelectPayment)}
-                    >
-                      <Flex align="center">
-                        <CryptoCurrencyIcon
-                          address={paymentCurrency?.address as string}
-                          css={{ width: 16, height: 16, mr: '$1' }}
-                        />
-                        <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                  <Flex direction="column" css={{ gap: '$2' }}>
+                    <Flex justify="between" align="center" css={{ gap: '$1' }}>
+                      <Text style="subtitle2">Payment Method</Text>
+                      <Flex
+                        align="center"
+                        css={{ gap: '$2', cursor: 'pointer' }}
+                        onClick={() =>
+                          setCollectStep(CollectStep.SelectPayment)
+                        }
+                      >
+                        <Flex align="center">
+                          <CryptoCurrencyIcon
+                            address={paymentCurrency?.address as string}
+                            css={{ width: 16, height: 16, mr: '$1' }}
+                          />
+                          <Text style="subtitle2">
+                            {paymentCurrency?.symbol}
+                          </Text>
+                        </Flex>
+                        <Box css={{ color: '$neutralSolidHover' }}>
+                          <FontAwesomeIcon icon={faChevronRight} width={10} />
+                        </Box>
                       </Flex>
-                      <Box css={{ color: '$neutralSolidHover' }}>
-                        <FontAwesomeIcon icon={faChevronRight} width={10} />
-                      </Box>
                     </Flex>
+                    {!hasEnoughCurrency ? (
+                      <Text css={{ mr: '$3' }} color="error" style="body3">
+                        Insufficient balance, select another token or add funds
+                      </Text>
+                    ) : null}
                   </Flex>
                 ) : null}
-                {!hasEnoughCurrency ? (
-                  <Text
-                    css={{ mr: '$3', pb: '$4' }}
-                    color="error"
-                    style="body3"
-                  >
-                    Insufficient balance, select another token or add funds
-                  </Text>
-                ) : null}
+
                 <Flex justify="between" align="start" css={{ height: 34 }}>
                   <Text style="h6">You Pay</Text>
                   <Flex direction="column" align="end" css={{ gap: '$1' }}>
@@ -314,6 +309,7 @@ export const MintContent: FC<
             paymentTokens={paymentTokens}
             currency={paymentCurrency}
             setCurrency={setPaymentCurrency}
+            goBack={() => setCollectStep(CollectStep.Idle)}
           />
         </Flex>
       )}
