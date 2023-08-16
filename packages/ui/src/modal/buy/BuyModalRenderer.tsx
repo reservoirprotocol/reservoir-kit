@@ -86,6 +86,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   tokenId?: string
+  chainId?: number
   collectionId?: string
   orderId?: string
   feesOnTopBps?: string[] | null
@@ -97,6 +98,7 @@ type Props = {
 export const BuyModalRenderer: FC<Props> = ({
   open,
   tokenId,
+  chainId,
   collectionId,
   orderId,
   feesOnTopBps,
@@ -119,7 +121,11 @@ export const BuyModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<BuyModalStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [quantity, setQuantity] = useState(1)
-  const { chain: activeChain } = useNetwork()
+  const { chains, chain } = useNetwork()
+
+  const activeChain = chainId
+    ? chains.find((chain) => chain.id === chainId) || chain
+    : chain
   const chainCurrency = useChainCurrency()
   const blockExplorerBaseUrl =
     activeChain?.blockExplorers?.default?.url || 'https://etherscan.io'
@@ -205,11 +211,9 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
 
-  const { chain } = useNetwork()
-
   const addFundsLink = currency?.contract
-    ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${currency?.contract}`
-    : `https://jumper.exchange/?toChain=${chain?.id}`
+    ? `https://jumper.exchange/?toChain=${activeChain?.id}&toToken=${currency?.contract}`
+    : `https://jumper.exchange/?toChain=${activeChain?.id}`
 
   const fetchPath = useCallback(() => {
     if (

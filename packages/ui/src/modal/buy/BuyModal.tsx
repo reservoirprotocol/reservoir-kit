@@ -54,6 +54,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  chainId?: number
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
   onPurchaseError?: (error: Error, data: PurchaseData) => void
@@ -83,6 +84,7 @@ export function BuyModal({
   feesOnTopUsd,
   normalizeRoyalties,
   copyOverrides,
+  chainId,
   onPurchaseComplete,
   onPurchaseError,
   onClose,
@@ -93,11 +95,17 @@ export function BuyModal({
     openState ? openState[0] : false,
     openState
   )
-  const { chain: activeChain } = useNetwork()
+
+  const { chains, chain } = useNetwork()
+
+  const activeChain = chainId
+    ? chains.find((chain) => chain.id === chainId) || chain
+    : chain
 
   return (
     <BuyModalRenderer
       open={open}
+      chainId={activeChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
       orderId={orderId}
