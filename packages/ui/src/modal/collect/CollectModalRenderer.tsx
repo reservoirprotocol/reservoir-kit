@@ -88,6 +88,7 @@ export type ChildrenProps = {
 type Props = {
   open: boolean
   mode?: CollectModalMode
+  chainId?: number
   collectionId?: string
   tokenId?: string
   feesOnTopBps?: string[] | null
@@ -100,6 +101,7 @@ export const CollectModalRenderer: FC<Props> = ({
   open,
   mode = 'preferMint',
   collectionId,
+  chainId,
   tokenId,
   feesOnTopBps,
   feesOnTopUsd,
@@ -149,7 +151,7 @@ export const CollectModalRenderer: FC<Props> = ({
   const contract = collectionId?.split(':')[0] as Address
 
   const { chains } = useNetwork()
-  const chain = chains.find((chain) => chain.id === currentChain?.id)
+  const chain = chains.find((chain) => chain.id === chainId || currentChain?.id)
 
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
@@ -162,7 +164,9 @@ export const CollectModalRenderer: FC<Props> = ({
     open && {
       id: collectionId,
       includeMintStages: true,
-    }
+    },
+    {},
+    chain?.id
   )
 
   const collection = collections && collections[0] ? collections[0] : undefined
@@ -176,13 +180,15 @@ export const CollectModalRenderer: FC<Props> = ({
           collection: isSingleToken1155 ? collectionId : undefined,
           tokens: isSingleToken1155 ? undefined : `${collectionId}:${tokenId}`,
         }
-      : undefined
+      : undefined,
+    {},
+    chain?.id
   )
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
 
   const { data: usdFeeConversion } = useCurrencyConversion(
-    undefined,
+    chain?.id,
     currency?.address,
     'usd'
   )
@@ -206,6 +212,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
     client?.actions
       .buyToken({
+        chainId: chain?.id,
         items: [
           {
             collection: token?.token?.tokenId ? undefined : collectionId,
@@ -503,6 +510,12 @@ export const CollectModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (chain?.id !== wallet.chain.id) {
+      const error = new Error(`Mismatched chain ids`)
+      setTransactionError(error)
+      throw error
+    }
+
     setTransactionError(null)
 
     let options: BuyTokenOptions = {
@@ -551,6 +564,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
     client.actions
       .buyToken({
+        chainId: chain?.id,
         items: [
           {
             collection: token?.token?.tokenId ? undefined : collectionId,
