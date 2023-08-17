@@ -561,7 +561,14 @@ export const CollectModalRenderer: FC<Props> = ({
             fillType: contentMode === 'mint' ? 'mint' : 'trade',
           },
         ],
-        expectedPrice: total,
+        expectedPrice: {
+          [currency?.address || zeroAddress]: {
+            amount: total,
+            raw: parseUnits(`${total}`, currency.decimals),
+            currencyAddress: currency.address,
+            currencyDecimals: currency.decimals,
+          },
+        },
         wallet,
         options,
         onProgress: (steps: Execute['steps'], path: Execute['path']) => {

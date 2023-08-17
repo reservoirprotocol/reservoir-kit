@@ -1,5 +1,5 @@
 import { getClient } from '.'
-import { Execute, paths, ReservoirWallet } from '../types'
+import { Execute, paths, ReservoirWallet, ExpectedPrice } from '../types'
 import {
   executeSteps,
   adaptViemWallet,
@@ -22,7 +22,7 @@ export type AcceptOfferOptions = Omit<
 type Data = {
   items: NonNullable<AcceptOfferBodyParameters>['items']
   options?: Partial<AcceptOfferOptions>
-  expectedPrice?: number | Record<string, number>
+  expectedPrice?: Record<string, ExpectedPrice>
   wallet: ReservoirWallet | WalletClient
   chainId?: number
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
@@ -33,7 +33,7 @@ type Data = {
 /**
  * Accept an offer to buy your token
  * @param data.items Items being accepted
- * @param data.expectedPrice Token price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
+ * @param data.expectedPrice Token price data used to protect buyer from price moves. Pass an object detailing the amount or/and raw amount with currency details. The raw amount will be more precise.
  * @param data.wallet ReservoirWallet object that adheres to the ReservoirWallet interface or a viem WalletClient
  * @param data.options Additional options to pass into the accept request
  * @param data.chainId Override the current active chain

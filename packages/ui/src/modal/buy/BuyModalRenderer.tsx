@@ -362,7 +362,14 @@ export const BuyModalRenderer: FC<Props> = ({
     client.actions
       .buyToken({
         items: items,
-        expectedPrice: totalPrice,
+        expectedPrice: {
+          [currency?.contract || zeroAddress]: {
+            amount: totalPrice,
+            raw: parseUnits(`${totalPrice}`, currency?.decimals || 18),
+            currencyAddress: currency?.contract,
+            currencyDecimals: currency?.decimals,
+          },
+        },
         wallet,
         onProgress: (steps: Execute['steps']) => {
           if (!steps) {
