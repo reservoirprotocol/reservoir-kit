@@ -180,7 +180,8 @@ export const BuyModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && orderId && orderId.length > 0 ? true : false
+    open && orderId && orderId.length > 0 ? true : false,
+    activeChain?.id
   )
 
   const listing = useMemo(
@@ -201,7 +202,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [listing, token, path, is1155, orderId])
 
   const { data: usdFeeConversion } = useCurrencyConversion(
-    undefined,
+    activeChain?.id,
     currency?.contract,
     'usd'
   )
@@ -286,6 +287,12 @@ export const BuyModalRenderer: FC<Props> = ({
   const buyToken = useCallback(() => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
+      setTransactionError(error)
+      throw error
+    }
+
+    if (activeChain?.id !== wallet.chain.id) {
+      const error = new Error(`Mismatching Chan id's`)
       setTransactionError(error)
       throw error
     }
