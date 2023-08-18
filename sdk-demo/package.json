@@ -5,6 +5,7 @@
   "dependencies": {
     "@rainbow-me/rainbowkit": "0.12.0",
     "@reservoir0x/ethers-wallet-adapter": "workspace:*",
+    "@reservoir0x/gelato-adapter": "workspace:*",
     "@reservoir0x/reservoir-sdk": "workspace:*",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
