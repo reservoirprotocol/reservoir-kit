@@ -3,7 +3,6 @@
 paths=(
     "./packages/*/dist"
     ".parcel-cache"
-    "./demo/.next"
 )
 
 for path in "${paths[@]}"; do
