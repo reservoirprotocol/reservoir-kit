@@ -18,6 +18,7 @@
     "types:check": "tsc --skipLibCheck --noEmit",
     "dev:ui": "nodemon --verbose --watch packages/ui/src --ext ts,tsx --exec 'yarn build:dev'",
     "dev:sdk": "nodemon --verbose --watch packages/sdk/src --ext ts,tsx --exec 'yarn build:dev'",
+    "dev:clean": "./scripts/package-cleanup.sh",
     "dev": "yarn dev:ui & yarn dev:sdk",
     "build": "yarn build:config && yarn build:packages && yarn build:cleanup && yarn postbuild",
     "build:dev": "parcel build './packages/*'",
