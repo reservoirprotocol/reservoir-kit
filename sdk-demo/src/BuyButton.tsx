@@ -1,6 +1,7 @@
 import { getClient } from 'src/utils'
 import { adaptEthersSigner } from '@reservoir0x/ethers-wallet-adapter'
 import { useSigner } from 'wagmi'
+import { adaptGelatoRelayer } from '@reservoir0x/gelato-adapter'
 
 function BuyButton() {
   const { data: signer } = useSigner()
@@ -38,6 +39,31 @@ function BuyButton() {
         }}
       >
         Buy
+      </button>
+      <button
+        onClick={() => {
+          if (!signer) {
+            throw 'Signer not available!'
+          }
+          getClient().actions.buyToken({
+            items: [
+              {
+                collection: '0xd8560c88d1dc85f9ed05b25878e366c49b68bef9',
+              },
+            ],
+            options: {
+              usePermit: true,
+              currency: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+            },
+            wallet: adaptGelatoRelayer(
+              signer,
+              process.env.REACT_APP_GELATO_KEY || ''
+            ),
+            onProgress: () => {},
+          })
+        }}
+      >
+        Buy with Gelato adapter
       </button>
     </div>
   )
