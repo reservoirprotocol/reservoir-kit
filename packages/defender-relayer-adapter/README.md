@@ -14,17 +14,20 @@ yarn add ethers viem @reservoir0x/defender-relayer-adapter @reservoir0x/reservoi
 
 ### Usage
 
-To use the adapter simply pass in your ethers signer and receive a normalized ReservoirWallet object:
+To use the adapter simply pass in your relayer credentials and receive a normalized ReservoirWallet object:
 
 ```
 import { getClient } from '@reservoir0x/reservoir-sdk'
-import { adaptEthersSigner } from '@reservoir0x/ethers-wallet-adapter'
-import { useSigner } from 'wagmi'
+import { adaptDefenderRelay } from '@reservoir0x/defender-relayer-adapter'
 
 ...
 
-const { data: signer } = useSigner()
-const wallet = adaptEthersSigner(signer)
+const credentials = {
+  apiKey: '' // Your OpenZepplin relayer apiKey,
+  apiSecret: '' // Your OpenZepplin relaer apiSecret,
+}
+
+const wallet = adaptDefenderRelay(credentials)
 
 getClient().actions.buyToken({
   items: [
@@ -37,4 +40,4 @@ getClient().actions.buyToken({
 })
 ```
 
-In the code snippet above we use the wagmi `useSigner` method, which is not required, you can create your ethers signer however you wish. We then adapt the signer to the ReservoirWallet object and pass this into any of the SDK methods. Here we pass it into the buyToken method along with the other required parameters.
+In the code above, we pass in our relayer credentials to adapt the signer to the ReservoirWallet object and pass this into any of the SDK methods. Here we pass it into the buyToken method along with the other required parameters.
