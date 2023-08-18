@@ -9,7 +9,7 @@ yarn add @reservoir0x/defender-relayer-adapter @reservoir0x/reservoir-sdk
 Also make sure to install the peer dependencies required by the adapter if your application doesn't already include them:
 
 ```
-yarn add ethers viem @reservoir0x/reservoir-sdk
+yarn add ethers viem @reservoir0x/defender-relayer-adapter @reservoir0x/reservoir-sdk
 ```
 
 ### Usage
