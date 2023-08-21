@@ -21,7 +21,7 @@ import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
-import { useNetwork } from 'wagmi'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 
@@ -49,6 +49,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
+  chainId?: number
   orderId?: string
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
@@ -77,6 +78,7 @@ export function BuyModal({
   openState,
   trigger,
   tokenId,
+  chainId,
   collectionId,
   orderId,
   feesOnTopBps,
@@ -93,10 +95,26 @@ export function BuyModal({
     openState ? openState[0] : false,
     openState
   )
-  const { chain: activeChain } = useNetwork()
+
+  const { chains, chain: activeChain } = useNetwork()
+  const { switchNetworkAsync } = useSwitchNetwork()
+
+  const selectedChain = chainId
+    ? chains.find((chain) => chain.id === chainId) || activeChain
+    : activeChain
+
+  const handleBuy = async (callback: () => void): Promise<void> => {
+    if (selectedChain?.id !== activeChain?.id) {
+      try {
+        await switchNetworkAsync?.(selectedChain?.id)
+      } catch (e: unknown) {}
+    }
+    callback()
+  }
 
   return (
     <BuyModalRenderer
+      chainId={selectedChain?.id}
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
@@ -345,7 +363,7 @@ export function BuyModal({
                 <Box css={{ p: '$4', width: '100%' }}>
                   {hasEnoughCurrency ? (
                     <Button
-                      onClick={buyToken}
+                      onClick={(): Promise<void> => handleBuy(buyToken)}
                       css={{ width: '100%' }}
                       color="primary"
                     >
@@ -542,7 +560,7 @@ export function BuyModal({
                         target="_blank"
                       >
                         View on{' '}
-                        {activeChain?.blockExplorers?.default.name ||
+                        {selectedChain?.blockExplorers?.default.name ||
                           'Etherscan'}
                       </Anchor>
                     </>

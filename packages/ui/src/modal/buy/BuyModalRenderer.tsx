@@ -86,6 +86,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   tokenId?: string
+  chainId?: number
   collectionId?: string
   orderId?: string
   feesOnTopBps?: string[] | null
@@ -97,6 +98,7 @@ type Props = {
 export const BuyModalRenderer: FC<Props> = ({
   open,
   tokenId,
+  chainId,
   collectionId,
   orderId,
   feesOnTopBps,
@@ -119,8 +121,14 @@ export const BuyModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<BuyModalStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [quantity, setQuantity] = useState(1)
-  const { chain: activeChain } = useNetwork()
-  const chainCurrency = useChainCurrency()
+
+  const { chains, chain: activeChain } = useNetwork()
+
+  const selectedChain = chainId
+    ? chains.find((chain) => chain.id === chainId) || activeChain
+    : activeChain
+
+  const chainCurrency = useChainCurrency(selectedChain?.id)
   const blockExplorerBaseUrl =
     activeChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
@@ -135,16 +143,20 @@ export const BuyModalRenderer: FC<Props> = ({
     },
     {
       revalidateFirstPage: true,
-    }
+    },
+    selectedChain?.id
   )
   const { data: collections, mutate: mutateCollection } = useCollections(
     open && {
       id: collectionId,
       normalizeRoyalties,
-    }
+    },
+    {},
+    selectedChain?.id
   )
   const { address } = useAccount()
   const { data: balance } = useBalance({
+    chainId: selectedChain?.id,
     address: address,
     token:
       currency?.contract !== zeroAddress
@@ -174,7 +186,8 @@ export const BuyModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && orderId && orderId.length > 0 ? true : false
+    open && orderId && orderId.length > 0 ? true : false,
+    selectedChain?.id
   )
 
   const listing = useMemo(
@@ -195,7 +208,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [listing, token, path, is1155, orderId])
 
   const { data: usdFeeConversion } = useCurrencyConversion(
-    undefined,
+    selectedChain?.id,
     currency?.contract,
     'usd'
   )
@@ -205,11 +218,9 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
 
-  const { chain } = useNetwork()
-
   const addFundsLink = currency?.contract
-    ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${currency?.contract}`
-    : `https://jumper.exchange/?toChain=${chain?.id}`
+    ? `https://jumper.exchange/?toChain=${selectedChain?.id}&toToken=${currency?.contract}`
+    : `https://jumper.exchange/?toChain=${selectedChain?.id}`
 
   const fetchPath = useCallback(() => {
     if (
@@ -239,6 +250,7 @@ export const BuyModalRenderer: FC<Props> = ({
     client.actions
       .buyToken({
         options,
+        chainId: selectedChain?.id,
         items: [
           {
             token: `${contract}:${tokenId}`,
@@ -282,6 +294,12 @@ export const BuyModalRenderer: FC<Props> = ({
   const buyToken = useCallback(() => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
+      setTransactionError(error)
+      throw error
+    }
+
+    if (selectedChain?.id !== activeChain?.id) {
+      const error = new Error(`Mismatching chain ids`)
       setTransactionError(error)
       throw error
     }
@@ -361,6 +379,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
     client.actions
       .buyToken({
+        chainId: selectedChain?.id,
         items: items,
         expectedPrice: totalPrice,
         wallet,
