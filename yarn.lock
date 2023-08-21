@@ -3834,21 +3834,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:1.0.0, @noble/curves@npm:~1.0.0":
-  version: 1.0.0
-  resolution: "@noble/curves@npm:1.0.0"
-  dependencies:
-    "@noble/hashes": 1.3.0
-  checksum: 6bcef44d626c640dc8961819d68dd67dffb907e3b973b7c27efe0ecdd9a5c6ce62c7b9e3dfc930c66605dced7f1ec0514d191c09a2ce98d6d52b66e3315ffa79
-  languageName: node
-  linkType: hard
-
 "@noble/curves@npm:1.1.0":
   version: 1.1.0
   resolution: "@noble/curves@npm:1.1.0"
   dependencies:
     "@noble/hashes": 1.3.1
   checksum: 2658cdd3f84f71079b4e3516c47559d22cf4b55c23ac8ee9d2b1f8e5b72916d9689e59820e0f9d9cb4a46a8423af5b56dc6bb7782405c88be06a015180508db5
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:~1.0.0":
+  version: 1.0.0
+  resolution: "@noble/curves@npm:1.0.0"
+  dependencies:
+    "@noble/hashes": 1.3.0
+  checksum: 6bcef44d626c640dc8961819d68dd67dffb907e3b973b7c27efe0ecdd9a5c6ce62c7b9e3dfc930c66605dced7f1ec0514d191c09a2ce98d6d52b66e3315ffa79
   languageName: node
   linkType: hard
 
@@ -7118,18 +7118,6 @@ __metadata:
     typescript:
       optional: true
   checksum: a8fdbce18f2ed8cce6c765828b78ef59756e3d4dc858af07f42827e78d8ab5b4ab3da2c79cd7cd3f534a6b27edd5bb5f764e6250394b4ae6aa0a055b7bdc518a
-  languageName: node
-  linkType: hard
-
-"@wagmi/chains@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@wagmi/chains@npm:1.1.0"
-  peerDependencies:
-    typescript: ">=5.0.4"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 3359df95f61120450dbe526f29860c60a9dc795dcfa5e6b2133b0b7662708f0d3998e99fae7f8337e3a92d97fcfa0e9900d88721d820dd3a8bf43832cedd8a64
   languageName: node
   linkType: hard
 
@@ -18378,7 +18366,7 @@ __metadata:
     replace-in-files: ^3.0.0
     ts-node: ^10.9.1
     typescript: ^5.0.4
-    viem: ~1.0.6
+    viem: ~1.6.4
   languageName: unknown
   linkType: soft
 
@@ -20616,25 +20604,6 @@ __metadata:
     typescript:
       optional: true
   checksum: 3b77db9e09fd7066f29db48fe37817a126bbafe97c36f2737c15684e1d5ed1a6458d37f336036702052b17bbb552b0687ec8ae4514b82ad3c9a07b6a07c051a1
-  languageName: node
-  linkType: hard
-
-"viem@npm:~1.0.6":
-  version: 1.0.7
-  resolution: "viem@npm:1.0.7"
-  dependencies:
-    "@adraffy/ens-normalize": 1.9.0
-    "@noble/curves": 1.0.0
-    "@noble/hashes": 1.3.0
-    "@scure/bip32": 1.3.0
-    "@scure/bip39": 1.2.0
-    "@wagmi/chains": 1.1.0
-    abitype: 0.8.7
-    isomorphic-ws: 5.0.0
-    ws: 8.12.0
-  peerDependencies:
-    typescript: ">=5.0.4"
-  checksum: 74ca713e5aac7a0a8235d4bc9407c02984c5133f8cb53f649cfa1b6f5a7a02d71df7c246d94096d6fda30a2e804248a7cdd4962ef59f506b9a9d12a63c27b1d7
   languageName: node
   linkType: hard
 
