@@ -309,7 +309,6 @@ export const CollectModalRenderer: FC<Props> = ({
     }
   }, [client, wallet, open, fetchBuyPathIfIdle, token?.token?.tokenId, is1155])
 
-  // Update listing currency
   const updateListingCurrency = useCallback(
     (tokens: typeof selectedTokens) => {
       let currencies = new Set<string>()
@@ -367,11 +366,11 @@ export const CollectModalRenderer: FC<Props> = ({
           const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
           const atomicFee = BigInt(fee)
           const convertedAtomicFee =
-            atomicFee * BigInt(10 ** listingCurrency?.decimals!)
+            atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
           const currencyFee = convertedAtomicFee / atomicUsdPrice
           const parsedFee = formatUnits(
             currencyFee,
-            listingCurrency?.decimals || 18
+            paymentCurrency?.decimals || 18
           )
           return totalFees + Number(parsedFee)
         }, 0)
@@ -379,7 +378,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
       return fees
     },
-    [feesOnTopBps, feeOnTop, usdPrice, feesOnTopUsd, listingCurrency]
+    [feesOnTopBps, feeOnTop, usdPrice, feesOnTopUsd, paymentCurrency]
   )
 
   useEffect(() => {
@@ -460,6 +459,12 @@ export const CollectModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (!paymentTokens[0] || paymentTokens.length <= 1) {
       return
+    } else if (contentMode === 'mint') {
+      setPaymentCurrency(
+        paymentTokens.find(
+          (paymentToken) => paymentToken.address === listingCurrency.address
+        ) || paymentTokens[0]
+      )
     } else if (!paymentCurrency) {
       setPaymentCurrency(paymentTokens[0])
     } else {
@@ -473,7 +478,7 @@ export const CollectModalRenderer: FC<Props> = ({
         setPaymentCurrency(updatedCurrency)
       }
     }
-  }, [paymentTokens])
+  }, [paymentTokens, listingCurrency])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${paymentCurrency?.address}`
@@ -542,13 +547,13 @@ export const CollectModalRenderer: FC<Props> = ({
         const [referrer, feeBps] = fullFee.split(':')
         const totalFeeTruncated = toFixed(
           total - feeOnTop,
-          listingCurrency?.decimals || 18
+          paymentCurrency?.decimals || 18
         )
         const fee =
           Number(
             parseUnits(
               `${Number(totalFeeTruncated)}`,
-              listingCurrency?.decimals || 18
+              paymentCurrency?.decimals || 18
             ) * BigInt(feeBps)
           ) / 10000
         const atomicUnitsFee = formatUnits(BigInt(fee), 0)
@@ -561,7 +566,7 @@ export const CollectModalRenderer: FC<Props> = ({
         const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
         const atomicFee = BigInt(fee)
         const convertedAtomicFee =
-          atomicFee * BigInt(10 ** listingCurrency?.decimals!)
+          atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
         const currencyFee = convertedAtomicFee / atomicUsdPrice
         const parsedFee = formatUnits(currencyFee, 0)
         return `${recipient}:${parsedFee}`
@@ -665,7 +670,6 @@ export const CollectModalRenderer: FC<Props> = ({
     chain,
     collectionId,
     tokenId,
-    listingCurrency,
     feesOnTopBps,
     feesOnTopUsd,
     contentMode,

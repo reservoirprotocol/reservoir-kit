@@ -228,21 +228,6 @@ export const SweepContent: FC<
             direction="column"
             css={{ px: '$4', pt: '$4', pb: '$2', gap: '$5' }}
           >
-            {feeOnTop > 0 && (
-              <Flex justify="between" align="start" css={{ width: '100%' }}>
-                <Text style="subtitle2">Referral Fee</Text>
-                <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                  <FormatCryptoCurrency
-                    amount={feeOnTop}
-                    address={listingCurrency?.address}
-                    decimals={listingCurrency?.decimals}
-                    symbol={listingCurrency?.symbol}
-                  />
-                  <FormatCurrency amount={feeUsd} color="subtle" style="tiny" />
-                </Flex>
-              </Flex>
-            )}
-
             {paymentTokens.length > 1 ? (
               <Flex direction="column" css={{ gap: '$2' }}>
                 <Flex justify="between" align="center" css={{ gap: '$1' }}>
@@ -271,6 +256,20 @@ export const SweepContent: FC<
                 ) : null}
               </Flex>
             ) : null}
+            {feeOnTop > 0 && (
+              <Flex justify="between" align="start" css={{ width: '100%' }}>
+                <Text style="subtitle2">Referral Fee</Text>
+                <Flex direction="column" align="end" css={{ gap: '$1' }}>
+                  <FormatCryptoCurrency
+                    amount={feeOnTop}
+                    address={paymentCurrency?.address}
+                    decimals={paymentCurrency?.decimals}
+                    symbol={paymentCurrency?.symbol}
+                  />
+                  <FormatCurrency amount={feeUsd} color="subtle" style="tiny" />
+                </Flex>
+              </Flex>
+            )}
             <Flex justify="between" align="start" css={{ height: 34 }}>
               <Text style="h6">You Pay</Text>
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
