@@ -1069,7 +1069,14 @@ function cartStore({
 
       client.actions
         .buyToken({
-          expectedPrice,
+          expectedPrice: {
+            [options.currency || zeroAddress]: {
+              amount: expectedPrice,
+              raw: parseUnits(`${expectedPrice}`, currencyDecimals),
+              currencyAddress: options.currency || zeroAddress,
+              currencyDecimals: currencyDecimals,
+            },
+          },
           wallet,
           items: tokens,
           options,

@@ -1,6 +1,13 @@
-import { Execute, paths, ReservoirWallet, TransactionStepItem } from '../types'
+import {
+  BuyPath,
+  Execute,
+  ExpectedPrice,
+  paths,
+  ReservoirWallet,
+  TransactionStepItem,
+} from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
-import { createPublicClient, fallback, http } from 'viem'
+import { createPublicClient, fallback, formatUnits, http } from 'viem'
 import { axios } from '../utils'
 import { customChains } from '../utils/customChains'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
@@ -13,34 +20,74 @@ import { sendTransactionSafely } from './transaction'
 import * as allChains from 'viem/chains'
 import { executeResults } from './executeResults'
 
+type ExpectedQuote = {
+  raw: bigint
+  amount: number
+  currencyDecimals: number
+}
+
 function checkExpectedPrice(
-  quote: number,
+  quote: ExpectedQuote,
   isSell: boolean,
   isBuy: boolean,
-  expectedPrice?: number
+  expectedPrice?: ExpectedPrice
 ) {
+  const baseError = {
+    type: 'price mismatch',
+    message: '',
+  }
   let error: null | Error | { type: string; message: string } = null
   if (expectedPrice === undefined) {
     error = {
-      type: 'price mismatch',
-      message: `Attention: the offer price of this token is now ${quote}`,
+      ...baseError,
+      message: `Attention: the offer price of this token is now ${quote.amount}`,
     }
     return
   }
+  const rawQuoteThreshold =
+    BigInt(10 ** (quote?.currencyDecimals || 18)) / BigInt(100000)
 
   // Check if the user is selling
-  if (isSell && Number((quote - expectedPrice).toFixed(6)) < -0.00001) {
-    error = {
-      type: 'price mismatch',
-      message: `Attention: the offer price of this token is now ${quote}`,
+  if (isSell) {
+    if (expectedPrice.raw) {
+      if (quote.raw - expectedPrice.raw < rawQuoteThreshold * BigInt(-1)) {
+        error = {
+          ...baseError,
+          message: `Attention: the offer price of this token is now ${formatUnits(
+            quote.raw,
+            quote.currencyDecimals || 18
+          )}`,
+        }
+      }
+    } else if (expectedPrice.amount) {
+      if (Number((quote.amount - expectedPrice.amount).toFixed(6)) < -0.00001) {
+        error = {
+          ...baseError,
+          message: `Attention: the offer price of this token is now ${quote.amount}`,
+        }
+      }
     }
   }
 
   // Check if the user is buying
-  if (isBuy && Number((quote - expectedPrice).toFixed(6)) > 0.00001) {
-    error = {
-      type: 'price mismatch',
-      message: `Attention: the price of this token is now ${quote}`,
+  if (isBuy) {
+    if (expectedPrice.raw) {
+      if (quote.raw - expectedPrice.raw > rawQuoteThreshold) {
+        error = {
+          ...baseError,
+          message: `Attention: the price of this token is now ${formatUnits(
+            quote.raw,
+            quote.currencyDecimals || 18
+          )}`,
+        }
+      }
+    } else if (expectedPrice.amount) {
+      if (Number((quote.amount - expectedPrice.amount).toFixed(6)) > 0.00001) {
+        error = {
+          ...baseError,
+          message: `Attention: the price of this token is now ${quote}`,
+        }
+      }
     }
   }
   return error
@@ -57,7 +104,7 @@ function checkExpectedPrice(
  * @param wallet ReservoirWallet object that adheres to the ReservoirWallet interface
  * @param setState Callback to update UI state has execution progresses
  * @param newJson Data passed around, which contains steps and items etc
- * @param expectedPrice Expected price to check for price moves before starting to process the steps. Can be a number or an object representing currency contract address to expected price
+ * @param expectedPrice Expected price to check for price moves before starting to process the steps. An object representing currency contract address to expected price object. Include the raw amount and the currency details
  * @param chainId Optional parameter to override the default chain
  * @returns A promise you can await on
  */
@@ -67,7 +114,7 @@ export async function executeSteps(
   wallet: ReservoirWallet,
   setState: (steps: Execute['steps'], path: Execute['path']) => any,
   newJson?: Execute,
-  expectedPrice?: number | Record<string, number>,
+  expectedPrice?: Record<string, ExpectedPrice>,
   chainId?: number,
   gas?: string
 ) {
@@ -128,11 +175,8 @@ export async function executeSteps(
 
     // Handle price changes to protect users from paying more
     // than expected when buying and selling for less than expected
-    const path = json.path as {
-      quote?: number //This is the quote, matching the order currency
-      buyInQuote?: number //This is the "Buy In" quote, when converting to a currency to buy an order in
-      currency?: string
-    }[]
+    const path = json.path as BuyPath
+
     if (path && expectedPrice) {
       client.log(
         [
@@ -145,38 +189,49 @@ export async function executeSteps(
         LogLevel.Verbose
       )
       let error: ReturnType<typeof checkExpectedPrice>
-      if (typeof expectedPrice === 'number') {
-        const quote = path.reduce((total: number, { quote, buyInQuote }) => {
-          total += buyInQuote || quote || 0
-          return total
-        }, 0)
-        error = checkExpectedPrice(quote, isSell, isBuy, expectedPrice)
-      } else {
-        const quotes: Record<string, number> = path.reduce(
-          (quotes, { quote, buyInQuote, currency }) => {
-            if (currency) {
-              if (!quotes[currency]) {
-                quotes[currency] = buyInQuote || quote || 0
-              } else {
-                quotes[currency] += buyInQuote || quote || 0
-              }
-            }
-            return quotes
-          },
-          {} as Record<string, number>
-        )
-        const quoteEntries = Object.entries(quotes)
-        for (let i = 0; i < quoteEntries.length; i++) {
-          const [currency, quote] = quoteEntries[i]
-          error = checkExpectedPrice(
+      const quotes = path.reduce(
+        (
+          quotes,
+          {
             quote,
-            isSell,
-            isBuy,
-            expectedPrice[currency]
-          )
-          if (error) {
-            break
+            rawQuote,
+            currency,
+            currencyDecimals,
+            buyInQuote,
+            buyInRawQuote,
+            buyInCurrency,
+            buyInCurrencyDecimals,
           }
+        ) => {
+          const currencyKey = buyInCurrency || currency
+          if (currencyKey) {
+            if (!quotes[currencyKey]) {
+              quotes[currencyKey] = {
+                raw: BigInt(buyInRawQuote || rawQuote || 0),
+                amount: buyInQuote || quote || 0,
+                currencyDecimals:
+                  buyInCurrencyDecimals || currencyDecimals || 18,
+              }
+            } else {
+              quotes[currencyKey].raw += BigInt(buyInRawQuote || rawQuote || 0)
+              quotes[currencyKey].amount += buyInQuote || quote || 0
+            }
+          }
+          return quotes
+        },
+        {} as Record<string, ExpectedQuote>
+      )
+      const quoteEntries = Object.entries(quotes)
+      for (let i = 0; i < quoteEntries.length; i++) {
+        const [currency, quote] = quoteEntries[i]
+        error = checkExpectedPrice(
+          quote,
+          isSell,
+          isBuy,
+          expectedPrice[currency]
+        )
+        if (error) {
+          break
         }
       }
 

@@ -10,10 +10,12 @@ import { useTokens, useCoinConversion, useReservoirClient } from '../../hooks'
 import { useAccount, useWalletClient, useNetwork } from 'wagmi'
 import {
   Execute,
+  ExpectedPrice,
   ReservoirClientActions,
   SellPath,
 } from '@reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
+import { parseUnits } from 'viem'
 
 export enum AcceptBidStep {
   Checkout,
@@ -312,9 +314,14 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       })
     )
 
-    const expectedPrice: Record<string, number> = {}
+    const expectedPrice: Record<string, ExpectedPrice> = {}
     for (let currency in prices) {
-      expectedPrice[currency] = prices[currency].netAmount
+      expectedPrice[currency] = {
+        amount: prices[currency].netAmount,
+        raw: parseUnits(`${prices[currency].netAmount}`, prices[currency].currency.decimals || 18),
+        currencyAddress: prices[currency].currency.contract,
+        currencyDecimals: prices[currency].currency.decimals || 18
+      }
     }
 
     let hasError = false

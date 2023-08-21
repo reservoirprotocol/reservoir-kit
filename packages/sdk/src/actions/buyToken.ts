@@ -1,4 +1,4 @@
-import { Execute, paths, ReservoirWallet } from '../types'
+import { Execute, ExpectedPrice, paths, ReservoirWallet } from '../types'
 import { getClient } from '.'
 import {
   executeSteps,
@@ -21,7 +21,7 @@ export type BuyTokenOptions = Partial<
 
 type Data = {
   items: BuyTokenBodyParameters['items']
-  expectedPrice?: number
+  expectedPrice?: Record<string, ExpectedPrice>
   options?: BuyTokenOptions
   wallet: ReservoirWallet | WalletClient
   chainId?: number
@@ -33,7 +33,7 @@ type Data = {
 /**
  * Instantly buy a token
  * @param data.items Array of tokens to be purchased, can also supply an order id or rawOrders to execute
- * @param data.expectedPrice Total price used to prevent to protect buyer from price moves. Pass the number with unit 'ether'. Example: `1.543` means 1.543 ETH
+ * @param data.expectedPrice Token price data used to protect buyer from price moves. Pass an object detailing the amount or/and raw amount with currency details. The raw amount will be more precise.
  * @param data.options Additional options to pass into the buy request
  * @param data.wallet ReservoirWallet object that adheres to the ReservoirWallet interface or a viem WalletClient
  * @param data.chainId Override the current active chain
