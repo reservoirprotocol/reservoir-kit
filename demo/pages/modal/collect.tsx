@@ -143,6 +143,7 @@ const CollectPage: NextPage = () => {
       </div>
 
       <CollectModal
+        chainId={1}
         trigger={
           <button
             style={{
