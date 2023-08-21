@@ -15,7 +15,7 @@
         "clean": "rm -rf dist",
         "version": "yarn version",
         "version:package": "sh ../../scripts/package-version.sh",
-        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release defender relayer adapter package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-ETHERS; git push --tags;",
+        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release defender relayer adapter package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-RELAYER; git push --tags;",
         "syncApi": "node ./sync-api.mjs"
     },
     "repository": {
