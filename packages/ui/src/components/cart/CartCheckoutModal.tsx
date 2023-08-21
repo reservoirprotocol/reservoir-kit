@@ -69,7 +69,7 @@ export function CartCheckoutModal({
     }, 0) || 0
 
   const totalQuantity =
-    items.reduce((total, item) => {
+    transaction?.items?.reduce((total, item) => {
       total += item?.order?.quantity || 1
       return total
     }, 0) || 0
