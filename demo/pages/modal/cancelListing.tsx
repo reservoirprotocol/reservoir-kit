@@ -62,6 +62,7 @@ const CancelListingPage: NextPage = () => {
       </div>
 
       <CancelListingModal
+        chainId={1}
         trigger={
           <button
             style={{
