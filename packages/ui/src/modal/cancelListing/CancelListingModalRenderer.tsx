@@ -35,6 +35,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   listingId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -42,6 +43,7 @@ type Props = {
 export const CancelListingModalRenderer: FC<Props> = ({
   open,
   listingId,
+  chainId,
   normalizeRoyalties,
   children,
 }) => {
@@ -50,7 +52,13 @@ export const CancelListingModalRenderer: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<CancelListingStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
-  const { chain: activeChain } = useNetwork()
+
+  const { chain, chains } = useNetwork()
+
+  const activeChain = chainId
+    ? chains.find((chain) => chain.id === chainId) || chain
+    : chain
+
   const blockExplorerBaseUrl =
     activeChain?.blockExplorers?.default.url || 'https://etherscan.io'
 
@@ -64,7 +72,8 @@ export const CancelListingModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && listingId ? true : false
+    open && listingId ? true : false,
+    activeChain?.id
   )
 
   const listing = listings && listings[0] ? listings[0] : undefined
@@ -98,10 +107,17 @@ export const CancelListingModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (activeChain?.id !== client.currentChain()?.id) {
+      const error = new Error(`Mismatching chainIds`)
+      setTransactionError(error)
+      throw error
+    }
+
     setCancelStep(CancelStep.Approving)
 
     client.actions
       .cancelOrder({
+        chainId: activeChain?.id,
         ids: [listingId],
         wallet,
         onProgress: (steps: Execute['steps']) => {
