@@ -169,6 +169,7 @@ const Index: NextPage = () => {
       </div>
 
       <ListModal
+        chainId={1}
         trigger={
           <button
             style={{

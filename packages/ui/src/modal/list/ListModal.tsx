@@ -48,6 +48,7 @@ import { CurrencySelector } from '../CurrencySelector'
 import { zeroAddress } from 'viem'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
+import { useSwitchNetwork } from 'wagmi'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -70,6 +71,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
+  chainId?: number
   currencies?: Currency[]
   nativeOnly?: boolean
   normalizeRoyalties?: boolean
@@ -120,6 +122,7 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
+  chainId,
   currencies,
   nativeOnly,
   normalizeRoyalties,
@@ -137,8 +140,16 @@ export function ListModal({
     openState ? openState[0] : false,
     openState
   )
+
+  const { switchNetworkAsync } = useSwitchNetwork()
+
   const client = useReservoirClient()
-  const reservoirChain = client?.currentChain()
+  const currentChain = client?.currentChain()
+
+  const reservoirChain = chainId
+    ? client?.chains.find((chain) => chain.id === chainId) || currentChain
+    : currentChain
+
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
     Marketplace[]
   >([])
@@ -149,9 +160,17 @@ export function ListModal({
     nativeOnly = true
   }
 
+  const handleList = async (callback: () => void): Promise<void> => {
+    if (currentChain?.id !== reservoirChain?.id) {
+      await switchNetworkAsync?.(reservoirChain?.id)
+    }
+    callback()
+  }
+
   return (
     <ListModalRenderer
       open={open}
+      chainId={reservoirChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
       currencies={currencies}

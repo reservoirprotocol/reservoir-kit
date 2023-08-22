@@ -83,6 +83,7 @@ type Props = {
   open: boolean
   tokenId?: string
   collectionId?: string
+  chainId?: number
   currencies?: Currency[]
   normalizeRoyalties?: boolean
   enableOnChainRoyalties: boolean
@@ -117,6 +118,7 @@ export const ListModalRenderer: FC<Props> = ({
   tokenId,
   collectionId,
   currencies,
+  chainId,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
   oracleEnabled = false,
@@ -126,6 +128,8 @@ export const ListModalRenderer: FC<Props> = ({
   const { data: wallet } = useWalletClient()
   const account = useAccount()
   const client = useReservoirClient()
+  const selectedChain = client?.chains.find((chain) => chain.id === chainId)
+
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
   const [allMarketplaces] = useMarketplaces(collectionId, true, feesBps)
@@ -135,7 +139,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
     null
   )
-  const chainCurrency = useChainCurrency()
+  const chainCurrency = useChainCurrency(selectedChain?.id)
   const defaultCurrency = {
     contract: chainCurrency.address,
     symbol: chainCurrency.symbol,
@@ -149,7 +153,9 @@ export const ListModalRenderer: FC<Props> = ({
     open && {
       id: collectionId,
       normalizeRoyalties,
-    }
+    },
+    {},
+    selectedChain?.id
   )
   const collection = collections && collections[0] ? collections[0] : undefined
 
@@ -186,7 +192,8 @@ export const ListModalRenderer: FC<Props> = ({
     collectionId,
     true,
     feesBps,
-    royaltyBps
+    royaltyBps,
+    selectedChain?.id
   )
   const {
     data: unapprovedMarketplaces,
@@ -354,6 +361,12 @@ export const ListModalRenderer: FC<Props> = ({
       const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
+    }
+
+    if (wallet.chain.id !== selectedChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
+      setTransactionError(error);
+      throw error;
     }
 
     if (!client) {
