@@ -1,3 +1,17 @@
+
+## [v1.6.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2e9f33cb50e6669a0f2e5629e80c2415c24a7450) (2023-08-22)
+
+## [v1.6.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/ee2879767381dfb023aa3ec054058a13e55a9a56) (2023-08-21)
+
+* Merge pull request #334 from reservoirprotocol/feature/improve-expected-price-check [cc83f1a](https://github.com/reservoirprotocol/reservoir-kit/commit/cc83f1a6b0f5b952eb5e9b567b735d314819b120)
+* CartProvider: cart checkout modal fix success message [bc63cc9](https://github.com/reservoirprotocol/reservoir-kit/commit/bc63cc974edae7ae746c59582d6da4bbbc3ea4be)
+## [v1.5.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/93d9eba98c9157b2d1ea90f93ad8d71b842cd684) (2023-08-18)
+
+* Update manifold contract address for goerli [ea956bf](https://github.com/reservoirprotocol/reservoir-kit/commit/ea956bfd7452503bf88ecf5c006b88de898baed8)
+## [v1.5.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d2f984d7d895909ddd62be1dbaab07e4e03d8f62) (2023-08-18)
+
+* Update manifold contracts [2c89c4a](https://github.com/reservoirprotocol/reservoir-kit/commit/2c89c4a3c028ba339fdffdd47e25a18dc10237c2)
+* Improve accuracy when checking expected price by using raw amount [1cd1944](https://github.com/reservoirprotocol/reservoir-kit/commit/1cd194442e8d2f957132513fc7327ce2fc5dbd08)
 ## [v1.5.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/73392b542bd097f00fcf68558e13221fc5c9875f) (2023-08-11)
 
 - useUserTopBids update from v2 -> v4 of the api [596c732](https://github.com/reservoirprotocol/reservoir-kit/commit/596c732d9e843334f6e0b2400993f6f2c91d9b04)
