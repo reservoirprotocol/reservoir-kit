@@ -105,9 +105,7 @@ export function BuyModal({
 
   const handleBuy = async (callback: () => void): Promise<void> => {
     if (selectedChain?.id !== activeChain?.id) {
-      try {
-        await switchNetworkAsync?.(selectedChain?.id)
-      } catch (e: unknown) {}
+      await switchNetworkAsync?.(selectedChain?.id)
     }
     callback()
   }
