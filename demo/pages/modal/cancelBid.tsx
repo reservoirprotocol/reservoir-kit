@@ -62,6 +62,7 @@ const CancelBidPage: NextPage = () => {
       </div>
 
       <CancelBidModal
+        chainId={1}
         trigger={
           <button
             style={{

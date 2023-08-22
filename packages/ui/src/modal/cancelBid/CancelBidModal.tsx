@@ -5,7 +5,7 @@ import { CancelBidModalRenderer, CancelStep } from './CancelBidModalRenderer'
 import { Modal } from '../Modal'
 import TokenPrimitive from '../../modal/TokenPrimitive'
 import Progress from '../Progress'
-import { useNetwork } from 'wagmi'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCircleExclamation,
@@ -23,6 +23,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   bidId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   onClose?: (data: any, currentStep: CancelStep) => void
@@ -33,6 +34,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 export function CancelBidModal({
   openState,
   bidId,
+  chainId,
   trigger,
   normalizeRoyalties,
   copyOverrides,
@@ -45,12 +47,29 @@ export function CancelBidModal({
     openState ? openState[0] : false,
     openState
   )
+
+  const { switchNetworkAsync } = useSwitchNetwork()
   const client = useReservoirClient()
-  const { chain: activeChain } = useNetwork()
-  const reservoirChain = client?.currentChain()
+  const { chain, chains } = useNetwork()
+
+  const preferredChainId = chainId || client?.currentChain()?.id
+
+  const reservoirChain =
+    client?.chains.find((c) => c.id === preferredChainId) ||
+    client?.currentChain()
+  const selectedChain = chains.find((c) => c.id === preferredChainId) || chain
+
+  const handleCancel = async (callback: () => void): Promise<void> => {
+    if (selectedChain?.id !== client?.currentChain()?.id) {
+      await switchNetworkAsync?.()
+    }
+
+    callback()
+  }
 
   return (
     <CancelBidModalRenderer
+      chainId={selectedChain?.id}
       bidId={bidId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
@@ -174,7 +193,10 @@ export function CancelBidModal({
                     ? 'This action will cancel your offer. You will be prompted to confirm this cancellation from your wallet. A gas fee is required.'
                     : 'This will cancel your offer for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
-                <Button onClick={cancelOrder} css={{ m: '$4' }}>
+                <Button
+                  onClick={() => handleCancel(cancelOrder)}
+                  css={{ m: '$4' }}
+                >
                   {!isOracleOrder && (
                     <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
                   )}
@@ -271,7 +293,7 @@ export function CancelBidModal({
                     target="_blank"
                   >
                     View on{' '}
-                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
+                    {selectedChain?.blockExplorers?.default.name || 'Etherscan'}
                   </Anchor>
                 </Flex>
                 <Button

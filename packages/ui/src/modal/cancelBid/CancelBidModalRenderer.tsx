@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useBids } from '../../hooks'
-import { useWalletClient, useNetwork } from 'wagmi'
+import { useWalletClient, useNetwork, useSwitchNetwork } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 
 export enum CancelStep {
@@ -34,12 +34,14 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   bidId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
 export const CancelBidModalRenderer: FC<Props> = ({
   open,
+  chainId,
   bidId,
   normalizeRoyalties,
   children,
@@ -49,7 +51,12 @@ export const CancelBidModalRenderer: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<CancelBidStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
-  const { chain: activeChain } = useNetwork()
+  const { chain, chains } = useNetwork()
+
+  const activeChain = chainId
+    ? chains.find((chain) => chain.id === chainId) || chain
+    : chain
+
   const blockExplorerBaseUrl =
     activeChain?.blockExplorers?.default.url || 'https://etherscan.io'
 
@@ -63,7 +70,8 @@ export const CancelBidModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && bidId ? true : false
+    open && bidId ? true : false,
+    activeChain?.id
   )
 
   const bid = bids && bids[0] ? bids[0] : undefined
@@ -85,6 +93,12 @@ export const CancelBidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (client?.currentChain()?.id !== activeChain?.id) {
+      const error = new Error(`Mismatching chainId`)
+      setTransactionError(error)
+      throw error
+    }
+
     if (!bidId) {
       const error = new Error('Missing bid id to cancel')
       setTransactionError(error)
@@ -101,6 +115,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
 
     client.actions
       .cancelOrder({
+        chainId: activeChain?.id,
         ids: [bidId],
         wallet,
         onProgress: (steps: Execute['steps']) => {
