@@ -1,5 +1,7 @@
+'use client'
+
 import React from 'react'
-import './App.css'
+import './globals.css'
 import {
   ConnectButton,
   RainbowKitProvider,
@@ -10,7 +12,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import * as allChains from 'wagmi/chains'
 import { WagmiConfig, createClient, configureChains } from 'wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
-import Actions from 'src/Actions'
+import Actions from '../components/Actions'
 
 const ALCHEMY_KEY = process.env.REACT_APP_ALCHEMY_KEY || ''
 const { chains, provider } = configureChains(
@@ -29,7 +31,7 @@ const wagmiClient = createClient({
   provider,
 })
 
-function App() {
+export default function App() {
   return (
     <WagmiConfig client={wagmiClient}>
       <div
@@ -50,4 +52,3 @@ function App() {
   )
 }
 
-export default App

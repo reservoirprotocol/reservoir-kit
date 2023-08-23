@@ -1,4 +1,4 @@
-import { getClient } from 'src/utils'
+import { getClient } from './utils'
 import { adaptEthersSigner } from '@reservoir0x/ethers-wallet-adapter'
 import { useSigner } from 'wagmi'
 
@@ -28,7 +28,7 @@ function BidButton() {
       <button
         onClick={() => {
           if (!signer) {
-            throw 'Signer not available!'
+            throw Error('Signer not available!')
           }
 
           getClient().actions.placeBid({

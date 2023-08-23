@@ -1,4 +1,4 @@
-import { getClient } from 'src/utils'
+import { getClient } from './utils'
 import { adaptEthersSigner } from '@reservoir0x/ethers-wallet-adapter'
 import { useSigner } from 'wagmi'
 import { adaptGelatoRelayer } from '@reservoir0x/gelato-adapter'
