@@ -38,6 +38,7 @@ import { Collapsible } from '../../primitives/Collapsible'
 import { ApproveBidCollapsible } from './ApproveBidCollapsible'
 import SigninStep from '../SigninStep'
 import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
+import { useSwitchNetwork } from 'wagmi'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -57,6 +58,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokens: AcceptBidTokenData[]
+  chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   onBidAccepted?: (data: BidData) => void
@@ -72,6 +74,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 export function AcceptBidModal({
   openState,
   trigger,
+  chainId,
   tokens,
   normalizeRoyalties,
   copyOverrides,
@@ -84,11 +87,29 @@ export function AcceptBidModal({
     openState ? openState[0] : false,
     openState
   )
+
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
+
+  const { switchNetworkAsync } = useSwitchNetwork()
+  const client = useReservoirClient()
+  const currentChain = client?.currentChain()
+  const chain = chainId
+    ? client?.chains.find((chain) => chain.id === chainId) || currentChain
+    : currentChain
+
+  const baseApiUrl = chain?.baseApiUrl
+
+  const handleAcceptBid = async (callback: () => void): Promise<void> => {
+    if (currentChain?.id !== chain?.id) {
+      await switchNetworkAsync?.(chain?.id)
+    }
+    callback()
+  }
 
   return (
     <AcceptBidModalRenderer
       open={open}
+      chainId={chain?.id}
       tokens={tokens}
       normalizeRoyalties={normalizeRoyalties}
     >
@@ -105,11 +126,6 @@ export function AcceptBidModal({
         stepData,
         acceptBid,
       }) => {
-        const client = useReservoirClient()
-        const chain = client?.currentChain()
-
-        const baseApiUrl = chain?.baseApiUrl
-
         useEffect(() => {
           if (acceptBidStep === AcceptBidStep.Complete && onBidAccepted) {
             const data: BidData = {
@@ -398,7 +414,7 @@ export function AcceptBidModal({
                     m: '$4',
                   }}
                   color="primary"
-                  onClick={acceptBid}
+                  onClick={() => handleAcceptBid(acceptBid)}
                 >
                   {copy.ctaAccept}
                 </Button>

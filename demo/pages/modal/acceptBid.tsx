@@ -121,6 +121,7 @@ const AcceptBidPage: NextPage = () => {
       </div>
 
       <AcceptBidModal
+        chainId={1}
         trigger={
           <button
             style={{

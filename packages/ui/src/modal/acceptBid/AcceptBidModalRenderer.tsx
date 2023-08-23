@@ -68,6 +68,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   tokens: AcceptBidTokenData[]
+  chainId?: number
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -75,6 +76,7 @@ type Props = {
 export const AcceptBidModalRenderer: FC<Props> = ({
   open,
   tokens,
+  chainId,
   normalizeRoyalties,
   children,
 }) => {
@@ -87,9 +89,14 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   )
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [txHash, setTxHash] = useState<string | null>(null)
-  const { chain: activeChain } = useNetwork()
+  const { chain, chains } = useNetwork()
+
+  const selectedChain = chainId
+    ? chains.find((chain) => chain.id === chainId) || chain
+    : chain
+
   const blockExplorerBaseUrl =
-    activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+    selectedChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
   const [isFetchingBidPath, setIsFetchingBidPath] = useState(false)
   const [bidsPath, setBidsPath] = useState<SellPath | null>(null)
 
@@ -108,7 +115,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     },
     {
       revalidateFirstPage: true,
-    }
+    },
+    selectedChain?.id
   )
 
   const enhancedTokens = useMemo(() => {
@@ -213,6 +221,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
       client.actions
         .acceptOffer({
+          chainId: selectedChain?.id,
           items: items,
           wallet,
           options,
@@ -276,6 +285,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (wallet.chain.id !== selectedChain?.id) {
+      const error = new Error(`Mismatching chanIds`)
+      setTransactionError(error)
+      throw error
+    }
+
     if (!bidsPath) {
       const error = new Error('Missing bids to accept')
       setTransactionError(error)
@@ -321,6 +336,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
     client.actions
       .acceptOffer({
+        chainId: selectedChain.id,
         expectedPrice,
         wallet,
         items,
