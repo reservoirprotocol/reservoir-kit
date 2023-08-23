@@ -185,6 +185,7 @@ const BidPage: NextPage = () => {
       </div>
 
       <BidModal
+        chainId={1}
         trigger={
           <button
             style={{
