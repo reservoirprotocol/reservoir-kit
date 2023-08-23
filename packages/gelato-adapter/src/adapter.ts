@@ -1,5 +1,5 @@
 import type { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { GelatoRelay } from '@gelatonetwork/relay-sdk'
+import { ERC2771Type, GelatoRelay, RelayResponse } from '@gelatonetwork/relay-sdk'
 import type { Signer } from 'ethers/lib/ethers'
 import { arrayify } from 'ethers/lib/utils'
 import type { TypedDataSigner } from '@ethersproject/abstract-signer/lib/index'
@@ -10,10 +10,16 @@ import { getTaskStatus } from './utils'
 // this function.
 //
 // - Developed by Privy in partnership with Reservoir
+
+// Two ways to use this. Can supply 
 export const adaptGelatoRelayer = (
   signer: Signer,
-  gelatoApiKey: string
+  gelatoApiKey?: string,
+  gelatoProxyApiUrl?: string
 ): ReservoirWallet => {
+
+  if (!gelatoApiKey && ! gelatoProxyApiUrl) throw new Error("You must supply either an apiKey or a proxy API url.")
+
   return {
     address: async () => {
       return signer.getAddress()
@@ -51,11 +57,28 @@ export const adaptGelatoRelayer = (
       }
 
       try {
-        const relayResponse = await relay.sponsoredCallERC2771(
-          request,
-          signer.provider as any,
-          gelatoApiKey
-        )
+        let relayResponse: RelayResponse
+
+        if (gelatoApiKey) {
+          relayResponse = await relay.sponsoredCallERC2771(
+            request,
+            signer.provider as any,
+            gelatoApiKey!
+          )
+        }
+        else if (gelatoProxyApiUrl) {
+          const signatureData = await relay.getSignatureDataERC2771(request, signer.provider as any, ERC2771Type.SponsoredCall)
+          const response = await fetch(gelatoProxyApiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(signatureData)
+          }) 
+          relayResponse = await response.json();
+        }
+        else throw new Error("You must supply either an apiKey or a proxy API url.")
+        
         const { taskId } = relayResponse
         const txHash = await getTaskStatus(taskId)
         return txHash
