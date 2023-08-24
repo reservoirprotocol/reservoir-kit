@@ -23,13 +23,13 @@ Otherwise, if you are relaying transactions and don't mind your API keys being p
 To use the adapter pass in your ethers signer and Gelato API key / Gelato API proxy URL. In return receive a normalized ReservoirWallet object:
 
 ### Gelato API key
+
 <h4>Sequence Diagram</h4>
 
 ```mermaid
 sequenceDiagram
-
 actor U as User
-box purple API key lives here
+box rgba(255, 255, 230, 0.1) API key lives here
 participant C as Client
 end
 participant G as Gelato
@@ -72,17 +72,20 @@ getClient().actions.buyToken({
   onProgress: () => {},
 })
 ```
+
 ### Gelato API proxy URL
+
 You will have to build your own backend API proxy, there is a basic example [here](/sdk-demo/app/api/relay/route.ts).
 
 <h4>Sequence Diagram</h4>
 
 ```mermaid
+
 sequenceDiagram
 
 actor U as User
 participant C as Client
-box purple API key lives here
+box rgba(255, 255, 230, 0.1) API key lives here
 participant P as Gelato API proxy
 end
 participant G as Gelato
@@ -102,7 +105,6 @@ deactivate G
 P->>C: Return taskId
 deactivate P
 ```
-
 
 <h4>Example adapter integration</h4>
 
