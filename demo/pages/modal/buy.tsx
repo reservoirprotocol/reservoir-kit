@@ -125,7 +125,7 @@ const BuyPage: NextPage = () => {
       </div>
 
       <BuyModal
-        chainId={Number(chainId) ? Number(chainId) : undefined}
+        chainId={Number(chainId)}
         trigger={
           <button
             style={{
