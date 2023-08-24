@@ -1,5 +1,5 @@
 import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
-import { useFallbackState } from '../../hooks'
+import { useFallbackState, useReservoirClient } from '../../hooks'
 import {
   Flex,
   Box,
@@ -96,23 +96,33 @@ export function BuyModal({
     openState
   )
 
-  const { chains, chain: activeChain } = useNetwork()
+  const { chains } = useNetwork()
+  const client = useReservoirClient()
   const { switchNetworkAsync } = useSwitchNetwork()
 
-  const selectedChain = chainId
-    ? chains.find((chain) => chain.id === chainId) || activeChain
-    : activeChain
+  const currentChain = client?.currentChain()
 
-  const handleBuy = async (callback: () => void): Promise<void> => {
-    if (selectedChain?.id !== activeChain?.id) {
-      await switchNetworkAsync?.(selectedChain?.id)
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const walletChain = chains.find(({ id }) => {
+    modalChain?.id === id
+  })
+
+  const handleBuy = async (buyToken: () => void): Promise<void> => {
+    if (modalChain?.id !== currentChain?.id) {
+      const chain = await switchNetworkAsync?.(modalChain?.id)
+      if (chain?.id !== modalChain?.id) return
+      buyToken()
     }
-    callback()
   }
 
   return (
     <BuyModalRenderer
-      chainId={selectedChain?.id}
+      chainId={modalChain?.id}
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
@@ -558,7 +568,7 @@ export function BuyModal({
                         target="_blank"
                       >
                         View on{' '}
-                        {selectedChain?.blockExplorers?.default.name ||
+                        {walletChain?.blockExplorers?.default.name ||
                           'Etherscan'}
                       </Anchor>
                     </>
