@@ -69,7 +69,6 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
-  chainId?: number
   collectionId?: string
   currencies?: Currency[]
   nativeOnly?: boolean
@@ -120,7 +119,6 @@ export function ListModal({
   openState,
   trigger,
   tokenId,
-  chainId,
   collectionId,
   currencies,
   nativeOnly,
@@ -140,12 +138,7 @@ export function ListModal({
     openState
   )
   const client = useReservoirClient()
-  const currentChain = client?.currentChain()
-
-  const reservoirChain = chainId
-    ? client?.chains.find((chain) => chain.id === chainId) || currentChain
-    : currentChain
-
+  const reservoirChain = client?.currentChain()
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
     Marketplace[]
   >([])
