@@ -7,16 +7,15 @@ import { useEffect, useState } from 'react'
 function Actions() {
   const { isConnected } = useAccount()
 
-  const [hasMounted, setHasMounted] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false)
 
   useEffect(() => {
-      setHasMounted(true);
+    setHasMounted(true)
   }, [])
 
-  if (!hasMounted) return <></>;
+  if (!hasMounted) return <></>
 
-  return (
-    isConnected ?
+  return isConnected ? (
     <div
       style={{
         padding: 10,
@@ -27,7 +26,8 @@ function Actions() {
     >
       <BuyButton />
       <BidButton />
-    </div> :
+    </div>
+  ) : (
     <></>
   )
 }
