@@ -15,14 +15,16 @@ import { getTaskStatus } from './utils'
 //
 // - Developed by Privy in partnership with Reservoir
 
-// Two ways to use this. Can supply
+// Two ways to use this. Can supply an API key from the front end or
+// an API proxy URL to your backend where the API key lives.
 export const adaptGelatoRelayer = (
   signer: Signer,
   gelatoApiKey?: string,
   gelatoProxyApiUrl?: string
 ): ReservoirWallet => {
-  if (!gelatoApiKey && !gelatoProxyApiUrl)
+  if (!gelatoApiKey && !gelatoProxyApiUrl) {
     throw new Error('You must supply either an apiKey or a proxy API url.')
+  }
 
   return {
     address: async () => {
@@ -91,10 +93,11 @@ export const adaptGelatoRelayer = (
             body: JSON.stringify({ signatureData: signatureDataFormatted }),
           })
           relayResponse = await response.json()
-        } else
+        } else {
           throw new Error(
             'You must supply either an apiKey or a proxy API url.'
           )
+        }
         const { taskId } = relayResponse
         const txHash = await getTaskStatus(taskId)
         return txHash
