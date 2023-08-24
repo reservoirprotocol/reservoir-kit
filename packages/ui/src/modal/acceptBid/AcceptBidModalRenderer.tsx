@@ -80,7 +80,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const client = useReservoirClient()
   const { data: wallet } = useWalletClient()
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [prices, setPrices] = useState<AcceptBidPrice[]>([])
@@ -89,14 +88,25 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   )
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [txHash, setTxHash] = useState<string | null>(null)
-  const { chain, chains } = useNetwork()
+  const { chain: activeWalletChain, chains } = useNetwork()
 
-  const selectedChain = chainId
-    ? chains.find((chain) => chain.id === chainId) || chain
-    : chain
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const wagmiChain = chains.find(({ id }) => {
+    rendererChain?.id === id
+  })
 
   const blockExplorerBaseUrl =
-    selectedChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+    wagmiChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+
   const [isFetchingBidPath, setIsFetchingBidPath] = useState(false)
   const [bidsPath, setBidsPath] = useState<SellPath | null>(null)
 
@@ -116,7 +126,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    selectedChain?.id
+    wagmiChain?.id
   )
 
   const enhancedTokens = useMemo(() => {
@@ -221,7 +231,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
       client.actions
         .acceptOffer({
-          chainId: selectedChain?.id,
+          chainId: wagmiChain?.id,
           items: items,
           wallet,
           options,
@@ -285,8 +295,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (wallet.chain.id !== selectedChain?.id) {
-      const error = new Error(`Mismatching chanIds`)
+    if (wallet.chain.id !== activeWalletChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
     }
@@ -336,7 +346,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
     client.actions
       .acceptOffer({
-        chainId: selectedChain.id,
+        chainId: wagmiChain?.id,
         expectedPrice,
         wallet,
         items,
@@ -428,7 +438,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         fetchBidsPath(tokens)
         mutateTokens()
       })
-  }, [bidsPath, bidTokenMap, client, wallet, prices, mutateTokens])
+  }, [bidsPath, bidTokenMap, chainId, client, wallet, prices, mutateTokens])
 
   useEffect(() => {
     if (bidsPath && bidsPath.length > 0) {
