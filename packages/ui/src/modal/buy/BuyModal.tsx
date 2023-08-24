@@ -371,7 +371,7 @@ export function BuyModal({
                 <Box css={{ p: '$4', width: '100%' }}>
                   {hasEnoughCurrency ? (
                     <Button
-                      onClick={(): Promise<void> => handleBuy(buyToken)}
+                      onClick={() => handleBuy(buyToken)}
                       css={{ width: '100%' }}
                       color="primary"
                     >

@@ -116,6 +116,7 @@ const BuyPage: NextPage = () => {
       </div>
 
       <BuyModal
+        chainId={1}
         trigger={
           <button
             style={{
