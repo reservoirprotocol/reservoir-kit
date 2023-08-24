@@ -5481,7 +5481,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@reservoir0x/gelato-adapter@workspace:*, @reservoir0x/gelato-adapter@workspace:packages/gelato-adapter":
+"@reservoir0x/gelato-adapter@workspace:packages/gelato-adapter":
   version: 0.0.0-use.local
   resolution: "@reservoir0x/gelato-adapter@workspace:packages/gelato-adapter"
   dependencies:
@@ -18487,7 +18487,6 @@ __metadata:
   dependencies:
     "@rainbow-me/rainbowkit": 0.12.0
     "@reservoir0x/ethers-wallet-adapter": "workspace:*"
-    "@reservoir0x/gelato-adapter": "workspace:*"
     "@reservoir0x/reservoir-sdk": "workspace:*"
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
