@@ -112,7 +112,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const contract = collectionId?.split(':')[0] as Address
 
-  const { chains } = useNetwork()
+  const { chains, chain: activeWalletChain } = useNetwork()
 
   const client = useReservoirClient()
 
@@ -124,7 +124,7 @@ export const CollectModalRenderer: FC<Props> = ({
       }) || currentChain
     : currentChain
 
-  const walletChain = chains.find(({ id }) => {
+  const wagmiChain = chains.find(({ id }) => {
     rendererChain?.id === id
   })
 
@@ -159,17 +159,17 @@ export const CollectModalRenderer: FC<Props> = ({
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0)
 
-  const chainCurrency = useChainCurrency(walletChain?.id)
+  const chainCurrency = useChainCurrency(wagmiChain?.id)
   const [currency, setCurrency] = useState(chainCurrency)
 
   const isChainCurrency = currency.address === chainCurrency.address
 
   const blockExplorerBaseUrl =
-    walletChain?.blockExplorers?.default?.url || 'https://etherscan.io'
+    wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   const addFundsLink = currency?.address
-    ? `https://jumper.exchange/?toChain=${walletChain?.id}&toToken=${currency?.address}`
-    : `https://jumper.exchange/?toChain=${walletChain?.id}`
+    ? `https://jumper.exchange/?toChain=${wagmiChain?.id}&toToken=${currency?.address}`
+    : `https://jumper.exchange/?toChain=${wagmiChain?.id}`
 
   const { data: collections, mutate: mutateCollection } = useCollections(
     open && {
@@ -177,7 +177,7 @@ export const CollectModalRenderer: FC<Props> = ({
       includeMintStages: true,
     },
     {},
-    walletChain?.id
+    wagmiChain?.id
   )
 
   const collection = collections && collections[0] ? collections[0] : undefined
@@ -193,13 +193,13 @@ export const CollectModalRenderer: FC<Props> = ({
         }
       : undefined,
     {},
-    walletChain?.id
+    wagmiChain?.id
   )
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
 
   const { data: usdFeeConversion } = useCurrencyConversion(
-    walletChain?.id,
+    wagmiChain?.id,
     currency?.address,
     'usd'
   )
@@ -223,7 +223,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
     client?.actions
       .buyToken({
-        chainId: walletChain?.id,
+        chainId: wagmiChain?.id,
         items: [
           {
             collection: token?.token?.tokenId ? undefined : collectionId,
@@ -345,12 +345,12 @@ export const CollectModalRenderer: FC<Props> = ({
             decimals: otherCurrency?.decimals as number,
             name: '',
             address: otherCurrency?.contract as Address,
-            chainId: walletChain?.id as number,
+            chainId: wagmiChain?.id as number,
           })
         }
       }
     },
-    [walletChain, chainCurrency]
+    [wagmiChain, chainCurrency]
   )
 
   // update currency based on selected tokens
@@ -460,7 +460,7 @@ export const CollectModalRenderer: FC<Props> = ({
   ])
 
   const { data: balance } = useBalance({
-    chainId: walletChain?.id,
+    chainId: wagmiChain?.id,
     address: account.address,
     token:
       currency?.address !== zeroAddress
@@ -521,7 +521,7 @@ export const CollectModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (rendererChain?.id !== walletChain?.id) {
+    if (rendererChain?.id !== activeWalletChain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
@@ -575,7 +575,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
     client.actions
       .buyToken({
-        chainId: walletChain?.id,
+        chainId: wagmiChain?.id,
         items: [
           {
             collection: token?.token?.tokenId ? undefined : collectionId,
@@ -660,7 +660,7 @@ export const CollectModalRenderer: FC<Props> = ({
     total,
     chainId,
     normalizeRoyalties,
-    walletChain,
+    wagmiChain,
     collectionId,
     tokenId,
     currency,

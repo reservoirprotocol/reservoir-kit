@@ -19,6 +19,7 @@ const CollectPage: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState<string | undefined>(undefined)
   const [mode, setMode] = useState('preferMint')
+  const [chainId, setChainId] = useState('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
   const deeplinkOpenState = useState(true)
@@ -58,7 +59,14 @@ const CollectPage: NextPage = () => {
           onChange={(e) => setTokenId(e.target.value)}
         />
       </div>
-
+      <div>
+        <label>Chain Override: </label>
+        <input
+          type="text"
+          value={chainId}
+          onChange={(e) => setChainId(e.target.value)}
+        />
+      </div>
       <div style={{ display: 'flex', gap: 10 }}>
         <label>Mode: </label>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -143,7 +151,7 @@ const CollectPage: NextPage = () => {
       </div>
 
       <CollectModal
-        chainId={1}
+        chainId={Number(chainId)}
         trigger={
           <button
             style={{
