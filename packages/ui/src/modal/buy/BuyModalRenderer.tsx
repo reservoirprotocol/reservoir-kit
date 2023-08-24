@@ -122,7 +122,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [quantity, setQuantity] = useState(1)
 
-  const { chains } = useNetwork()
+  const { chains, chain: activeWalletChain } = useNetwork()
 
   const client = useReservoirClient()
 
@@ -134,13 +134,13 @@ export const BuyModalRenderer: FC<Props> = ({
       }) || currentChain
     : currentChain
 
-  const walletChain = chains.find(({ id }) => {
+  const wagmiChain = chains.find(({ id }) => {
     rendererChain?.id === id
   })
 
   const chainCurrency = useChainCurrency(rendererChain?.id)
   const blockExplorerBaseUrl =
-    walletChain?.blockExplorers?.default?.url || 'https://etherscan.io'
+    wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
@@ -306,7 +306,7 @@ export const BuyModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (rendererChain?.id !== walletChain?.id) {
+    if (rendererChain?.id !== activeWalletChain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error

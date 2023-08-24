@@ -96,7 +96,7 @@ export function BuyModal({
     openState
   )
 
-  const { chains } = useNetwork()
+  const { chains, chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
   const { switchNetworkAsync } = useSwitchNetwork()
 
@@ -108,12 +108,12 @@ export function BuyModal({
       }) || currentChain
     : currentChain
 
-  const walletChain = chains.find(({ id }) => {
+  const wagmiChain = chains.find(({ id }) => {
     modalChain?.id === id
   })
 
   const handleBuy = async (buyToken: () => void): Promise<void> => {
-    if (modalChain?.id !== currentChain?.id) {
+    if (modalChain?.id !== activeWalletChain?.id) {
       const chain = await switchNetworkAsync?.(modalChain?.id)
       if (chain?.id !== modalChain?.id) return
       buyToken()
@@ -568,7 +568,7 @@ export function BuyModal({
                         target="_blank"
                       >
                         View on{' '}
-                        {walletChain?.blockExplorers?.default.name ||
+                        {wagmiChain?.blockExplorers?.default.name ||
                           'Etherscan'}
                       </Anchor>
                     </>

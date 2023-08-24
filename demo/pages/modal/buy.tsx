@@ -19,6 +19,7 @@ const BuyPage: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [orderId, setOrderId] = useState('')
+  const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
   const deeplinkOpenState = useState(true)
@@ -63,6 +64,14 @@ const BuyPage: NextPage = () => {
           type="text"
           value={orderId}
           onChange={(e) => setOrderId(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Chain Override: </label>
+        <input
+          type="text"
+          value={chainId}
+          onChange={(e) => setChainId(e.target.value)}
         />
       </div>
       <div>
@@ -116,7 +125,7 @@ const BuyPage: NextPage = () => {
       </div>
 
       <BuyModal
-        chainId={1}
+        chainId={Number(chainId) ? Number(chainId) : undefined}
         trigger={
           <button
             style={{
