@@ -63,22 +63,23 @@ export const adaptGelatoRelayer = (
           relayResponse = await relay.sponsoredCallERC2771(
             request,
             signer.provider as any,
-            gelatoApiKey!
+            gelatoApiKey
           )
         }
         else if (gelatoProxyApiUrl) {
           const signatureData = await relay.getSignatureDataERC2771(request, signer.provider as any, ERC2771Type.SponsoredCall)
+          // userNonce must be a number to be parsed into JSON
+          const signatureDataFormatted = {...signatureData, struct: {...signatureData.struct, userNonce: Number(signatureData.struct.userNonce)}}
           const response = await fetch(gelatoProxyApiUrl, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(signatureData)
+            body: JSON.stringify({signatureData: signatureDataFormatted})
           }) 
           relayResponse = await response.json();
         }
         else throw new Error("You must supply either an apiKey or a proxy API url.")
-        
         const { taskId } = relayResponse
         const txHash = await getTaskStatus(taskId)
         return txHash
