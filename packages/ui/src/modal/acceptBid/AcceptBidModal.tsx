@@ -38,6 +38,7 @@ import { Collapsible } from '../../primitives/Collapsible'
 import { ApproveBidCollapsible } from './ApproveBidCollapsible'
 import SigninStep from '../SigninStep'
 import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -57,6 +58,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokens: AcceptBidTokenData[]
+  chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   onBidAccepted?: (data: BidData) => void
@@ -72,6 +74,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 export function AcceptBidModal({
   openState,
   trigger,
+  chainId,
   tokens,
   normalizeRoyalties,
   copyOverrides,
@@ -84,11 +87,35 @@ export function AcceptBidModal({
     openState ? openState[0] : false,
     openState
   )
+
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
+
+  const { chain: activeWalletChain } = useNetwork()
+  const client = useReservoirClient()
+  const { switchNetworkAsync } = useSwitchNetwork()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const baseApiUrl = modalChain?.baseApiUrl
+
+  const handleAcceptBid = async (acceptBid: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      const chain = await switchNetworkAsync?.(modalChain?.id)
+      if (chain?.id !== modalChain?.id) return
+      acceptBid()
+    }
+  }
 
   return (
     <AcceptBidModalRenderer
       open={open}
+      chainId={modalChain?.id}
       tokens={tokens}
       normalizeRoyalties={normalizeRoyalties}
     >
@@ -105,11 +132,6 @@ export function AcceptBidModal({
         stepData,
         acceptBid,
       }) => {
-        const client = useReservoirClient()
-        const chain = client?.currentChain()
-
-        const baseApiUrl = chain?.baseApiUrl
-
         useEffect(() => {
           if (acceptBidStep === AcceptBidStep.Complete && onBidAccepted) {
             const data: BidData = {
@@ -398,7 +420,7 @@ export function AcceptBidModal({
                     m: '$4',
                   }}
                   color="primary"
-                  onClick={acceptBid}
+                  onClick={() => handleAcceptBid(acceptBid)}
                 >
                   {copy.ctaAccept}
                 </Button>
@@ -410,7 +432,7 @@ export function AcceptBidModal({
                   tokensData={tokensData}
                   usdPrices={usdPrices}
                   prices={prices}
-                  chain={chain}
+                  chain={modalChain}
                 />
                 <SigninStep css={{ mt: 48, mb: 60, gap: 20 }} />
                 <Button disabled={true} css={{ m: '$4' }}>
@@ -425,7 +447,7 @@ export function AcceptBidModal({
                   tokensData={tokensData}
                   usdPrices={usdPrices}
                   prices={prices}
-                  chain={chain}
+                  chain={modalChain}
                 />
                 <Text style="h6" css={{ m: '$4', textAlign: 'center' }}>
                   Confirm Selling
@@ -436,7 +458,7 @@ export function AcceptBidModal({
                       key={step.id}
                       step={step}
                       tokensData={tokensData}
-                      chain={chain}
+                      chain={modalChain}
                       isCurrentStep={stepData.currentStep.id === step.id}
                       open={stepData.currentStep.id === step.id}
                     />
@@ -463,7 +485,7 @@ export function AcceptBidModal({
                   tokensData={tokensData}
                   usdPrices={usdPrices}
                   prices={prices}
-                  chain={chain}
+                  chain={modalChain}
                 />
                 <Text style="h6" css={{ textAlign: 'center' }}>
                   Finalizing on blockchain
