@@ -15,6 +15,7 @@ const CancelBidPage: NextPage = () => {
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [bidId, setBidId] = useState('')
+  const [chainId, setChainId] = useState('')
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
 
@@ -49,6 +50,14 @@ const CancelBidPage: NextPage = () => {
           style={{ width: 250 }}
         />
       </div>
+      <div>
+        <label>Chain Override: </label>
+        <input
+          type="text"
+          value={chainId}
+          onChange={(e) => setChainId(e.target.value)}
+        />
+      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -62,7 +71,7 @@ const CancelBidPage: NextPage = () => {
       </div>
 
       <CancelBidModal
-        chainId={1}
+        chainId={Number(chainId)}
         trigger={
           <button
             style={{
