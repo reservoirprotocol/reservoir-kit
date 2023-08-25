@@ -1,4 +1,4 @@
-import { useFallbackState, useTimeSince } from '../../hooks'
+import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
 import React, {
   ReactElement,
   Dispatch,
@@ -33,7 +33,7 @@ import {
   faCircleExclamation,
   faClose,
 } from '@fortawesome/free-solid-svg-icons'
-
+import { useSwitchNetwork, useNetwork } from 'wagmi'
 const ModalCopy = {
   title: 'Edit Offer',
   ctaClose: 'Close',
@@ -48,6 +48,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   bidId?: string
   tokenId?: string
+  chainId?: number
   collectionId?: string
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
@@ -61,6 +62,7 @@ export function EditBidModal({
   openState,
   bidId,
   tokenId,
+  chainId,
   collectionId,
   trigger,
   normalizeRoyalties,
@@ -74,6 +76,26 @@ export function EditBidModal({
     openState ? openState[0] : false,
     openState
   )
+
+  const { chain: activeWalletChain } = useNetwork()
+  const client = useReservoirClient()
+  const { switchNetworkAsync } = useSwitchNetwork()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const handleEditBid = async (editBid: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      const chain = await switchNetworkAsync?.(modalChain?.id)
+      if (chain?.id !== modalChain?.id) return
+      editBid()
+    }
+  }
 
   return (
     <EditBidModalRenderer
@@ -470,7 +492,7 @@ export function EditBidModal({
                         </Button>
                         <Button
                           disabled={bidAmount === '' || bidAmount === '0'}
-                          onClick={editBid}
+                          onClick={() => handleEditBid(editBid)}
                           css={{ flex: 1 }}
                         >
                           {copy.ctaConfirm}
