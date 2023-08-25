@@ -83,6 +83,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   bidId?: string
+  chainId?: number
   tokenId?: string
   attribute?: Trait
   collectionId?: string
@@ -93,6 +94,7 @@ type Props = {
 export const EditBidModalRenderer: FC<Props> = ({
   open,
   bidId,
+  chainId,
   tokenId,
   collectionId,
   attribute,
@@ -100,6 +102,22 @@ export const EditBidModalRenderer: FC<Props> = ({
   children,
 }) => {
   const { data: wallet } = useWalletClient()
+
+  const { chains, chain: activeWalletChain } = useNetwork()
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const wagmiChain = chains.find(({ id }) => {
+    rendererChain?.id === id
+  })
+
   const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<EditBidStepData | null>(null)
@@ -114,7 +132,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   const [amountToWrap, setAmountToWrap] = useState('')
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
-  const chainCurrency = useChainCurrency()
+  const chainCurrency = useChainCurrency(rendererChain?.id)
 
   const nativeWrappedContractAddress =
     chainCurrency.chainId in wrappedContracts
@@ -135,7 +153,8 @@ export const EditBidModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && bidId ? true : false
+    open && bidId ? true : false,
+    rendererChain?.id
   )
 
   const bid = bids && bids[0] ? bids[0] : undefined
@@ -166,31 +185,29 @@ export const EditBidModalRenderer: FC<Props> = ({
 
   const bidAmountUsd = +bidAmount * (usdPrice || 0)
 
-  const client = useReservoirClient()
-
   const { address } = useAccount()
   const { data: balance } = useBalance({
     address: address,
     watch: open,
+    chainId: rendererChain?.id,
   })
 
   const { data: wrappedBalance } = useBalance({
     token: wrappedContractAddress as any,
     address: address,
     watch: open,
-    chainId: client?.currentChain()?.id,
+    chainId: rendererChain?.id,
   })
 
-  const { chain } = useNetwork()
   const canAutomaticallyConvert =
     !currency || currency.contract === nativeWrappedContractAddress
   let convertLink: string = ''
 
   if (canAutomaticallyConvert) {
     convertLink =
-      chain?.id === mainnet.id || chain?.id === goerli.id
+      wagmiChain?.id === mainnet.id || wagmiChain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
-            chain?.network || 'mainnet'
+            wagmiChain?.network || 'mainnet'
           }&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
   } else {
@@ -200,7 +217,8 @@ export const EditBidModalRenderer: FC<Props> = ({
   const isTokenBid = bid?.criteria?.kind == 'token'
 
   const { data: traits } = useAttributes(
-    open && !isTokenBid ? collectionId : undefined
+    open && !isTokenBid ? collectionId : undefined,
+    rendererChain?.id
   )
 
   const { data: collections } = useCollections(
@@ -208,7 +226,9 @@ export const EditBidModalRenderer: FC<Props> = ({
       id: collectionId,
       includeTopBid: true,
       normalizeRoyalties,
-    }
+    },
+    {},
+    rendererChain?.id
   )
   const collection = collections && collections[0] ? collections[0] : undefined
   let royaltyBps = collection?.royalties?.bps
@@ -221,7 +241,8 @@ export const EditBidModalRenderer: FC<Props> = ({
     },
     {
       revalidateFirstPage: true,
-    }
+    },
+    rendererChain?.id
   )
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
@@ -296,6 +317,12 @@ export const EditBidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (activeWalletChain?.id !== rendererChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
+      setTransactionError(error)
+      throw error
+    }
+
     if (!client) {
       const error = new Error('ReservoirClient was not initialized')
       setTransactionError(error)
@@ -362,6 +389,7 @@ export const EditBidModalRenderer: FC<Props> = ({
 
     client.actions
       .placeBid({
+        chainId: rendererChain?.id,
         bids: [bid],
         wallet,
         onProgress: (steps: Execute['steps']) => {
@@ -427,6 +455,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     wallet,
     collectionId,
     tokenId,
+    chainId,
     expirationOption,
     trait,
     bidAmount,

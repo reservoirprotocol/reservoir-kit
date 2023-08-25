@@ -19,6 +19,7 @@ const EditListingPage: NextPage = () => {
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [listingId, setListingId] = useState('')
+  const [chainId, setChainId] = useState('')
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [normalizeRoyalties, setNormalizeRoyalties] =
@@ -71,6 +72,14 @@ const EditListingPage: NextPage = () => {
           onChange={(e) => setTokenId(e.target.value)}
         />
       </div>
+      <div>
+        <label>Chain Override: </label>
+        <input
+          type="text"
+          value={chainId}
+          onChange={(e) => setChainId(e.target.value)}
+        />
+      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -84,6 +93,7 @@ const EditListingPage: NextPage = () => {
       </div>
 
       <EditListingModal
+        chainId={Number(chainId)}
         trigger={
           <button
             style={{
