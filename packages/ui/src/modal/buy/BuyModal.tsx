@@ -1,5 +1,5 @@
 import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
-import { useFallbackState } from '../../hooks'
+import { useFallbackState, useReservoirClient } from '../../hooks'
 import {
   Flex,
   Box,
@@ -21,7 +21,7 @@ import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
-import { useNetwork } from 'wagmi'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 
@@ -49,6 +49,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
+  chainId?: number
   orderId?: string
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
@@ -77,6 +78,7 @@ export function BuyModal({
   openState,
   trigger,
   tokenId,
+  chainId,
   collectionId,
   orderId,
   feesOnTopBps,
@@ -93,10 +95,34 @@ export function BuyModal({
     openState ? openState[0] : false,
     openState
   )
-  const { chain: activeChain } = useNetwork()
+
+  const { chains, chain: activeWalletChain } = useNetwork()
+  const client = useReservoirClient()
+  const { switchNetworkAsync } = useSwitchNetwork()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const wagmiChain = chains.find(({ id }) => {
+    modalChain?.id === id
+  })
+
+  const handleBuy = async (buyToken: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      const chain = await switchNetworkAsync?.(modalChain?.id)
+      if (chain?.id !== modalChain?.id) return
+      buyToken()
+    }
+  }
 
   return (
     <BuyModalRenderer
+      chainId={modalChain?.id}
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
@@ -345,7 +371,7 @@ export function BuyModal({
                 <Box css={{ p: '$4', width: '100%' }}>
                   {hasEnoughCurrency ? (
                     <Button
-                      onClick={buyToken}
+                      onClick={() => handleBuy(buyToken)}
                       css={{ width: '100%' }}
                       color="primary"
                     >
@@ -542,7 +568,7 @@ export function BuyModal({
                         target="_blank"
                       >
                         View on{' '}
-                        {activeChain?.blockExplorers?.default.name ||
+                        {wagmiChain?.blockExplorers?.default.name ||
                           'Etherscan'}
                       </Anchor>
                     </>

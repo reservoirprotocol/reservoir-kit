@@ -86,6 +86,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   tokenId?: string
+  chainId?: number
   collectionId?: string
   orderId?: string
   feesOnTopBps?: string[] | null
@@ -97,6 +98,7 @@ type Props = {
 export const BuyModalRenderer: FC<Props> = ({
   open,
   tokenId,
+  chainId,
   collectionId,
   orderId,
   feesOnTopBps,
@@ -119,10 +121,26 @@ export const BuyModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<BuyModalStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [quantity, setQuantity] = useState(1)
-  const { chain: activeChain } = useNetwork()
-  const chainCurrency = useChainCurrency()
+
+  const { chains, chain: activeWalletChain } = useNetwork()
+
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const wagmiChain = chains.find(({ id }) => {
+    rendererChain?.id === id
+  })
+
+  const chainCurrency = useChainCurrency(rendererChain?.id)
   const blockExplorerBaseUrl =
-    activeChain?.blockExplorers?.default?.url || 'https://etherscan.io'
+    wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
@@ -135,16 +153,20 @@ export const BuyModalRenderer: FC<Props> = ({
     },
     {
       revalidateFirstPage: true,
-    }
+    },
+    rendererChain?.id
   )
   const { data: collections, mutate: mutateCollection } = useCollections(
     open && {
       id: collectionId,
       normalizeRoyalties,
-    }
+    },
+    {},
+    rendererChain?.id
   )
   const { address } = useAccount()
   const { data: balance } = useBalance({
+    chainId: rendererChain?.id,
     address: address,
     token:
       currency?.contract !== zeroAddress
@@ -174,7 +196,8 @@ export const BuyModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && orderId && orderId.length > 0 ? true : false
+    open && orderId && orderId.length > 0 ? true : false,
+    rendererChain?.id
   )
 
   const listing = useMemo(
@@ -195,7 +218,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [listing, token, path, is1155, orderId])
 
   const { data: usdFeeConversion } = useCurrencyConversion(
-    undefined,
+    rendererChain?.id,
     currency?.contract,
     'usd'
   )
@@ -203,13 +226,9 @@ export const BuyModalRenderer: FC<Props> = ({
   const feeUsd = feeOnTop * usdPrice
   const totalUsd = totalIncludingFees * usdPrice
 
-  const client = useReservoirClient()
-
-  const { chain } = useNetwork()
-
   const addFundsLink = currency?.contract
-    ? `https://jumper.exchange/?toChain=${chain?.id}&toToken=${currency?.contract}`
-    : `https://jumper.exchange/?toChain=${chain?.id}`
+    ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${currency?.contract}`
+    : `https://jumper.exchange/?toChain=${rendererChain?.id}`
 
   const fetchPath = useCallback(() => {
     if (
@@ -239,6 +258,7 @@ export const BuyModalRenderer: FC<Props> = ({
     client.actions
       .buyToken({
         options,
+        chainId: rendererChain?.id,
         items: [
           {
             token: `${contract}:${tokenId}`,
@@ -282,6 +302,12 @@ export const BuyModalRenderer: FC<Props> = ({
   const buyToken = useCallback(() => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
+      setTransactionError(error)
+      throw error
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
     }
@@ -361,6 +387,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
     client.actions
       .buyToken({
+        chainId: rendererChain?.id,
         items: items,
         expectedPrice: {
           [currency?.contract || zeroAddress]: {
@@ -452,6 +479,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [
     tokenId,
     collectionId,
+    chainId,
     orderId,
     feesOnTopBps,
     feesOnTopUsd,
