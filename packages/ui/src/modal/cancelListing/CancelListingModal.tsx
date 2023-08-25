@@ -51,28 +51,33 @@ export function CancelListingModal({
     openState
   )
 
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { chains, chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
-  const { chain, chains } = useNetwork()
+  const { switchNetworkAsync } = useSwitchNetwork()
 
-  const preferredChainId = chainId || client?.currentChain()?.id
+  const currentChain = client?.currentChain()
 
-  const reservoirChain =
-    client?.chains.find((c) => c.id === preferredChainId) ||
-    client?.currentChain()
-  const selectedChain = chains.find((c) => c.id === preferredChainId) || chain
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
 
-  const handleCancel = async (callback: () => void): Promise<void> => {
-    if (selectedChain?.id !== client?.currentChain()?.id) {
-      await switchNetworkAsync?.()
+  const wagmiChain = chains.find(({ id }) => {
+    modalChain?.id === id
+  })
+
+  const handleCancel = async (cancelListing: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      const chain = await switchNetworkAsync?.()
+      if (chain?.id !== modalChain?.id) return
+      cancelListing()
     }
-
-    callback()
   }
 
   return (
     <CancelListingModalRenderer
-      chainId={selectedChain?.id}
+      chainId={modalChain?.id}
       listingId={listingId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
@@ -91,8 +96,8 @@ export function CancelListingModal({
       }) => {
         const expires = useTimeSince(listing?.expiration)
         const listingImg = tokenId
-          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${tokenId}/image/v1?imageSize=small`
-          : `${reservoirChain?.baseApiUrl}/redirect/collections/${contract}/image/v1`
+          ? `${modalChain?.baseApiUrl}/redirect/tokens/${contract}:${tokenId}/image/v1?imageSize=small`
+          : `${modalChain?.baseApiUrl}/redirect/collections/${contract}/image/v1`
 
         useEffect(() => {
           if (cancelStep === CancelStep.Complete && onCancelComplete) {
@@ -281,7 +286,7 @@ export function CancelListingModal({
                     target="_blank"
                   >
                     View on{' '}
-                    {selectedChain?.blockExplorers?.default.name || 'Etherscan'}
+                    {wagmiChain?.blockExplorers?.default.name || 'Etherscan'}
                   </Anchor>
                 </Flex>
                 <Button
