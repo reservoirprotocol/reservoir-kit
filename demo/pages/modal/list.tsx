@@ -94,6 +94,7 @@ const Index: NextPage = () => {
           value={chainId}
           onChange={(e) => setChainId(e.target.value)}
         />
+      </div>
       <div>
         <label>Currencies: </label>
         <textarea

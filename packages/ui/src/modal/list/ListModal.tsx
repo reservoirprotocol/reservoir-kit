@@ -48,7 +48,7 @@ import { CurrencySelector } from '../CurrencySelector'
 import { zeroAddress } from 'viem'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
-import { useSwitchNetwork } from 'wagmi'
+import { useSwitchNetwork, useNetwork } from 'wagmi'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -141,14 +141,21 @@ export function ListModal({
     openState
   )
 
+  const { chains, chain: activeWalletChain } = useNetwork()
+  const client = useReservoirClient()
   const { switchNetworkAsync } = useSwitchNetwork()
 
-  const client = useReservoirClient()
   const currentChain = client?.currentChain()
 
-  const reservoirChain = chainId
-    ? client?.chains.find((chain) => chain.id === chainId) || currentChain
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
     : currentChain
+
+  const wagmiChain = chains.find(({ id }) => {
+    modalChain?.id === id
+  })
 
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
     Marketplace[]
@@ -160,17 +167,18 @@ export function ListModal({
     nativeOnly = true
   }
 
-  const handleList = async (callback: () => void): Promise<void> => {
-    if (currentChain?.id !== reservoirChain?.id) {
-      await switchNetworkAsync?.(reservoirChain?.id)
+  const handleList = async (listToken: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      const chain = await switchNetworkAsync?.(modalChain?.id)
+      if (chain?.id !== modalChain?.id) return
+      listToken()
     }
-    callback()
   }
 
   return (
     <ListModalRenderer
       open={open}
-      chainId={reservoirChain?.id}
+      chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
       currencies={currencies}
@@ -818,7 +826,7 @@ export function ListModal({
                           <a
                             key={data.listing.orderbook}
                             target="_blank"
-                            href={`${reservoirChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                            href={`${modalChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
                           >
                             <Image
                               css={{ width: 24 }}
