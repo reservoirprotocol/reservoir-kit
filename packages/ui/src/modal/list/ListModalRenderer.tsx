@@ -17,7 +17,7 @@ import {
   useChainCurrency,
   useOnChainRoyalties,
 } from '../../hooks'
-import { useAccount, useWalletClient } from 'wagmi'
+import { useAccount, useWalletClient, useNetwork } from 'wagmi'
 
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
@@ -83,6 +83,7 @@ type Props = {
   open: boolean
   tokenId?: string
   collectionId?: string
+  chainId?: number
   currencies?: Currency[]
   normalizeRoyalties?: boolean
   enableOnChainRoyalties: boolean
@@ -117,6 +118,7 @@ export const ListModalRenderer: FC<Props> = ({
   tokenId,
   collectionId,
   currencies,
+  chainId,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
   oracleEnabled = false,
@@ -125,7 +127,22 @@ export const ListModalRenderer: FC<Props> = ({
 }) => {
   const { data: wallet } = useWalletClient()
   const account = useAccount()
+
+  const { chains, chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const wagmiChain = chains.find(({ id }) => {
+    rendererChain?.id === id
+  })
+
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
   const [allMarketplaces] = useMarketplaces(collectionId, true, feesBps)
@@ -135,7 +152,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
     null
   )
-  const chainCurrency = useChainCurrency()
+  const chainCurrency = useChainCurrency(rendererChain?.id)
   const defaultCurrency = {
     contract: chainCurrency.address,
     symbol: chainCurrency.symbol,
@@ -149,7 +166,9 @@ export const ListModalRenderer: FC<Props> = ({
     open && {
       id: collectionId,
       normalizeRoyalties,
-    }
+    },
+    {},
+    rendererChain?.id
   )
   const collection = collections && collections[0] ? collections[0] : undefined
 
@@ -186,7 +205,8 @@ export const ListModalRenderer: FC<Props> = ({
     collectionId,
     true,
     feesBps,
-    royaltyBps
+    royaltyBps,
+    rendererChain?.id
   )
   const {
     data: unapprovedMarketplaces,
@@ -356,6 +376,12 @@ export const ListModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (activeWalletChain?.id !== rendererChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
+      setTransactionError(error)
+      throw error
+    }
+
     if (!client) {
       const error = new Error('ReservoirClient was not initialized')
       setTransactionError(error)
@@ -448,6 +474,7 @@ export const ListModalRenderer: FC<Props> = ({
 
     client.actions
       .listToken({
+        chainId: rendererChain?.id,
         listings: listingData.map((data) => data.listing),
         wallet,
         onProgress: (steps: Execute['steps']) => {
@@ -530,6 +557,7 @@ export const ListModalRenderer: FC<Props> = ({
     marketplaces,
     wallet,
     collectionId,
+    chainId,
     tokenId,
     expirationOption,
     currency,
