@@ -1,3 +1,6 @@
+
+## [v1.6.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/480f4a718e8ad9969dfe6a006fdfd2eb1c133211) (2023-08-25)
+
 ## [v1.6.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2e9f33cb50e6669a0f2e5629e80c2415c24a7450) (2023-08-22)
 
 - Improve error messaging to surface more information from API errors
