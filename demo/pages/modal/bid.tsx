@@ -36,6 +36,7 @@ const BidPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
+  const [chainId, setChainId] = useState('')
   const [attributeKey, setAttributeKey] = useState('')
   const [attributeValue, setAttributeValue] = useState('')
   const [currencies, setCurrencies] = useState<
@@ -123,6 +124,14 @@ const BidPage: NextPage = () => {
         />
       </div>
       <div>
+        <label>Chain Override: </label>
+        <input
+          type="text"
+          value={chainId}
+          onChange={(e) => setChainId(e.target.value)}
+        />
+      </div>
+      <div>
         <label>Currencies: </label>
         <textarea
           onChange={() => {}}
@@ -185,7 +194,7 @@ const BidPage: NextPage = () => {
       </div>
 
       <BidModal
-        chainId={1}
+        chainId={Number(chainId)}
         trigger={
           <button
             style={{
