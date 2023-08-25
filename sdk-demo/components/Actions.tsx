@@ -1,17 +1,21 @@
+'use client'
 import { useAccount } from 'wagmi'
-import BuyButton from 'src/BuyButton'
-import { useState } from 'react'
-import BidButton from 'src/BidButton'
+import BuyButton from './BuyButton'
+import BidButton from './BidButton'
+import { useEffect, useState } from 'react'
 
 function Actions() {
   const { isConnected } = useAccount()
-  const [items, setItems] = useState('')
 
-  if (!isConnected) {
-    return null
-  }
+  const [hasMounted, setHasMounted] = useState(false)
 
-  return (
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
+  if (!hasMounted) return <></>
+
+  return isConnected ? (
     <div
       style={{
         padding: 10,
@@ -23,6 +27,8 @@ function Actions() {
       <BuyButton />
       <BidButton />
     </div>
+  ) : (
+    <></>
   )
 }
 
