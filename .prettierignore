@@ -11,4 +11,13 @@ scripts/
 .github/
 packages/**/dist/
 packages/sdk/src/types/api.ts
-packages/sdk/src/tests/
+packages/sdk/tests/
+packages/sdk/jest.config.mjs
+**/package.json
+**/CHANGELOG.md
+package.json
+tsconfig.production.json
+tsconfig.base.json
+tsconfig.json
+.yarnrc.yml
+.prettierignore

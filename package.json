@@ -11,11 +11,10 @@
     "sdk-demo"
   ],
   "scripts": {
-    "lint": "prettier --write .",
+    "lint": "tsc --skipLibCheck --noEmit",
     "demo": "yarn workspace reservoir-kit-demo dev",
     "clean": "yarn workspaces foreach --exclude primitives --exclude ssr-testing run clean",
     "test": "yarn workspace @reservoir0x/reservoir-sdk test",
-    "types:check": "tsc --skipLibCheck --noEmit",
     "dev:clean": "./scripts/package-cleanup.sh",
     "dev": "yarn dev:watch",
     "dev:watch": "parcel watch 'packages/*' --no-cache --no-hmr --no-source-maps",
