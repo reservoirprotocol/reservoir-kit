@@ -49,12 +49,13 @@ import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
-import { useFallbackState } from '../../hooks'
+import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 type BidCallbackData = {
   tokenId?: string
@@ -80,6 +81,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
+  chainId?: number
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
@@ -137,6 +139,7 @@ export function BidModal({
   openState,
   trigger,
   tokenId,
+  chainId,
   collectionId,
   attribute,
   normalizeRoyalties,
@@ -155,12 +158,31 @@ export function BidModal({
     openState
   )
 
+  const client = useReservoirClient()
+  const { chain: activeWalletChain } = useNetwork()
+  const { switchNetworkAsync } = useSwitchNetwork()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
   const datetimeElement = useRef<Flatpickr | null>(null)
   const [stepTitle, setStepTitle] = useState('')
   const [localMarketplace, setLocalMarketplace] = useState<ReturnType<
     typeof getLocalMarketplaceData
   > | null>(null)
   const [attributesSelectable, setAttributesSelectable] = useState(false)
+
+  const handlePlaceBid = async (placeBid: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      await switchNetworkAsync?.(modalChain?.id)
+    }
+    placeBid()
+  }
 
   useEffect(() => {
     setLocalMarketplace(getLocalMarketplaceData())
@@ -170,6 +192,7 @@ export function BidModal({
   return (
     <BidModalRenderer
       open={open}
+      chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
       attribute={attribute}
@@ -710,7 +733,7 @@ export function BidModal({
                     )}
                     {bidAmountPerUnit !== '' && hasEnoughWrappedCurrency && (
                       <Button
-                        onClick={() => placeBid()}
+                        onClick={() => handlePlaceBid(placeBid)}
                         css={{ width: '100%' }}
                       >
                         {copy.ctaBid.length > 0
