@@ -33,6 +33,7 @@ const Index: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
+  const [chainId, setChainId] = useState('')
   const [currencies, setCurrencies] = useState<
     { contract: string; symbol: string; decimals?: number }[] | undefined
   >([
@@ -86,6 +87,13 @@ const Index: NextPage = () => {
           onChange={(e) => setTokenId(e.target.value)}
         />
       </div>
+      <div>
+        <label>Chain Override: </label>
+        <input
+          type="text"
+          value={chainId}
+          onChange={(e) => setChainId(e.target.value)}
+        />
       <div>
         <label>Currencies: </label>
         <textarea
@@ -169,7 +177,7 @@ const Index: NextPage = () => {
       </div>
 
       <ListModal
-        chainId={1}
+        chainId={Number(chainId)}
         trigger={
           <button
             style={{
