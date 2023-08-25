@@ -15,6 +15,7 @@ import {
   useCurrencyConversion,
 } from '../../hooks'
 import { useAccount, useBalance, useWalletClient, useNetwork } from 'wagmi'
+import { getNetwork } from 'wagmi/actions'
 
 import {
   BuyPath,
@@ -106,7 +107,6 @@ export const BuyModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
   const [totalPrice, setTotalPrice] = useState(0)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0)
@@ -129,14 +129,12 @@ export const BuyModalRenderer: FC<Props> = ({
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => {
-    rendererChain?.id === id
-  })
+  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
+
+  const { data: wallet } = useWalletClient()
 
   const chainCurrency = useChainCurrency(rendererChain?.id)
   const blockExplorerBaseUrl =
@@ -306,7 +304,7 @@ export const BuyModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (rendererChain?.id !== activeWalletChain?.id) {
+    if (rendererChain?.id !== getNetwork().chain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
@@ -479,7 +477,6 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [
     tokenId,
     collectionId,
-    chainId,
     orderId,
     feesOnTopBps,
     feesOnTopUsd,
@@ -489,6 +486,9 @@ export const BuyModalRenderer: FC<Props> = ({
     client,
     currency,
     totalPrice,
+    chainId,
+    rendererChain,
+    activeWalletChain,
     totalIncludingFees,
     mutateListings,
     mutateTokens,
