@@ -234,7 +234,7 @@ export const BuyModalRenderer: FC<Props> = ({
       !client ||
       !tokenId ||
       !contract ||
-      !wallet ||
+      !address ||
       !is1155 ||
       orderId
     ) {
@@ -264,7 +264,11 @@ export const BuyModalRenderer: FC<Props> = ({
             fillType: 'trade',
           },
         ],
-        wallet,
+        wallet: {
+          address: async () => {
+            return address
+          },
+        } as any,
         onProgress: () => {},
         precheck: true,
       })
@@ -285,7 +289,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [
     open,
     client,
-    wallet,
+    address,
     tokenId,
     contract,
     is1155,
@@ -605,6 +609,7 @@ export const BuyModalRenderer: FC<Props> = ({
       } else {
         setFeeOnTop(0)
       }
+
       setTotalPrice(total)
       setTotalIncludingFees(total + totalFees)
       setAverageUnitPrice(total / quantity)
@@ -628,7 +633,6 @@ export const BuyModalRenderer: FC<Props> = ({
     feesOnTopUsd,
     usdPrice,
     feeOnTop,
-    client,
     quantity,
     token,
     chainCurrency.address,
