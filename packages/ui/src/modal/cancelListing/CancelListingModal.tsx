@@ -8,7 +8,7 @@ import {
 import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
-import { useNetwork } from 'wagmi'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCircleExclamation,
@@ -26,6 +26,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   listingId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   onClose?: (data: any, currentStep: CancelStep) => void
@@ -36,6 +37,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 export function CancelListingModal({
   openState,
   listingId,
+  chainId,
   trigger,
   normalizeRoyalties,
   copyOverrides,
@@ -48,12 +50,34 @@ export function CancelListingModal({
     openState ? openState[0] : false,
     openState
   )
+
+  const { chains, chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
-  const { chain: activeChain } = useNetwork()
-  const reservoirChain = client?.currentChain()
+  const { switchNetworkAsync } = useSwitchNetwork()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const wagmiChain = chains.find(({ id }) => {
+    modalChain?.id === id
+  })
+
+  const handleCancel = async (cancelListing: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      const chain = await switchNetworkAsync?.()
+      if (chain?.id !== modalChain?.id) return
+      cancelListing()
+    }
+  }
 
   return (
     <CancelListingModalRenderer
+      chainId={modalChain?.id}
       listingId={listingId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
@@ -72,8 +96,8 @@ export function CancelListingModal({
       }) => {
         const expires = useTimeSince(listing?.expiration)
         const listingImg = tokenId
-          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${tokenId}/image/v1?imageSize=small`
-          : `${reservoirChain?.baseApiUrl}/redirect/collections/${contract}/image/v1`
+          ? `${modalChain?.baseApiUrl}/redirect/tokens/${contract}:${tokenId}/image/v1?imageSize=small`
+          : `${modalChain?.baseApiUrl}/redirect/collections/${contract}/image/v1`
 
         useEffect(() => {
           if (cancelStep === CancelStep.Complete && onCancelComplete) {
@@ -175,7 +199,10 @@ export function CancelListingModal({
                     ? 'This action will cancel your listing. You will be prompted to confirm this cancellation from your wallet. A gas fee is required.'
                     : 'This will cancel your listing for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
-                <Button onClick={cancelOrder} css={{ m: '$4' }}>
+                <Button
+                  onClick={() => handleCancel(cancelOrder)}
+                  css={{ m: '$4' }}
+                >
                   {!isOracleOrder && (
                     <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
                   )}
@@ -259,7 +286,7 @@ export function CancelListingModal({
                     target="_blank"
                   >
                     View on{' '}
-                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
+                    {wagmiChain?.blockExplorers?.default.name || 'Etherscan'}
                   </Anchor>
                 </Flex>
                 <Button

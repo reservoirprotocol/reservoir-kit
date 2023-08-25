@@ -34,12 +34,14 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   bidId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
 
 export const CancelBidModalRenderer: FC<Props> = ({
   open,
+  chainId,
   bidId,
   normalizeRoyalties,
   children,
@@ -49,9 +51,24 @@ export const CancelBidModalRenderer: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<CancelBidStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
-  const { chain: activeChain } = useNetwork()
+
+  const { chains, chain: activeWalletChain } = useNetwork()
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const wagmiChain = chains.find(({ id }) => {
+    rendererChain?.id === id
+  })
+
   const blockExplorerBaseUrl =
-    activeChain?.blockExplorers?.default.url || 'https://etherscan.io'
+    wagmiChain?.blockExplorers?.default.url || 'https://etherscan.io'
 
   const { data: bids, isFetchingPage } = useBids(
     {
@@ -63,7 +80,8 @@ export const CancelBidModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && bidId ? true : false
+    open && bidId ? true : false,
+    rendererChain?.id
   )
 
   const bid = bids && bids[0] ? bids[0] : undefined
@@ -76,11 +94,15 @@ export const CancelBidModalRenderer: FC<Props> = ({
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
   const totalUsd = usdPrice * (bid?.price?.amount?.decimal || 0)
 
-  const client = useReservoirClient()
-
   const cancelOrder = useCallback(() => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
+      setTransactionError(error)
+      throw error
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
     }
@@ -101,6 +123,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
 
     client.actions
       .cancelOrder({
+        chainId: rendererChain?.id,
         ids: [bidId],
         wallet,
         onProgress: (steps: Execute['steps']) => {
@@ -165,7 +188,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
         setStepData(null)
         setSteps(null)
       })
-  }, [bidId, client, wallet])
+  }, [bidId, client, chainId, wallet])
 
   useEffect(() => {
     if (!open) {
