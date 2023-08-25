@@ -55,7 +55,7 @@ import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
-import { useSwitchNetwork } from 'wagmi'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 type BidCallbackData = {
   tokenId?: string
@@ -158,12 +158,16 @@ export function BidModal({
     openState
   )
 
-  const { switchNetworkAsync } = useSwitchNetwork()
   const client = useReservoirClient()
+  const { chain: activeWalletChain } = useNetwork()
+  const { switchNetworkAsync } = useSwitchNetwork()
+
   const currentChain = client?.currentChain()
 
-  const selectedChain = chainId
-    ? client?.chains.find((chain) => chain.id === chainId) || currentChain
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
     : currentChain
 
   const datetimeElement = useRef<Flatpickr | null>(null)
@@ -173,11 +177,11 @@ export function BidModal({
   > | null>(null)
   const [attributesSelectable, setAttributesSelectable] = useState(false)
 
-  const handlePlaceBid = async (callback: () => void): Promise<void> => {
-    if (currentChain?.id !== selectedChain?.id) {
-      await switchNetworkAsync?.(selectedChain?.id)
+  const handlePlaceBid = async (placeBid: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      await switchNetworkAsync?.(modalChain?.id)
     }
-    callback()
+    placeBid()
   }
 
   useEffect(() => {
@@ -188,7 +192,7 @@ export function BidModal({
   return (
     <BidModalRenderer
       open={open}
-      chainId={selectedChain?.id}
+      chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
       attribute={attribute}
