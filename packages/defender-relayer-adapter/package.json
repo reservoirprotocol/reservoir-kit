@@ -33,7 +33,7 @@
     ],
     "dependencies": {
         "@openzeppelin/defender-relay-client": "^1.47.1",
-        "@reservoir0x/ethers-wallet-adapter": "^0.0.13",
+        "@reservoir0x/ethers-wallet-adapter": "^0.0.14",
         "axios": "^0.27.2"
     },
     "publishConfig": {
