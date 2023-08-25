@@ -17,7 +17,7 @@ import {
   useChainCurrency,
   useOnChainRoyalties,
 } from '../../hooks'
-import { useAccount, useWalletClient } from 'wagmi'
+import { useAccount, useWalletClient, useNetwork } from 'wagmi'
 
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
@@ -127,8 +127,21 @@ export const ListModalRenderer: FC<Props> = ({
 }) => {
   const { data: wallet } = useWalletClient()
   const account = useAccount()
+
+  const { chains, chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
-  const selectedChain = client?.chains.find((chain) => chain.id === chainId)
+
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => {
+        id === chainId
+      }) || currentChain
+    : currentChain
+
+  const wagmiChain = chains.find(({ id }) => {
+    rendererChain?.id === id
+  })
 
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
@@ -139,7 +152,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
     null
   )
-  const chainCurrency = useChainCurrency(selectedChain?.id)
+  const chainCurrency = useChainCurrency(rendererChain?.id)
   const defaultCurrency = {
     contract: chainCurrency.address,
     symbol: chainCurrency.symbol,
@@ -155,7 +168,7 @@ export const ListModalRenderer: FC<Props> = ({
       normalizeRoyalties,
     },
     {},
-    selectedChain?.id
+    rendererChain?.id
   )
   const collection = collections && collections[0] ? collections[0] : undefined
 
@@ -193,7 +206,7 @@ export const ListModalRenderer: FC<Props> = ({
     true,
     feesBps,
     royaltyBps,
-    selectedChain?.id
+    rendererChain?.id
   )
   const {
     data: unapprovedMarketplaces,
@@ -363,10 +376,10 @@ export const ListModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (wallet.chain.id !== selectedChain?.id) {
+    if (activeWalletChain?.id !== rendererChain?.id) {
       const error = new Error(`Mismatching chainIds`)
-      setTransactionError(error);
-      throw error;
+      setTransactionError(error)
+      throw error
     }
 
     if (!client) {
@@ -461,6 +474,7 @@ export const ListModalRenderer: FC<Props> = ({
 
     client.actions
       .listToken({
+        chainId: rendererChain?.id,
         listings: listingData.map((data) => data.listing),
         wallet,
         onProgress: (steps: Execute['steps']) => {
@@ -543,6 +557,7 @@ export const ListModalRenderer: FC<Props> = ({
     marketplaces,
     wallet,
     collectionId,
+    chainId,
     tokenId,
     expirationOption,
     currency,

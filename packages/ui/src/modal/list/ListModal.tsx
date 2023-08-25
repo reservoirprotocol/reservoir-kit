@@ -141,7 +141,7 @@ export function ListModal({
     openState
   )
 
-  const { chains, chain: activeWalletChain } = useNetwork()
+  const { chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
   const { switchNetworkAsync } = useSwitchNetwork()
 
@@ -152,10 +152,6 @@ export function ListModal({
         id === chainId
       }) || currentChain
     : currentChain
-
-  const wagmiChain = chains.find(({ id }) => {
-    modalChain?.id === id
-  })
 
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
     Marketplace[]
@@ -672,7 +668,7 @@ export function ListModal({
                           marketplace.price == 0 ||
                           Number(marketplace.price) < MINIMUM_AMOUNT
                       )}
-                      onClick={listToken}
+                      onClick={() => handleList(listToken)}
                       css={{ width: '100%' }}
                     >
                       {copy.ctaList}
