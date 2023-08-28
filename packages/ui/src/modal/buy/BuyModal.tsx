@@ -222,7 +222,7 @@ export function BuyModal({
             {buyStep === BuyStep.Unavailable && !loading && (
               <Flex direction="column">
                 <TokenLineItem
-                  chainId={chainId}
+                  chainId={modalChain?.id}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -410,6 +410,7 @@ export function BuyModal({
             {buyStep === BuyStep.Approving && token && (
               <Flex direction="column">
                 <TokenLineItem
+                  chainId={modalChain?.id}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
