@@ -26,6 +26,7 @@ import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import { Currency } from '../../types/Currency'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { getNetwork } from 'wagmi/actions'
 
 export enum ListStep {
   SelectMarkets,
@@ -125,23 +126,18 @@ export const ListModalRenderer: FC<Props> = ({
   feesBps,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
   const account = useAccount()
 
-  const { chains, chain: activeWalletChain } = useNetwork()
+  const { chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
 
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => {
-    rendererChain?.id === id
-  })
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
@@ -214,7 +210,8 @@ export const ListModalRenderer: FC<Props> = ({
   } = useListingPreapprovalCheck(
     marketplaces,
     open ? tokenId : undefined,
-    open ? contract : undefined
+    open ? contract : undefined,
+    rendererChain?.id
   )
 
   const { data: tokens } = useTokens(
@@ -226,7 +223,8 @@ export const ListModalRenderer: FC<Props> = ({
     },
     {
       revalidateFirstPage: true,
-    }
+    },
+    rendererChain?.id
   )
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
@@ -236,7 +234,9 @@ export const ListModalRenderer: FC<Props> = ({
     open && is1155 ? account.address : undefined,
     {
       tokens: [`${contract}:${tokenId}`],
-    }
+    },
+    {},
+    rendererChain?.id
   )
 
   const quantityAvailable =
@@ -376,7 +376,7 @@ export const ListModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (activeWalletChain?.id !== rendererChain?.id) {
+    if (rendererChain?.id !== getNetwork().chain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error

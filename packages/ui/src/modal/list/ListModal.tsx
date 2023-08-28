@@ -148,9 +148,7 @@ export function ListModal({
   const currentChain = client?.currentChain()
 
   const modalChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
@@ -164,11 +162,13 @@ export function ListModal({
   }
 
   const handleList = async (listToken: () => void): Promise<void> => {
+    console.log(modalChain?.id, activeWalletChain?.id)
     if (modalChain?.id !== activeWalletChain?.id) {
       const chain = await switchNetworkAsync?.(modalChain?.id)
       if (chain?.id !== modalChain?.id) return
       listToken()
     }
+    listToken()
   }
 
   return (
@@ -327,6 +327,7 @@ export function ListModal({
                 }}
               >
                 <TokenStats
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   royaltyBps={royaltyBps}
@@ -342,6 +343,7 @@ export function ListModal({
                       >
                         List item in
                         <CurrencySelector
+                          chainId={modalChain?.id}
                           currency={currency}
                           currencies={currencies}
                           setCurrency={setCurrency}
@@ -466,6 +468,7 @@ export function ListModal({
                 }}
               >
                 <TokenStats
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   royaltyBps={royaltyBps}
@@ -577,6 +580,7 @@ export function ListModal({
                     {selectedMarketplaces.map((marketplace) => (
                       <Box key={marketplace.name} css={{ mb: '$3' }}>
                         <MarketplacePriceInput
+                          chainId={modalChain?.id}
                           marketplace={marketplace}
                           collection={collection}
                           currency={currency}

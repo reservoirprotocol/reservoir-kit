@@ -20,6 +20,7 @@ type MarketPlaceInputProps = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   currency: Currency
   currencies: Currency[]
+  chainId?: number
   setCurrency: (currency: Currency) => void
   usdPrice?: number | null
   quantity?: number
@@ -35,6 +36,7 @@ const MarketplacePriceInput = ({
   currencies,
   setCurrency,
   usdPrice,
+  chainId,
   quantity = 1,
   nativeOnly,
   onChange,
@@ -62,6 +64,7 @@ const MarketplacePriceInput = ({
         ) : null}
         {nativeOnly && currencies.length > 1 ? (
           <CurrencySelector
+            chainId={chainId}
             currency={currency}
             currencies={currencies}
             setCurrency={setCurrency}
@@ -110,6 +113,7 @@ const MarketplacePriceInput = ({
       </Box>
       <Flex direction="column" align="end" css={{ ml: '$3' }}>
         <FormatCryptoCurrency
+          chainId={chainId}
           amount={profit}
           address={currency.contract}
           decimals={currency.decimals}

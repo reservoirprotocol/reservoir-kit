@@ -8,12 +8,14 @@ type Props = {
   valueCss?: CSS
   currencies: Currency[]
   currency: Currency
+  chainId?: number
   setCurrency: (currency: Currency) => void
 }
 
 export const CurrencySelector: FC<Props> = ({
   triggerCss,
   valueCss,
+  chainId,
   currencies,
   currency,
   setCurrency,
@@ -33,6 +35,7 @@ export const CurrencySelector: FC<Props> = ({
             <Flex align="center" css={{ ...valueCss }}>
               <Flex align="center">
                 <CryptoCurrencyIcon
+                  chainId={chainId}
                   address={currency.contract}
                   css={{ height: 18 }}
                 />
@@ -58,6 +61,7 @@ export const CurrencySelector: FC<Props> = ({
           <Select.ItemText>
             <Flex align="center" css={{ gap: '$1' }}>
               <CryptoCurrencyIcon
+                chainId={chainId}
                 address={option.contract}
                 css={{ height: 18 }}
               />

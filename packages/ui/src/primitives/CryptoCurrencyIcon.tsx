@@ -26,6 +26,8 @@ const CryptoCurrencyIcon: FC<Props> = ({
     (chain) => chain.id === chainCurrency.chainId
   )
 
+  console.log(chain)
+
   if (chainCurrency.symbol === 'ETH') {
     if (zeroAddress === address) {
       return (
