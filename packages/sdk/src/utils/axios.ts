@@ -12,7 +12,11 @@ _axios.interceptors.response.use(
     return _res
   },
   (error) => {
-    return Promise.reject(APIError(error.message))
+    return Promise.reject(
+      APIError(
+        `${error.message}: ${error.response?.data?.message || 'Unknown Reason'}`
+      )
+    )
   }
 )
 

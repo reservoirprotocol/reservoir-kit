@@ -201,7 +201,7 @@ export interface paths {
   };
   "/events/asks/v3": {
     /**
-     * Every time an ask of a collection or token changes (i.e. the ‘listing’), an event is generated. This API is designed to be polled at high frequency, in order to keep an external system in sync with accurate prices for any token.
+     * Every time an ask status changes, an event is generated. This API is designed to be polled at high frequency, in order to keep an external system in sync with accurate prices for any token.
      *
      * There are multiple event types, which describe what caused the change in price:
      *
@@ -223,15 +223,7 @@ export interface paths {
      *
      * - `bootstrap` > initial loading of data, so that all tokens have a price associated
      *
-     * Some considerations to keep in mind
-     *
-     * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
-     *
-     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
-     *
-     * - Events are only generated if the best listing changes. So if a new listing happens without changing the best listing, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
-     *
-     * - Private listings (asks) will not appear in the results.
+     * Note: Private listings (asks) will not appear in the results.
      */
     get: operations["getEventsAsksV3"];
   };
@@ -245,7 +237,7 @@ export interface paths {
   };
   "/events/bids/v3": {
     /**
-     * Every time a bid of a collection or token changes (i.e. the ‘offer’), an event is generated. This API is designed to be polled at high frequency, in order to keep an external system in sync with accurate prices for any token.
+     * Every time a bid status changes, an event is generated. This API is designed to be polled at high frequency, in order to keep an external system in sync with accurate prices for any token.
      *
      * There are multiple event types, which describe what caused the change in price:
      *
@@ -272,8 +264,6 @@ export interface paths {
      * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
      *
      * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
-     *
-     * - Events are only generated if the best bid changes. So if a new bid happens without changing the best bid, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
      */
     get: operations["getEventsBidsV3"];
   };
@@ -1115,6 +1105,9 @@ export interface paths {
   "/execute/sell/v7": {
     /** Use this API to accept bids. We recommend using the SDK over this API as the SDK will iterate through the steps and return callbacks. Please mark `excludeEOA` as `true` to exclude Blur orders. */
     post: operations["postExecuteSellV7"];
+  };
+  "/execute/transfer/v1": {
+    post: operations["postExecuteTransferV1"];
   };
   "/tokens/flag/v1": {
     post: operations["postTokensFlagV1"];
@@ -2164,6 +2157,7 @@ export interface definitions {
   Model85: {
     token?: definitions["Model78"];
     market?: definitions["Model84"];
+    updatedAt?: string;
   };
   Model86: definitions["Model85"][];
   getTokensV6Response: {
@@ -4131,10 +4125,14 @@ export interface definitions {
     /** @description No rarity rank for collections over 100k */
     rarityRank?: number;
     media?: string;
+    /** @default false */
+    isFlagged?: boolean;
+    lastFlagUpdate?: string;
+    lastFlagChange?: string;
     collection?: definitions["Model306"];
     lastSale?: definitions["Model51"];
     topBid?: definitions["Model307"];
-    /** @description Can be null. */
+    /** @description The value of the last sale.Can be null. */
     lastAppraisalValue?: number;
     attributes?: definitions["Model309"];
   };
@@ -4545,8 +4543,6 @@ export interface definitions {
   Model374: {
     /** @description The queue name to retry */
     queueName: string;
-    /** @default / */
-    vhost?: string;
   };
   Model375: {
     id: string;
@@ -5346,6 +5342,8 @@ export interface definitions {
      * @enum {string}
      */
     swapProvider?: "uniswap" | "1inch";
+    /** @description Referrer address where supported */
+    referrer?: string;
     /** @description Optional X2Y2 API key used for filling. */
     x2y2ApiKey?: string;
     /** @description Optional OpenSea API key used for filling. You don't need to pass your own key, but if you don't, you are more likely to be rate-limited. */
@@ -5836,6 +5834,42 @@ export interface definitions {
     path?: definitions["Model490"];
   };
   Model491: {
+    token: string;
+    /** @default 1 */
+    quantity?: number;
+  };
+  Model492: definitions["Model491"][];
+  Model493: {
+    from: string;
+    to: string;
+    items?: definitions["Model492"];
+  };
+  Model494: {
+    /**
+     * @description Returns `complete` or `incomplete`.
+     * @enum {string}
+     */
+    status: "complete" | "incomplete";
+    data?: definitions["metadata"];
+  };
+  Model495: definitions["Model494"][];
+  Model496: {
+    /** @description Returns `nft-approval` or `transfer` */
+    id: string;
+    /**
+     * @description Returns `transaction`
+     * @enum {string}
+     */
+    kind: "transaction";
+    action: string;
+    description: string;
+    items: definitions["Model495"];
+  };
+  Model497: definitions["Model496"][];
+  postExecuteTransferV1Response: {
+    steps?: definitions["Model497"];
+  };
+  Model498: {
     /** @description The token to update the flag status for. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -5844,7 +5878,7 @@ export interface definitions {
      */
     flag: 0 | 1;
   };
-  Model492: {
+  Model499: {
     /** @description Refresh the given token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -5858,7 +5892,7 @@ export interface definitions {
      */
     overrideCoolDown?: boolean;
   };
-  Model493: {
+  Model500: {
     token?: string;
     /**
      * @default v6
@@ -5866,10 +5900,10 @@ export interface definitions {
      */
     router?: "v5" | "v6";
   };
-  Model494: {
+  Model501: {
     token?: string;
   };
-  Model495: {
+  Model502: {
     id: string;
     /** @default false */
     skipRevalidation?: boolean;
@@ -6813,8 +6847,8 @@ export interface operations {
          * 1 = Flagged tokens
          */
         flagStatus?: -1 | 0 | 1;
-        /** Order the items are returned in the response. Options are `floorAskPrice`, `tokenId`, and `rarity`. No rarity rank for collections over 100k. */
-        sortBy?: "floorAskPrice" | "tokenId" | "rarity";
+        /** Order the items are returned in the response. Options are `floorAskPrice`, `tokenId`, `rarity`, and `updatedAt`. No rarity rank for collections over 100k. */
+        sortBy?: "floorAskPrice" | "tokenId" | "rarity" | "updatedAt";
         sortDirection?: "asc" | "desc";
         /** Filter to tokens with a listing in a particular currency. Max limit is 50. `Example: currencies[0]: 0x0000000000000000000000000000000000000000` */
         currencies?: string[] | string;
@@ -7199,7 +7233,7 @@ export interface operations {
     };
   };
   /**
-   * Every time an ask of a collection or token changes (i.e. the ‘listing’), an event is generated. This API is designed to be polled at high frequency, in order to keep an external system in sync with accurate prices for any token.
+   * Every time an ask status changes, an event is generated. This API is designed to be polled at high frequency, in order to keep an external system in sync with accurate prices for any token.
    *
    * There are multiple event types, which describe what caused the change in price:
    *
@@ -7221,15 +7255,7 @@ export interface operations {
    *
    * - `bootstrap` > initial loading of data, so that all tokens have a price associated
    *
-   * Some considerations to keep in mind
-   *
-   * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
-   *
-   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
-   *
-   * - Events are only generated if the best listing changes. So if a new listing happens without changing the best listing, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
-   *
-   * - Private listings (asks) will not appear in the results.
+   * Note: Private listings (asks) will not appear in the results.
    */
   getEventsAsksV3: {
     parameters: {
@@ -7316,7 +7342,7 @@ export interface operations {
     };
   };
   /**
-   * Every time a bid of a collection or token changes (i.e. the ‘offer’), an event is generated. This API is designed to be polled at high frequency, in order to keep an external system in sync with accurate prices for any token.
+   * Every time a bid status changes, an event is generated. This API is designed to be polled at high frequency, in order to keep an external system in sync with accurate prices for any token.
    *
    * There are multiple event types, which describe what caused the change in price:
    *
@@ -7343,8 +7369,6 @@ export interface operations {
    * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
    *
    * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
-   *
-   * - Events are only generated if the best bid changes. So if a new bid happens without changing the best bid, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
    */
   getEventsBidsV3: {
     parameters: {
@@ -10030,7 +10054,7 @@ export interface operations {
         tokens?: string[] | string;
         /** If true, prices will include missing royalties to be added on-top. */
         normalizeRoyalties?: boolean;
-        /** Order the items are returned in the response. Options are `acquiredAt` and `lastAppraisalValue`. */
+        /** Order the items are returned in the response. Options are `acquiredAt` and `lastAppraisalValue`. `lastAppraisalValue` is the value of the last sale. */
         sortBy?: "acquiredAt" | "lastAppraisalValue";
         /** Order the items are returned in the response. */
         sortDirection?: "asc" | "desc";
@@ -11480,10 +11504,23 @@ export interface operations {
       };
     };
   };
+  postExecuteTransferV1: {
+    parameters: {
+      body: {
+        body?: definitions["Model493"];
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["postExecuteTransferV1Response"];
+      };
+    };
+  };
   postTokensFlagV1: {
     parameters: {
       body: {
-        body?: definitions["Model491"];
+        body?: definitions["Model498"];
       };
     };
     responses: {
@@ -11501,7 +11538,7 @@ export interface operations {
   postTokensRefreshV1: {
     parameters: {
       body: {
-        body?: definitions["Model492"];
+        body?: definitions["Model499"];
       };
     };
     responses: {
@@ -11514,7 +11551,7 @@ export interface operations {
   postTokensSimulatefloorV1: {
     parameters: {
       body: {
-        body?: definitions["Model493"];
+        body?: definitions["Model500"];
       };
     };
     responses: {
@@ -11527,7 +11564,7 @@ export interface operations {
   postTokensSimulatetopbidV1: {
     parameters: {
       body: {
-        body?: definitions["Model494"];
+        body?: definitions["Model501"];
       };
     };
     responses: {
@@ -11540,7 +11577,7 @@ export interface operations {
   postManagementOrdersSimulateV1: {
     parameters: {
       body: {
-        body?: definitions["Model495"];
+        body?: definitions["Model502"];
       };
     };
     responses: {

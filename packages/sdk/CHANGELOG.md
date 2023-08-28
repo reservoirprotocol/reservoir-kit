@@ -1,3 +1,14 @@
+
+## [v1.2.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/356d497855224ef3e4ac781bdb258bb73bde4787) (2023-08-25)
+
+* Sync api [7617f10](https://github.com/reservoirprotocol/reservoir-kit/commit/7617f10f34ff4be6b30859bd27ff62179e60b274)
+
+## [v1.2.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8fed14b38eec0fff1a5b34ace1e11d8be6398e52) (2023-08-22)
+
+* Improve error message handling for network errors [8ff5b75](https://github.com/reservoirprotocol/reservoir-kit/commit/8ff5b75dee8e32f9bebad42e6e4fffc20ef0d54b)
+## [v1.2.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/5a5f86a0304a3e20e64ebbe3ce247af0e2ea63e4) (2023-08-21)
+
+* Improve accuracy when checking expected price by using raw amount [1cd1944](https://github.com/reservoirprotocol/reservoir-kit/commit/1cd194442e8d2f957132513fc7327ce2fc5dbd08)
 ## [v1.1.24-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/06b76ff3e18a32654df42d82a45650a76f75b1b4) (2023-08-03)
 
 - Upgrade to typescript v5

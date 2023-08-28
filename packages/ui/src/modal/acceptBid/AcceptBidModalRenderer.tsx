@@ -318,9 +318,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     for (let currency in prices) {
       expectedPrice[currency] = {
         amount: prices[currency].netAmount,
-        raw: parseUnits(`${prices[currency].netAmount}`, prices[currency].currency.decimals || 18),
+        raw: parseUnits(
+          `${prices[currency].netAmount}`,
+          prices[currency].currency.decimals || 18
+        ),
         currencyAddress: prices[currency].currency.contract,
-        currencyDecimals: prices[currency].currency.decimals || 18
+        currencyDecimals: prices[currency].currency.decimals || 18,
       }
     }
 
