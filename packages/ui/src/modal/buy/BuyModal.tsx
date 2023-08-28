@@ -222,6 +222,7 @@ export function BuyModal({
             {buyStep === BuyStep.Unavailable && !loading && (
               <Flex direction="column">
                 <TokenLineItem
+                  chainId={chainId}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -286,6 +287,7 @@ export function BuyModal({
                   </Flex>
                 )}
                 <TokenLineItem
+                  chainId={modalChain?.id}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -325,6 +327,7 @@ export function BuyModal({
                     >
                       <Text style="subtitle2">Referral Fee</Text>
                       <FormatCryptoCurrency
+                        chainId={modalChain?.id}
                         amount={feeOnTop}
                         address={currency?.contract}
                         decimals={currency?.decimals}
@@ -349,6 +352,7 @@ export function BuyModal({
                   <Text style="h6">Total</Text>
                   <FormatCryptoCurrency
                     textStyle="h6"
+                    chainId={modalChain?.id}
                     amount={totalIncludingFees}
                     address={currency?.contract}
                     decimals={currency?.decimals}
@@ -380,6 +384,7 @@ export function BuyModal({
                         </Text>
 
                         <FormatCryptoCurrency
+                          chainId={modalChain?.id}
                           amount={balance}
                           address={currency?.contract}
                           decimals={currency?.decimals}

@@ -25,6 +25,7 @@ type TokenLineItemProps = {
   expires?: string
   sourceImg?: string
   css?: CSSProperties
+  chainId?: number
   showRoyalties?: boolean
   quantity?: number
 }
@@ -32,6 +33,7 @@ type TokenLineItemProps = {
 const TokenLineItem: FC<TokenLineItemProps> = ({
   tokenDetails,
   collection,
+  chainId,
   usdConversion = 0,
   isUnavailable,
   price,
@@ -77,6 +79,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         expires={expires}
         warning={warning}
         source={sourceImg || ''}
+        chainId={chainId}
         isUnavailable={isUnavailable}
         priceSubtitle={priceSubtitle}
         royaltiesBps={royaltiesBps}
