@@ -3,13 +3,11 @@ import {
   ReservoirWallet,
   getClient,
 } from '@reservoir0x/reservoir-sdk'
-import { Signer } from 'ethers/lib/ethers'
-import { arrayify } from 'ethers/lib/utils'
-import { TypedDataSigner } from '@ethersproject/abstract-signer/lib/index'
+import { JsonRpcSigner } from 'ethers'
 import { CustomTransport, HttpTransport } from 'viem'
 
 export const adaptEthersSigner = (
-  signer: Signer,
+  signer: JsonRpcSigner,
   transport?: CustomTransport | HttpTransport
 ): ReservoirWallet => {
   return {
@@ -27,15 +25,17 @@ export const adaptEthersSigner = (
           client.log(['Execute Steps: Signing with eip191'], LogLevel.Verbose)
           if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
             // If the message represents a hash, we need to convert it to raw bytes first
-            signature = await signer.signMessage(arrayify(signData.message))
+            signature = await signer._legacySignMessage(signData.message)
           } else {
             signature = await signer.signMessage(signData.message)
           }
         } else if (signData.signatureKind === 'eip712') {
           client.log(['Execute Steps: Signing with eip712'], LogLevel.Verbose)
-          signature = await (
-            signer as unknown as TypedDataSigner
-          )._signTypedData(signData.domain, signData.types, signData.value)
+          signature = await (signer as unknown as JsonRpcSigner).signTypedData(
+            signData.domain,
+            signData.types,
+            signData.value
+          )
         }
       }
       return signature

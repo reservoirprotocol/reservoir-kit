@@ -11677,6 +11677,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ethers@npm:6.7.1":
+  version: 6.7.1
+  resolution: "ethers@npm:6.7.1"
+  dependencies:
+    "@adraffy/ens-normalize": 1.9.2
+    "@noble/hashes": 1.1.2
+    "@noble/secp256k1": 1.7.1
+    "@types/node": 18.15.13
+    aes-js: 4.0.0-beta.5
+    tslib: 2.4.0
+    ws: 8.5.0
+  checksum: 07833692e3f53b18e28c4cba9f53f3d5ebff8360de02ad57b2584c00c52b88f5b790373f9b9f6b4f6b52ffa2074530a6101192b30c3260f7cdeff929d34bb88b
+  languageName: node
+  linkType: hard
+
 "ethers@npm:^5.6.1, ethers@npm:^5.7.2":
   version: 5.7.2
   resolution: "ethers@npm:5.7.2"
@@ -18593,6 +18608,7 @@ __metadata:
     "@types/react-dom": ^18.0.6
     "@types/react-flatpickr": ^3.8.7
     buffer: ^6.0.3
+    ethers: 6.7.1
     next-remote-watch: ^1.0.0
     parcel: ^2.9.3
     prettier: ^2.5.1
