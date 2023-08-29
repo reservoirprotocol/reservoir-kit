@@ -23,6 +23,8 @@ export type ReservoirEventListener = (
  * @param automatedRoyalties If true, royalties will be automatically included, defaults to true. Only relevant for creating orders.
  * @param marketplaceFees A list of fee strings representing a recipient and the fee in BPS delimited by a colon: ["0xabc:100"] used when creating an order (listing or bid)
  * @param normalizeRoyalties Normalize orders that don't have royalties by apply royalties on top of them
+ * @param bountyReferrer Referrer address to collect bounties when filling orders (applies to zora, manifold, etc)
+ * @param logLevel Log level from 0-4, the higher the more verbose.
  */
 export type ReservoirClientOptions = {
   chains: ReservoirChain[]
@@ -31,6 +33,7 @@ export type ReservoirClientOptions = {
   automatedRoyalties?: boolean
   marketplaceFees?: string[]
   normalizeRoyalties?: boolean
+  bountyReferrer?: string
   logLevel?: LogLevel
 }
 
@@ -47,6 +50,7 @@ export class ReservoirClient {
   marketplaceFees?: string[]
   automatedRoyalties?: boolean
   normalizeRoyalties?: boolean
+  bountyReferrer?: string
   logLevel: LogLevel
   log(
     message: Parameters<typeof logUtil>['0'],
@@ -69,6 +73,7 @@ export class ReservoirClient {
     this.marketplaceFees = options.marketplaceFees
     this.normalizeRoyalties = options.normalizeRoyalties
     this.source = options.source
+    this.bountyReferrer = options.bountyReferrer
     this.logLevel =
       options.logLevel !== undefined ? options.logLevel : LogLevel.None
   }
@@ -90,6 +95,10 @@ export class ReservoirClient {
       options.normalizeRoyalties !== undefined
         ? options.normalizeRoyalties
         : this.normalizeRoyalties
+    this.bountyReferrer =
+      options.bountyReferrer !== undefined
+        ? options.bountyReferrer
+        : this.bountyReferrer
     this.logLevel =
       options.logLevel !== undefined ? options.logLevel : LogLevel.None
   }
