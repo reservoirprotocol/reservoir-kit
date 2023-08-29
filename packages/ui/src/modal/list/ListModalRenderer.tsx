@@ -128,7 +128,6 @@ export const ListModalRenderer: FC<Props> = ({
 }) => {
   const account = useAccount()
 
-  const { chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
 
   const currentChain = client?.currentChain()

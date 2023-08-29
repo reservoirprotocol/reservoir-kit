@@ -688,6 +688,7 @@ export function ListModal({
                 }}
               >
                 <TokenListingDetails
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   listingData={listingData}
@@ -773,6 +774,7 @@ export function ListModal({
                 }}
               >
                 <TokenListingDetails
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   listingData={listingData}

@@ -50,7 +50,7 @@ const MarketplacePriceInput = ({
     Number(marketplace.truePrice) *
     quantity
   100
-
+  
   return (
     <Flex {...props} align="center">
       <>
@@ -86,6 +86,7 @@ const MarketplacePriceInput = ({
               }}
             >
               <CryptoCurrencyIcon
+                chainId={chainId}
                 css={{ height: 18 }}
                 address={currency.contract}
               />
