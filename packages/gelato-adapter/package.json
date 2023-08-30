@@ -2,10 +2,22 @@
     "name": "@reservoir0x/gelato-adapter",
     "version": "0.1.1",
     "description": "An adapter used to enhance a ethers wallet adapter with the gelato SDK for use in the @reservoir0x/reservoir-sdk to enable gasless transactions",
-    "source": "src/index.ts",
-    "main": "dist/index.js",
-    "module": "dist/index.module.js",
-    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+          "import": {
+            "types": "./dist/index.d.mts",
+            "default": "./dist/index.mjs"
+          },
+          "require": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+          }
+        }
+    },
+    "source": "./src/index.ts",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
     "author": "Reservoir Protocol",
     "license": "MIT",
     "files": [
