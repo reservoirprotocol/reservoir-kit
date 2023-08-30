@@ -1,11 +1,11 @@
 
 ## [v1.4.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/07457a4001d540f58b312fdfb29e6588e8bffb0a) (2023-08-30)
 
-* Merge pull request #357 from reservoirprotocol/fix/commonjs-esmodule-issues [da2a04e](https://github.com/reservoirprotocol/reservoir-kit/commit/da2a04e6149275c7e0a7f69f4eb3dc4a9cc34380)
+* Setup different exports based on the import flavor [ba5608d](https://github.com/reservoirprotocol/reservoir-kit/commit/ba5608d235ff57f2578d070f316cb4d83a6015f4)
 ## [v1.3.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1dd88560a2fd8ebbbe6202cbb65c0038cb48ef8b) (2023-08-30)
 
-* Setup different exports based on the import flavor [ba5608d](https://github.com/reservoirprotocol/reservoir-kit/commit/ba5608d235ff57f2578d070f316cb4d83a6015f4)
 * Add bounty referrer global parameter for purchasing [82efe58](https://github.com/reservoirprotocol/reservoir-kit/commit/82efe58df8d6335bdc1f9b7c593405b5224ac82a)
+
 ## [v1.3.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/de7f3293de37c74d3831a7759728c0b994b5c8ee) (2023-08-28)
 
 * Upgrade wagmi [ typescript](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-21)
