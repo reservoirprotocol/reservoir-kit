@@ -86,7 +86,7 @@ type AppWrapperProps = {
   children: ReactNode
 }
 
-const AppWrapper: FC<any> = ({ children }) => {
+export const AppWrapper: FC<any> = ({ children }) => {
   const { theme } = useContext(ThemeSwitcherContext)
   const router = useRouter()
   const cartFeeBps = router.query.cartFeeBps
