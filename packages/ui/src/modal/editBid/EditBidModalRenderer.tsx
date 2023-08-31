@@ -206,7 +206,6 @@ export const EditBidModalRenderer: FC<Props> = ({
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
-      includeTopBid: true,
       normalizeRoyalties,
     }
   )
