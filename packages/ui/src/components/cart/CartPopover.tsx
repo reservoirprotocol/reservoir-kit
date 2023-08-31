@@ -183,21 +183,23 @@ export function CartPopover({
                     align="center"
                     justify="center"
                     css={{
-                      background: '$accentBgActive',
+                      background: '$accentSolid',
                       height: 20,
                       width: 20,
                       borderRadius: '99999px',
                       ml: '$2',
                     }}
                   >
-                    <Text style="subtitle2">{items.length}</Text>
+                    <Text style="subtitle2" color="button">
+                      {items.length}
+                    </Text>
                   </Flex>
                 )}
                 {!isCartEmpty && (
                   <Text
                     style="subtitle2"
-                    color="accent"
                     css={{
+                      color: '$accentSolid',
                       cursor: 'pointer',
                       ml: 24,
                       '&:hover': { color: '$accentSolidHover' },
