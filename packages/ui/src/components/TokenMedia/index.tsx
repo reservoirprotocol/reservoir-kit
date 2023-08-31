@@ -167,6 +167,12 @@ const TokenMedia: FC<Props> = ({
     }
   }, [tokenURI])
 
+  useEffect(() => {
+    if (mediaRef && mediaRef.current) {
+      mediaRef.current.load()
+    }
+  }, [media])
+
   if (!token && !staticOnly) {
     console.warn('A token object or a media url are required!')
     return null
