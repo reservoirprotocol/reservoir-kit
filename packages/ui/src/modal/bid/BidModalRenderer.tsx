@@ -27,6 +27,7 @@ import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
 import { parseUnits } from 'viem'
+import { getNetwork } from 'wagmi/actions'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -135,8 +136,6 @@ export const BidModalRenderer: FC<Props> = ({
   feesBps,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
-
   const { chains, chain: activeWalletChain } = useNetwork()
 
   const client = useReservoirClient()
@@ -144,14 +143,12 @@ export const BidModalRenderer: FC<Props> = ({
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => {
-    rendererChain?.id === id
-  })
+  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
+
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -245,7 +242,7 @@ export const BidModalRenderer: FC<Props> = ({
     token: wrappedContractAddress as any,
     address: address,
     watch: open,
-    chainId: client?.currentChain()?.id,
+    chainId: rendererChain?.id,
   })
 
   const canAutomaticallyConvert =
@@ -356,7 +353,7 @@ export const BidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (activeWalletChain?.id !== rendererChain?.id) {
+    if (rendererChain?.id !== getNetwork()?.chain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
