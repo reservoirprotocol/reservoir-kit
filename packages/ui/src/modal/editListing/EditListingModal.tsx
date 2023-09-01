@@ -71,9 +71,7 @@ export function EditListingModal({
   const currentChain = client?.currentChain()
 
   const modalChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
   const handleEditListing = async (editListing: () => void): Promise<void> => {

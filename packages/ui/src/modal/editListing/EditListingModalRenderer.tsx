@@ -90,20 +90,14 @@ export const EditListingModalRenderer: FC<Props> = ({
 }) => {
   const { data: wallet } = useWalletClient()
 
-  const { chains, chain: activeWalletChain } = useNetwork()
+  const { chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
 
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
-
-  const wagmiChain = chains.find(({ id }) => {
-    rendererChain?.id === id
-  })
 
   const account = useAccount()
   const [editListingStep, setEditListingStep] = useState<EditListingStep>(
@@ -364,6 +358,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   }, [
     client,
     wallet,
+    chainId,
     collectionId,
     tokenId,
     expirationOption,
