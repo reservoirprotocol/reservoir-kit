@@ -97,14 +97,10 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => {
-    rendererChain?.id === id
-  })
+  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
 
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
@@ -128,7 +124,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    wagmiChain?.id
+    rendererChain?.id
   )
 
   const enhancedTokens = useMemo(() => {
@@ -233,7 +229,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
       client.actions
         .acceptOffer({
-          chainId: wagmiChain?.id,
+          chainId: rendererChain?.id,
           items: items,
           wallet,
           options,
@@ -343,9 +339,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     for (let currency in prices) {
       expectedPrice[currency] = {
         amount: prices[currency].netAmount,
-        raw: parseUnits(`${prices[currency].netAmount}`, prices[currency].currency.decimals || 18),
+        raw: parseUnits(
+          `${prices[currency].netAmount}`,
+          prices[currency].currency.decimals || 18
+        ),
         currencyAddress: prices[currency].currency.contract,
-        currencyDecimals: prices[currency].currency.decimals || 18
+        currencyDecimals: prices[currency].currency.decimals || 18,
       }
     }
 
@@ -353,7 +352,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
     client.actions
       .acceptOffer({
-        chainId: wagmiChain?.id,
+        chainId: rendererChain?.id,
         expectedPrice,
         wallet,
         items,
