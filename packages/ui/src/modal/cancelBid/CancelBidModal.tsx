@@ -55,21 +55,17 @@ export function CancelBidModal({
   const currentChain = client?.currentChain()
 
   const modalChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => {
-    modalChain?.id === id
-  })
+  const wagmiChain = chains.find(({ id }) => modalChain?.id === id)
 
-  const handleCancel = async (cancelBid: () => void): Promise<void> => {
-    if (modalChain?.id !== client?.currentChain()?.id) {
-      const chain = await switchNetworkAsync?.()
-      if (chain?.id !== activeWalletChain?.id) return
+  const handleCancelBid = async (cancelOrder: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      const chain = await switchNetworkAsync?.(modalChain?.id)
+      if (chain?.id !== modalChain?.id) return
     }
-    cancelBid()
+    cancelOrder()
   }
 
   return (
@@ -176,6 +172,7 @@ export function CancelBidModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={bidImg}
                     name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
@@ -199,7 +196,7 @@ export function CancelBidModal({
                     : 'This will cancel your offer for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
                 <Button
-                  onClick={() => handleCancel(cancelOrder)}
+                  onClick={() => handleCancelBid(cancelOrder)}
                   css={{ m: '$4' }}
                 >
                   {!isOracleOrder && (
@@ -213,6 +210,7 @@ export function CancelBidModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={bidImg}
                     name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}

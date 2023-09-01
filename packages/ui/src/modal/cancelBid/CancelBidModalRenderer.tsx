@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useBids } from '../../hooks'
 import { useWalletClient, useNetwork } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
+import { getNetwork } from 'wagmi/actions'
 
 export enum CancelStep {
   Cancel,
@@ -46,26 +47,22 @@ export const CancelBidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
   const [cancelStep, setCancelStep] = useState<CancelStep>(CancelStep.Cancel)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<CancelBidStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
 
-  const { chains, chain: activeWalletChain } = useNetwork()
+  const { chains } = useNetwork()
   const client = useReservoirClient()
 
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => {
-    rendererChain?.id === id
-  })
+  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.default.url || 'https://etherscan.io'
@@ -101,7 +98,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (rendererChain?.id !== activeWalletChain?.id) {
+    if (rendererChain?.id !== getNetwork().chain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
