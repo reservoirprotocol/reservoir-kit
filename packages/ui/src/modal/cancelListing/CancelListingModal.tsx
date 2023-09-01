@@ -71,8 +71,8 @@ export function CancelListingModal({
     if (modalChain?.id !== activeWalletChain?.id) {
       const chain = await switchNetworkAsync?.()
       if (chain?.id !== modalChain?.id) return
-      cancelListing()
     }
+    cancelListing()
   }
 
   return (

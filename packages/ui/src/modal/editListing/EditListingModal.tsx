@@ -80,8 +80,8 @@ export function EditListingModal({
     if (modalChain?.id !== activeWalletChain?.id) {
       const chain = await switchNetworkAsync?.(modalChain?.id)
       if (chain?.id !== modalChain?.id) return
-      editListing()
     }
+    editListing()
   }
 
   return (

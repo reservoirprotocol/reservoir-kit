@@ -68,8 +68,8 @@ export function CancelBidModal({
     if (modalChain?.id !== client?.currentChain()?.id) {
       const chain = await switchNetworkAsync?.()
       if (chain?.id !== activeWalletChain?.id) return
-      cancelBid()
     }
+    cancelBid()
   }
 
   return (

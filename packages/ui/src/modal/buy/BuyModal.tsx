@@ -112,7 +112,6 @@ export function BuyModal({
     if (modalChain?.id !== activeWalletChain?.id) {
       const chain = await switchNetworkAsync?.(modalChain?.id)
       if (chain?.id !== modalChain?.id) return
-      handleBuy()
     }
     handleBuy()
   }

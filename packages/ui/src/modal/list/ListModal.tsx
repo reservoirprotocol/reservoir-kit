@@ -162,11 +162,9 @@ export function ListModal({
   }
 
   const handleList = async (listToken: () => void): Promise<void> => {
-    console.log(modalChain?.id, activeWalletChain?.id)
     if (modalChain?.id !== activeWalletChain?.id) {
       const chain = await switchNetworkAsync?.(modalChain?.id)
       if (chain?.id !== modalChain?.id) return
-      listToken()
     }
     listToken()
   }
