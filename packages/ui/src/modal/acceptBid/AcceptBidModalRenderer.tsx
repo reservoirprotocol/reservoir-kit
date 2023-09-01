@@ -96,6 +96,11 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
   const currentChain = client?.currentChain()
 
+
+    useEffect(() => {
+      console.log(chainId)
+    }, [ ]);
+
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
@@ -247,7 +252,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           setIsFetchingBidPath(false)
         })
     },
-    [client, wallet, normalizeRoyalties]
+    [client, wallet, chainId, normalizeRoyalties]
   )
 
   useEffect(() => {

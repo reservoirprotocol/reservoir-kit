@@ -108,6 +108,7 @@ export function AcceptBidModal({
       if (chain?.id !== modalChain?.id) return
       acceptBid()
     }
+    acceptBid()
   }
 
   return (
@@ -259,6 +260,7 @@ export function AcceptBidModal({
                   if (!bidsPath || !bidsPath.length) {
                     return (
                       <AcceptBidLineItem
+                        chainId={modalChain?.id}
                         key={i}
                         token={{
                           name: tokenData?.token?.name || '',
@@ -279,6 +281,7 @@ export function AcceptBidModal({
                     return bidsPath.map((bidPath) => (
                       <AcceptBidLineItem
                         key={i}
+                        chainId={modalChain?.id}
                         token={{
                           name: tokenData?.token?.name || '',
                           id: tokenData?.token?.tokenId || '',
@@ -324,6 +327,7 @@ export function AcceptBidModal({
                         </Text>
                         <Flex direction="column" css={{ gap: '$1' }}>
                           <FormatCryptoCurrency
+                            chainId={modalChain?.id}
                             amount={price.netAmount}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
@@ -359,6 +363,7 @@ export function AcceptBidModal({
                           Total {price.currency?.symbol} Offer Value
                         </Text>
                         <FormatCryptoCurrency
+                          chainId={modalChain?.id}
                           amount={price.amount}
                           decimals={price.currency?.decimals}
                           address={price.currency?.contract}
@@ -379,6 +384,7 @@ export function AcceptBidModal({
                             -
                           </Text>
                           <FormatCryptoCurrency
+                            chainId={modalChain?.id}
                             amount={price.royalty}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
@@ -400,6 +406,7 @@ export function AcceptBidModal({
                             -
                           </Text>
                           <FormatCryptoCurrency
+                            chainId={modalChain?.id}
                             amount={price.marketplaceFee}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
