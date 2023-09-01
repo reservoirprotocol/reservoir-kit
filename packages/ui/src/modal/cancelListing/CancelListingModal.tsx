@@ -58,21 +58,19 @@ export function CancelListingModal({
   const currentChain = client?.currentChain()
 
   const modalChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => {
-    modalChain?.id === id
-  })
+  const wagmiChain = chains.find(({ id }) => modalChain?.id === id)
 
-  const handleCancel = async (cancelListing: () => void): Promise<void> => {
+  const handleCancelListing = async (
+    cancelOrder: () => void
+  ): Promise<void> => {
     if (modalChain?.id !== activeWalletChain?.id) {
-      const chain = await switchNetworkAsync?.()
+      const chain = await switchNetworkAsync?.(modalChain?.id)
       if (chain?.id !== modalChain?.id) return
     }
-    cancelListing()
+    cancelOrder()
   }
 
   return (
@@ -178,6 +176,7 @@ export function CancelListingModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={listingImg}
                     name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
@@ -200,7 +199,7 @@ export function CancelListingModal({
                     : 'This will cancel your listing for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
                 <Button
-                  onClick={() => handleCancel(cancelOrder)}
+                  onClick={() => handleCancelListing(cancelOrder)}
                   css={{ m: '$4' }}
                 >
                   {!isOracleOrder && (
@@ -214,6 +213,7 @@ export function CancelListingModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={listingImg}
                     name={listing?.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
