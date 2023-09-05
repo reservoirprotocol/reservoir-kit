@@ -339,13 +339,14 @@ export const BuyModalRenderer: FC<Props> = ({
           totalIncludingFees - feeOnTop,
           currency?.decimals || 18
         )
-        const fee =
+        const fee = Math.floor(
           Number(
             parseUnits(
               `${Number(totalFeeTruncated)}`,
               currency?.decimals || 18
             ) * BigInt(feeBps)
           ) / 10000
+        )
         const atomicUnitsFee = formatUnits(BigInt(fee), 0)
         return `${referrer}:${atomicUnitsFee}`
       })

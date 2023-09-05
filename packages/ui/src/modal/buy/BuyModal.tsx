@@ -65,7 +65,15 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   ) => void
 }
 
-function titleForStep(step: BuyStep, copy: typeof ModalCopy) {
+function titleForStep(
+  step: BuyStep,
+  copy: typeof ModalCopy,
+  isLoading: boolean
+) {
+  if (isLoading) {
+    return copy.titleDefault
+  }
+
   switch (step) {
     case BuyStep.Unavailable:
       return copy.titleUnavilable
@@ -155,7 +163,7 @@ export function BuyModal({
         setBuyStep,
         buyToken,
       }) => {
-        const title = titleForStep(buyStep, copy)
+        const title = titleForStep(buyStep, copy, loading)
 
         useEffect(() => {
           if (buyStep === BuyStep.Complete && onPurchaseComplete) {
