@@ -4,15 +4,11 @@
 * Round down to avoid decimals when calculating bps feesOnTop [dfeb7ce](https://github.com/reservoirprotocol/reservoir-kit/commit/dfeb7ce84701e6bb6ab6f3c9b825dd487fea6ac8)
 ## [v1.8.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/0c2f43c7007d025cb37d71d0fc3bc604cbf45038) (2023-08-31)
 
-* Merge pull request #359 from reservoirprotocol/pedro/grwth-3188-the-primary-color-is-off-for-the-cart-on-the-explorer [a2bf151](https://github.com/reservoirprotocol/reservoir-kit/commit/a2bf15103613f1783d654f64d55e5b01506e7cad)
-* Merge pull request #360 from reservoirprotocol/pedro/grwth-3205-token-media-issue-when-grid-is-updated [f97f252](https://github.com/reservoirprotocol/reservoir-kit/commit/f97f2521bd54d68bcd926566a9b76f1f54913f6e)
-* Merge pull request #361 from reservoirprotocol/pedro/grwth-3200-not-handling-m4a-mov-media-on-explorer [a6e592b](https://github.com/reservoirprotocol/reservoir-kit/commit/a6e592b5bd1375998d020dde155e126cf4c0eefd)
-* Merge pull request #362 from reservoirprotocol/pedro/grwth-3165-weird-state-when-loading-the-rk-modal [a94e0cd](https://github.com/reservoirprotocol/reservoir-kit/commit/a94e0cd8cd7e8ce0df8cb19098b2eae320c635d8)
+* CartPopover: Tweak theme keys to be more configurable  [a2bf151](https://github.com/reservoirprotocol/reservoir-kit/commit/a2bf15103613f1783d654f64d55e5b01506e7cad)
 * useCollections: Upgrade from v5 to v6 [f0a48a0](https://github.com/reservoirprotocol/reservoir-kit/commit/f0a48a01bded05b42836e7459ddbcefd6e40f6e6)
 * BuyModal: fix unavailable title when token is still loading [edb0190](https://github.com/reservoirprotocol/reservoir-kit/commit/edb0190fdeba6f4e113080428e024c511d765ab2)
 * TokenMedia: add support for m4a audio and mov video [1880983](https://github.com/reservoirprotocol/reservoir-kit/commit/1880983dab9b787bb6489090c95282378dbcde4a)
 * TokenMedia: handle updated media url [8a5c4dd](https://github.com/reservoirprotocol/reservoir-kit/commit/8a5c4ddaaa15f34ef6f478da9762ee908f72efa5)
-* Change cartpopover text and count color [2bdec2c](https://github.com/reservoirprotocol/reservoir-kit/commit/2bdec2ceaf81319ca03acb325912841776dc0248)
 
 ## [v1.8.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/db1492a2f9847a2969180d4900af918ef5d070d3) (2023-08-30)
 

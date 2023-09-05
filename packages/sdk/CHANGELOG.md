@@ -2,7 +2,6 @@
 ## [v1.4.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0578f8b9b4e3ae93aa732110b39886537001465c) (2023-08-31)
 
 * Sync api [8003a5a](https://github.com/reservoirprotocol/reservoir-kit/commit/8003a5a56623b1a3641f5c7f27f7b049d514525d)
-* Merge pull request #358 from reservoirprotocol/fix/chainid-comparison [215af65](https://github.com/reservoirprotocol/reservoir-kit/commit/215af659de8f724d314120df1f7938b941b79d67)
 * Loosen comparison when searching for a chain via id [16a8e98](https://github.com/reservoirprotocol/reservoir-kit/commit/16a8e98f03241bf6637e5fe52eb6b73d266271e1)
 
 ## [v1.4.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/07457a4001d540f58b312fdfb29e6588e8bffb0a) (2023-08-30)
