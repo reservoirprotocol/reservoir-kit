@@ -305,6 +305,7 @@ export const SweepContent: FC<
             }}
           >
             <CollectCheckout
+              chainId={chainId}
               collection={collection}
               token={token}
               itemCount={itemAmount}
@@ -395,6 +396,7 @@ export const SweepContent: FC<
             }}
           >
             <CollectCheckout
+              chainId={chainId}
               collection={collection}
               token={token}
               itemCount={itemAmount}
