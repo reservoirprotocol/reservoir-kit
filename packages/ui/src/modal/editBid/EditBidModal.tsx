@@ -97,6 +97,7 @@ export function EditBidModal({
 
   return (
     <EditBidModalRenderer
+      chainId={modalChain?.id}
       bidId={bidId}
       tokenId={tokenId}
       collectionId={collectionId}
@@ -256,6 +257,7 @@ export function EditBidModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={itemImage}
                     name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
@@ -286,6 +288,7 @@ export function EditBidModal({
                       >
                         Balance:{' '}
                         <FormatWrappedCurrency
+                          chainId={modalChain?.id}
                           logoWidth={10}
                           textStyle="tiny"
                           amount={wrappedBalance?.value}
@@ -305,6 +308,7 @@ export function EditBidModal({
                       color="subtle"
                     >
                       <CryptoCurrencyIcon
+                        chainId={modalChain?.id}
                         css={{ height: 20 }}
                         address={wrappedContractAddress}
                       />
@@ -393,6 +397,7 @@ export function EditBidModal({
                                       {trait?.floorAskPrice && (
                                         <Box css={{ flex: 'none' }}>
                                           <FormatCryptoCurrency
+                                            chainId={modalChain?.id}
                                             amount={trait?.floorAskPrice}
                                             maximumFractionDigits={2}
                                             logoWidth={11}
@@ -434,6 +439,7 @@ export function EditBidModal({
                           </Popover.Trigger>
                           <Popover.Content sideOffset={-50}>
                             <AttributeSelector
+                              chainId={modalChain?.id}
                               attributes={attributes}
                               tokenCount={tokenCount}
                               setTrait={setTrait}
@@ -504,6 +510,7 @@ export function EditBidModal({
                               {balance?.symbol || 'ETH'} Balance
                             </Text>
                             <FormatCryptoCurrency
+                              chainId={modalChain?.id}
                               amount={balance?.value}
                               symbol={balance?.symbol}
                             />
@@ -556,6 +563,7 @@ export function EditBidModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={itemImage}
                     name={bid?.criteria?.data?.token?.name}
                     price={Number(bidAmount)}

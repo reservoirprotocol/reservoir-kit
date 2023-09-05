@@ -26,6 +26,7 @@ import {
 } from '../bid/BidModalRenderer'
 import { formatBN } from '../../lib/numbers'
 import { parseUnits } from 'viem'
+import { getNetwork } from 'wagmi/actions'
 
 export enum EditBidStep {
   Edit,
@@ -101,22 +102,18 @@ export const EditBidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
-
-  const { chains, chain: activeWalletChain } = useNetwork()
+  const { chains } = useNetwork()
   const client = useReservoirClient()
 
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
-    ? client?.chains.find(({ id }) => {
-        id === chainId
-      }) || currentChain
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => {
-    rendererChain?.id === id
-  })
+  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
+
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -211,7 +208,7 @@ export const EditBidModalRenderer: FC<Props> = ({
           }&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
   } else {
-    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${wrappedContractAddress}`
+    convertLink = `https://jumper.exchange/?toChain=${wagmiChain?.id}&toToken=${wrappedContractAddress}`
   }
 
   const isTokenBid = bid?.criteria?.kind == 'token'
@@ -317,7 +314,7 @@ export const EditBidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (activeWalletChain?.id !== rendererChain?.id) {
+    if (rendererChain?.id !== getNetwork()?.chain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
