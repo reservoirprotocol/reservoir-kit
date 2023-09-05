@@ -31,6 +31,7 @@ import { TokenInfo } from '../TokenInfo'
 
 export const MintContent: FC<
   ChildrenProps & {
+    chainId?: number
     copy: typeof CollectModalCopy
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -39,6 +40,7 @@ export const MintContent: FC<
   collection,
   token,
   orders,
+  chainId,
   mintPrice,
   itemAmount,
   setItemAmount,
@@ -176,6 +178,7 @@ export const MintContent: FC<
                     </Text>
                     <Flex css={{ gap: '$1' }}>
                       <FormatCryptoCurrency
+                        chainId={chainId}
                         amount={mintPrice}
                         address={currency?.address}
                         decimals={currency?.decimals}
@@ -200,6 +203,7 @@ export const MintContent: FC<
                     <Text style="subtitle2">Referral Fee</Text>
                     <Flex direction="column" align="end" css={{ gap: '$1' }}>
                       <FormatCryptoCurrency
+                        chainId={chainId}
                         amount={feeOnTop}
                         address={currency?.address}
                         decimals={currency?.decimals}
@@ -217,6 +221,7 @@ export const MintContent: FC<
                   <Text style="h6">Total</Text>
                   <Flex direction="column" align="end" css={{ gap: '$1' }}>
                     <FormatCryptoCurrency
+                      chainId={chainId}
                       textStyle="h6"
                       amount={totalIncludingFees}
                       address={currency?.address}
@@ -253,6 +258,7 @@ export const MintContent: FC<
                   </Text>
 
                   <FormatCryptoCurrency
+                    chainId={chainId}
                     amount={balance}
                     address={currency?.address}
                     decimals={currency?.decimals}
@@ -282,6 +288,7 @@ export const MintContent: FC<
             }}
           >
             <CollectCheckout
+              chainId={chainId}
               collection={collection}
               token={token}
               itemCount={itemAmount}

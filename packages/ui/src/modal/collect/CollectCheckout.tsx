@@ -23,6 +23,7 @@ type Props = {
   currency?: ReturnType<typeof useChainCurrency>
   chain?: ReservoirChain | null
   size?: Size
+  chainId?: number
 }
 
 export const CollectCheckout: FC<Props> = ({
@@ -30,6 +31,7 @@ export const CollectCheckout: FC<Props> = ({
   token,
   itemCount,
   totalPrice,
+  chainId,
   usdPrice,
   currency,
   chain,
@@ -80,13 +82,13 @@ export const CollectCheckout: FC<Props> = ({
         </Flex>
         <Flex direction="column" align="end" css={{ gap: '$1', pt: '$1' }}>
           <FormatCryptoCurrency
+            chainId={chainId}
             textStyle={'h6'}
             amount={totalPrice}
             address={currency?.address}
             decimals={currency?.decimals}
             symbol={currency?.symbol}
             logoWidth={18}
-            chainId={chain?.id}
           />
           {usdPrice ? (
             <FormatCurrency
