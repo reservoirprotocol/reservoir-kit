@@ -108,12 +108,12 @@ export function BuyModal({
 
   const wagmiChain = chains.find(({ id }) => modalChain?.id === id)
 
-  const handleBuy = async (): Promise<void> => {
+  const handleBuy = async (buyToken: () => void): Promise<void> => {
     if (modalChain?.id !== activeWalletChain?.id) {
       const chain = await switchNetworkAsync?.(modalChain?.id)
       if (chain?.id !== modalChain?.id) return
     }
-    handleBuy()
+    buyToken()
   }
 
   return (
@@ -371,7 +371,7 @@ export function BuyModal({
                 <Box css={{ p: '$4', width: '100%' }}>
                   {hasEnoughCurrency ? (
                     <Button
-                      onClick={() => handleBuy().then(buyToken)}
+                      onClick={() => handleBuy(buyToken)}
                       css={{ width: '100%' }}
                       color="primary"
                     >

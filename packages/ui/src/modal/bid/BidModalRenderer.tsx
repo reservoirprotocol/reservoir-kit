@@ -136,7 +136,7 @@ export const BidModalRenderer: FC<Props> = ({
   feesBps,
   children,
 }) => {
-  const { chains, chain: activeWalletChain } = useNetwork()
+  const { chains } = useNetwork()
 
   const client = useReservoirClient()
 

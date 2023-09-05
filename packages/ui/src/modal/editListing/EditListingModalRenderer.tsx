@@ -16,7 +16,7 @@ import {
   useOnChainRoyalties,
   useChainCurrency,
 } from '../../hooks'
-import { useWalletClient, useAccount, useNetwork } from 'wagmi'
+import { useWalletClient, useAccount } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
@@ -364,7 +364,6 @@ export const EditListingModalRenderer: FC<Props> = ({
     price,
     currency,
     quantity,
-    chainId,
     contract,
   ])
 

@@ -16,6 +16,7 @@ import {
 } from '@reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
 import { parseUnits } from 'viem'
+import { getNetwork } from 'wagmi/actions'
 
 export enum AcceptBidStep {
   Checkout,
@@ -90,16 +91,11 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   )
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [txHash, setTxHash] = useState<string | null>(null)
-  const { chain: activeWalletChain, chains } = useNetwork()
+  const { chains } = useNetwork()
 
   const client = useReservoirClient()
 
   const currentChain = client?.currentChain()
-
-
-    useEffect(() => {
-      console.log(chainId)
-    }, [ ]);
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -298,7 +294,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (wallet.chain.id !== activeWalletChain?.id) {
+    if (rendererChain?.id !== getNetwork()?.chain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error

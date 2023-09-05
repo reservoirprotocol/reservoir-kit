@@ -122,7 +122,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [quantity, setQuantity] = useState(1)
 
-  const { chains, chain: activeWalletChain } = useNetwork()
+  const { chains } = useNetwork()
 
   const client = useReservoirClient()
 
@@ -492,7 +492,6 @@ export const BuyModalRenderer: FC<Props> = ({
     totalPrice,
     chainId,
     rendererChain,
-    activeWalletChain,
     totalIncludingFees,
     mutateListings,
     mutateTokens,
