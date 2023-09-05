@@ -23,6 +23,7 @@ import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import { Listings } from '../list/ListModalRenderer'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { getNetwork } from 'wagmi/actions'
 
 export enum EditListingStep {
   Edit,
@@ -88,9 +89,6 @@ export const EditListingModalRenderer: FC<Props> = ({
   enableOnChainRoyalties = false,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
-
-  const { chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
 
   const currentChain = client?.currentChain()
@@ -99,6 +97,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
   const account = useAccount()
   const [editListingStep, setEditListingStep] = useState<EditListingStep>(
     EditListingStep.Edit
@@ -227,7 +226,7 @@ export const EditListingModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (activeWalletChain?.id !== rendererChain?.id) {
+    if (rendererChain?.id !== getNetwork()?.chain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error

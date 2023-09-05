@@ -219,6 +219,7 @@ export function EditListingModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={token?.token?.imageSmall}
                     name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
@@ -284,6 +285,7 @@ export function EditListingModal({
                   </Flex>
                   <Flex direction="column" css={{ gap: '$2' }}>
                     <PriceInput
+                      chainId={modalChain?.id}
                       price={price}
                       collection={collection}
                       currency={currency}
@@ -399,6 +401,7 @@ export function EditListingModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={token?.token?.imageSmall}
                     name={token?.token?.name}
                     price={profit}
