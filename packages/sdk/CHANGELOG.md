@@ -1,4 +1,24 @@
 
+## [v1.4.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0578f8b9b4e3ae93aa732110b39886537001465c) (2023-08-31)
+
+* Sync api [8003a5a](https://github.com/reservoirprotocol/reservoir-kit/commit/8003a5a56623b1a3641f5c7f27f7b049d514525d)
+* Loosen comparison when searching for a chain via id [16a8e98](https://github.com/reservoirprotocol/reservoir-kit/commit/16a8e98f03241bf6637e5fe52eb6b73d266271e1)
+
+## [v1.4.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/07457a4001d540f58b312fdfb29e6588e8bffb0a) (2023-08-30)
+
+* Setup different exports based on the import flavor [ba5608d](https://github.com/reservoirprotocol/reservoir-kit/commit/ba5608d235ff57f2578d070f316cb4d83a6015f4)
+## [v1.3.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1dd88560a2fd8ebbbe6202cbb65c0038cb48ef8b) (2023-08-30)
+
+* Add bounty referrer global parameter for purchasing [82efe58](https://github.com/reservoirprotocol/reservoir-kit/commit/82efe58df8d6335bdc1f9b7c593405b5224ac82a)
+
+## [v1.3.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/de7f3293de37c74d3831a7759728c0b994b5c8ee) (2023-08-28)
+
+* Upgrade wagmi [ typescript](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-21)
+
+## [v1.2.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/356d497855224ef3e4ac781bdb258bb73bde4787) (2023-08-25)
+
+* Sync api [7617f10](https://github.com/reservoirprotocol/reservoir-kit/commit/7617f10f34ff4be6b30859bd27ff62179e60b274)
+
 ## [v1.2.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8fed14b38eec0fff1a5b34ace1e11d8be6398e52) (2023-08-22)
 
 * Improve error message handling for network errors [8ff5b75](https://github.com/reservoirprotocol/reservoir-kit/commit/8ff5b75dee8e32f9bebad42e6e4fffc20ef0d54b)

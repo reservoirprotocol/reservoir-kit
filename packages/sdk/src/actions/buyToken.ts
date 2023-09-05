@@ -77,6 +77,10 @@ export async function buyToken(data: Data) {
       params.normalizeRoyalties = client.normalizeRoyalties
     }
 
+    if (client.bountyReferrer !== undefined && params.referrer === undefined) {
+      params.referrer = client.bountyReferrer
+    }
+
     const request: AxiosRequestConfig = {
       url: `${baseApiUrl}/execute/buy/v7`,
       method: 'post',

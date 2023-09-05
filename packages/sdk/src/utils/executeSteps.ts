@@ -121,19 +121,19 @@ export async function executeSteps(
   const client = getClient()
   let reservoirChain = client?.currentChain()
   if (chainId) {
-    reservoirChain = client.chains.find((chain) => chain.id === chainId) || null
+    reservoirChain = client.chains.find((chain) => chain.id == chainId) || null
   }
 
   let viemChain: allChains.Chain
   const customChain = Object.values(customChains).find(
-    (chain) => chain.id === (reservoirChain?.id || 1)
+    (chain) => chain.id == (reservoirChain?.id || 1)
   )
   if (customChain) {
     viemChain = customChain
   } else {
     viemChain =
       Object.values(allChains).find(
-        (chain) => chain.id === (reservoirChain?.id || 1)
+        (chain) => chain.id == (reservoirChain?.id || 1)
       ) || allChains.mainnet
   }
 

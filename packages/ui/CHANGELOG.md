@@ -1,3 +1,31 @@
+
+## [v1.8.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3cbb2c2078ddada9ae521073d1538811861df6f8) (2023-09-05)
+
+* Round down to avoid decimals when calculating bps feesOnTop [dfeb7ce](https://github.com/reservoirprotocol/reservoir-kit/commit/dfeb7ce84701e6bb6ab6f3c9b825dd487fea6ac8)
+## [v1.8.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/0c2f43c7007d025cb37d71d0fc3bc604cbf45038) (2023-08-31)
+
+* CartPopover: Tweak theme keys to be more configurable  [a2bf151](https://github.com/reservoirprotocol/reservoir-kit/commit/a2bf15103613f1783d654f64d55e5b01506e7cad)
+* useCollections: Upgrade from v5 to v6 [f0a48a0](https://github.com/reservoirprotocol/reservoir-kit/commit/f0a48a01bded05b42836e7459ddbcefd6e40f6e6)
+* BuyModal: fix unavailable title when token is still loading [edb0190](https://github.com/reservoirprotocol/reservoir-kit/commit/edb0190fdeba6f4e113080428e024c511d765ab2)
+* TokenMedia: add support for m4a audio and mov video [1880983](https://github.com/reservoirprotocol/reservoir-kit/commit/1880983dab9b787bb6489090c95282378dbcde4a)
+* TokenMedia: handle updated media url [8a5c4dd](https://github.com/reservoirprotocol/reservoir-kit/commit/8a5c4ddaaa15f34ef6f478da9762ee908f72efa5)
+
+## [v1.8.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/db1492a2f9847a2969180d4900af918ef5d070d3) (2023-08-30)
+
+* Setup different exports based on the import flavor [ba5608d](https://github.com/reservoirprotocol/reservoir-kit/commit/ba5608d235ff57f2578d070f316cb4d83a6015f4)
+
+## [v1.7.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/735e51af07171ff0a27a2fb3d42a56d1c63846e9) (2023-08-30)
+
+* Add bounty referrer global parameter for purchasing [82efe58](https://github.com/reservoirprotocol/reservoir-kit/commit/82efe58df8d6335bdc1f9b7c593405b5224ac82a)
+
+## [v1.7.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/cd75fbc492a848c4ac21e4808838777dfc56393c) (2023-08-28)
+
+* Upgrade wagmi [ typescript](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-21)
+
+## [v1.6.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/480f4a718e8ad9969dfe6a006fdfd2eb1c133211) (2023-08-25)
+
+- Sync Api
+
 ## [v1.6.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2e9f33cb50e6669a0f2e5629e80c2415c24a7450) (2023-08-22)
 
 - Improve error messaging to surface more information from API errors
