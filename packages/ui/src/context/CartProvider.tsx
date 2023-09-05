@@ -1027,11 +1027,12 @@ function cartStore({
         if (cartData.current.feesOnTopBps) {
           const fixedFees = cartData.current.feesOnTopBps.map((fullFee) => {
             const [referrer, feeBps] = fullFee.split(':')
-            const fee =
+            const fee = Math.floor(
               Number(
                 parseUnits(`${expectedPrice}`, currencyDecimals) *
                   BigInt(feeBps)
               ) / 10000
+            )
             const atomicUnitsFee = formatUnits(BigInt(fee), 0)
             return `${referrer}:${atomicUnitsFee}`
           })
