@@ -5718,11 +5718,11 @@ __metadata:
     framer-motion: ^6.4.2
     react-flatpickr: ^3.10.13
     swr: 2.0.1
-    wagmi: ^1.3.10
   peerDependencies:
     react: ^18.0
     react-dom: ^18.0
     viem: ~1.6.4
+    wagmi: ^1.3.10
   languageName: unknown
   linkType: soft
 
