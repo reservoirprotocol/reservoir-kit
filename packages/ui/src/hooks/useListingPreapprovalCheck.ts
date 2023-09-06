@@ -89,7 +89,7 @@ export default function (
     } else if (unapprovedMarketplaces.length > 0) {
       setUnapprovedMarketplaces([])
     }
-  }, [client, wallet, tokenId, collectionId, marketplaces.length])
+  }, [client, wallet, tokenId, collectionId, marketplaces.length, hookChain])
 
   return { data: unapprovedMarketplaces, isFetching }
 }

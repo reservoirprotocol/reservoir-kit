@@ -477,7 +477,7 @@ export const BidModalRenderer: FC<Props> = ({
       })
   }, [
     tokenId,
-    chainId,
+    rendererChain,
     collectionId,
     currency,
     client,

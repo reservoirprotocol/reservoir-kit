@@ -295,6 +295,7 @@ export const BuyModalRenderer: FC<Props> = ({
     is1155,
     orderId,
     normalizeRoyalties,
+    rendererChain,
   ])
 
   useEffect(() => {
@@ -491,7 +492,7 @@ export const BuyModalRenderer: FC<Props> = ({
     client,
     currency,
     totalPrice,
-    chainId,
+    rendererChain,
     rendererChain,
     totalIncludingFees,
     mutateListings,

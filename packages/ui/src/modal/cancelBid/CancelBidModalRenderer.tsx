@@ -185,7 +185,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
         setStepData(null)
         setSteps(null)
       })
-  }, [bidId, client, chainId, wallet])
+  }, [bidId, client, rendererChain, wallet])
 
   useEffect(() => {
     if (!open) {

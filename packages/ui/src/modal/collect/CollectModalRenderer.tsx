@@ -283,7 +283,7 @@ export const CollectModalRenderer: FC<Props> = ({
   }, [
     client,
     wallet,
-    chainId,
+    rendererChain,
     normalizeRoyalties,
     collectionId,
     tokenId,
@@ -664,7 +664,7 @@ export const CollectModalRenderer: FC<Props> = ({
     total,
     normalizeRoyalties,
     wagmiChain,
-    chainId,
+    rendererChain,
     collectionId,
     tokenId,
     currency,

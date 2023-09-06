@@ -357,7 +357,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   }, [
     client,
     wallet,
-    chainId,
+    rendererChain,
     collectionId,
     tokenId,
     expirationOption,

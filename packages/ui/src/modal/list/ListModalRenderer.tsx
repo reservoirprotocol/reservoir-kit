@@ -17,7 +17,7 @@ import {
   useChainCurrency,
   useOnChainRoyalties,
 } from '../../hooks'
-import { useAccount, useWalletClient, useNetwork } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'

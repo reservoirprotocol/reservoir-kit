@@ -451,7 +451,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     wallet,
     collectionId,
     tokenId,
-    chainId,
+    rendererChain,
     expirationOption,
     trait,
     bidAmount,

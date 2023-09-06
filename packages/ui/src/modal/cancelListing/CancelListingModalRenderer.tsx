@@ -187,7 +187,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
         setStepData(null)
         setSteps(null)
       })
-  }, [listingId, client, chainId, wallet])
+  }, [listingId, client, rendererChain, wallet])
 
   useEffect(() => {
     if (!open) {

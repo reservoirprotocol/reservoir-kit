@@ -248,7 +248,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           setIsFetchingBidPath(false)
         })
     },
-    [client, wallet, chainId, normalizeRoyalties]
+    [client, wallet, rendererChain, normalizeRoyalties]
   )
 
   useEffect(() => {
@@ -445,7 +445,15 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         fetchBidsPath(tokens)
         mutateTokens()
       })
-  }, [bidsPath, bidTokenMap, chainId, client, wallet, prices, mutateTokens])
+  }, [
+    bidsPath,
+    bidTokenMap,
+    rendererChain,
+    client,
+    wallet,
+    prices,
+    mutateTokens,
+  ])
 
   useEffect(() => {
     if (bidsPath && bidsPath.length > 0) {
