@@ -174,7 +174,6 @@ export const CollectModalRenderer: FC<Props> = ({
     {},
     rendererChain?.id
   )
-
   const collection = collections && collections[0] ? collections[0] : undefined
 
   const is1155 = collection?.contractKind === 'erc1155'
