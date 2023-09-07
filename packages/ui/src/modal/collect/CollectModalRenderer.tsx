@@ -471,10 +471,23 @@ export const CollectModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (contentMode === 'sweep') {
-      const updatedTokens = orders?.slice(0, Math.max(0, itemAmount))
+      let updatedTokens = []
+      let quantity = 0
+      for (var i = 0; i < orders.length; i++) {
+        const order = orders[i]
+        if (order.quantity && order.quantity > 1) {
+          quantity += order.quantity
+        } else {
+          quantity++
+        }
+        updatedTokens.push(order)
+        if (quantity >= itemAmount) {
+          break
+        }
+      }
       setSelectedTokens(updatedTokens)
     }
-  }, [itemAmount, orders])
+  }, [itemAmount, maxItemAmount, orders])
 
   // Reset state on close
   useEffect(() => {
