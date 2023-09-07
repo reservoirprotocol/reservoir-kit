@@ -185,8 +185,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [marketplaces, setMarketplaces] = useMarketplaces(
     collectionId,
     true,
-    feesBps,
-    royaltyBps
+    feesBps
   )
   const {
     data: unapprovedMarketplaces,
