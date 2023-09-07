@@ -3,9 +3,9 @@ import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type CollectionResponse =
-  paths['/collections/v6']['get']['responses']['200']['schema']
+  paths['/collections/v7']['get']['responses']['200']['schema']
 
-type CollectionsQuery = paths['/collections/v6']['get']['parameters']['query']
+type CollectionsQuery = paths['/collections/v7']['get']['parameters']['query']
 
 export default function (
   options?: CollectionsQuery | false,
@@ -24,7 +24,7 @@ export default function (
         return null
       }
 
-      const url = new URL(`${chain?.baseApiUrl}/collections/v6`)
+      const url = new URL(`${chain?.baseApiUrl}/collections/v7`)
       let query: CollectionsQuery = { ...options }
 
       if (previousPageData && !previousPageData.continuation) {
