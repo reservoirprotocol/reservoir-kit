@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useListings } from '../../hooks'
 import { useWalletClient, useNetwork } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
+import { getNetwork } from 'wagmi/actions'
 
 export enum CancelStep {
   Cancel,
@@ -35,6 +36,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   listingId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -42,17 +44,29 @@ type Props = {
 export const CancelListingModalRenderer: FC<Props> = ({
   open,
   listingId,
+  chainId,
   normalizeRoyalties,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
   const [cancelStep, setCancelStep] = useState<CancelStep>(CancelStep.Cancel)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<CancelListingStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
-  const { chain: activeChain } = useNetwork()
+
+  const { chains } = useNetwork()
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
+  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+
   const blockExplorerBaseUrl =
-    activeChain?.blockExplorers?.default.url || 'https://etherscan.io'
+    wagmiChain?.blockExplorers?.default.url || 'https://etherscan.io'
 
   const { data: listings, isFetchingPage } = useListings(
     {
@@ -64,7 +78,8 @@ export const CancelListingModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && listingId ? true : false
+    open && listingId ? true : false,
+    rendererChain?.id
   )
 
   const listing = listings && listings[0] ? listings[0] : undefined
@@ -76,8 +91,6 @@ export const CancelListingModalRenderer: FC<Props> = ({
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
   const totalUsd = usdPrice * (listing?.price?.amount?.decimal || 0)
-
-  const client = useReservoirClient()
 
   const cancelOrder = useCallback(() => {
     if (!wallet) {
@@ -98,10 +111,17 @@ export const CancelListingModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (rendererChain?.id !== getNetwork()?.chain?.id) {
+      const error = new Error(`Mismatching chainIds`)
+      setTransactionError(error)
+      throw error
+    }
+
     setCancelStep(CancelStep.Approving)
 
     client.actions
       .cancelOrder({
+        chainId: rendererChain?.id,
         ids: [listingId],
         wallet,
         onProgress: (steps: Execute['steps']) => {
@@ -167,7 +187,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
         setStepData(null)
         setSteps(null)
       })
-  }, [listingId, client, wallet])
+  }, [listingId, client, rendererChain, wallet])
 
   useEffect(() => {
     if (!open) {

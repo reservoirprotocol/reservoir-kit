@@ -1,5 +1,5 @@
 import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
-import { useFallbackState } from '../../hooks'
+import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Modal } from '../Modal'
 import {
   CollectModalRenderer,
@@ -11,6 +11,7 @@ import {
 import { MintContent } from './mint/MintContent'
 import { SweepContent } from './sweep/SweepContent'
 import { Flex, Text } from '../../primitives'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 type CollectCallbackData = {
   collectionId?: string
@@ -43,6 +44,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
+  chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof CollectModalCopy>
   onCollectComplete?: (data: CollectCallbackData) => void
@@ -56,6 +58,7 @@ export function CollectModal({
   trigger,
   collectionId,
   tokenId,
+  chainId,
   feesOnTopBps,
   feesOnTopUsd,
   normalizeRoyalties,
@@ -73,8 +76,27 @@ export function CollectModal({
     openState
   )
 
+  const { chain: activeWalletChain } = useNetwork()
+  const client = useReservoirClient()
+  const { switchNetworkAsync } = useSwitchNetwork()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
+  const handleCollect = async (collectTokens: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      const chain = await switchNetworkAsync?.(modalChain?.id)
+      if (chain?.id !== modalChain?.id) return
+    }
+    collectTokens()
+  }
+
   return (
     <CollectModalRenderer
+      chainId={modalChain?.id}
       open={open}
       mode={mode}
       collectionId={collectionId}
@@ -91,6 +113,7 @@ export function CollectModal({
           address,
           stepData,
           transactionError,
+          collectTokens,
         } = props
         useEffect(() => {
           if (collectStep === CollectStep.Complete && onCollectComplete) {
@@ -139,6 +162,8 @@ export function CollectModal({
             {!loading && contentMode === 'sweep' ? (
               <SweepContent
                 {...props}
+                chainId={modalChain?.id}
+                collectTokens={() => handleCollect(collectTokens)}
                 copy={copy}
                 open={open}
                 setOpen={setOpen}
@@ -148,6 +173,8 @@ export function CollectModal({
             {!loading && contentMode === 'mint' ? (
               <MintContent
                 {...props}
+                chainId={modalChain?.id}
+                collectTokens={() => handleCollect(collectTokens)}
                 copy={copy}
                 open={open}
                 setOpen={setOpen}

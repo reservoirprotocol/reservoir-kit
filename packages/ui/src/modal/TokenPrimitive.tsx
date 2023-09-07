@@ -26,6 +26,7 @@ type Props = {
   isUnavailable?: boolean
   priceSubtitle?: string
   royaltiesBps?: number
+  chainId?: number
   quantity?: number
 }
 
@@ -37,6 +38,7 @@ const Img = styled('img', {
 const TokenPrimitive: FC<Props> = ({
   img,
   name,
+  chainId,
   collection,
   currencyContract,
   currencyDecimals,
@@ -164,6 +166,7 @@ const TokenPrimitive: FC<Props> = ({
           {price ? (
             <FormatCryptoCurrency
               amount={price}
+              chainId={chainId}
               textColor={isUnavailable ? 'subtle' : 'base'}
               address={currencyContract}
               decimals={currencyDecimals}

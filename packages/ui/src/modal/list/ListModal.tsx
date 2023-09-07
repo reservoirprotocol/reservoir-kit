@@ -48,6 +48,7 @@ import { CurrencySelector } from '../CurrencySelector'
 import { zeroAddress } from 'viem'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
+import { useSwitchNetwork, useNetwork } from 'wagmi'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -70,6 +71,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
+  chainId?: number
   currencies?: Currency[]
   nativeOnly?: boolean
   normalizeRoyalties?: boolean
@@ -120,6 +122,7 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
+  chainId,
   currencies,
   nativeOnly,
   normalizeRoyalties,
@@ -137,8 +140,17 @@ export function ListModal({
     openState ? openState[0] : false,
     openState
   )
+
+  const { chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
-  const reservoirChain = client?.currentChain()
+  const { switchNetworkAsync } = useSwitchNetwork()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
     Marketplace[]
   >([])
@@ -149,9 +161,18 @@ export function ListModal({
     nativeOnly = true
   }
 
+  const handleList = async (listToken: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      const chain = await switchNetworkAsync?.(modalChain?.id)
+      if (chain?.id !== modalChain?.id) return
+    }
+    listToken()
+  }
+
   return (
     <ListModalRenderer
       open={open}
+      chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
       currencies={currencies}
@@ -304,6 +325,7 @@ export function ListModal({
                 }}
               >
                 <TokenStats
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   royaltyBps={royaltyBps}
@@ -319,6 +341,7 @@ export function ListModal({
                       >
                         List item in
                         <CurrencySelector
+                          chainId={modalChain?.id}
                           currency={currency}
                           currencies={currencies}
                           setCurrency={setCurrency}
@@ -443,6 +466,7 @@ export function ListModal({
                 }}
               >
                 <TokenStats
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   royaltyBps={royaltyBps}
@@ -554,6 +578,7 @@ export function ListModal({
                     {selectedMarketplaces.map((marketplace) => (
                       <Box key={marketplace.name} css={{ mb: '$3' }}>
                         <MarketplacePriceInput
+                          chainId={modalChain?.id}
                           marketplace={marketplace}
                           collection={collection}
                           currency={currency}
@@ -645,7 +670,7 @@ export function ListModal({
                           marketplace.price == 0 ||
                           Number(marketplace.price) < MINIMUM_AMOUNT
                       )}
-                      onClick={listToken}
+                      onClick={() => handleList(listToken)}
                       css={{ width: '100%' }}
                     >
                       {copy.ctaList}
@@ -661,6 +686,7 @@ export function ListModal({
                 }}
               >
                 <TokenListingDetails
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   listingData={listingData}
@@ -746,6 +772,7 @@ export function ListModal({
                 }}
               >
                 <TokenListingDetails
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   listingData={listingData}
@@ -799,7 +826,7 @@ export function ListModal({
                           <a
                             key={data.listing.orderbook}
                             target="_blank"
-                            href={`${reservoirChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                            href={`${modalChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
                           >
                             <Image
                               css={{ width: 24 }}

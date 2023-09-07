@@ -1,4 +1,4 @@
-import { useFallbackState, useTimeSince } from '../../hooks'
+import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
 import React, { ReactElement, Dispatch, SetStateAction, useEffect } from 'react'
 import { Flex, Text, Box, Button, Loader, Select } from '../../primitives'
 import {
@@ -16,6 +16,7 @@ import {
 import PriceInput from './PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { zeroAddress } from 'viem'
+import { useSwitchNetwork, useNetwork } from 'wagmi'
 
 const ModalCopy = {
   title: 'Edit Listing',
@@ -32,6 +33,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   listingId?: string
   tokenId?: string
   collectionId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
@@ -47,6 +49,7 @@ export function EditListingModal({
   listingId,
   tokenId,
   collectionId,
+  chainId,
   trigger,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
@@ -61,9 +64,28 @@ export function EditListingModal({
     openState
   )
 
+  const { chain: activeWalletChain } = useNetwork()
+  const client = useReservoirClient()
+  const { switchNetworkAsync } = useSwitchNetwork()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
+  const handleEditListing = async (editListing: () => void): Promise<void> => {
+    if (modalChain?.id !== activeWalletChain?.id) {
+      const chain = await switchNetworkAsync?.(modalChain?.id)
+      if (chain?.id !== modalChain?.id) return
+    }
+    editListing()
+  }
+
   return (
     <EditListingModalRenderer
       listingId={listingId}
+      chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
       open={open}
@@ -197,6 +219,7 @@ export function EditListingModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={token?.token?.imageSmall}
                     name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
@@ -262,6 +285,7 @@ export function EditListingModal({
                   </Flex>
                   <Flex direction="column" css={{ gap: '$2' }}>
                     <PriceInput
+                      chainId={modalChain?.id}
                       price={price}
                       collection={collection}
                       currency={currency}
@@ -364,7 +388,7 @@ export function EditListingModal({
                         price === 0 ||
                         price < MINIMUM_AMOUNT
                       }
-                      onClick={editListing}
+                      onClick={() => handleEditListing(editListing)}
                       css={{ flex: 1 }}
                     >
                       {copy.ctaConfirm}
@@ -377,6 +401,7 @@ export function EditListingModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={token?.token?.imageSmall}
                     name={token?.token?.name}
                     price={profit}
