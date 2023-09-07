@@ -96,7 +96,7 @@ const TokenStats: FC<Props> = ({ token, collection, royaltyBps = 0 }) => {
                 Collection Floor
               </Text>
             ),
-            value: collection?.floorAsk?.price?.amount?.native || 0,
+            value: collection?.floorAsk?.price?.amount?.decimal || 0,
             address: collection?.floorAsk?.price?.currency?.contract,
             symbol: collection?.floorAsk?.price?.currency?.symbol,
             asNative: true,
