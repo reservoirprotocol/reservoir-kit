@@ -208,10 +208,8 @@ export const CollectModalRenderer: FC<Props> = ({
       .buyToken({
         items: [
           {
-            collection: token?.token?.tokenId ? undefined : collectionId,
-            token: token?.token?.tokenId
-              ? `${collectionId}:${token?.token?.tokenId}`
-              : undefined,
+            collection: tokenId ? undefined : collectionId,
+            token: tokenId ? `${collectionId}:${tokenId}` : undefined,
             fillType: mode === 'preferMint' ? undefined : mode,
           },
         ],
@@ -275,7 +273,6 @@ export const CollectModalRenderer: FC<Props> = ({
     tokenId,
     currency,
     mode,
-    token?.token?.tokenId,
     is1155,
   ])
 
@@ -294,7 +291,7 @@ export const CollectModalRenderer: FC<Props> = ({
         return () => clearInterval(intervalId)
       }
     }
-  }, [client, wallet, open, fetchBuyPathIfIdle, token?.token?.tokenId, is1155])
+  }, [client, wallet, open, fetchBuyPathIfIdle])
 
   // Update currency
   const updateCurrency = useCallback(
