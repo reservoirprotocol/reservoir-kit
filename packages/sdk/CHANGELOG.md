@@ -1,7 +1,7 @@
 
 ## [v1.4.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/24c3283cd15b881fb83161fe3e5cd32d73562eb8) (2023-09-07)
 
-* useCollections: Update collections/v6 to v7 [38ecc5a](https://github.com/reservoirprotocol/reservoir-kit/commit/38ecc5a922e31d8e38792d0bc11eed74ebb4e0f4)
+* Sync api [38ecc5a](https://github.com/reservoirprotocol/reservoir-kit/commit/38ecc5a922e31d8e38792d0bc11eed74ebb4e0f4)
 
 ## [v1.4.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0578f8b9b4e3ae93aa732110b39886537001465c) (2023-08-31)
 
