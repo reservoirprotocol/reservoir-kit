@@ -20,7 +20,8 @@ export default function (
   collectionId?: string,
   listingEnabledOnly?: boolean,
   fees?: string[],
-  chainId?: number
+  chainId?: number,
+  enabled: boolean = true
 ): [Marketplace[], React.Dispatch<React.SetStateAction<Marketplace[]>>] {
   const [marketplaces, setMarketplaces] = useState<Marketplace[]>([])
   const client = useReservoirClient()
@@ -34,7 +35,12 @@ export default function (
 
   const { data } = useSWR<
     paths['/collections/{collection}/supported-marketplaces/v1']['get']['responses'][200]['schema']
-  >(collectionId ? [path.href, chain?.apiKey, client?.version] : null, null)
+  >(
+    collectionId && enabled
+      ? [path.href, chain?.apiKey, client?.version]
+      : null,
+    null
+  )
 
   useEffect(() => {
     if (data && data.marketplaces) {

@@ -140,7 +140,13 @@ export const ListModalRenderer: FC<Props> = ({
 
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
-  const [allMarketplaces] = useMarketplaces(collectionId, true, feesBps)
+  const [allMarketplaces] = useMarketplaces(
+    collectionId,
+    true,
+    feesBps,
+    rendererChain?.id,
+    open
+  )
   const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<ListModalStepData | null>(null)
@@ -200,7 +206,8 @@ export const ListModalRenderer: FC<Props> = ({
     collectionId,
     true,
     feesBps,
-    rendererChain?.id
+    rendererChain?.id,
+    open
   )
   const {
     data: unapprovedMarketplaces,
