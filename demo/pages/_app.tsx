@@ -45,9 +45,9 @@ const { chains, publicClient } = configureChains(
     allChains.optimism,
     allChains.arbitrum,
     allChains.zora,
-    customChains.base,
+    allChains.base,
     allChains.avalanche,
-    customChains.linea,
+    allChains.linea,
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
@@ -139,16 +139,22 @@ const AppWrapper: FC<any> = ({ children }) => {
             },
             {
               baseApiUrl: 'https://api-base.reservoir.tools',
-              id: customChains.base.id,
-              active: CHAIN_ID === customChains.base.id,
+              id: allChains.base.id,
+              active: CHAIN_ID === allChains.base.id,
               apiKey: API_KEY,
             },
             {
               baseApiUrl: 'https://api-linea.reservoir.tools',
-              id: customChains.linea.id,
-              active: CHAIN_ID === customChains.linea.id,
+              id: allChains.linea.id,
+              active: CHAIN_ID === allChains.linea.id,
               apiKey: API_KEY,
             },
+            {
+              baseApiUrl: 'https://api-arbitrum-nova.reservoir.tools',
+              id: customChains.arbitrumNova.id,
+              active: CHAIN_ID === customChains.arbitrumNova.id,
+              apiKey: API_KEY
+            }
           ],
           marketplaceFees: MARKETPLACE_FEES,
           source: SOURCE,
