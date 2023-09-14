@@ -19,6 +19,7 @@ type Props = {
   netAmount?: number
   currency?: string
   decimals?: number
+  chainId?: number
 }
 
 const Img = styled('img', {
@@ -30,6 +31,7 @@ const AcceptBidLineItem: FC<Props> = ({
   img,
   token,
   collection,
+  chainId,
   sourceImg,
   price,
   netAmount,
@@ -94,6 +96,7 @@ const AcceptBidLineItem: FC<Props> = ({
               <Flex css={{ gap: '$1' }} justify="between">
                 <Text style="body3">Total Offer Value</Text>
                 <FormatCryptoCurrency
+                  chainId={chainId}
                   amount={price}
                   address={currency}
                   decimals={decimals}
@@ -121,6 +124,7 @@ const AcceptBidLineItem: FC<Props> = ({
                       -
                     </Text>
                     <FormatCryptoCurrency
+                      chainId={chainId}
                       amount={fee.amount}
                       address={currency}
                       decimals={decimals}
@@ -132,6 +136,7 @@ const AcceptBidLineItem: FC<Props> = ({
               <Flex justify="between" css={{ gap: '$1' }}>
                 <Text style="body3">You Get</Text>
                 <FormatCryptoCurrency
+                  chainId={chainId}
                   amount={netAmount}
                   address={currency}
                   decimals={decimals}
@@ -151,6 +156,7 @@ const AcceptBidLineItem: FC<Props> = ({
               <Img src={sourceImg} css={{ height: 16, width: 16 }} />
             )}
             <FormatCryptoCurrency
+              chainId={chainId}
               amount={price}
               address={currency}
               decimals={decimals}

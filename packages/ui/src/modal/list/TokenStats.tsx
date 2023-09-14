@@ -8,10 +8,16 @@ import InfoTooltip from '../../primitives/InfoTooltip'
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  chainId?: number
   royaltyBps?: number
 }
 
-const TokenStats: FC<Props> = ({ token, collection, royaltyBps = 0 }) => {
+const TokenStats: FC<Props> = ({
+  token,
+  chainId,
+  collection,
+  royaltyBps = 0,
+}) => {
   let attributeFloor = token?.token?.attributes
     ? Math.max(
         ...token.token.attributes.map((attr: any) =>
@@ -96,7 +102,7 @@ const TokenStats: FC<Props> = ({ token, collection, royaltyBps = 0 }) => {
                 Collection Floor
               </Text>
             ),
-            value: collection?.floorAsk?.price?.amount?.native || 0,
+            value: collection?.floorAsk?.price?.amount?.decimal || 0,
             address: collection?.floorAsk?.price?.currency?.contract,
             symbol: collection?.floorAsk?.price?.currency?.symbol,
             asNative: true,
@@ -132,7 +138,7 @@ const TokenStats: FC<Props> = ({ token, collection, royaltyBps = 0 }) => {
             asNative: true,
           },
         ].map((stat) => (
-          <Stat key={stat.id} {...stat} />
+          <Stat key={stat.id} {...stat} chainId={chainId} />
         ))}
       </Box>
     </Flex>

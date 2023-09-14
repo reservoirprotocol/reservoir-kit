@@ -18,6 +18,7 @@ const CollectPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState<string | undefined>(undefined)
+  const [chainId, setChainId] = useState<string | undefined>(undefined)
   const [mode, setMode] = useState('preferMint')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
@@ -56,6 +57,15 @@ const CollectPage: NextPage = () => {
           type="text"
           value={tokenId}
           onChange={(e) => setTokenId(e.target.value)}
+        />
+      </div>
+
+      <div>
+        <label>Chain Override: </label>
+        <input
+          type="text"
+          value={chainId}
+          onChange={(e) => setChainId(e.target.value)}
         />
       </div>
 
@@ -143,6 +153,7 @@ const CollectPage: NextPage = () => {
       </div>
 
       <CollectModal
+        chainId={Number(chainId)}
         trigger={
           <button
             style={{

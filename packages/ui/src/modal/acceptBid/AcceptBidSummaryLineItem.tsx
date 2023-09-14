@@ -137,6 +137,7 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
                     </Text>
                   ) : null}
                   <FormatCryptoCurrency
+                    chainId={chain?.id}
                     amount={netAmount}
                     address={currency.contract}
                     decimals={currency.decimals}

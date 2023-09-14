@@ -27,14 +27,17 @@ import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible
 import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
+import { formatNumber } from '../../../lib/numbers'
 
 export const SweepContent: FC<
   ChildrenProps & {
+    chainId?: number
     copy: typeof CollectModalCopy
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
   }
 > = ({
+  chainId,
   collection,
   token,
   orders,
@@ -159,8 +162,8 @@ export const SweepContent: FC<
                 >
                   <Text style="subtitle2">Quantity</Text>
                   <Text style="body3" color="subtle">
-                    {maxItemAmount} {maxItemAmount === 1 ? 'item' : 'items'}{' '}
-                    available
+                    {formatNumber(maxItemAmount)}{' '}
+                    {maxItemAmount === 1 ? 'item' : 'items'} available
                   </Text>
                 </Flex>
                 <QuantitySelector
@@ -180,6 +183,7 @@ export const SweepContent: FC<
                           Price Range
                         </Text>
                         <FormatCryptoCurrency
+                          chainId={chainId}
                           amount={cheapestTokenPrice}
                           address={currency?.address}
                           decimals={currency?.decimals}
@@ -190,6 +194,7 @@ export const SweepContent: FC<
                           -
                         </Text>
                         <FormatCryptoCurrency
+                          chainId={chainId}
                           amount={mostExpensiveTokenPrice}
                           address={currency?.address}
                           decimals={currency?.decimals}
@@ -207,6 +212,7 @@ export const SweepContent: FC<
                       Avg Price
                     </Text>
                     <FormatCryptoCurrency
+                      chainId={chainId}
                       amount={total / itemAmount}
                       address={currency?.address}
                       decimals={currency?.decimals}
@@ -228,6 +234,7 @@ export const SweepContent: FC<
                 <Text style="subtitle2">Referral Fee</Text>
                 <Flex direction="column" align="end" css={{ gap: '$1' }}>
                   <FormatCryptoCurrency
+                    chainId={chainId}
                     amount={feeOnTop}
                     address={currency?.address}
                     decimals={currency?.decimals}
@@ -241,6 +248,7 @@ export const SweepContent: FC<
               <Text style="h6">Total</Text>
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
                 <FormatCryptoCurrency
+                  chainId={chainId}
                   textStyle="h6"
                   amount={totalIncludingFees}
                   address={currency?.address}
@@ -270,6 +278,7 @@ export const SweepContent: FC<
                 </Text>
 
                 <FormatCryptoCurrency
+                  chainId={chainId}
                   amount={balance}
                   address={currency?.address}
                   decimals={currency?.decimals}
@@ -297,6 +306,7 @@ export const SweepContent: FC<
             }}
           >
             <CollectCheckout
+              chainId={chainId}
               collection={collection}
               token={token}
               itemCount={itemAmount}
@@ -387,6 +397,7 @@ export const SweepContent: FC<
             }}
           >
             <CollectCheckout
+              chainId={chainId}
               collection={collection}
               token={token}
               itemCount={itemAmount}

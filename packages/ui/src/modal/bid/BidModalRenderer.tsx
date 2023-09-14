@@ -27,6 +27,7 @@ import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
 import { parseUnits } from 'viem'
+import { getNetwork } from 'wagmi/actions'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -103,6 +104,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   tokenId?: string
+  chainId?: number
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
@@ -125,6 +127,7 @@ export type BidModalStepData = {
 export const BidModalRenderer: FC<Props> = ({
   open,
   tokenId,
+  chainId,
   collectionId,
   attribute,
   normalizeRoyalties,
@@ -133,7 +136,20 @@ export const BidModalRenderer: FC<Props> = ({
   feesBps,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
+  const { chains } = useNetwork()
+
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
+  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
+
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [bidAmountPerUnit, setBidAmountPerUnit] = useState<string>('')
@@ -150,7 +166,7 @@ export const BidModalRenderer: FC<Props> = ({
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
-  const chainCurrency = useChainCurrency()
+  const chainCurrency = useChainCurrency(rendererChain?.id)
 
   const nativeWrappedContractAddress =
     chainCurrency.chainId in wrappedContracts
@@ -185,18 +201,22 @@ export const BidModalRenderer: FC<Props> = ({
       },
     {
       revalidateFirstPage: true,
-    }
+    },
+    rendererChain?.id
   )
 
   const { data: traits } = useAttributes(
-    open && !tokenId ? collectionId : undefined
+    open && !tokenId ? collectionId : undefined,
+    rendererChain?.id
   )
 
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
       normalizeRoyalties,
-    }
+    },
+    {},
+    rendererChain?.id
   )
 
   const collection = collections && collections[0] ? collections[0] : undefined
@@ -210,36 +230,33 @@ export const BidModalRenderer: FC<Props> = ({
   const totalBidAmount = Number(bidAmountPerUnit) * Math.max(1, quantity)
   const totalBidAmountUsd = totalBidAmount * (usdPrice || 0)
 
-  const client = useReservoirClient()
-
   const { address } = useAccount()
   const { data: balance } = useBalance({
     address: address,
     watch: open,
-    chainId: client?.currentChain()?.id,
+    chainId: rendererChain?.id,
   })
 
   const { data: wrappedBalance } = useBalance({
     token: wrappedContractAddress as any,
     address: address,
     watch: open,
-    chainId: client?.currentChain()?.id,
+    chainId: rendererChain?.id,
   })
 
-  const { chain } = useNetwork()
   const canAutomaticallyConvert =
     !currency || currency.contract === nativeWrappedContractAddress
   let convertLink: string = ''
 
   if (canAutomaticallyConvert) {
     convertLink =
-      chain?.id === mainnet.id || chain?.id === goerli.id
+      rendererChain?.id === mainnet.id || rendererChain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
-            chain?.network || 'mainnet'
+            wagmiChain?.network || 'mainnet'
           }&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
   } else {
-    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${wrappedContractAddress}`
+    convertLink = `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${wrappedContractAddress}`
   }
 
   const feeBps: number | undefined = useMemo(() => {
@@ -335,6 +352,12 @@ export const BidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (rendererChain?.id !== getNetwork()?.chain?.id) {
+      const error = new Error(`Mismatching chainIds`)
+      setTransactionError(error)
+      throw error
+    }
+
     if (!tokenId && !collectionId) {
       const error = new Error('Missing tokenId and collectionId')
       setTransactionError(error)
@@ -408,6 +431,7 @@ export const BidModalRenderer: FC<Props> = ({
 
     client.actions
       .placeBid({
+        chainId: rendererChain?.id,
         wallet,
         bids: [bid],
         onProgress: (steps: Execute['steps']) => {
@@ -453,6 +477,7 @@ export const BidModalRenderer: FC<Props> = ({
       })
   }, [
     tokenId,
+    rendererChain,
     collectionId,
     currency,
     client,

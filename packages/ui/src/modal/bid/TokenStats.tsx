@@ -11,9 +11,10 @@ type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   trait?: Trait
+  chainId?: number
 }
 
-const TokenStats: FC<Props> = ({ token, collection, trait }) => {
+const TokenStats: FC<Props> = ({ token, chainId, collection, trait }) => {
   let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = []
 
   stats.push(
@@ -137,7 +138,7 @@ const TokenStats: FC<Props> = ({ token, collection, trait }) => {
           }}
         >
           {stats.map((stat) => (
-            <Stat key={stat.id} {...stat} />
+            <Stat chainId={chainId} key={stat.id} {...stat} />
           ))}
         </Box>
       </Grid>
