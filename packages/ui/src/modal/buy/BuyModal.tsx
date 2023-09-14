@@ -34,6 +34,7 @@ type PurchaseData = {
 const ModalCopy = {
   titleInsufficientFunds: 'Add Funds',
   titleUnavilable: 'Selected item is no longer Available',
+  titleIsOwner: 'You already own this token',
   titleDefault: 'Complete Checkout',
   ctaClose: 'Close',
   ctaCheckout: 'Checkout',
@@ -78,7 +79,7 @@ function titleForStep(
 
   switch (step) {
     case BuyStep.Unavailable:
-      return isOwner ? 'You already own this token' : copy.titleUnavilable
+      return isOwner ? copy.titleIsOwner : copy.titleUnavilable
     default:
       return copy.titleDefault
   }
