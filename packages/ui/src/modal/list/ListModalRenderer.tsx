@@ -200,7 +200,6 @@ export const ListModalRenderer: FC<Props> = ({
     collectionId,
     true,
     feesBps,
-    royaltyBps,
     rendererChain?.id
   )
   const {
