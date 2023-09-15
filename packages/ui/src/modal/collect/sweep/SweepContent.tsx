@@ -27,6 +27,7 @@ import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible
 import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
+import { formatNumber } from '../../../lib/numbers'
 
 export const SweepContent: FC<
   ChildrenProps & {
@@ -161,8 +162,8 @@ export const SweepContent: FC<
                 >
                   <Text style="subtitle2">Quantity</Text>
                   <Text style="body3" color="subtle">
-                    {maxItemAmount} {maxItemAmount === 1 ? 'item' : 'items'}{' '}
-                    available
+                    {formatNumber(maxItemAmount)}{' '}
+                    {maxItemAmount === 1 ? 'item' : 'items'} available
                   </Text>
                 </Flex>
                 <QuantitySelector
