@@ -12,7 +12,7 @@ import {
   useReservoirClient,
   useTokens,
 } from '../hooks'
-import { getChainCurrency } from '../hooks/useChainCurrency'
+import { useChainCurrency } from '../hooks/index'
 import { defaultFetcher } from '../lib/swr'
 import React, {
   createContext,
@@ -302,7 +302,7 @@ function cartStore({
         }
       }
       if (currencies.size > 1) {
-        const chainCurrency = getChainCurrency(chains, chainId)
+        const chainCurrency = useChainCurrency(chainId)
         return {
           ...chainCurrency,
           contract: chainCurrency.address,
@@ -1005,10 +1005,7 @@ function cartStore({
       if (!tokens || tokens.length === 0) {
         throw 'Cart is empty'
       }
-      const chainCurrency = getChainCurrency(
-        chains,
-        cartData.current.chain?.id || 1
-      )
+      const chainCurrency = useChainCurrency(cartData.current.chain?.id || 1)
       const currencyChain = client.chains.find(
         (chain) => (chainCurrency.chainId = chain.id)
       )

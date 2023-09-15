@@ -28,6 +28,7 @@ import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible
 import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
+import { formatNumber } from '../../../lib/numbers'
 
 export const MintContent: FC<
   ChildrenProps & {
@@ -152,8 +153,8 @@ export const MintContent: FC<
                   >
                     <Text style="subtitle2">Quantity</Text>
                     <Text style="body3" color="subtle">
-                      {maxItemAmount} {maxItemAmount > 1 ? 'items' : 'item'}{' '}
-                      available
+                      {formatNumber(maxItemAmount)}{' '}
+                      {maxItemAmount > 1 ? 'items' : 'item'} available
                     </Text>
                   </Flex>
                   <QuantitySelector

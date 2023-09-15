@@ -14,18 +14,21 @@ import {
   useChainCurrency,
   useCurrencyConversion,
 } from '../../hooks'
-import { useAccount, useBalance, useWalletClient, useNetwork } from 'wagmi'
-import { getNetwork } from 'wagmi/actions'
+import { useAccount, useBalance, useWalletClient } from 'wagmi'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
 
 import {
   BuyPath,
   Execute,
+  LogLevel,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
 import { UseBalanceToken } from '../../types/wagmi'
 import { toFixed } from '../../lib/numbers'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { Currency } from '../../types/Currency'
+import { customChains } from '@reservoir0x/reservoir-sdk'
+import * as allChains from 'viem/chains'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
@@ -76,9 +79,12 @@ type ChildrenProps = {
   balance?: bigint
   address?: string
   blockExplorerBaseUrl: string
+  blockExplorerBaseName: string
   steps: Execute['steps'] | null
   stepData: BuyModalStepData | null
   quantity: number
+  isConnected: boolean
+  isOwner: boolean
   setBuyStep: React.Dispatch<React.SetStateAction<BuyStep>>
   setQuantity: React.Dispatch<React.SetStateAction<number>>
   buyToken: () => void
@@ -93,6 +99,7 @@ type Props = {
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
+  onConnectWallet: () => void
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -105,6 +112,7 @@ export const BuyModalRenderer: FC<Props> = ({
   feesOnTopBps,
   feesOnTopUsd,
   normalizeRoyalties,
+  onConnectWallet,
   children,
 }) => {
   const [totalPrice, setTotalPrice] = useState(0)
@@ -122,23 +130,25 @@ export const BuyModalRenderer: FC<Props> = ({
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [quantity, setQuantity] = useState(1)
 
-  const { chains } = useNetwork()
-
   const client = useReservoirClient()
-
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
+  const wagmiChain: allChains.Chain | undefined = Object.values({
+    ...allChains,
+    ...customChains,
+  }).find(({ id }) => rendererChain?.id === id)
 
   const { data: wallet } = useWalletClient()
 
   const chainCurrency = useChainCurrency(rendererChain?.id)
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
+  const blockExplorerBaseName =
+    wagmiChain?.blockExplorers?.default?.name || 'Etherscan'
 
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
@@ -177,6 +187,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const collection = collections && collections[0] ? collections[0] : undefined
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
   const is1155 = token?.token?.kind === 'erc1155'
+  const isOwner = token?.token?.owner?.toLowerCase() === address?.toLowerCase()
 
   const {
     data: listingsData,
@@ -229,15 +240,7 @@ export const BuyModalRenderer: FC<Props> = ({
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
 
   const fetchPath = useCallback(() => {
-    if (
-      !open ||
-      !client ||
-      !tokenId ||
-      !contract ||
-      !address ||
-      !is1155 ||
-      orderId
-    ) {
+    if (!open || !client || !tokenId || !contract || !is1155 || orderId) {
       setPath(undefined)
       return
     }
@@ -266,7 +269,7 @@ export const BuyModalRenderer: FC<Props> = ({
         ],
         wallet: {
           address: async () => {
-            return address
+            return address || zeroAddress
           },
         } as any,
         onProgress: () => {},
@@ -302,14 +305,24 @@ export const BuyModalRenderer: FC<Props> = ({
     fetchPath()
   }, [fetchPath])
 
-  const buyToken = useCallback(() => {
+  const buyToken = useCallback(async () => {
     if (!wallet) {
-      const error = new Error('Missing a wallet/signer')
-      setTransactionError(error)
-      throw error
+      onConnectWallet()
+      if (document.body.style) {
+        document.body.style.pointerEvents = 'auto'
+      }
+      client?.log(['Missing wallet, prompting connection'], LogLevel.Verbose)
+      return
     }
 
-    if (rendererChain?.id !== getNetwork().chain?.id) {
+    let activeWalletChain = getNetwork().chain
+    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchNetwork({
+        chainId: rendererChain?.id as number,
+      })
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
@@ -495,9 +508,11 @@ export const BuyModalRenderer: FC<Props> = ({
     rendererChain,
     rendererChain,
     totalIncludingFees,
+    wallet,
     mutateListings,
     mutateTokens,
     mutateCollection,
+    onConnectWallet,
   ])
 
   useEffect(() => {
@@ -506,7 +521,8 @@ export const BuyModalRenderer: FC<Props> = ({
     if (
       !token ||
       (orderId && !listing && isValidatingListing) ||
-      (is1155 && !path && isFetchingPath)
+      (is1155 && !path && isFetchingPath) ||
+      (!is1155 && isOwner)
     ) {
       setBuyStep(BuyStep.Unavailable)
       setTotalPrice(0)
@@ -637,6 +653,7 @@ export const BuyModalRenderer: FC<Props> = ({
     quantity,
     token,
     chainCurrency.address,
+    isOwner,
   ])
 
   useEffect(() => {
@@ -697,9 +714,12 @@ export const BuyModalRenderer: FC<Props> = ({
         balance: balance?.value,
         address: address,
         blockExplorerBaseUrl,
+        blockExplorerBaseName,
         steps,
         stepData,
         quantity,
+        isConnected: wallet !== undefined,
+        isOwner,
         setQuantity,
         setBuyStep,
         buyToken,

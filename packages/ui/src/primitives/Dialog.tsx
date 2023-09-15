@@ -162,7 +162,7 @@ const Dialog = forwardRef<
         <AnimatePresence>
           {dialogOpen && (
             <DialogPrimitive.DialogPortal forceMount {...portalProps}>
-              <AnimatedOverlay />
+              <AnimatedOverlay data-radix-dismissable />
               <StyledAnimatedContent
                 ref={forwardedRef}
                 {...props}

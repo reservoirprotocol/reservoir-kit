@@ -1,4 +1,17 @@
 
+## [v1.8.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c2993841994af0cfca0b452a873b547ecb70978a) (2023-09-07)
+
+* Allow chain override for all modals [7395dca](https://github.com/reservoirprotocol/reservoir-kit/commit/7395dca643167b3aed8294fc741b5de4616b95c3)
+* CollectModal: fix sweeping 1155s quantity [63ea43a](https://github.com/reservoirprotocol/reservoir-kit/commit/63ea43af5518d01f9cfda6d6f891c4d98707f627)
+* ListModal: fix collect floor stat [2068d4b](https://github.com/reservoirprotocol/reservoir-kit/commit/2068d4b7449b18e5cd4f139991a5f370473777bd)
+* CollectModal: format quantity available [abfd250](https://github.com/reservoirprotocol/reservoir-kit/commit/abfd250b738475f64077eaa42b35347da8ccbaee)
+* Add zksync wrapped contract details [54d24d9](https://github.com/reservoirprotocol/reservoir-kit/commit/54d24d94daefb0409f1b76f5f1768430237fd1fc)
+* useCollections: Update collections/v6 to v7 [38ecc5a](https://github.com/reservoirprotocol/reservoir-kit/commit/38ecc5a922e31d8e38792d0bc11eed74ebb4e0f4)
+
+## [v1.8.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/674519e6a257ac070c76d97ce2795c602adf4729) (2023-09-06)
+
+* Make wagmi a peerdependency of RK ui [98b10b7](https://github.com/reservoirprotocol/reservoir-kit/commit/98b10b71f5eca78c12200faf8e452c6cdd5d012d)
+
 ## [v1.8.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3cbb2c2078ddada9ae521073d1538811861df6f8) (2023-09-05)
 
 * Round down to avoid decimals when calculating bps feesOnTop [dfeb7ce](https://github.com/reservoirprotocol/reservoir-kit/commit/dfeb7ce84701e6bb6ab6f3c9b825dd487fea6ac8)
