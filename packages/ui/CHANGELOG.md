@@ -1,4 +1,12 @@
 
+## [v1.8.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c590e29a6b5786b999705e95ff1e35c61c131d1e) (2023-09-14)
+
+* Merge pull request #372 from reservoirprotocol/pedro/grwth-3259-retry-button-should-also-trigger-switching-chains [3c0adb1](https://github.com/reservoirprotocol/reservoir-kit/commit/3c0adb11ab4f063f4c8009c3cef0e040575ceba6)
+* ListModal: only get supported marketplaces when modal opens [8934742](https://github.com/reservoirprotocol/reservoir-kit/commit/893474210208030c78282c226656fe287cd8f3ec)
+* resolve conflicts [df8afaa](https://github.com/reservoirprotocol/reservoir-kit/commit/df8afaa8288f5dd6403308932c0e8846c10161cf)
+* ListModal & BidModal: retry button should switch chanins if necessary [abaeb81](https://github.com/reservoirprotocol/reservoir-kit/commit/abaeb81465a450c7aede774d727eb5248828e7f2)
+* ListModal: Remove outdated opensea fee logic [ff0e0ca](https://github.com/reservoirprotocol/reservoir-kit/commit/ff0e0cafd8000de016e3a4bde1ee6b8a12dd4510)
+
 ## [v1.8.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c2993841994af0cfca0b452a873b547ecb70978a) (2023-09-07)
 
 * Allow chain override for all modals [7395dca](https://github.com/reservoirprotocol/reservoir-kit/commit/7395dca643167b3aed8294fc741b5de4616b95c3)
