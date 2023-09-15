@@ -21,7 +21,6 @@ import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 
@@ -35,9 +34,11 @@ type PurchaseData = {
 const ModalCopy = {
   titleInsufficientFunds: 'Add Funds',
   titleUnavilable: 'Selected item is no longer Available',
+  titleIsOwner: 'You already own this token',
   titleDefault: 'Complete Checkout',
   ctaClose: 'Close',
   ctaCheckout: 'Checkout',
+  ctaConnect: 'Connect',
   ctaInsufficientFunds: 'Add Funds',
   ctaGoToToken: '',
   ctaAwaitingValidation: 'Waiting for transaction to be validated',
@@ -55,6 +56,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
   onPurchaseError?: (error: Error, data: PurchaseData) => void
@@ -68,7 +70,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 function titleForStep(
   step: BuyStep,
   copy: typeof ModalCopy,
-  isLoading: boolean
+  isLoading: boolean,
+  isOwner: boolean
 ) {
   if (isLoading) {
     return copy.titleDefault
@@ -76,7 +79,7 @@ function titleForStep(
 
   switch (step) {
     case BuyStep.Unavailable:
-      return copy.titleUnavilable
+      return isOwner ? copy.titleIsOwner : copy.titleUnavilable
     default:
       return copy.titleDefault
   }
@@ -93,6 +96,7 @@ export function BuyModal({
   feesOnTopUsd,
   normalizeRoyalties,
   copyOverrides,
+  onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
   onClose,
@@ -104,25 +108,13 @@ export function BuyModal({
     openState
   )
 
-  const { chains, chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
-  const { switchNetworkAsync } = useSwitchNetwork()
 
   const currentChain = client?.currentChain()
 
   const modalChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
-
-  const wagmiChain = chains.find(({ id }) => modalChain?.id === id)
-
-  const handleBuy = async (buyToken: () => void): Promise<void> => {
-    if (modalChain?.id !== activeWalletChain?.id) {
-      const chain = await switchNetworkAsync?.(modalChain?.id)
-      if (chain?.id !== modalChain?.id) return
-    }
-    buyToken()
-  }
 
   return (
     <BuyModalRenderer
@@ -134,6 +126,7 @@ export function BuyModal({
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
+      onConnectWallet={onConnectWallet}
     >
       {({
         loading,
@@ -159,11 +152,14 @@ export function BuyModal({
         balance,
         address,
         blockExplorerBaseUrl,
+        blockExplorerBaseName,
+        isConnected,
+        isOwner,
         setQuantity,
         setBuyStep,
         buyToken,
       }) => {
-        const title = titleForStep(buyStep, copy, loading)
+        const title = titleForStep(buyStep, copy, loading, isOwner)
 
         useEffect(() => {
           if (buyStep === BuyStep.Complete && onPurchaseComplete) {
@@ -215,6 +211,18 @@ export function BuyModal({
             trigger={trigger}
             title={title}
             open={open}
+            onPointerDownOutside={(e) => {
+              const dismissableLayers = Array.from(
+                document.querySelectorAll('div[data-radix-dismissable]')
+              )
+              const clickedDismissableLayer = dismissableLayers.some((el) =>
+                e.target ? el.contains(e.target as Node) : false
+              )
+
+              if (!clickedDismissableLayer && dismissableLayers.length > 0) {
+                e.preventDefault()
+              }
+            }}
             onOpenChange={(open) => {
               if (!open && onClose) {
                 const data: PurchaseData = {
@@ -377,13 +385,13 @@ export function BuyModal({
                 </Flex>
 
                 <Box css={{ p: '$4', width: '100%' }}>
-                  {hasEnoughCurrency ? (
+                  {hasEnoughCurrency || !isConnected ? (
                     <Button
-                      onClick={() => handleBuy(buyToken)}
+                      onClick={buyToken}
                       css={{ width: '100%' }}
                       color="primary"
                     >
-                      {copy.ctaCheckout}
+                      {!isConnected ? copy.ctaConnect : copy.ctaCheckout}
                     </Button>
                   ) : (
                     <Flex direction="column" align="center">
@@ -577,9 +585,7 @@ export function BuyModal({
                         href={`${blockExplorerBaseUrl}/tx/${finalTxHash}`}
                         target="_blank"
                       >
-                        View on{' '}
-                        {wagmiChain?.blockExplorers?.default.name ||
-                          'Etherscan'}
+                        View on {blockExplorerBaseName}
                       </Anchor>
                     </>
                   )}

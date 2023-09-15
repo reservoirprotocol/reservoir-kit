@@ -1,26 +1,22 @@
 import { getClient } from '@reservoir0x/reservoir-sdk'
 import { zeroAddress } from 'viem'
-import { Address, Chain, useNetwork } from 'wagmi'
-import { mainnet, goerli } from 'wagmi/chains'
+import { Address } from 'wagmi'
+import * as allChains from 'viem/chains'
 
-export default function (chainId?: number) {
-  const { chains } = useNetwork()
-  return getChainCurrency(chains, chainId)
-}
-
-export const getChainCurrency = (chains: Chain[], chainId?: number) => {
+export default (chainId?: number) => {
   const client = getClient()
   const reservoirChain = chainId
     ? client.chains.find((chain) => chain.id === chainId)
     : client.currentChain()
 
+  const chains = Object.values(allChains)
   let chain = chains.find((chain) => reservoirChain?.id === chain.id)
 
   if (!chain && chains.length > 0) {
     chain = chains[0]
   }
 
-  const ETHChains: number[] = [mainnet.id, goerli.id]
+  const ETHChains: number[] = [allChains.mainnet.id, allChains.goerli.id]
 
   if (!chain || !chain.nativeCurrency || ETHChains.includes(chain.id)) {
     return {
@@ -28,7 +24,7 @@ export const getChainCurrency = (chains: Chain[], chainId?: number) => {
       symbol: 'ETH',
       decimals: 18,
       address: zeroAddress as Address,
-      chainId: chain?.id || mainnet.id,
+      chainId: chain?.id || allChains.mainnet.id,
     }
   } else {
     return {
