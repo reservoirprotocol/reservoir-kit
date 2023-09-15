@@ -5660,7 +5660,7 @@ __metadata:
     "@ethersproject/hash": ^5.7.0
     "@ethersproject/providers": ^5.7.2
     "@openzeppelin/defender-relay-client": ^1.47.1
-    "@reservoir0x/ethers-wallet-adapter": ^0.2.1
+    "@reservoir0x/ethers-wallet-adapter": ^0.2.2
     axios: ^0.27.2
   peerDependencies:
     "@reservoir0x/reservoir-sdk": "workspace:*"
@@ -5669,7 +5669,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@reservoir0x/ethers-wallet-adapter@^0.2.1, @reservoir0x/ethers-wallet-adapter@workspace:*, @reservoir0x/ethers-wallet-adapter@workspace:packages/ethers-wallet-adapter":
+"@reservoir0x/ethers-wallet-adapter@^0.2.2, @reservoir0x/ethers-wallet-adapter@workspace:*, @reservoir0x/ethers-wallet-adapter@workspace:packages/ethers-wallet-adapter":
   version: 0.0.0-use.local
   resolution: "@reservoir0x/ethers-wallet-adapter@workspace:packages/ethers-wallet-adapter"
   dependencies:
