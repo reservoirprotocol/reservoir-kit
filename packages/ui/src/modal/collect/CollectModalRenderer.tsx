@@ -547,7 +547,12 @@ export const CollectModalRenderer: FC<Props> = ({
         chainId: rendererChain?.id as number,
       })
     }
-
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
+      setTransactionError(error)
+      throw error
+    }
+    
     if (!client) {
       const error = new Error('ReservoirClient was not initialized')
       setTransactionError(error)
