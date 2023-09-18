@@ -1,4 +1,7 @@
 
+## [v1.8.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/758b2b703b9a7a64ef0be8d583f01b1460d89b34) (2023-09-18)
+
+
 ## [v1.8.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c590e29a6b5786b999705e95ff1e35c61c131d1e) (2023-09-14)
 
 * ListModal: only get supported marketplaces when modal opens [8934742](https://github.com/reservoirprotocol/reservoir-kit/commit/893474210208030c78282c226656fe287cd8f3ec)
