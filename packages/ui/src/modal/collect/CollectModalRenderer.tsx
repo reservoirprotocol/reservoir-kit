@@ -77,6 +77,7 @@ export type ChildrenProps = {
   currentChain: ReservoirChain | null | undefined
   address?: string
   balance?: bigint
+  isConnected: boolean
   contract: Address
   hasEnoughCurrency: boolean
   addFundsLink: string
@@ -530,7 +531,7 @@ export const CollectModalRenderer: FC<Props> = ({
   }, [open])
 
   const collectTokens = useCallback(async () => {
-    window.alert(`Clicked`)
+
     if (!wallet) {
       onConnectWallet()
       if (document.body.style) {
@@ -734,6 +735,7 @@ export const CollectModalRenderer: FC<Props> = ({
         feeOnTop,
         feeUsd,
         usdPrice,
+        isConnected: wallet !== undefined,
         currentChain,
         mintPrice,
         orders,

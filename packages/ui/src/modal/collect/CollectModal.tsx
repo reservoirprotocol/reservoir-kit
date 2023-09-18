@@ -11,7 +11,6 @@ import {
 import { MintContent } from './mint/MintContent'
 import { SweepContent } from './sweep/SweepContent'
 import { Flex, Text } from '../../primitives'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 type CollectCallbackData = {
   collectionId?: string
@@ -21,9 +20,9 @@ type CollectCallbackData = {
 }
 
 export const CollectModalCopy = {
-  titleIsOwner: 'You already own this token.', // ONLY FOR 721
-  ctaConnect: 'Connect',
   mintTitle: 'Mint',
+  mintTitleIsOwner: 'You already own this token.',
+  mintCtaConncet: 'Connect',
   mintCtaClose: 'Close',
   mintCtaBuy: 'Mint',
   mintCtaBuyDisabled: 'Mint',
@@ -32,7 +31,9 @@ export const CollectModalCopy = {
   mintCtaAwaitingValidation: 'Waiting to be validated...',
   sweepTitle: 'Buy',
   sweepCtaClose: 'Close',
+  sweepCtaConnect: 'Connect',
   sweepCtaBuy: 'Buy',
+  sweepTitleIsOwner: 'You already own this token.',
   sweepCtaBuyDisabled: 'Select Items to Buy',
   sweepCtaInsufficientFunds: 'Add Funds to Purchase',
   sweepCtaAwaitingApproval: 'Waiting for approval...',
