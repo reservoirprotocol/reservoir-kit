@@ -6,11 +6,12 @@ import {
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import { useAccount, useBalance, useNetwork, useWalletClient } from 'wagmi'
+import { useAccount, useBalance, useWalletClient } from 'wagmi'
 import Token from '../list/Token'
 import {
   BuyPath,
   Execute,
+  LogLevel,
   ReservoirChain,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
@@ -18,7 +19,9 @@ import { toFixed } from '../../lib/numbers'
 import { UseBalanceToken } from '../../types/wagmi'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
-import { getNetwork } from 'wagmi/actions'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
+import * as allChains from 'viem/chains'
+import { customChains } from '@reservoir0x/reservoir-sdk'
 
 export enum CollectStep {
   Idle,
@@ -91,6 +94,7 @@ type Props = {
   mode?: CollectModalMode
   collectionId?: string
   tokenId?: string
+  onConnectWallet: () => void
   chainId?: number
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
@@ -106,10 +110,11 @@ export const CollectModalRenderer: FC<Props> = ({
   tokenId,
   feesOnTopBps,
   feesOnTopUsd,
+  onConnectWallet,
   normalizeRoyalties,
   children,
 }) => {
-  const account = useAccount()
+  const { address } = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
   const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
   const [orders, setOrders] = useState<NonNullable<BuyPath>>([])
@@ -147,7 +152,6 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const contract = collectionId?.split(':')[0] as Address
 
-  const { chains } = useNetwork()
   const client = useReservoirClient()
 
   const currentChain = client?.currentChain()
@@ -156,7 +160,11 @@ export const CollectModalRenderer: FC<Props> = ({
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
+  const wagmiChain: allChains.Chain | undefined = Object.values({
+    ...allChains,
+    ...customChains,
+  }).find(({ id }) => rendererChain?.id === id)
+
   const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const blockExplorerBaseUrl =
@@ -203,7 +211,7 @@ export const CollectModalRenderer: FC<Props> = ({
   const totalUsd = usdPrice * (totalIncludingFees || 0)
 
   const fetchBuyPath = useCallback(() => {
-    if (!wallet || !client) {
+    if (!client) {
       return
     }
 
@@ -230,7 +238,11 @@ export const CollectModalRenderer: FC<Props> = ({
         ],
         expectedPrice: undefined,
         options,
-        wallet,
+        wallet: {
+          address: async () => {
+            return zeroAddress
+          },
+        } as any,
         precheck: true,
         onProgress: () => {},
       })
@@ -457,7 +469,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const { data: balance } = useBalance({
     chainId: wagmiChain?.id,
-    address: account.address,
+    address: address,
     token:
       currency?.address !== zeroAddress
         ? (currency?.address as UseBalanceToken)
@@ -517,11 +529,22 @@ export const CollectModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  const collectTokens = useCallback(() => {
+  const collectTokens = useCallback(async () => {
+    window.alert(`Clicked`)
     if (!wallet) {
-      const error = new Error('Missing a wallet/signer')
-      setTransactionError(error)
-      throw error
+      onConnectWallet()
+      if (document.body.style) {
+        document.body.style.pointerEvents = 'auto'
+      }
+      client?.log(['Missing wallet, prompting connection'], LogLevel.Verbose)
+      return
+    }
+
+    let activeWalletChain = getNetwork().chain
+    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchNetwork({
+        chainId: rendererChain?.id as number,
+      })
     }
 
     if (!client) {
@@ -682,6 +705,7 @@ export const CollectModalRenderer: FC<Props> = ({
     tokenId,
     currency,
     feesOnTopBps,
+    onConnectWallet,
     feesOnTopUsd,
     contentMode,
     itemAmount,
@@ -694,7 +718,7 @@ export const CollectModalRenderer: FC<Props> = ({
         collection,
         token,
         loading: !fetchedInitialOrders,
-        address: account?.address,
+        address: address,
         selectedTokens,
         setSelectedTokens,
         itemAmount,

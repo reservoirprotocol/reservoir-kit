@@ -21,6 +21,8 @@ type CollectCallbackData = {
 }
 
 export const CollectModalCopy = {
+  titleIsOwner: 'You already own this token.', // ONLY FOR 721
+  ctaConnect: 'Connect',
   mintTitle: 'Mint',
   mintCtaClose: 'Close',
   mintCtaBuy: 'Mint',
@@ -42,6 +44,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
   tokenId?: string
+  onConnectWallet: () => void
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   chainId?: number
@@ -56,6 +59,7 @@ export function CollectModal({
   mode,
   openState,
   trigger,
+  onConnectWallet,
   collectionId,
   tokenId,
   chainId,
@@ -76,9 +80,7 @@ export function CollectModal({
     openState
   )
 
-  const { chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
-  const { switchNetworkAsync } = useSwitchNetwork()
 
   const currentChain = client?.currentChain()
 
@@ -86,16 +88,9 @@ export function CollectModal({
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const handleCollect = async (collectTokens: () => void): Promise<void> => {
-    if (modalChain?.id !== activeWalletChain?.id) {
-      const chain = await switchNetworkAsync?.(modalChain?.id)
-      if (chain?.id !== modalChain?.id) return
-    }
-    collectTokens()
-  }
-
   return (
     <CollectModalRenderer
+      onConnectWallet={onConnectWallet}
       chainId={modalChain?.id}
       open={open}
       mode={mode}
@@ -146,6 +141,18 @@ export function CollectModal({
             title={contentMode === 'mint' ? copy.mintTitle : copy.sweepTitle}
             open={open}
             loading={loading}
+            onPointerDownOutside={(e) => {
+              const dismissableLayers = Array.from(
+                document.querySelectorAll('div[data-radix-dismissable]')
+              )
+              const clickedDismissableLayer = dismissableLayers.some((el) =>
+                e.target ? el.contains(e.target as Node) : false
+              )
+
+              if (!clickedDismissableLayer && dismissableLayers.length > 0) {
+                e.preventDefault()
+              }
+            }}
             onOpenChange={(open) => {
               if (!open && onClose) {
                 const data: CollectCallbackData = {
@@ -163,7 +170,7 @@ export function CollectModal({
               <SweepContent
                 {...props}
                 chainId={modalChain?.id}
-                collectTokens={() => handleCollect(collectTokens)}
+                collectTokens={collectTokens}
                 copy={copy}
                 open={open}
                 setOpen={setOpen}
@@ -174,7 +181,7 @@ export function CollectModal({
               <MintContent
                 {...props}
                 chainId={modalChain?.id}
-                collectTokens={() => handleCollect(collectTokens)}
+                collectTokens={collectTokens}
                 copy={copy}
                 open={open}
                 setOpen={setOpen}
