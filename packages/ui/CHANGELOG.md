@@ -1,6 +1,7 @@
 
 ## [v1.8.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/758b2b703b9a7a64ef0be8d583f01b1460d89b34) (2023-09-18)
 
+- Update SDK
 
 ## [v1.8.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c590e29a6b5786b999705e95ff1e35c61c131d1e) (2023-09-14)
 
