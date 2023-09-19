@@ -387,6 +387,7 @@ export function BuyModal({
                 <Box css={{ p: '$4', width: '100%' }}>
                   {hasEnoughCurrency || !isConnected ? (
                     <Button
+                      disabled={!hasEnoughCurrency && isConnected}
                       onClick={buyToken}
                       css={{ width: '100%' }}
                       color="primary"
