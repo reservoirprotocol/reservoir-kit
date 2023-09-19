@@ -26,7 +26,7 @@ import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import { Currency } from '../../types/Currency'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
-import { getNetwork } from 'wagmi/actions'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
 
 export enum ListStep {
   SelectMarkets,
@@ -129,14 +129,13 @@ export const ListModalRenderer: FC<Props> = ({
   const account = useAccount()
 
   const client = useReservoirClient()
-
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wallet } = useWalletClient()
 
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])
@@ -368,14 +367,21 @@ export const ListModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
-  const listToken = useCallback(() => {
+  const listToken = useCallback(async () => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
 
-    if (rendererChain?.id !== getNetwork().chain?.id) {
+    let activeWalletChain = getNetwork().chain
+    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchNetwork({
+        chainId: rendererChain?.id as number,
+      })
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error

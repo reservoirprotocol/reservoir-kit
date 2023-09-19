@@ -48,7 +48,6 @@ import { CurrencySelector } from '../CurrencySelector'
 import { zeroAddress } from 'viem'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
-import { useSwitchNetwork, useNetwork } from 'wagmi'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -141,9 +140,7 @@ export function ListModal({
     openState
   )
 
-  const { chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
-  const { switchNetworkAsync } = useSwitchNetwork()
 
   const currentChain = client?.currentChain()
 
@@ -159,14 +156,6 @@ export function ListModal({
 
   if (oracleEnabled) {
     nativeOnly = true
-  }
-
-  const handleList = async (listToken: () => void): Promise<void> => {
-    if (modalChain?.id !== activeWalletChain?.id) {
-      const chain = await switchNetworkAsync?.(modalChain?.id)
-      if (chain?.id !== modalChain?.id) return
-    }
-    listToken()
   }
 
   return (
@@ -670,7 +659,7 @@ export function ListModal({
                           marketplace.price == 0 ||
                           Number(marketplace.price) < MINIMUM_AMOUNT
                       )}
-                      onClick={() => handleList(listToken)}
+                      onClick={listToken}
                       css={{ width: '100%' }}
                     >
                       {copy.ctaList}
