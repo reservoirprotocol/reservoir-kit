@@ -20,8 +20,8 @@ export default function (
   collectionId?: string,
   listingEnabledOnly?: boolean,
   fees?: string[],
-  royaltyBps?: number,
-  chainId?: number
+  chainId?: number,
+  enabled: boolean = true
 ): [Marketplace[], React.Dispatch<React.SetStateAction<Marketplace[]>>] {
   const [marketplaces, setMarketplaces] = useState<Marketplace[]>([])
   const client = useReservoirClient()
@@ -35,7 +35,12 @@ export default function (
 
   const { data } = useSWR<
     paths['/collections/{collection}/supported-marketplaces/v1']['get']['responses'][200]['schema']
-  >(collectionId ? [path.href, chain?.apiKey, client?.version] : null, null)
+  >(
+    collectionId && enabled
+      ? [path.href, chain?.apiKey, client?.version]
+      : null,
+    null
+  )
 
   useEffect(() => {
     if (data && data.marketplaces) {
@@ -66,17 +71,8 @@ export default function (
             marketplace.imageUrl = data.icon
           }
         }
-        if (marketplace.orderbook === 'opensea' && royaltyBps !== undefined) {
-          const osFee =
-            royaltyBps && royaltyBps >= 50 ? 0 : 50 - (royaltyBps || 0)
-          marketplace.fee = {
-            bps: osFee,
-            percent: osFee / 100,
-          }
-        } else {
-          if (marketplace.fee) {
-            marketplace.fee.percent = (marketplace.fee.bps || 0) / 100
-          }
+        if (marketplace.fee) {
+          marketplace.fee.percent = (marketplace.fee.bps || 0) / 100
         }
         marketplace.price = 0
         marketplace.truePrice = 0
@@ -85,7 +81,7 @@ export default function (
       })
       setMarketplaces(updatedMarketplaces)
     }
-  }, [data, listingEnabledOnly, chainId, fees, royaltyBps])
+  }, [data, listingEnabledOnly, chainId, fees])
 
   return [marketplaces, setMarketplaces]
 }

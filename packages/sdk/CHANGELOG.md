@@ -1,4 +1,8 @@
 
+## [v1.4.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/a23cb189a88637c093a0f2229a50f0a507478cde) (2023-09-18)
+
+* Use locally scoped axios instance [d1f32c4](https://github.com/reservoirprotocol/reservoir-kit/commit/d1f32c46dd0e49072063119ca3542f120f20613d)
+
 ## [v1.4.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/24c3283cd15b881fb83161fe3e5cd32d73562eb8) (2023-09-07)
 
 * Sync api [38ecc5a](https://github.com/reservoirprotocol/reservoir-kit/commit/38ecc5a922e31d8e38792d0bc11eed74ebb4e0f4)
