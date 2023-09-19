@@ -20,9 +20,8 @@ type CollectCallbackData = {
 }
 
 export const CollectModalCopy = {
+  ctaConnect: 'Connect',
   mintTitle: 'Mint',
-  mintTitleIsOwner: 'You already own this token.',
-  mintCtaConncet: 'Connect',
   mintCtaClose: 'Close',
   mintCtaBuy: 'Mint',
   mintCtaBuyDisabled: 'Mint',
@@ -31,9 +30,7 @@ export const CollectModalCopy = {
   mintCtaAwaitingValidation: 'Waiting to be validated...',
   sweepTitle: 'Buy',
   sweepCtaClose: 'Close',
-  sweepCtaConnect: 'Connect',
   sweepCtaBuy: 'Buy',
-  sweepTitleIsOwner: 'You already own this token.',
   sweepCtaBuyDisabled: 'Select Items to Buy',
   sweepCtaInsufficientFunds: 'Add Funds to Purchase',
   sweepCtaAwaitingApproval: 'Waiting for approval...',

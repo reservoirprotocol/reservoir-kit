@@ -268,7 +268,7 @@ export const SweepContent: FC<
               onClick={collectTokens}
             >
               {!isConnected
-                ? copy.sweepCtaConnect
+                ? copy.ctaConnect
                 : selectedTokens.length > 0
                 ? copy.sweepCtaBuy
                 : copy.sweepCtaBuyDisabled}

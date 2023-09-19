@@ -246,7 +246,7 @@ export const MintContent: FC<
                 disabled={!hasEnoughCurrency}
                 onClick={collectTokens}
               >
-                {!isConnected ? copy.mintCtaConncet : copy.mintCtaBuy}
+                {!isConnected ? copy.ctaConnect : copy.mintCtaBuy}
               </Button>
             ) : (
               <Flex

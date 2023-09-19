@@ -203,6 +203,8 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
   const isOwner = token?.token?.owner?.toLowerCase() === address?.toLowerCase()
+  // Is owner 
+
 
   const { data: usdFeeConversion } = useCurrencyConversion(
     rendererChain?.id,
