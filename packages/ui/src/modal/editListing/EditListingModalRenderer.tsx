@@ -23,7 +23,7 @@ import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import { Listings } from '../list/ListModalRenderer'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
-import { getNetwork } from 'wagmi/actions'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
 
 export enum EditListingStep {
   Edit,
@@ -90,14 +90,13 @@ export const EditListingModalRenderer: FC<Props> = ({
   children,
 }) => {
   const client = useReservoirClient()
-
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wallet } = useWalletClient()
   const account = useAccount()
   const [editListingStep, setEditListingStep] = useState<EditListingStep>(
     EditListingStep.Edit
@@ -219,14 +218,21 @@ export const EditListingModalRenderer: FC<Props> = ({
     royaltyBps = onChainRoyaltyBps
   }
 
-  const editListing = useCallback(() => {
+  const editListing = useCallback(async () => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
 
-    if (rendererChain?.id !== getNetwork()?.chain?.id) {
+    let activeWalletChain = getNetwork().chain
+    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchNetwork({
+        chainId: rendererChain?.id as number,
+      })
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
