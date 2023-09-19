@@ -67,7 +67,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const { data: wallet } = useWalletClient()
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.default.url || 'https://etherscan.io'

@@ -96,7 +96,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const { data: wallet } = useWalletClient()
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
   const account = useAccount()
   const [editListingStep, setEditListingStep] = useState<EditListingStep>(
     EditListingStep.Edit

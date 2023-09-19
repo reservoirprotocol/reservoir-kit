@@ -135,7 +135,7 @@ export const ListModalRenderer: FC<Props> = ({
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const { data: wallet } = useWalletClient()
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
   const [listingData, setListingData] = useState<ListingData[]>([])

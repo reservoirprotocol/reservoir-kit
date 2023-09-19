@@ -116,7 +116,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const { data: wallet } = useWalletClient()
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()

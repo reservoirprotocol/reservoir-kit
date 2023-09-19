@@ -85,7 +85,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [prices, setPrices] = useState<AcceptBidPrice[]>([])
   const [acceptBidStep, setAcceptBidStep] = useState<AcceptBidStep>(
@@ -105,6 +104,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     ...allChains,
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
+  
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'

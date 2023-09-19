@@ -150,7 +150,7 @@ export const BidModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const { data: wallet } = useWalletClient()
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()
