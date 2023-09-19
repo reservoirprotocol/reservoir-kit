@@ -57,7 +57,6 @@ export type ChildrenProps = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   token?: NonNullable<ReturnType<typeof useTokens>['data']>[0]
   loading: boolean
-  isOwner: boolean
   orders: NonNullable<BuyPath>
   selectedTokens: NonNullable<BuyPath>
   setSelectedTokens: React.Dispatch<React.SetStateAction<NonNullable<BuyPath>>>
@@ -202,8 +201,6 @@ export const CollectModalRenderer: FC<Props> = ({
   )
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
-  const isOwner = token?.token?.owner?.toLowerCase() === address?.toLowerCase()
-  // Is owner
 
   const { data: usdFeeConversion } = useCurrencyConversion(
     rendererChain?.id,
@@ -717,7 +714,6 @@ export const CollectModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
-        isOwner,
         contentMode,
         collection,
         token,
