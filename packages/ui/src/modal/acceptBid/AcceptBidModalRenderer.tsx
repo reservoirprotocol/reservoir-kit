@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from 'react'
 import { useTokens, useCoinConversion, useReservoirClient } from '../../hooks'
-import { useAccount, useWalletClient, useNetwork } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 import {
   Execute,
   ExpectedPrice,
