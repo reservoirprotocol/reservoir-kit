@@ -55,7 +55,6 @@ import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 type BidCallbackData = {
   tokenId?: string
@@ -159,8 +158,6 @@ export function BidModal({
   )
 
   const client = useReservoirClient()
-  const { chain: activeWalletChain } = useNetwork()
-  const { switchNetworkAsync } = useSwitchNetwork()
 
   const currentChain = client?.currentChain()
 
@@ -174,14 +171,6 @@ export function BidModal({
     typeof getLocalMarketplaceData
   > | null>(null)
   const [attributesSelectable, setAttributesSelectable] = useState(false)
-
-  const handlePlaceBid = async (placeBid: () => void): Promise<void> => {
-    if (modalChain?.id !== activeWalletChain?.id) {
-      const chain = await switchNetworkAsync?.(modalChain?.id)
-      if (chain?.id !== modalChain?.id) return
-    }
-    placeBid()
-  }
 
   useEffect(() => {
     setLocalMarketplace(getLocalMarketplaceData())
@@ -738,7 +727,7 @@ export function BidModal({
                     )}
                     {bidAmountPerUnit !== '' && hasEnoughWrappedCurrency && (
                       <Button
-                        onClick={() => handlePlaceBid(placeBid)}
+                        onClick={() => placeBid()}
                         css={{ width: '100%' }}
                       >
                         {copy.ctaBid.length > 0

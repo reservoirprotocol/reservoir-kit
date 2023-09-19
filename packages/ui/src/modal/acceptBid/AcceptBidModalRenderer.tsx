@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from 'react'
 import { useTokens, useCoinConversion, useReservoirClient } from '../../hooks'
-import { useAccount, useWalletClient, useNetwork } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 import {
   Execute,
   ExpectedPrice,
@@ -16,7 +16,9 @@ import {
 } from '@reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
 import { parseUnits } from 'viem'
-import { getNetwork } from 'wagmi/actions'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { customChains } from '@reservoir0x/reservoir-sdk'
+import * as allChains from 'viem/chains'
 
 export enum AcceptBidStep {
   Checkout,
@@ -83,7 +85,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [prices, setPrices] = useState<AcceptBidPrice[]>([])
   const [acceptBidStep, setAcceptBidStep] = useState<AcceptBidStep>(
@@ -91,17 +92,20 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   )
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [txHash, setTxHash] = useState<string | null>(null)
-  const { chains } = useNetwork()
 
   const client = useReservoirClient()
-
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
+  const wagmiChain: allChains.Chain | undefined = Object.values({
+    ...allChains,
+    ...customChains,
+  }).find(({ id }) => rendererChain?.id === id)
+  
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
@@ -286,7 +290,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     [conversions]
   )
 
-  const acceptBid = useCallback(() => {
+  const acceptBid = useCallback(async () => {
     setTransactionError(null)
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
@@ -294,7 +298,14 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (rendererChain?.id !== getNetwork()?.chain?.id) {
+    let activeWalletChain = getNetwork().chain
+    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchNetwork({
+        chainId: rendererChain?.id as number,
+      })
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
