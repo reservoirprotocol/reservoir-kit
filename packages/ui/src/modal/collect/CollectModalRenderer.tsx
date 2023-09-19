@@ -297,6 +297,7 @@ export const CollectModalRenderer: FC<Props> = ({
         setFetchedInitialOrders(true)
       })
   }, [
+    address,
     client,
     wallet,
     rendererChain,
