@@ -264,7 +264,10 @@ export const SweepContent: FC<
           {hasEnoughCurrency || !isConnected ? (
             <Button
               css={{ m: '$4' }}
-              disabled={!(selectedTokens.length > 0) || !hasEnoughCurrency}
+              disabled={
+                !(selectedTokens.length > 0) ||
+                (!hasEnoughCurrency && isConnected)
+              }
               onClick={collectTokens}
             >
               {!isConnected
