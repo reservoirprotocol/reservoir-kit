@@ -757,7 +757,10 @@ export function ListModal({
                       >
                         {copy.ctaEditListing}
                       </Button>
-                      <Button css={{ flex: 1 }} onClick={() => listToken()}>
+                      <Button
+                        css={{ flex: 1 }}
+                        onClick={() => handleList(listToken)}
+                      >
                         {copy.ctaRetry}
                       </Button>
                     </Flex>
