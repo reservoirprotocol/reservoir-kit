@@ -560,12 +560,6 @@ export const CollectModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (rendererChain?.id !== getNetwork()?.chain?.id) {
-      const error = new Error('Mismatching chainIds')
-      setTransactionError(error)
-      throw error
-    }
-
     setTransactionError(null)
 
     let options: BuyTokenOptions = {
