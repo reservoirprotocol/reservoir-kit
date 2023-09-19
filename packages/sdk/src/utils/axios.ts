@@ -1,7 +1,9 @@
 import _axios, { AxiosResponse } from 'axios'
 import { APIError } from './request'
 
-_axios.interceptors.response.use(
+export const axios = _axios.create()
+
+axios.interceptors.response.use(
   (_res: AxiosResponse) => {
     if (_res.headers['Deprecation'] === 'true') {
       console.warn(
@@ -19,5 +21,3 @@ _axios.interceptors.response.use(
     )
   }
 )
-
-export const axios = _axios
