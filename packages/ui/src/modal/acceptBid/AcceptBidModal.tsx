@@ -38,7 +38,6 @@ import { Collapsible } from '../../primitives/Collapsible'
 import { ApproveBidCollapsible } from './ApproveBidCollapsible'
 import SigninStep from '../SigninStep'
 import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -90,25 +89,14 @@ export function AcceptBidModal({
 
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
 
-  const { chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
-  const { switchNetworkAsync } = useSwitchNetwork()
 
   const currentChain = client?.currentChain()
+  const baseApiUrl = currentChain?.baseApiUrl
 
   const modalChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
-
-  const baseApiUrl = modalChain?.baseApiUrl
-
-  const handleAcceptBid = async (acceptBid: () => void): Promise<void> => {
-    if (modalChain?.id !== activeWalletChain?.id) {
-      const chain = await switchNetworkAsync?.(modalChain?.id)
-      if (chain?.id !== modalChain?.id) return
-    }
-    acceptBid()
-  }
 
   return (
     <AcceptBidModalRenderer
@@ -424,7 +412,7 @@ export function AcceptBidModal({
                     m: '$4',
                   }}
                   color="primary"
-                  onClick={() => handleAcceptBid(acceptBid)}
+                  onClick={acceptBid}
                 >
                   {copy.ctaAccept}
                 </Button>
