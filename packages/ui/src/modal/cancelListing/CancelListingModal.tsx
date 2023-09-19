@@ -8,7 +8,6 @@ import {
 import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCircleExclamation,
@@ -51,27 +50,13 @@ export function CancelListingModal({
     openState
   )
 
-  const { chains, chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
-  const { switchNetworkAsync } = useSwitchNetwork()
 
   const currentChain = client?.currentChain()
 
   const modalChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
-
-  const wagmiChain = chains.find(({ id }) => modalChain?.id === id)
-
-  const handleCancelListing = async (
-    cancelOrder: () => void
-  ): Promise<void> => {
-    if (modalChain?.id !== activeWalletChain?.id) {
-      const chain = await switchNetworkAsync?.(modalChain?.id)
-      if (chain?.id !== modalChain?.id) return
-    }
-    cancelOrder()
-  }
 
   return (
     <CancelListingModalRenderer
@@ -89,6 +74,7 @@ export function CancelListingModal({
         transactionError,
         stepData,
         totalUsd,
+        blockExplorerName,
         blockExplorerBaseUrl,
         cancelOrder,
       }) => {
@@ -198,10 +184,7 @@ export function CancelListingModal({
                     ? 'This action will cancel your listing. You will be prompted to confirm this cancellation from your wallet. A gas fee is required.'
                     : 'This will cancel your listing for free. You will be prompted to confirm this cancellation from your wallet.'}
                 </Text>
-                <Button
-                  onClick={() => handleCancelListing(cancelOrder)}
-                  css={{ m: '$4' }}
-                >
+                <Button onClick={cancelOrder} css={{ m: '$4' }}>
                   {!isOracleOrder && (
                     <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
                   )}
@@ -285,8 +268,7 @@ export function CancelListingModal({
                     href={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
                     target="_blank"
                   >
-                    View on{' '}
-                    {wagmiChain?.blockExplorers?.default.name || 'Etherscan'}
+                    View on {blockExplorerName}
                   </Anchor>
                 </Flex>
                 <Button

@@ -52,6 +52,7 @@ export const SweepContent: FC<
   totalUsd,
   feeOnTop,
   feeUsd,
+  isConnected,
   usdPrice,
   currentChain,
   balance,
@@ -261,13 +262,18 @@ export const SweepContent: FC<
               </Flex>
             </Flex>
           </Flex>
-          {hasEnoughCurrency ? (
+          {hasEnoughCurrency || !isConnected ? (
             <Button
               css={{ m: '$4' }}
-              disabled={!(selectedTokens.length > 0) || !hasEnoughCurrency}
+              disabled={
+                !(selectedTokens.length > 0) ||
+                (!hasEnoughCurrency && isConnected)
+              }
               onClick={collectTokens}
             >
-              {selectedTokens.length > 0
+              {!isConnected
+                ? copy.ctaConnect
+                : selectedTokens.length > 0
                 ? copy.sweepCtaBuy
                 : copy.sweepCtaBuyDisabled}
             </Button>

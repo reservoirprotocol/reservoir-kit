@@ -14,7 +14,7 @@ import {
   useAttributes,
   useChainCurrency,
 } from '../../hooks'
-import { useAccount, useBalance, useNetwork, useWalletClient } from 'wagmi'
+import { useAccount, useBalance, useWalletClient } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
@@ -27,7 +27,9 @@ import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
 import { parseUnits } from 'viem'
-import { getNetwork } from 'wagmi/actions'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { customChains } from '@reservoir0x/reservoir-sdk'
+import * as allChains from 'viem/chains'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -136,17 +138,17 @@ export const BidModalRenderer: FC<Props> = ({
   feesBps,
   children,
 }) => {
-  const { chains } = useNetwork()
-
   const client = useReservoirClient()
-
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain = chains.find(({ id }) => rendererChain?.id === id)
+  const wagmiChain: allChains.Chain | undefined = Object.values({
+    ...allChains,
+    ...customChains,
+  }).find(({ id }) => rendererChain?.id === id)
 
   const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
@@ -345,14 +347,21 @@ export const BidModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
-  const placeBid = useCallback(() => {
+  const placeBid = useCallback(async () => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
       throw error
     }
 
-    if (rendererChain?.id !== getNetwork()?.chain?.id) {
+    let activeWalletChain = getNetwork().chain
+    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchNetwork({
+        chainId: rendererChain?.id as number,
+      })
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
