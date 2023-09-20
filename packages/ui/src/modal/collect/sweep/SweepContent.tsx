@@ -160,7 +160,7 @@ export const SweepContent: FC<
                   align="start"
                   css={{ gap: '$1', flexShrink: 0 }}
                 >
-                  <Text style="subtitle3">Quantity</Text>
+                  <Text style="subtitle2">Quantity</Text>
                   <Text style="body3" color="subtle">
                     {formatNumber(maxItemAmount)}{' '}
                     {maxItemAmount === 1 ? 'item' : 'items'} available
