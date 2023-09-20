@@ -192,7 +192,7 @@ export function CartCheckoutModal({
                                 <Text style="h6" css={{ textAlign: 'center' }}>
                                   Approve Purchases
                                 </Text>
-                                <Text style="subtitle2" color="subtle">
+                                <Text style="subtitle3" color="subtle">
                                   Due to limitations with Blur, the purchase of
                                   these items needs to be split into{' '}
                                   {transaction?.currentStep?.items.length}{' '}
@@ -252,7 +252,7 @@ export function CartCheckoutModal({
                       >
                         <Text style="h6">Finalizing on blockchain</Text>
                         <Text
-                          style="subtitle2"
+                          style="subtitle3"
                           color="subtle"
                           css={{ textAlign: 'center' }}
                         >

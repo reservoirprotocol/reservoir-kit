@@ -160,7 +160,7 @@ export const SweepContent: FC<
                   align="start"
                   css={{ gap: '$1', flexShrink: 0 }}
                 >
-                  <Text style="subtitle2">Quantity</Text>
+                  <Text style="subtitle3">Quantity</Text>
                   <Text style="body3" color="subtle">
                     {formatNumber(maxItemAmount)}{' '}
                     {maxItemAmount === 1 ? 'item' : 'items'} available
@@ -179,7 +179,7 @@ export const SweepContent: FC<
                   {!is1155 ? (
                     <>
                       <Flex align="center" css={{ gap: '$2' }}>
-                        <Text style="subtitle2" color="subtle">
+                        <Text style="subtitle3" color="subtle">
                           Price Range
                         </Text>
                         <FormatCryptoCurrency
@@ -190,7 +190,7 @@ export const SweepContent: FC<
                           symbol={currency?.symbol}
                           maximumFractionDigits={2}
                         />
-                        <Text style="subtitle2" color="subtle">
+                        <Text style="subtitle3" color="subtle">
                           -
                         </Text>
                         <FormatCryptoCurrency
@@ -202,13 +202,13 @@ export const SweepContent: FC<
                           maximumFractionDigits={2}
                         />
                       </Flex>
-                      <Text style="subtitle2" color="subtle">
+                      <Text style="subtitle3" color="subtle">
                         |
                       </Text>
                     </>
                   ) : null}
                   <Flex align="center" css={{ gap: '$2' }}>
-                    <Text style="subtitle2" color="subtle">
+                    <Text style="subtitle3" color="subtle">
                       Avg Price
                     </Text>
                     <FormatCryptoCurrency
@@ -231,7 +231,7 @@ export const SweepContent: FC<
                 align="start"
                 css={{ py: '$4', width: '100%' }}
               >
-                <Text style="subtitle2">Referral Fee</Text>
+                <Text style="subtitle3">Referral Fee</Text>
                 <Flex direction="column" align="end" css={{ gap: '$1' }}>
                   <FormatCryptoCurrency
                     chainId={chainId}
@@ -344,7 +344,7 @@ export const SweepContent: FC<
                     <Text style="h6" css={{ textAlign: 'center' }}>
                       Approve Purchases
                     </Text>
-                    <Text style="subtitle2" color="subtle">
+                    <Text style="subtitle3" color="subtle">
                       The purchase of these items needs to be split into{' '}
                       {stepData?.currentStep?.items.length} separate
                       transactions.
@@ -419,7 +419,7 @@ export const SweepContent: FC<
           >
             <Text style="h6">Finalizing on blockchain</Text>
             <Text
-              style="subtitle2"
+              style="subtitle3"
               color="subtle"
               css={{ textAlign: 'center' }}
             >

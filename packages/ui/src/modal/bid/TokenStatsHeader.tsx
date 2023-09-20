@@ -36,7 +36,7 @@ const TokenStatsHeader: FC<Props> = ({ token, collection }) => {
       }}
     >
       <Text
-        style="subtitle2"
+        style="subtitle3"
         color="subtle"
         css={{ mb: '$1', display: 'block' }}
       >
@@ -57,7 +57,7 @@ const TokenStatsHeader: FC<Props> = ({ token, collection }) => {
       </Text>
       {token && (
         <Box>
-          <Text style="subtitle2" color="subtle" as="p" ellipsify>
+          <Text style="subtitle3" color="subtle" as="p" ellipsify>
             {token?.token?.collection?.name}
           </Text>
         </Box>

@@ -479,7 +479,7 @@ export function BidModal({
                       }}
                     >
                       <Text
-                        style="subtitle2"
+                        style="subtitle3"
                         color="subtle"
                         css={{ width: 90, flexShrink: 0 }}
                       >
@@ -499,13 +499,13 @@ export function BidModal({
                       align="center"
                       css={{ gap: '$2', mt: '$3', mb: '$4' }}
                     >
-                      <Text style="subtitle2" color="subtle">
+                      <Text style="subtitle3" color="subtle">
                         Total Offer Price
                       </Text>
                       <FormatWrappedCurrency
                         chainId={modalChain?.id}
                         logoWidth={16}
-                        textStyle="subtitle2"
+                        textStyle="subtitle3"
                         amount={totalBidAmount}
                         address={currency?.contract}
                         decimals={currency?.decimals}
