@@ -24,6 +24,9 @@ export async function sendTransactionSafely(
   await viemClient.waitForTransactionReceipt({
     hash: txHash,
     onReplaced: (replacement) => {
+      if (replacement.reason === 'cancelled') {
+        throw 'Transaction cancelled'
+      }
       setTx(replacement.transaction.hash)
       getClient()?.log(['Transaction replaced', replacement], LogLevel.Verbose)
     },
