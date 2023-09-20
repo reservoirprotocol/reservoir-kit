@@ -233,7 +233,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             }}
           >
             <FormatCryptoCurrency
-              textStyle="subtitle2"
+              textStyle="subtitle3"
               amount={price}
               address={cartCurrency?.contract}
               decimals={cartCurrency?.decimals}

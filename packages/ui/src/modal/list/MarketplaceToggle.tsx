@@ -23,7 +23,7 @@ const MarketplaceToggle = ({
     <Text style="body2" css={{ flex: 1 }}>
       {marketplace.name}
     </Text>
-    <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
+    <Text style="subtitle3" color="subtle" css={{ mr: '$2' }}>
       Marketplace fee: {marketplace.fee?.percent}%
     </Text>
     <Switch checked={marketplace.isSelected} onCheckedChange={onSelection} />

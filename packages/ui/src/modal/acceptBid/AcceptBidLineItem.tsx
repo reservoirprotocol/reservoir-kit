@@ -100,7 +100,7 @@ const AcceptBidLineItem: FC<Props> = ({
                   amount={price}
                   address={currency}
                   decimals={decimals}
-                  textStyle="subtitle2"
+                  textStyle="subtitle3"
                 />
               </Flex>
               {fees?.map((fee, i) => {
@@ -128,7 +128,7 @@ const AcceptBidLineItem: FC<Props> = ({
                       amount={fee.amount}
                       address={currency}
                       decimals={decimals}
-                      textStyle="subtitle2"
+                      textStyle="subtitle3"
                     />
                   </Flex>
                 )
@@ -140,7 +140,7 @@ const AcceptBidLineItem: FC<Props> = ({
                   amount={netAmount}
                   address={currency}
                   decimals={decimals}
-                  textStyle="subtitle2"
+                  textStyle="subtitle3"
                 />
               </Flex>
             </Flex>
@@ -160,7 +160,7 @@ const AcceptBidLineItem: FC<Props> = ({
               amount={price}
               address={currency}
               decimals={decimals}
-              textStyle="subtitle2"
+              textStyle="subtitle3"
             />
           </Flex>
         </Tooltip>

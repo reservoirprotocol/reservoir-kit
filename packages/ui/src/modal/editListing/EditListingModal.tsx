@@ -242,7 +242,7 @@ export function EditListingModal({
                         <Text
                           as="div"
                           css={{ mb: '$2' }}
-                          style="subtitle2"
+                          style="subtitle3"
                           color="subtle"
                         >
                           Quantity
@@ -269,11 +269,11 @@ export function EditListingModal({
                     </>
                   )}
                   <Flex css={{ mb: '$2' }} justify="between">
-                    <Text style="subtitle2" color="subtle" as="p">
+                    <Text style="subtitle3" color="subtle" as="p">
                       Set New Price
                     </Text>
                     <Flex css={{ alignItems: 'center', gap: 8 }}>
-                      <Text style="subtitle2" color="subtle" as="p">
+                      <Text style="subtitle3" color="subtle" as="p">
                         You Get
                       </Text>
                       <InfoTooltip
@@ -344,7 +344,7 @@ export function EditListingModal({
                     <Text
                       as="div"
                       css={{ mb: '$2' }}
-                      style="subtitle2"
+                      style="subtitle3"
                       color="subtle"
                     >
                       Expiration Date

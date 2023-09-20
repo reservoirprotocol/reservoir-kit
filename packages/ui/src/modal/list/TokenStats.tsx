@@ -55,7 +55,7 @@ const TokenStats: FC<Props> = ({
             label: (
               <>
                 <Text
-                  style="subtitle2"
+                  style="subtitle3"
                   color="subtle"
                   css={{ minWidth: '0' }}
                   ellipsify
@@ -77,7 +77,7 @@ const TokenStats: FC<Props> = ({
             id: 1,
             label: (
               <Text
-                style="subtitle2"
+                style="subtitle3"
                 color="subtle"
                 css={{ minWidth: '0' }}
                 ellipsify
@@ -94,7 +94,7 @@ const TokenStats: FC<Props> = ({
             id: 2,
             label: (
               <Text
-                style="subtitle2"
+                style="subtitle3"
                 color="subtle"
                 css={{ minWidth: '0' }}
                 ellipsify
@@ -112,7 +112,7 @@ const TokenStats: FC<Props> = ({
             label: (
               <>
                 <Text
-                  style="subtitle2"
+                  style="subtitle3"
                   color="subtle"
                   css={{ minWidth: '0' }}
                   ellipsify

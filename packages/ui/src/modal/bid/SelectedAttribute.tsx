@@ -27,12 +27,12 @@ const SelectedAttribute: FC<Props> = ({ attributeKey, attributeValue }) => {
         },
       }}
     >
-      <Text color="accent" style="subtitle2">
+      <Text color="accent" style="subtitle3">
         {attributeKey}
         {`${isMobile ? '' : ':'}`}
       </Text>
       <Text
-        style="subtitle2"
+        style="subtitle3"
         css={{
           maxWidth: 200,
           overflow: 'hidden',
