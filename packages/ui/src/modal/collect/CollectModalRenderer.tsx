@@ -643,7 +643,19 @@ export const CollectModalRenderer: FC<Props> = ({
             })
           }
 
-          if (currentStep.items?.every((item) => item.txHash)) {
+          const transactionSteps = steps.filter(
+            (step) =>
+              step.kind === 'transaction' &&
+              step.items &&
+              step.items?.length > 0
+          )
+
+          if (
+            transactionSteps.length > 0 &&
+            transactionSteps.every((step) =>
+              step.items?.every((item) => item.txHash)
+            )
+          ) {
             setCollectStep(CollectStep.Finalizing)
           }
 
