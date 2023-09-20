@@ -17,7 +17,7 @@ export async function sendTransactionSafely(
 ) {
   const txHash = await wallet.handleSendTransactionStep(chainId, item, step)
   if (!txHash) {
-    throw 'Transaction hash not returned from sendTransaction method'
+    throw Error('Transaction hash not returned from sendTransaction method')
   }
   setTx(txHash)
 
@@ -25,7 +25,7 @@ export async function sendTransactionSafely(
     hash: txHash,
     onReplaced: (replacement) => {
       if (replacement.reason === 'cancelled') {
-        throw 'Transaction cancelled'
+        throw Error('Transaction cancelled')
       }
       setTx(replacement.transaction.hash)
       getClient()?.log(['Transaction replaced', replacement], LogLevel.Verbose)
