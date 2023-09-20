@@ -134,7 +134,7 @@ export const MintContent: FC<
               direction="column"
               css={{ borderBottom: '1px solid $neutralBorder' }}
             >
-              {transactionError ? <ErrorWell /> : null}
+              {transactionError ? <ErrorWell error={transactionError} /> : null}
               <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
                 {token ? (
                   <TokenInfo token={token} collection={collection} />

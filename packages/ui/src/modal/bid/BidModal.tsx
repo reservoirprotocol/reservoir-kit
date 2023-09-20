@@ -824,7 +824,9 @@ export function BidModal({
                     value={stepData?.stepProgress || 0}
                     max={stepData?.totalSteps || 0}
                   />
-                  {transactionError && <ErrorWell css={{ mt: 24 }} />}
+                  {transactionError && (
+                    <ErrorWell error={transactionError} css={{ mt: 24 }} />
+                  )}
                   {stepData && (
                     <>
                       <Text
