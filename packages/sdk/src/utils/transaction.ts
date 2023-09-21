@@ -51,7 +51,7 @@ export async function sendTransactionSafely(
       )
     })
 
-  const maximumAttempts = 20
+  const maximumAttempts = 30
   let attemptCount = 0
   let waitingForConfirmation = true
 
@@ -64,7 +64,6 @@ export async function sendTransactionSafely(
   }
 
   while (waitingForConfirmation && attemptCount < maximumAttempts) {
-    console.log('polling: ', txHash)
     const res = await axios.request({
       url: `${request.baseURL}/transactions/${txHash}/synced/v1`,
       method: 'get',
