@@ -286,8 +286,10 @@ export const CollectModalRenderer: FC<Props> = ({
 
         setContentMode(intendedContentMode)
       })
-      .catch(() => {
+      .catch((err) => {
         setContentMode(mode === 'mint' ? 'mint' : 'sweep')
+        setOrders([])
+        throw err
       })
       .finally(() => {
         setFetchedInitialOrders(true)
