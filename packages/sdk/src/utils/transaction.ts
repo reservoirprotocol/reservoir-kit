@@ -28,7 +28,7 @@ export async function sendTransactionSafely(
   }
   setTx(txHash)
 
-  // Handle transaction replacements or cancellations
+  // Handle transaction replacements and cancellations
   viemClient
     .waitForTransactionReceipt({
       hash: txHash,
