@@ -55,7 +55,6 @@ import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 type BidCallbackData = {
   tokenId?: string
@@ -159,8 +158,6 @@ export function BidModal({
   )
 
   const client = useReservoirClient()
-  const { chain: activeWalletChain } = useNetwork()
-  const { switchNetworkAsync } = useSwitchNetwork()
 
   const currentChain = client?.currentChain()
 
@@ -174,14 +171,6 @@ export function BidModal({
     typeof getLocalMarketplaceData
   > | null>(null)
   const [attributesSelectable, setAttributesSelectable] = useState(false)
-
-  const handlePlaceBid = async (placeBid: () => void): Promise<void> => {
-    if (modalChain?.id !== activeWalletChain?.id) {
-      const chain = await switchNetworkAsync?.(modalChain?.id)
-      if (chain?.id !== modalChain?.id) return
-    }
-    placeBid()
-  }
 
   useEffect(() => {
     setLocalMarketplace(getLocalMarketplaceData())
@@ -479,7 +468,7 @@ export function BidModal({
                       }}
                     >
                       <Text
-                        style="subtitle2"
+                        style="subtitle3"
                         color="subtle"
                         css={{ width: 90, flexShrink: 0 }}
                       >
@@ -499,13 +488,13 @@ export function BidModal({
                       align="center"
                       css={{ gap: '$2', mt: '$3', mb: '$4' }}
                     >
-                      <Text style="subtitle2" color="subtle">
+                      <Text style="subtitle3" color="subtle">
                         Total Offer Price
                       </Text>
                       <FormatWrappedCurrency
                         chainId={modalChain?.id}
                         logoWidth={16}
-                        textStyle="subtitle2"
+                        textStyle="subtitle3"
                         amount={totalBidAmount}
                         address={currency?.contract}
                         decimals={currency?.decimals}
@@ -738,7 +727,7 @@ export function BidModal({
                     )}
                     {bidAmountPerUnit !== '' && hasEnoughWrappedCurrency && (
                       <Button
-                        onClick={() => handlePlaceBid(placeBid)}
+                        onClick={() => placeBid()}
                         css={{ width: '100%' }}
                       >
                         {copy.ctaBid.length > 0
@@ -824,7 +813,9 @@ export function BidModal({
                     value={stepData?.stepProgress || 0}
                     max={stepData?.totalSteps || 0}
                   />
-                  {transactionError && <ErrorWell css={{ mt: 24 }} />}
+                  {transactionError && (
+                    <ErrorWell error={transactionError} css={{ mt: 24 }} />
+                  )}
                   {stepData && (
                     <>
                       <Text

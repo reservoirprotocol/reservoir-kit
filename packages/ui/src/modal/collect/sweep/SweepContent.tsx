@@ -52,6 +52,7 @@ export const SweepContent: FC<
   totalUsd,
   feeOnTop,
   feeUsd,
+  isConnected,
   usdPrice,
   currentChain,
   balance,
@@ -144,7 +145,7 @@ export const SweepContent: FC<
             direction="column"
             css={{ borderBottom: '1px solid $neutralBorder' }}
           >
-            {transactionError ? <ErrorWell /> : null}
+            {transactionError ? <ErrorWell error={transactionError} /> : null}
             <Flex direction="column" css={{ p: '$4', gap: 10 }}>
               {token ? (
                 <TokenInfo token={token} collection={collection} />
@@ -180,7 +181,7 @@ export const SweepContent: FC<
                   {!is1155 ? (
                     <>
                       <Flex align="center" css={{ gap: '$2' }}>
-                        <Text style="subtitle2" color="subtle">
+                        <Text style="subtitle3" color="subtle">
                           Price Range
                         </Text>
                         <FormatCryptoCurrency
@@ -191,7 +192,7 @@ export const SweepContent: FC<
                           symbol={currency?.symbol}
                           maximumFractionDigits={2}
                         />
-                        <Text style="subtitle2" color="subtle">
+                        <Text style="subtitle3" color="subtle">
                           -
                         </Text>
                         <FormatCryptoCurrency
@@ -203,13 +204,13 @@ export const SweepContent: FC<
                           maximumFractionDigits={2}
                         />
                       </Flex>
-                      <Text style="subtitle2" color="subtle">
+                      <Text style="subtitle3" color="subtle">
                         |
                       </Text>
                     </>
                   ) : null}
                   <Flex align="center" css={{ gap: '$2' }}>
-                    <Text style="subtitle2" color="subtle">
+                    <Text style="subtitle3" color="subtle">
                       Avg Price
                     </Text>
                     <FormatCryptoCurrency
@@ -232,7 +233,7 @@ export const SweepContent: FC<
                 align="start"
                 css={{ py: '$4', width: '100%' }}
               >
-                <Text style="subtitle2">Referral Fee</Text>
+                <Text style="subtitle3">Referral Fee</Text>
                 <Flex direction="column" align="end" css={{ gap: '$1' }}>
                   <FormatCryptoCurrency
                     chainId={chainId}
@@ -261,13 +262,18 @@ export const SweepContent: FC<
               </Flex>
             </Flex>
           </Flex>
-          {hasEnoughCurrency ? (
+          {hasEnoughCurrency || !isConnected ? (
             <Button
               css={{ m: '$4' }}
-              disabled={!(selectedTokens.length > 0) || !hasEnoughCurrency}
+              disabled={
+                !(selectedTokens.length > 0) ||
+                (!hasEnoughCurrency && isConnected)
+              }
               onClick={collectTokens}
             >
-              {selectedTokens.length > 0
+              {!isConnected
+                ? copy.ctaConnect
+                : selectedTokens.length > 0
                 ? copy.sweepCtaBuy
                 : copy.sweepCtaBuyDisabled}
             </Button>
@@ -392,7 +398,7 @@ export const SweepContent: FC<
                     <Text style="h6" css={{ textAlign: 'center' }}>
                       Approve Purchases
                     </Text>
-                    <Text style="subtitle2" color="subtle">
+                    <Text style="subtitle3" color="subtle">
                       The purchase of these items needs to be split into{' '}
                       {stepData?.currentStep?.items.length} separate
                       transactions.
@@ -467,7 +473,7 @@ export const SweepContent: FC<
           >
             <Text style="h6">Finalizing on blockchain</Text>
             <Text
-              style="subtitle2"
+              style="subtitle3"
               color="subtle"
               css={{ textAlign: 'center' }}
             >

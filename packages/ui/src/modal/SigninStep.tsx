@@ -20,7 +20,7 @@ const SigninStep: FC<Props> = ({ css }) => {
         Sign in to Blur
       </Text>
       <Text
-        style="subtitle2"
+        style="subtitle3"
         color="subtle"
         css={{ mb: 20, textAlign: 'center' }}
       >

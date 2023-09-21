@@ -16,7 +16,6 @@ import {
 import PriceInput from './PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { zeroAddress } from 'viem'
-import { useSwitchNetwork, useNetwork } from 'wagmi'
 
 const ModalCopy = {
   title: 'Edit Listing',
@@ -63,24 +62,13 @@ export function EditListingModal({
     openState ? openState[0] : false,
     openState
   )
-
-  const { chain: activeWalletChain } = useNetwork()
   const client = useReservoirClient()
-  const { switchNetworkAsync } = useSwitchNetwork()
 
   const currentChain = client?.currentChain()
 
   const modalChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
-
-  const handleEditListing = async (editListing: () => void): Promise<void> => {
-    if (modalChain?.id !== activeWalletChain?.id) {
-      const chain = await switchNetworkAsync?.(modalChain?.id)
-      if (chain?.id !== modalChain?.id) return
-    }
-    editListing()
-  }
 
   return (
     <EditListingModalRenderer
@@ -242,7 +230,7 @@ export function EditListingModal({
                         <Text
                           as="div"
                           css={{ mb: '$2' }}
-                          style="subtitle2"
+                          style="subtitle3"
                           color="subtle"
                         >
                           Quantity
@@ -269,11 +257,11 @@ export function EditListingModal({
                     </>
                   )}
                   <Flex css={{ mb: '$2' }} justify="between">
-                    <Text style="subtitle2" color="subtle" as="p">
+                    <Text style="subtitle3" color="subtle" as="p">
                       Set New Price
                     </Text>
                     <Flex css={{ alignItems: 'center', gap: 8 }}>
-                      <Text style="subtitle2" color="subtle" as="p">
+                      <Text style="subtitle3" color="subtle" as="p">
                         You Get
                       </Text>
                       <InfoTooltip
@@ -344,7 +332,7 @@ export function EditListingModal({
                     <Text
                       as="div"
                       css={{ mb: '$2' }}
-                      style="subtitle2"
+                      style="subtitle3"
                       color="subtle"
                     >
                       Expiration Date
@@ -388,7 +376,7 @@ export function EditListingModal({
                         price === 0 ||
                         price < MINIMUM_AMOUNT
                       }
-                      onClick={() => handleEditListing(editListing)}
+                      onClick={editListing}
                       css={{ flex: 1 }}
                     >
                       {copy.ctaConfirm}

@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { CollectModal, CollectModalMode } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
@@ -16,6 +16,8 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 
 const CollectPage: NextPage = () => {
   const router = useRouter()
+  const { openConnectModal } = useConnectModal()
+
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState<string | undefined>(undefined)
   const [chainId, setChainId] = useState<string | undefined>(undefined)
@@ -154,6 +156,9 @@ const CollectPage: NextPage = () => {
 
       <CollectModal
         chainId={Number(chainId)}
+        onConnectWallet={() => {
+          openConnectModal?.()        
+        }}
         trigger={
           <button
             style={{

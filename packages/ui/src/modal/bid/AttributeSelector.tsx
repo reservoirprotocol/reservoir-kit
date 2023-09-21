@@ -132,7 +132,7 @@ const AttributeSelector: FC<Props> = ({
                           textOverflow: 'ellipsis',
                           textAlign: 'start',
                         }}
-                        style="subtitle2"
+                        style="subtitle3"
                       >
                         {value}
                       </Text>
@@ -142,7 +142,7 @@ const AttributeSelector: FC<Props> = ({
                           amount={floorAskPrice}
                           logoWidth={10}
                           maximumFractionDigits={1}
-                          textStyle="subtitle2"
+                          textStyle="subtitle3"
                         />
                       </Box>
                     </Flex>

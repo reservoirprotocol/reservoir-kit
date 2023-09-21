@@ -61,6 +61,7 @@ export const MintContent: FC<
   transactionError,
   stepData,
   collectStep,
+  isConnected,
   collectTokens,
   copy,
   setOpen,
@@ -134,7 +135,7 @@ export const MintContent: FC<
               direction="column"
               css={{ borderBottom: '1px solid $neutralBorder' }}
             >
-              {transactionError ? <ErrorWell /> : null}
+              {transactionError ? <ErrorWell error={transactionError} /> : null}
               <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
                 {token ? (
                   <TokenInfo token={token} collection={collection} />
@@ -174,7 +175,7 @@ export const MintContent: FC<
               <Flex direction="column" css={{ gap: 10 }}>
                 {hasQuantitySet ? (
                   <Flex justify="between" align="center" css={{ gap: '$4' }}>
-                    <Text style="subtitle2" color="subtle">
+                    <Text style="subtitle3" color="subtle">
                       {itemAmount} {quantitySubject}
                     </Text>
                     <Flex css={{ gap: '$1' }}>
@@ -187,7 +188,7 @@ export const MintContent: FC<
                         logoWidth={12}
                         css={{ color: '$neutralText' }}
                       />
-                      <Text style="subtitle2" color="subtle">
+                      <Text style="subtitle3" color="subtle">
                         x {itemAmount}
                       </Text>
                     </Flex>
@@ -201,7 +202,7 @@ export const MintContent: FC<
                     align="start"
                     css={{ py: '$4', width: '100%' }}
                   >
-                    <Text style="subtitle2">Referral Fee</Text>
+                    <Text style="subtitle3">Referral Fee</Text>
                     <Flex direction="column" align="end" css={{ gap: '$1' }}>
                       <FormatCryptoCurrency
                         chainId={chainId}
@@ -232,20 +233,20 @@ export const MintContent: FC<
                     />
                     <FormatCurrency
                       amount={totalUsd}
-                      style="subtitle2"
+                      style="subtitle3"
                       color="subtle"
                     />
                   </Flex>
                 </Flex>
               </Flex>
             </Flex>
-            {hasEnoughCurrency ? (
+            {hasEnoughCurrency || !isConnected ? (
               <Button
                 css={{ m: '$4' }}
                 disabled={!hasEnoughCurrency}
                 onClick={collectTokens}
               >
-                {copy.mintCtaBuy}
+                {!isConnected ? copy.ctaConnect : copy.mintCtaBuy}
               </Button>
             ) : (
               <Flex
@@ -327,7 +328,7 @@ export const MintContent: FC<
                     <Text style="h6" css={{ textAlign: 'center' }}>
                       Approve Purchases
                     </Text>
-                    <Text style="subtitle2" color="subtle">
+                    <Text style="subtitle3" color="subtle">
                       The purchase of these items needs to be split into{' '}
                       {stepData?.currentStep?.items.length} separate
                       transactions.
@@ -403,7 +404,7 @@ export const MintContent: FC<
           >
             <Text style="h6">Finalizing on blockchain</Text>
             <Text
-              style="subtitle2"
+              style="subtitle3"
               color="subtle"
               css={{ textAlign: 'center' }}
             >

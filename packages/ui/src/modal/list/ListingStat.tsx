@@ -44,14 +44,14 @@ const ListingStat: FC<Props> = ({
         <FormatCryptoCurrency
           chainId={chainId}
           amount={listing.weiPrice}
-          textStyle="subtitle2"
+          textStyle="subtitle3"
           address={currency.contract}
           decimals={currency.decimals}
           symbol={currency?.symbol}
         />
         <Img src={marketImg} />
       </Flex>
-      <Text style="subtitle2" color="subtle" as="p" css={{ flex: 1 }}>
+      <Text style="subtitle3" color="subtle" as="p" css={{ flex: 1 }}>
         {listing.expirationTime ? `Expires ${timeSince}` : 'No Expiration'}
       </Text>
     </Flex>

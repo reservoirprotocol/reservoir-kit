@@ -41,10 +41,10 @@ export const CollectCheckout: FC<Props> = ({
   return (
     <Flex direction="column">
       <Flex justify="between" css={{ width: '100%', mb: '$2' }}>
-        <Text style="subtitle2" color="subtle">
+        <Text style="subtitle3" color="subtle">
           Item
         </Text>
-        <Text style="subtitle2" color="subtle">
+        <Text style="subtitle3" color="subtle">
           Total
         </Text>
       </Flex>
@@ -93,7 +93,7 @@ export const CollectCheckout: FC<Props> = ({
           {usdPrice ? (
             <FormatCurrency
               amount={usdPrice * totalPrice}
-              style="subtitle2"
+              style="subtitle3"
               color="subtle"
               css={{ textAlign: 'end' }}
             />
