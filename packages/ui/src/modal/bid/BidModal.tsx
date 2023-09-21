@@ -886,10 +886,7 @@ export function BidModal({
                       >
                         {copy.ctaEditOffer}
                       </Button>
-                      <Button
-                        css={{ flex: 1 }}
-                        onClick={() => handlePlaceBid(placeBid)}
-                      >
+                      <Button css={{ flex: 1 }} onClick={() => placeBid()}>
                         {copy.ctaRetry}
                       </Button>
                     </Flex>
