@@ -61,6 +61,7 @@ export const MintContent: FC<
   transactionError,
   stepData,
   collectStep,
+  isConnected,
   collectTokens,
   copy,
   setOpen,
@@ -239,13 +240,13 @@ export const MintContent: FC<
                 </Flex>
               </Flex>
             </Flex>
-            {hasEnoughCurrency ? (
+            {hasEnoughCurrency || !isConnected ? (
               <Button
                 css={{ m: '$4' }}
                 disabled={!hasEnoughCurrency}
                 onClick={collectTokens}
               >
-                {copy.mintCtaBuy}
+                {!isConnected ? copy.ctaConnect : copy.mintCtaBuy}
               </Button>
             ) : (
               <Flex
