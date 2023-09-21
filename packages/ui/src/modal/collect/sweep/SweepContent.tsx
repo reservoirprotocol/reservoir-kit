@@ -360,7 +360,7 @@ export const SweepContent: FC<
                       : null}
                   </Text>
                   <Text
-                    style="subtitle2"
+                    style="subtitle3"
                     color="subtle"
                     css={{ mb: 20, textAlign: 'center' }}
                   >
