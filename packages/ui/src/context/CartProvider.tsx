@@ -1122,7 +1122,19 @@ function cartStore({
               return currentStepItem
             })
 
-            if (currentStep.items?.every((item) => item.txHash)) {
+            const transactionSteps = steps.filter(
+              (step) =>
+                step.kind === 'transaction' &&
+                step.items &&
+                step.items?.length > 0
+            )
+
+            if (
+              transactionSteps.length > 0 &&
+              transactionSteps.every((step) =>
+                step.items?.every((item) => item.txHash)
+              )
+            ) {
               status = CheckoutStatus.Finalizing
               if (cartData.current.items.length > 0) {
                 cartData.current.items = []
