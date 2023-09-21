@@ -28,7 +28,7 @@ export async function sendTransactionSafely(
   }
   setTx(txHash)
 
-  // Begin waiting for the transaction receipt without awaiting its completion
+  // Handle transaction replacements or cancellations
   viemClient
     .waitForTransactionReceipt({
       hash: txHash,
@@ -63,6 +63,7 @@ export async function sendTransactionSafely(
     return res.status === 200 && res.data && res.data.synced
   }
 
+  // Poll the confirmation url to confirm the transaction went through
   while (waitingForConfirmation && attemptCount < maximumAttempts) {
     const res = await axios.request({
       url: `${request.baseURL}/transactions/${txHash}/synced/v1`,
