@@ -1,6 +1,6 @@
 import { useContractRead } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
-import useChainCurrency from '../hooks/useChainCurrency'
+import { useChainCurrency } from '../hooks/index'
 import { parseUnits } from 'viem'
 
 type Props = {
