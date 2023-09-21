@@ -14,6 +14,7 @@ import {
   FormatCryptoCurrency,
   Box,
   Anchor,
+  ErrorWell,
 } from '../../primitives'
 
 import { Modal } from '../Modal'
@@ -215,26 +216,7 @@ export function AcceptBidModal({
 
             {acceptBidStep === AcceptBidStep.Checkout && !loading && (
               <Flex direction="column">
-                {transactionError && (
-                  <Flex
-                    css={{
-                      color: '$errorAccent',
-                      p: '$4',
-                      gap: '$2',
-                      background: '$wellBackground',
-                    }}
-                    align="center"
-                  >
-                    <FontAwesomeIcon
-                      icon={faCircleExclamation}
-                      width={16}
-                      height={16}
-                    />
-                    <Text style="body3" color="errorLight">
-                      {transactionError.message}
-                    </Text>
-                  </Flex>
-                )}
+                {transactionError && <ErrorWell error={transactionError} />}
                 <Flex justify="between" css={{ px: '$4', pt: '$4' }}>
                   <Text style="subtitle3" color="subtle">
                     {bidCount > 1 ? `${bidCount} Items` : 'Item'}
