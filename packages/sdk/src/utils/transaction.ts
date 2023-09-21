@@ -23,6 +23,10 @@ export async function sendTransactionSafely(
   headers: AxiosRequestHeaders
 ) {
   let txHash = await wallet.handleSendTransactionStep(chainId, item, step)
+  const maximumAttempts = 30
+  let attemptCount = 0
+  let waitingForConfirmation = true
+
   if (!txHash) {
     throw Error('Transaction hash not returned from sendTransaction method')
   }
@@ -31,13 +35,17 @@ export async function sendTransactionSafely(
   // Handle transaction replacements and cancellations
   viemClient
     .waitForTransactionReceipt({
+      pollingInterval: 1,
       hash: txHash,
       onReplaced: (replacement) => {
         if (replacement.reason === 'cancelled') {
+          attemptCount = maximumAttempts
           throw Error('Transaction cancelled')
         }
+
         setTx(replacement.transaction.hash)
         txHash = replacement.transaction.hash
+        attemptCount = 0 // reset attempt count
         getClient()?.log(
           ['Transaction replaced', replacement],
           LogLevel.Verbose
@@ -50,10 +58,6 @@ export async function sendTransactionSafely(
         LogLevel.Verbose
       )
     })
-
-  const maximumAttempts = 30
-  let attemptCount = 0
-  let waitingForConfirmation = true
 
   const validate = (res: AxiosResponse) => {
     getClient()?.log(
