@@ -53,7 +53,7 @@ const Stat: FC<StatProps> = ({
       <FormatCryptoCurrency
         chainId={chainId}
         amount={value}
-        textStyle="subtitle2"
+        textStyle="subtitle3"
         address={address}
         symbol={symbol}
       />
@@ -64,12 +64,12 @@ const Stat: FC<StatProps> = ({
         amount={value}
         address={address}
         symbol={symbol}
-        textStyle="subtitle2"
+        textStyle="subtitle3"
       />
     )}
     {!asNative && !asWrapped && (
       <Text
-        style="subtitle2"
+        style="subtitle3"
         as="p"
         css={{
           marginLeft: '$2',

@@ -98,7 +98,7 @@ export const MintImages: FC<Props> = ({ stepData, contract }) => {
                       width: 100,
                     }}
                   />
-                  <Text style="subtitle2">#{mint?.token?.tokenId}</Text>
+                  <Text style="subtitle3">#{mint?.token?.tokenId}</Text>
                 </Flex>
               )
             })}

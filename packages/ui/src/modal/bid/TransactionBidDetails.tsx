@@ -64,15 +64,15 @@ const TransactionBidDetails: FC<Props> = ({
           }}
         >
           <Flex justify="between">
-            <Text style="subtitle2">Offer Price</Text>
+            <Text style="subtitle3">Offer Price</Text>
             <FormatWrappedCurrency
               chainId={chainId}
               amount={+value}
-              textStyle="subtitle2"
+              textStyle="subtitle3"
               address={bidData?.currency}
             />
           </Flex>
-          <Text style="subtitle2" color="subtle" as="p" css={{ flex: 1 }}>
+          <Text style="subtitle3" color="subtle" as="p" css={{ flex: 1 }}>
             {bidData?.expirationTime ? `Expires ${timeSince}` : 'No Expiration'}
           </Text>
         </Flex>
