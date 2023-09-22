@@ -5,10 +5,18 @@ import Text from './Text'
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
-  message?: string
+  error?: Error
 } & Pick<ComponentPropsWithoutRef<typeof Flex>, 'css'>
 
-export default function ErrorWell({ message, css }: Props) {
+export default function ErrorWell({ error, css }: Props) {
+  let message = 'Oops, something went wrong. Please try again.'
+
+  if (error) {
+    if (error.message.includes('rejected')) {
+      message = 'User rejected the request.'
+    }
+  }
+
   return (
     <Flex
       css={{
@@ -22,7 +30,7 @@ export default function ErrorWell({ message, css }: Props) {
     >
       <FontAwesomeIcon icon={faCircleExclamation} width={16} height={16} />
       <Text style="body3" color="errorLight">
-        {message || 'Oops, something went wrong. Please try again.'}
+        {message}
       </Text>
     </Flex>
   )

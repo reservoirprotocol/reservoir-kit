@@ -342,6 +342,18 @@ export async function executeSteps(
                   if (gas !== undefined) {
                     stepItem.data.gas = gas
                   }
+                  const headers: AxiosRequestHeaders = {
+                    'x-rkc-version': version,
+                  }
+
+                  if (request.headers && request.headers['x-api-key']) {
+                    headers['x-api-key'] = request.headers['x-api-key']
+                  }
+
+                  if (request.headers && client?.uiVersion) {
+                    request.headers['x-rkui-version'] = client.uiVersion
+                  }
+
                   await sendTransactionSafely(
                     reservoirChain?.id || 1,
                     viemClient,
@@ -360,43 +372,9 @@ export async function executeSteps(
                       if (json) {
                         setState([...json.steps], path)
                       }
-                    }
-                  )
-                  client.log(
-                    [
-                      'Execute Steps: Transaction finished, starting to poll for confirmation',
-                    ],
-                    LogLevel.Verbose
-                  )
-
-                  //Implicitly poll the confirmation url to confirm the transaction went through
-                  const confirmationUrl = new URL(
-                    `${request.baseURL}/transactions/${stepItem.txHash}/synced/v1`
-                  )
-                  const headers: AxiosRequestHeaders = {
-                    'x-rkc-version': version,
-                  }
-
-                  if (request.headers && request.headers['x-api-key']) {
-                    headers['x-api-key'] = request.headers['x-api-key']
-                  }
-
-                  if (request.headers && client?.uiVersion) {
-                    request.headers['x-rkui-version'] = client.uiVersion
-                  }
-                  await pollUntilOk(
-                    {
-                      url: confirmationUrl.href,
-                      method: 'get',
-                      headers: headers,
                     },
-                    (res) => {
-                      client.log(
-                        ['Execute Steps: Polling for confirmation', res],
-                        LogLevel.Verbose
-                      )
-                      return res && res.data.synced
-                    }
+                    request,
+                    headers
                   )
 
                   //Confirm that on-chain tx has been picked up by the indexer
