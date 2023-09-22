@@ -1,4 +1,12 @@
 
+## [v1.4.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d4881c50622cc88d19cd1a3b6bde9a6faea38082) (2023-09-21)
+
+* Merge pull request #383 from reservoirprotocol/ted/grwth-3076-handle-transaction-cancelled-better [5c9d70c7](https://github.com/reservoirprotocol/reservoir-kit/commit/5c9d70c73712b8fc7ec10408039cd2e64b7da026)
+* Merge pull request #373 from reservoirprotocol/pedro/grwth-3109-buymodal-allow-opening-without-signer [8beb0787](https://github.com/reservoirprotocol/reservoir-kit/commit/8beb078737d25fc341f144486016e31b05780219)
+* Update throw Error [bfb883e4](https://github.com/reservoirprotocol/reservoir-kit/commit/bfb883e412abfb0c2b4ccbde0062f91ccc8b739b)
+* Handle transaction cancelled logic [f7b1e722](https://github.com/reservoirprotocol/reservoir-kit/commit/f7b1e722bed098996794d6f6d8275cddf61bc8b6)
+* Remove unnecessary customChains that are now included in viem/wagmi [b5cdaf47](https://github.com/reservoirprotocol/reservoir-kit/commit/b5cdaf47e1464a19e82fddc7e04259e055a11a69)
+
 ## [v1.4.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/a23cb189a88637c093a0f2229a50f0a507478cde) (2023-09-18)
 
 * Use locally scoped axios instance [d1f32c4](https://github.com/reservoirprotocol/reservoir-kit/commit/d1f32c46dd0e49072063119ca3542f120f20613d)
