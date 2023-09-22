@@ -81,7 +81,7 @@ const PriceInput = ({
         />
         <FormatCurrency
           amount={profit * (usdPrice || 0)}
-          style="subtitle2"
+          style="subtitle3"
           color="subtle"
         />
       </Flex>

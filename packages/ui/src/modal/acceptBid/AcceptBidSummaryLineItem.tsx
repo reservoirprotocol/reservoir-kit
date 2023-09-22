@@ -87,10 +87,10 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
       css={{ p: '$4', borderBottom: '1px solid $borderColor', gap: '$2' }}
     >
       <Flex justify="between">
-        <Text color="subtle" style="subtitle2">
+        <Text color="subtle" style="subtitle3">
           Item
         </Text>
-        <Text color="subtle" style="subtitle2">
+        <Text color="subtle" style="subtitle3">
           You Get
         </Text>
       </Flex>
@@ -132,7 +132,7 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
               return (
                 <span key={i}>
                   {i > 0 ? (
-                    <Text color="subtle" style="subtitle2" css={{ mx: '$1' }}>
+                    <Text color="subtle" style="subtitle3" css={{ mx: '$1' }}>
                       +
                     </Text>
                   ) : null}

@@ -265,7 +265,7 @@ export function EditBidModal({
                 </Box>
                 <Flex direction="column" css={{ px: '$4', py: '$2' }}>
                   <Flex css={{ mb: '$2' }} justify="between">
-                    <Text style="subtitle2" color="subtle" as="p">
+                    <Text style="subtitle3" color="subtle" as="p">
                       Set New Offer
                     </Text>
                     {wrappedBalance?.value ? (
@@ -337,7 +337,7 @@ export function EditBidModal({
                         <Text
                           as="div"
                           css={{ mb: '$2' }}
-                          style="subtitle2"
+                          style="subtitle3"
                           color="subtle"
                         >
                           Attributes
@@ -442,7 +442,7 @@ export function EditBidModal({
                     <Text
                       as="div"
                       css={{ mb: '$2' }}
-                      style="subtitle2"
+                      style="subtitle3"
                       color="subtle"
                     >
                       Expiration Date
