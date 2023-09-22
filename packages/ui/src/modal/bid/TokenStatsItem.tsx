@@ -34,7 +34,7 @@ const TokenStatsItem: FC<Props> = ({ token, collection }) => {
       }}
     >
       <Text
-        style="subtitle2"
+        style="subtitle3"
         color="subtle"
         css={{ mb: '$1', display: 'block' }}
       >
@@ -52,7 +52,7 @@ const TokenStatsItem: FC<Props> = ({ token, collection }) => {
         {token?.token?.name || `#${token?.token?.tokenId}`}
       </Text>
       <Box>
-        <Text style="subtitle2" color="subtle" as="p" ellipsify>
+        <Text style="subtitle3" color="subtle" as="p" ellipsify>
           {token?.token?.collection?.name}
         </Text>
       </Box>

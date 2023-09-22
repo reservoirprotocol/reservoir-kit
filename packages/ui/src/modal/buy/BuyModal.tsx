@@ -342,7 +342,7 @@ export function BuyModal({
                       justify="between"
                       css={{ pt: '$4', px: '$4' }}
                     >
-                      <Text style="subtitle2">Referral Fee</Text>
+                      <Text style="subtitle3">Referral Fee</Text>
                       <FormatCryptoCurrency
                         chainId={modalChain?.id}
                         amount={feeOnTop}
@@ -562,7 +562,7 @@ export function BuyModal({
                           </Box>
                         )}
                         <Text
-                          style="subtitle2"
+                          style="subtitle3"
                           css={{ maxWidth: '100%' }}
                           ellipsify
                         >

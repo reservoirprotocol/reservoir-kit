@@ -50,7 +50,7 @@ const MarketplacePriceInput = ({
     Number(marketplace.truePrice) *
     quantity
   100
-  
+
   return (
     <Flex {...props} align="center">
       <>
@@ -124,7 +124,7 @@ const MarketplacePriceInput = ({
         />
         <FormatCurrency
           amount={profit * (usdPrice || 0)}
-          style="subtitle2"
+          style="subtitle3"
           color="subtle"
         />
       </Flex>
