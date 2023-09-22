@@ -1,11 +1,23 @@
 {
     "name": "@reservoir0x/gelato-adapter",
-    "version": "0.0.1",
+    "version": "0.2.4",
     "description": "An adapter used to enhance a ethers wallet adapter with the gelato SDK for use in the @reservoir0x/reservoir-sdk to enable gasless transactions",
-    "source": "src/index.ts",
-    "main": "dist/index.js",
-    "module": "dist/index.module.js",
-    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.mts",
+                "default": "./dist/index.mjs"
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        }
+    },
+    "source": "./src/index.ts",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
     "author": "Reservoir Protocol",
     "license": "MIT",
     "files": [
@@ -15,7 +27,7 @@
         "clean": "rm -rf dist",
         "version": "yarn version",
         "version:package": "sh ../../scripts/package-version.sh",
-        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release ethers wallet adapter package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-ETHERS; git push --tags;",
+        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release gelato wallet adapter package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-GELATO; git push --tags;",
         "syncApi": "node ./sync-api.mjs"
     },
     "repository": {
@@ -41,6 +53,6 @@
     "peerDependencies": {
         "@reservoir0x/reservoir-sdk": "workspace:*",
         "ethers": "^5.6.1",
-        "viem": "~1.0.6"
+        "viem": "~1.6.4"
     }
 }

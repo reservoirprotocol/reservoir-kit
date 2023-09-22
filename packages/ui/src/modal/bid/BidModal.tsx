@@ -49,7 +49,7 @@ import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
-import { useFallbackState } from '../../hooks'
+import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
@@ -80,6 +80,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
+  chainId?: number
   collectionId?: string
   attribute?: Trait
   normalizeRoyalties?: boolean
@@ -137,6 +138,7 @@ export function BidModal({
   openState,
   trigger,
   tokenId,
+  chainId,
   collectionId,
   attribute,
   normalizeRoyalties,
@@ -155,6 +157,14 @@ export function BidModal({
     openState
   )
 
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
   const datetimeElement = useRef<Flatpickr | null>(null)
   const [stepTitle, setStepTitle] = useState('')
   const [localMarketplace, setLocalMarketplace] = useState<ReturnType<
@@ -170,6 +180,7 @@ export function BidModal({
   return (
     <BidModalRenderer
       open={open}
+      chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
       attribute={attribute}
@@ -355,6 +366,7 @@ export function BidModal({
                 }}
               >
                 <TokenStats
+                  chainId={modalChain?.id}
                   token={token ? token : undefined}
                   collection={collection}
                   trait={trait}
@@ -372,6 +384,7 @@ export function BidModal({
                     >
                       Balance:{' '}
                       <FormatWrappedCurrency
+                        chainId={modalChain?.id}
                         logoWidth={10}
                         textStyle="tiny"
                         amount={wrappedBalance?.value}
@@ -391,6 +404,7 @@ export function BidModal({
                     >
                       {currencies.length > 1 ? (
                         <CurrencySelector
+                          chainId={modalChain?.id}
                           currency={currency}
                           currencies={currencies}
                           setCurrency={setCurrency}
@@ -399,6 +413,7 @@ export function BidModal({
                       ) : (
                         <>
                           <CryptoCurrencyIcon
+                            chainId={modalChain?.id}
                             css={{ height: 20 }}
                             address={wrappedContractAddress}
                           />
@@ -453,7 +468,7 @@ export function BidModal({
                       }}
                     >
                       <Text
-                        style="subtitle2"
+                        style="subtitle3"
                         color="subtle"
                         css={{ width: 90, flexShrink: 0 }}
                       >
@@ -473,12 +488,13 @@ export function BidModal({
                       align="center"
                       css={{ gap: '$2', mt: '$3', mb: '$4' }}
                     >
-                      <Text style="subtitle2" color="subtle">
+                      <Text style="subtitle3" color="subtle">
                         Total Offer Price
                       </Text>
                       <FormatWrappedCurrency
+                        chainId={modalChain?.id}
                         logoWidth={16}
-                        textStyle="subtitle2"
+                        textStyle="subtitle3"
                         amount={totalBidAmount}
                         address={currency?.contract}
                         decimals={currency?.decimals}
@@ -654,6 +670,7 @@ export function BidModal({
                       }
                       value={expirationDate}
                       options={{
+                        chainId: modalChain?.id,
                         minDate: minimumDate,
                         enableTime: true,
                         minuteIncrement: 1,
@@ -730,6 +747,7 @@ export function BidModal({
                               {balance?.symbol || 'ETH'} Balance
                             </Text>
                             <FormatCryptoCurrency
+                              chainId={modalChain?.id}
                               amount={balance?.value}
                               symbol={balance?.symbol}
                             />
@@ -785,6 +803,7 @@ export function BidModal({
                 }}
               >
                 <TransactionBidDetails
+                  chainId={modalChain?.id}
                   token={token ? token : undefined}
                   collection={collection}
                   bidData={bidData}
@@ -794,7 +813,9 @@ export function BidModal({
                     value={stepData?.stepProgress || 0}
                     max={stepData?.totalSteps || 0}
                   />
-                  {transactionError && <ErrorWell css={{ mt: 24 }} />}
+                  {transactionError && (
+                    <ErrorWell error={transactionError} css={{ mt: 24 }} />
+                  )}
                   {stepData && (
                     <>
                       <Text
@@ -819,6 +840,7 @@ export function BidModal({
                             }}
                           >
                             <CryptoCurrencyIcon
+                              chainId={modalChain?.id}
                               css={{ height: 56, width: 56 }}
                               address={wrappedContractAddress}
                             />

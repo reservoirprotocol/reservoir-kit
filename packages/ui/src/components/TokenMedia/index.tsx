@@ -27,6 +27,8 @@ type MediaType =
   | 'mp4'
   | 'mp3'
   | 'wav'
+  | 'm4a'
+  | 'mov'
   | 'gltf'
   | 'glb'
   | 'png'
@@ -167,6 +169,12 @@ const TokenMedia: FC<Props> = ({
     }
   }, [tokenURI])
 
+  useEffect(() => {
+    if (mediaRef && mediaRef.current) {
+      mediaRef.current.load()
+    }
+  }, [media])
+
   if (!token && !staticOnly) {
     console.warn('A token object or a media url are required!')
     return null
@@ -236,7 +244,7 @@ const TokenMedia: FC<Props> = ({
   }
 
   // VIDEO
-  if (mediaType === 'mp4') {
+  if (mediaType === 'mp4' || mediaType === 'mov') {
     return (
       <Box className={className} style={computedStyle} ref={containerRef}>
         {!isContainerLarge && <MediaPlayButton mediaRef={mediaRef} />}
@@ -260,7 +268,7 @@ const TokenMedia: FC<Props> = ({
   }
 
   // AUDIO
-  if (mediaType === 'wav' || mediaType === 'mp3') {
+  if (mediaType === 'wav' || mediaType === 'mp3' || mediaType === 'm4a') {
     return (
       <Box className={className} style={computedStyle} ref={containerRef}>
         {!isContainerLarge && <MediaPlayButton mediaRef={mediaRef} />}

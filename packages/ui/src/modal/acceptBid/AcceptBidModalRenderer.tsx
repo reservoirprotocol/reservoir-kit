@@ -7,13 +7,18 @@ import React, {
   useMemo,
 } from 'react'
 import { useTokens, useCoinConversion, useReservoirClient } from '../../hooks'
-import { useAccount, useWalletClient, useNetwork } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 import {
   Execute,
+  ExpectedPrice,
   ReservoirClientActions,
   SellPath,
 } from '@reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
+import { parseUnits } from 'viem'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { customChains } from '@reservoir0x/reservoir-sdk'
+import * as allChains from 'viem/chains'
 
 export enum AcceptBidStep {
   Checkout,
@@ -68,6 +73,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   tokens: AcceptBidTokenData[]
+  chainId?: number
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -75,11 +81,10 @@ type Props = {
 export const AcceptBidModalRenderer: FC<Props> = ({
   open,
   tokens,
+  chainId,
   normalizeRoyalties,
   children,
 }) => {
-  const client = useReservoirClient()
-  const { data: wallet } = useWalletClient()
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [prices, setPrices] = useState<AcceptBidPrice[]>([])
   const [acceptBidStep, setAcceptBidStep] = useState<AcceptBidStep>(
@@ -87,9 +92,24 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   )
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [txHash, setTxHash] = useState<string | null>(null)
-  const { chain: activeChain } = useNetwork()
+
+  const client = useReservoirClient()
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
+  const wagmiChain: allChains.Chain | undefined = Object.values({
+    ...allChains,
+    ...customChains,
+  }).find(({ id }) => rendererChain?.id === id)
+  
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+
   const blockExplorerBaseUrl =
-    activeChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+    wagmiChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+
   const [isFetchingBidPath, setIsFetchingBidPath] = useState(false)
   const [bidsPath, setBidsPath] = useState<SellPath | null>(null)
 
@@ -108,7 +128,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     },
     {
       revalidateFirstPage: true,
-    }
+    },
+    rendererChain?.id
   )
 
   const enhancedTokens = useMemo(() => {
@@ -213,6 +234,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
       client.actions
         .acceptOffer({
+          chainId: rendererChain?.id,
           items: items,
           wallet,
           options,
@@ -230,7 +252,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           setIsFetchingBidPath(false)
         })
     },
-    [client, wallet, normalizeRoyalties]
+    [client, wallet, rendererChain, normalizeRoyalties]
   )
 
   useEffect(() => {
@@ -268,10 +290,23 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     [conversions]
   )
 
-  const acceptBid = useCallback(() => {
+  const acceptBid = useCallback(async () => {
     setTransactionError(null)
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
+      setTransactionError(error)
+      throw error
+    }
+
+    let activeWalletChain = getNetwork().chain
+    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchNetwork({
+        chainId: rendererChain?.id as number,
+      })
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
     }
@@ -312,15 +347,24 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       })
     )
 
-    const expectedPrice: Record<string, number> = {}
+    const expectedPrice: Record<string, ExpectedPrice> = {}
     for (let currency in prices) {
-      expectedPrice[currency] = prices[currency].netAmount
+      expectedPrice[currency] = {
+        amount: prices[currency].netAmount,
+        raw: parseUnits(
+          `${prices[currency].netAmount}`,
+          prices[currency].currency.decimals || 18
+        ),
+        currencyAddress: prices[currency].currency.contract,
+        currencyDecimals: prices[currency].currency.decimals || 18,
+      }
     }
 
     let hasError = false
 
     client.actions
       .acceptOffer({
+        chainId: rendererChain?.id,
         expectedPrice,
         wallet,
         items,
@@ -412,7 +456,15 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         fetchBidsPath(tokens)
         mutateTokens()
       })
-  }, [bidsPath, bidTokenMap, client, wallet, prices, mutateTokens])
+  }, [
+    bidsPath,
+    bidTokenMap,
+    rendererChain,
+    client,
+    wallet,
+    prices,
+    mutateTokens,
+  ])
 
   useEffect(() => {
     if (bidsPath && bidsPath.length > 0) {

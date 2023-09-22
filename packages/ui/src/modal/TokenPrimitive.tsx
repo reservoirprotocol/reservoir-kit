@@ -26,6 +26,7 @@ type Props = {
   isUnavailable?: boolean
   priceSubtitle?: string
   royaltiesBps?: number
+  chainId?: number
   quantity?: number
 }
 
@@ -37,6 +38,7 @@ const Img = styled('img', {
 const TokenPrimitive: FC<Props> = ({
   img,
   name,
+  chainId,
   collection,
   currencyContract,
   currencyDecimals,
@@ -57,7 +59,7 @@ const TokenPrimitive: FC<Props> = ({
     <Box>
       <Flex css={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Text
-          style="subtitle2"
+          style="subtitle3"
           color="subtle"
           css={{ mb: 10, display: 'block' }}
         >
@@ -65,7 +67,7 @@ const TokenPrimitive: FC<Props> = ({
         </Text>
         {priceSubtitle && (
           <Text
-            style="subtitle2"
+            style="subtitle3"
             color="subtle"
             css={{ mb: 10, display: 'block' }}
           >
@@ -164,6 +166,7 @@ const TokenPrimitive: FC<Props> = ({
           {price ? (
             <FormatCryptoCurrency
               amount={price}
+              chainId={chainId}
               textColor={isUnavailable ? 'subtle' : 'base'}
               address={currencyContract}
               decimals={currencyDecimals}
@@ -171,7 +174,7 @@ const TokenPrimitive: FC<Props> = ({
               logoWidth={14.5}
             />
           ) : (
-            <Text style="subtitle2" color={isUnavailable ? 'subtle' : 'base'}>
+            <Text style="subtitle3" color={isUnavailable ? 'subtle' : 'base'}>
               --
             </Text>
           )}
@@ -179,7 +182,7 @@ const TokenPrimitive: FC<Props> = ({
             <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
           ) : null}
           {warning && (
-            <Text style="subtitle2" color="error">
+            <Text style="subtitle3" color="error">
               {warning}
             </Text>
           )}

@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 * Finished reservoirChains configuration [2023-08-03](https://github.com/reservoirprotocol/reservoir-kit/commit/ef9a655)
 * BREAKING: move api key configuration from chain to client [dc879c3](https://github.com/reservoirprotocol/reservoir-kit/commit/dc879c3c1f4ad2321be747cfb54f1fcb6ec92e9e)
 * Add usdc to goerli payment tokens [980049d](https://github.com/reservoirprotocol/reservoir-kit/commit/980049dc8a67a2f2858d94fe123c556fbb16db77)
@@ -7,6 +8,42 @@
 * Updated collect modal renderer currency logic [302f1b2](https://github.com/reservoirprotocol/reservoir-kit/commit/302f1b2295b2792d19b1b03963e001090fb91d36)
 * Add todo [15c3ea1](https://github.com/reservoirprotocol/reservoir-kit/commit/15c3ea10c1b5dcc747b89fbeace149f2a5b3b41b)
 * update PaymentToken address type [e9de589](https://github.com/reservoirprotocol/reservoir-kit/commit/e9de589b7ac2531038c0f4c7d0e73d38b82607fd)
+=======
+## [v1.4.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/a23cb189a88637c093a0f2229a50f0a507478cde) (2023-09-18)
+
+* Use locally scoped axios instance [d1f32c4](https://github.com/reservoirprotocol/reservoir-kit/commit/d1f32c46dd0e49072063119ca3542f120f20613d)
+
+## [v1.4.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/24c3283cd15b881fb83161fe3e5cd32d73562eb8) (2023-09-07)
+
+* Sync api [38ecc5a](https://github.com/reservoirprotocol/reservoir-kit/commit/38ecc5a922e31d8e38792d0bc11eed74ebb4e0f4)
+
+## [v1.4.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0578f8b9b4e3ae93aa732110b39886537001465c) (2023-08-31)
+
+* Sync api [8003a5a](https://github.com/reservoirprotocol/reservoir-kit/commit/8003a5a56623b1a3641f5c7f27f7b049d514525d)
+* Loosen comparison when searching for a chain via id [16a8e98](https://github.com/reservoirprotocol/reservoir-kit/commit/16a8e98f03241bf6637e5fe52eb6b73d266271e1)
+
+## [v1.4.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/07457a4001d540f58b312fdfb29e6588e8bffb0a) (2023-08-30)
+
+* Setup different exports based on the import flavor [ba5608d](https://github.com/reservoirprotocol/reservoir-kit/commit/ba5608d235ff57f2578d070f316cb4d83a6015f4)
+## [v1.3.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1dd88560a2fd8ebbbe6202cbb65c0038cb48ef8b) (2023-08-30)
+
+* Add bounty referrer global parameter for purchasing [82efe58](https://github.com/reservoirprotocol/reservoir-kit/commit/82efe58df8d6335bdc1f9b7c593405b5224ac82a)
+
+## [v1.3.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/de7f3293de37c74d3831a7759728c0b994b5c8ee) (2023-08-28)
+
+* Upgrade wagmi [ typescript](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-21)
+
+## [v1.2.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/356d497855224ef3e4ac781bdb258bb73bde4787) (2023-08-25)
+
+* Sync api [7617f10](https://github.com/reservoirprotocol/reservoir-kit/commit/7617f10f34ff4be6b30859bd27ff62179e60b274)
+
+## [v1.2.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8fed14b38eec0fff1a5b34ace1e11d8be6398e52) (2023-08-22)
+
+* Improve error message handling for network errors [8ff5b75](https://github.com/reservoirprotocol/reservoir-kit/commit/8ff5b75dee8e32f9bebad42e6e4fffc20ef0d54b)
+## [v1.2.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/5a5f86a0304a3e20e64ebbe3ce247af0e2ea63e4) (2023-08-21)
+
+* Improve accuracy when checking expected price by using raw amount [1cd1944](https://github.com/reservoirprotocol/reservoir-kit/commit/1cd194442e8d2f957132513fc7327ce2fc5dbd08)
+>>>>>>> main
 ## [v1.1.24-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/06b76ff3e18a32654df42d82a45650a76f75b1b4) (2023-08-03)
 
 - Upgrade to typescript v5

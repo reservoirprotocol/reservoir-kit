@@ -1,7 +1,9 @@
 import _axios, { AxiosResponse } from 'axios'
 import { APIError } from './request'
 
-_axios.interceptors.response.use(
+export const axios = _axios.create()
+
+axios.interceptors.response.use(
   (_res: AxiosResponse) => {
     if (_res.headers['Deprecation'] === 'true') {
       console.warn(
@@ -12,8 +14,10 @@ _axios.interceptors.response.use(
     return _res
   },
   (error) => {
-    return Promise.reject(APIError(error.message))
+    return Promise.reject(
+      APIError(
+        `${error.message}: ${error.response?.data?.message || 'Unknown Reason'}`
+      )
+    )
   }
 )
-
-export const axios = _axios

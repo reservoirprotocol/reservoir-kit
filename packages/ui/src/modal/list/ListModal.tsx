@@ -70,6 +70,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
+  chainId?: number
   currencies?: Currency[]
   nativeOnly?: boolean
   normalizeRoyalties?: boolean
@@ -120,6 +121,7 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
+  chainId,
   currencies,
   nativeOnly,
   normalizeRoyalties,
@@ -137,8 +139,15 @@ export function ListModal({
     openState ? openState[0] : false,
     openState
   )
+
   const client = useReservoirClient()
-  const reservoirChain = client?.currentChain()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
   const [marketplacesToApprove, setMarketplacesToApprove] = useState<
     Marketplace[]
   >([])
@@ -152,6 +161,7 @@ export function ListModal({
   return (
     <ListModalRenderer
       open={open}
+      chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
       currencies={currencies}
@@ -304,6 +314,7 @@ export function ListModal({
                 }}
               >
                 <TokenStats
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   royaltyBps={royaltyBps}
@@ -319,6 +330,7 @@ export function ListModal({
                       >
                         List item in
                         <CurrencySelector
+                          chainId={modalChain?.id}
                           currency={currency}
                           currencies={currencies}
                           setCurrency={setCurrency}
@@ -332,7 +344,7 @@ export function ListModal({
                       </Text>
                     )}
 
-                    <Text style="subtitle2" as="p" color="subtle">
+                    <Text style="subtitle3" as="p" color="subtle">
                       Default
                     </Text>
                     <Flex align="center" css={{ mb: '$4', mt: '$2' }}>
@@ -364,14 +376,14 @@ export function ListModal({
                           />
                         </Flex>
                       </Box>
-                      <Text style="subtitle2" color="subtle" css={{ mr: '$2' }}>
+                      <Text style="subtitle3" color="subtle" css={{ mr: '$2' }}>
                         Marketplace fee:{' '}
                         {((localMarketplace?.fee?.bps || 0) / 10000) * 100}%
                       </Text>
                     </Flex>
                     {availableMarketplaces.length > 1 && (
                       <Text
-                        style="subtitle2"
+                        style="subtitle3"
                         color="subtle"
                         as="p"
                         css={{ mb: '$2' }}
@@ -398,7 +410,7 @@ export function ListModal({
                     {marketplacesToApprove.length > 0 && (
                       <Text
                         color="accent"
-                        style="subtitle2"
+                        style="subtitle3"
                         css={{
                           my: 10,
                           width: '100%',
@@ -443,6 +455,7 @@ export function ListModal({
                 }}
               >
                 <TokenStats
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   royaltyBps={royaltyBps}
@@ -475,7 +488,7 @@ export function ListModal({
                           <Text
                             as="div"
                             css={{ mb: '$2' }}
-                            style="subtitle2"
+                            style="subtitle3"
                             color="subtle"
                           >
                             Quantity
@@ -502,13 +515,13 @@ export function ListModal({
                       </>
                     )}
                     <Flex css={{ mb: '$2' }} justify="between">
-                      <Text style="subtitle2" color="subtle" as="p">
+                      <Text style="subtitle3" color="subtle" as="p">
                         {quantityAvailable > 1 && quantitySelectionAvailable
                           ? 'Unit Price'
                           : 'Price'}
                       </Text>
                       <Flex css={{ alignItems: 'center', gap: 8 }}>
-                        <Text style="subtitle2" color="subtle" as="p">
+                        <Text style="subtitle3" color="subtle" as="p">
                           {quantityAvailable > 1 && quantitySelectionAvailable
                             ? 'Total Profit'
                             : 'Profit'}
@@ -520,13 +533,13 @@ export function ListModal({
                               <Flex direction="column" css={{ gap: '$3' }}>
                                 <Flex justify="between" css={{ gap: '$4' }}>
                                   <Text style="body3">Marketplace Fee</Text>
-                                  <Text style="subtitle2" color="subtle">
+                                  <Text style="subtitle3" color="subtle">
                                     {localMarketplace?.fee?.percent || 0}%
                                   </Text>
                                 </Flex>
                                 <Flex justify="between" css={{ gap: '$4' }}>
                                   <Text style="body3">Creator Royalties</Text>
-                                  <Text style="subtitle2" color="subtle">
+                                  <Text style="subtitle3" color="subtle">
                                     {(royaltyBps || 0) * 0.01}%
                                   </Text>
                                 </Flex>
@@ -554,6 +567,7 @@ export function ListModal({
                     {selectedMarketplaces.map((marketplace) => (
                       <Box key={marketplace.name} css={{ mb: '$3' }}>
                         <MarketplacePriceInput
+                          chainId={modalChain?.id}
                           marketplace={marketplace}
                           collection={collection}
                           currency={currency}
@@ -613,7 +627,7 @@ export function ListModal({
                       <Text
                         as="div"
                         css={{ mb: '$2' }}
-                        style="subtitle2"
+                        style="subtitle3"
                         color="subtle"
                       >
                         Expiration Date
@@ -661,6 +675,7 @@ export function ListModal({
                 }}
               >
                 <TokenListingDetails
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   listingData={listingData}
@@ -671,7 +686,9 @@ export function ListModal({
                     value={stepData?.stepProgress || 0}
                     max={stepData?.totalSteps || 0}
                   />
-                  {transactionError && <ErrorWell css={{ mt: 24 }} />}
+                  {transactionError && (
+                    <ErrorWell error={transactionError} css={{ mt: 24 }} />
+                  )}
                   {stepData && stepData.currentStep.id === 'auth' ? (
                     <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
                   ) : null}
@@ -731,7 +748,7 @@ export function ListModal({
                       >
                         {copy.ctaEditListing}
                       </Button>
-                      <Button css={{ flex: 1 }} onClick={() => listToken()}>
+                      <Button css={{ flex: 1 }} onClick={listToken}>
                         {copy.ctaRetry}
                       </Button>
                     </Flex>
@@ -746,6 +763,7 @@ export function ListModal({
                 }}
               >
                 <TokenListingDetails
+                  chainId={modalChain?.id}
                   token={token}
                   collection={collection}
                   listingData={listingData}
@@ -785,7 +803,7 @@ export function ListModal({
                       </Span>{' '}
                       has been listed for sale
                     </Text>
-                    <Text style="subtitle2" as="p" css={{ mb: '$3' }}>
+                    <Text style="subtitle3" as="p" css={{ mb: '$3' }}>
                       View Listing on
                     </Text>
                     <Flex css={{ gap: '$3' }}>
@@ -799,7 +817,7 @@ export function ListModal({
                           <a
                             key={data.listing.orderbook}
                             target="_blank"
-                            href={`${reservoirChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                            href={`${modalChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
                           >
                             <Image
                               css={{ width: 24 }}

@@ -8,6 +8,7 @@ import {
 
 type StatProps = {
   label: string | ReactElement
+  chainId?: number
   value: string | number | null
   symbol?: string
   asNative?: boolean
@@ -18,6 +19,7 @@ type StatProps = {
 const Stat: FC<StatProps> = ({
   label,
   value,
+  chainId,
   symbol,
   asNative = false,
   asWrapped = false,
@@ -49,23 +51,25 @@ const Stat: FC<StatProps> = ({
     </Flex>
     {asNative && !asWrapped && (
       <FormatCryptoCurrency
+        chainId={chainId}
         amount={value}
-        textStyle="subtitle2"
+        textStyle="subtitle3"
         address={address}
         symbol={symbol}
       />
     )}
     {asWrapped && !asNative && (
       <FormatWrappedCurrency
+        chainId={chainId}
         amount={value}
         address={address}
         symbol={symbol}
-        textStyle="subtitle2"
+        textStyle="subtitle3"
       />
     )}
     {!asNative && !asWrapped && (
       <Text
-        style="subtitle2"
+        style="subtitle3"
         as="p"
         css={{
           marginLeft: '$2',

@@ -4,6 +4,8 @@ const wrappedContractNames: Record<number, string> = {
   10: 'WETH', //optimism
   56: 'WBNB', //bnb
   137: 'WMATIC', //polygon
+  1101: 'WETH ', // zkEVM
+  324: 'WETH', //weth
   42161: 'WETH', //arbitrum
   42170: 'WETH', //arbitrum nova
   43114: 'WAVAX', //avalance

@@ -9,7 +9,7 @@ import {
   useBids,
   useAttributes,
 } from '../../hooks'
-import { useWalletClient, useAccount, useBalance, useNetwork } from 'wagmi'
+import { useWalletClient, useAccount, useBalance } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 
 import { Execute } from '@reservoir0x/reservoir-sdk'
@@ -26,6 +26,9 @@ import {
 } from '../bid/BidModalRenderer'
 import { formatBN } from '../../lib/numbers'
 import { parseUnits } from 'viem'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { customChains } from '@reservoir0x/reservoir-sdk'
+import * as allChains from 'viem/chains'
 
 export enum EditBidStep {
   Edit,
@@ -83,6 +86,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   bidId?: string
+  chainId?: number
   tokenId?: string
   attribute?: Trait
   collectionId?: string
@@ -93,13 +97,27 @@ type Props = {
 export const EditBidModalRenderer: FC<Props> = ({
   open,
   bidId,
+  chainId,
   tokenId,
   collectionId,
   attribute,
   normalizeRoyalties,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
+  const client = useReservoirClient()
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
+  const wagmiChain: allChains.Chain | undefined = Object.values({
+    ...allChains,
+    ...customChains,
+  }).find(({ id }) => rendererChain?.id === id)
+
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+
   const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<EditBidStepData | null>(null)
@@ -114,7 +132,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   const [amountToWrap, setAmountToWrap] = useState('')
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
-  const chainCurrency = useChainCurrency()
+  const chainCurrency = useChainCurrency(rendererChain?.id)
 
   const nativeWrappedContractAddress =
     chainCurrency.chainId in wrappedContracts
@@ -135,7 +153,8 @@ export const EditBidModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && bidId ? true : false
+    open && bidId ? true : false,
+    rendererChain?.id
   )
 
   const bid = bids && bids[0] ? bids[0] : undefined
@@ -166,49 +185,49 @@ export const EditBidModalRenderer: FC<Props> = ({
 
   const bidAmountUsd = +bidAmount * (usdPrice || 0)
 
-  const client = useReservoirClient()
-
   const { address } = useAccount()
   const { data: balance } = useBalance({
     address: address,
     watch: open,
+    chainId: rendererChain?.id,
   })
 
   const { data: wrappedBalance } = useBalance({
     token: wrappedContractAddress as any,
     address: address,
     watch: open,
-    chainId: client?.currentChain()?.id,
+    chainId: rendererChain?.id,
   })
 
-  const { chain } = useNetwork()
   const canAutomaticallyConvert =
     !currency || currency.contract === nativeWrappedContractAddress
   let convertLink: string = ''
 
   if (canAutomaticallyConvert) {
     convertLink =
-      chain?.id === mainnet.id || chain?.id === goerli.id
+      wagmiChain?.id === mainnet.id || wagmiChain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
-            chain?.network || 'mainnet'
+            wagmiChain?.network || 'mainnet'
           }&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
   } else {
-    convertLink = `https://jumper.exchange/?toChain=${chain?.id}&toToken=${wrappedContractAddress}`
+    convertLink = `https://jumper.exchange/?toChain=${wagmiChain?.id}&toToken=${wrappedContractAddress}`
   }
 
   const isTokenBid = bid?.criteria?.kind == 'token'
 
   const { data: traits } = useAttributes(
-    open && !isTokenBid ? collectionId : undefined
+    open && !isTokenBid ? collectionId : undefined,
+    rendererChain?.id
   )
 
   const { data: collections } = useCollections(
     open && {
       id: collectionId,
-      includeTopBid: true,
       normalizeRoyalties,
-    }
+    },
+    {},
+    rendererChain?.id
   )
   const collection = collections && collections[0] ? collections[0] : undefined
   let royaltyBps = collection?.royalties?.bps
@@ -221,7 +240,8 @@ export const EditBidModalRenderer: FC<Props> = ({
     },
     {
       revalidateFirstPage: true,
-    }
+    },
+    rendererChain?.id
   )
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
@@ -289,9 +309,22 @@ export const EditBidModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  const editBid = useCallback(() => {
+  const editBid = useCallback(async () => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
+      setTransactionError(error)
+      throw error
+    }
+
+    let activeWalletChain = getNetwork().chain
+    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchNetwork({
+        chainId: rendererChain?.id as number,
+      })
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
     }
@@ -362,6 +395,7 @@ export const EditBidModalRenderer: FC<Props> = ({
 
     client.actions
       .placeBid({
+        chainId: rendererChain?.id,
         bids: [bid],
         wallet,
         onProgress: (steps: Execute['steps']) => {
@@ -427,6 +461,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     wallet,
     collectionId,
     tokenId,
+    rendererChain,
     expirationOption,
     trait,
     bidAmount,

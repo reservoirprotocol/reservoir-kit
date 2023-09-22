@@ -8,7 +8,6 @@ import {
 import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
-import { useNetwork } from 'wagmi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCircleExclamation,
@@ -26,6 +25,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   listingId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   onClose?: (data: any, currentStep: CancelStep) => void
@@ -36,6 +36,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 export function CancelListingModal({
   openState,
   listingId,
+  chainId,
   trigger,
   normalizeRoyalties,
   copyOverrides,
@@ -48,12 +49,18 @@ export function CancelListingModal({
     openState ? openState[0] : false,
     openState
   )
+
   const client = useReservoirClient()
-  const { chain: activeChain } = useNetwork()
-  const reservoirChain = client?.currentChain()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
 
   return (
     <CancelListingModalRenderer
+      chainId={modalChain?.id}
       listingId={listingId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
@@ -67,13 +74,14 @@ export function CancelListingModal({
         transactionError,
         stepData,
         totalUsd,
+        blockExplorerName,
         blockExplorerBaseUrl,
         cancelOrder,
       }) => {
         const expires = useTimeSince(listing?.expiration)
         const listingImg = tokenId
-          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${contract}:${tokenId}/image/v1?imageSize=small`
-          : `${reservoirChain?.baseApiUrl}/redirect/collections/${contract}/image/v1`
+          ? `${modalChain?.baseApiUrl}/redirect/tokens/${contract}:${tokenId}/image/v1?imageSize=small`
+          : `${modalChain?.baseApiUrl}/redirect/collections/${contract}/image/v1`
 
         useEffect(() => {
           if (cancelStep === CancelStep.Complete && onCancelComplete) {
@@ -154,6 +162,7 @@ export function CancelListingModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={listingImg}
                     name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
@@ -187,6 +196,7 @@ export function CancelListingModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={listingImg}
                     name={listing?.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
@@ -258,8 +268,7 @@ export function CancelListingModal({
                     href={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
                     target="_blank"
                   >
-                    View on{' '}
-                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
+                    View on {blockExplorerName}
                   </Anchor>
                 </Flex>
                 <Button

@@ -14,7 +14,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
-  faChevronLeft,
   faCircleExclamation,
   faCube,
   faEye,
@@ -29,9 +28,11 @@ import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible
 import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
+import { formatNumber } from '../../../lib/numbers'
 
 export const MintContent: FC<
   ChildrenProps & {
+    chainId?: number
     copy: typeof CollectModalCopy
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -40,6 +41,7 @@ export const MintContent: FC<
   collection,
   token,
   orders,
+  chainId,
   mintPrice,
   itemAmount,
   setItemAmount,
@@ -57,7 +59,7 @@ export const MintContent: FC<
   transactionError,
   stepData,
   collectStep,
-  balance,
+  isConnected,
   collectTokens,
   copy,
   setOpen,
@@ -131,7 +133,7 @@ export const MintContent: FC<
               direction="column"
               css={{ borderBottom: '1px solid $neutralBorder' }}
             >
-              {transactionError ? <ErrorWell /> : null}
+              {transactionError ? <ErrorWell error={transactionError} /> : null}
               <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
                 {token ? (
                   <TokenInfo token={token} collection={collection} />
@@ -150,8 +152,8 @@ export const MintContent: FC<
                   >
                     <Text style="subtitle2">Quantity</Text>
                     <Text style="body3" color="subtle">
-                      {maxItemAmount} {maxItemAmount > 1 ? 'items' : 'item'}{' '}
-                      available
+                      {formatNumber(maxItemAmount)}{' '}
+                      {maxItemAmount > 1 ? 'items' : 'item'} available
                     </Text>
                   </Flex>
                   <QuantitySelector
@@ -171,11 +173,12 @@ export const MintContent: FC<
               <Flex direction="column" css={{ gap: 10 }}>
                 {hasQuantitySet ? (
                   <Flex justify="between" align="center" css={{ gap: '$4' }}>
-                    <Text style="subtitle2" color="subtle">
+                    <Text style="subtitle3" color="subtle">
                       {itemAmount} {quantitySubject}
                     </Text>
                     <Flex css={{ gap: '$1' }}>
                       <FormatCryptoCurrency
+                        chainId={chainId}
                         amount={mintPrice}
                         address={listingCurrency?.address}
                         decimals={listingCurrency?.decimals}
@@ -183,7 +186,7 @@ export const MintContent: FC<
                         logoWidth={12}
                         css={{ color: '$neutralText' }}
                       />
-                      <Text style="subtitle2" color="subtle">
+                      <Text style="subtitle3" color="subtle">
                         x {itemAmount}
                       </Text>
                     </Flex>
@@ -192,10 +195,15 @@ export const MintContent: FC<
               </Flex>
               <Flex direction="column" css={{ gap: '$5' }}>
                 {feeOnTop > 0 && (
-                  <Flex justify="between" align="start" css={{ width: '100%' }}>
-                    <Text style="subtitle2">Referral Fee</Text>
+                  <Flex
+                    justify="between"
+                    align="start"
+                    css={{ py: '$4', width: '100%' }}
+                  >
+                    <Text style="subtitle3">Referral Fee</Text>
                     <Flex direction="column" align="end" css={{ gap: '$1' }}>
                       <FormatCryptoCurrency
+                        chainId={chainId}
                         amount={feeOnTop}
                         address={listingCurrency?.address}
                         decimals={listingCurrency?.decimals}
@@ -214,6 +222,7 @@ export const MintContent: FC<
                   <Text style="h6">You Pay</Text>
                   <Flex direction="column" align="end" css={{ gap: '$1' }}>
                     <FormatCryptoCurrency
+                      chainId={chainId}
                       textStyle="h6"
                       amount={paymentCurrency?.currencyTotal}
                       address={paymentCurrency?.address}
@@ -223,17 +232,20 @@ export const MintContent: FC<
                     />
                     <FormatCurrency
                       amount={paymentCurrency?.usdTotal}
-                      style="subtitle2"
+                      style="subtitle3"
                       color="subtle"
                     />
                   </Flex>
                 </Flex>
               </Flex>
             </Flex>
-
-            {hasEnoughCurrency ? (
-              <Button css={{ m: '$4' }} onClick={collectTokens}>
-                {copy.mintCtaBuy}
+            {hasEnoughCurrency || !isConnected ? (
+              <Button
+                css={{ m: '$4' }}
+                disabled={!hasEnoughCurrency}
+                onClick={collectTokens}
+              >
+                {!isConnected ? copy.ctaConnect : copy.mintCtaBuy}
               </Button>
             ) : (
               <Flex
@@ -247,7 +259,8 @@ export const MintContent: FC<
                   </Text>
 
                   <FormatCryptoCurrency
-                    amount={balance}
+                    chainId={chainId}
+                    amount={paymentCurrency?.balance}
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
                     symbol={paymentCurrency?.symbol}
@@ -276,6 +289,7 @@ export const MintContent: FC<
             }}
           >
             <CollectCheckout
+              chainId={chainId}
               collection={collection}
               token={token}
               itemCount={itemAmount}
@@ -313,7 +327,7 @@ export const MintContent: FC<
                     <Text style="h6" css={{ textAlign: 'center' }}>
                       Approve Purchases
                     </Text>
-                    <Text style="subtitle2" color="subtle">
+                    <Text style="subtitle3" color="subtle">
                       The purchase of these items needs to be split into{' '}
                       {stepData?.currentStep?.items.length} separate
                       transactions.
@@ -367,6 +381,7 @@ export const MintContent: FC<
             }}
           >
             <CollectCheckout
+              chainId={chainId}
               collection={collection}
               token={token}
               itemCount={itemAmount}
@@ -388,7 +403,7 @@ export const MintContent: FC<
           >
             <Text style="h6">Finalizing on blockchain</Text>
             <Text
-              style="subtitle2"
+              style="subtitle3"
               color="subtle"
               css={{ textAlign: 'center' }}
             >

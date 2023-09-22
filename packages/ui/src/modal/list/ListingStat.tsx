@@ -14,9 +14,16 @@ type Props = {
   listing: Listings[0]
   marketImg: string
   currency: Currency
+  chainId?: number
 }
 
-const ListingStat: FC<Props> = ({ listing, marketImg, currency, ...props }) => {
+const ListingStat: FC<Props> = ({
+  listing,
+  chainId,
+  marketImg,
+  currency,
+  ...props
+}) => {
   const timeSince = useTimeSince(
     listing.expirationTime ? +listing.expirationTime : 0
   )
@@ -35,15 +42,16 @@ const ListingStat: FC<Props> = ({ listing, marketImg, currency, ...props }) => {
     >
       <Flex justify="between">
         <FormatCryptoCurrency
+          chainId={chainId}
           amount={listing.weiPrice}
-          textStyle="subtitle2"
+          textStyle="subtitle3"
           address={currency.contract}
           decimals={currency.decimals}
           symbol={currency?.symbol}
         />
         <Img src={marketImg} />
       </Flex>
-      <Text style="subtitle2" color="subtle" as="p" css={{ flex: 1 }}>
+      <Text style="subtitle3" color="subtle" as="p" css={{ flex: 1 }}>
         {listing.expirationTime ? `Expires ${timeSince}` : 'No Expiration'}
       </Text>
     </Flex>

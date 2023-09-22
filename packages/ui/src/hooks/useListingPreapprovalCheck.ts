@@ -8,7 +8,8 @@ import { Execute } from '@reservoir0x/reservoir-sdk'
 export default function (
   marketplaces: Marketplace[],
   tokenId?: string,
-  collectionId?: string
+  collectionId?: string,
+  chainId?: number
 ) {
   const [unapprovedMarketplaces, setUnapprovedMarketplaces] = useState<
     Marketplace[]
@@ -16,6 +17,12 @@ export default function (
   const [isFetching, setIsFetching] = useState(false)
   const client = useReservoirClient()
   const { data: wallet } = useWalletClient()
+
+  const currentChain = client?.currentChain()
+
+  const hookChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
 
   useEffect(() => {
     if (
@@ -39,6 +46,7 @@ export default function (
       setIsFetching(true)
       client.actions
         .listToken({
+          chainId: hookChain?.id,
           listings: listings,
           wallet,
           precheck: true,
@@ -81,7 +89,7 @@ export default function (
     } else if (unapprovedMarketplaces.length > 0) {
       setUnapprovedMarketplaces([])
     }
-  }, [client, wallet, tokenId, collectionId, marketplaces.length])
+  }, [client, wallet, tokenId, collectionId, marketplaces.length, hookChain])
 
   return { data: unapprovedMarketplaces, isFetching }
 }

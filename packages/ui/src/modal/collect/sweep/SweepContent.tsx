@@ -20,6 +20,7 @@ import {
   faCircleExclamation,
   faCube,
   faMagnifyingGlass,
+  faPenNib,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import QuantitySelector from '../../QuantitySelector'
@@ -31,14 +32,17 @@ import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
 import { SelectPaymentToken } from '../../SelectPaymentToken'
+import { formatNumber } from '../../../lib/numbers'
 
 export const SweepContent: FC<
   ChildrenProps & {
+    chainId?: number
     copy: typeof CollectModalCopy
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
   }
 > = ({
+  chainId,
   collection,
   token,
   orders,
@@ -52,6 +56,7 @@ export const SweepContent: FC<
   total,
   feeOnTop,
   feeUsd,
+  isConnected,
   usdPrice,
   currentChain,
   chainCurrency,
@@ -146,7 +151,7 @@ export const SweepContent: FC<
             direction="column"
             css={{ borderBottom: '1px solid $neutralBorder' }}
           >
-            {transactionError ? <ErrorWell /> : null}
+            {transactionError ? <ErrorWell error={transactionError} /> : null}
             <Flex direction="column" css={{ p: '$4', gap: 10 }}>
               {token ? (
                 <TokenInfo token={token} collection={collection} />
@@ -165,8 +170,8 @@ export const SweepContent: FC<
                 >
                   <Text style="subtitle2">Quantity</Text>
                   <Text style="body3" color="subtle">
-                    {maxItemAmount} {maxItemAmount === 1 ? 'item' : 'items'}{' '}
-                    available
+                    {formatNumber(maxItemAmount)}{' '}
+                    {maxItemAmount === 1 ? 'item' : 'items'} available
                   </Text>
                 </Flex>
                 <QuantitySelector
@@ -182,20 +187,22 @@ export const SweepContent: FC<
                   {!is1155 ? (
                     <>
                       <Flex align="center" css={{ gap: '$2' }}>
-                        <Text style="subtitle2" color="subtle">
+                        <Text style="subtitle3" color="subtle">
                           Price Range
                         </Text>
                         <FormatCryptoCurrency
+                          chainId={chainId}
                           amount={cheapestTokenPrice}
                           address={listingCurrency?.address}
                           decimals={listingCurrency?.decimals}
                           symbol={listingCurrency?.symbol}
                           maximumFractionDigits={2}
                         />
-                        <Text style="subtitle2" color="subtle">
+                        <Text style="subtitle3" color="subtle">
                           -
                         </Text>
                         <FormatCryptoCurrency
+                          chainId={chainId}
                           amount={mostExpensiveTokenPrice}
                           address={listingCurrency?.address}
                           decimals={listingCurrency?.decimals}
@@ -203,16 +210,17 @@ export const SweepContent: FC<
                           maximumFractionDigits={2}
                         />
                       </Flex>
-                      <Text style="subtitle2" color="subtle">
+                      <Text style="subtitle3" color="subtle">
                         |
                       </Text>
                     </>
                   ) : null}
                   <Flex align="center" css={{ gap: '$2' }}>
-                    <Text style="subtitle2" color="subtle">
+                    <Text style="subtitle3" color="subtle">
                       Avg Price
                     </Text>
                     <FormatCryptoCurrency
+                      chainId={chainId}
                       amount={total / itemAmount}
                       address={listingCurrency?.address}
                       decimals={listingCurrency?.decimals}
@@ -257,10 +265,15 @@ export const SweepContent: FC<
               </Flex>
             ) : null}
             {feeOnTop > 0 && (
-              <Flex justify="between" align="start" css={{ width: '100%' }}>
-                <Text style="subtitle2">Referral Fee</Text>
+              <Flex
+                justify="between"
+                align="start"
+                css={{ py: '$4', width: '100%' }}
+              >
+                <Text style="subtitle3">Referral Fee</Text>
                 <Flex direction="column" align="end" css={{ gap: '$1' }}>
                   <FormatCryptoCurrency
+                    chainId={chainId}
                     amount={feeOnTop}
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
@@ -274,6 +287,7 @@ export const SweepContent: FC<
               <Text style="h6">You Pay</Text>
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
                 <FormatCryptoCurrency
+                  chainId={chainId}
                   textStyle="h6"
                   amount={paymentCurrency?.currencyTotal}
                   address={paymentCurrency?.address}
@@ -289,23 +303,44 @@ export const SweepContent: FC<
               </Flex>
             </Flex>
           </Flex>
-          {hasEnoughCurrency ? (
+          {hasEnoughCurrency || !isConnected ? (
             <Button
               css={{ m: '$4' }}
-              disabled={!(selectedTokens.length > 0) || !hasEnoughCurrency}
+              disabled={
+                !(selectedTokens.length > 0) ||
+                (!hasEnoughCurrency && isConnected)
+              }
               onClick={collectTokens}
             >
-              {selectedTokens.length > 0
+              {!isConnected
+                ? copy.ctaConnect
+                : selectedTokens.length > 0
                 ? copy.sweepCtaBuy
                 : copy.sweepCtaBuyDisabled}
             </Button>
           ) : (
-            <Button
-              css={{ m: '$4' }}
-              onClick={() => window.open(addFundsLink, '_blank')}
-            >
-              {copy.sweepCtaInsufficientFunds}
-            </Button>
+            <Flex direction="column" align="center" css={{ px: '$3' }}>
+              <Flex align="center">
+                <Text css={{ mr: '$3' }} color="error" style="body3">
+                  Insufficient Balance
+                </Text>
+
+                <FormatCryptoCurrency
+                  chainId={chainId}
+                  amount={paymentCurrency?.balance}
+                  address={paymentCurrency?.address}
+                  decimals={paymentCurrency?.decimals}
+                  symbol={paymentCurrency?.symbol}
+                  textStyle="body3"
+                />
+              </Flex>
+              <Button
+                css={{ my: '$4', width: '100%' }}
+                onClick={() => window.open(addFundsLink, '_blank')}
+              >
+                {copy.sweepCtaInsufficientFunds}
+              </Button>
+            </Flex>
           )}
         </Flex>
       )}
@@ -341,6 +376,7 @@ export const SweepContent: FC<
             }}
           >
             <CollectCheckout
+              chainId={chainId}
               collection={collection}
               token={token}
               itemCount={itemAmount}
@@ -360,6 +396,53 @@ export const SweepContent: FC<
                 <Loader />
               </Flex>
             ) : null}
+
+            {stepData?.currentStep &&
+            stepData.currentStep.id !== 'auth' &&
+            stepData.currentStep.id !== 'sale' ? (
+              <>
+                <Flex
+                  css={{ color: '$neutralText', py: '$5' }}
+                  direction="column"
+                  justify="center"
+                  align="center"
+                >
+                  <Text
+                    style="h6"
+                    color="base"
+                    css={{ mb: '$2', textAlign: 'center' }}
+                  >
+                    {stepData.currentStep.action}{' '}
+                    {stepData?.currentStep?.items &&
+                    stepData.currentStep.items.length > 1
+                      ? `(${
+                          stepData.currentStep.items.filter(
+                            (item) => item.status === 'complete'
+                          ).length
+                        }/${stepData.currentStep.items.length})`
+                      : null}
+                  </Text>
+                  <Text
+                    style="subtitle3"
+                    color="subtle"
+                    css={{ mb: 20, textAlign: 'center' }}
+                  >
+                    {stepData.currentStep.description}
+                  </Text>
+                  <FontAwesomeIcon
+                    icon={faPenNib}
+                    width={32}
+                    height={32}
+                    style={{ height: 32 }}
+                  />
+                </Flex>
+                <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
+                  <Loader />
+                  {copy.sweepCtaAwaitingApproval}
+                </Button>
+              </>
+            ) : null}
+
             {stepData?.currentStep && stepData.currentStep.id === 'auth' ? (
               <>
                 <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
@@ -370,7 +453,7 @@ export const SweepContent: FC<
               </>
             ) : null}
 
-            {stepData?.currentStep && stepData?.currentStep?.id !== 'auth' ? (
+            {stepData?.currentStep && stepData?.currentStep?.id === 'sale' ? (
               <>
                 {stepData?.currentStep?.items &&
                 stepData?.currentStep?.items.length > 1 ? (
@@ -378,7 +461,7 @@ export const SweepContent: FC<
                     <Text style="h6" css={{ textAlign: 'center' }}>
                       Approve Purchases
                     </Text>
-                    <Text style="subtitle2" color="subtle">
+                    <Text style="subtitle3" color="subtle">
                       The purchase of these items needs to be split into{' '}
                       {stepData?.currentStep?.items.length} separate
                       transactions.
@@ -431,6 +514,7 @@ export const SweepContent: FC<
             }}
           >
             <CollectCheckout
+              chainId={chainId}
               collection={collection}
               token={token}
               itemCount={itemAmount}
@@ -452,7 +536,7 @@ export const SweepContent: FC<
           >
             <Text style="h6">Finalizing on blockchain</Text>
             <Text
-              style="subtitle2"
+              style="subtitle3"
               color="subtle"
               css={{ textAlign: 'center' }}
             >
