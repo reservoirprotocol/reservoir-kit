@@ -294,9 +294,14 @@ export async function executeSteps(
           LogLevel.Verbose
         )
         const data = json as Execute
+        // An item is ready if:
+        // - data became available
+        // - the status changed to "completed"
         return data?.steps?.[incompleteStepIndex].items?.[
           incompleteStepItemIndex
-        ].data
+        ].data || data?.steps?.[incompleteStepIndex].items?.[
+          incompleteStepItemIndex
+        ].status === "complete"
           ? true
           : false
       })) as Execute
