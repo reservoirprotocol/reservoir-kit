@@ -468,7 +468,7 @@ export function BidModal({
                       }}
                     >
                       <Text
-                        style="subtitle2"
+                        style="subtitle3"
                         color="subtle"
                         css={{ width: 90, flexShrink: 0 }}
                       >
@@ -488,13 +488,13 @@ export function BidModal({
                       align="center"
                       css={{ gap: '$2', mt: '$3', mb: '$4' }}
                     >
-                      <Text style="subtitle2" color="subtle">
+                      <Text style="subtitle3" color="subtle">
                         Total Offer Price
                       </Text>
                       <FormatWrappedCurrency
                         chainId={modalChain?.id}
                         logoWidth={16}
-                        textStyle="subtitle2"
+                        textStyle="subtitle3"
                         amount={totalBidAmount}
                         address={currency?.contract}
                         decimals={currency?.decimals}
@@ -813,7 +813,9 @@ export function BidModal({
                     value={stepData?.stepProgress || 0}
                     max={stepData?.totalSteps || 0}
                   />
-                  {transactionError && <ErrorWell css={{ mt: 24 }} />}
+                  {transactionError && (
+                    <ErrorWell error={transactionError} css={{ mt: 24 }} />
+                  )}
                   {stepData && (
                     <>
                       <Text
@@ -884,10 +886,7 @@ export function BidModal({
                       >
                         {copy.ctaEditOffer}
                       </Button>
-                      <Button
-                        css={{ flex: 1 }}
-                        onClick={() => handlePlaceBid(placeBid)}
-                      >
+                      <Button css={{ flex: 1 }} onClick={() => placeBid()}>
                         {copy.ctaRetry}
                       </Button>
                     </Flex>

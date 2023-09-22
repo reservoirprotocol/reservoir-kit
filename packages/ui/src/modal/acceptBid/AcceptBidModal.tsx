@@ -236,10 +236,10 @@ export function AcceptBidModal({
                   </Flex>
                 )}
                 <Flex justify="between" css={{ px: '$4', pt: '$4' }}>
-                  <Text style="subtitle2" color="subtle">
+                  <Text style="subtitle3" color="subtle">
                     {bidCount > 1 ? `${bidCount} Items` : 'Item'}
                   </Text>
-                  <Text style="subtitle2" color="subtle">
+                  <Text style="subtitle3" color="subtle">
                     Total Offer Value
                   </Text>
                 </Flex>
@@ -346,7 +346,7 @@ export function AcceptBidModal({
                       direction="column"
                     >
                       <Flex justify="between">
-                        <Text style="subtitle2" color="subtle">
+                        <Text style="subtitle3" color="subtle">
                           Total {price.currency?.symbol} Offer Value
                         </Text>
                         <FormatCryptoCurrency
@@ -355,17 +355,17 @@ export function AcceptBidModal({
                           decimals={price.currency?.decimals}
                           address={price.currency?.contract}
                           symbol={price.currency?.symbol}
-                          textStyle="subtitle2"
+                          textStyle="subtitle3"
                         />
                       </Flex>
                       {price.royalty > 0 ? (
                         <Flex justify="between">
-                          <Text style="subtitle2" color="subtle">
+                          <Text style="subtitle3" color="subtle">
                             Creator Royalties
                           </Text>
                           <Text
                             css={{ ml: 'auto' }}
-                            style="subtitle2"
+                            style="subtitle3"
                             color="subtle"
                           >
                             -
@@ -376,18 +376,18 @@ export function AcceptBidModal({
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
                             symbol={price.currency?.symbol}
-                            textStyle="subtitle2"
+                            textStyle="subtitle3"
                           />
                         </Flex>
                       ) : null}
                       {price.marketplaceFee > 0 ? (
                         <Flex justify="between">
-                          <Text style="subtitle2" color="subtle">
+                          <Text style="subtitle3" color="subtle">
                             Marketplace Fee
                           </Text>
                           <Text
                             css={{ ml: 'auto' }}
-                            style="subtitle2"
+                            style="subtitle3"
                             color="subtle"
                           >
                             -
@@ -398,7 +398,7 @@ export function AcceptBidModal({
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
                             symbol={price.currency?.symbol}
-                            textStyle="subtitle2"
+                            textStyle="subtitle3"
                           />
                         </Flex>
                       ) : null}
@@ -483,7 +483,7 @@ export function AcceptBidModal({
                   Finalizing on blockchain
                 </Text>
                 <Text
-                  style="subtitle2"
+                  style="subtitle3"
                   color="subtle"
                   css={{ textAlign: 'center', px: '$4' }}
                 >
