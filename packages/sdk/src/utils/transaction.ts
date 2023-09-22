@@ -26,6 +26,7 @@ export async function sendTransactionSafely(
   const maximumAttempts = 30
   let attemptCount = 0
   let waitingForConfirmation = true
+  let transactionCancelled = false
 
   if (!txHash) {
     throw Error('Transaction hash not returned from sendTransaction method')
@@ -35,11 +36,10 @@ export async function sendTransactionSafely(
   // Handle transaction replacements and cancellations
   viemClient
     .waitForTransactionReceipt({
-      pollingInterval: 1,
       hash: txHash,
       onReplaced: (replacement) => {
         if (replacement.reason === 'cancelled') {
-          attemptCount = maximumAttempts
+          transactionCancelled = true
           throw Error('Transaction cancelled')
         }
 
@@ -68,7 +68,11 @@ export async function sendTransactionSafely(
   }
 
   // Poll the confirmation url to confirm the transaction went through
-  while (waitingForConfirmation && attemptCount < maximumAttempts) {
+  while (
+    waitingForConfirmation &&
+    attemptCount < maximumAttempts &&
+    !transactionCancelled
+  ) {
     const res = await axios.request({
       url: `${request.baseURL}/transactions/${txHash}/synced/v1`,
       method: 'get',
@@ -85,6 +89,10 @@ export async function sendTransactionSafely(
 
   if (attemptCount >= maximumAttempts) {
     throw `Failed to get an ok response after ${attemptCount} attempt(s), aborting`
+  }
+
+  if (transactionCancelled) {
+    throw 'Transaction was cancelled'
   }
 
   return true
