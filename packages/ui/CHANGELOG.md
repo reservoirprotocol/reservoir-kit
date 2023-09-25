@@ -1,16 +1,15 @@
 
-<<<<<<< HEAD
-* CollectModal: fix a few bugs with total usd when sweeping [8dbac89](https://github.com/reservoirprotocol/reservoir-kit/commit/8dbac89b3873b63d1a407cf37782522510f24c97)
-* Fix usdPrice and usdTotal [ea5109e](https://github.com/reservoirprotocol/reservoir-kit/commit/ea5109ebc42ff15d22668c6461f43f12bbc202e4)
-* BREAKING: move api key configuration from chain to client [dc879c3](https://github.com/reservoirprotocol/reservoir-kit/commit/dc879c3c1f4ad2321be747cfb54f1fcb6ec92e9e)
-* Pass paymentCurrency as currency to execute buy [48d8031](https://github.com/reservoirprotocol/reservoir-kit/commit/48d8031c709b41a36606a003c57a18e11e620098)
-* Remove usdCoinConversion from CollectRenderer [c8db911](https://github.com/reservoirprotocol/reservoir-kit/commit/c8db911e4147b58e97776f68ed64985178fac2a9)
-* Fixed hasEnoughBalance calculation [a44574f](https://github.com/reservoirprotocol/reservoir-kit/commit/a44574f559c753195bcd0b857d4d672835d585d6)
-* Add useCurrencyConversion hook [ and payment tokens logic](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-01)
-* Updated select payment tokens ui [2023-07-31](https://github.com/reservoirprotocol/reservoir-kit/commit/15b8bfa)
-* Updated collect modal renderer currency logic [302f1b2](https://github.com/reservoirprotocol/reservoir-kit/commit/302f1b2295b2792d19b1b03963e001090fb91d36)
-* Add todo to Sweep content [fd1d06e](https://github.com/reservoirprotocol/reservoir-kit/commit/fd1d06e2117c6c6cbf687991f009c1bc7fabf17a)
-=======
+## [v1.9.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d19b2b186a9935e29dc837d48d725a23d24abef8) (2023-09-21)
+
+* BidModal & ListModal: Fix retry logic [15763bd7](https://github.com/reservoirprotocol/reservoir-kit/commit/15763bd7123259ab28314ab928e6671b5c45fec0)
+
+## [v1.9.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f5118f9eebd85c2caf7214e523a82b35091c4076) (2023-09-21)
+
+* BuyModal & CollectModal: Allow opening without being connected [8beb0787](https://github.com/reservoirprotocol/reservoir-kit/commit/8beb078737d25fc341f144486016e31b05780219)
+* Improve "User Rejected" error [4d6d132b](https://github.com/reservoirprotocol/reservoir-kit/commit/4d6d132b0e6c86dde8a5e3ea4352cd0d62019505)
+* Add zkEVM WETH details [801b2ad7](https://github.com/reservoirprotocol/reservoir-kit/commit/801b2ad7d1e858df3d21efba695b2e1fca2c6b8f)
+* CollectModal: handle sweeping 721c tokens listed in a different currency [21ab7c26](https://github.com/reservoirprotocol/reservoir-kit/commit/21ab7c263516004ad933208ef241b901c468e980)
+
 ## [v1.8.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/758b2b703b9a7a64ef0be8d583f01b1460d89b34) (2023-09-18)
 
 - Update SDK
@@ -78,7 +77,6 @@
 
 - Update manifold contracts [2c89c4a](https://github.com/reservoirprotocol/reservoir-kit/commit/2c89c4a3c028ba339fdffdd47e25a18dc10237c2)
 
->>>>>>> main
 ## [v1.5.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/73392b542bd097f00fcf68558e13221fc5c9875f) (2023-08-11)
 
 - useUserTopBids update from v2 -> v4 of the api [596c732](https://github.com/reservoirprotocol/reservoir-kit/commit/596c732d9e843334f6e0b2400993f6f2c91d9b04)
