@@ -352,7 +352,11 @@ export const EditListingModalRenderer: FC<Props> = ({
       })
       .catch((e: any) => {
         const error = e as Error
-        const transactionError = new Error(error?.message || '', {
+        let message = 'Oops, something went wrong. Please try again.'
+        if (error.message.includes('rejected')) {
+          message = 'User rejected the request.'
+        }
+        const transactionError = new Error(message || '', {
           cause: error,
         })
         setTransactionError(transactionError)
