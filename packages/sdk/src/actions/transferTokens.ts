@@ -36,9 +36,6 @@ export async function transferTokens(data: Data) {
   const maker = await reservoirWallet.address()
   let baseApiUrl = client.currentChain()?.baseApiUrl
 
-  console.log(data)
-  console.log(maker)
-
   if (chainId) {
     baseApiUrl =
       client.chains.find((chain) => chain.id === chainId)?.baseApiUrl ||
