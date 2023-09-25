@@ -62,7 +62,7 @@ export const ApproveCollapsible: FC<Props> = ({
               }}
             />
             <Text
-              style="subtitle2"
+              style="subtitle3"
               css={{ color: isComplete ? '$neutralText' : '$textColor' }}
             >
               {title}

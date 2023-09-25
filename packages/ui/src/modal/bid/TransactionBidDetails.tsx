@@ -11,9 +11,15 @@ type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   bidData: BidData | null
+  chainId?: number
 }
 
-const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
+const TransactionBidDetails: FC<Props> = ({
+  token,
+  collection,
+  bidData,
+  chainId,
+}) => {
   const [value, setValue] = useState('')
   const timeSince = useTimeSince(
     bidData?.expirationTime ? +bidData.expirationTime : 0
@@ -58,14 +64,15 @@ const TransactionBidDetails: FC<Props> = ({ token, collection, bidData }) => {
           }}
         >
           <Flex justify="between">
-            <Text style="subtitle2">Offer Price</Text>
+            <Text style="subtitle3">Offer Price</Text>
             <FormatWrappedCurrency
+              chainId={chainId}
               amount={+value}
-              textStyle="subtitle2"
+              textStyle="subtitle3"
               address={bidData?.currency}
             />
           </Flex>
-          <Text style="subtitle2" color="subtle" as="p" css={{ flex: 1 }}>
+          <Text style="subtitle3" color="subtle" as="p" css={{ flex: 1 }}>
             {bidData?.expirationTime ? `Expires ${timeSince}` : 'No Expiration'}
           </Text>
         </Flex>

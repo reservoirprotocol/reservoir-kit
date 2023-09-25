@@ -14,6 +14,7 @@ import { useCollections, useListings } from '../../hooks'
 
 type MarketPlaceInputProps = {
   price: number | undefined
+  chainId?: number
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   currency: NonNullable<
     NonNullable<ReturnType<typeof useListings>['data']>[0]['price']
@@ -25,6 +26,7 @@ type MarketPlaceInputProps = {
 }
 
 const PriceInput = ({
+  chainId,
   price,
   collection,
   currency,
@@ -48,6 +50,7 @@ const PriceInput = ({
           }}
         >
           <CryptoCurrencyIcon
+            chainId={chainId}
             css={{ height: 18 }}
             address={currency?.contract as string}
           />
@@ -68,6 +71,7 @@ const PriceInput = ({
       </Box>
       <Flex direction="column" align="end" css={{ ml: '$3' }}>
         <FormatCryptoCurrency
+          chainId={chainId}
           amount={profit}
           address={currency?.contract}
           decimals={currency?.decimals}
@@ -77,7 +81,7 @@ const PriceInput = ({
         />
         <FormatCurrency
           amount={profit * (usdPrice || 0)}
-          style="subtitle2"
+          style="subtitle3"
           color="subtle"
         />
       </Flex>

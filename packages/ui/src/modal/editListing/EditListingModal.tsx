@@ -1,4 +1,4 @@
-import { useFallbackState, useTimeSince } from '../../hooks'
+import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
 import React, { ReactElement, Dispatch, SetStateAction, useEffect } from 'react'
 import { Flex, Text, Box, Button, Loader, Select } from '../../primitives'
 import {
@@ -32,6 +32,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   listingId?: string
   tokenId?: string
   collectionId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
@@ -47,6 +48,7 @@ export function EditListingModal({
   listingId,
   tokenId,
   collectionId,
+  chainId,
   trigger,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
@@ -60,10 +62,18 @@ export function EditListingModal({
     openState ? openState[0] : false,
     openState
   )
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
 
   return (
     <EditListingModalRenderer
       listingId={listingId}
+      chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
       open={open}
@@ -197,6 +207,7 @@ export function EditListingModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={token?.token?.imageSmall}
                     name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
@@ -219,7 +230,7 @@ export function EditListingModal({
                         <Text
                           as="div"
                           css={{ mb: '$2' }}
-                          style="subtitle2"
+                          style="subtitle3"
                           color="subtle"
                         >
                           Quantity
@@ -246,11 +257,11 @@ export function EditListingModal({
                     </>
                   )}
                   <Flex css={{ mb: '$2' }} justify="between">
-                    <Text style="subtitle2" color="subtle" as="p">
+                    <Text style="subtitle3" color="subtle" as="p">
                       Set New Price
                     </Text>
                     <Flex css={{ alignItems: 'center', gap: 8 }}>
-                      <Text style="subtitle2" color="subtle" as="p">
+                      <Text style="subtitle3" color="subtle" as="p">
                         You Get
                       </Text>
                       <InfoTooltip
@@ -262,6 +273,7 @@ export function EditListingModal({
                   </Flex>
                   <Flex direction="column" css={{ gap: '$2' }}>
                     <PriceInput
+                      chainId={modalChain?.id}
                       price={price}
                       collection={collection}
                       currency={currency}
@@ -320,7 +332,7 @@ export function EditListingModal({
                     <Text
                       as="div"
                       css={{ mb: '$2' }}
-                      style="subtitle2"
+                      style="subtitle3"
                       color="subtle"
                     >
                       Expiration Date
@@ -377,6 +389,7 @@ export function EditListingModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={token?.token?.imageSmall}
                     name={token?.token?.name}
                     price={profit}

@@ -1,7 +1,10 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useListings } from '../../hooks'
-import { useWalletClient, useNetwork } from 'wagmi'
+import { useWalletClient } from 'wagmi'
 import { Execute } from '@reservoir0x/reservoir-sdk'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { customChains } from '@reservoir0x/reservoir-sdk'
+import * as allChains from 'viem/chains'
 
 export enum CancelStep {
   Cancel,
@@ -26,6 +29,7 @@ type ChildrenProps = {
   totalUsd: number
   usdPrice: number
   blockExplorerBaseUrl: string
+  blockExplorerName: string
   steps: Execute['steps'] | null
   stepData: CancelListingStepData | null
   setCancelStep: React.Dispatch<React.SetStateAction<CancelStep>>
@@ -35,6 +39,7 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   listingId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
 }
@@ -42,17 +47,34 @@ type Props = {
 export const CancelListingModalRenderer: FC<Props> = ({
   open,
   listingId,
+  chainId,
   normalizeRoyalties,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
   const [cancelStep, setCancelStep] = useState<CancelStep>(CancelStep.Cancel)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<CancelListingStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
-  const { chain: activeChain } = useNetwork()
+
+  const client = useReservoirClient()
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
+  const wagmiChain: allChains.Chain | undefined = Object.values({
+    ...allChains,
+    ...customChains,
+  }).find(({ id }) => rendererChain?.id === id)
+
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+
   const blockExplorerBaseUrl =
-    activeChain?.blockExplorers?.default.url || 'https://etherscan.io'
+    wagmiChain?.blockExplorers?.default.url || 'https://etherscan.io'
+
+  const blockExplorerName =
+    wagmiChain?.blockExplorers?.default?.name || 'Etherscan'
 
   const { data: listings, isFetchingPage } = useListings(
     {
@@ -64,7 +86,8 @@ export const CancelListingModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && listingId ? true : false
+    open && listingId ? true : false,
+    rendererChain?.id
   )
 
   const listing = listings && listings[0] ? listings[0] : undefined
@@ -77,9 +100,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
   const totalUsd = usdPrice * (listing?.price?.amount?.decimal || 0)
 
-  const client = useReservoirClient()
-
-  const cancelOrder = useCallback(() => {
+  const cancelOrder = useCallback(async () => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
       setTransactionError(error)
@@ -98,10 +119,24 @@ export const CancelListingModalRenderer: FC<Props> = ({
       throw error
     }
 
+    let activeWalletChain = getNetwork().chain
+    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchNetwork({
+        chainId: rendererChain?.id as number,
+      })
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
+      setTransactionError(error)
+      throw error
+    }
+
     setCancelStep(CancelStep.Approving)
 
     client.actions
       .cancelOrder({
+        chainId: rendererChain?.id,
         ids: [listingId],
         wallet,
         onProgress: (steps: Execute['steps']) => {
@@ -167,7 +202,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
         setStepData(null)
         setSteps(null)
       })
-  }, [listingId, client, wallet])
+  }, [listingId, client, rendererChain, wallet])
 
   useEffect(() => {
     if (!open) {
@@ -187,6 +222,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
         loading: isFetchingPage !== undefined ? isFetchingPage : true,
         listing,
         tokenId,
+        blockExplorerName,
         contract,
         cancelStep,
         transactionError,

@@ -16,12 +16,14 @@ import { useAttributes } from '../../hooks'
 type Props = {
   attributes?: NonNullable<ReturnType<typeof useAttributes>['data']>
   tokenCount?: number
+  chainId?: number
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const AttributeSelector: FC<Props> = ({
   attributes,
+  chainId,
   setTrait,
   setOpen,
   tokenCount,
@@ -130,16 +132,17 @@ const AttributeSelector: FC<Props> = ({
                           textOverflow: 'ellipsis',
                           textAlign: 'start',
                         }}
-                        style="subtitle2"
+                        style="subtitle3"
                       >
                         {value}
                       </Text>
                       <Box css={{ flex: 'none' }}>
                         <FormatCryptoCurrency
+                          chainId={chainId}
                           amount={floorAskPrice}
                           logoWidth={10}
                           maximumFractionDigits={1}
-                          textStyle="subtitle2"
+                          textStyle="subtitle3"
                         />
                       </Box>
                     </Flex>

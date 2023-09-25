@@ -57,6 +57,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokens: AcceptBidTokenData[]
+  chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   onBidAccepted?: (data: BidData) => void
@@ -72,6 +73,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 export function AcceptBidModal({
   openState,
   trigger,
+  chainId,
   tokens,
   normalizeRoyalties,
   copyOverrides,
@@ -84,11 +86,22 @@ export function AcceptBidModal({
     openState ? openState[0] : false,
     openState
   )
+
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
+
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+  const baseApiUrl = currentChain?.baseApiUrl
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
 
   return (
     <AcceptBidModalRenderer
       open={open}
+      chainId={modalChain?.id}
       tokens={tokens}
       normalizeRoyalties={normalizeRoyalties}
     >
@@ -105,11 +118,6 @@ export function AcceptBidModal({
         stepData,
         acceptBid,
       }) => {
-        const client = useReservoirClient()
-        const chain = client?.currentChain()
-
-        const baseApiUrl = chain?.baseApiUrl
-
         useEffect(() => {
           if (acceptBidStep === AcceptBidStep.Complete && onBidAccepted) {
             const data: BidData = {
@@ -228,10 +236,10 @@ export function AcceptBidModal({
                   </Flex>
                 )}
                 <Flex justify="between" css={{ px: '$4', pt: '$4' }}>
-                  <Text style="subtitle2" color="subtle">
+                  <Text style="subtitle3" color="subtle">
                     {bidCount > 1 ? `${bidCount} Items` : 'Item'}
                   </Text>
-                  <Text style="subtitle2" color="subtle">
+                  <Text style="subtitle3" color="subtle">
                     Total Offer Value
                   </Text>
                 </Flex>
@@ -239,6 +247,7 @@ export function AcceptBidModal({
                   if (!bidsPath || !bidsPath.length) {
                     return (
                       <AcceptBidLineItem
+                        chainId={modalChain?.id}
                         key={i}
                         token={{
                           name: tokenData?.token?.name || '',
@@ -259,6 +268,7 @@ export function AcceptBidModal({
                     return bidsPath.map((bidPath) => (
                       <AcceptBidLineItem
                         key={i}
+                        chainId={modalChain?.id}
                         token={{
                           name: tokenData?.token?.name || '',
                           id: tokenData?.token?.tokenId || '',
@@ -304,6 +314,7 @@ export function AcceptBidModal({
                         </Text>
                         <Flex direction="column" css={{ gap: '$1' }}>
                           <FormatCryptoCurrency
+                            chainId={modalChain?.id}
                             amount={price.netAmount}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
@@ -335,56 +346,59 @@ export function AcceptBidModal({
                       direction="column"
                     >
                       <Flex justify="between">
-                        <Text style="subtitle2" color="subtle">
+                        <Text style="subtitle3" color="subtle">
                           Total {price.currency?.symbol} Offer Value
                         </Text>
                         <FormatCryptoCurrency
+                          chainId={modalChain?.id}
                           amount={price.amount}
                           decimals={price.currency?.decimals}
                           address={price.currency?.contract}
                           symbol={price.currency?.symbol}
-                          textStyle="subtitle2"
+                          textStyle="subtitle3"
                         />
                       </Flex>
                       {price.royalty > 0 ? (
                         <Flex justify="between">
-                          <Text style="subtitle2" color="subtle">
+                          <Text style="subtitle3" color="subtle">
                             Creator Royalties
                           </Text>
                           <Text
                             css={{ ml: 'auto' }}
-                            style="subtitle2"
+                            style="subtitle3"
                             color="subtle"
                           >
                             -
                           </Text>
                           <FormatCryptoCurrency
+                            chainId={modalChain?.id}
                             amount={price.royalty}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
                             symbol={price.currency?.symbol}
-                            textStyle="subtitle2"
+                            textStyle="subtitle3"
                           />
                         </Flex>
                       ) : null}
                       {price.marketplaceFee > 0 ? (
                         <Flex justify="between">
-                          <Text style="subtitle2" color="subtle">
+                          <Text style="subtitle3" color="subtle">
                             Marketplace Fee
                           </Text>
                           <Text
                             css={{ ml: 'auto' }}
-                            style="subtitle2"
+                            style="subtitle3"
                             color="subtle"
                           >
                             -
                           </Text>
                           <FormatCryptoCurrency
+                            chainId={modalChain?.id}
                             amount={price.marketplaceFee}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
                             symbol={price.currency?.symbol}
-                            textStyle="subtitle2"
+                            textStyle="subtitle3"
                           />
                         </Flex>
                       ) : null}
@@ -410,7 +424,7 @@ export function AcceptBidModal({
                   tokensData={tokensData}
                   usdPrices={usdPrices}
                   prices={prices}
-                  chain={chain}
+                  chain={modalChain}
                 />
                 <SigninStep css={{ mt: 48, mb: 60, gap: 20 }} />
                 <Button disabled={true} css={{ m: '$4' }}>
@@ -425,7 +439,7 @@ export function AcceptBidModal({
                   tokensData={tokensData}
                   usdPrices={usdPrices}
                   prices={prices}
-                  chain={chain}
+                  chain={modalChain}
                 />
                 <Text style="h6" css={{ m: '$4', textAlign: 'center' }}>
                   Confirm Selling
@@ -436,7 +450,7 @@ export function AcceptBidModal({
                       key={step.id}
                       step={step}
                       tokensData={tokensData}
-                      chain={chain}
+                      chain={modalChain}
                       isCurrentStep={stepData.currentStep.id === step.id}
                       open={stepData.currentStep.id === step.id}
                     />
@@ -463,13 +477,13 @@ export function AcceptBidModal({
                   tokensData={tokensData}
                   usdPrices={usdPrices}
                   prices={prices}
-                  chain={chain}
+                  chain={modalChain}
                 />
                 <Text style="h6" css={{ textAlign: 'center' }}>
                   Finalizing on blockchain
                 </Text>
                 <Text
-                  style="subtitle2"
+                  style="subtitle3"
                   color="subtle"
                   css={{ textAlign: 'center', px: '$4' }}
                 >

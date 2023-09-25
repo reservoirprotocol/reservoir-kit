@@ -26,7 +26,6 @@ import {
 import {
   LogLevel,
   customChains,
-  reservoirChains,
 } from '@reservoir0x/reservoir-sdk'
 import { useRouter } from 'next/router'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
@@ -50,9 +49,9 @@ const { chains, publicClient } = configureChains(
     allChains.optimism,
     allChains.arbitrum,
     allChains.zora,
-    customChains.base,
+    allChains.base,
     allChains.avalanche,
-    customChains.linea,
+    allChains.linea,
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
@@ -150,12 +149,18 @@ const AppWrapper: FC<any> = ({ children }) => {
             },
             {
               ...reservoirChains.base,
-              active: CHAIN_ID === customChains.base.id,
+              active: CHAIN_ID === allChains.base.id,
             },
             {
               ...reservoirChains.linea,
-              active: CHAIN_ID === customChains.linea.id,
+              active: CHAIN_ID === allChains.linea.id,
             },
+            {
+              baseApiUrl: 'https://api-arbitrum-nova.reservoir.tools',
+              id: customChains.arbitrumNova.id,
+              active: CHAIN_ID === customChains.arbitrumNova.id,
+              apiKey: API_KEY
+            }
           ],
           marketplaceFees: MARKETPLACE_FEES,
           source: SOURCE,

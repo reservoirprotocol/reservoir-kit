@@ -10,9 +10,6 @@ export type SellPath =
 export type BuyResponses =
   paths['/execute/buy/v7']['post']['responses']['200']['schema']
 
-export type Preview =
-  paths['/execute/buy/v7']['post']['responses']['200']['schema']['preview']
-
 export type SignatureStepItem = Pick<
   NonNullable<Execute['steps'][0]['items']>[0],
   'status' | 'orderIds' | 'orderIndexes' | 'orderData'
@@ -55,7 +52,6 @@ export type TransactionStepItem = Pick<
 export type Execute = {
   requestId?: string
   errors?: { message?: string; orderId?: string }[]
-  preview?: Preview
   path: BuyPath | SellPath
   error?: string // Manually added client error
   steps: {
@@ -96,4 +92,11 @@ export type ReservoirWallet = {
   ) => Promise<`0x${string}` | undefined>
   address: () => Promise<string>
   transport?: CustomTransport | HttpTransport
+}
+
+export type ExpectedPrice = {
+  amount: number
+  raw?: bigint
+  currencyAddress?: string
+  currencyDecimals?: number
 }

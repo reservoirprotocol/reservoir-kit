@@ -23,6 +23,7 @@ import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import { Listings } from '../list/ListModalRenderer'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
 
 export enum EditListingStep {
   Edit,
@@ -72,6 +73,7 @@ type Props = {
   listingId?: string
   tokenId?: string
   collectionId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   enableOnChainRoyalties: boolean
   children: (props: ChildrenProps) => ReactNode
@@ -82,11 +84,19 @@ export const EditListingModalRenderer: FC<Props> = ({
   listingId,
   tokenId,
   collectionId,
+  chainId,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
   children,
 }) => {
-  const { data: wallet } = useWalletClient()
+  const client = useReservoirClient()
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
+  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
   const account = useAccount()
   const [editListingStep, setEditListingStep] = useState<EditListingStep>(
     EditListingStep.Edit
@@ -107,7 +117,8 @@ export const EditListingModalRenderer: FC<Props> = ({
     {
       revalidateFirstPage: true,
     },
-    open && listingId ? true : false
+    open && listingId ? true : false,
+    rendererChain?.id
   )
 
   const listing = listings && listings[0] ? listings[0] : undefined
@@ -129,8 +140,6 @@ export const EditListingModalRenderer: FC<Props> = ({
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
   const totalUsd = usdPrice * (listing?.price?.amount?.decimal || 0)
 
-  const client = useReservoirClient()
-
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
     expirationOptions[5]
   )
@@ -139,7 +148,9 @@ export const EditListingModalRenderer: FC<Props> = ({
     open && {
       id: collectionId,
       normalizeRoyalties,
-    }
+    },
+    {},
+    rendererChain?.id
   )
   const collection = collections && collections[0] ? collections[0] : undefined
   let royaltyBps = collection?.royalties?.bps
@@ -162,7 +173,8 @@ export const EditListingModalRenderer: FC<Props> = ({
     },
     {
       revalidateFirstPage: true,
-    }
+    },
+    rendererChain?.id
   )
 
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
@@ -172,7 +184,9 @@ export const EditListingModalRenderer: FC<Props> = ({
     open && is1155 ? account.address : undefined,
     {
       tokens: [`${contract}:${tokenId}`],
-    }
+    },
+    {},
+    rendererChain?.id
   )
 
   const quantityAvailable =
@@ -180,7 +194,7 @@ export const EditListingModalRenderer: FC<Props> = ({
       ? Number(userTokens[0].ownership?.tokenCount || 1)
       : 1
 
-  const chainCurrency = useChainCurrency()
+  const chainCurrency = useChainCurrency(rendererChain?.id)
 
   const { data: onChainRoyalties } = useOnChainRoyalties({
     contract,
@@ -204,9 +218,22 @@ export const EditListingModalRenderer: FC<Props> = ({
     royaltyBps = onChainRoyaltyBps
   }
 
-  const editListing = useCallback(() => {
+  const editListing = useCallback(async () => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
+      setTransactionError(error)
+      throw error
+    }
+
+    let activeWalletChain = getNetwork().chain
+    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchNetwork({
+        chainId: rendererChain?.id as number,
+      })
+    }
+
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
     }
@@ -273,6 +300,7 @@ export const EditListingModalRenderer: FC<Props> = ({
 
     client.actions
       .listToken({
+        chainId: rendererChain?.id,
         listings: [listing],
         wallet,
         onProgress: (steps: Execute['steps']) => {
@@ -335,6 +363,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   }, [
     client,
     wallet,
+    rendererChain,
     collectionId,
     tokenId,
     expirationOption,

@@ -12,7 +12,7 @@ import {
   useReservoirClient,
   useTokens,
 } from '../hooks'
-import { getChainCurrency } from '../hooks/useChainCurrency'
+import { useChainCurrency } from '../hooks/index'
 import { defaultFetcher } from '../lib/swr'
 import React, {
   createContext,
@@ -302,7 +302,7 @@ function cartStore({
         }
       }
       if (currencies.size > 1) {
-        const chainCurrency = getChainCurrency(chains, chainId)
+        const chainCurrency = useChainCurrency(chainId)
         return {
           ...chainCurrency,
           contract: chainCurrency.address,
@@ -1005,10 +1005,7 @@ function cartStore({
       if (!tokens || tokens.length === 0) {
         throw 'Cart is empty'
       }
-      const chainCurrency = getChainCurrency(
-        chains,
-        cartData.current.chain?.id || 1
-      )
+      const chainCurrency = useChainCurrency(cartData.current.chain?.id || 1)
       const currencyChain = client.chains.find(
         (chain) => (chainCurrency.chainId = chain.id)
       )
@@ -1027,11 +1024,12 @@ function cartStore({
         if (cartData.current.feesOnTopBps) {
           const fixedFees = cartData.current.feesOnTopBps.map((fullFee) => {
             const [referrer, feeBps] = fullFee.split(':')
-            const fee =
+            const fee = Math.floor(
               Number(
                 parseUnits(`${expectedPrice}`, currencyDecimals) *
                   BigInt(feeBps)
               ) / 10000
+            )
             const atomicUnitsFee = formatUnits(BigInt(fee), 0)
             return `${referrer}:${atomicUnitsFee}`
           })
@@ -1069,7 +1067,14 @@ function cartStore({
 
       client.actions
         .buyToken({
-          expectedPrice,
+          expectedPrice: {
+            [options.currency || zeroAddress]: {
+              amount: expectedPrice,
+              raw: parseUnits(`${expectedPrice}`, currencyDecimals),
+              currencyAddress: options.currency || zeroAddress,
+              currencyDecimals: currencyDecimals,
+            },
+          },
           wallet,
           items: tokens,
           options,
@@ -1117,7 +1122,19 @@ function cartStore({
               return currentStepItem
             })
 
-            if (currentStep.items?.every((item) => item.txHash)) {
+            const transactionSteps = steps.filter(
+              (step) =>
+                step.kind === 'transaction' &&
+                step.items &&
+                step.items?.length > 0
+            )
+
+            if (
+              transactionSteps.length > 0 &&
+              transactionSteps.every((step) =>
+                step.items?.every((item) => item.txHash)
+              )
+            ) {
               status = CheckoutStatus.Finalizing
               if (cartData.current.items.length > 0) {
                 cartData.current.items = []

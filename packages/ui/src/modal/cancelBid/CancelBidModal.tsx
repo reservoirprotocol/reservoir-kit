@@ -5,7 +5,6 @@ import { CancelBidModalRenderer, CancelStep } from './CancelBidModalRenderer'
 import { Modal } from '../Modal'
 import TokenPrimitive from '../../modal/TokenPrimitive'
 import Progress from '../Progress'
-import { useNetwork } from 'wagmi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCircleExclamation,
@@ -23,6 +22,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   bidId?: string
+  chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   onClose?: (data: any, currentStep: CancelStep) => void
@@ -33,6 +33,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 export function CancelBidModal({
   openState,
   bidId,
+  chainId,
   trigger,
   normalizeRoyalties,
   copyOverrides,
@@ -45,12 +46,18 @@ export function CancelBidModal({
     openState ? openState[0] : false,
     openState
   )
+
   const client = useReservoirClient()
-  const { chain: activeChain } = useNetwork()
-  const reservoirChain = client?.currentChain()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
 
   return (
     <CancelBidModalRenderer
+      chainId={modalChain?.id}
       bidId={bidId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
@@ -63,14 +70,15 @@ export function CancelBidModal({
         transactionError,
         stepData,
         totalUsd,
+        blockExplorerName,
         blockExplorerBaseUrl,
         cancelOrder,
       }) => {
         const expires = useTimeSince(bid?.expiration)
         const collectionId = bid?.criteria?.data?.collection?.id
         const bidImg = tokenId
-          ? `${reservoirChain?.baseApiUrl}/redirect/tokens/${collectionId}:${tokenId}/image/v1?imageSize=small`
-          : `${reservoirChain?.baseApiUrl}/redirect/collections/${collectionId}/image/v1`
+          ? `${modalChain?.baseApiUrl}/redirect/tokens/${collectionId}:${tokenId}/image/v1?imageSize=small`
+          : `${modalChain?.baseApiUrl}/redirect/collections/${collectionId}/image/v1`
         const isAttributeOffer = (bid?.criteria?.kind as any) === 'attribute'
 
         useEffect(() => {
@@ -152,6 +160,7 @@ export function CancelBidModal({
                 )}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={bidImg}
                     name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
@@ -186,6 +195,7 @@ export function CancelBidModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
+                    chainId={modalChain?.id}
                     img={bidImg}
                     name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
@@ -270,8 +280,7 @@ export function CancelBidModal({
                     href={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
                     target="_blank"
                   >
-                    View on{' '}
-                    {activeChain?.blockExplorers?.default.name || 'Etherscan'}
+                    View on {blockExplorerName}
                   </Anchor>
                 </Flex>
                 <Button

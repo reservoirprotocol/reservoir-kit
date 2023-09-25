@@ -55,13 +55,13 @@ export const TokenCheckout: FC<Props> = ({
             />
           ))}
         </Flex>
-        <Text style={size == Size.SM ? 'subtitle2' : 'h6'}>
+        <Text style={size == Size.SM ? 'subtitle3' : 'h6'}>
           {itemCount} {itemSubject}
         </Text>
       </Flex>
       <Flex direction="column" align="end" css={{ gap: '$1' }}>
         <FormatCryptoCurrency
-          textStyle={size == Size.SM ? 'subtitle2' : 'h6'}
+          textStyle={size == Size.SM ? 'subtitle3' : 'h6'}
           amount={totalPrice}
           address={currency?.contract}
           decimals={currency?.decimals}
@@ -72,7 +72,7 @@ export const TokenCheckout: FC<Props> = ({
         {usdPrice ? (
           <FormatCurrency
             amount={usdPrice * totalPrice}
-            style="subtitle2"
+            style="subtitle3"
             color="subtle"
             css={{ textAlign: 'end' }}
           />

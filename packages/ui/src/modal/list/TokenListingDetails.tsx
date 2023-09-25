@@ -9,6 +9,7 @@ import { Currency } from '../../types/Currency'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
+  chainId?: number
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listingData: ListingData[]
   currency: Currency
@@ -17,6 +18,7 @@ type Props = {
 const TokenListingDetails: FC<Props> = ({
   token,
   collection,
+  chainId,
   listingData,
   currency,
 }) => (
@@ -44,6 +46,7 @@ const TokenListingDetails: FC<Props> = ({
     >
       {listingData.map((data, i) => (
         <ListingStat
+          chainId={chainId}
           key={i}
           listing={data.listing}
           marketImg={data.marketplace.imageUrl || ''}

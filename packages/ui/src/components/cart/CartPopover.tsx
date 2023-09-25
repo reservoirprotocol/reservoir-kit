@@ -183,21 +183,23 @@ export function CartPopover({
                     align="center"
                     justify="center"
                     css={{
-                      background: '$accentBgActive',
+                      background: '$accentSolid',
                       height: 20,
                       width: 20,
                       borderRadius: '99999px',
                       ml: '$2',
                     }}
                   >
-                    <Text style="subtitle2">{items.length}</Text>
+                    <Text style="subtitle3" color="button">
+                      {items.length}
+                    </Text>
                   </Flex>
                 )}
                 {!isCartEmpty && (
                   <Text
-                    style="subtitle2"
-                    color="accent"
+                    style="subtitle3"
                     css={{
+                      color: '$accentSolid',
                       cursor: 'pointer',
                       ml: 24,
                       '&:hover': { color: '$accentSolidHover' },
@@ -231,7 +233,7 @@ export function CartPopover({
                   link={
                     <Text
                       color="accent"
-                      style="subtitle2"
+                      style="subtitle3"
                       css={{ ml: 'auto', mt: 3, cursor: 'pointer' }}
                       onClick={(e) => {
                         e.preventDefault()
@@ -320,14 +322,14 @@ export function CartPopover({
               <Flex direction="column" css={{ mt: 'auto', pb: 10 }}>
                 {!isCartEmpty && feeOnTop ? (
                   <Flex css={{ mb: '$4' }}>
-                    <Text style="subtitle2">Referrer Fee</Text>
+                    <Text style="subtitle3">Referrer Fee</Text>
                     <Flex
                       direction="column"
                       justify="center"
                       css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
                     >
                       <FormatCryptoCurrency
-                        textStyle="subtitle2"
+                        textStyle="subtitle3"
                         amount={feeOnTop}
                         address={currency?.contract}
                         decimals={currency?.decimals}
@@ -338,7 +340,7 @@ export function CartPopover({
                       {usdPrice && (
                         <FormatCurrency
                           amount={usdPrice * feeOnTop}
-                          style="subtitle2"
+                          style="subtitle3"
                           color="subtle"
                           css={{ textAlign: 'end' }}
                         />
@@ -366,7 +368,7 @@ export function CartPopover({
                       {usdPrice && (
                         <FormatCurrency
                           amount={usdPrice * totalPrice}
-                          style="subtitle2"
+                          style="subtitle3"
                           color="subtle"
                           css={{ textAlign: 'end' }}
                         />

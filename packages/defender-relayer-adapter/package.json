@@ -1,11 +1,23 @@
 {
     "name": "@reservoir0x/defender-relayer-adapter",
-    "version": "0.0.1",
+    "version": "0.2.4",
     "description": "An adapter that intergrates OpenZeppelins defender relayer wallet to a Reservoir Wallet for use in the @reservoir0x/reservoir-sdk",
-    "source": "src/index.ts",
-    "main": "dist/index.js",
-    "module": "dist/index.module.js",
-    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.mts",
+                "default": "./dist/index.mjs"
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        }
+    },
+    "source": "./src/index.ts",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
     "author": "Reservoir Protocol",
     "license": "MIT",
     "files": [
@@ -15,7 +27,7 @@
         "clean": "rm -rf dist",
         "version": "yarn version",
         "version:package": "sh ../../scripts/package-version.sh",
-        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release defender relayer adapter package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-ETHERS; git push --tags;",
+        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release defender relayer adapter package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-RELAYER; git push --tags;",
         "syncApi": "node ./sync-api.mjs"
     },
     "repository": {
@@ -32,8 +44,12 @@
         "sdk-adapter"
     ],
     "dependencies": {
+        "@ethersproject/abstract-provider": "^5.7.0",
+        "@ethersproject/abstract-signer": "^5.7.0",
+        "@ethersproject/hash": "^5.7.0",
+        "@ethersproject/providers": "^5.7.2",
         "@openzeppelin/defender-relay-client": "^1.47.1",
-        "@reservoir0x/ethers-wallet-adapter": "^0.0.11",
+        "@reservoir0x/ethers-wallet-adapter": "^0.2.4",
         "axios": "^0.27.2"
     },
     "publishConfig": {
@@ -42,6 +58,6 @@
     "peerDependencies": {
         "@reservoir0x/reservoir-sdk": "workspace:*",
         "ethers": "^5.6.1",
-        "viem": "~1.0.6"
+        "viem": "~1.6.4"
     }
 }

@@ -1,5 +1,5 @@
 import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
-import { useFallbackState } from '../../hooks'
+import { useFallbackState, useReservoirClient } from '../../hooks'
 import {
   Flex,
   Box,
@@ -21,7 +21,6 @@ import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
-import { useNetwork } from 'wagmi'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 
@@ -35,9 +34,11 @@ type PurchaseData = {
 const ModalCopy = {
   titleInsufficientFunds: 'Add Funds',
   titleUnavilable: 'Selected item is no longer Available',
+  titleIsOwner: 'You already own this token',
   titleDefault: 'Complete Checkout',
   ctaClose: 'Close',
   ctaCheckout: 'Checkout',
+  ctaConnect: 'Connect',
   ctaInsufficientFunds: 'Add Funds',
   ctaGoToToken: '',
   ctaAwaitingValidation: 'Waiting for transaction to be validated',
@@ -49,11 +50,13 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
+  chainId?: number
   orderId?: string
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
   onPurchaseError?: (error: Error, data: PurchaseData) => void
@@ -64,10 +67,19 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   ) => void
 }
 
-function titleForStep(step: BuyStep, copy: typeof ModalCopy) {
+function titleForStep(
+  step: BuyStep,
+  copy: typeof ModalCopy,
+  isLoading: boolean,
+  isOwner: boolean
+) {
+  if (isLoading) {
+    return copy.titleDefault
+  }
+
   switch (step) {
     case BuyStep.Unavailable:
-      return copy.titleUnavilable
+      return isOwner ? copy.titleIsOwner : copy.titleUnavilable
     default:
       return copy.titleDefault
   }
@@ -77,12 +89,14 @@ export function BuyModal({
   openState,
   trigger,
   tokenId,
+  chainId,
   collectionId,
   orderId,
   feesOnTopBps,
   feesOnTopUsd,
   normalizeRoyalties,
   copyOverrides,
+  onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
   onClose,
@@ -93,10 +107,18 @@ export function BuyModal({
     openState ? openState[0] : false,
     openState
   )
-  const { chain: activeChain } = useNetwork()
+
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
+  const modalChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
 
   return (
     <BuyModalRenderer
+      chainId={modalChain?.id}
       open={open}
       tokenId={tokenId}
       collectionId={collectionId}
@@ -104,6 +126,7 @@ export function BuyModal({
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
+      onConnectWallet={onConnectWallet}
     >
       {({
         loading,
@@ -129,11 +152,14 @@ export function BuyModal({
         balance,
         address,
         blockExplorerBaseUrl,
+        blockExplorerBaseName,
+        isConnected,
+        isOwner,
         setQuantity,
         setBuyStep,
         buyToken,
       }) => {
-        const title = titleForStep(buyStep, copy)
+        const title = titleForStep(buyStep, copy, loading, isOwner)
 
         useEffect(() => {
           if (buyStep === BuyStep.Complete && onPurchaseComplete) {
@@ -185,6 +211,18 @@ export function BuyModal({
             trigger={trigger}
             title={title}
             open={open}
+            onPointerDownOutside={(e) => {
+              const dismissableLayers = Array.from(
+                document.querySelectorAll('div[data-radix-dismissable]')
+              )
+              const clickedDismissableLayer = dismissableLayers.some((el) =>
+                e.target ? el.contains(e.target as Node) : false
+              )
+
+              if (!clickedDismissableLayer && dismissableLayers.length > 0) {
+                e.preventDefault()
+              }
+            }}
             onOpenChange={(open) => {
               if (!open && onClose) {
                 const data: PurchaseData = {
@@ -201,6 +239,7 @@ export function BuyModal({
             {buyStep === BuyStep.Unavailable && !loading && (
               <Flex direction="column">
                 <TokenLineItem
+                  chainId={modalChain?.id}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -265,6 +304,7 @@ export function BuyModal({
                   </Flex>
                 )}
                 <TokenLineItem
+                  chainId={modalChain?.id}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -302,8 +342,9 @@ export function BuyModal({
                       justify="between"
                       css={{ pt: '$4', px: '$4' }}
                     >
-                      <Text style="subtitle2">Referral Fee</Text>
+                      <Text style="subtitle3">Referral Fee</Text>
                       <FormatCryptoCurrency
+                        chainId={modalChain?.id}
                         amount={feeOnTop}
                         address={currency?.contract}
                         decimals={currency?.decimals}
@@ -328,6 +369,7 @@ export function BuyModal({
                   <Text style="h6">Total</Text>
                   <FormatCryptoCurrency
                     textStyle="h6"
+                    chainId={modalChain?.id}
                     amount={totalIncludingFees}
                     address={currency?.contract}
                     decimals={currency?.decimals}
@@ -343,13 +385,14 @@ export function BuyModal({
                 </Flex>
 
                 <Box css={{ p: '$4', width: '100%' }}>
-                  {hasEnoughCurrency ? (
+                  {hasEnoughCurrency || !isConnected ? (
                     <Button
+                      disabled={!hasEnoughCurrency && isConnected}
                       onClick={buyToken}
                       css={{ width: '100%' }}
                       color="primary"
                     >
-                      {copy.ctaCheckout}
+                      {!isConnected ? copy.ctaConnect : copy.ctaCheckout}
                     </Button>
                   ) : (
                     <Flex direction="column" align="center">
@@ -359,6 +402,7 @@ export function BuyModal({
                         </Text>
 
                         <FormatCryptoCurrency
+                          chainId={modalChain?.id}
                           amount={balance}
                           address={currency?.contract}
                           decimals={currency?.decimals}
@@ -384,6 +428,7 @@ export function BuyModal({
             {buyStep === BuyStep.Approving && token && (
               <Flex direction="column">
                 <TokenLineItem
+                  chainId={modalChain?.id}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -517,7 +562,7 @@ export function BuyModal({
                           </Box>
                         )}
                         <Text
-                          style="subtitle2"
+                          style="subtitle3"
                           css={{ maxWidth: '100%' }}
                           ellipsify
                         >
@@ -541,9 +586,7 @@ export function BuyModal({
                         href={`${blockExplorerBaseUrl}/tx/${finalTxHash}`}
                         target="_blank"
                       >
-                        View on{' '}
-                        {activeChain?.blockExplorers?.default.name ||
-                          'Etherscan'}
+                        View on {blockExplorerBaseName}
                       </Anchor>
                     </>
                   )}

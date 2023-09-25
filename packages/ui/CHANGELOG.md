@@ -1,14 +1,82 @@
 
-* CollectModal: fix a few bugs with total usd when sweeping [8dbac89](https://github.com/reservoirprotocol/reservoir-kit/commit/8dbac89b3873b63d1a407cf37782522510f24c97)
-* Fix usdPrice and usdTotal [ea5109e](https://github.com/reservoirprotocol/reservoir-kit/commit/ea5109ebc42ff15d22668c6461f43f12bbc202e4)
-* BREAKING: move api key configuration from chain to client [dc879c3](https://github.com/reservoirprotocol/reservoir-kit/commit/dc879c3c1f4ad2321be747cfb54f1fcb6ec92e9e)
-* Pass paymentCurrency as currency to execute buy [48d8031](https://github.com/reservoirprotocol/reservoir-kit/commit/48d8031c709b41a36606a003c57a18e11e620098)
-* Remove usdCoinConversion from CollectRenderer [c8db911](https://github.com/reservoirprotocol/reservoir-kit/commit/c8db911e4147b58e97776f68ed64985178fac2a9)
-* Fixed hasEnoughBalance calculation [a44574f](https://github.com/reservoirprotocol/reservoir-kit/commit/a44574f559c753195bcd0b857d4d672835d585d6)
-* Add useCurrencyConversion hook [ and payment tokens logic](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-01)
-* Updated select payment tokens ui [2023-07-31](https://github.com/reservoirprotocol/reservoir-kit/commit/15b8bfa)
-* Updated collect modal renderer currency logic [302f1b2](https://github.com/reservoirprotocol/reservoir-kit/commit/302f1b2295b2792d19b1b03963e001090fb91d36)
-* Add todo to Sweep content [fd1d06e](https://github.com/reservoirprotocol/reservoir-kit/commit/fd1d06e2117c6c6cbf687991f009c1bc7fabf17a)
+## [v1.9.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d19b2b186a9935e29dc837d48d725a23d24abef8) (2023-09-21)
+
+* BidModal & ListModal: Fix retry logic [15763bd7](https://github.com/reservoirprotocol/reservoir-kit/commit/15763bd7123259ab28314ab928e6671b5c45fec0)
+
+## [v1.9.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f5118f9eebd85c2caf7214e523a82b35091c4076) (2023-09-21)
+
+* BuyModal & CollectModal: Allow opening without being connected [8beb0787](https://github.com/reservoirprotocol/reservoir-kit/commit/8beb078737d25fc341f144486016e31b05780219)
+* Improve "User Rejected" error [4d6d132b](https://github.com/reservoirprotocol/reservoir-kit/commit/4d6d132b0e6c86dde8a5e3ea4352cd0d62019505)
+* Add zkEVM WETH details [801b2ad7](https://github.com/reservoirprotocol/reservoir-kit/commit/801b2ad7d1e858df3d21efba695b2e1fca2c6b8f)
+* CollectModal: handle sweeping 721c tokens listed in a different currency [21ab7c26](https://github.com/reservoirprotocol/reservoir-kit/commit/21ab7c263516004ad933208ef241b901c468e980)
+
+## [v1.8.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/758b2b703b9a7a64ef0be8d583f01b1460d89b34) (2023-09-18)
+
+- Update SDK
+
+## [v1.8.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c590e29a6b5786b999705e95ff1e35c61c131d1e) (2023-09-14)
+
+* ListModal: only get supported marketplaces when modal opens [8934742](https://github.com/reservoirprotocol/reservoir-kit/commit/893474210208030c78282c226656fe287cd8f3ec)
+* ListModal & BidModal: retry button should switch chanins if necessary [abaeb81](https://github.com/reservoirprotocol/reservoir-kit/commit/abaeb81465a450c7aede774d727eb5248828e7f2)
+* ListModal: Remove outdated opensea fee logic [ff0e0ca](https://github.com/reservoirprotocol/reservoir-kit/commit/ff0e0cafd8000de016e3a4bde1ee6b8a12dd4510)
+
+## [v1.8.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c2993841994af0cfca0b452a873b547ecb70978a) (2023-09-07)
+
+* Allow chain override for all modals [7395dca](https://github.com/reservoirprotocol/reservoir-kit/commit/7395dca643167b3aed8294fc741b5de4616b95c3)
+* CollectModal: fix sweeping 1155s quantity [63ea43a](https://github.com/reservoirprotocol/reservoir-kit/commit/63ea43af5518d01f9cfda6d6f891c4d98707f627)
+* ListModal: fix collect floor stat [2068d4b](https://github.com/reservoirprotocol/reservoir-kit/commit/2068d4b7449b18e5cd4f139991a5f370473777bd)
+* CollectModal: format quantity available [abfd250](https://github.com/reservoirprotocol/reservoir-kit/commit/abfd250b738475f64077eaa42b35347da8ccbaee)
+* Add zksync wrapped contract details [54d24d9](https://github.com/reservoirprotocol/reservoir-kit/commit/54d24d94daefb0409f1b76f5f1768430237fd1fc)
+* useCollections: Update collections/v6 to v7 [38ecc5a](https://github.com/reservoirprotocol/reservoir-kit/commit/38ecc5a922e31d8e38792d0bc11eed74ebb4e0f4)
+
+## [v1.8.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/674519e6a257ac070c76d97ce2795c602adf4729) (2023-09-06)
+
+* Make wagmi a peerdependency of RK ui [98b10b7](https://github.com/reservoirprotocol/reservoir-kit/commit/98b10b71f5eca78c12200faf8e452c6cdd5d012d)
+
+## [v1.8.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3cbb2c2078ddada9ae521073d1538811861df6f8) (2023-09-05)
+
+* Round down to avoid decimals when calculating bps feesOnTop [dfeb7ce](https://github.com/reservoirprotocol/reservoir-kit/commit/dfeb7ce84701e6bb6ab6f3c9b825dd487fea6ac8)
+## [v1.8.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/0c2f43c7007d025cb37d71d0fc3bc604cbf45038) (2023-08-31)
+
+* CartPopover: Tweak theme keys to be more configurable  [a2bf151](https://github.com/reservoirprotocol/reservoir-kit/commit/a2bf15103613f1783d654f64d55e5b01506e7cad)
+* useCollections: Upgrade from v5 to v6 [f0a48a0](https://github.com/reservoirprotocol/reservoir-kit/commit/f0a48a01bded05b42836e7459ddbcefd6e40f6e6)
+* BuyModal: fix unavailable title when token is still loading [edb0190](https://github.com/reservoirprotocol/reservoir-kit/commit/edb0190fdeba6f4e113080428e024c511d765ab2)
+* TokenMedia: add support for m4a audio and mov video [1880983](https://github.com/reservoirprotocol/reservoir-kit/commit/1880983dab9b787bb6489090c95282378dbcde4a)
+* TokenMedia: handle updated media url [8a5c4dd](https://github.com/reservoirprotocol/reservoir-kit/commit/8a5c4ddaaa15f34ef6f478da9762ee908f72efa5)
+
+## [v1.8.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/db1492a2f9847a2969180d4900af918ef5d070d3) (2023-08-30)
+
+* Setup different exports based on the import flavor [ba5608d](https://github.com/reservoirprotocol/reservoir-kit/commit/ba5608d235ff57f2578d070f316cb4d83a6015f4)
+
+## [v1.7.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/735e51af07171ff0a27a2fb3d42a56d1c63846e9) (2023-08-30)
+
+* Add bounty referrer global parameter for purchasing [82efe58](https://github.com/reservoirprotocol/reservoir-kit/commit/82efe58df8d6335bdc1f9b7c593405b5224ac82a)
+
+## [v1.7.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/cd75fbc492a848c4ac21e4808838777dfc56393c) (2023-08-28)
+
+* Upgrade wagmi [ typescript](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-21)
+
+## [v1.6.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/480f4a718e8ad9969dfe6a006fdfd2eb1c133211) (2023-08-25)
+
+- Sync Api
+
+## [v1.6.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2e9f33cb50e6669a0f2e5629e80c2415c24a7450) (2023-08-22)
+
+- Improve error messaging to surface more information from API errors
+
+## [v1.6.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/ee2879767381dfb023aa3ec054058a13e55a9a56) (2023-08-21)
+
+- [BREAKING]: Improve expected price check [cc83f1a](https://github.com/reservoirprotocol/reservoir-kit/commit/cc83f1a6b0f5b952eb5e9b567b735d314819b120)
+- CartProvider: cart checkout modal fix success message [bc63cc9](https://github.com/reservoirprotocol/reservoir-kit/commit/bc63cc974edae7ae746c59582d6da4bbbc3ea4be)
+
+## [v1.5.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/93d9eba98c9157b2d1ea90f93ad8d71b842cd684) (2023-08-18)
+
+- Update manifold contract address for goerli [ea956bf](https://github.com/reservoirprotocol/reservoir-kit/commit/ea956bfd7452503bf88ecf5c006b88de898baed8)
+
+## [v1.5.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d2f984d7d895909ddd62be1dbaab07e4e03d8f62) (2023-08-18)
+
+- Update manifold contracts [2c89c4a](https://github.com/reservoirprotocol/reservoir-kit/commit/2c89c4a3c028ba339fdffdd47e25a18dc10237c2)
+
 ## [v1.5.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/73392b542bd097f00fcf68558e13221fc5c9875f) (2023-08-11)
 
 - useUserTopBids update from v2 -> v4 of the api [596c732](https://github.com/reservoirprotocol/reservoir-kit/commit/596c732d9e843334f6e0b2400993f6f2c91d9b04)

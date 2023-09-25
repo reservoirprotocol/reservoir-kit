@@ -18,6 +18,7 @@ const AcceptBidPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
+  const [chainId, setChainId] = useState('')
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [bidId, setBidId] = useState('')
@@ -87,6 +88,14 @@ const AcceptBidPage: NextPage = () => {
           style={{ width: 250 }}
         />
       </div>
+      <div>
+        <label>Chain Override: </label>
+        <input
+          type="text"
+          value={chainId}
+          onChange={(e) => setChainId(e.target.value)}
+        />
+      </div>
       <button
         disabled={!tokenId.length || !collectionId.length}
         onClick={() => {
@@ -121,6 +130,7 @@ const AcceptBidPage: NextPage = () => {
       </div>
 
       <AcceptBidModal
+        chainId={Number(chainId)}
         trigger={
           <button
             style={{
