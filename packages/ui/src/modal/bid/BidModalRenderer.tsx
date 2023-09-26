@@ -31,6 +31,7 @@ import { parseUnits } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
+import { Marketplace } from '../../hooks/useMarketplaces'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -81,6 +82,10 @@ type ChildrenProps = {
   bidStep: BidStep
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
+  loading: boolean
+  traitBidSupported: boolean
+  collectionBidSupported: boolean
+  partialBidSupported: boolean
   amountToWrap: string
   usdPrice: number | null
   balance?: FetchBalanceResult
@@ -244,13 +249,23 @@ export const BidModalRenderer: FC<Props> = ({
 
   const reservoirMarketplace = allMarketplaces.filter(
     (marketplace) => marketplace.orderbook === 'reservoir'
+  )[0]
+
+  // const traitBidSupported = Boolean(reservoirMarketplace?.traitBidSupported)
+  const traitBidSupported = Boolean(false)
+  const collectionBidSupported = Boolean(
+    reservoirMarketplace?.collectionBidSupported
   )
+  const partialBidSupported = Boolean(reservoirMarketplace?.partialBidSupported)
 
-  type RequiredAndNonNullable<T> = {
-    [K in keyof T]-?: NonNullable<T[K]>
-  }
-
-  const traitBidSupported = reservoirMarketplace
+  // Set bid step to unavailable if collection bid is not supported
+  useEffect(() => {
+    if (open && !tokenId && reservoirMarketplace && !collectionBidSupported) {
+      setBidStep(BidStep.Unavailable)
+    } else {
+      setBidStep(BidStep.SetPrice)
+    }
+  }, [open, tokenId, reservoirMarketplace, collectionBidSupported])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -411,7 +426,8 @@ export const BidModalRenderer: FC<Props> = ({
     const bid: BidData = {
       weiPrice: atomicBidAmount,
       orderbook: 'reservoir',
-      orderKind: 'seaport',
+      orderKind:
+        (reservoirMarketplace?.orderKind as BidData['orderKind']) || 'seaport',
       attributeKey: trait?.key,
       attributeValue: trait?.value,
     }
@@ -516,6 +532,7 @@ export const BidModalRenderer: FC<Props> = ({
     trait,
     quantity,
     feesBps,
+    reservoirMarketplace?.orderKind,
   ])
 
   return (
@@ -538,8 +555,12 @@ export const BidModalRenderer: FC<Props> = ({
         bidData,
         totalBidAmountUsd,
         bidStep,
+        loading: !collection || !reservoirMarketplace,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        traitBidSupported,
+        collectionBidSupported,
+        partialBidSupported,
         amountToWrap,
         transactionError,
         expirationOption,
