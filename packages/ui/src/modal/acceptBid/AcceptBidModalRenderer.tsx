@@ -104,7 +104,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     ...allChains,
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
-  
   const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const blockExplorerBaseUrl =
@@ -444,6 +443,9 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         let message = 'Oops, something went wrong. Please try again.'
         if (errorType && errorType === 'price mismatch') {
           message = error.message
+        }
+        if (error.message.includes('rejected')) {
+          message = 'User rejected the request.'
         }
         //@ts-ignore
         const transactionError = new Error(message, {
