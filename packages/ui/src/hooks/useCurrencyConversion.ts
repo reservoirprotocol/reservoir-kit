@@ -14,5 +14,5 @@ export default function (chainId?: number, from?: string, to?: string) {
 
   return useSWR<
     paths['/currencies/conversion/v1']['get']['responses'][200]['schema']
-  >(from && to ? [path.href, chain?.apiKey, client?.version] : null, null)
+  >(from && to ? [path.href, client?.apiKey, client?.version] : null, null)
 }

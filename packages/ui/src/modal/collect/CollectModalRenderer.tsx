@@ -2,11 +2,11 @@ import React, { FC, ReactNode, useCallback, useEffect, useState } from 'react'
 import {
   useChainCurrency,
   useCollections,
-  useCurrencyConversion,
+  usePaymentTokens,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import { useAccount, useBalance, useWalletClient } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 import Token from '../list/Token'
 import {
   BuyPath,
@@ -16,15 +16,16 @@ import {
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
 import { toFixed } from '../../lib/numbers'
-import { UseBalanceToken } from '../../types/wagmi'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
+import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 
 export enum CollectStep {
   Idle,
+  SelectPayment,
   Approving,
   Finalizing,
   Complete,
@@ -64,9 +65,17 @@ export type ChildrenProps = {
   setItemAmount: React.Dispatch<React.SetStateAction<number>>
   maxItemAmount: number
   setMaxItemAmount: React.Dispatch<React.SetStateAction<number>>
-  currency: ReturnType<typeof useChainCurrency>
+  listingCurrency: ReturnType<typeof useChainCurrency>
+  setListingCurrency: React.Dispatch<
+    React.SetStateAction<ReturnType<typeof useChainCurrency>>
+  >
+  paymentCurrency?: EnhancedCurrency
+  setPaymentCurrency: React.Dispatch<
+    React.SetStateAction<EnhancedCurrency | undefined>
+  >
   chainCurrency: ReturnType<typeof useChainCurrency>
   isChainCurrency: boolean
+  paymentTokens: EnhancedCurrency[]
   total: number
   totalIncludingFees: number
   totalUsd: number
@@ -115,6 +124,7 @@ export const CollectModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
+  const client = useReservoirClient()
   const { address } = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
   const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
@@ -146,20 +156,19 @@ export const CollectModalRenderer: FC<Props> = ({
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0)
 
-  const chainCurrency = useChainCurrency()
-  const [currency, setCurrency] = useState(chainCurrency)
-
-  const isChainCurrency = currency.address === chainCurrency.address
-
-  const contract = collectionId?.split(':')[0] as Address
-
-  const client = useReservoirClient()
-
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
+
+  const chainCurrency = useChainCurrency(rendererChain?.id)
+
+  const [listingCurrency, setListingCurrency] = useState(chainCurrency)
+
+  const isChainCurrency = listingCurrency.address === chainCurrency.address
+
+  const contract = collectionId?.split(':')[0] as Address
 
   const wagmiChain: allChains.Chain | undefined = Object.values({
     ...allChains,
@@ -170,10 +179,6 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
-
-  const addFundsLink = currency?.address
-    ? `https://jumper.exchange/?toChain=${wagmiChain?.id}&toToken=${currency?.address}`
-    : `https://jumper.exchange/?toChain=${wagmiChain?.id}`
 
   const { data: collections, mutate: mutateCollection } = useCollections(
     open && {
@@ -201,14 +206,21 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
 
-  const { data: usdFeeConversion } = useCurrencyConversion(
-    rendererChain?.id,
-    currency?.address,
-    'usd'
+  const paymentTokens = usePaymentTokens(
+    open,
+    address as Address,
+    listingCurrency,
+    totalIncludingFees, //@TODO: verify
+    rendererChain?.id
   )
-  const usdPrice = Number(usdFeeConversion?.usd || 0)
+
+  const [paymentCurrency, setPaymentCurrency] = useState<
+    EnhancedCurrency | undefined
+  >(undefined)
+
+  const usdPrice = Number(paymentCurrency?.usdPrice || 0)
   const feeUsd = feeOnTop * usdPrice
-  const totalUsd = usdPrice * (totalIncludingFees || 0)
+  const totalUsd = paymentCurrency?.usdTotal || 0
 
   const fetchBuyPath = useCallback(() => {
     if (!client) {
@@ -302,7 +314,7 @@ export const CollectModalRenderer: FC<Props> = ({
     normalizeRoyalties,
     collectionId,
     tokenId,
-    currency,
+    listingCurrency,
     mode,
     token?.token?.tokenId,
     is1155,
@@ -325,8 +337,7 @@ export const CollectModalRenderer: FC<Props> = ({
     }
   }, [client, wallet, open, fetchBuyPathIfIdle, token?.token?.tokenId, is1155])
 
-  // Update currency
-  const updateCurrency = useCallback(
+  const updateListingCurrency = useCallback(
     (tokens: typeof selectedTokens) => {
       let currencies = new Set<string>()
       let currenciesData: Record<string, Currency> = {}
@@ -345,13 +356,13 @@ export const CollectModalRenderer: FC<Props> = ({
         }
       }
       if (currencies.size > 1) {
-        if (currency?.address != chainCurrency?.address) {
-          setCurrency(chainCurrency)
+        if (listingCurrency?.address != chainCurrency?.address) {
+          setListingCurrency(chainCurrency)
         }
       } else if (currencies.size > 0) {
         let otherCurrency = Object.values(currenciesData)[0]
-        if (otherCurrency?.contract != currency?.address) {
-          setCurrency({
+        if (otherCurrency?.contract != listingCurrency?.address) {
+          setListingCurrency({
             symbol: otherCurrency?.symbol as string,
             decimals: otherCurrency?.decimals as number,
             name: '',
@@ -364,9 +375,9 @@ export const CollectModalRenderer: FC<Props> = ({
     [wagmiChain, chainCurrency]
   )
 
-  // update currency based on selected tokens
+  // update listing currency based on selected tokens
   useEffect(() => {
-    updateCurrency(selectedTokens)
+    updateListingCurrency(selectedTokens)
   }, [selectedTokens])
 
   const calculateFees = useCallback(
@@ -383,16 +394,19 @@ export const CollectModalRenderer: FC<Props> = ({
           const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
           const atomicFee = BigInt(fee)
           const convertedAtomicFee =
-            atomicFee * BigInt(10 ** currency?.decimals!)
+            atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
           const currencyFee = convertedAtomicFee / atomicUsdPrice
-          const parsedFee = formatUnits(currencyFee, currency?.decimals || 18)
+          const parsedFee = formatUnits(
+            currencyFee,
+            paymentCurrency?.decimals || 18
+          )
           return totalFees + Number(parsedFee)
         }, 0)
       }
 
       return fees
     },
-    [feesOnTopBps, feeOnTop, usdPrice, feesOnTopUsd, currency]
+    [feesOnTopBps, feeOnTop, usdPrice, feesOnTopUsd, paymentCurrency]
   )
 
   useEffect(() => {
@@ -463,40 +477,59 @@ export const CollectModalRenderer: FC<Props> = ({
     selectedTokens,
     feesOnTopBps,
     feesOnTopUsd,
-    currency,
+    listingCurrency,
     isChainCurrency,
     contentMode,
     itemAmount,
     orders,
   ])
 
-  const { data: balance } = useBalance({
-    chainId: wagmiChain?.id,
-    address: address,
-    token:
-      currency?.address !== zeroAddress
-        ? (currency?.address as UseBalanceToken)
-        : undefined,
-    watch: open,
-    formatUnits: currency?.decimals,
-  })
-
   // Determine if user has enough funds
   useEffect(() => {
-    if (balance) {
-      const totalPriceTruncated = toFixed(total, currency?.decimals || 18)
-      if (!balance.value) {
-        setHasEnoughCurrency(false)
-      } else if (
-        balance?.value <
-        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals || 18)
+    if (!paymentTokens[0] || paymentTokens.length <= 1) {
+      return
+    } else if (contentMode === 'mint') {
+      setPaymentCurrency(
+        paymentTokens.find(
+          (paymentToken) => paymentToken.address === listingCurrency.address
+        ) || paymentTokens[0]
+      )
+    } else if (!paymentCurrency) {
+      setPaymentCurrency(paymentTokens[0])
+    } else {
+      let updatedCurrency = paymentTokens.find(
+        (paymentToken) => paymentToken.address === paymentCurrency?.address
+      )
+      if (
+        updatedCurrency &&
+        updatedCurrency.currencyTotal !== paymentCurrency.currencyTotal
       ) {
-        setHasEnoughCurrency(false)
-      } else {
-        setHasEnoughCurrency(true)
+        setPaymentCurrency(updatedCurrency)
       }
     }
-  }, [total, balance, currency])
+  }, [paymentTokens, listingCurrency])
+
+  const addFundsLink = paymentCurrency?.address
+    ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
+    : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+
+  // Determine if user has enough funds in paymentToken
+  useEffect(() => {
+    if (
+      paymentCurrency?.balance &&
+      paymentCurrency?.currencyTotal &&
+      Number(
+        formatUnits(
+          BigInt(paymentCurrency?.balance),
+          paymentCurrency?.decimals || 18
+        )
+      ) >= paymentCurrency?.currencyTotal
+    ) {
+      setHasEnoughCurrency(true)
+    } else {
+      setHasEnoughCurrency(false)
+    }
+  }, [total, paymentCurrency])
 
   useEffect(() => {
     if (contentMode === 'sweep') {
@@ -561,10 +594,9 @@ export const CollectModalRenderer: FC<Props> = ({
     }
 
     setTransactionError(null)
-
     let options: BuyTokenOptions = {
       partial: true,
-      currency: currency?.address,
+      currency: paymentCurrency?.address,
     }
 
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
@@ -572,13 +604,13 @@ export const CollectModalRenderer: FC<Props> = ({
         const [referrer, feeBps] = fullFee.split(':')
         const totalFeeTruncated = toFixed(
           total - feeOnTop,
-          currency?.decimals || 18
+          paymentCurrency?.decimals || 18
         )
         const fee = Math.floor(
           Number(
             parseUnits(
               `${Number(totalFeeTruncated)}`,
-              currency?.decimals || 18
+              paymentCurrency?.decimals || 18
             ) * BigInt(feeBps)
           ) / 10000
         )
@@ -591,7 +623,8 @@ export const CollectModalRenderer: FC<Props> = ({
         const [recipient, fee] = feeOnTop.split(':')
         const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
         const atomicFee = BigInt(fee)
-        const convertedAtomicFee = atomicFee * BigInt(10 ** currency?.decimals!)
+        const convertedAtomicFee =
+          atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
         const currencyFee = convertedAtomicFee / atomicUsdPrice
         const parsedFee = formatUnits(currencyFee, 0)
         return `${recipient}:${parsedFee}`
@@ -621,11 +654,11 @@ export const CollectModalRenderer: FC<Props> = ({
           },
         ],
         expectedPrice: {
-          [currency?.address || zeroAddress]: {
+          [paymentCurrency?.address || zeroAddress]: {
             amount: total,
-            raw: parseUnits(`${total}`, currency.decimals),
-            currencyAddress: currency.address,
-            currencyDecimals: currency.decimals,
+            raw: parseUnits(`${total}`, paymentCurrency?.decimals || 18),
+            currencyAddress: paymentCurrency?.address,
+            currencyDecimals: paymentCurrency?.decimals || 18,
           },
         },
         wallet,
@@ -717,12 +750,12 @@ export const CollectModalRenderer: FC<Props> = ({
     rendererChain,
     collectionId,
     tokenId,
-    currency,
     feesOnTopBps,
     onConnectWallet,
     feesOnTopUsd,
     contentMode,
     itemAmount,
+    paymentCurrency,
   ])
 
   return (
@@ -739,9 +772,13 @@ export const CollectModalRenderer: FC<Props> = ({
         setItemAmount,
         maxItemAmount,
         setMaxItemAmount,
-        currency,
+        listingCurrency,
+        setListingCurrency,
+        paymentCurrency,
+        setPaymentCurrency,
         chainCurrency,
         isChainCurrency,
+        paymentTokens,
         total,
         totalIncludingFees,
         totalUsd,
@@ -752,7 +789,9 @@ export const CollectModalRenderer: FC<Props> = ({
         currentChain,
         mintPrice,
         orders,
-        balance: balance?.value,
+        balance: paymentCurrency?.balance
+          ? BigInt(paymentCurrency.balance)
+          : undefined,
         contract,
         hasEnoughCurrency,
         addFundsLink,

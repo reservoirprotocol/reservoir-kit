@@ -477,7 +477,10 @@ export const BuyModalRenderer: FC<Props> = ({
           if (errorStatus >= 400 && errorStatus < 500) {
             message = error.message
           }
-          //@ts-ignore: Should be fixed in an update to typescript
+          if (error.message.includes('rejected')) {
+            message = 'User rejected the request.'
+          }
+
           const transactionError = new Error(message, {
             cause: error,
           })

@@ -42,7 +42,7 @@ export default function (
       }
 
       setParams(url, query)
-      return [url.href, chain?.apiKey, client?.version]
+      return [url.href, client?.apiKey, client?.version]
     },
     {
       revalidateOnMount: true,
