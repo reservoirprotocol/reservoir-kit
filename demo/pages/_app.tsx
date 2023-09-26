@@ -25,7 +25,7 @@ import {
 } from '@reservoir0x/reservoir-kit-ui'
 import {
   LogLevel,
-  customChains,
+  reservoirChains,
 } from '@reservoir0x/reservoir-sdk'
 import { useRouter } from 'next/router'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
@@ -156,10 +156,8 @@ const AppWrapper: FC<any> = ({ children }) => {
               active: CHAIN_ID === allChains.linea.id,
             },
             {
-              baseApiUrl: 'https://api-arbitrum-nova.reservoir.tools',
-              id: customChains.arbitrumNova.id,
-              active: CHAIN_ID === customChains.arbitrumNova.id,
-              apiKey: API_KEY
+              ...reservoirChains.arbitrumNova,
+              active: CHAIN_ID === allChains.arbitrumNova.id
             }
           ],
           marketplaceFees: MARKETPLACE_FEES,

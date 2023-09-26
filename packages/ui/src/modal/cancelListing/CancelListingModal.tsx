@@ -1,6 +1,14 @@
 import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
 import React, { ReactElement, Dispatch, SetStateAction, useEffect } from 'react'
-import { Flex, Text, Box, Button, Loader, Anchor } from '../../primitives'
+import {
+  Flex,
+  Text,
+  Box,
+  Button,
+  Loader,
+  Anchor,
+  ErrorWell,
+} from '../../primitives'
 import {
   CancelListingModalRenderer,
   CancelStep,
@@ -9,10 +17,7 @@ import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCircleExclamation,
-  faGasPump,
-} from '@fortawesome/free-solid-svg-icons'
+import { faGasPump } from '@fortawesome/free-solid-svg-icons'
 
 const ModalCopy = {
   title: 'Cancel Listing',
@@ -140,26 +145,7 @@ export function CancelListingModal({
             )}
             {isListingAvailable && cancelStep === CancelStep.Cancel && (
               <Flex direction="column">
-                {transactionError && (
-                  <Flex
-                    css={{
-                      color: '$errorAccent',
-                      p: '$4',
-                      gap: '$2',
-                      background: '$wellBackground',
-                    }}
-                    align="center"
-                  >
-                    <FontAwesomeIcon
-                      icon={faCircleExclamation}
-                      width={16}
-                      height={16}
-                    />
-                    <Text style="body3" color="errorLight">
-                      {transactionError.message}
-                    </Text>
-                  </Flex>
-                )}
+                {transactionError && <ErrorWell error={transactionError} />}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
                     chainId={modalChain?.id}

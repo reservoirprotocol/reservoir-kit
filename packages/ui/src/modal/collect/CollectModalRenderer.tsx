@@ -124,6 +124,7 @@ export const CollectModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
 }) => {
+  const client = useReservoirClient()
   const { address } = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
   const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
@@ -155,21 +156,19 @@ export const CollectModalRenderer: FC<Props> = ({
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0)
 
-  const chainCurrency = useChainCurrency()
+  const currentChain = client?.currentChain()
+
+  const rendererChain = chainId
+    ? client?.chains.find(({ id }) => id === chainId) || currentChain
+    : currentChain
+
+  const chainCurrency = useChainCurrency(rendererChain?.id)
 
   const [listingCurrency, setListingCurrency] = useState(chainCurrency)
 
   const isChainCurrency = listingCurrency.address === chainCurrency.address
 
   const contract = collectionId?.split(':')[0] as Address
-
-  const client = useReservoirClient()
-
-  const currentChain = client?.currentChain()
-
-  const rendererChain = chainId
-    ? client?.chains.find(({ id }) => id === chainId) || currentChain
-    : currentChain
 
   const wagmiChain: allChains.Chain | undefined = Object.values({
     ...allChains,

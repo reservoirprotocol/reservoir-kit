@@ -9,6 +9,7 @@ import {
   FormatCurrency,
   FormatCryptoCurrency,
   Loader,
+  ErrorWell,
 } from '../../primitives'
 import Progress from '../Progress'
 import { Modal } from '../Modal'
@@ -262,26 +263,7 @@ export function BuyModal({
 
             {buyStep === BuyStep.Checkout && !loading && (
               <Flex direction="column">
-                {transactionError && (
-                  <Flex
-                    css={{
-                      color: '$errorAccent',
-                      p: '$4',
-                      gap: '$2',
-                      background: '$wellBackground',
-                    }}
-                    align="center"
-                  >
-                    <FontAwesomeIcon
-                      icon={faCircleExclamation}
-                      width={16}
-                      height={16}
-                    />
-                    <Text style="body3" color="errorLight">
-                      {transactionError.message}
-                    </Text>
-                  </Flex>
-                )}
+                {transactionError && <ErrorWell error={transactionError} />}
                 {mixedCurrencies && (
                   <Flex
                     css={{

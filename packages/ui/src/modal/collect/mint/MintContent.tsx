@@ -242,7 +242,7 @@ export const MintContent: FC<
             {hasEnoughCurrency || !isConnected ? (
               <Button
                 css={{ m: '$4' }}
-                disabled={!hasEnoughCurrency}
+                disabled={!hasEnoughCurrency && isConnected}
                 onClick={collectTokens}
               >
                 {!isConnected ? copy.ctaConnect : copy.mintCtaBuy}
