@@ -366,7 +366,7 @@ export const CollectModalRenderer: FC<Props> = ({
           setListingCurrency({
             symbol: otherCurrency?.symbol as string,
             decimals: otherCurrency?.decimals as number,
-            name: '',
+            name: otherCurrency?.name || '',
             address: otherCurrency?.contract as Address,
             chainId: wagmiChain?.id as number,
           })
