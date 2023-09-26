@@ -257,7 +257,7 @@ export const SweepContent: FC<
                     </Box>
                   </Flex>
                 </Flex>
-                {!hasEnoughCurrency ? (
+                {!hasEnoughCurrency && isConnected ? (
                   <Text css={{ mr: '$3' }} color="error" style="body3">
                     Insufficient balance, select another token or add funds
                   </Text>
