@@ -335,8 +335,8 @@ function cartStore({
       }
       setParams(url, query)
       const params = [url.href]
-      if (reservoirChain?.apiKey) {
-        params.push(reservoirChain.apiKey)
+      if (client?.apiKey) {
+        params.push(client.apiKey)
       }
       if (client?.version) {
         params.push(client.version)
@@ -371,8 +371,8 @@ function cartStore({
       }
       setParams(url, query)
       const params = [url.href]
-      if (reservoirChain?.apiKey) {
-        params.push(reservoirChain.apiKey)
+      if (client?.apiKey) {
+        params.push(client.apiKey)
       }
       if (client?.version) {
         params.push(client.version)

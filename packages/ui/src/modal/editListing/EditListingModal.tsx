@@ -1,6 +1,14 @@
 import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
 import React, { ReactElement, Dispatch, SetStateAction, useEffect } from 'react'
-import { Flex, Text, Box, Button, Loader, Select } from '../../primitives'
+import {
+  Flex,
+  Text,
+  Box,
+  Button,
+  Loader,
+  Select,
+  ErrorWell,
+} from '../../primitives'
 import {
   EditListingModalRenderer,
   EditListingStep,
@@ -185,26 +193,7 @@ export function EditListingModal({
             )}
             {isListingEditable && editListingStep === EditListingStep.Edit && (
               <Flex direction="column">
-                {transactionError && (
-                  <Flex
-                    css={{
-                      color: '$errorAccent',
-                      p: '$4',
-                      gap: '$2',
-                      background: '$wellBackground',
-                    }}
-                    align="center"
-                  >
-                    <FontAwesomeIcon
-                      icon={faCircleExclamation}
-                      width={16}
-                      height={16}
-                    />
-                    <Text style="body3" color="errorLight">
-                      {transactionError.message}
-                    </Text>
-                  </Flex>
-                )}
+                {transactionError && <ErrorWell error={transactionError} />}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
                     chainId={modalChain?.id}

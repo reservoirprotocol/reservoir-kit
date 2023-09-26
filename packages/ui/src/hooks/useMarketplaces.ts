@@ -37,7 +37,7 @@ export default function (
     paths['/collections/{collection}/supported-marketplaces/v1']['get']['responses'][200]['schema']
   >(
     collectionId && enabled
-      ? [path.href, chain?.apiKey, client?.version]
+      ? [path.href, client?.apiKey, client?.version]
       : null,
     null
   )
