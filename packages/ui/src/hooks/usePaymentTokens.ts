@@ -104,7 +104,7 @@ export default function (
           preferredCurrencyTotalPrice / Number(conversionData?.conversion)
 
         const usdPrice = conversionData?.usd || 0
-        const usdTotal = currencyTotal * usdPrice
+        const usdTotal = currencyTotal * Number(usdPrice ?? 0)
 
         return {
           ...currency,
@@ -120,7 +120,7 @@ export default function (
           return -1
         if (b.address === preferredCurrency.address && Number(b.balance) > 0)
           return 1
-        return b.usdPrice - a.usdPrice
+        return Number(b.usdPrice ?? 0) - Number(a.usdPrice ?? 0)
       }) as EnhancedCurrency[]
   }, [
     address,
