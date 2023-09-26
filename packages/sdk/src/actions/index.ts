@@ -3,12 +3,13 @@ import * as utils from '../utils'
 import { version } from '../../package.json'
 import { LogLevel, log as logUtil } from '../utils/logger'
 import { ReservoirEvent } from '../utils/events'
+import { PaymentToken, chainPaymentTokensMap } from '../utils/paymentTokens'
 
 export type ReservoirChain = {
   id: number
   baseApiUrl: string
   active: boolean
-  apiKey?: string
+  paymentTokens?: PaymentToken[]
 }
 
 export type ReservoirEventListener = (
@@ -18,7 +19,7 @@ export type ReservoirEventListener = (
 
 /**
  * ReservoirClient Configuration Options
- * @param chains List of chain objects with configuration (id, baseApiUrl, apiKey and if it's the default)
+ * @param chains List of chain objects with configuration (id, baseApiUrl, paymentTokens and if it's the default)
  * @param source Used to manually override the source domain used to attribute local orders
  * @param automatedRoyalties If true, royalties will be automatically included, defaults to true. Only relevant for creating orders.
  * @param marketplaceFees A list of fee strings representing a recipient and the fee in BPS delimited by a colon: ["0xabc:100"] used when creating an order (listing or bid)
@@ -28,6 +29,7 @@ export type ReservoirEventListener = (
  */
 export type ReservoirClientOptions = {
   chains: ReservoirChain[]
+  apiKey?: string
   uiVersion?: string
   source?: string
   automatedRoyalties?: boolean
@@ -45,6 +47,7 @@ let _eventListeners: ReservoirEventListener[] = []
 export class ReservoirClient {
   version: string
   chains: ReservoirChain[]
+  apiKey?: string
   source?: string
   uiVersion?: string
   marketplaceFees?: string[]
@@ -67,7 +70,11 @@ export class ReservoirClient {
     this.chains = options.chains.map((chain) => ({
       ...chain,
       baseApiUrl: chain.baseApiUrl.replace(/\/$/, ''),
+      paymentTokens: chain?.paymentTokens
+        ? chain?.paymentTokens
+        : chainPaymentTokensMap[chain.id],
     }))
+    this.apiKey = options.apiKey
     this.uiVersion = options.uiVersion
     this.automatedRoyalties = options.automatedRoyalties
     this.marketplaceFees = options.marketplaceFees
@@ -85,6 +92,9 @@ export class ReservoirClient {
       ? options.chains.map((chain) => ({
           ...chain,
           baseApiUrl: chain.baseApiUrl.replace(/\/$/, ''),
+          paymentTokens: chain?.paymentTokens
+            ? chain?.paymentTokens
+            : chainPaymentTokensMap[chain.id],
         }))
       : this.chains
     this.marketplaceFees = options.marketplaceFees
