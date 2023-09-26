@@ -188,7 +188,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   const onChainRoyaltyBps = useMemo(() => {
     const totalRoyalty = onChainRoyalties?.[1].reduce((total, royalty) => {
-      total += parseFloat(formatUnits(royalty, currency.decimals || 18))
+      total += parseFloat(formatUnits(royalty, chainCurrency.decimals || 18))
       return total
     }, 0)
     if (totalRoyalty) {
@@ -557,7 +557,6 @@ export const ListModalRenderer: FC<Props> = ({
       })
       .catch((e: any) => {
         const error = e as Error
-        //@ts-ignore
         const transactionError = new Error(error?.message || '', {
           cause: error,
         })
