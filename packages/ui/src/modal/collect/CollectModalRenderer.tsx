@@ -210,7 +210,7 @@ export const CollectModalRenderer: FC<Props> = ({
     open,
     address as Address,
     listingCurrency,
-    totalIncludingFees, //@TODO: verify
+    totalIncludingFees,
     rendererChain?.id
   )
 
@@ -365,7 +365,7 @@ export const CollectModalRenderer: FC<Props> = ({
           setListingCurrency({
             symbol: otherCurrency?.symbol as string,
             decimals: otherCurrency?.decimals as number,
-            name: '',
+            name: otherCurrency?.name || '',
             address: otherCurrency?.contract as Address,
             chainId: wagmiChain?.id as number,
           })
