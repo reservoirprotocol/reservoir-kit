@@ -251,8 +251,7 @@ export const BidModalRenderer: FC<Props> = ({
     (marketplace) => marketplace.orderbook === 'reservoir'
   )[0]
 
-  // const traitBidSupported = Boolean(reservoirMarketplace?.traitBidSupported)
-  const traitBidSupported = Boolean(false)
+  const traitBidSupported = Boolean(reservoirMarketplace?.traitBidSupported)
   const collectionBidSupported = Boolean(
     reservoirMarketplace?.collectionBidSupported
   )
