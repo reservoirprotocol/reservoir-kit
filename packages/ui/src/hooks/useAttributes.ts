@@ -21,7 +21,7 @@ export default function (
   const path = collection ? new URL(pathname) : null
 
   const { data, mutate, error, isValidating } = useSWR<AttributesResponse>(
-    path ? [path.href, chain?.apiKey, client?.version] : null,
+    path ? [path.href, client?.apiKey, client?.version] : null,
     null,
     {
       revalidateOnMount: true,

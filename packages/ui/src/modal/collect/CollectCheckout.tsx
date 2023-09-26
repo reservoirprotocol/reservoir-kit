@@ -7,7 +7,8 @@ import {
   Img,
   Text,
 } from '../../primitives'
-import { useChainCurrency, useCollections, useTokens } from '../../hooks'
+import { useCollections, useTokens } from '../../hooks'
+import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
 
 enum Size {
   SM,
@@ -20,7 +21,7 @@ type Props = {
   itemCount: number
   totalPrice: number
   usdPrice: number
-  currency?: ReturnType<typeof useChainCurrency>
+  currency?: PaymentToken
   chain?: ReservoirChain | null
   size?: Size
   chainId?: number
