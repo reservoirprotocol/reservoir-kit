@@ -1,6 +1,9 @@
-import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { ReservoirChain, paths } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
+
+type CurrencyConversionResponse =
+  paths['/currencies/conversion/v1']['get']['responses']['200']['schema']
 
 const fetcher = async (urls: string[]) => {
   const fetches = urls.map(
@@ -25,8 +28,7 @@ export default function (
       `${chain?.baseApiUrl}/currencies/conversion/v1?from=${currency.address}&to=${prefferedCurrencyAddress}`
   )
 
-  // @TODO: Add type
-  const { data, error } = useSWR(urls, fetcher)
+  const { data, error } = useSWR<CurrencyConversionResponse[]>(urls, fetcher)
   return {
     data: data,
     isError: !!error,
