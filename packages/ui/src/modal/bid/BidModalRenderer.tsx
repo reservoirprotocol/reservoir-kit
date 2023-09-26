@@ -413,6 +413,14 @@ export const BidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (!tokenId && !collectionBidSupported) {
+      const error = new Error(
+        'Collection bids are not supported for this collection'
+      )
+      setTransactionError(error)
+      throw error
+    }
+
     setBidStep(BidStep.Offering)
     setTransactionError(null)
     setBidData(null)
@@ -427,8 +435,8 @@ export const BidModalRenderer: FC<Props> = ({
       orderbook: 'reservoir',
       orderKind:
         (reservoirMarketplace?.orderKind as BidData['orderKind']) || 'seaport',
-      attributeKey: trait?.key,
-      attributeValue: trait?.value,
+      attributeKey: traitBidSupported ? trait?.key : undefined,
+      attributeValue: traitBidSupported ? trait?.value : undefined,
     }
 
     if (feesBps && feesBps?.length > 0) {
@@ -531,7 +539,7 @@ export const BidModalRenderer: FC<Props> = ({
     trait,
     quantity,
     feesBps,
-    reservoirMarketplace?.orderKind,
+    reservoirMarketplace,
   ])
 
   return (
