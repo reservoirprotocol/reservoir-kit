@@ -211,7 +211,7 @@ export const CollectModalRenderer: FC<Props> = ({
     open,
     address as Address,
     listingCurrency,
-    totalIncludingFees, //@TODO: verify
+    totalIncludingFees,
     rendererChain?.id
   )
 
