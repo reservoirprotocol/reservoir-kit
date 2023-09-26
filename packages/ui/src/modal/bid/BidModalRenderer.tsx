@@ -13,6 +13,7 @@ import {
   useCollections,
   useAttributes,
   useChainCurrency,
+  useMarketplaces,
 } from '../../hooks'
 import { useAccount, useBalance, useWalletClient } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
@@ -52,6 +53,7 @@ export enum BidStep {
   SetPrice,
   Offering,
   Complete,
+  Unavailable,
 }
 
 export type Traits =
@@ -231,6 +233,24 @@ export const BidModalRenderer: FC<Props> = ({
   const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
   const totalBidAmount = Number(bidAmountPerUnit) * Math.max(1, quantity)
   const totalBidAmountUsd = totalBidAmount * (usdPrice || 0)
+
+  const [allMarketplaces] = useMarketplaces(
+    collectionId,
+    undefined,
+    undefined,
+    rendererChain?.id,
+    open
+  )
+
+  const reservoirMarketplace = allMarketplaces.filter(
+    (marketplace) => marketplace.orderbook === 'reservoir'
+  )
+
+  type RequiredAndNonNullable<T> = {
+    [K in keyof T]-?: NonNullable<T[K]>
+  }
+
+  const traitBidSupported = reservoirMarketplace
 
   const { address } = useAccount()
   const { data: balance } = useBalance({

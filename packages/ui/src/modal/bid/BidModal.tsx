@@ -66,6 +66,7 @@ const ModalCopy = {
   titleSetPrice: 'Make an Offer',
   titleConfirm: 'Complete Offer',
   titleComplete: 'Offer Submitted',
+  titleUnavailable: 'Bidding Unavailable',
   ctaBidDisabled: 'Enter a Price',
   ctaBid: '',
   ctaConvertManually: 'Convert Manually',
@@ -106,6 +107,8 @@ function titleForStep(step: BidStep, copy: typeof ModalCopy) {
       return copy.titleConfirm
     case BidStep.Complete:
       return copy.titleComplete
+    case BidStep.Unavailable:
+      return copy.titleUnavailable
   }
 }
 
@@ -925,6 +928,13 @@ export function BidModal({
                     {copy.ctaClose}
                   </Button>
                 )}
+              </Flex>
+            )}
+            {bidStep === BidStep.Unavailable && (
+              <Flex direction="column" align="center" css={{ p: '$4' }}>
+                <Text style="subtitle3">
+                  Oops, bidding is unavailable for this collection
+                </Text>
               </Flex>
             )}
           </Modal>
