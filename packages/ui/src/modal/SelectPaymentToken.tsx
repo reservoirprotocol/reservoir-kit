@@ -30,59 +30,59 @@ export const SelectPaymentToken: FC<Props> = ({
           paymentToken?.decimals || 18
         )
 
-        return (
-          <Button
-            key={paymentToken?.address}
-            color="ghost"
-            size="none"
-            css={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '100%',
-              p: '$2',
-              borderRadius: 4,
-              '&:hover': {
-                background: '$neutralBgHover',
-              },
-              '&:disabled': {
-                background: 'transparent',
-                cursor: 'not-allowed',
-              },
-            }}
-            disabled={!paymentToken?.currencyTotal}
-            onClick={() => {
-              setCurrency(paymentToken)
-              goBack()
-            }}
-          >
-            <Flex
-              align="center"
-              css={{ gap: '$3', opacity: isSelectedCurrency ? 0.5 : 1 }}
+        if (paymentToken?.currencyTotal)
+          return (
+            <Button
+              key={paymentToken?.address}
+              color="ghost"
+              size="none"
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+                p: '$2',
+                borderRadius: 4,
+                '&:hover': {
+                  background: '$neutralBgHover',
+                },
+                '&:disabled': {
+                  background: 'transparent',
+                  cursor: 'not-allowed',
+                },
+              }}
+              onClick={() => {
+                setCurrency(paymentToken)
+                goBack()
+              }}
             >
-              <CryptoCurrencyIcon
-                address={paymentToken?.address as string}
-                css={{ width: 24, height: 24 }}
-              />
-              <Flex direction="column" align="start">
-                <Text style="subtitle2">{paymentToken?.symbol}</Text>
-                <Text style="body2" color="subtle">
-                  Balance: {formatNumber(Number(formattedBalance), 6)}
-                </Text>
+              <Flex
+                align="center"
+                css={{ gap: '$3', opacity: isSelectedCurrency ? 0.5 : 1 }}
+              >
+                <CryptoCurrencyIcon
+                  address={paymentToken?.address as string}
+                  css={{ width: 24, height: 24 }}
+                />
+                <Flex direction="column" align="start">
+                  <Text style="subtitle2">{paymentToken?.symbol}</Text>
+                  <Text style="body2" color="subtle">
+                    Balance: {formatNumber(Number(formattedBalance), 6)}
+                  </Text>
+                </Flex>
               </Flex>
-            </Flex>
-            <Flex align="center" css={{ gap: '$3' }}>
-              <Text style="subtitle2">
-                {formatNumber(paymentToken?.currencyTotal, 6)}
-              </Text>
-              {isSelectedCurrency ? (
-                <Box css={{ color: '$accentSolidHover' }}>
-                  <FontAwesomeIcon icon={faCheck} width={14} />
-                </Box>
-              ) : null}
-            </Flex>
-          </Button>
-        )
+              <Flex align="center" css={{ gap: '$3' }}>
+                <Text style="subtitle2">
+                  {formatNumber(paymentToken?.currencyTotal, 6)}
+                </Text>
+                {isSelectedCurrency ? (
+                  <Box css={{ color: '$accentSolidHover' }}>
+                    <FontAwesomeIcon icon={faCheck} width={14} />
+                  </Box>
+                ) : null}
+              </Flex>
+            </Button>
+          )
       })}
     </Flex>
   )
