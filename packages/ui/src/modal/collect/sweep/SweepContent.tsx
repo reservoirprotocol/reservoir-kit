@@ -232,19 +232,30 @@ export const SweepContent: FC<
               ) : null}
             </Flex>
           </Flex>
-          <Flex
-            direction="column"
-            css={{ px: '$4', pt: '$4', pb: '$2', gap: '$5' }}
-          >
+          <Flex direction="column" css={{ pt: '$4', pb: '$2', gap: '$4' }}>
             {paymentTokens.length > 1 ? (
-              <Flex direction="column" css={{ gap: '$2' }}>
-                <Flex justify="between" align="center" css={{ gap: '$1' }}>
+              <Flex
+                direction="column"
+                css={{
+                  gap: '$2',
+                  py: '$3',
+                  px: '$4',
+                  borderRadius: '$3',
+                  '&:hover': {
+                    backgroundColor: '$neutralBgHover',
+                  },
+                }}
+                onClick={() => setCollectStep(CollectStep.SelectPayment)}
+              >
+                <Flex
+                  justify="between"
+                  align="center"
+                  css={{
+                    gap: '$1',
+                  }}
+                >
                   <Text style="subtitle2">Payment Method</Text>
-                  <Flex
-                    align="center"
-                    css={{ gap: '$2', cursor: 'pointer' }}
-                    onClick={() => setCollectStep(CollectStep.SelectPayment)}
-                  >
+                  <Flex align="center" css={{ gap: '$2', cursor: 'pointer' }}>
                     <Flex align="center">
                       <CryptoCurrencyIcon
                         address={paymentCurrency?.address as string}
@@ -268,7 +279,7 @@ export const SweepContent: FC<
               <Flex
                 justify="between"
                 align="start"
-                css={{ py: '$4', width: '100%' }}
+                css={{ px: '$4', py: '$3', width: '100%' }}
               >
                 <Text style="subtitle3">Referral Fee</Text>
                 <Flex direction="column" align="end" css={{ gap: '$1' }}>
@@ -283,7 +294,11 @@ export const SweepContent: FC<
                 </Flex>
               </Flex>
             )}
-            <Flex justify="between" align="start" css={{ height: 34 }}>
+            <Flex
+              justify="between"
+              align="start"
+              css={{ height: 34, px: '$4' }}
+            >
               <Text style="h6">You Pay</Text>
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
                 <FormatCryptoCurrency
@@ -346,12 +361,12 @@ export const SweepContent: FC<
       )}
 
       {collectStep === CollectStep.SelectPayment && (
-        <Flex direction="column" css={{ py: 20, gap: '$4' }}>
-          <Flex align="center" css={{ gap: '$4', px: '$4' }}>
+        <Flex direction="column" css={{ py: 20 }}>
+          <Flex align="center" css={{ gap: '$2', px: '$4' }}>
             <Button
               onClick={() => setCollectStep(CollectStep.Idle)}
               color="ghost"
-              size="none"
+              size="xs"
               css={{ color: '$neutralSolidHover' }}
             >
               <FontAwesomeIcon icon={faChevronLeft} width={10} />

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, CryptoCurrencyIcon, Flex, Text } from '../primitives'
+import { Box, Button, CryptoCurrencyIcon, Flex, Text } from '../primitives'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -22,7 +22,7 @@ export const SelectPaymentToken: FC<Props> = ({
   currency,
 }) => {
   return (
-    <Flex direction="column" css={{ width: '100%', gap: '$1', px: '$2' }}>
+    <Flex direction="column" css={{ width: '100%', gap: '$1', px: '$3' }}>
       {paymentTokens?.map((paymentToken) => {
         const isSelectedCurrency = currency?.address === paymentToken?.address
         const formattedBalance = formatUnits(
@@ -31,19 +31,26 @@ export const SelectPaymentToken: FC<Props> = ({
         )
 
         return (
-          <Flex
+          <Button
             key={paymentToken?.address}
-            align="center"
-            justify="between"
+            color="ghost"
+            size="none"
             css={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
               width: '100%',
               p: '$2',
               borderRadius: 4,
-              cursor: 'pointer',
               '&:hover': {
                 background: '$neutralBgHover',
               },
+              '&:disabled': {
+                background: 'transparent',
+                cursor: 'not-allowed',
+              },
             }}
+            disabled={!paymentToken?.currencyTotal}
             onClick={() => {
               setCurrency(paymentToken)
               goBack()
@@ -57,7 +64,7 @@ export const SelectPaymentToken: FC<Props> = ({
                 address={paymentToken?.address as string}
                 css={{ width: 24, height: 24 }}
               />
-              <Flex direction="column" css={{ gap: '$1' }}>
+              <Flex direction="column" align="start">
                 <Text style="subtitle2">{paymentToken?.symbol}</Text>
                 <Text style="body2" color="subtle">
                   Balance: {formatNumber(Number(formattedBalance), 6)}
@@ -74,7 +81,7 @@ export const SelectPaymentToken: FC<Props> = ({
                 </Box>
               ) : null}
             </Flex>
-          </Flex>
+          </Button>
         )
       })}
     </Flex>
