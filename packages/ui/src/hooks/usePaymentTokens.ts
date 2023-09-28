@@ -102,12 +102,13 @@ export default function (
 
         const currencyTotal =
           preferredCurrencyTotalPrice / Number(conversionData?.conversion)
-
+        debugger
         const usdPrice = conversionData?.usd || 0
         const usdTotal = currencyTotal * Number(usdPrice ?? 0)
 
         return {
           ...currency,
+          address: currency.address.toLowerCase(),
           usdPrice,
           usdTotal,
           balance,

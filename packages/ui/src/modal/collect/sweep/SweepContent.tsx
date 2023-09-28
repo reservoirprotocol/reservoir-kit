@@ -50,7 +50,6 @@ export const SweepContent: FC<
   itemAmount,
   setItemAmount,
   maxItemAmount,
-  listingCurrency,
   paymentCurrency,
   setPaymentCurrency,
   total,
@@ -59,8 +58,6 @@ export const SweepContent: FC<
   isConnected,
   usdPrice,
   currentChain,
-  chainCurrency,
-  isChainCurrency,
   paymentTokens,
   hasEnoughCurrency,
   addFundsLink,
@@ -79,13 +76,13 @@ export const SweepContent: FC<
 
   const cheapestToken = selectedTokens?.[0]
   const cheapestTokenPrice =
-    cheapestToken?.currency != chainCurrency.address && isChainCurrency
+    cheapestToken?.currency?.toLowerCase() != paymentCurrency?.address
       ? cheapestToken?.buyInQuote
       : cheapestToken?.totalPrice
 
   const mostExpensiveToken = selectedTokens?.[selectedTokens.length - 1]
   const mostExpensiveTokenPrice =
-    mostExpensiveToken?.currency != chainCurrency.address && isChainCurrency
+    mostExpensiveToken?.currency?.toLowerCase() != paymentCurrency?.address
       ? mostExpensiveToken?.buyInQuote
       : mostExpensiveToken?.totalPrice
 
@@ -193,9 +190,9 @@ export const SweepContent: FC<
                         <FormatCryptoCurrency
                           chainId={chainId}
                           amount={cheapestTokenPrice}
-                          address={listingCurrency?.address}
-                          decimals={listingCurrency?.decimals}
-                          symbol={listingCurrency?.symbol}
+                          address={paymentCurrency?.address}
+                          decimals={paymentCurrency?.decimals}
+                          symbol={paymentCurrency?.symbol}
                           maximumFractionDigits={2}
                         />
                         <Text style="subtitle3" color="subtle">
@@ -204,9 +201,9 @@ export const SweepContent: FC<
                         <FormatCryptoCurrency
                           chainId={chainId}
                           amount={mostExpensiveTokenPrice}
-                          address={listingCurrency?.address}
-                          decimals={listingCurrency?.decimals}
-                          symbol={listingCurrency?.symbol}
+                          address={paymentCurrency?.address}
+                          decimals={paymentCurrency?.decimals}
+                          symbol={paymentCurrency?.symbol}
                           maximumFractionDigits={2}
                         />
                       </Flex>
@@ -222,9 +219,9 @@ export const SweepContent: FC<
                     <FormatCryptoCurrency
                       chainId={chainId}
                       amount={total / itemAmount}
-                      address={listingCurrency?.address}
-                      decimals={listingCurrency?.decimals}
-                      symbol={listingCurrency?.symbol}
+                      address={paymentCurrency?.address}
+                      decimals={paymentCurrency?.decimals}
+                      symbol={paymentCurrency?.symbol}
                       maximumFractionDigits={2}
                     />
                   </Flex>

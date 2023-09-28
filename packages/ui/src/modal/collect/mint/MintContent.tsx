@@ -46,7 +46,6 @@ export const MintContent: FC<
   itemAmount,
   setItemAmount,
   maxItemAmount,
-  listingCurrency,
   paymentCurrency,
   usdPrice,
   feeOnTop,
@@ -180,9 +179,9 @@ export const MintContent: FC<
                       <FormatCryptoCurrency
                         chainId={chainId}
                         amount={mintPrice}
-                        address={listingCurrency?.address}
-                        decimals={listingCurrency?.decimals}
-                        symbol={listingCurrency?.symbol}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
                         logoWidth={12}
                         css={{ color: '$neutralText' }}
                       />
@@ -205,9 +204,9 @@ export const MintContent: FC<
                       <FormatCryptoCurrency
                         chainId={chainId}
                         amount={feeOnTop}
-                        address={listingCurrency?.address}
-                        decimals={listingCurrency?.decimals}
-                        symbol={listingCurrency?.symbol}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
                       />
                       <FormatCurrency
                         amount={feeUsd}
@@ -294,7 +293,7 @@ export const MintContent: FC<
               token={token}
               itemCount={itemAmount}
               totalPrice={paymentCurrency?.currencyTotal || 0}
-              currency={listingCurrency}
+              currency={paymentCurrency}
               usdPrice={usdPrice}
               chain={currentChain}
             />
@@ -386,7 +385,7 @@ export const MintContent: FC<
               token={token}
               itemCount={itemAmount}
               totalPrice={paymentCurrency?.currencyTotal || 0}
-              currency={listingCurrency}
+              currency={paymentCurrency}
               usdPrice={usdPrice}
               chain={currentChain}
             />
