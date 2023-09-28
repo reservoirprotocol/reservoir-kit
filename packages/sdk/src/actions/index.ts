@@ -35,6 +35,7 @@ export type ReservoirClientOptions = {
   normalizeRoyalties?: boolean
   bountyReferrer?: string
   logLevel?: LogLevel
+  maxPollingAttemptsBeforeTimeout?: number
 }
 
 export type ReservoirClientActions = typeof actions
@@ -52,6 +53,7 @@ export class ReservoirClient {
   normalizeRoyalties?: boolean
   bountyReferrer?: string
   logLevel: LogLevel
+  maxPollingAttemptsBeforeTimeout?: number
   log(
     message: Parameters<typeof logUtil>['0'],
     level: LogLevel = LogLevel.Info
@@ -76,6 +78,8 @@ export class ReservoirClient {
     this.bountyReferrer = options.bountyReferrer
     this.logLevel =
       options.logLevel !== undefined ? options.logLevel : LogLevel.None
+    this.maxPollingAttemptsBeforeTimeout =
+      options.maxPollingAttemptsBeforeTimeout
   }
 
   configure(options: ReservoirClientOptions) {
@@ -101,6 +105,8 @@ export class ReservoirClient {
         : this.bountyReferrer
     this.logLevel =
       options.logLevel !== undefined ? options.logLevel : LogLevel.None
+    this.maxPollingAttemptsBeforeTimeout =
+      options.maxPollingAttemptsBeforeTimeout
   }
 
   currentChain() {

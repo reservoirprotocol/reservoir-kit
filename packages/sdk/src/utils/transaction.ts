@@ -22,8 +22,9 @@ export async function sendTransactionSafely(
   request: AxiosRequestConfig,
   headers: AxiosRequestHeaders
 ) {
+  const client = getClient()
   let txHash = await wallet.handleSendTransactionStep(chainId, item, step)
-  const maximumAttempts = 30
+  const maximumAttempts = client.maxPollingAttemptsBeforeTimeout ?? 30
   let attemptCount = 0
   let waitingForConfirmation = true
   let transactionCancelled = false
@@ -89,7 +90,7 @@ export async function sendTransactionSafely(
 
   if (attemptCount >= maximumAttempts) {
     throw Error(
-      `Failed to get an ok response after ${attemptCount} attempt(s), aborting`
+      `Transaction Timeout Error: Failed to receive a successful response for transaction with hash '${txHash}' after ${attemptCount} attempt(s).`
     )
   }
 
