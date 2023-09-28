@@ -16,7 +16,7 @@ import Actions from '../components/Actions'
 
 const ALCHEMY_KEY = process.env.REACT_APP_ALCHEMY_KEY || ''
 const { chains, provider } = configureChains(
-  [allChains.goerli],
+  [allChains.goerli, allChains.sepolia],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
 

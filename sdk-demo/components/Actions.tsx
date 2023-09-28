@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi'
 import BuyButton from './BuyButton'
 import BidButton from './BidButton'
 import { useEffect, useState } from 'react'
+import TransferButton from './TransferButton'
 
 function Actions() {
   const { isConnected } = useAccount()
@@ -26,6 +27,7 @@ function Actions() {
     >
       <BuyButton />
       <BidButton />
+      <TransferButton />
     </div>
   ) : (
     <></>
