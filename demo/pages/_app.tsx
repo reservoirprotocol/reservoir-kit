@@ -45,6 +45,7 @@ const { chains, publicClient } = configureChains(
   [
     allChains.mainnet,
     allChains.goerli,
+    allChains.sepolia,
     allChains.polygon,
     allChains.optimism,
     allChains.arbitrum,
@@ -130,6 +131,10 @@ const AppWrapper: FC<any> = ({ children }) => {
                   coinGeckoId: 'dai',
                 },
               ],
+            },
+            {
+              ...reservoirChains.sepolia,
+              active: CHAIN_ID === allChains.sepolia.id
             },
             {
               ...reservoirChains.polygon,

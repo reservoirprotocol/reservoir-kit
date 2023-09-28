@@ -24,12 +24,10 @@ const Button = styled('button', {
   '&:disabled': {
     backgroundColor: '$neutralBorder',
     color: '$neutralText',
-    cursor: 'default',
   },
   '&:disabled:hover': {
     backgroundColor: '$neutralBorderHover',
     color: '$neutralText',
-    cursor: 'default',
   },
   variants: {
     color: {
