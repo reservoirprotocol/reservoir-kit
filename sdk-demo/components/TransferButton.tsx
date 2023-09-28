@@ -8,6 +8,7 @@ function TransferButton() {
   const { data: signer } = useSigner()
   const [to, setTo] = useState<Address>('0x72D04b5b45a8C800D01E13791d2396C8D160181a')
   const [token, setToken] = useState('0x932ca55b9ef0b3094e8fa82435b3b4c50d713043:19')
+  const [quantity, setQuantity] = useState(1)
 
   return (
     <div
@@ -27,6 +28,8 @@ function TransferButton() {
         <div>
         <b>Token:</b>
         <input value={token} onChange={(e) => setToken(e.target.value) } style={{width:'100%'}}/>
+        <b>Quantity:</b>
+        <input value={quantity} type='number' onChange={(e) => setQuantity(Number(e.target.value))} style={{width: '100%'}} />
       </div>
       <button
         onClick={() => {
@@ -39,7 +42,7 @@ function TransferButton() {
             items: [
               {
                 token: token,
-                quantity: 1
+                quantity: quantity ?? 1,
               },
             ],
             wallet: adaptEthersSigner(signer),
