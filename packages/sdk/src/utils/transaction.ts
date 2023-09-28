@@ -55,7 +55,7 @@ export async function sendTransactionSafely(
     .catch((error) => {
       getClient()?.log(
         ['Error in waitForTransactionReceipt', error],
-        LogLevel.Verbose
+        LogLevel.Error
       )
     })
 
@@ -88,11 +88,13 @@ export async function sendTransactionSafely(
   }
 
   if (attemptCount >= maximumAttempts) {
-    throw `Failed to get an ok response after ${attemptCount} attempt(s), aborting`
+    throw Error(
+      `Failed to get an ok response after ${attemptCount} attempt(s), aborting`
+    )
   }
 
   if (transactionCancelled) {
-    throw 'Transaction was cancelled'
+    throw Error('Transaction was cancelled')
   }
 
   return true
