@@ -516,18 +516,18 @@ export const CollectModalRenderer: FC<Props> = ({
   // Determine if user has enough funds in paymentToken
   useEffect(() => {
     if (
-      paymentCurrency?.balance &&
-      paymentCurrency?.currencyTotal &&
+      paymentCurrency?.balance != undefined &&
+      paymentCurrency?.currencyTotal != undefined &&
       Number(
         formatUnits(
           BigInt(paymentCurrency?.balance),
           paymentCurrency?.decimals || 18
         )
-      ) >= paymentCurrency?.currencyTotal
+      ) < paymentCurrency?.currencyTotal
     ) {
-      setHasEnoughCurrency(true)
-    } else {
       setHasEnoughCurrency(false)
+    } else {
+      setHasEnoughCurrency(true)
     }
   }, [total, paymentCurrency])
 
@@ -730,7 +730,6 @@ export const CollectModalRenderer: FC<Props> = ({
       })
       .catch((e: any) => {
         const error = e as Error
-        //@ts-ignore
         const transactionError = new Error(error?.message || '', {
           cause: error,
         })
