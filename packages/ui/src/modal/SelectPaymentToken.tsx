@@ -78,7 +78,7 @@ export const SelectPaymentToken: FC<Props> = ({
                     ? formatBN(
                         paymentToken?.currencyTotal,
                         6,
-                        paymentToken.decimals
+                        paymentToken?.decimals
                       )
                     : 0}
                 </Text>

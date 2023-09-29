@@ -204,10 +204,12 @@ export const CollectModalRenderer: FC<Props> = ({
   const paymentTokens = usePaymentTokens(
     open,
     address as Address,
-    defaultCurrency ?? chainCurrency,
+    paymentCurrency ?? chainCurrency,
     totalIncludingFees,
     rendererChain?.id
   )
+
+  console.log(paymentTokens)
 
   const usdPrice = paymentCurrency?.usdPrice || '0'
   const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
@@ -516,6 +518,7 @@ export const CollectModalRenderer: FC<Props> = ({
       setContentMode(undefined)
       setTransactionError(null)
       setFetchedInitialOrders(false)
+      setPaymentCurrency(undefined)
     }
   }, [open])
 

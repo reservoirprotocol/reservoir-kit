@@ -22,6 +22,8 @@ export default function (
   preferredCurrencyTotalPrice: bigint,
   chainId?: number
 ) {
+  console.log('preferredCurrency: ', preferredCurrency)
+  console.log('preferredCurrencyTotalPrice: ', preferredCurrencyTotalPrice)
   const client = useReservoirClient()
   const chain =
     chainId !== undefined
@@ -102,6 +104,8 @@ export default function (
 
         const conversionData = preferredCurrencyConversions?.data?.[i]
 
+        console.log('conversion data: ', conversionData, currency?.name)
+
         if (conversionData && preferredCurrency?.decimals) {
           debugger
         }
@@ -116,11 +120,21 @@ export default function (
             currency.decimals - preferredCurrency.decimals
           )
           const unitDifference = BigInt(10 ** decimalDifference)
+
+          const conversionRateDecimals = (
+            conversionData?.conversion.split('.')[1] || ''
+          ).length
+
           const currencyConversion = BigInt(
-            Number(conversionData.conversion) * 10 ** decimalDifference
+            Math.round(
+              Number(conversionData.conversion) *
+                10 ** preferredCurrency.decimals
+            )
           )
+
           currencyTotal =
-            (preferredCurrencyTotalPrice * unitDifference) / currencyConversion
+            (preferredCurrencyTotalPrice * (unitDifference || 1n)) /
+            currencyConversion
 
           if (currencyTotal === 0n) {
             currencyTotal = 1n
