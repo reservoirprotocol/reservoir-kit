@@ -108,24 +108,20 @@ export default function (
         let currencyTotal
 
         if (
+          preferredCurrencyTotalPrice &&
           conversionData?.conversion != undefined &&
           Number(conversionData?.conversion) > 0
         ) {
-          currencyTotal = BigInt(
-            Math.round(
-              Number(preferredCurrencyTotalPrice) *
-                Number(conversionData.conversion)
-            )
+          const decimalDifference = Math.abs(
+            currency.decimals - preferredCurrency.decimals
           )
+          const unitDifference = BigInt(10 ** decimalDifference)
+          const currencyConversion = BigInt(
+            Number(conversionData.conversion) * 10 ** decimalDifference
+          )
+          currencyTotal =
+            (preferredCurrencyTotalPrice * unitDifference) / currencyConversion
 
-          // currencyTotal =
-          //   preferredCurrencyTotalPrice /
-          //   BigInt(
-          //     Math.round(
-          //       Number(conversionData.conversion) *
-          //         10 ** preferredCurrency.decimals
-          //     )
-          //   )
           if (currencyTotal === 0n) {
             currencyTotal = 1n
           }
@@ -133,7 +129,7 @@ export default function (
           currencyTotal = 0n
         }
 
-        const currencyUnit = BigInt(10 ** preferredCurrency.decimals)
+        const currencyUnit = BigInt(10 ** currency.decimals)
         const usdUnit = BigInt(10 ** 6)
 
         const usdPrice = conversionData?.usd || '0'

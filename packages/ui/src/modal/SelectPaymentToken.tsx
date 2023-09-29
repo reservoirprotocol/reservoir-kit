@@ -75,7 +75,11 @@ export const SelectPaymentToken: FC<Props> = ({
               <Flex align="center" css={{ gap: '$3' }}>
                 <Text style="subtitle2">
                   {paymentToken?.currencyTotal
-                    ? formatBN(paymentToken?.currencyTotal, 6)
+                    ? formatBN(
+                        paymentToken?.currencyTotal,
+                        6,
+                        paymentToken.decimals
+                      )
                     : 0}
                 </Text>
                 {isSelectedCurrency ? (
