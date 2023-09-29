@@ -31,7 +31,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
   faChevronDown,
-  faCircleExclamation,
   faClose,
 } from '@fortawesome/free-solid-svg-icons'
 const ModalCopy = {

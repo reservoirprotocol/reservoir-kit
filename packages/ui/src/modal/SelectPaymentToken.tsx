@@ -24,13 +24,14 @@ export const SelectPaymentToken: FC<Props> = ({
   return (
     <Flex direction="column" css={{ width: '100%', gap: '$1', px: '$3' }}>
       {paymentTokens?.map((paymentToken) => {
-        const isSelectedCurrency = currency?.address === paymentToken?.address
+        const isSelectedCurrency =
+          currency?.address.toLowerCase() === paymentToken?.address
         const formattedBalance = formatUnits(
           BigInt(paymentToken?.balance || 0),
           paymentToken?.decimals || 18
         )
 
-        if (paymentToken?.currencyTotal)
+        if (paymentToken?.currencyTotal != undefined)
           return (
             <Button
               key={paymentToken?.address}
@@ -73,7 +74,9 @@ export const SelectPaymentToken: FC<Props> = ({
               </Flex>
               <Flex align="center" css={{ gap: '$3' }}>
                 <Text style="subtitle2">
-                  {formatNumber(paymentToken?.currencyTotal, 6)}
+                  {paymentToken?.currencyTotal
+                    ? formatNumber(paymentToken?.currencyTotal, 6)
+                    : 0}
                 </Text>
                 {isSelectedCurrency ? (
                   <Box css={{ color: '$accentSolidHover' }}>

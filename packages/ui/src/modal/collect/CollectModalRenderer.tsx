@@ -191,6 +191,10 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
 
+  const [defaultCurrency, setDefaultCurrency] = useState<
+    EnhancedCurrency | undefined
+  >(undefined)
+
   const [paymentCurrency, setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
@@ -198,7 +202,7 @@ export const CollectModalRenderer: FC<Props> = ({
   const paymentTokens = usePaymentTokens(
     open,
     address as Address,
-    paymentCurrency || chainCurrency,
+    defaultCurrency ?? chainCurrency,
     totalIncludingFees,
     rendererChain?.id
   )
@@ -215,6 +219,7 @@ export const CollectModalRenderer: FC<Props> = ({
     let options: BuyTokenOptions = {
       partial: true,
       onlyPath: true,
+      currency: paymentCurrency?.address,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -301,6 +306,7 @@ export const CollectModalRenderer: FC<Props> = ({
     tokenId,
     mode,
     token?.token?.tokenId,
+    paymentCurrency?.address,
     is1155,
   ])
 
@@ -319,7 +325,15 @@ export const CollectModalRenderer: FC<Props> = ({
         return () => clearInterval(intervalId)
       }
     }
-  }, [client, wallet, open, fetchBuyPathIfIdle, token?.token?.tokenId, is1155])
+  }, [
+    client,
+    wallet,
+    open,
+    fetchBuyPathIfIdle,
+    token?.token?.tokenId,
+    is1155,
+    paymentCurrency?.address,
+  ])
 
   const calculateFees = useCallback(
     (totalPrice: number) => {
@@ -417,7 +431,6 @@ export const CollectModalRenderer: FC<Props> = ({
     setFeeOnTop(fees)
     setTotal(updatedTotal)
     setTotalIncludingFees(updatedTotal + fees)
-    debugger
   }, [
     selectedTokens,
     paymentCurrency,
@@ -428,18 +441,19 @@ export const CollectModalRenderer: FC<Props> = ({
     orders,
   ])
 
-  // Determine if user has enough funds
   useEffect(() => {
     if (!paymentTokens[0] || paymentTokens.length <= 1) {
       return
     } else if (contentMode === 'mint') {
       setPaymentCurrency(chainCurrency)
+      setDefaultCurrency(chainCurrency)
     } else if (!paymentCurrency && selectedTokens.length > 0) {
-      setPaymentCurrency(
+      const firstListingCurrency =
         paymentTokens.find(
           (token) => token.address === selectedTokens[0].currency?.toLowerCase()
         ) || paymentTokens[0]
-      )
+      setPaymentCurrency(firstListingCurrency)
+      setDefaultCurrency(firstListingCurrency)
     }
   }, [paymentTokens, chainCurrency, selectedTokens])
 

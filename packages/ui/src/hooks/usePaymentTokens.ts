@@ -31,8 +31,8 @@ export default function (
 
     if (
       !paymentTokens
-        ?.map((currency) => currency.address)
-        .includes(preferredCurrency.address)
+        ?.map((currency) => currency.address.toLowerCase())
+        .includes(preferredCurrency.address.toLowerCase())
     ) {
       paymentTokens?.push(preferredCurrency)
     }
@@ -102,7 +102,7 @@ export default function (
 
         const currencyTotal =
           preferredCurrencyTotalPrice / Number(conversionData?.conversion)
-        debugger
+
         const usdPrice = conversionData?.usd || 0
         const usdTotal = currencyTotal * Number(usdPrice ?? 0)
 
