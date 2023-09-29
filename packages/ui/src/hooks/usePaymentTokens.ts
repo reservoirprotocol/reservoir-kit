@@ -4,20 +4,21 @@ import { useReservoirClient, useCurrencyConversions } from '.'
 import { useMemo } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
+import { formatBN } from 'packages/ui/src/lib/numbers'
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
       usdPrice?: number
-      usdTotal?: number
+      usdTotal?: string
       balance?: string | number | bigint
-      currencyTotal?: number
+      currencyTotal?: bigint
     }
 
 export default function (
   open: boolean,
   address: Address,
   preferredCurrency: PaymentToken,
-  preferredCurrencyTotalPrice: number,
+  preferredCurrencyTotalPrice: bigint,
   chainId?: number
 ) {
   const client = useReservoirClient()
@@ -101,10 +102,18 @@ export default function (
         const conversionData = preferredCurrencyConversions?.data?.[i]
 
         const currencyTotal =
-          preferredCurrencyTotalPrice / Number(conversionData?.conversion)
+          preferredCurrencyTotalPrice /
+          BigInt(conversionData?.conversion ?? '0')
+
+        const currencyUnit = BigInt(10 ** preferredCurrency.decimals)
+        const usdUnit = BigInt(10 ** 6)
 
         const usdPrice = conversionData?.usd || 0
-        const usdTotal = currencyTotal * Number(usdPrice ?? 0)
+        const usdPriceRaw = Math.round(Number(usdPrice) * 10 ** 6)
+        const usdTotal = formatBN(
+          (usdUnit * currencyUnit) / BigInt(usdPriceRaw),
+          6
+        )
 
         return {
           ...currency,

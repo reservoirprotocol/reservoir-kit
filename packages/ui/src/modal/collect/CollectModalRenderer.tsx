@@ -66,7 +66,7 @@ export type ChildrenProps = {
   paymentTokens: EnhancedCurrency[]
   total: number
   totalIncludingFees: number
-  totalUsd: number
+  totalUsd: string | number
   feeOnTop: number
   feeUsd: number
   usdPrice: number

@@ -1,4 +1,3 @@
-import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import React, { FC } from 'react'
 import {
   Flex,
@@ -19,10 +18,9 @@ type Props = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   token?: NonNullable<ReturnType<typeof useTokens>['data']>[0]
   itemCount: number
-  totalPrice: number
+  totalPrice: number | bigint
   usdPrice: number
   currency?: PaymentToken
-  chain?: ReservoirChain | null
   size?: Size
   chainId?: number
 }
@@ -35,7 +33,6 @@ export const CollectCheckout: FC<Props> = ({
   chainId,
   usdPrice,
   currency,
-  chain,
 }) => {
   const itemSubject = itemCount === 1 ? 'item' : 'items'
 
