@@ -4,11 +4,12 @@ import { useReservoirClient, useCurrencyConversions } from '.'
 import { useMemo } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
-import { formatBN } from 'packages/ui/src/lib/numbers'
+import { formatBN } from '../lib/numbers'
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
-      usdPrice?: number
+      usdPrice?: string
+      usdPriceRaw?: bigint
       usdTotal?: string
       balance?: string | number | bigint
       currencyTotal?: bigint
@@ -101,24 +102,51 @@ export default function (
 
         const conversionData = preferredCurrencyConversions?.data?.[i]
 
-        const currencyTotal =
-          preferredCurrencyTotalPrice /
-          BigInt(conversionData?.conversion ?? '0')
+        if (conversionData && preferredCurrency?.decimals) {
+          debugger
+        }
+        let currencyTotal
+
+        if (
+          conversionData?.conversion != undefined &&
+          Number(conversionData?.conversion) > 0
+        ) {
+          currencyTotal = BigInt(
+            Math.round(
+              Number(preferredCurrencyTotalPrice) *
+                Number(conversionData.conversion)
+            )
+          )
+
+          // currencyTotal =
+          //   preferredCurrencyTotalPrice /
+          //   BigInt(
+          //     Math.round(
+          //       Number(conversionData.conversion) *
+          //         10 ** preferredCurrency.decimals
+          //     )
+          //   )
+          if (currencyTotal === 0n) {
+            currencyTotal = 1n
+          }
+        } else {
+          currencyTotal = 0n
+        }
 
         const currencyUnit = BigInt(10 ** preferredCurrency.decimals)
         const usdUnit = BigInt(10 ** 6)
 
-        const usdPrice = conversionData?.usd || 0
+        const usdPrice = conversionData?.usd || '0'
         const usdPriceRaw = Math.round(Number(usdPrice) * 10 ** 6)
-        const usdTotal = formatBN(
-          (usdUnit * currencyUnit) / BigInt(usdPriceRaw),
-          6
-        )
+        const usdTotal = usdPriceRaw
+          ? formatBN((usdUnit * currencyUnit) / BigInt(usdPriceRaw), 6)
+          : '0'
 
         return {
           ...currency,
           address: currency.address.toLowerCase(),
           usdPrice,
+          usdPriceRaw: BigInt(usdPriceRaw),
           usdTotal,
           balance,
           currencyTotal,

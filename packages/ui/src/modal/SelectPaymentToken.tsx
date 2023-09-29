@@ -4,7 +4,7 @@ import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import { formatNumber } from '../lib/numbers'
+import { formatBN, formatNumber } from '../lib/numbers'
 
 type Props = {
   paymentTokens: EnhancedCurrency[]
@@ -75,7 +75,7 @@ export const SelectPaymentToken: FC<Props> = ({
               <Flex align="center" css={{ gap: '$3' }}>
                 <Text style="subtitle2">
                   {paymentToken?.currencyTotal
-                    ? formatNumber(paymentToken?.currencyTotal, 6)
+                    ? formatBN(paymentToken?.currencyTotal, 6)
                     : 0}
                 </Text>
                 {isSelectedCurrency ? (

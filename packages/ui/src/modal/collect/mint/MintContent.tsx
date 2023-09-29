@@ -48,6 +48,7 @@ export const MintContent: FC<
   maxItemAmount,
   paymentCurrency,
   usdPrice,
+  usdPriceRaw,
   feeOnTop,
   feeUsd,
   currentChain,
@@ -292,9 +293,9 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={paymentCurrency?.currencyTotal || 0}
+              totalPrice={paymentCurrency?.currencyTotal || 0n}
               currency={paymentCurrency}
-              usdPrice={usdPrice}
+              usdPrice={usdPriceRaw}
             />
           </Box>
           <Flex
@@ -335,7 +336,7 @@ export const MintContent: FC<
                         key={index}
                         item={item}
                         pathMap={pathMap}
-                        usdPrice={usdPrice}
+                        usdPrice={+usdPrice}
                         chain={currentChain}
                         open={true}
                       />
@@ -383,9 +384,9 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={paymentCurrency?.currencyTotal || 0}
+              totalPrice={paymentCurrency?.currencyTotal || 0n}
               currency={paymentCurrency}
-              usdPrice={usdPrice}
+              usdPrice={usdPriceRaw}
             />
           </Box>
           <Flex

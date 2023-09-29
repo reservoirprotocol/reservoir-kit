@@ -18,8 +18,8 @@ type Props = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   token?: NonNullable<ReturnType<typeof useTokens>['data']>[0]
   itemCount: number
-  totalPrice: number | bigint
-  usdPrice: number
+  totalPrice: bigint
+  usdPrice: bigint
   currency?: PaymentToken
   size?: Size
   chainId?: number

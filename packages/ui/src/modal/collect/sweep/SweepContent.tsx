@@ -58,6 +58,7 @@ export const SweepContent: FC<
   feeUsd,
   isConnected,
   usdPrice,
+  usdPriceRaw,
   currentChain,
   paymentTokens,
   hasEnoughCurrency,
@@ -219,7 +220,7 @@ export const SweepContent: FC<
                     </Text>
                     <FormatCryptoCurrency
                       chainId={chainId}
-                      amount={total / itemAmount}
+                      amount={total / BigInt(itemAmount)}
                       address={paymentCurrency?.address}
                       decimals={paymentCurrency?.decimals}
                       symbol={paymentCurrency?.symbol}
@@ -393,9 +394,9 @@ export const SweepContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={paymentCurrency?.currencyTotal || 0}
+              totalPrice={paymentCurrency?.currencyTotal || 0n}
               currency={paymentCurrency}
-              usdPrice={usdPrice}
+              usdPrice={usdPriceRaw}
             />
           </Box>
           <Flex
@@ -482,7 +483,7 @@ export const SweepContent: FC<
                       <ApprovePurchasingCollapsible
                         item={item}
                         pathMap={pathMap}
-                        usdPrice={usdPrice}
+                        usdPrice={+usdPrice}
                         chain={currentChain}
                         open={true}
                       />
@@ -530,9 +531,9 @@ export const SweepContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={paymentCurrency?.currencyTotal || 0}
+              totalPrice={paymentCurrency?.currencyTotal || 0n}
               currency={paymentCurrency}
-              usdPrice={usdPrice}
+              usdPrice={usdPriceRaw}
             />
           </Box>
           <Flex

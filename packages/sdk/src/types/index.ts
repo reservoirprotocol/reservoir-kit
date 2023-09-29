@@ -95,7 +95,7 @@ export type ReservoirWallet = {
 }
 
 export type ExpectedPrice = {
-  amount: number
+  amount?: number
   raw?: bigint
   currencyAddress?: string
   currencyDecimals?: number
