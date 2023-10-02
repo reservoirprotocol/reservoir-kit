@@ -5,6 +5,7 @@ import React, {
   useCallback,
   ReactNode,
   useMemo,
+  useContext,
 } from 'react'
 import {
   useTokens,
@@ -30,6 +31,7 @@ import { parseUnits } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -151,6 +153,7 @@ export const BidModalRenderer: FC<Props> = ({
   }).find(({ id }) => rendererChain?.id === id)
 
   const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const providerOptions = useContext(ProviderOptionsContext)
 
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -258,7 +261,9 @@ export const BidModalRenderer: FC<Props> = ({
           }&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
   } else {
-    convertLink = `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${wrappedContractAddress}`
+    convertLink = providerOptions.disableJumperLink
+      ? ''
+      : `https://jumper.exchange/?toChain=${wagmiChain?.id}&toToken=${wrappedContractAddress}`
   }
 
   const feeBps: number | undefined = useMemo(() => {

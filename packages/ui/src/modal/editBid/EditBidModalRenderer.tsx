@@ -1,4 +1,11 @@
-import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
+import React, {
+  FC,
+  useEffect,
+  useState,
+  useCallback,
+  ReactNode,
+  useContext,
+} from 'react'
 import {
   useCoinConversion,
   useReservoirClient,
@@ -29,6 +36,7 @@ import { parseUnits } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 export enum EditBidStep {
   Edit,
@@ -117,6 +125,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   }).find(({ id }) => rendererChain?.id === id)
 
   const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const providerOptions = useContext(ProviderOptionsContext)
 
   const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -211,7 +220,9 @@ export const EditBidModalRenderer: FC<Props> = ({
           }&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
   } else {
-    convertLink = `https://jumper.exchange/?toChain=${wagmiChain?.id}&toToken=${wrappedContractAddress}`
+    convertLink = providerOptions.disableJumperLink
+      ? ''
+      : `https://jumper.exchange/?toChain=${wagmiChain?.id}&toToken=${wrappedContractAddress}`
   }
 
   const isTokenBid = bid?.criteria?.kind == 'token'

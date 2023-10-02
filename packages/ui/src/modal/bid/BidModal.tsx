@@ -765,6 +765,7 @@ export function BidModal({
                           }}
                         >
                           <Button
+                            disabled={convertLink !== ''}
                             css={{ flex: '1 0 auto' }}
                             color="secondary"
                             onClick={() => {
