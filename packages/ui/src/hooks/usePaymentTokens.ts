@@ -112,11 +112,10 @@ export default function (
         // 100000000 (value you want to convert) * 1000000000000000000 (eth) / 1600000000 (usd)
 
         const currencyTotalRaw = conversionData?.conversion
-          ? (preferredCurrencyTotalPrice *
-              parseUnits('1', preferredCurrency.decimals)) /
+          ? (preferredCurrencyTotalPrice * parseUnits('1', currency.decimals)) /
             parseUnits(
               conversionData?.conversion?.toString(),
-              currency.decimals
+              preferredCurrency.decimals
             )
           : undefined
 
@@ -129,10 +128,10 @@ export default function (
 
         const usdPrice = Number(conversionData?.usd ?? 0)
         const usdPriceRaw = BigInt(Math.round(Number(usdPrice) * 10 ** 6))
-        const usdTotalPriceRaw = (usdUnit * currencyUnit) / usdPriceRaw
-        const usdTotalFormatted = usdPriceRaw
-          ? formatBN(usdTotalPriceRaw, 6)
-          : '0'
+        const usdTotalPriceRaw = usdPriceRaw
+          ? (usdUnit * currencyUnit) / usdPriceRaw
+          : 0n
+        const usdTotalFormatted = formatBN(usdTotalPriceRaw, 6)
 
         return {
           ...currency,

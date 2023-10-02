@@ -14,8 +14,7 @@ import {
   ReservoirChain,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
-import { toFixed } from '../../lib/numbers'
-import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { Address, formatUnits, zeroAddress } from 'viem'
 import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
@@ -222,7 +221,7 @@ export const CollectModalRenderer: FC<Props> = ({
     let options: BuyTokenOptions = {
       partial: true,
       onlyPath: true,
-      currency: chainCurrency.address,
+      currency: paymentCurrency?.address,
     }
 
     if (normalizeRoyalties !== undefined) {
