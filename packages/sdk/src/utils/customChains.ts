@@ -51,11 +51,11 @@ export const ancient8Testnet = {
   blockExplorers: {
     etherscan: {
       name: 'a8scan',
-      url: 'https://testnet.a8scan.io/',
+      url: 'https://testnet.a8scan.io',
     },
     default: {
       name: 'a8scan',
-      url: 'https://testnet.a8scan.io/',
+      url: 'https://testnet.a8scan.io',
     },
   },
 } as const satisfies Chain
