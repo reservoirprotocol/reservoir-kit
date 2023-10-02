@@ -480,8 +480,9 @@ export const SweepContent: FC<
                       {stepData?.currentStep?.items.length} separate
                       transactions.
                     </Text>
-                    {stepData?.currentStep?.items.map((item) => (
+                    {stepData?.currentStep?.items.map((item, idx) => (
                       <ApprovePurchasingCollapsible
+                        key={idx}
                         item={item}
                         pathMap={pathMap}
                         usdPrice={+usdPrice}
@@ -601,13 +602,14 @@ export const SweepContent: FC<
                 : 'Congrats! Purchase was successful.'}
             </Text>
             <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-              {stepData?.currentStep?.items?.map((item) => {
+              {stepData?.currentStep?.items?.map((item, idx) => {
                 const txHash = item.txHash
                   ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(-4)}`
                   : ''
 
                 return (
                   <Anchor
+                    key={idx}
                     href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
                     color="primary"
                     weight="medium"
