@@ -4,7 +4,6 @@ import { useReservoirClient, useCurrencyConversions } from '.'
 import { useMemo } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
-import { formatBN } from '../lib/numbers'
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
@@ -24,8 +23,6 @@ export default function (
   preferredCurrencyTotalPrice: bigint,
   chainId?: number
 ) {
-  console.log('preferredCurrency: ', preferredCurrency)
-  console.log('preferredCurrencyTotalPrice: ', preferredCurrencyTotalPrice)
   const client = useReservoirClient()
   const chain =
     chainId !== undefined
@@ -106,11 +103,6 @@ export default function (
 
         const conversionData = preferredCurrencyConversions?.data?.[i]
 
-        console.log('conversion data: ', conversionData, currency?.name)
-
-        // Example if the price of eth is 1600 usdc
-        // 100000000 (value you want to convert) * 1000000000000000000 (eth) / 1600000000 (usd)
-
         const currencyTotalRaw = conversionData?.conversion
           ? (preferredCurrencyTotalPrice * parseUnits('1', currency.decimals)) /
             parseUnits(
@@ -123,15 +115,16 @@ export default function (
           ? formatUnits(currencyTotalRaw, currency.decimals)
           : undefined
 
-        const currencyUnit = BigInt(10 ** currency.decimals)
-        const usdUnit = BigInt(10 ** 6)
-
         const usdPrice = Number(conversionData?.usd ?? 0)
-        const usdPriceRaw = BigInt(Math.round(Number(usdPrice) * 10 ** 6))
-        const usdTotalPriceRaw = usdPriceRaw
-          ? (usdUnit * currencyUnit) / usdPriceRaw
-          : 0n
-        const usdTotalFormatted = formatBN(usdTotalPriceRaw, 6)
+        const usdPriceRaw = parseUnits(usdPrice.toString(), 6)
+        const usdTotalPriceRaw = conversionData?.usd
+          ? (preferredCurrencyTotalPrice * usdPriceRaw) /
+            parseUnits('1', preferredCurrency?.decimals)
+          : undefined
+
+        const usdTotalFormatted = usdTotalPriceRaw
+          ? formatUnits(usdTotalPriceRaw, 6)
+          : undefined
 
         return {
           ...currency,
