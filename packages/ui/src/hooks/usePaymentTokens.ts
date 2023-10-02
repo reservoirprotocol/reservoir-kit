@@ -1,5 +1,5 @@
 import { erc20ABI, useBalance, useContractReads } from 'wagmi'
-import { Address, zeroAddress } from 'viem'
+import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useReservoirClient, useCurrencyConversions } from '.'
 import { useMemo } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
@@ -8,11 +8,13 @@ import { formatBN } from '../lib/numbers'
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
-      usdPrice?: string
+      usdPrice?: number
       usdPriceRaw?: bigint
-      usdTotal?: string
+      usdTotalPriceRaw?: bigint
+      usdTotalFormatted?: string // @TODO: confirm this is needed
       balance?: string | number | bigint
-      currencyTotal?: bigint
+      currencyTotalRaw?: bigint
+      currencyTotalFormatted?: string // @TODO: confirm this is needed
     }
 
 export default function (
@@ -106,60 +108,42 @@ export default function (
 
         console.log('conversion data: ', conversionData, currency?.name)
 
-        if (conversionData && preferredCurrency?.decimals) {
-          debugger
-        }
-        let currencyTotal
+        // Example if the price of eth is 1600 usdc
+        // 100000000 (value you want to convert) * 1000000000000000000 (eth) / 1600000000 (usd)
 
-        if (
-          preferredCurrencyTotalPrice &&
-          conversionData?.conversion != undefined &&
-          Number(conversionData?.conversion) > 0
-        ) {
-          const decimalDifference = Math.abs(
-            currency.decimals - preferredCurrency.decimals
-          )
-          const unitDifference = BigInt(10 ** decimalDifference)
-
-          const conversionRateDecimals = (
-            conversionData?.conversion.split('.')[1] || ''
-          ).length
-
-          const currencyConversion = BigInt(
-            Math.round(
-              Number(conversionData.conversion) *
-                10 ** preferredCurrency.decimals
+        const currencyTotalRaw = conversionData?.conversion
+          ? (preferredCurrencyTotalPrice *
+              parseUnits('1', preferredCurrency.decimals)) /
+            parseUnits(
+              conversionData?.conversion?.toString(),
+              currency.decimals
             )
-          )
+          : undefined
 
-          currencyTotal =
-            (preferredCurrencyTotalPrice * (unitDifference || 1n)) /
-            currencyConversion
-
-          if (currencyTotal === 0n) {
-            currencyTotal = 1n
-          }
-        } else {
-          currencyTotal = 0n
-        }
+        const currencyTotalFormatted = currencyTotalRaw
+          ? formatUnits(currencyTotalRaw, currency.decimals)
+          : undefined
 
         const currencyUnit = BigInt(10 ** currency.decimals)
         const usdUnit = BigInt(10 ** 6)
 
-        const usdPrice = conversionData?.usd || '0'
-        const usdPriceRaw = Math.round(Number(usdPrice) * 10 ** 6)
-        const usdTotal = usdPriceRaw
-          ? formatBN((usdUnit * currencyUnit) / BigInt(usdPriceRaw), 6)
+        const usdPrice = Number(conversionData?.usd ?? 0)
+        const usdPriceRaw = BigInt(Math.round(Number(usdPrice) * 10 ** 6))
+        const usdTotalPriceRaw = (usdUnit * currencyUnit) / usdPriceRaw
+        const usdTotalFormatted = usdPriceRaw
+          ? formatBN(usdTotalPriceRaw, 6)
           : '0'
 
         return {
           ...currency,
           address: currency.address.toLowerCase(),
           usdPrice,
-          usdPriceRaw: BigInt(usdPriceRaw),
-          usdTotal,
+          usdPriceRaw,
+          usdTotalPriceRaw,
+          usdTotalFormatted,
           balance,
-          currencyTotal,
+          currencyTotalRaw,
+          currencyTotalFormatted,
         }
       })
       .sort((a, b) => {

@@ -31,7 +31,7 @@ export const SelectPaymentToken: FC<Props> = ({
           paymentToken?.decimals || 18
         )
 
-        if (paymentToken?.currencyTotal != undefined)
+        if (paymentToken?.currencyTotalRaw != undefined)
           return (
             <Button
               key={paymentToken?.address}
@@ -74,9 +74,9 @@ export const SelectPaymentToken: FC<Props> = ({
               </Flex>
               <Flex align="center" css={{ gap: '$3' }}>
                 <Text style="subtitle2">
-                  {paymentToken?.currencyTotal
+                  {paymentToken?.currencyTotalRaw
                     ? formatBN(
-                        paymentToken?.currencyTotal,
+                        paymentToken?.currencyTotalRaw,
                         6,
                         paymentToken?.decimals
                       )

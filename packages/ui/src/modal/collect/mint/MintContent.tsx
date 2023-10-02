@@ -224,14 +224,14 @@ export const MintContent: FC<
                     <FormatCryptoCurrency
                       chainId={chainId}
                       textStyle="h6"
-                      amount={paymentCurrency?.currencyTotal}
+                      amount={paymentCurrency?.currencyTotalRaw}
                       address={paymentCurrency?.address}
                       decimals={paymentCurrency?.decimals}
                       symbol={paymentCurrency?.symbol}
                       logoWidth={18}
                     />
                     <FormatCurrency
-                      amount={paymentCurrency?.usdTotal}
+                      amount={paymentCurrency?.usdTotalPriceRaw}
                       style="subtitle3"
                       color="subtle"
                     />
@@ -293,7 +293,7 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={paymentCurrency?.currencyTotal || 0n}
+              totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
               currency={paymentCurrency}
               usdPrice={usdPriceRaw}
             />
@@ -384,7 +384,7 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={paymentCurrency?.currencyTotal || 0n}
+              totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
               currency={paymentCurrency}
               usdPrice={usdPriceRaw}
             />

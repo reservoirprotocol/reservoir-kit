@@ -43,6 +43,7 @@ export const SweepContent: FC<
   }
 > = ({
   chainId,
+  chainCurrency,
   collection,
   token,
   orders,
@@ -303,14 +304,14 @@ export const SweepContent: FC<
                 <FormatCryptoCurrency
                   chainId={chainId}
                   textStyle="h6"
-                  amount={totalIncludingFees}
+                  amount={paymentCurrency?.currencyTotalRaw}
                   address={paymentCurrency?.address}
                   decimals={paymentCurrency?.decimals}
                   symbol={paymentCurrency?.symbol}
                   logoWidth={18}
                 />
                 <FormatCurrency
-                  amount={paymentCurrency?.usdTotal}
+                  amount={paymentCurrency?.usdTotalPriceRaw}
                   style="tiny"
                   color="subtle"
                 />
@@ -394,7 +395,7 @@ export const SweepContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={paymentCurrency?.currencyTotal || 0n}
+              totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
               currency={paymentCurrency}
               usdPrice={usdPriceRaw}
             />
@@ -531,7 +532,7 @@ export const SweepContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={paymentCurrency?.currencyTotal || 0n}
+              totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
               currency={paymentCurrency}
               usdPrice={usdPriceRaw}
             />

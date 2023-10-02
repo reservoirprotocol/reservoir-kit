@@ -66,10 +66,9 @@ export type ChildrenProps = {
   paymentTokens: EnhancedCurrency[]
   total: bigint
   totalIncludingFees: bigint
-  totalUsd: string | number
   feeOnTop: bigint
   feeUsd: bigint
-  usdPrice: string
+  usdPrice: number
   usdPriceRaw: bigint
   mintPrice: bigint
   currentChain: ReservoirChain | null | undefined
@@ -193,28 +192,27 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
 
-  const [defaultCurrency, setDefaultCurrency] = useState<
-    EnhancedCurrency | undefined
-  >(undefined)
-
-  const [paymentCurrency, setPaymentCurrency] = useState<
+  const [_paymentCurrency, setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
 
   const paymentTokens = usePaymentTokens(
     open,
     address as Address,
-    paymentCurrency ?? chainCurrency,
+    _paymentCurrency ?? chainCurrency,
     totalIncludingFees,
     rendererChain?.id
   )
 
+  const paymentCurrency = paymentTokens?.find(
+    (paymentToken) => paymentToken?.address === _paymentCurrency?.address
+  )
+
   console.log(paymentTokens)
 
-  const usdPrice = paymentCurrency?.usdPrice || '0'
+  const usdPrice = paymentCurrency?.usdPrice || 0
   const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
   const feeUsd = feeOnTop * usdPriceRaw
-  const totalUsd = paymentCurrency?.usdTotal || 0
 
   const fetchBuyPath = useCallback(() => {
     if (!client) {
@@ -224,7 +222,7 @@ export const CollectModalRenderer: FC<Props> = ({
     let options: BuyTokenOptions = {
       partial: true,
       onlyPath: true,
-      currency: paymentCurrency?.address,
+      currency: chainCurrency.address,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -450,18 +448,17 @@ export const CollectModalRenderer: FC<Props> = ({
   ])
 
   useEffect(() => {
-    if (!paymentTokens[0] || paymentTokens.length <= 1) {
+    if (!paymentTokens[0] || paymentTokens.length <= 1 || paymentCurrency) {
       return
-    } else if (contentMode === 'mint') {
+    }
+    if (contentMode === 'mint') {
       setPaymentCurrency(chainCurrency)
-      setDefaultCurrency(chainCurrency)
-    } else if (!paymentCurrency && selectedTokens.length > 0) {
+    } else if (selectedTokens.length > 0) {
       const firstListingCurrency =
         paymentTokens.find(
           (token) => token.address === selectedTokens[0].currency?.toLowerCase()
         ) || paymentTokens[0]
       setPaymentCurrency(firstListingCurrency)
-      setDefaultCurrency(firstListingCurrency)
     }
   }, [paymentTokens, chainCurrency, selectedTokens])
 
@@ -473,13 +470,8 @@ export const CollectModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (
       paymentCurrency?.balance != undefined &&
-      paymentCurrency?.currencyTotal != undefined &&
-      Number(
-        formatUnits(
-          BigInt(paymentCurrency?.balance),
-          paymentCurrency?.decimals || 18
-        )
-      ) < paymentCurrency?.currencyTotal
+      paymentCurrency?.currencyTotalRaw != undefined &&
+      BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
     ) {
       setHasEnoughCurrency(false)
     } else {
@@ -725,7 +717,6 @@ export const CollectModalRenderer: FC<Props> = ({
         paymentTokens,
         total,
         totalIncludingFees,
-        totalUsd,
         feeOnTop,
         feeUsd,
         usdPrice,
