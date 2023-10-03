@@ -165,7 +165,6 @@ export function BidModal({
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const providerOptions = useContext(ProviderOptionsContext)
   const datetimeElement = useRef<Flatpickr | null>(null)
   const [stepTitle, setStepTitle] = useState('')
   const [localMarketplace, setLocalMarketplace] = useState<ReturnType<
@@ -766,14 +765,14 @@ export function BidModal({
                           }}
                         >
                           <Button
-                            disabled={providerOptions.disableJumperLink}
+                            disabled={providerOptionsContext.disableJumperLink}
                             css={{ flex: '1 0 auto' }}
                             color="secondary"
                             onClick={() => {
                               window.open(convertLink, '_blank')
                             }}
                           >
-                            {providerOptions.disableJumperLink
+                            {providerOptionsContext.disableJumperLink
                               ? copy.ctaBid.length > 0
                                 ? copy.ctaBid
                                 : token && token.token
