@@ -207,8 +207,6 @@ export const CollectModalRenderer: FC<Props> = ({
     (paymentToken) => paymentToken?.address === _paymentCurrency?.address
   )
 
-  console.log(paymentTokens)
-
   const usdPrice = paymentCurrency?.usdPrice || 0
   const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
   const feeUsd = feeOnTop * usdPriceRaw

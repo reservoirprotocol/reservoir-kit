@@ -295,7 +295,7 @@ export const MintContent: FC<
               itemCount={itemAmount}
               totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
               currency={paymentCurrency}
-              usdPrice={usdPriceRaw}
+              usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
             />
           </Box>
           <Flex
@@ -386,7 +386,7 @@ export const MintContent: FC<
               itemCount={itemAmount}
               totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
               currency={paymentCurrency}
-              usdPrice={usdPriceRaw}
+              usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
             />
           </Box>
           <Flex
