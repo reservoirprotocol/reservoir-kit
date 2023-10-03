@@ -299,9 +299,9 @@ export async function executeSteps(
         // - the status changed to "completed"
         return data?.steps?.[incompleteStepIndex].items?.[
           incompleteStepItemIndex
-        ].data || data?.steps?.[incompleteStepIndex].items?.[
-          incompleteStepItemIndex
-        ].status === "complete"
+        ].data ||
+          data?.steps?.[incompleteStepIndex].items?.[incompleteStepItemIndex]
+            .status === 'complete'
           ? true
           : false
       })) as Execute
