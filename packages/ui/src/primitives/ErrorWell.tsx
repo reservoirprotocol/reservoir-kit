@@ -18,6 +18,8 @@ export default function ErrorWell({ error, css }: Props) {
   if (error) {
     if (error.message.includes('rejected')) {
       message = 'User rejected the request.'
+    } else if (error.message) {
+      message = error.message
     }
     if ((error as any)?.type === 'price mismatch') {
       message = error.message

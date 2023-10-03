@@ -192,6 +192,9 @@ export const CancelBidModalRenderer: FC<Props> = ({
         if (errorStatus >= 400 && errorStatus < 500) {
           message = error.message
         }
+        if (error.message.includes('rejected')) {
+          message = 'User rejected the request.'
+        }
         const transactionError = new Error(message, {
           cause: error,
         })

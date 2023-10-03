@@ -155,6 +155,12 @@ const AppWrapper: FC<any> = ({ children }) => {
               id: customChains.arbitrumNova.id,
               active: CHAIN_ID === customChains.arbitrumNova.id,
               apiKey: API_KEY
+            },
+            {
+              baseApiUrl: 'https://api-ancient8-testnet.reservoir.tools',
+              id: customChains.ancient8Testnet.id,
+              active: CHAIN_ID === customChains.ancient8Testnet.id,
+              apiKey: API_KEY
             }
           ],
           marketplaceFees: MARKETPLACE_FEES,

@@ -1,4 +1,15 @@
 
+## [v1.9.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d19b2b186a9935e29dc837d48d725a23d24abef8) (2023-09-21)
+
+* BidModal & ListModal: Fix retry logic [15763bd7](https://github.com/reservoirprotocol/reservoir-kit/commit/15763bd7123259ab28314ab928e6671b5c45fec0)
+
+## [v1.9.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f5118f9eebd85c2caf7214e523a82b35091c4076) (2023-09-21)
+
+* BuyModal & CollectModal: Allow opening without being connected [8beb0787](https://github.com/reservoirprotocol/reservoir-kit/commit/8beb078737d25fc341f144486016e31b05780219)
+* Improve "User Rejected" error [4d6d132b](https://github.com/reservoirprotocol/reservoir-kit/commit/4d6d132b0e6c86dde8a5e3ea4352cd0d62019505)
+* Add zkEVM WETH details [801b2ad7](https://github.com/reservoirprotocol/reservoir-kit/commit/801b2ad7d1e858df3d21efba695b2e1fca2c6b8f)
+* CollectModal: handle sweeping 721c tokens listed in a different currency [21ab7c26](https://github.com/reservoirprotocol/reservoir-kit/commit/21ab7c263516004ad933208ef241b901c468e980)
+
 ## [v1.8.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/758b2b703b9a7a64ef0be8d583f01b1460d89b34) (2023-09-18)
 
 - Update SDK
