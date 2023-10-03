@@ -7,7 +7,6 @@ import {
   useTokens,
 } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
-import Token from '../list/Token'
 import {
   BuyPath,
   Execute,
@@ -15,8 +14,7 @@ import {
   ReservoirChain,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
-import { toFixed } from '../../lib/numbers'
-import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { Address, formatUnits, zeroAddress } from 'viem'
 import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
@@ -39,15 +37,9 @@ export type CollectModalStepData = {
   path: Execute['path']
 }
 
-type Token = ReturnType<typeof useTokens>['data'][0]
-
 type BuyTokenOptions = Parameters<
   ReservoirClientActions['buyToken']
 >['0']['options']
-
-type Currency = NonNullable<
-  NonNullable<NonNullable<Token['market']>['floorAsk']>['price']
->['currency']
 
 export type CollectModalMode = 'preferMint' | 'mint' | 'trade'
 
@@ -65,24 +57,19 @@ export type ChildrenProps = {
   setItemAmount: React.Dispatch<React.SetStateAction<number>>
   maxItemAmount: number
   setMaxItemAmount: React.Dispatch<React.SetStateAction<number>>
-  listingCurrency: ReturnType<typeof useChainCurrency>
-  setListingCurrency: React.Dispatch<
-    React.SetStateAction<ReturnType<typeof useChainCurrency>>
-  >
   paymentCurrency?: EnhancedCurrency
   setPaymentCurrency: React.Dispatch<
     React.SetStateAction<EnhancedCurrency | undefined>
   >
   chainCurrency: ReturnType<typeof useChainCurrency>
-  isChainCurrency: boolean
   paymentTokens: EnhancedCurrency[]
-  total: number
-  totalIncludingFees: number
-  totalUsd: number
-  feeOnTop: number
-  feeUsd: number
+  total: bigint
+  totalIncludingFees: bigint
+  feeOnTop: bigint
+  feeUsd: bigint
   usdPrice: number
-  mintPrice: number
+  usdPriceRaw: bigint
+  mintPrice: bigint
   currentChain: ReservoirChain | null | undefined
   address?: string
   balance?: bigint
@@ -134,8 +121,8 @@ export const CollectModalRenderer: FC<Props> = ({
   const [collectStep, setCollectStep] = useState<CollectStep>(CollectStep.Idle)
   const [stepData, setStepData] = useState<CollectModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [total, setTotal] = useState(0)
-  const [totalIncludingFees, setTotalIncludingFees] = useState(0)
+  const [total, setTotal] = useState(0n)
+  const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
 
   const [contentMode, setContentMode] = useState<
     CollectModalContentMode | undefined
@@ -151,10 +138,11 @@ export const CollectModalRenderer: FC<Props> = ({
     }
   })
 
-  const mintPrice = orders?.[0]?.totalPrice || 0
+  // const mintPrice = orders?.[0]?.totalPrice || 0
+  const mintPrice = BigInt(orders?.[0]?.totalRawPrice || '0')
 
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
-  const [feeOnTop, setFeeOnTop] = useState(0)
+  const [feeOnTop, setFeeOnTop] = useState(0n)
 
   const currentChain = client?.currentChain()
 
@@ -163,10 +151,6 @@ export const CollectModalRenderer: FC<Props> = ({
     : currentChain
 
   const chainCurrency = useChainCurrency(rendererChain?.id)
-
-  const [listingCurrency, setListingCurrency] = useState(chainCurrency)
-
-  const isChainCurrency = listingCurrency.address === chainCurrency.address
 
   const contract = collectionId?.split(':')[0] as Address
 
@@ -206,21 +190,25 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
 
+  const [_paymentCurrency, setPaymentCurrency] = useState<
+    EnhancedCurrency | undefined
+  >(undefined)
+
   const paymentTokens = usePaymentTokens(
     open,
     address as Address,
-    listingCurrency,
+    _paymentCurrency ?? chainCurrency,
     totalIncludingFees,
     rendererChain?.id
   )
 
-  const [paymentCurrency, setPaymentCurrency] = useState<
-    EnhancedCurrency | undefined
-  >(undefined)
+  const paymentCurrency = paymentTokens?.find(
+    (paymentToken) => paymentToken?.address === _paymentCurrency?.address
+  )
 
-  const usdPrice = Number(paymentCurrency?.usdPrice || 0)
-  const feeUsd = feeOnTop * usdPrice
-  const totalUsd = paymentCurrency?.usdTotal || 0
+  const usdPrice = paymentCurrency?.usdPrice || 0
+  const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
+  const feeUsd = feeOnTop * usdPriceRaw
 
   const fetchBuyPath = useCallback(() => {
     if (!client) {
@@ -230,6 +218,7 @@ export const CollectModalRenderer: FC<Props> = ({
     let options: BuyTokenOptions = {
       partial: true,
       onlyPath: true,
+      currency: paymentCurrency?.address,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -314,9 +303,9 @@ export const CollectModalRenderer: FC<Props> = ({
     normalizeRoyalties,
     collectionId,
     tokenId,
-    listingCurrency,
     mode,
     token?.token?.tokenId,
+    paymentCurrency?.address,
     is1155,
   ])
 
@@ -335,82 +324,47 @@ export const CollectModalRenderer: FC<Props> = ({
         return () => clearInterval(intervalId)
       }
     }
-  }, [client, wallet, open, fetchBuyPathIfIdle, token?.token?.tokenId, is1155])
-
-  const updateListingCurrency = useCallback(
-    (tokens: typeof selectedTokens) => {
-      let currencies = new Set<string>()
-      let currenciesData: Record<string, Currency> = {}
-      for (let i = 0; i < tokens.length; i++) {
-        const token = tokens[i]
-        if (token.currency) {
-          currencies.add(token.currency)
-          currenciesData[token.currency] = {
-            contract: token.currency,
-            symbol: token.currencySymbol,
-            decimals: token.currencyDecimals,
-          }
-        }
-        if (currencies.size > 1) {
-          break
-        }
-      }
-      if (currencies.size > 1) {
-        if (listingCurrency?.address != chainCurrency?.address) {
-          setListingCurrency(chainCurrency)
-        }
-      } else if (currencies.size > 0) {
-        let otherCurrency = Object.values(currenciesData)[0]
-        if (otherCurrency?.contract != listingCurrency?.address) {
-          setListingCurrency({
-            symbol: otherCurrency?.symbol as string,
-            decimals: otherCurrency?.decimals as number,
-            name: otherCurrency?.name || '',
-            address: otherCurrency?.contract as Address,
-            chainId: wagmiChain?.id as number,
-          })
-        }
-      }
-    },
-    [wagmiChain, chainCurrency]
-  )
-
-  // update listing currency based on selected tokens
-  useEffect(() => {
-    updateListingCurrency(selectedTokens)
-  }, [selectedTokens])
+  }, [
+    client,
+    wallet,
+    open,
+    fetchBuyPathIfIdle,
+    token?.token?.tokenId,
+    is1155,
+    paymentCurrency?.address,
+  ])
 
   const calculateFees = useCallback(
-    (totalPrice: number) => {
-      let fees = 0
+    (totalPrice: bigint) => {
+      let fees = 0n
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (Number(fee) / 10000) * totalPrice
-        }, 0)
-      } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPrice) {
+          return totalFees + (BigInt(fee) / 10000n) * totalPrice
+        }, 0n)
+      } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
         fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
           const atomicFee = BigInt(fee)
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
-          const currencyFee = convertedAtomicFee / atomicUsdPrice
+          const currencyFee = convertedAtomicFee / usdPriceRaw
           const parsedFee = formatUnits(
             currencyFee,
             paymentCurrency?.decimals || 18
           )
-          return totalFees + Number(parsedFee)
-        }, 0)
+          return totalFees + BigInt(parsedFee)
+        }, 0n)
       }
 
       return fees
     },
-    [feesOnTopBps, feeOnTop, usdPrice, feesOnTopUsd, paymentCurrency]
+    [feesOnTopBps, feeOnTop, usdPriceRaw, feesOnTopUsd, paymentCurrency]
   )
 
   useEffect(() => {
-    let updatedTotal = 0
+    let updatedTotal = 0n
+
     // Mint erc1155
     if (contentMode === 'mint' && is1155) {
       let remainingQuantity = itemAmount
@@ -418,13 +372,13 @@ export const CollectModalRenderer: FC<Props> = ({
       for (const order of orders) {
         if (remainingQuantity >= 0) {
           let orderQuantity = order?.quantity || 1
-          let orderPricePerItem = order?.totalPrice || 0
+          let orderPricePerItem = BigInt(order?.totalRawPrice || '0')
 
           if (remainingQuantity >= orderQuantity) {
-            updatedTotal += orderPricePerItem * orderQuantity
+            updatedTotal += orderPricePerItem * BigInt(orderQuantity)
             remainingQuantity -= orderQuantity
           } else {
-            let fractionalPrice = orderPricePerItem * remainingQuantity
+            let fractionalPrice = orderPricePerItem * BigInt(remainingQuantity)
             updatedTotal += fractionalPrice
             remainingQuantity = 0
           }
@@ -434,7 +388,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
     // Mint erc721
     else if (contentMode === 'mint') {
-      updatedTotal = mintPrice * (Math.max(0, itemAmount) || 0)
+      updatedTotal = mintPrice * BigInt(Math.max(0, itemAmount) || 0)
     }
 
     // Sweep erc1155
@@ -446,13 +400,17 @@ export const CollectModalRenderer: FC<Props> = ({
           break
         }
         let orderQuantity = order?.quantity || 1
-        let orderPricePerItem = order?.totalPrice || 0
+        let orderPricePerItem = BigInt(
+          (order?.currency?.toLowerCase() !== paymentCurrency?.address
+            ? order?.buyInRawQuote
+            : order?.totalRawPrice) || 0
+        )
 
         if (remainingQuantity >= orderQuantity) {
-          updatedTotal += orderPricePerItem * orderQuantity
+          updatedTotal += orderPricePerItem * BigInt(orderQuantity)
           remainingQuantity -= orderQuantity
         } else {
-          let fractionalPrice = orderPricePerItem * remainingQuantity
+          let fractionalPrice = orderPricePerItem * BigInt(remainingQuantity)
           updatedTotal += fractionalPrice
           remainingQuantity = 0
         }
@@ -463,11 +421,13 @@ export const CollectModalRenderer: FC<Props> = ({
       updatedTotal = selectedTokens?.reduce((total, token) => {
         return (
           total +
-          (token?.currency != chainCurrency.address && isChainCurrency
-            ? token?.buyInQuote || 0
-            : token?.totalPrice || 0)
+          BigInt(
+            token?.currency?.toLowerCase() != paymentCurrency?.address
+              ? token?.buyInRawQuote || 0
+              : token?.totalRawPrice || 0
+          )
         )
-      }, 0)
+      }, 0n)
     }
     const fees = calculateFees(updatedTotal)
     setFeeOnTop(fees)
@@ -475,39 +435,28 @@ export const CollectModalRenderer: FC<Props> = ({
     setTotalIncludingFees(updatedTotal + fees)
   }, [
     selectedTokens,
+    paymentCurrency,
     feesOnTopBps,
     feesOnTopUsd,
-    listingCurrency,
-    isChainCurrency,
     contentMode,
     itemAmount,
     orders,
   ])
 
-  // Determine if user has enough funds
   useEffect(() => {
-    if (!paymentTokens[0] || paymentTokens.length <= 1) {
+    if (!paymentTokens[0] || paymentTokens.length <= 1 || paymentCurrency) {
       return
-    } else if (contentMode === 'mint') {
-      setPaymentCurrency(
-        paymentTokens.find(
-          (paymentToken) => paymentToken.address === listingCurrency.address
-        ) || paymentTokens[0]
-      )
-    } else if (!paymentCurrency) {
-      setPaymentCurrency(paymentTokens[0])
-    } else {
-      let updatedCurrency = paymentTokens.find(
-        (paymentToken) => paymentToken.address === paymentCurrency?.address
-      )
-      if (
-        updatedCurrency &&
-        updatedCurrency.currencyTotal !== paymentCurrency.currencyTotal
-      ) {
-        setPaymentCurrency(updatedCurrency)
-      }
     }
-  }, [paymentTokens, listingCurrency])
+    if (contentMode === 'mint') {
+      setPaymentCurrency(chainCurrency)
+    } else if (selectedTokens.length > 0) {
+      const firstListingCurrency =
+        paymentTokens.find(
+          (token) => token.address === selectedTokens[0].currency?.toLowerCase()
+        ) || paymentTokens[0]
+      setPaymentCurrency(firstListingCurrency)
+    }
+  }, [paymentTokens, chainCurrency, selectedTokens])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
@@ -517,13 +466,8 @@ export const CollectModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (
       paymentCurrency?.balance != undefined &&
-      paymentCurrency?.currencyTotal != undefined &&
-      Number(
-        formatUnits(
-          BigInt(paymentCurrency?.balance),
-          paymentCurrency?.decimals || 18
-        )
-      ) < paymentCurrency?.currencyTotal
+      paymentCurrency?.currencyTotalRaw != undefined &&
+      BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
     ) {
       setHasEnoughCurrency(false)
     } else {
@@ -562,6 +506,7 @@ export const CollectModalRenderer: FC<Props> = ({
       setContentMode(undefined)
       setTransactionError(null)
       setFetchedInitialOrders(false)
+      setPaymentCurrency(undefined)
     }
   }, [open])
 
@@ -602,30 +547,22 @@ export const CollectModalRenderer: FC<Props> = ({
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
-        const totalFeeTruncated = toFixed(
-          total - feeOnTop,
-          paymentCurrency?.decimals || 18
-        )
+        const totalFeeTruncated = total - feeOnTop
+
         const fee = Math.floor(
-          Number(
-            parseUnits(
-              `${Number(totalFeeTruncated)}`,
-              paymentCurrency?.decimals || 18
-            ) * BigInt(feeBps)
-          ) / 10000
+          Number(totalFeeTruncated * BigInt(feeBps)) / 10000
         )
         const atomicUnitsFee = formatUnits(BigInt(fee), 0)
         return `${referrer}:${atomicUnitsFee}`
       })
       options.feesOnTop = fixedFees
-    } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPrice) {
+    } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
       const feesOnTopFixed = feesOnTopUsd.map((feeOnTop) => {
         const [recipient, fee] = feeOnTop.split(':')
-        const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
         const atomicFee = BigInt(fee)
         const convertedAtomicFee =
           atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
-        const currencyFee = convertedAtomicFee / atomicUsdPrice
+        const currencyFee = convertedAtomicFee / usdPriceRaw
         const parsedFee = formatUnits(currencyFee, 0)
         return `${recipient}:${parsedFee}`
       })
@@ -655,8 +592,7 @@ export const CollectModalRenderer: FC<Props> = ({
         ],
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            amount: total,
-            raw: parseUnits(`${total}`, paymentCurrency?.decimals || 18),
+            raw: total,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },
@@ -771,19 +707,16 @@ export const CollectModalRenderer: FC<Props> = ({
         setItemAmount,
         maxItemAmount,
         setMaxItemAmount,
-        listingCurrency,
-        setListingCurrency,
         paymentCurrency,
         setPaymentCurrency,
         chainCurrency,
-        isChainCurrency,
         paymentTokens,
         total,
         totalIncludingFees,
-        totalUsd,
         feeOnTop,
         feeUsd,
         usdPrice,
+        usdPriceRaw,
         isConnected: wallet !== undefined,
         currentChain,
         mintPrice,

@@ -1,8 +1,9 @@
 import React, { ComponentPropsWithoutRef, FC, useEffect, useState } from 'react'
 import { Text } from './index'
+import { formatUnits } from 'viem'
 
 type Props = {
-  amount: string | number | null | undefined
+  amount: string | number | bigint | null | undefined
   currency?: Intl.NumberFormatOptions['currency']
   maximumFractionDigits?: number
 }
@@ -16,16 +17,22 @@ const FormatCurrency: FC<ComponentPropsWithoutRef<typeof Text> & Props> = ({
   const [formattedValue, setFormattedValue] = useState('')
 
   useEffect(() => {
-    if (amount) {
+    let parsedAmount
+    if (typeof amount === 'bigint') {
+      parsedAmount = formatUnits(amount, 6)
+    } else {
+      parsedAmount = amount
+    }
+    if (parsedAmount) {
       const lowestValue = Number(
         `0.${new Array(maximumFractionDigits).join('0')}1`
       )
-      const tooLow = +amount < lowestValue
+      const tooLow = +parsedAmount < lowestValue
 
       const formatted = new Intl.NumberFormat(undefined, {
         style: 'currency',
         currency: currency,
-      }).format(tooLow ? lowestValue : +amount)
+      }).format(tooLow ? lowestValue : +parsedAmount)
       setFormattedValue(tooLow ? `< ${formatted}` : formatted)
     } else {
       setFormattedValue('')
