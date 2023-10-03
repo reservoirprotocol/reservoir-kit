@@ -4,25 +4,23 @@ import Flex from './Flex'
 import Text from './Text'
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import Anchor from './Anchor'
+import { TransactionTimeoutError } from '@reservoir0x/reservoir-sdk'
+import { Address } from 'viem'
 
 type Props = {
   error?: Error
-  blockExplorerBaseUrl?: string
 } & Pick<ComponentPropsWithoutRef<typeof Flex>, 'css'>
 
-export default function ErrorWell({ error, blockExplorerBaseUrl, css }: Props) {
+export default function ErrorWell({ error, css }: Props) {
   let message = 'Oops, something went wrong. Please try again.'
-  let txHash
+  let txHash: Address | null = null
 
   if (error) {
     if (error.message.includes('rejected')) {
       message = 'User rejected the request.'
     }
-    if (error.message.startsWith('Transaction Timeout Error')) {
-      const txHashRegex = /hash '(0x[a-fA-F0-9]+)'/
-      const match = error.message.match(txHashRegex)
-      txHash = match ? match[1] : undefined
-      console.log(txHash)
+    if (error.name === 'Transaction Timeout Error') {
+      txHash = (error as TransactionTimeoutError).txHash
     }
   }
 
@@ -40,11 +38,13 @@ export default function ErrorWell({ error, blockExplorerBaseUrl, css }: Props) {
       <FontAwesomeIcon icon={faCircleExclamation} width={16} height={16} />
 
       <Text style="body3" color="errorLight">
-        {txHash && blockExplorerBaseUrl ? (
+        {error?.name === 'Transaction Timeout Error' ? (
           <>
             Transaction timed out.{' '}
             <Anchor
-              href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+              href={`${
+                (error as TransactionTimeoutError).blockExplorerBaseUrl
+              }/tx/${txHash}`}
               color="primary"
               weight="medium"
               target="_blank"

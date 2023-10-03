@@ -1,4 +1,4 @@
-import { CustomTransport, HttpTransport } from 'viem'
+import { Address, CustomTransport, HttpTransport } from 'viem'
 import { paths } from './api'
 export * from './api'
 
@@ -99,4 +99,9 @@ export type ExpectedPrice = {
   raw?: bigint
   currencyAddress?: string
   currencyDecimals?: number
+}
+
+export interface TransactionTimeoutError extends Error {
+  txHash: Address
+  blockExplorerBaseUrl?: string
 }

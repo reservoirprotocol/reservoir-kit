@@ -100,6 +100,7 @@ const AppWrapper: FC<any> = ({ children }) => {
     <WagmiConfig config={wagmiConfig}>
       <ReservoirKitProvider
         options={{
+          maxPollingAttemptsBeforeTimeout: 2,
           chains: [
             {
               baseApiUrl: 'https://api.reservoir.tools',
