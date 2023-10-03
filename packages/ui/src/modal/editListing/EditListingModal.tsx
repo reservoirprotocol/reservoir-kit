@@ -17,10 +17,7 @@ import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCheckCircle,
-  faCircleExclamation,
-} from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import PriceInput from './PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { zeroAddress } from 'viem'
