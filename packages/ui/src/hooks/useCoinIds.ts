@@ -16,7 +16,9 @@ type CoinList = Record<string, { name: string; symbol: string; id: string }[]>
 export default function () {
   const providerOptionsContext = useContext(ProviderOptionsContext)
   const baseUrl = createBaseUrl(providerOptionsContext?.coinGecko)
-  const response = useSWR(baseUrl, null, { refreshInterval: 7200000 })
+  const response = useSWR(baseUrl, null, {
+    refreshInterval: 7200000, //2hr
+  })
   const coins: CoinList =
     response?.data?.reduce((coins: CoinList, coin: CoinList[0][0]) => {
       //Hardcoded symbol to id pairings for established cryptocurrencies

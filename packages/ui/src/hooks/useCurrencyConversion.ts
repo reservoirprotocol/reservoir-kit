@@ -1,6 +1,6 @@
 import { paths } from '@reservoir0x/reservoir-sdk'
 import useReservoirClient from './useReservoirClient'
-import useSWR from 'swr'
+import useSWR from 'swr/immutable'
 
 export default function (chainId?: number, from?: string, to?: string) {
   const client = useReservoirClient()
@@ -14,5 +14,7 @@ export default function (chainId?: number, from?: string, to?: string) {
 
   return useSWR<
     paths['/currencies/conversion/v1']['get']['responses'][200]['schema']
-  >(from && to ? [path.href, client?.apiKey, client?.version] : null, null)
+  >(from && to ? [path.href, client?.apiKey, client?.version] : null, null, {
+    refreshInterval: 300000, //5m
+  })
 }

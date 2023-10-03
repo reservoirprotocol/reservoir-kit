@@ -1,5 +1,5 @@
 import { ReservoirChain, paths } from '@reservoir0x/reservoir-sdk'
-import useSWR from 'swr'
+import useSWR from 'swr/immutable'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
 
 type CurrencyConversionResponse =
@@ -28,7 +28,9 @@ export default function (
       `${chain?.baseApiUrl}/currencies/conversion/v1?from=${currency.address}&to=${prefferedCurrencyAddress}`
   )
 
-  const { data, error } = useSWR<CurrencyConversionResponse[]>(urls, fetcher)
+  const { data, error } = useSWR<CurrencyConversionResponse[]>(urls, fetcher, {
+    refreshInterval: 300000, //5m
+  })
   return {
     data: data,
     isError: !!error,
