@@ -236,6 +236,16 @@ export function BidModal({
 
         const providerOptionsContext = useContext(ProviderOptionsContext)
 
+        const ctaButtonText = providerOptionsContext.disableJumperLink
+          ? copy.ctaBid.length > 0
+            ? copy.ctaBid
+            : token && token.token
+            ? 'Make an Offer'
+            : trait
+            ? 'Make an Attribute Offer'
+            : 'Make a Collection Offer'
+          : copy.ctaConvertManually
+
         const quantityEnabled =
           !tokenId ||
           (token?.token?.kind === 'erc1155' && Number(token?.token?.supply) > 1)
@@ -730,13 +740,7 @@ export function BidModal({
                         onClick={() => placeBid()}
                         css={{ width: '100%' }}
                       >
-                        {copy.ctaBid.length > 0
-                          ? copy.ctaBid
-                          : token && token.token
-                          ? 'Make an Offer'
-                          : trait
-                          ? 'Make an Attribute Offer'
-                          : 'Make a Collection Offer'}
+                        {ctaButtonText}
                       </Button>
                     )}
                     {bidAmountPerUnit !== '' && !hasEnoughWrappedCurrency && (
@@ -772,15 +776,7 @@ export function BidModal({
                               window.open(convertLink, '_blank')
                             }}
                           >
-                            {providerOptionsContext.disableJumperLink
-                              ? copy.ctaBid.length > 0
-                                ? copy.ctaBid
-                                : token && token.token
-                                ? 'Make an Offer'
-                                : trait
-                                ? 'Make an Attribute Offer'
-                                : 'Make a Collection Offer'
-                              : copy.ctaConvertManually}
+                            {ctaButtonText}
                           </Button>
                           {canAutomaticallyConvert && (
                             <Button
