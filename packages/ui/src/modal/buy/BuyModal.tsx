@@ -1,4 +1,10 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useContext,
+  useEffect,
+} from 'react'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import {
   Flex,
@@ -24,6 +30,7 @@ import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type PurchaseData = {
   tokenId?: string
@@ -116,6 +123,8 @@ export function BuyModal({
   const modalChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
+
+  const providerOptions = useContext(ProviderOptionsContext)
 
   return (
     <BuyModalRenderer
@@ -394,12 +403,15 @@ export function BuyModal({
                       </Flex>
 
                       <Button
+                        disabled={providerOptions.disableJumperLink}
                         onClick={() => {
                           window.open(addFundsLink, '_blank')
                         }}
                         css={{ width: '100%' }}
                       >
-                        {copy.ctaInsufficientFunds}
+                        {providerOptions.disableJumperLink
+                          ? copy.ctaCheckout
+                          : copy.ctaInsufficientFunds}
                       </Button>
                     </Flex>
                   )}
