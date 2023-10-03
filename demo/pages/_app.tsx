@@ -25,6 +25,7 @@ import {
 } from '@reservoir0x/reservoir-kit-ui'
 import {
   LogLevel,
+  customChains,
   reservoirChains,
 } from '@reservoir0x/reservoir-sdk'
 import { useRouter } from 'next/router'
@@ -163,6 +164,11 @@ const AppWrapper: FC<any> = ({ children }) => {
             {
               ...reservoirChains.arbitrumNova,
               active: CHAIN_ID === allChains.arbitrumNova.id
+            },
+            {
+              ...reservoirChains.ancient8Testnet,
+              id: customChains.ancient8Testnet.id,
+              active: CHAIN_ID === customChains.ancient8Testnet.id,
             }
           ],
           marketplaceFees: MARKETPLACE_FEES,
