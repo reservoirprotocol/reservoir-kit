@@ -46,9 +46,9 @@ export const MintContent: FC<
   itemAmount,
   setItemAmount,
   maxItemAmount,
-  listingCurrency,
   paymentCurrency,
   usdPrice,
+  usdPriceRaw,
   feeOnTop,
   feeUsd,
   currentChain,
@@ -180,9 +180,9 @@ export const MintContent: FC<
                       <FormatCryptoCurrency
                         chainId={chainId}
                         amount={mintPrice}
-                        address={listingCurrency?.address}
-                        decimals={listingCurrency?.decimals}
-                        symbol={listingCurrency?.symbol}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
                         logoWidth={12}
                         css={{ color: '$neutralText' }}
                       />
@@ -205,9 +205,9 @@ export const MintContent: FC<
                       <FormatCryptoCurrency
                         chainId={chainId}
                         amount={feeOnTop}
-                        address={listingCurrency?.address}
-                        decimals={listingCurrency?.decimals}
-                        symbol={listingCurrency?.symbol}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
                       />
                       <FormatCurrency
                         amount={feeUsd}
@@ -224,14 +224,14 @@ export const MintContent: FC<
                     <FormatCryptoCurrency
                       chainId={chainId}
                       textStyle="h6"
-                      amount={paymentCurrency?.currencyTotal}
+                      amount={paymentCurrency?.currencyTotalRaw}
                       address={paymentCurrency?.address}
                       decimals={paymentCurrency?.decimals}
                       symbol={paymentCurrency?.symbol}
                       logoWidth={18}
                     />
                     <FormatCurrency
-                      amount={paymentCurrency?.usdTotal}
+                      amount={paymentCurrency?.usdTotalPriceRaw}
                       style="subtitle3"
                       color="subtle"
                     />
@@ -293,10 +293,9 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={paymentCurrency?.currencyTotal || 0}
-              currency={listingCurrency}
-              usdPrice={usdPrice}
-              chain={currentChain}
+              totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+              currency={paymentCurrency}
+              usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
             />
           </Box>
           <Flex
@@ -337,7 +336,7 @@ export const MintContent: FC<
                         key={index}
                         item={item}
                         pathMap={pathMap}
-                        usdPrice={usdPrice}
+                        usdPrice={+usdPrice}
                         chain={currentChain}
                         open={true}
                       />
@@ -385,10 +384,9 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={paymentCurrency?.currencyTotal || 0}
-              currency={listingCurrency}
-              usdPrice={usdPrice}
-              chain={currentChain}
+              totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+              currency={paymentCurrency}
+              usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
             />
           </Box>
           <Flex

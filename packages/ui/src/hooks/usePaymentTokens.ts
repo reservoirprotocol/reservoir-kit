@@ -1,5 +1,5 @@
 import { erc20ABI, useBalance, useContractReads } from 'wagmi'
-import { Address, zeroAddress } from 'viem'
+import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useReservoirClient, useCurrencyConversions } from '.'
 import { useMemo } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
@@ -8,16 +8,19 @@ import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
       usdPrice?: number
-      usdTotal?: number
+      usdPriceRaw?: bigint
+      usdTotalPriceRaw?: bigint
+      usdTotalFormatted?: string // @TODO: confirm this is needed
       balance?: string | number | bigint
-      currencyTotal?: number
+      currencyTotalRaw?: bigint
+      currencyTotalFormatted?: string // @TODO: confirm this is needed
     }
 
 export default function (
   open: boolean,
   address: Address,
   preferredCurrency: PaymentToken,
-  preferredCurrencyTotalPrice: number,
+  preferredCurrencyTotalPrice: bigint,
   chainId?: number
 ) {
   const client = useReservoirClient()
@@ -31,8 +34,8 @@ export default function (
 
     if (
       !paymentTokens
-        ?.map((currency) => currency.address)
-        .includes(preferredCurrency.address)
+        ?.map((currency) => currency.address.toLowerCase())
+        .includes(preferredCurrency.address.toLowerCase())
     ) {
       paymentTokens?.push(preferredCurrency)
     }
@@ -100,18 +103,39 @@ export default function (
 
         const conversionData = preferredCurrencyConversions?.data?.[i]
 
-        const currencyTotal =
-          preferredCurrencyTotalPrice / Number(conversionData?.conversion)
+        const currencyTotalRaw = conversionData?.conversion
+          ? (preferredCurrencyTotalPrice * parseUnits('1', currency.decimals)) /
+            parseUnits(
+              conversionData?.conversion?.toString(),
+              preferredCurrency.decimals
+            )
+          : undefined
 
-        const usdPrice = conversionData?.usd || 0
-        const usdTotal = currencyTotal * Number(usdPrice ?? 0)
+        const currencyTotalFormatted = currencyTotalRaw
+          ? formatUnits(currencyTotalRaw, currency.decimals)
+          : undefined
+
+        const usdPrice = Number(conversionData?.usd ?? 0)
+        const usdPriceRaw = parseUnits(usdPrice.toString(), 6)
+        const usdTotalPriceRaw = conversionData?.usd
+          ? (preferredCurrencyTotalPrice * usdPriceRaw) /
+            parseUnits('1', preferredCurrency?.decimals)
+          : undefined
+
+        const usdTotalFormatted = usdTotalPriceRaw
+          ? formatUnits(usdTotalPriceRaw, 6)
+          : undefined
 
         return {
           ...currency,
+          address: currency.address.toLowerCase(),
           usdPrice,
-          usdTotal,
+          usdPriceRaw,
+          usdTotalPriceRaw,
+          usdTotalFormatted,
           balance,
-          currencyTotal,
+          currencyTotalRaw,
+          currencyTotalFormatted,
         }
       })
       .sort((a, b) => {
