@@ -696,8 +696,8 @@ export const CollectModalRenderer: FC<Props> = ({
           }
         },
       })
-      .catch((e: Error) => {
-        setTransactionError(e)
+      .catch((error: Error) => {
+        setTransactionError(error)
         setCollectStep(CollectStep.Idle)
         mutateCollection()
         fetchBuyPath()

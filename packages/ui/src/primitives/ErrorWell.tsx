@@ -15,17 +15,20 @@ export default function ErrorWell({ error, css }: Props) {
   let message = 'Oops, something went wrong. Please try again.'
   let txHash: Address | null = null
 
+  const errorType = (error as any)?.type
+  const errorStatus = (error as any)?.statusCode
+
   if (error) {
     if (error.message.includes('rejected')) {
       message = 'User rejected the request.'
+    } else if (errorType && errorType === 'price mismatch') {
+      message = error.message
+    } else if (error.name === 'TransactionTimeoutError') {
+      txHash = (error as TransactionTimeoutError).txHash
+    } else if (errorStatus >= 400 && errorStatus < 500) {
+      message = error.message
     } else if (error.message) {
       message = error.message
-    }
-    if ((error as any)?.type === 'price mismatch') {
-      message = error.message
-    }
-    if (error.name === 'TransactionTimeoutError') {
-      txHash = (error as TransactionTimeoutError).txHash
     }
   }
 
