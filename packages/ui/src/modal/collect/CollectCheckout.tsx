@@ -19,7 +19,7 @@ type Props = {
   token?: NonNullable<ReturnType<typeof useTokens>['data']>[0]
   itemCount: number
   totalPrice: bigint
-  usdPrice: bigint
+  usdTotalFormatted?: number | string
   currency?: PaymentToken
   size?: Size
   chainId?: number
@@ -31,7 +31,7 @@ export const CollectCheckout: FC<Props> = ({
   itemCount,
   totalPrice,
   chainId,
-  usdPrice,
+  usdTotalFormatted,
   currency,
 }) => {
   const itemSubject = itemCount === 1 ? 'item' : 'items'
@@ -88,9 +88,9 @@ export const CollectCheckout: FC<Props> = ({
             symbol={currency?.symbol}
             logoWidth={18}
           />
-          {usdPrice ? (
+          {usdTotalFormatted ? (
             <FormatCurrency
-              amount={usdPrice * totalPrice}
+              amount={usdTotalFormatted}
               style="subtitle3"
               color="subtle"
               css={{ textAlign: 'end' }}

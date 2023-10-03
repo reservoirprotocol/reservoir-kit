@@ -396,8 +396,8 @@ export const SweepContent: FC<
               token={token}
               itemCount={itemAmount}
               totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+              usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
               currency={paymentCurrency}
-              usdPrice={usdPriceRaw}
             />
           </Box>
           <Flex
@@ -534,8 +534,8 @@ export const SweepContent: FC<
               token={token}
               itemCount={itemAmount}
               totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+              usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
               currency={paymentCurrency}
-              usdPrice={usdPriceRaw}
             />
           </Box>
           <Flex
