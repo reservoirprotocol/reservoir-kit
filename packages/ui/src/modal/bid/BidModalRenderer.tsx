@@ -477,12 +477,8 @@ export const BidModalRenderer: FC<Props> = ({
           }
         },
       })
-      .catch((e: any) => {
-        //@ts-ignore
-        const transactionError = new Error(e?.message || '', {
-          cause: e,
-        })
-        setTransactionError(transactionError)
+      .catch((e: Error) => {
+        setTransactionError(e)
       })
   }, [
     tokenId,

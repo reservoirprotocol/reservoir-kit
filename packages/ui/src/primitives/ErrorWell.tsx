@@ -19,7 +19,10 @@ export default function ErrorWell({ error, css }: Props) {
     if (error.message.includes('rejected')) {
       message = 'User rejected the request.'
     }
-    if (error.name === 'Transaction Timeout Error') {
+    if ((error as any)?.type === 'price mismatch') {
+      message = error.message
+    }
+    if (error.name === 'TransactionTimeoutError') {
       txHash = (error as TransactionTimeoutError).txHash
     }
   }
@@ -38,9 +41,9 @@ export default function ErrorWell({ error, css }: Props) {
       <FontAwesomeIcon icon={faCircleExclamation} width={16} height={16} />
 
       <Text style="body3" color="errorLight">
-        {error?.name === 'Transaction Timeout Error' ? (
+        {error?.name === 'TransactionTimeoutError' && txHash ? (
           <>
-            Transaction timed out.{' '}
+            Timed out waiting for transaction.{' '}
             <Anchor
               href={`${
                 (error as TransactionTimeoutError).blockExplorerBaseUrl
@@ -50,7 +53,8 @@ export default function ErrorWell({ error, css }: Props) {
               target="_blank"
               css={{ fontSize: 12 }}
             >
-              View transaction: {txHash}
+              View on block explorer:{' '}
+              {`${txHash.slice(0, 4)}...${txHash.slice(-4)}`}
             </Anchor>
           </>
         ) : (

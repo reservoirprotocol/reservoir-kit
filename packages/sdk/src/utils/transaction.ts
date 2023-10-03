@@ -1,11 +1,7 @@
 import { PublicClient, Transaction } from 'viem'
 import { LogLevel, getClient } from '..'
-import {
-  Execute,
-  ReservoirWallet,
-  TransactionStepItem,
-  TransactionTimeoutError,
-} from '../types'
+import { Execute, ReservoirWallet, TransactionStepItem } from '../types'
+import { TransactionTimeoutError } from '../errors'
 import axios, {
   AxiosRequestConfig,
   AxiosRequestHeaders,
@@ -96,20 +92,16 @@ export async function sendTransactionSafely(
   }
 
   if (attemptCount >= maximumAttempts) {
-    const error = Error(
-      `Failed to receive a successful response for transaction with hash '${txHash}' after ${attemptCount} attempt(s).`
-    ) as TransactionTimeoutError
-
     const wagmiChain: allChains.Chain | undefined = Object.values({
       ...allChains,
       ...customChains,
     }).find(({ id }) => id === chainId)
 
-    error.name = 'Transaction Timeout Error'
-    error.txHash = txHash
-    error.blockExplorerBaseUrl = wagmiChain?.blockExplorers?.default.url
-
-    throw error
+    throw new TransactionTimeoutError(
+      txHash,
+      attemptCount,
+      wagmiChain?.blockExplorers?.default.url
+    )
   }
 
   if (transactionCancelled) {
