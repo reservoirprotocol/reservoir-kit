@@ -4,7 +4,7 @@ import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import { formatNumber } from '../lib/numbers'
+import { formatBN, formatNumber } from '../lib/numbers'
 
 type Props = {
   paymentTokens: EnhancedCurrency[]
@@ -24,13 +24,14 @@ export const SelectPaymentToken: FC<Props> = ({
   return (
     <Flex direction="column" css={{ width: '100%', gap: '$1', px: '$3' }}>
       {paymentTokens?.map((paymentToken) => {
-        const isSelectedCurrency = currency?.address === paymentToken?.address
+        const isSelectedCurrency =
+          currency?.address.toLowerCase() === paymentToken?.address
         const formattedBalance = formatUnits(
           BigInt(paymentToken?.balance || 0),
           paymentToken?.decimals || 18
         )
 
-        if (paymentToken?.currencyTotal)
+        if (paymentToken?.currencyTotalRaw != undefined)
           return (
             <Button
               key={paymentToken?.address}
@@ -73,7 +74,13 @@ export const SelectPaymentToken: FC<Props> = ({
               </Flex>
               <Flex align="center" css={{ gap: '$3' }}>
                 <Text style="subtitle2">
-                  {formatNumber(paymentToken?.currencyTotal, 6)}
+                  {paymentToken?.currencyTotalRaw
+                    ? formatBN(
+                        paymentToken?.currencyTotalRaw,
+                        6,
+                        paymentToken?.decimals
+                      )
+                    : 0}
                 </Text>
                 {isSelectedCurrency ? (
                   <Box css={{ color: '$accentSolidHover' }}>
