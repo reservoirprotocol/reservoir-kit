@@ -404,6 +404,7 @@ export function CartPopover({
                     </Text>
                     <FormatCryptoCurrency
                       textStyle="body3"
+                      chainId={cartChain?.id}
                       amount={balance}
                       address={currency?.contract}
                       decimals={currency?.decimals}
