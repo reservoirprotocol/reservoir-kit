@@ -10,10 +10,10 @@ export type EnhancedCurrency =
       usdPrice?: number
       usdPriceRaw?: bigint
       usdTotalPriceRaw?: bigint
-      usdTotalFormatted?: string // @TODO: confirm this is needed
+      usdTotalFormatted?: string
       balance?: string | number | bigint
       currencyTotalRaw?: bigint
-      currencyTotalFormatted?: string // @TODO: confirm this is needed
+      currencyTotalFormatted?: string
     }
 
 export default function (
@@ -89,7 +89,8 @@ export default function (
             nonNativeCurrencies?.findIndex(
               (nonNativeCurrency) =>
                 nonNativeCurrency.symbol === currency.symbol &&
-                nonNativeCurrency.coinGeckoId === currency.coinGeckoId
+                nonNativeCurrency.address.toLowerCase() ===
+                  currency.address.toLowerCase()
             ) || 0
           balance =
             nonNativeBalances &&
