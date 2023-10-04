@@ -27,6 +27,7 @@ import SigninStep from '../SigninStep'
 import { zeroAddress } from 'viem'
 import PriceInput from './PriceInput'
 import ListCheckout from './ListCheckout'
+import QuantitySelector from '../QuantitySelector'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -209,110 +210,105 @@ export function ListModal({
                   css={{ width: '100%', p: '$4' }}
                 >
                   {quantityAvailable > 1 && quantitySelectionAvailable && (
-                    <>
-                      <Box css={{ mb: '$2' }}>
-                        <Text
-                          as="div"
-                          css={{ mb: '$2' }}
-                          style="subtitle3"
-                          color="subtle"
-                        >
+                    <Flex align="center" justify="between" css={{ gap: '$3' }}>
+                      <Flex
+                        align="start"
+                        direction="column"
+                        css={{ gap: '$1' }}
+                      >
+                        <Text css={{ mb: '$2' }} style="subtitle2">
                           Quantity
                         </Text>
-                        <Select
-                          value={`${quantity}`}
-                          onValueChange={(value: string) => {
-                            setQuantity(Number(value))
-                          }}
-                        >
-                          {[...Array(quantityAvailable)].map((_a, i) => (
-                            <Select.Item key={i} value={`${i + 1}`}>
-                              <Select.ItemText>{i + 1}</Select.ItemText>
-                            </Select.Item>
-                          ))}
-                        </Select>
-                      </Box>
-                      <Text
-                        style="body2"
-                        css={{ mb: 24, display: 'inline-block' }}
-                      >
-                        {quantityAvailable} items available
-                      </Text>
-                    </>
+                        <Text style="body3">
+                          {quantityAvailable} items available
+                        </Text>
+                      </Flex>
+                      <QuantitySelector
+                        quantity={quantity}
+                        setQuantity={setQuantity}
+                        min={1}
+                        max={quantityAvailable}
+                      />
+                    </Flex>
                   )}
 
-                  <PriceInput
-                    price={price}
-                    chainId={modalChain?.id}
-                    currency={currency}
-                    currencies={currencies}
-                    setCurrency={setCurrency}
-                    onChange={(e) => {
-                      setPrice(e.target.value)
-                    }}
-                    onBlur={() => {
-                      // if (price === '') {
-                      //   setPrice(0)
-                      // }
-                    }}
-                  />
-                  {Number(price) !== 0 && Number(price) < MINIMUM_AMOUNT && (
-                    <Box>
-                      <Text style="body2" color="error">
-                        Amount must be higher than {MINIMUM_AMOUNT}
-                      </Text>
-                    </Box>
-                  )}
-                  {collection &&
-                    collection?.floorAsk?.price?.amount?.native !== undefined &&
-                    Number(price) !== 0 &&
-                    Number(price) >= MINIMUM_AMOUNT &&
-                    currency.contract === zeroAddress &&
-                    Number(price) <
-                      collection?.floorAsk?.price.amount.native && (
+                  <Flex direction="column" css={{ gap: '$2' }}>
+                    <Text style="subtitle2">Enter a price</Text>
+                    <Flex>
+                      <PriceInput
+                        price={price}
+                        chainId={modalChain?.id}
+                        currency={currency}
+                        currencies={currencies}
+                        setCurrency={setCurrency}
+                        onChange={(e) => {
+                          setPrice(e.target.value)
+                        }}
+                        onBlur={() => {
+                          // if (price === '') {
+                          //   setPrice(0)
+                          // }
+                        }}
+                      />
+                      <Button color="secondary">Floor</Button>
+                    </Flex>
+                    {Number(price) !== 0 && Number(price) < MINIMUM_AMOUNT && (
                       <Box>
                         <Text style="body2" color="error">
-                          Price is{' '}
-                          {Math.round(
-                            ((collection.floorAsk.price.amount.native -
-                              +price) /
-                              ((collection.floorAsk.price.amount.native +
-                                +price) /
-                                2)) *
-                              100 *
-                              1000
-                          ) / 1000}
-                          % below the floor
+                          Amount must be higher than {MINIMUM_AMOUNT}
                         </Text>
                       </Box>
                     )}
-                  <Box css={{ mb: '$3', mt: '$4' }}>
-                    <Text
-                      as="div"
-                      css={{ mb: '$2' }}
-                      style="subtitle3"
-                      color="subtle"
-                    >
-                      Expiration Date
-                    </Text>
-                    <Select
-                      value={expirationOption?.text || ''}
-                      onValueChange={(value: string) => {
-                        const option = expirationOptions.find(
-                          (option) => option.value == value
-                        )
-                        if (option) {
-                          setExpirationOption(option)
-                        }
-                      }}
-                    >
-                      {expirationOptions.map((option) => (
-                        <Select.Item key={option.text} value={option.value}>
-                          <Select.ItemText>{option.text}</Select.ItemText>
-                        </Select.Item>
-                      ))}
-                    </Select>
-                  </Box>
+                    {collection &&
+                      collection?.floorAsk?.price?.amount?.native !==
+                        undefined &&
+                      Number(price) !== 0 &&
+                      Number(price) >= MINIMUM_AMOUNT &&
+                      currency.contract === zeroAddress &&
+                      Number(price) <
+                        collection?.floorAsk?.price.amount.native && (
+                        <Box>
+                          <Text style="body2" color="error">
+                            Price is{' '}
+                            {Math.round(
+                              ((collection.floorAsk.price.amount.native -
+                                +price) /
+                                ((collection.floorAsk.price.amount.native +
+                                  +price) /
+                                  2)) *
+                                100 *
+                                1000
+                            ) / 1000}
+                            % below the floor
+                          </Text>
+                        </Box>
+                      )}
+                  </Flex>
+                  <Text
+                    as="div"
+                    css={{ mb: '$2' }}
+                    style="subtitle3"
+                    color="subtle"
+                  >
+                    Expiration Date
+                  </Text>
+                  <Select
+                    value={expirationOption?.text || ''}
+                    onValueChange={(value: string) => {
+                      const option = expirationOptions.find(
+                        (option) => option.value == value
+                      )
+                      if (option) {
+                        setExpirationOption(option)
+                      }
+                    }}
+                  >
+                    {expirationOptions.map((option) => (
+                      <Select.Item key={option.text} value={option.value}>
+                        <Select.ItemText>{option.text}</Select.ItemText>
+                      </Select.Item>
+                    ))}
+                  </Select>
                 </Flex>
                 <Box css={{ p: '$4', width: '100%' }}>
                   <Button
