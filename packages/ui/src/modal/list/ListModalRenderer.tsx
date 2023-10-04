@@ -262,6 +262,8 @@ export const ListModalRenderer: FC<Props> = ({
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
 
+  console.log(quantity, expirationOption)
+
   // @TODO: remove in favor of filtering passed in currencies to only show supported currencies
   // warn if any of the currencies are not allowed
   useEffect(() => {
@@ -515,6 +517,7 @@ export const ListModalRenderer: FC<Props> = ({
         const transactionError = new Error(error?.message || '', {
           cause: error,
         })
+        setListStep(ListStep.SetPrice)
         setTransactionError(transactionError)
       })
   }, [

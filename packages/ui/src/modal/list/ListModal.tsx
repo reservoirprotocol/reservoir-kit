@@ -1,5 +1,12 @@
 import { styled } from '../../../stitches.config'
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import {
   Flex,
   Box,
@@ -9,8 +16,10 @@ import {
   Select,
   ErrorWell,
   Img,
+  DateInput,
 } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Flatpickr from 'react-flatpickr'
 import { Modal } from '../Modal'
 import {
   ListingData,
@@ -18,16 +27,16 @@ import {
   ListStep,
   ListModalStepData,
 } from './ListModalRenderer'
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCalendar } from '@fortawesome/free-solid-svg-icons'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import TransactionProgress from '../../modal/TransactionProgress'
-import ProgressBar from '../../modal/ProgressBar'
 import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'
 import { zeroAddress } from 'viem'
 import PriceInput from './PriceInput'
 import ListCheckout from './ListCheckout'
 import QuantitySelector from '../QuantitySelector'
+import dayjs from 'dayjs'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -69,9 +78,10 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 }
 
 const Image = styled('img', {})
-const Span = styled('span', {})
 
 const MINIMUM_AMOUNT = 0.000001
+
+const minimumDate = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
 
 export function ListModal({
   openState,
@@ -95,6 +105,8 @@ export function ListModal({
     openState ? openState[0] : false,
     openState
   )
+
+  const datetimeElement = useRef<Flatpickr | null>(null)
 
   const client = useReservoirClient()
 
@@ -141,10 +153,26 @@ export function ListModal({
         setExpirationOption,
         setQuantity,
       }) => {
+        const [expirationDate, setExpirationDate] = useState('')
+
         const tokenImage =
           token && token.token?.imageSmall
             ? token.token.imageSmall
             : (collection?.image as string)
+
+        useEffect(() => {
+          if (expirationOption && expirationOption.relativeTime) {
+            const newExpirationTime = expirationOption.relativeTimeUnit
+              ? dayjs().add(
+                  expirationOption.relativeTime,
+                  expirationOption.relativeTimeUnit
+                )
+              : dayjs.unix(expirationOption.relativeTime)
+            setExpirationDate(newExpirationTime.format('MM/DD/YYYY h:mm A'))
+          } else {
+            setExpirationDate('')
+          }
+        }, [expirationOption])
 
         useEffect(() => {
           if (listStep === ListStep.Complete && onListingComplete) {
@@ -195,9 +223,24 @@ export function ListModal({
               setOpen(open)
             }}
             loading={loading}
+            onPointerDownOutside={(e) => {
+              if (
+                e.target instanceof Element &&
+                datetimeElement.current?.flatpickr?.calendarContainer &&
+                datetimeElement.current.flatpickr.calendarContainer.contains(
+                  e.target
+                )
+              ) {
+                e.preventDefault()
+              }
+            }}
+            onFocusCapture={(e) => {
+              e.stopPropagation()
+            }}
           >
             {!loading && listStep == ListStep.SetPrice && (
-              <Flex>
+              <Flex direction="column">
+                {transactionError && <ErrorWell error={transactionError} />}
                 <ListCheckout
                   collection={collection}
                   token={token}
@@ -284,31 +327,72 @@ export function ListModal({
                         </Box>
                       )}
                   </Flex>
-                  <Text
-                    as="div"
-                    css={{ mb: '$2' }}
-                    style="subtitle3"
-                    color="subtle"
-                  >
-                    Expiration Date
-                  </Text>
-                  <Select
-                    value={expirationOption?.text || ''}
-                    onValueChange={(value: string) => {
-                      const option = expirationOptions.find(
-                        (option) => option.value == value
-                      )
-                      if (option) {
-                        setExpirationOption(option)
-                      }
-                    }}
-                  >
-                    {expirationOptions.map((option) => (
-                      <Select.Item key={option.text} value={option.value}>
-                        <Select.ItemText>{option.text}</Select.ItemText>
-                      </Select.Item>
-                    ))}
-                  </Select>
+                  <Flex direction="column" css={{ gap: '$2' }}>
+                    <Text style="subtitle2">Expiration Date</Text>
+                    <Flex align="center" css={{ gap: '$2' }}>
+                      <Select
+                        value={expirationOption?.text || ''}
+                        onValueChange={(value: string) => {
+                          const option = expirationOptions.find(
+                            (option) => option.value == value
+                          )
+                          if (option) {
+                            setExpirationOption(option)
+                          }
+                        }}
+                      >
+                        {expirationOptions.map((option) => (
+                          <Select.Item key={option.text} value={option.value}>
+                            <Select.ItemText>{option.text}</Select.ItemText>
+                          </Select.Item>
+                        ))}
+                      </Select>
+                      <DateInput
+                        ref={datetimeElement}
+                        icon={
+                          <FontAwesomeIcon
+                            icon={faCalendar}
+                            width={14}
+                            height={16}
+                          />
+                        }
+                        value={expirationDate}
+                        options={{
+                          chainId: modalChain?.id,
+                          minDate: minimumDate,
+                          enableTime: true,
+                          minuteIncrement: 1,
+                        }}
+                        defaultValue={expirationDate}
+                        onChange={(e: any) => {
+                          if (Array.isArray(e)) {
+                            const customOption = expirationOptions.find(
+                              (option) => option.value === 'custom'
+                            )
+                            if (customOption) {
+                              setExpirationOption({
+                                ...customOption,
+                                relativeTime: e[0] / 1000,
+                              })
+                            }
+                          }
+                        }}
+                        containerCss={{
+                          width: 46,
+                          '@bp1': {
+                            flex: 1,
+                            width: '100%',
+                          },
+                        }}
+                        css={{
+                          padding: 0,
+                          '@bp1': {
+                            padding: '12px 16px 12px 48px',
+                          },
+                        }}
+                      />
+                    </Flex>
+                  </Flex>
                 </Flex>
                 <Box css={{ p: '$4', width: '100%' }}>
                   <Button
@@ -329,9 +413,6 @@ export function ListModal({
                 align="center"
                 css={{ width: '100%', p: '$4' }}
               >
-                {transactionError && (
-                  <ErrorWell error={transactionError} css={{ mt: 24 }} />
-                )}
                 {stepData && stepData.currentStep.id === 'auth' ? (
                   <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
                 ) : null}
@@ -374,26 +455,10 @@ export function ListModal({
                     <Loader />
                   </Flex>
                 )}
-                {!transactionError && (
-                  <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
-                    <Loader />
-                    {copy.ctaAwaitingApproval}
-                  </Button>
-                )}
-                {transactionError && (
-                  <Flex css={{ mt: 'auto', gap: 10 }}>
-                    <Button
-                      color="secondary"
-                      css={{ flex: 1 }}
-                      onClick={() => setListStep(ListStep.SetPrice)}
-                    >
-                      {copy.ctaEditListing}
-                    </Button>
-                    <Button css={{ flex: 1 }} onClick={listToken}>
-                      {copy.ctaRetry}
-                    </Button>
-                  </Flex>
-                )}
+                <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
+                  <Loader />
+                  {copy.ctaAwaitingApproval}
+                </Button>
               </Flex>
             )}
             {!loading && listStep == ListStep.Complete && (
