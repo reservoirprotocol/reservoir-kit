@@ -27,6 +27,7 @@ createClient({
   chains: [
     {
       id: 1,
+      name: 'Ethereum',
       baseApiUrl: 'https://api.reservoir.tools',
       active: true,
     },
