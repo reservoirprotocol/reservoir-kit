@@ -48,7 +48,7 @@ export default function ErrorWell({ error, css }: Props) {
       <Text style="body3" color="errorLight">
         {error?.name === 'TransactionTimeoutError' && txHash ? (
           <>
-            Timed out waiting for transaction.{' '}
+            Your transaction was sent, but is taking longer to process.{' '}
             <Anchor
               href={`${
                 (error as TransactionTimeoutError).blockExplorerBaseUrl
@@ -58,8 +58,7 @@ export default function ErrorWell({ error, css }: Props) {
               target="_blank"
               css={{ fontSize: 12 }}
             >
-              View on block explorer:{' '}
-              {`${txHash.slice(0, 4)}...${txHash.slice(-4)}`}
+              View on block explorer
             </Anchor>
           </>
         ) : (
