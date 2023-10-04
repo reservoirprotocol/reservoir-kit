@@ -7,7 +7,6 @@ import useSWR from 'swr'
 export type Marketplace = NonNullable<
   paths['/collections/{collection}/supported-marketplaces/v1']['get']['responses']['200']['schema']['marketplaces']
 >[0] & {
-  isSelected: boolean
   price: number | string
   truePrice: number | string
   fee: {
@@ -76,8 +75,6 @@ export default function (
         }
         marketplace.price = 0
         marketplace.truePrice = 0
-        marketplace.isSelected =
-          marketplace.orderbook === 'reservoir' ? true : false
       })
       setMarketplaces(updatedMarketplaces)
     }
