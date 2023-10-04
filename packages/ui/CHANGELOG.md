@@ -1,61 +1,28 @@
 
 ## [v1.10.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/819d348bf4dd526dfec6b6d779d0a518031232e6) (2023-10-04)
 
-* Fix RK provider chains [c6adc2d8](https://github.com/reservoirprotocol/reservoir-kit/commit/c6adc2d800d6b1136f1fa6f2dd1762c26e131efe)
-* Fix ttl default [84578561](https://github.com/reservoirprotocol/reservoir-kit/commit/845785613aa22d55f09c034ad8832eab67e6a07b)
-* Update insufficient balance error [2023-10-04](https://github.com/reservoirprotocol/reservoir-kit/commit/b7326edf)
+* CollectModal: Purchase currency selector [e619f299](https://github.com/reservoirprotocol/reservoir-kit/commit/e619f299af3b5cf5ac8cbacc7d51cb61824903dd)
+
+### Breaking Change Migrations:
+* apiKey moved to root configuration object, no longer required on every chain configuration.
+* CollectModalRenderer: Changes to state parameters passed from renderer
+
 ## [v1.9.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/12d26b9567d7c5242ca748c1e778f9cff87e93ea) (2023-10-03)
 
 * Update a8 testnet weth address [1b9332a4](https://github.com/reservoirprotocol/reservoir-kit/commit/1b9332a4b30f3ad95c9a5ead9768307dfc2e894b)
-* Merge branch 'ted/grwth-2972-select-purchase-currency-in-collectmodal' of https://github.com/reservoirprotocol/reservoir-kit into ted/grwth-2972-select-purchase-currency-in-collectmodal [e619f299](https://github.com/reservoirprotocol/reservoir-kit/commit/e619f299af3b5cf5ac8cbacc7d51cb61824903dd)
-* Reconfigure reservoir chains and payment tokens [f3ef9621](https://github.com/reservoirprotocol/reservoir-kit/commit/f3ef9621aba9a273438a497190ec1ccb98807b14)
-* Merge branch 'ted/grwth-2972-select-purchase-currency-in-collectmodal' of github.com:reservoirprotocol/reservoir-kit into ted/grwth-2972-select-purchase-currency-in-collectmodal [728a3ab9](https://github.com/reservoirprotocol/reservoir-kit/commit/728a3ab90227dce637792c162d99967f4b45b919)
-* Add improved swr caching with ttl [4cbfd648](https://github.com/reservoirprotocol/reservoir-kit/commit/4cbfd648d41d10e19d0965596f817f90fc7c0253)
-* Fix collect checkout usd total price [5652c967](https://github.com/reservoirprotocol/reservoir-kit/commit/5652c9676f29a6a7f2239fc28e55f791a26b9134)
-* Fix missing keys [a657e3a0](https://github.com/reservoirprotocol/reservoir-kit/commit/a657e3a0a4800f27e627324e63db861280b84b9e)
-* Fix usd price calculation [2023-10-02](https://github.com/reservoirprotocol/reservoir-kit/commit/95fe1ab5)
-* Fix conversion calculation [040f72a3](https://github.com/reservoirprotocol/reservoir-kit/commit/040f72a3ffc2740d7fe59f07fc7d9ca6a17c331d)
-* Update payment currency logic [b01b11c9](https://github.com/reservoirprotocol/reservoir-kit/commit/b01b11c93098e291bce40e01d612a360cd21eb58)
+
 ## [v1.9.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/74b3e4195905f3ac7a6eb2ca7b22a0da137fae57) (2023-10-02)
 
-* Merge pull request #399 from reservoirprotocol/feature/ancient8-testnet [6040cd4e](https://github.com/reservoirprotocol/reservoir-kit/commit/6040cd4e47eca636f82685cfaeae191307838b74)
-* Merge pull request #397 from reservoirprotocol/pedro/grwth-3322-cart-balance-currency-icon-is-broken-when-switching-chain [6c0c0993](https://github.com/reservoirprotocol/reservoir-kit/commit/6c0c09935c905539e399e427b331de7bf616121b)
 * Add ancient8 chain [55dfc452](https://github.com/reservoirprotocol/reservoir-kit/commit/55dfc4525a38e762f16e02d983b103047b94589a)
-* latest changes [21aee2c0](https://github.com/reservoirprotocol/reservoir-kit/commit/21aee2c0c146749fad921080daa9424772206d9e)
-* wip conversion rates [6d1990cb](https://github.com/reservoirprotocol/reservoir-kit/commit/6d1990cbab8335375470a42579d6b2813abb328f)
-* wip refactoring raw pricing [35aa9614](https://github.com/reservoirprotocol/reservoir-kit/commit/35aa9614615bc848596da7ec38112c2539e5da7d)
-* Merge branch 'ted/grwth-2972-select-purchase-currency-in-collectmodal' of github.com:reservoirprotocol/reservoir-kit into ted/grwth-2972-select-purchase-currency-in-collectmodal [479fb99b](https://github.com/reservoirprotocol/reservoir-kit/commit/479fb99b98951fbf43cee2ac5e85a68304cee257)
-* Hide currencies if failed to get conversion [1de3959e](https://github.com/reservoirprotocol/reservoir-kit/commit/1de3959e3b1c3c487ced0a771c69dd6f3611f75d)
-* Improve select payment token ux [18961fc1](https://github.com/reservoirprotocol/reservoir-kit/commit/18961fc17ffd8b288bec7013428d327e187fd02c)
+
 * CartPopover: Fix insufficient balance currency icon [a559ae0e](https://github.com/reservoirprotocol/reservoir-kit/commit/a559ae0e89f0b1562f6304e4e7d1da77d34700e7)
-* Merge branch 'ted/grwth-2972-select-purchase-currency-in-collectmodal' of github.com:reservoirprotocol/reservoir-kit into ted/grwth-2972-select-purchase-currency-in-collectmodal [61b03b81](https://github.com/reservoirprotocol/reservoir-kit/commit/61b03b8149c564909dc3b4fd95bb6b255fb0a24d)
-* Fix insufficient balance when disconnected [27728d9e](https://github.com/reservoirprotocol/reservoir-kit/commit/27728d9e5da780dc3cd01a8737bf15083e6793d1)
-* Add type to currency conversion hook [2023-09-26](https://github.com/reservoirprotocol/reservoir-kit/commit/aee5dc99)
-* Resolve conflicts [3c510bcc](https://github.com/reservoirprotocol/reservoir-kit/commit/3c510bcc8d8c59aefb0e2c56a1e6651bb51159e3)
+
 ## [v1.9.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/cc38ed3743ea081bb7fd25277e54a2b68aea4bf9) (2023-09-25)
 
-* Merge pull request #390 from reservoirprotocol/pedro/grwth-3319-connect-button-appears-disabled-after-disconnect-wallet-and [d74a4a0e](https://github.com/reservoirprotocol/reservoir-kit/commit/d74a4a0eb8bd0143ee84c69d92c79399367babc7)
-* Merge pull request #389 from reservoirprotocol/ted-update-modals-with-error-well-logic [b0a77b72](https://github.com/reservoirprotocol/reservoir-kit/commit/b0a77b725bdefe140183e909520e6cfe9775e5f8)
-* Merge pull request #392 from reservoirprotocol/pedro/grwth-3251-creator-royalty-updating-to-wrong-value-when-listing-721c [63d94241](https://github.com/reservoirprotocol/reservoir-kit/commit/63d94241966816bc91b8c3f1d60a9d5d1488cbf1)
-* Fix purchase currency conflicts [0ef58ac4](https://github.com/reservoirprotocol/reservoir-kit/commit/0ef58ac4c8fd6e831fa8a2aa567633bb78eef89a)
-* Fix onchain royalties not properly calculated [47540954](https://github.com/reservoirprotocol/reservoir-kit/commit/475409546e656fd1f64d528c027baed7bf281b5b)
+* ListModal: Fix Creator royalty updating to wrong value when listing 721c [63d94241](https://github.com/reservoirprotocol/reservoir-kit/commit/63d94241966816bc91b8c3f1d60a9d5d1488cbf1)
 * CollectModal: Fix issue with disabled button after disconnecting [8ad67182](https://github.com/reservoirprotocol/reservoir-kit/commit/8ad6718245f774617ea1c48b2a1492a75645d02a)
 * Update all modals with ErrorWell logic [2608641c](https://github.com/reservoirprotocol/reservoir-kit/commit/2608641c69bd183632e663deb0aef7b4c55b38ed)
-* CollectModal: fees are based on the payment currency [10d373e1](https://github.com/reservoirprotocol/reservoir-kit/commit/10d373e1f86b1677c3284b5715305702b01da5ed)
-* Fix apikey not found on chain in useCurrencyConversion [17ccd3d5](https://github.com/reservoirprotocol/reservoir-kit/commit/17ccd3d5eef086a888f1084978a5a81048118864)
-* Merge branch 'ted/grwth-2972-select-purchase-currency-in-collectmodal' of github.com:reservoirprotocol/reservoir-kit into ted/grwth-2972-select-purchase-currency-in-collectmodal [207ef1c8](https://github.com/reservoirprotocol/reservoir-kit/commit/207ef1c8593db819aa054cd44ab2e73202ea3186)
-* Merge branch 'ted/grwth-2972-select-purchase-currency-in-collectmodal' of https://github.com/reservoirprotocol/reservoir-kit into ted/grwth-2972-select-purchase-currency-in-collectmodal [68b9a5ab](https://github.com/reservoirprotocol/reservoir-kit/commit/68b9a5ab28d77fa9f343207a349bd4189409fd6d)
-* Go back to idle state when selecting a payment currency [43495fd2](https://github.com/reservoirprotocol/reservoir-kit/commit/43495fd24b2b1c6ba6bf0661a94eb2b158bc9dd0)
-* CollectModal: fix a few bugs with total usd when sweeping [8dbac89b](https://github.com/reservoirprotocol/reservoir-kit/commit/8dbac89b3873b63d1a407cf37782522510f24c97)
-* Fix usdPrice and usdTotal [ea5109eb](https://github.com/reservoirprotocol/reservoir-kit/commit/ea5109ebc42ff15d22668c6461f43f12bbc202e4)
-* BREAKING: move api key configuration from chain to client [dc879c3c](https://github.com/reservoirprotocol/reservoir-kit/commit/dc879c3c1f4ad2321be747cfb54f1fcb6ec92e9e)
-* Pass paymentCurrency as currency to execute buy [48d8031c](https://github.com/reservoirprotocol/reservoir-kit/commit/48d8031c709b41a36606a003c57a18e11e620098)
-* Remove usdCoinConversion from CollectRenderer [c8db911e](https://github.com/reservoirprotocol/reservoir-kit/commit/c8db911e4147b58e97776f68ed64985178fac2a9)
-* Fixed hasEnoughBalance calculation [a44574f5](https://github.com/reservoirprotocol/reservoir-kit/commit/a44574f559c753195bcd0b857d4d672835d585d6)
-* Add useCurrencyConversion hook [ and payment tokens logic](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-01)
-* Updated select payment tokens ui [2023-07-31](https://github.com/reservoirprotocol/reservoir-kit/commit/15b8bfa2)
-* Updated collect modal renderer currency logic [302f1b22](https://github.com/reservoirprotocol/reservoir-kit/commit/302f1b2295b2792d19b1b03963e001090fb91d36)
-* Add todo to Sweep content [fd1d06e2](https://github.com/reservoirprotocol/reservoir-kit/commit/fd1d06e2117c6c6cbf687991f009c1bc7fabf17a)
+
 
 ## [v1.9.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d19b2b186a9935e29dc837d48d725a23d24abef8) (2023-09-21)
 
