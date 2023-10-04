@@ -444,7 +444,7 @@ export const CollectModalRenderer: FC<Props> = ({
   ])
 
   useEffect(() => {
-    if (!paymentTokens[0] || paymentTokens.length <= 1 || paymentCurrency) {
+    if (!paymentTokens[0] || paymentCurrency) {
       return
     }
     if (contentMode === 'mint') {
@@ -454,6 +454,7 @@ export const CollectModalRenderer: FC<Props> = ({
         paymentTokens.find(
           (token) => token.address === selectedTokens[0].currency?.toLowerCase()
         ) || paymentTokens[0]
+
       setPaymentCurrency(firstListingCurrency)
     }
   }, [paymentTokens, chainCurrency, selectedTokens])

@@ -60,7 +60,7 @@ export const localStorageProvider = (): Cache<any> => {
         : new Map([])
     cacheTTL =
       typeof window !== 'undefined'
-        ? JSON.parse(localStorage.getItem(CACHE_KEY_TTL) || '[]')
+        ? JSON.parse(localStorage.getItem(CACHE_KEY_TTL) || '{}')
         : {}
     for (let key in cacheTTL) {
       const ttl: number = cacheTTL[key]
