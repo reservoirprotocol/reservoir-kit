@@ -1,4 +1,31 @@
 
+## [v1.5.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/2ce88f4f6f06c57ceff1ac47ea46c06f4c52597d) (2023-10-04)
+
+* Fix ExecuteSteps test error [b5e37686](https://github.com/reservoirprotocol/reservoir-kit/commit/b5e3768617ef142b271baffd9111a2cdfc82ee5a)
+* Add name to Reservoir chains [f615c333](https://github.com/reservoirprotocol/reservoir-kit/commit/f615c333f0ac01f99505cddd5c90d1a756d4c988)
+* Reconfigure reservoir chains and payment tokens [f3ef9621](https://github.com/reservoirprotocol/reservoir-kit/commit/f3ef9621aba9a273438a497190ec1ccb98807b14)
+## [v1.4.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/70b3ea56dfe92fa81930ec6360ebda8a30877d9e) (2023-10-02)
+
+* Merge pull request #399 from reservoirprotocol/feature/ancient8-testnet [6040cd4e](https://github.com/reservoirprotocol/reservoir-kit/commit/6040cd4e47eca636f82685cfaeae191307838b74)
+* Merge pull request #394 from reservoirprotocol/ted/grwth-3313-sdk-transfer-action [b8e9c19f](https://github.com/reservoirprotocol/reservoir-kit/commit/b8e9c19fbcf059de2f4c27900bae7e20d48eb230)
+* Add ancient8 chain [55dfc452](https://github.com/reservoirprotocol/reservoir-kit/commit/55dfc4525a38e762f16e02d983b103047b94589a)
+* Resolve conflicts [3c510bcc](https://github.com/reservoirprotocol/reservoir-kit/commit/3c510bcc8d8c59aefb0e2c56a1e6651bb51159e3)
+* Remove logs [4a0f58eb](https://github.com/reservoirprotocol/reservoir-kit/commit/4a0f58eb9f32d197d0baddccba488534e34e08cb)
+* Add Transfer sdk action [e85517a5](https://github.com/reservoirprotocol/reservoir-kit/commit/e85517a5f6062da15abed2968247b564732bd8d0)
+## [v1.4.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1a27e36fde5753db28a8ec2e08ddecce636c709e) (2023-09-25)
+
+* Merge pull request #391 from reservoirprotocol/fix/polling-of-steps [aca1bd82](https://github.com/reservoirprotocol/reservoir-kit/commit/aca1bd8210f48bbbab41abd6611da2e073257311)
+* Fix purchase currency conflicts [0ef58ac4](https://github.com/reservoirprotocol/reservoir-kit/commit/0ef58ac4c8fd6e831fa8a2aa567633bb78eef89a)
+* fix: polling of steps [3b95b6b7](https://github.com/reservoirprotocol/reservoir-kit/commit/3b95b6b7f60f89426899b6422063965c9a6a553a)
+* Finished reservoirChains configuration [2023-08-03](https://github.com/reservoirprotocol/reservoir-kit/commit/ef9a6558)
+* BREAKING: move api key configuration from chain to client [dc879c3c](https://github.com/reservoirprotocol/reservoir-kit/commit/dc879c3c1f4ad2321be747cfb54f1fcb6ec92e9e)
+* Add usdc to goerli payment tokens [980049dc](https://github.com/reservoirprotocol/reservoir-kit/commit/980049dc8a67a2f2858d94fe123c556fbb16db77)
+* Add useCurrencyConversion hook [ and payment tokens logic](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-01)
+* Sync api [aac112e9](https://github.com/reservoirprotocol/reservoir-kit/commit/aac112e9b81233b664624edfdbafe33d46d5dbdb)
+* Updated collect modal renderer currency logic [302f1b22](https://github.com/reservoirprotocol/reservoir-kit/commit/302f1b2295b2792d19b1b03963e001090fb91d36)
+* Add todo [15c3ea10](https://github.com/reservoirprotocol/reservoir-kit/commit/15c3ea10c1b5dcc747b89fbeace149f2a5b3b41b)
+* update PaymentToken address type [e9de589b](https://github.com/reservoirprotocol/reservoir-kit/commit/e9de589b7ac2531038c0f4c7d0e73d38b82607fd)
+
 ## [v1.4.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d4881c50622cc88d19cd1a3b6bde9a6faea38082) (2023-09-21)
 
 * Improve the way we handle a cancelled transaction [5c9d70c7](https://github.com/reservoirprotocol/reservoir-kit/commit/5c9d70c73712b8fc7ec10408039cd2e64b7da026)
