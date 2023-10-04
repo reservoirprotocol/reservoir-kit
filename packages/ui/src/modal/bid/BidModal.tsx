@@ -236,16 +236,6 @@ export function BidModal({
 
         const providerOptionsContext = useContext(ProviderOptionsContext)
 
-        const ctaButtonText = providerOptionsContext.disableJumperLink
-          ? copy.ctaBid.length > 0
-            ? copy.ctaBid
-            : token && token.token
-            ? 'Make an Offer'
-            : trait
-            ? 'Make an Attribute Offer'
-            : 'Make a Collection Offer'
-          : copy.ctaConvertManually
-
         const quantityEnabled =
           !tokenId ||
           (token?.token?.kind === 'erc1155' && Number(token?.token?.supply) > 1)
@@ -334,6 +324,15 @@ export function BidModal({
             ? 0
             : 12,
         }
+
+        const ctaButtonText =
+          copy.ctaBid.length > 0
+            ? copy.ctaBid
+            : token && token.token
+            ? 'Make an Offer'
+            : trait
+            ? 'Make an Attribute Offer'
+            : 'Make a Collection Offer'
 
         return (
           <Modal
@@ -776,7 +775,9 @@ export function BidModal({
                               window.open(convertLink, '_blank')
                             }}
                           >
-                            {ctaButtonText}
+                            {providerOptionsContext.disableJumperLink
+                              ? ctaButtonText
+                              : copy.ctaConvertManually}
                           </Button>
                           {canAutomaticallyConvert && (
                             <Button
