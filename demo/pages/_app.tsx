@@ -12,6 +12,7 @@ import { ThemeProvider } from 'next-themes'
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { WagmiConfig, createConfig, configureChains } from 'wagmi'
 import * as allChains from 'wagmi/chains'
+
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import '../fonts.css'
@@ -22,7 +23,11 @@ import {
   ReservoirKitTheme,
   CartProvider,
 } from '@reservoir0x/reservoir-kit-ui'
-import { LogLevel, customChains } from '@reservoir0x/reservoir-sdk'
+import {
+  LogLevel,
+  customChains,
+  reservoirChains,
+} from '@reservoir0x/reservoir-sdk'
 import { useRouter } from 'next/router'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
@@ -41,6 +46,7 @@ const { chains, publicClient } = configureChains(
   [
     allChains.mainnet,
     allChains.goerli,
+    allChains.sepolia,
     allChains.polygon,
     allChains.optimism,
     allChains.arbitrum,
@@ -100,66 +106,69 @@ const AppWrapper: FC<any> = ({ children }) => {
     <WagmiConfig config={wagmiConfig}>
       <ReservoirKitProvider
         options={{
+          apiKey: API_KEY,
           chains: [
             {
-              baseApiUrl: 'https://api.reservoir.tools',
-              id: allChains.mainnet.id,
+              ...reservoirChains.mainnet,
               active: CHAIN_ID === allChains.mainnet.id,
-              apiKey: API_KEY,
             },
             {
-              baseApiUrl: 'https://api-goerli.reservoir.tools',
-              id: allChains.goerli.id,
+              ...reservoirChains.goerli,
               active: CHAIN_ID === allChains.goerli.id,
-              apiKey: API_KEY,
+              paymentTokens: [
+                ...reservoirChains.goerli.paymentTokens,
+                {
+                  address: '0x68B7E050E6e2C7eFE11439045c9d49813C1724B8',
+                  symbol: 'phUSDC',
+                  name: 'phUSDC',
+                  decimals: 6,
+                  coinGeckoId: 'usd-coin',
+                },
+                {
+                  address: '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844',
+                  symbol: 'DAI',
+                  name: 'Dai',
+                  decimals: 18,
+                  coinGeckoId: 'dai',
+                },
+              ],
             },
             {
-              baseApiUrl: 'https://api-polygon.reservoir.tools',
-              id: allChains.polygon.id,
+              ...reservoirChains.sepolia,
+              active: CHAIN_ID === allChains.sepolia.id
+            },
+            {
+              ...reservoirChains.polygon,
               active: CHAIN_ID === allChains.polygon.id,
-              apiKey: API_KEY,
             },
             {
-              baseApiUrl: 'https://api-optimism.reservoir.tools',
-              id: allChains.optimism.id,
+              ...reservoirChains.optimism,
               active: CHAIN_ID === allChains.optimism.id,
-              apiKey: API_KEY,
             },
             {
-              baseApiUrl: 'https://api-arbitrum.reservoir.tools',
-              id: allChains.arbitrum.id,
+              ...reservoirChains.arbitrum,
               active: CHAIN_ID === allChains.arbitrum.id,
-              apiKey: API_KEY,
             },
             {
-              baseApiUrl: 'https://api-zora.reservoir.tools',
-              id: allChains.zora.id,
+              ...reservoirChains.zora,
               active: CHAIN_ID === allChains.zora.id,
-              apiKey: API_KEY,
             },
             {
-              baseApiUrl: 'https://api-base.reservoir.tools',
-              id: allChains.base.id,
+              ...reservoirChains.base,
               active: CHAIN_ID === allChains.base.id,
-              apiKey: API_KEY,
             },
             {
-              baseApiUrl: 'https://api-linea.reservoir.tools',
-              id: allChains.linea.id,
+              ...reservoirChains.linea,
               active: CHAIN_ID === allChains.linea.id,
-              apiKey: API_KEY,
             },
             {
-              baseApiUrl: 'https://api-arbitrum-nova.reservoir.tools',
-              id: customChains.arbitrumNova.id,
-              active: CHAIN_ID === customChains.arbitrumNova.id,
-              apiKey: API_KEY
+              ...reservoirChains.arbitrumNova,
+              active: CHAIN_ID === allChains.arbitrumNova.id
             },
             {
-              baseApiUrl: 'https://api-ancient8-testnet.reservoir.tools',
+              ...reservoirChains.ancient8Testnet,
               id: customChains.ancient8Testnet.id,
               active: CHAIN_ID === customChains.ancient8Testnet.id,
-              apiKey: API_KEY
             }
           ],
           marketplaceFees: MARKETPLACE_FEES,

@@ -69,7 +69,7 @@ const TokenFallback: FC<TokenFallbackProps> = ({
                   token: `${token?.collection?.id}:${token?.tokenId}`,
                 }
               const headers = {
-                ...defaultHeaders(reservoirChain?.apiKey, client?.version),
+                ...defaultHeaders(client?.apiKey, client?.version),
                 'Content-Type': 'application/json',
               }
               fetch(url, {

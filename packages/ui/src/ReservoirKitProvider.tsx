@@ -8,7 +8,10 @@ import React, {
   ComponentPropsWithoutRef,
   useCallback,
 } from 'react'
-import { ReservoirClientOptions } from '@reservoir0x/reservoir-sdk'
+import {
+  ReservoirClientOptions,
+  reservoirChains,
+} from '@reservoir0x/reservoir-sdk'
 import { ReservoirKitTheme, darkTheme } from './themes'
 import { ReservoirClientProvider } from './ReservoirClientProvider'
 import { SWRConfig } from 'swr'
@@ -45,7 +48,7 @@ export const ProviderOptionsContext =
   createContext<ReservoirKitProviderOptions>({})
 
 const defaultOptions = {
-  chains: [{ baseApiUrl: 'https://api.reservoir.tools', id: 1, active: true }],
+  chains: [{ ...reservoirChains.mainnet, active: true }],
 }
 
 const classNameObserverOptions = {
