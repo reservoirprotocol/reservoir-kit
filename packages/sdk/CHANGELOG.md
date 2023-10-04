@@ -1,4 +1,17 @@
 
+## [v1.5.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/2ce88f4f6f06c57ceff1ac47ea46c06f4c52597d) (2023-10-04)
+
+* ReservoirChains prebundled configuration [e619f299](https://github.com/reservoirprotocol/reservoir-kit/commit/e619f299af3b5cf5ac8cbacc7d51cb61824903dd)
+
+### Breaking Change Migrations:
+* apiKey moved to root configuration object, no longer required on every chain configuration.
+
+## [v1.4.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/70b3ea56dfe92fa81930ec6360ebda8a30877d9e) (2023-10-02)
+
+* Add ancient8 chain [55dfc452](https://github.com/reservoirprotocol/reservoir-kit/commit/55dfc4525a38e762f16e02d983b103047b94589a)
+* Add Transfer sdk action [e85517a5](https://github.com/reservoirprotocol/reservoir-kit/commit/e85517a5f6062da15abed2968247b564732bd8d0)
+## [v1.4.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1a27e36fde5753db28a8ec2e08ddecce636c709e) (2023-09-25)
+
 ## [v1.4.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d4881c50622cc88d19cd1a3b6bde9a6faea38082) (2023-09-21)
 
 * Improve the way we handle a cancelled transaction [5c9d70c7](https://github.com/reservoirprotocol/reservoir-kit/commit/5c9d70c73712b8fc7ec10408039cd2e64b7da026)

@@ -4,6 +4,7 @@ import {
   Anchor,
   Box,
   Button,
+  CryptoCurrencyIcon,
   ErrorWell,
   Flex,
   FormatCryptoCurrency,
@@ -14,6 +15,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
+  faChevronLeft,
+  faChevronRight,
   faCircleExclamation,
   faCube,
   faMagnifyingGlass,
@@ -28,6 +31,7 @@ import { ApprovePurchasingCollapsible } from '../../ApprovePurchasingCollapsible
 import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
+import { SelectPaymentToken } from '../../SelectPaymentToken'
 import { formatNumber } from '../../../lib/numbers'
 
 export const SweepContent: FC<
@@ -39,6 +43,7 @@ export const SweepContent: FC<
   }
 > = ({
   chainId,
+  chainCurrency,
   collection,
   token,
   orders,
@@ -46,24 +51,24 @@ export const SweepContent: FC<
   itemAmount,
   setItemAmount,
   maxItemAmount,
-  currency,
+  paymentCurrency,
+  setPaymentCurrency,
   total,
   totalIncludingFees,
-  totalUsd,
   feeOnTop,
   feeUsd,
   isConnected,
   usdPrice,
+  usdPriceRaw,
   currentChain,
-  balance,
-  chainCurrency,
-  isChainCurrency,
+  paymentTokens,
   hasEnoughCurrency,
   addFundsLink,
   blockExplorerBaseUrl,
   transactionError,
   stepData,
   collectStep,
+  setCollectStep,
   collectTokens,
   copy,
   setOpen,
@@ -74,13 +79,13 @@ export const SweepContent: FC<
 
   const cheapestToken = selectedTokens?.[0]
   const cheapestTokenPrice =
-    cheapestToken?.currency != chainCurrency.address && isChainCurrency
+    cheapestToken?.currency?.toLowerCase() != paymentCurrency?.address
       ? cheapestToken?.buyInQuote
       : cheapestToken?.totalPrice
 
   const mostExpensiveToken = selectedTokens?.[selectedTokens.length - 1]
   const mostExpensiveTokenPrice =
-    mostExpensiveToken?.currency != chainCurrency.address && isChainCurrency
+    mostExpensiveToken?.currency?.toLowerCase() != paymentCurrency?.address
       ? mostExpensiveToken?.buyInQuote
       : mostExpensiveToken?.totalPrice
 
@@ -139,6 +144,7 @@ export const SweepContent: FC<
           </Button>
         </Flex>
       ) : null}
+
       {hasTokens && maxItemAmount !== 0 && collectStep === CollectStep.Idle && (
         <Flex direction="column">
           <Flex
@@ -187,9 +193,9 @@ export const SweepContent: FC<
                         <FormatCryptoCurrency
                           chainId={chainId}
                           amount={cheapestTokenPrice}
-                          address={currency?.address}
-                          decimals={currency?.decimals}
-                          symbol={currency?.symbol}
+                          address={paymentCurrency?.address}
+                          decimals={paymentCurrency?.decimals}
+                          symbol={paymentCurrency?.symbol}
                           maximumFractionDigits={2}
                         />
                         <Text style="subtitle3" color="subtle">
@@ -198,9 +204,9 @@ export const SweepContent: FC<
                         <FormatCryptoCurrency
                           chainId={chainId}
                           amount={mostExpensiveTokenPrice}
-                          address={currency?.address}
-                          decimals={currency?.decimals}
-                          symbol={currency?.symbol}
+                          address={paymentCurrency?.address}
+                          decimals={paymentCurrency?.decimals}
+                          symbol={paymentCurrency?.symbol}
                           maximumFractionDigits={2}
                         />
                       </Flex>
@@ -215,10 +221,10 @@ export const SweepContent: FC<
                     </Text>
                     <FormatCryptoCurrency
                       chainId={chainId}
-                      amount={total / itemAmount}
-                      address={currency?.address}
-                      decimals={currency?.decimals}
-                      symbol={currency?.symbol}
+                      amount={total / BigInt(itemAmount)}
+                      address={paymentCurrency?.address}
+                      decimals={paymentCurrency?.decimals}
+                      symbol={paymentCurrency?.symbol}
                       maximumFractionDigits={2}
                     />
                   </Flex>
@@ -226,39 +232,84 @@ export const SweepContent: FC<
               ) : null}
             </Flex>
           </Flex>
-          <Flex direction="column" css={{ px: '$4', pt: '$4', pb: '$2' }}>
+          <Flex direction="column" css={{ pt: '$4', pb: '$2', gap: '$4' }}>
+            {paymentTokens.length > 1 ? (
+              <Flex
+                direction="column"
+                css={{
+                  gap: '$2',
+                  py: '$3',
+                  px: '$4',
+                  borderRadius: '$3',
+                  '&:hover': {
+                    backgroundColor: '$neutralBgHover',
+                  },
+                }}
+                onClick={() => setCollectStep(CollectStep.SelectPayment)}
+              >
+                <Flex
+                  justify="between"
+                  align="center"
+                  css={{
+                    gap: '$1',
+                  }}
+                >
+                  <Text style="subtitle2">Payment Method</Text>
+                  <Flex align="center" css={{ gap: '$2', cursor: 'pointer' }}>
+                    <Flex align="center">
+                      <CryptoCurrencyIcon
+                        address={paymentCurrency?.address as string}
+                        css={{ width: 16, height: 16, mr: '$1' }}
+                      />
+                      <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                    </Flex>
+                    <Box css={{ color: '$neutralSolidHover' }}>
+                      <FontAwesomeIcon icon={faChevronRight} width={10} />
+                    </Box>
+                  </Flex>
+                </Flex>
+              </Flex>
+            ) : null}
             {feeOnTop > 0 && (
               <Flex
                 justify="between"
                 align="start"
-                css={{ py: '$4', width: '100%' }}
+                css={{ px: '$4', py: '$3', width: '100%' }}
               >
                 <Text style="subtitle3">Referral Fee</Text>
                 <Flex direction="column" align="end" css={{ gap: '$1' }}>
                   <FormatCryptoCurrency
                     chainId={chainId}
                     amount={feeOnTop}
-                    address={currency?.address}
-                    decimals={currency?.decimals}
-                    symbol={currency?.symbol}
+                    address={paymentCurrency?.address}
+                    decimals={paymentCurrency?.decimals}
+                    symbol={paymentCurrency?.symbol}
                   />
                   <FormatCurrency amount={feeUsd} color="subtle" style="tiny" />
                 </Flex>
               </Flex>
             )}
-            <Flex justify="between" align="start" css={{ height: 34 }}>
-              <Text style="h6">Total</Text>
+            <Flex
+              justify="between"
+              align="start"
+              css={{ height: 34, px: '$4' }}
+            >
+              <Text style="h6">You Pay</Text>
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
                 <FormatCryptoCurrency
                   chainId={chainId}
                   textStyle="h6"
-                  amount={totalIncludingFees}
-                  address={currency?.address}
-                  decimals={currency?.decimals}
-                  symbol={currency?.symbol}
+                  amount={paymentCurrency?.currencyTotalRaw}
+                  address={paymentCurrency?.address}
+                  decimals={paymentCurrency?.decimals}
+                  symbol={paymentCurrency?.symbol}
                   logoWidth={18}
                 />
-                <FormatCurrency amount={totalUsd} style="tiny" color="subtle" />
+                <FormatCurrency
+                  amount={paymentCurrency?.usdTotalPriceRaw}
+                  style="tiny"
+                  color="subtle"
+                />
               </Flex>
             </Flex>
           </Flex>
@@ -282,14 +333,17 @@ export const SweepContent: FC<
               <Flex align="center">
                 <Text css={{ mr: '$3' }} color="error" style="body3">
                   Insufficient Balance
+                  {paymentTokens.length > 1
+                    ? ', select another token or add funds'
+                    : null}
                 </Text>
 
                 <FormatCryptoCurrency
                   chainId={chainId}
-                  amount={balance}
-                  address={currency?.address}
-                  decimals={currency?.decimals}
-                  symbol={currency?.symbol}
+                  amount={paymentCurrency?.balance}
+                  address={paymentCurrency?.address}
+                  decimals={paymentCurrency?.decimals}
+                  symbol={paymentCurrency?.symbol}
                   textStyle="body3"
                 />
               </Flex>
@@ -301,6 +355,28 @@ export const SweepContent: FC<
               </Button>
             </Flex>
           )}
+        </Flex>
+      )}
+
+      {collectStep === CollectStep.SelectPayment && (
+        <Flex direction="column" css={{ py: 20 }}>
+          <Flex align="center" css={{ gap: '$2', px: '$4' }}>
+            <Button
+              onClick={() => setCollectStep(CollectStep.Idle)}
+              color="ghost"
+              size="xs"
+              css={{ color: '$neutralSolidHover' }}
+            >
+              <FontAwesomeIcon icon={faChevronLeft} width={10} />
+            </Button>
+            <Text style="subtitle2">Select A Token</Text>
+          </Flex>
+          <SelectPaymentToken
+            paymentTokens={paymentTokens}
+            currency={paymentCurrency}
+            setCurrency={setPaymentCurrency}
+            goBack={() => setCollectStep(CollectStep.Idle)}
+          />
         </Flex>
       )}
 
@@ -317,10 +393,9 @@ export const SweepContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={totalIncludingFees}
-              usdPrice={usdPrice}
-              currency={currency}
-              chain={currentChain}
+              totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+              usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
+              currency={paymentCurrency}
             />
           </Box>
           <Flex
@@ -403,11 +478,12 @@ export const SweepContent: FC<
                       {stepData?.currentStep?.items.length} separate
                       transactions.
                     </Text>
-                    {stepData?.currentStep?.items.map((item) => (
+                    {stepData?.currentStep?.items.map((item, idx) => (
                       <ApprovePurchasingCollapsible
+                        key={idx}
                         item={item}
                         pathMap={pathMap}
-                        usdPrice={usdPrice}
+                        usdPrice={+usdPrice}
                         chain={currentChain}
                         open={true}
                       />
@@ -455,10 +531,9 @@ export const SweepContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={totalIncludingFees}
-              usdPrice={usdPrice}
-              currency={currency}
-              chain={currentChain}
+              totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+              usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
+              currency={paymentCurrency}
             />
           </Box>
           <Flex
@@ -525,13 +600,14 @@ export const SweepContent: FC<
                 : 'Congrats! Purchase was successful.'}
             </Text>
             <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-              {stepData?.currentStep?.items?.map((item) => {
+              {stepData?.currentStep?.items?.map((item, idx) => {
                 const txHash = item.txHash
                   ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(-4)}`
                   : ''
 
                 return (
                   <Anchor
+                    key={idx}
                     href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
                     color="primary"
                     weight="medium"
