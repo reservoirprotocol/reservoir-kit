@@ -212,6 +212,9 @@ export const ListModalRenderer: FC<Props> = ({
     rendererChain?.id,
     open
   )
+
+  // @TODO: update hook to only take in one marketplace
+  // have a useEffect that set's the marketplace to reservoir if other marketplace is not supported
   // const {
   //   data: unapprovedMarketplaces,
   //   isFetching: isFetchingUnapprovedMarketplaces,
