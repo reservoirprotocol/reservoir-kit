@@ -29,6 +29,7 @@ import { Path } from '../../../components/cart/CartCheckoutModal'
 import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
 import { formatNumber } from '../../../lib/numbers'
+import { truncateAddress } from '../../../lib/truncate'
 
 export const MintContent: FC<
   ChildrenProps & {
@@ -473,7 +474,7 @@ export const MintContent: FC<
             <Flex direction="column" css={{ gap: '$2', mb: '$3', px: '$5' }}>
               {stepData?.currentStep?.items?.map((item, index) => {
                 const txHash = item.txHash
-                  ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(-4)}`
+                  ? `${truncateAddress(item.txHash)}`
                   : ''
 
                 return (

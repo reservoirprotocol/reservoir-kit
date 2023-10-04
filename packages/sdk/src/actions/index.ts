@@ -20,13 +20,14 @@ export type ReservoirEventListener = (
 
 /**
  * ReservoirClient Configuration Options
- * @param chains List of chain objects with configuration (id, baseApiUrl, paymentTokens and if it's the default)
+ * @param chains List of chain objects with configuration (id, name, baseApiUrl, paymentTokens and if it's the default)
  * @param source Used to manually override the source domain used to attribute local orders
  * @param automatedRoyalties If true, royalties will be automatically included, defaults to true. Only relevant for creating orders.
  * @param marketplaceFees A list of fee strings representing a recipient and the fee in BPS delimited by a colon: ["0xabc:100"] used when creating an order (listing or bid)
  * @param normalizeRoyalties Normalize orders that don't have royalties by apply royalties on top of them
  * @param bountyReferrer Referrer address to collect bounties when filling orders (applies to zora, manifold, etc)
  * @param logLevel Log level from 0-4, the higher the more verbose.
+ * @param maxPollingAttemptsBeforeTimeout The maximum number of attempts the synced api is polled before timing out. The api is polled every 5 secs (default is 30)
  */
 export type ReservoirClientOptions = {
   chains: ReservoirChain[]

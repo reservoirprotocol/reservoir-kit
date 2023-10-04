@@ -6,6 +6,7 @@ import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import Anchor from './Anchor'
 import { TransactionTimeoutError } from '@reservoir0x/reservoir-sdk'
 import { Address } from 'viem'
+import { truncateAddress } from '../lib/truncate'
 
 type Props = {
   error?: Error
@@ -57,8 +58,7 @@ export default function ErrorWell({ error, css }: Props) {
               target="_blank"
               css={{ fontSize: 12 }}
             >
-              View on block explorer:{' '}
-              {`${txHash.slice(0, 4)}...${txHash.slice(-4)}`}
+              View on block explorer: {truncateAddress(txHash)}
             </Anchor>
           </>
         ) : (
