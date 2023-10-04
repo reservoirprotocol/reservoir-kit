@@ -7,6 +7,7 @@ import { PaymentToken, chainPaymentTokensMap } from '../utils/paymentTokens'
 
 export type ReservoirChain = {
   id: number
+  name: string
   baseApiUrl: string
   active: boolean
   paymentTokens?: PaymentToken[]
