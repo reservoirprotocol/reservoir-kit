@@ -27,8 +27,6 @@ export default function ErrorWell({ error, css }: Props) {
       txHash = (error as TransactionTimeoutError).txHash
     } else if (errorStatus >= 400 && errorStatus < 500) {
       message = error.message
-    } else if (error.message) {
-      message = error.message
     }
   }
 
