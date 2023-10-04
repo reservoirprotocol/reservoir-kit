@@ -151,8 +151,8 @@ export async function executeSteps(
     if (reservoirChain?.baseApiUrl) {
       request.baseURL = reservoirChain.baseApiUrl
     }
-    if (reservoirChain?.apiKey) {
-      request.headers['x-api-key'] = reservoirChain.apiKey
+    if (client?.apiKey) {
+      request.headers['x-api-key'] = client.apiKey
     }
     if (client?.uiVersion) {
       request.headers['x-rkui-version'] = client.uiVersion
@@ -299,9 +299,9 @@ export async function executeSteps(
         // - the status changed to "completed"
         return data?.steps?.[incompleteStepIndex].items?.[
           incompleteStepItemIndex
-        ].data || data?.steps?.[incompleteStepIndex].items?.[
-          incompleteStepItemIndex
-        ].status === "complete"
+        ].data ||
+          data?.steps?.[incompleteStepIndex].items?.[incompleteStepItemIndex]
+            .status === 'complete'
           ? true
           : false
       })) as Execute
