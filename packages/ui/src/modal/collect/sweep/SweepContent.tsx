@@ -268,11 +268,6 @@ export const SweepContent: FC<
                     </Box>
                   </Flex>
                 </Flex>
-                {!hasEnoughCurrency && isConnected ? (
-                  <Text css={{ mr: '$3' }} color="error" style="body3">
-                    Insufficient balance, select another token or add funds
-                  </Text>
-                ) : null}
               </Flex>
             ) : null}
             {feeOnTop > 0 && (
@@ -338,6 +333,9 @@ export const SweepContent: FC<
               <Flex align="center">
                 <Text css={{ mr: '$3' }} color="error" style="body3">
                   Insufficient Balance
+                  {paymentTokens.length > 1
+                    ? ', select another token or add funds'
+                    : null}
                 </Text>
 
                 <FormatCryptoCurrency
