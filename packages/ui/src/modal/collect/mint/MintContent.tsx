@@ -46,14 +46,12 @@ export const MintContent: FC<
   itemAmount,
   setItemAmount,
   maxItemAmount,
-  currency,
-  totalIncludingFees,
-  totalUsd,
+  paymentCurrency,
   usdPrice,
+  usdPriceRaw,
   feeOnTop,
   feeUsd,
   currentChain,
-  balance,
   contract,
   hasEnoughCurrency,
   addFundsLink,
@@ -170,7 +168,7 @@ export const MintContent: FC<
             </Flex>
             <Flex
               direction="column"
-              css={{ px: '$4', pt: '$4', pb: '$2', gap: '$4' }}
+              css={{ px: '$4', pt: '$4', pb: '$2', gap: '$5' }}
             >
               <Flex direction="column" css={{ gap: 10 }}>
                 {hasQuantitySet ? (
@@ -182,9 +180,9 @@ export const MintContent: FC<
                       <FormatCryptoCurrency
                         chainId={chainId}
                         amount={mintPrice}
-                        address={currency?.address}
-                        decimals={currency?.decimals}
-                        symbol={currency?.symbol}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
                         logoWidth={12}
                         css={{ color: '$neutralText' }}
                       />
@@ -195,7 +193,7 @@ export const MintContent: FC<
                   </Flex>
                 ) : null}
               </Flex>
-              <Flex direction="column">
+              <Flex direction="column" css={{ gap: '$5' }}>
                 {feeOnTop > 0 && (
                   <Flex
                     justify="between"
@@ -207,9 +205,9 @@ export const MintContent: FC<
                       <FormatCryptoCurrency
                         chainId={chainId}
                         amount={feeOnTop}
-                        address={currency?.address}
-                        decimals={currency?.decimals}
-                        symbol={currency?.symbol}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
                       />
                       <FormatCurrency
                         amount={feeUsd}
@@ -219,20 +217,21 @@ export const MintContent: FC<
                     </Flex>
                   </Flex>
                 )}
+
                 <Flex justify="between" align="start" css={{ height: 34 }}>
-                  <Text style="h6">Total</Text>
+                  <Text style="h6">You Pay</Text>
                   <Flex direction="column" align="end" css={{ gap: '$1' }}>
                     <FormatCryptoCurrency
                       chainId={chainId}
                       textStyle="h6"
-                      amount={totalIncludingFees}
-                      address={currency?.address}
-                      decimals={currency?.decimals}
-                      symbol={currency?.symbol}
+                      amount={paymentCurrency?.currencyTotalRaw}
+                      address={paymentCurrency?.address}
+                      decimals={paymentCurrency?.decimals}
+                      symbol={paymentCurrency?.symbol}
                       logoWidth={18}
                     />
                     <FormatCurrency
-                      amount={totalUsd}
+                      amount={paymentCurrency?.usdTotalPriceRaw}
                       style="subtitle3"
                       color="subtle"
                     />
@@ -261,10 +260,10 @@ export const MintContent: FC<
 
                   <FormatCryptoCurrency
                     chainId={chainId}
-                    amount={balance}
-                    address={currency?.address}
-                    decimals={currency?.decimals}
-                    symbol={currency?.symbol}
+                    amount={paymentCurrency?.balance}
+                    address={paymentCurrency?.address}
+                    decimals={paymentCurrency?.decimals}
+                    symbol={paymentCurrency?.symbol}
                     textStyle="body3"
                   />
                 </Flex>
@@ -272,7 +271,7 @@ export const MintContent: FC<
                   onClick={() => {
                     window.open(addFundsLink, '_blank')
                   }}
-                  css={{ width: '100%', mb: '$3' }}
+                  css={{ mb: '$3', width: '100%' }}
                 >
                   {copy.mintCtaInsufficientFunds}
                 </Button>
@@ -294,10 +293,9 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={totalIncludingFees}
-              usdPrice={usdPrice}
-              currency={currency}
-              chain={currentChain}
+              totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+              currency={paymentCurrency}
+              usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
             />
           </Box>
           <Flex
@@ -338,7 +336,7 @@ export const MintContent: FC<
                         key={index}
                         item={item}
                         pathMap={pathMap}
-                        usdPrice={usdPrice}
+                        usdPrice={+usdPrice}
                         chain={currentChain}
                         open={true}
                       />
@@ -386,10 +384,9 @@ export const MintContent: FC<
               collection={collection}
               token={token}
               itemCount={itemAmount}
-              totalPrice={totalIncludingFees}
-              usdPrice={usdPrice}
-              currency={currency}
-              chain={currentChain}
+              totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+              currency={paymentCurrency}
+              usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
             />
           </Box>
           <Flex

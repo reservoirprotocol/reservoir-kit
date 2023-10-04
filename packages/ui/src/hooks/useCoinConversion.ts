@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import useSWR from 'swr'
+import useSWR from 'swr/immutable'
 import { CoinGecko, ProviderOptionsContext } from '../ReservoirKitProvider'
 import useCoinIds from './useCoinIds'
 
@@ -16,7 +16,7 @@ export default function (
   vs_currency?: string,
   symbols: string = 'eth',
   id: string = ''
-): { price: number; symbol: string }[] {
+): { price: number; symbol: string; id: string }[] {
   const providerOptionsContext = useContext(ProviderOptionsContext)
   const { data: coinIds } = useCoinIds()
   const baseUrl = createBaseUrl(providerOptionsContext?.coinGecko)
@@ -44,7 +44,7 @@ export default function (
     vs_currency ? `${baseUrl}vs_currency=${vs_currency}&ids=${id}` : null,
     null,
     {
-      refreshInterval: 60 * 1000 * 5, //5m Interval
+      refreshInterval: 300000, //5m Interval
     }
   )
 

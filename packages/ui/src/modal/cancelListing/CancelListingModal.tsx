@@ -17,10 +17,7 @@ import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCircleExclamation,
-  faGasPump,
-} from '@fortawesome/free-solid-svg-icons'
+import { faGasPump } from '@fortawesome/free-solid-svg-icons'
 
 const ModalCopy = {
   title: 'Cancel Listing',
