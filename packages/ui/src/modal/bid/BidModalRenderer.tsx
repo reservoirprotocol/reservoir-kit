@@ -13,6 +13,7 @@ import {
   useCollections,
   useAttributes,
   useChainCurrency,
+  useMarketplaces,
 } from '../../hooks'
 import { useAccount, useBalance, useWalletClient } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
@@ -30,6 +31,7 @@ import { parseUnits } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
+import { Marketplace } from '../../hooks/useMarketplaces'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -52,6 +54,7 @@ export enum BidStep {
   SetPrice,
   Offering,
   Complete,
+  Unavailable,
 }
 
 export type Traits =
@@ -79,6 +82,10 @@ type ChildrenProps = {
   bidStep: BidStep
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
+  loading: boolean
+  traitBidSupported: boolean
+  collectionBidSupported: boolean
+  partialBidSupported: boolean
   amountToWrap: string
   usdPrice: number | null
   balance?: FetchBalanceResult
@@ -232,6 +239,33 @@ export const BidModalRenderer: FC<Props> = ({
   const totalBidAmount = Number(bidAmountPerUnit) * Math.max(1, quantity)
   const totalBidAmountUsd = totalBidAmount * (usdPrice || 0)
 
+  const [allMarketplaces] = useMarketplaces(
+    collectionId,
+    undefined,
+    undefined,
+    rendererChain?.id,
+    open
+  )
+
+  const reservoirMarketplace = allMarketplaces.filter(
+    (marketplace) => marketplace.orderbook === 'reservoir'
+  )[0]
+
+  const traitBidSupported = Boolean(reservoirMarketplace?.traitBidSupported)
+  const collectionBidSupported = Boolean(
+    reservoirMarketplace?.collectionBidSupported
+  )
+  const partialBidSupported = Boolean(reservoirMarketplace?.partialBidSupported)
+
+  // Set bid step to unavailable if collection bid is not supported
+  useEffect(() => {
+    if (open && !tokenId && reservoirMarketplace && !collectionBidSupported) {
+      setBidStep(BidStep.Unavailable)
+    } else {
+      setBidStep(BidStep.SetPrice)
+    }
+  }, [open, tokenId, reservoirMarketplace, collectionBidSupported])
+
   const { address } = useAccount()
   const { data: balance } = useBalance({
     address: address,
@@ -379,6 +413,14 @@ export const BidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (!tokenId && !collectionBidSupported) {
+      const error = new Error(
+        'Collection bids are not supported for this collection'
+      )
+      setTransactionError(error)
+      throw error
+    }
+
     setBidStep(BidStep.Offering)
     setTransactionError(null)
     setBidData(null)
@@ -391,9 +433,10 @@ export const BidModalRenderer: FC<Props> = ({
     const bid: BidData = {
       weiPrice: atomicBidAmount,
       orderbook: 'reservoir',
-      orderKind: 'seaport',
-      attributeKey: trait?.key,
-      attributeValue: trait?.value,
+      orderKind:
+        (reservoirMarketplace?.orderKind as BidData['orderKind']) || 'seaport',
+      attributeKey: traitBidSupported ? trait?.key : undefined,
+      attributeValue: traitBidSupported ? trait?.value : undefined,
     }
 
     if (feesBps && feesBps?.length > 0) {
@@ -496,6 +539,7 @@ export const BidModalRenderer: FC<Props> = ({
     trait,
     quantity,
     feesBps,
+    reservoirMarketplace,
   ])
 
   return (
@@ -518,8 +562,12 @@ export const BidModalRenderer: FC<Props> = ({
         bidData,
         totalBidAmountUsd,
         bidStep,
+        loading: !collection || !reservoirMarketplace,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        traitBidSupported,
+        collectionBidSupported,
+        partialBidSupported,
         amountToWrap,
         transactionError,
         expirationOption,
