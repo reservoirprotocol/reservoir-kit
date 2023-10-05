@@ -1,18 +1,11 @@
 
 ## [v1.11.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7e913c881f274449ba29cf7403d2ceb8f66f0d72) (2023-10-05)
 
-* fix: BidModal unavailable title [a51f2e88](https://github.com/reservoirprotocol/reservoir-kit/commit/a51f2e88c02f840c91d45bfae9bd500b1756381d)
-* Merge pull request #388 from reservoirprotocol/ted/grwth-3199-observe-the-transaction-in-parallel-with-the-synced-api [9347f698](https://github.com/reservoirprotocol/reservoir-kit/commit/9347f698ef341df963efe9396cdef5a06ee08bab)
-* Merge pull request #396 from reservoirprotocol/ted/grwth-3312-bidmodal-use-supported-marketplaces-api [f3896827](https://github.com/reservoirprotocol/reservoir-kit/commit/f3896827fa2ad4265f0d954048961c66ed4c9a5f)
-* Add truncate address util and param description for maxAttemtpsPollingBeforeTimeout [1f627048](https://github.com/reservoirprotocol/reservoir-kit/commit/1f627048ff7581b4daaba148f5abb9da64945609)
-* Use generic error message if error not handled [95c60be6](https://github.com/reservoirprotocol/reservoir-kit/commit/95c60be6afbdabb123e44d3d1db5f1d88fdb408d)
-* Add back txHash to error message [9ba9f058](https://github.com/reservoirprotocol/reservoir-kit/commit/9ba9f058e04a73c8b4d6954c121b854f0fc8bd45)
-* Update transaction time out error text [09a96d81](https://github.com/reservoirprotocol/reservoir-kit/commit/09a96d81a9937738518c52a71a39434d2e3e77af)
-* Improve error handling across all modals [cc35a1cc](https://github.com/reservoirprotocol/reservoir-kit/commit/cc35a1ccd580ca7eb34c11170424db655e7b309a)
-* pr feedback [7f37ee94](https://github.com/reservoirprotocol/reservoir-kit/commit/7f37ee9427b6a860c65ee963dde9c07165b75c3c)
-* Remove comment [aef1880d](https://github.com/reservoirprotocol/reservoir-kit/commit/aef1880d3fa5af48e0efc476bdb22d468a350c55)
-* Integrate BidModal with supported marketplaces api [c75b6326](https://github.com/reservoirprotocol/reservoir-kit/commit/c75b6326cf2616bcf9f9fcf0809416f97d9b62c2)
-* Fix missing key error [ed7cb4f2](https://github.com/reservoirprotocol/reservoir-kit/commit/ed7cb4f2adfe9fee59972fa0fef06b8c60dbd77f)
+* Improve transaction observability to reduce dependency on RPC [9347f698](https://github.com/reservoirprotocol/reservoir-kit/commit/9347f698ef341df963efe9396cdef5a06ee08bab)
+* Bidmodal: use supported marketplaces api to select the right exchange (orderKind) and follow restrictions [f3896827](https://github.com/reservoirprotocol/reservoir-kit/commit/f3896827fa2ad4265f0d954048961c66ed4c9a5f)
+
+### Breaking Changes:
+* All custom modals now defer the handling of errors to the UI, while now providing more explicit errors
 
 ## [v1.10.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/819d348bf4dd526dfec6b6d779d0a518031232e6) (2023-10-04)
 
