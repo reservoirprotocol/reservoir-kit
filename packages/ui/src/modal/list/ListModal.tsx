@@ -17,6 +17,8 @@ import {
   ErrorWell,
   Img,
   DateInput,
+  CryptoCurrencyIcon,
+  Input,
 } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Flatpickr from 'react-flatpickr'
@@ -27,16 +29,16 @@ import {
   ListStep,
   ListModalStepData,
 } from './ListModalRenderer'
-import { faCalendar } from '@fortawesome/free-solid-svg-icons'
+import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
 import { useFallbackState, useReservoirClient } from '../../hooks'
-import TransactionProgress from '../../modal/TransactionProgress'
 import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'
 import { zeroAddress } from 'viem'
-import PriceInput from './PriceInput'
 import ListCheckout from './ListCheckout'
 import QuantitySelector from '../QuantitySelector'
 import dayjs from 'dayjs'
+import { CurrencySelector } from '../CurrencySelector'
+import PriceBreakdown from './PriceBreakdown'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -50,8 +52,6 @@ const ModalCopy = {
   ctaSetPrice: 'Set your price',
   ctaList: 'List for Sale',
   ctaAwaitingApproval: 'Waiting for Approval',
-  ctaEditListing: 'Edit Listing',
-  ctaRetry: 'Retry',
   ctaGoToToken: 'Go to Token',
 }
 
@@ -142,12 +142,10 @@ export function ListModal({
         transactionError,
         stepData,
         price,
-        setPrice,
         currencies,
         currency,
         quantity,
-        royaltyBps,
-        setListStep,
+        setPrice,
         listToken,
         setCurrency,
         setExpirationOption,
@@ -155,10 +153,10 @@ export function ListModal({
       }) => {
         const [expirationDate, setExpirationDate] = useState('')
 
-        const tokenImage =
-          token && token.token?.imageSmall
-            ? token.token.imageSmall
-            : (collection?.image as string)
+        const source =
+          marketplace?.orderbook === 'reservoir' && client?.source
+            ? client?.source
+            : marketplace?.domain
 
         useEffect(() => {
           if (expirationOption && expirationOption.relativeTime) {
@@ -203,6 +201,7 @@ export function ListModal({
         let loading =
           !token ||
           !collection ||
+          !marketplace ||
           (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false)
 
         return (
@@ -250,19 +249,21 @@ export function ListModal({
                 <Flex
                   direction="column"
                   align="center"
-                  css={{ width: '100%', p: '$4' }}
+                  css={{ width: '100%', p: '$4', gap: 24 }}
                 >
                   {quantityAvailable > 1 && quantitySelectionAvailable && (
-                    <Flex align="center" justify="between" css={{ gap: '$3' }}>
+                    <Flex
+                      align="center"
+                      justify="between"
+                      css={{ width: '100%', gap: '$3', '@bp1': { gap: '$6' } }}
+                    >
                       <Flex
                         align="start"
                         direction="column"
-                        css={{ gap: '$1' }}
+                        css={{ gap: '$1', flexShrink: 0 }}
                       >
-                        <Text css={{ mb: '$2' }} style="subtitle2">
-                          Quantity
-                        </Text>
-                        <Text style="body3">
+                        <Text style="subtitle2">Quantity</Text>
+                        <Text style="body3" color="subtle">
                           {quantityAvailable} items available
                         </Text>
                       </Flex>
@@ -271,28 +272,66 @@ export function ListModal({
                         setQuantity={setQuantity}
                         min={1}
                         max={quantityAvailable}
+                        css={{ width: '100%', justifyContent: 'space-between' }}
                       />
                     </Flex>
                   )}
 
-                  <Flex direction="column" css={{ gap: '$2' }}>
+                  <Flex direction="column" css={{ gap: '$2', width: '100%' }}>
                     <Text style="subtitle2">Enter a price</Text>
-                    <Flex>
-                      <PriceInput
-                        price={price}
-                        chainId={modalChain?.id}
-                        currency={currency}
-                        currencies={currencies}
-                        setCurrency={setCurrency}
+                    <Flex align="center" justify="between" css={{ gap: '$2' }}>
+                      <Input
+                        type="number"
+                        value={price}
                         onChange={(e) => {
                           setPrice(e.target.value)
                         }}
-                        onBlur={() => {
-                          // if (price === '') {
-                          //   setPrice(0)
-                          // }
-                        }}
+                        placeholder="Enter a listing price"
+                        css={{ width: '100%' }}
+                        containerCss={{ width: '100%' }}
                       />
+                      {currencies.length > 1 ? (
+                        <CurrencySelector
+                          chainId={chainId}
+                          currency={currency}
+                          currencies={currencies}
+                          setCurrency={setCurrency}
+                          triggerCss={{
+                            backgroundColor: '$neutralBgActive',
+                            borderRadius: 8,
+                            p: '$3',
+                            width: 120,
+                            flexShrink: 0,
+                          }}
+                          valueCss={{
+                            justifyContent: 'space-between',
+                            width: '100%',
+                          }}
+                        />
+                      ) : (
+                        <Flex align="center">
+                          <Box
+                            css={{
+                              width: 'auto',
+                              height: 20,
+                            }}
+                          >
+                            <CryptoCurrencyIcon
+                              chainId={chainId}
+                              css={{ height: 18 }}
+                              address={currency.contract}
+                            />
+                          </Box>
+                          <Text
+                            style="body1"
+                            color="subtle"
+                            css={{ ml: '$1', mr: '$4' }}
+                            as="p"
+                          >
+                            {currency.symbol}
+                          </Text>
+                        </Flex>
+                      )}
                       <Button color="secondary">Floor</Button>
                     </Flex>
                     {Number(price) !== 0 && Number(price) < MINIMUM_AMOUNT && (
@@ -327,7 +366,7 @@ export function ListModal({
                         </Box>
                       )}
                   </Flex>
-                  <Flex direction="column" css={{ gap: '$2' }}>
+                  <Flex direction="column" css={{ width: '100%', gap: '$2' }}>
                     <Text style="subtitle2">Expiration Date</Text>
                     <Flex align="center" css={{ gap: '$2' }}>
                       <Select
@@ -340,6 +379,7 @@ export function ListModal({
                             setExpirationOption(option)
                           }
                         }}
+                        css={{ borderRadius: 8, maxWidth: 160 }}
                       >
                         {expirationOptions.map((option) => (
                           <Select.Item key={option.text} value={option.value}>
@@ -393,6 +433,14 @@ export function ListModal({
                       />
                     </Flex>
                   </Flex>
+                  <PriceBreakdown
+                    price={price}
+                    usdPrice={usdPrice}
+                    currency={currency}
+                    quantity={quantity}
+                    collection={collection}
+                    marketplace={marketplace}
+                  />
                 </Flex>
                 <Box css={{ p: '$4', width: '100%' }}>
                   <Button
@@ -408,57 +456,74 @@ export function ListModal({
               </Flex>
             )}
             {!loading && listStep == ListStep.Listing && (
-              <Flex
-                direction="column"
-                align="center"
-                css={{ width: '100%', p: '$4' }}
-              >
-                {stepData && stepData.currentStep.id === 'auth' ? (
-                  <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
-                ) : null}
-                {stepData && stepData.currentStep.id !== 'auth' ? (
-                  <>
-                    <Text
-                      css={{ textAlign: 'center', mt: 48, mb: 28 }}
-                      style="subtitle1"
-                    >
-                      {stepData.currentStep.kind === 'transaction'
-                        ? 'Approve access to items\nin your wallet'
-                        : 'Confirm listing in your wallet'}
-                    </Text>
-                    <TransactionProgress
+              <Flex direction="column">
+                <ListCheckout
+                  collection={collection}
+                  token={token}
+                  price={price}
+                  currency={currency}
+                  quantity={quantity}
+                  expirationOption={expirationOption}
+                  containerCss={{
+                    borderBottom: '1px solid',
+                    borderBottomColor: '$neutralLine',
+                    borderColor: '$neutralLine',
+                  }}
+                />
+                <Flex
+                  direction="column"
+                  align="center"
+                  css={{ width: '100%', p: 24, gap: '$4' }}
+                >
+                  {stepData && stepData.currentStep.id === 'auth' ? (
+                    <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
+                  ) : null}
+                  {stepData && stepData.currentStep.id !== 'auth' ? (
+                    <>
+                      <Text css={{ textAlign: 'center' }} style="h6">
+                        {stepData.currentStep.kind === 'transaction'
+                          ? 'Approve Collections'
+                          : 'Confirm listing in your wallet'}
+                      </Text>
+                      <Text
+                        css={{
+                          textAlign: 'center',
+                          maxWidth: 395,
+                          mx: 'auto',
+                        }}
+                        style="body1"
+                        color="subtle"
+                      >
+                        {stepData?.currentStep.description}
+                      </Text>
+                      <Flex css={{ color: '$neutralSolid' }}>
+                        <FontAwesomeIcon
+                          icon={
+                            stepData.currentStep.kind === 'transaction'
+                              ? faImages
+                              : faTag
+                          }
+                          size="2x"
+                        />
+                      </Flex>
+                    </>
+                  ) : null}
+                  {!stepData && (
+                    <Flex
+                      css={{ height: '100%', py: '$6' }}
                       justify="center"
-                      fromImg={tokenImage}
-                      toImgs={[marketplace?.imageUrl ?? '']}
-                    />
-                    <Text
-                      css={{
-                        textAlign: 'center',
-                        mt: 24,
-                        maxWidth: 395,
-                        mx: 'auto',
-                        mb: '$4',
-                      }}
-                      style="body3"
-                      color="subtle"
+                      align="center"
                     >
-                      {stepData?.currentStep.description}
-                    </Text>
-                  </>
-                ) : null}
-                {!stepData && (
-                  <Flex
-                    css={{ height: '100%' }}
-                    justify="center"
-                    align="center"
-                  >
+                      <Loader />
+                    </Flex>
+                  )}
+                </Flex>
+                <Flex css={{ width: '100%', p: '$4' }}>
+                  <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
                     <Loader />
-                  </Flex>
-                )}
-                <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
-                  <Loader />
-                  {copy.ctaAwaitingApproval}
-                </Button>
+                    {copy.ctaAwaitingApproval}
+                  </Button>
+                </Flex>
               </Flex>
             )}
             {!loading && listStep == ListStep.Complete && (
@@ -466,9 +531,13 @@ export function ListModal({
                 <Flex
                   direction="column"
                   align="center"
-                  css={{ width: '100%', p: '$5', gap: 24 }}
+                  css={{ width: '100%', px: '$5', pt: '$5', gap: 24 }}
                 >
-                  <Flex direction="column" align="center" css={{ gap: '$2' }}>
+                  <Flex
+                    direction="column"
+                    align="center"
+                    css={{ width: '100%', gap: '$2' }}
+                  >
                     <Img
                       src={token?.token?.image || collection?.image}
                       alt={token?.token?.name || token?.token?.tokenId}
@@ -488,35 +557,31 @@ export function ListModal({
                       {collection?.name}
                     </Text>
                   </Flex>
-                  <Text style="h5" css={{ mb: '$2' }} as="h5">
+                  <Text style="h5" as="h5">
                     Your item has been listed!
                   </Text>
-                  <Text style="subtitle3" as="p" css={{ mb: '$3' }}>
-                    View Listing on
-                  </Text>
-                  <Flex css={{ gap: '$3' }}>
-                    {listingData.map((data) => {
-                      const source =
-                        data.listing.orderbook === 'reservoir' && client?.source
-                          ? client?.source
-                          : data.marketplace.domain
-                      return (
-                        <a
-                          key={data.listing.orderbook}
-                          target="_blank"
-                          href={`${modalChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
-                        >
-                          <Image
-                            css={{ width: 24 }}
-                            src={marketplace?.imageUrl}
-                          />
-                        </a>
-                      )
-                    })}
-                  </Flex>
+
+                  {source ? (
+                    <Flex direction="column" align="center" css={{ gap: '$2' }}>
+                      <Text style="subtitle3" color="subtle" as="p">
+                        View Listing on
+                      </Text>
+                      <a
+                        target="_blank"
+                        href={`${modalChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                      >
+                        <Image
+                          css={{ width: 24, borderRadius: 4 }}
+                          src={marketplace?.imageUrl}
+                        />
+                      </a>
+                    </Flex>
+                  ) : null}
                 </Flex>
                 <Flex
                   css={{
+                    p: '$4',
+                    width: '100%',
                     flexDirection: 'column',
                     gap: '$3',
                     '@bp1': {

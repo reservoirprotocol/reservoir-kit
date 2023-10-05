@@ -11,7 +11,6 @@ import {
   useCoinConversion,
   useReservoirClient,
   useMarketplaces,
-  useListingPreapprovalCheck,
   useCollections,
   useUserTokens,
   useChainCurrency,
@@ -23,7 +22,7 @@ import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
-import expirationOptions from '../../lib/defaultExpirationOptions'
+import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { Currency } from '../../types/Currency'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
@@ -114,6 +113,16 @@ const isCurrencyAllowed = (currency: Currency, marketplace: Marketplace) => {
   }
   return false
 }
+
+const expirationOptions = [
+  ...defaultExpirationOptions,
+  {
+    text: 'Custom',
+    value: 'custom',
+    relativeTime: null,
+    relativeTimeUnit: null,
+  },
+]
 
 export const ListModalRenderer: FC<Props> = ({
   open,
@@ -213,18 +222,6 @@ export const ListModalRenderer: FC<Props> = ({
     open
   )
 
-  // @TODO: update hook to only take in one marketplace
-  // have a useEffect that set's the marketplace to reservoir if other marketplace is not supported
-  // const {
-  //   data: unapprovedMarketplaces,
-  //   isFetching: isFetchingUnapprovedMarketplaces,
-  // } = useListingPreapprovalCheck(
-  //   marketplaces,
-  //   open ? tokenId : undefined,
-  //   open ? contract : undefined,
-  //   rendererChain?.id
-  // )
-
   const { data: tokens } = useTokens(
     open && {
       tokens: [`${contract}:${tokenId}`],
@@ -261,8 +258,6 @@ export const ListModalRenderer: FC<Props> = ({
     currency.coinGeckoId
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
-
-  console.log(quantity, expirationOption)
 
   // @TODO: remove in favor of filtering passed in currencies to only show supported currencies
   // warn if any of the currencies are not allowed
@@ -317,6 +312,7 @@ export const ListModalRenderer: FC<Props> = ({
           })
         )
       }
+      setPrice('')
       setLoadedInitalPrice(false)
       setStepData(null)
       setExpirationOption(expirationOptions[5])
