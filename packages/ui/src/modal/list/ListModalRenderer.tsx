@@ -555,12 +555,8 @@ export const ListModalRenderer: FC<Props> = ({
           }
         },
       })
-      .catch((e: any) => {
-        const error = e as Error
-        const transactionError = new Error(error?.message || '', {
-          cause: error,
-        })
-        setTransactionError(transactionError)
+      .catch((error: Error) => {
+        setTransactionError(error)
       })
   }, [
     client,
