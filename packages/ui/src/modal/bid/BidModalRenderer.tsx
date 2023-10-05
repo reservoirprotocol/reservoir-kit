@@ -31,7 +31,6 @@ import { parseUnits } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
-import { Marketplace } from '../../hooks/useMarketplaces'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
