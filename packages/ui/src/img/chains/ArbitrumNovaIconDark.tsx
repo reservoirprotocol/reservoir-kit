@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 26.4.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+import React from 'react'
+
+export default () => (
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 2000 1359.88" style="enable-background:new 0 0 2000 1359.88;" xml:space="preserve">
 <style type="text/css">
@@ -16,3 +17,4 @@
 	c-12.64,0-23.94,7.9-28.27,19.78l-334.93,918.2c-2.43,6.66-2.43,13.96,0,20.62l94.98,260.38c4.81,13.19,23.46,13.19,28.27,0
 	l331.55-908.93L1999.08,20.2C2002.66,10.39,1995.39,0,1984.94,0z"/>
 </svg>
+)
