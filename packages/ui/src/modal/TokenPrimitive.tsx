@@ -7,6 +7,7 @@ import {
   Grid,
   FormatCurrency,
   FormatCryptoCurrency,
+  ChainIcon,
 } from '../primitives'
 import InfoTooltip from '../primitives/InfoTooltip'
 
@@ -99,6 +100,7 @@ const TokenPrimitive: FC<Props> = ({
                 color={isUnavailable ? 'subtle' : 'base'}
               >
                 {name ? name : collection}
+                {!name ? <ChainIcon chainId={chainId} /> : null}
               </Text>
               {expires && quantity && quantity > 1 ? (
                 <Flex
@@ -120,9 +122,12 @@ const TokenPrimitive: FC<Props> = ({
               ) : null}
             </Flex>
             {name && (
-              <Text style="body3" color={isUnavailable ? 'subtle' : 'base'}>
-                {collection}
-              </Text>
+              <Flex>
+                <Text style="body3" color={isUnavailable ? 'subtle' : 'base'}>
+                  {collection}
+                </Text>
+                <ChainIcon chainId={chainId} />
+              </Flex>
             )}
             {!!expires && <Text style="tiny">Expires {expires}</Text>}
             {!expires && quantity && quantity > 1 ? (
