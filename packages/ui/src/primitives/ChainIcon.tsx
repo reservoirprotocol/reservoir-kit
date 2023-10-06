@@ -34,13 +34,15 @@ import ZksyncIconLight from '../img/chains/ZksyncIconLight'
 import ZoraIconDark from '../img/chains/ZoraIconDark'
 import ZoraIconLight from '../img/chains/ZoraIconLight'
 import { Box } from './'
+import { CSS } from '@stitches/react'
 
 type Props = {
   chainId?: number
   height?: number
+  css?: CSS
 }
 
-const ChainIcon: FC<Props> = ({ chainId, height = 14 }) => {
+const ChainIcon: FC<Props> = ({ chainId, css = {}, height = 14 }) => {
   const themeContext = useContext(ThemeContext)
   const chainIcon: ReservoirKitThemeContext['assets']['chainIcon']['value'] =
     themeContext && (themeContext as any)
@@ -133,7 +135,7 @@ const ChainIcon: FC<Props> = ({ chainId, height = 14 }) => {
     }
   }
   return icon ? (
-    <Box css={{ display: 'flex', height: height }}>{icon}</Box>
+    <Box css={{ display: 'flex', height: height, ...css }}>{icon}</Box>
   ) : null
 }
 

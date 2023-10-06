@@ -28,6 +28,7 @@ type Props = {
   priceSubtitle?: string
   royaltiesBps?: number
   chainId?: number
+  chainName?: string
   quantity?: number
 }
 
@@ -40,6 +41,7 @@ const TokenPrimitive: FC<Props> = ({
   img,
   name,
   chainId,
+  chainName,
   collection,
   currencyContract,
   currencyDecimals,
@@ -100,8 +102,15 @@ const TokenPrimitive: FC<Props> = ({
                 color={isUnavailable ? 'subtle' : 'base'}
               >
                 {name ? name : collection}
-                {!name ? <ChainIcon chainId={chainId} /> : null}
               </Text>
+              {expires && quantity && quantity > 1 && !name ? (
+                <Flex>
+                  <ChainIcon chainId={chainId} height={12} css={{ mr: 5 }} />
+                  <Text style="tiny" color="subtle">
+                    {chainName}
+                  </Text>
+                </Flex>
+              ) : null}
               {expires && quantity && quantity > 1 ? (
                 <Flex
                   css={{
@@ -121,15 +130,38 @@ const TokenPrimitive: FC<Props> = ({
                 </Flex>
               ) : null}
             </Flex>
+            {!name && !quantity && expires ? (
+              <Flex align="center">
+                <ChainIcon chainId={chainId} height={12} css={{ mr: 5 }} />
+                <Text style="body3" color="subtle">
+                  {chainName}
+                </Text>
+              </Flex>
+            ) : null}
             {name && (
               <Flex>
-                <Text style="body3" color={isUnavailable ? 'subtle' : 'base'}>
+                <Text style="body3" color="subtle">
                   {collection}
                 </Text>
-                <ChainIcon chainId={chainId} />
+                <Box
+                  css={{
+                    background: '$neutralLine',
+                    height: '100%',
+                    width: 2,
+                    margin: '0 5px',
+                  }}
+                />
+                <ChainIcon chainId={chainId} css={{ mr: 5 }} height={12} />
+                <Text style="body3" color="subtle">
+                  {chainName}
+                </Text>
               </Flex>
             )}
-            {!!expires && <Text style="tiny">Expires {expires}</Text>}
+            {!!expires && (
+              <Text style="tiny" color="subtle" css={{ color: '$neutralText' }}>
+                Expires {expires}
+              </Text>
+            )}
             {!expires && quantity && quantity > 1 ? (
               <Flex
                 css={{

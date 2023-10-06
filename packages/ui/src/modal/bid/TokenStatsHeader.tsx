@@ -1,7 +1,7 @@
 import { useTokens, useCollections } from '../../hooks'
 import React, { FC } from 'react'
 import { styled } from '../../../stitches.config'
-import { Box, Text } from '../../primitives'
+import { Box, ChainIcon, Flex, Text } from '../../primitives'
 import optimizeImage from '../../lib/optimizeImage'
 
 const Img = styled('img', {
@@ -16,9 +16,16 @@ const Img = styled('img', {
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  chainId?: number
+  chainName?: string
 }
 
-const TokenStatsHeader: FC<Props> = ({ token, collection }) => {
+const TokenStatsHeader: FC<Props> = ({
+  token,
+  collection,
+  chainId,
+  chainName,
+}) => {
   const img = token?.token?.imageSmall
     ? token.token.imageSmall
     : optimizeImage(collection?.image as string, 250)
@@ -56,12 +63,20 @@ const TokenStatsHeader: FC<Props> = ({ token, collection }) => {
           : collection?.name}
       </Text>
       {token && (
-        <Box>
+        <Box css={{ mt: '$1' }}>
           <Text style="subtitle3" color="subtle" as="p" ellipsify>
             {token?.token?.collection?.name}
           </Text>
         </Box>
       )}
+      {chainId && chainName ? (
+        <Flex align="center" css={{ mt: '$1' }}>
+          <ChainIcon chainId={chainId} css={{ marginRight: 5 }} height={12} />
+          <Text style="subtitle3" color="subtle" ellipsify>
+            {chainName}
+          </Text>
+        </Flex>
+      ) : null}
     </Box>
   )
 }

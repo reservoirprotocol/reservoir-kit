@@ -315,6 +315,7 @@ export function ListModal({
               >
                 <TokenStats
                   chainId={modalChain?.id}
+                  chainName={modalChain?.name}
                   token={token}
                   collection={collection}
                   royaltyBps={royaltyBps}
@@ -456,6 +457,7 @@ export function ListModal({
               >
                 <TokenStats
                   chainId={modalChain?.id}
+                  chainName={modalChain?.name}
                   token={token}
                   collection={collection}
                   royaltyBps={royaltyBps}
