@@ -47,8 +47,9 @@ export default function (
         data.marketplaces as Marketplace[]
       if (listingEnabledOnly) {
         updatedMarketplaces = updatedMarketplaces.filter(
-          (marketplace) =>
-            marketplace.listingEnabled && marketplace.orderbook !== 'x2y2'
+          (marketplace) => marketplace.listingEnabled
+          // @TODO: Is this x2y2 check still necessary?
+          // && marketplace.orderbook !== 'x2y2'
         )
       }
       updatedMarketplaces.forEach((marketplace) => {

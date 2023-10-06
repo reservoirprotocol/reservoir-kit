@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { ListModal } from '@reservoir0x/reservoir-kit-ui'
+import { ListModal, Orderbook } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
@@ -34,6 +34,7 @@ const Index: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [chainId, setChainId] = useState('')
+  const [orderbook, setOrderbook] = useState('reservoir')
   const [currencies, setCurrencies] = useState<
     { contract: string; symbol: string; decimals?: number }[] | undefined
   >([
@@ -85,6 +86,14 @@ const Index: NextPage = () => {
           type="text"
           value={tokenId}
           onChange={(e) => setTokenId(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Orderbook (reservoir | opensea | looks-rare | blur | x2y2): </label>
+        <input
+          type="text"
+          value={orderbook}
+          onChange={(e) => setOrderbook(e.target.value)}
         />
       </div>
       <div>
@@ -199,6 +208,7 @@ const Index: NextPage = () => {
         nativeOnly={nativeOnly}
         collectionId={collectionId}
         tokenId={tokenId}
+        orderbook={orderbook as Orderbook}
         currencies={currencies}
         normalizeRoyalties={normalizeRoyalties}
         enableOnChainRoyalties={enableOnChainRoyalties}

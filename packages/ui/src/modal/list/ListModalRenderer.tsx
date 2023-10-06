@@ -18,7 +18,11 @@ import {
 } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
 
-import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
+import {
+  Execute,
+  LogLevel,
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
@@ -49,7 +53,7 @@ export type ListModalStepData = {
   listingData: ListingData[]
 }
 
-type Orderbook = Parameters<
+export type Orderbook = Parameters<
   ReservoirClientActions['listToken']
 >['0']['listings'][0]['orderbook']
 
@@ -67,7 +71,7 @@ type ChildrenProps = {
   transactionError?: Error | null
   stepData: ListModalStepData | null
   price: string
-  currencies: Currency[]
+  supportedCurrencies: Currency[]
   currency: Currency
   quantity: number
   royaltyBps?: number
@@ -157,11 +161,30 @@ export const ListModalRenderer: FC<Props> = ({
     rendererChain?.id,
     open
   )
-  const marketplace = allMarketplaces.find(
-    (marketplace) => marketplace.orderbook === orderbook
-  )
 
-  const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
+  const marketplace = useMemo(() => {
+    if (!allMarketplaces || allMarketplaces.length == 0) {
+      return
+    }
+    const prefferedMarketplace = allMarketplaces.find(
+      (marketplace) => marketplace.orderbook === orderbook
+    )
+
+    if (prefferedMarketplace) {
+      return prefferedMarketplace
+    }
+    // Fallback to reservoir
+    else {
+      client?.log(
+        [`${orderbook} orderbook not found. Falling back to Reservoir`],
+        LogLevel.Warn
+      )
+      return allMarketplaces.find(
+        (marketplace) => marketplace.orderbook === 'reservoir'
+      )
+    }
+  }, [allMarketplaces, orderbook])
+
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<ListModalStepData | null>(null)
   const [price, setPrice] = useState('')
@@ -259,44 +282,31 @@ export const ListModalRenderer: FC<Props> = ({
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
 
-  // @TODO: remove in favor of filtering passed in currencies to only show supported currencies
-  // warn if any of the currencies are not allowed
-  useEffect(() => {
-    if (
-      open &&
-      token &&
-      collection &&
-      !loadedInitalPrice &&
-      allMarketplaces.length > 0
-    ) {
-      let updatedMarketplaces = allMarketplaces.map(
-        (marketplace): Marketplace => {
-          const listingEnabled = isCurrencyAllowed(currency, marketplace)
-          return {
-            ...marketplace,
-            listingEnabled,
-          }
-        }
-      )
-      setMarketplaces(updatedMarketplaces)
-      setLoadedInitalPrice(true)
+  const supportedCurrencies = useMemo(() => {
+    if (!currencies || currencies.length === 0) {
+      return [defaultCurrency]
     }
-  }, [token, collection, loadedInitalPrice, open, marketplaces.length])
 
-  useEffect(() => {
-    if (open && loadedInitalPrice) {
-      let updatedMarketplaces = allMarketplaces.map(
-        (marketplace): Marketplace => {
-          const listingEnabled = isCurrencyAllowed(currency, marketplace)
-          return {
-            ...marketplace,
-            listingEnabled,
-          }
-        }
+    if (marketplace) {
+      const filteredCurrencies = currencies.filter((currency) =>
+        isCurrencyAllowed(currency, marketplace)
       )
-      setMarketplaces(updatedMarketplaces)
+
+      if (filteredCurrencies.length !== currencies.length) {
+        client?.log(
+          [
+            `One or more of the configured currencies are not supported for listing with the ${orderbook} orderbook.`,
+          ],
+          LogLevel.Warn
+        )
+      }
+
+      return filteredCurrencies.length > 0
+        ? filteredCurrencies
+        : [defaultCurrency]
     }
-  }, [open, currency])
+    return currencies
+  }, [currencies, marketplace])
 
   useEffect(() => {
     if (!open) {
@@ -307,13 +317,11 @@ export const ListModalRenderer: FC<Props> = ({
           marketplaces.map((marketplace) => {
             return {
               ...marketplace,
-              isSelected: marketplace.orderbook === 'reservoir',
             }
           })
         )
       }
       setPrice('')
-      setLoadedInitalPrice(false)
       setStepData(null)
       setExpirationOption(expirationOptions[5])
       setQuantity(1)
@@ -548,7 +556,7 @@ export const ListModalRenderer: FC<Props> = ({
         transactionError,
         stepData,
         price,
-        currencies: currencies || [defaultCurrency],
+        supportedCurrencies,
         currency,
         quantity,
         royaltyBps,

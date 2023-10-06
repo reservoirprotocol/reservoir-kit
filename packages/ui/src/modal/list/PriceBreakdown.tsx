@@ -48,7 +48,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
   ) {
     return (
       <Collapsible
-        style={{ width: '100%' }}
+        style={{ width: '100%', borderRadius: 0, overflow: 'visible' }}
         trigger={
           <Button
             color="ghost"
@@ -64,6 +64,8 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
               '&[data-state="open"] > div > span > svg': {
                 transform: 'rotate(180deg)',
               },
+              $$focusColor: '$colors$accentBorderHover',
+              '&:focus': { boxShadow: '0 0 0 2px $$focusColor' },
             }}
           >
             <Flex align="center" css={{ gap: '$3' }}>

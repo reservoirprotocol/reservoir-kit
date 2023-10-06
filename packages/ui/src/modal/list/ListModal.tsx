@@ -28,6 +28,7 @@ import {
   ListModalRenderer,
   ListStep,
   ListModalStepData,
+  Orderbook,
 } from './ListModalRenderer'
 import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
 import { useFallbackState, useReservoirClient } from '../../hooks'
@@ -59,6 +60,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
+  orderbook?: Orderbook
   chainId?: number
   currencies?: Currency[]
   nativeOnly?: boolean
@@ -88,6 +90,7 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
+  orderbook,
   chainId,
   currencies,
   normalizeRoyalties,
@@ -122,6 +125,7 @@ export function ListModal({
       chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
+      orderbook={orderbook}
       currencies={currencies}
       normalizeRoyalties={normalizeRoyalties}
       enableOnChainRoyalties={enableOnChainRoyalties}
@@ -142,7 +146,7 @@ export function ListModal({
         transactionError,
         stepData,
         price,
-        currencies,
+        supportedCurrencies,
         currency,
         quantity,
         setPrice,
@@ -203,6 +207,48 @@ export function ListModal({
           !collection ||
           !marketplace ||
           (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false)
+
+        const floorAskPrice = collection?.floorAsk?.price
+        const decimalFloorPrice = collection?.floorAsk?.price?.amount?.decimal
+        const nativeFloorPrice = collection?.floorAsk?.price?.amount?.native
+        const usdFloorPrice = collection?.floorAsk?.price?.amount?.usd
+        const defaultCurrency = supportedCurrencies?.find(
+          (supportedCurrency) => supportedCurrency?.contract === zeroAddress
+        )
+
+        const floorButtonEnabled =
+          (currency.contract === floorAskPrice?.currency?.contract &&
+            decimalFloorPrice) ||
+          (currency.symbol === 'USDC' && usdFloorPrice) ||
+          (nativeFloorPrice && currency.contract === zeroAddress) ||
+          (nativeFloorPrice && defaultCurrency)
+
+        const handleSetFloor = () => {
+          // If currency matches floor ask currency, use decimal floor price
+          if (
+            currency.contract === floorAskPrice?.currency?.contract &&
+            decimalFloorPrice
+          ) {
+            setPrice(decimalFloorPrice.toString())
+          }
+
+          // If currency is USDC, use usd floor price
+          else if (currency.symbol === 'USDC' && usdFloorPrice) {
+            setPrice(usdFloorPrice?.toString())
+          } else if (nativeFloorPrice) {
+            // If currency is native currency, use native floor price
+            if (currency.contract === zeroAddress) {
+              setPrice(nativeFloorPrice.toString())
+            }
+            // Fallback to default currency if it exists
+            else {
+              if (defaultCurrency) {
+                setCurrency(defaultCurrency)
+                setPrice(nativeFloorPrice.toString())
+              }
+            }
+          }
+        }
 
         return (
           <Modal
@@ -288,20 +334,21 @@ export function ListModal({
                         }}
                         placeholder="Enter a listing price"
                         css={{ width: '100%' }}
-                        containerCss={{ width: '100%' }}
+                        containerCss={{ width: '100%', height: 44 }}
                       />
-                      {currencies.length > 1 ? (
+                      {supportedCurrencies.length > 1 ? (
                         <CurrencySelector
                           chainId={chainId}
                           currency={currency}
-                          currencies={currencies}
+                          currencies={supportedCurrencies}
                           setCurrency={setCurrency}
                           triggerCss={{
-                            backgroundColor: '$neutralBgActive',
+                            backgroundColor: '$neutralBgHover',
                             borderRadius: 8,
                             p: '$3',
                             width: 120,
                             flexShrink: 0,
+                            height: 44,
                           }}
                           valueCss={{
                             justifyContent: 'space-between',
@@ -309,7 +356,7 @@ export function ListModal({
                           }}
                         />
                       ) : (
-                        <Flex align="center">
+                        <Flex align="center" css={{ flexShrink: 0, px: '$2' }}>
                           <Box
                             css={{
                               width: 'auto',
@@ -325,14 +372,23 @@ export function ListModal({
                           <Text
                             style="body1"
                             color="subtle"
-                            css={{ ml: '$1', mr: '$4' }}
+                            css={{ ml: '$1' }}
                             as="p"
                           >
                             {currency.symbol}
                           </Text>
                         </Flex>
                       )}
-                      <Button color="secondary">Floor</Button>
+                      {floorButtonEnabled ? (
+                        <Button
+                          color="secondary"
+                          size="none"
+                          css={{ height: 44, px: '$4', borderRadius: 8 }}
+                          onClick={() => handleSetFloor()}
+                        >
+                          Floor
+                        </Button>
+                      ) : null}
                     </Flex>
                     {Number(price) !== 0 && Number(price) < MINIMUM_AMOUNT && (
                       <Box>
@@ -379,7 +435,7 @@ export function ListModal({
                             setExpirationOption(option)
                           }
                         }}
-                        css={{ borderRadius: 8, maxWidth: 160 }}
+                        css={{ borderRadius: 8, maxWidth: 160, height: 44 }}
                       >
                         {expirationOptions.map((option) => (
                           <Select.Item key={option.text} value={option.value}>
@@ -418,6 +474,7 @@ export function ListModal({
                           }
                         }}
                         containerCss={{
+                          height: 44,
                           width: 46,
                           '@bp1': {
                             flex: 1,
