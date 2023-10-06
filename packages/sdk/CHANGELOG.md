@@ -1,4 +1,10 @@
 
+## [v1.5.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/af5f3d11d93bcfd4b484bb6960f754f38883ec69) (2023-10-05)
+
+* Sync api [39a0cff0](https://github.com/reservoirprotocol/reservoir-kit/commit/39a0cff04e47dac0ca19890d9f665d732db92760)
+* Improve error handling across all modals [cc35a1cc](https://github.com/reservoirprotocol/reservoir-kit/commit/cc35a1ccd580ca7eb34c11170424db655e7b309a)
+* Improve transaction observability to reduce dependency on RPC [9347f698](https://github.com/reservoirprotocol/reservoir-kit/commit/9347f698ef341df963efe9396cdef5a06ee08bab)
+
 ## [v1.5.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/2ce88f4f6f06c57ceff1ac47ea46c06f4c52597d) (2023-10-04)
 
 * ReservoirChains prebundled configuration [e619f299](https://github.com/reservoirprotocol/reservoir-kit/commit/e619f299af3b5cf5ac8cbacc7d51cb61824903dd)

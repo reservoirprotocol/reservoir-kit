@@ -39,6 +39,7 @@ import { Collapsible } from '../../primitives/Collapsible'
 import { ApproveBidCollapsible } from './ApproveBidCollapsible'
 import SigninStep from '../SigninStep'
 import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
+import { truncateAddress } from '../../lib/truncate'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -521,9 +522,7 @@ export function AcceptBidModal({
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
                     {stepData?.currentStep?.items?.map((item) => {
                       const txHash = item.txHash
-                        ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
-                            -4
-                          )}`
+                        ? `${truncateAddress(item.txHash)}`
                         : ''
                       return (
                         <Anchor
