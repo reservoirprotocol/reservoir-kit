@@ -102,7 +102,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
               Total Listing Value
             </Text>
             <FormatCryptoCurrency
-              amount={Number(price)}
+              amount={Number(price) * quantity}
               address={currency.contract}
               symbol={currency.symbol}
               textStyle="subtitle2"
