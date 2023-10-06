@@ -27,6 +27,7 @@ import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 
 export enum ListStep {
+  Unavailable,
   SetPrice,
   Listing,
   Complete,
@@ -238,6 +239,12 @@ export const ListModalRenderer: FC<Props> = ({
   }, [open])
 
   useEffect(() => {
+    if (marketplace && !marketplace.listingEnabled) {
+      setListStep(ListStep.Unavailable)
+    }
+  }, [marketplace])
+
+  useEffect(() => {
     if (currencies && currencies.length > 5) {
       console.warn(
         'The ListModal UI was designed to have a maximum of 5 currencies, going above 5 may degrade the user experience.'
@@ -278,7 +285,6 @@ export const ListModalRenderer: FC<Props> = ({
 
     setTransactionError(null)
 
-    const listingData: ListingData[] = []
     let expirationTime: string | null = null
 
     if (expirationOption.relativeTime && expirationOption.relativeTimeUnit) {
@@ -317,14 +323,12 @@ export const ListModalRenderer: FC<Props> = ({
       listing.fees = [...royalties]
     }
 
-    if (listing.orderbook === 'reservoir') {
-      const fees = feesBps || client.marketplaceFees
-      if (fees) {
-        if (!listing.fees) {
-          listing.fees = []
-        }
-        listing.fees = listing.fees.concat(fees)
+    const fees = feesBps || client.marketplaceFees
+    if (fees) {
+      if (!listing.fees) {
+        listing.fees = []
       }
+      listing.fees = listing.fees.concat(fees)
     }
 
     if (quantity > 1) {
@@ -347,7 +351,7 @@ export const ListModalRenderer: FC<Props> = ({
       }
     }
 
-    setListingData(listingData)
+    setListingData([{ listing, marketplace }])
     setListStep(ListStep.Listing)
 
     client.actions

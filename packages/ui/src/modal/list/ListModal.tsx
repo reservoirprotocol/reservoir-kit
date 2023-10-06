@@ -29,7 +29,12 @@ import {
   ListStep,
   ListModalStepData,
 } from './ListModalRenderer'
-import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCalendar,
+  faHand,
+  faImages,
+  faTag,
+} from '@fortawesome/free-solid-svg-icons'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'
@@ -272,6 +277,32 @@ export function ListModal({
               e.stopPropagation()
             }}
           >
+            {!loading && listStep == ListStep.Unavailable && (
+              <Flex
+                direction="column"
+                align="center"
+                css={{ p: '$4', gap: '$5' }}
+              >
+                <Box css={{ color: '$neutralSolid', mt: 48 }}>
+                  <FontAwesomeIcon
+                    icon={faTag}
+                    style={{ width: '32px', height: '32px' }}
+                  />
+                </Box>
+
+                <Text style="h6" css={{ mb: '$3', textAlign: 'center' }}>
+                  Listing is not available for this collection.
+                </Text>
+                <Button
+                  css={{ width: '100%' }}
+                  onClick={() => {
+                    setOpen(false)
+                  }}
+                >
+                  {copy.ctaClose}
+                </Button>
+              </Flex>
+            )}
             {!loading && listStep == ListStep.SetPrice && (
               <Flex direction="column">
                 {transactionError && <ErrorWell error={transactionError} />}
@@ -280,7 +311,6 @@ export function ListModal({
                   token={token}
                   chain={modalChain}
                 />
-
                 <Flex
                   direction="column"
                   align="center"
@@ -380,6 +410,7 @@ export function ListModal({
                       ) : null}
                       <FloorDropdown
                         token={token}
+                        currency={currency}
                         defaultCurrency={defaultCurrency}
                         setPrice={setPrice}
                         setCurrency={setCurrency}
@@ -562,7 +593,7 @@ export function ListModal({
                   ) : null}
                   {!stepData && (
                     <Flex
-                      css={{ height: '100%', py: '$6' }}
+                      css={{ height: '100%', py: '$5' }}
                       justify="center"
                       align="center"
                     >

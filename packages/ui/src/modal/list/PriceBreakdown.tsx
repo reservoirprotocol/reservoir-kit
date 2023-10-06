@@ -65,7 +65,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
                 transform: 'rotate(180deg)',
               },
               $$focusColor: '$colors$accentBorderHover',
-              '&:focus': { boxShadow: '0 0 0 2px $$focusColor' },
+              '&:focus-visible': { boxShadow: '0 0 0 2px $$focusColor' },
             }}
           >
             <Flex align="center" css={{ gap: '$3' }}>

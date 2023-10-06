@@ -9,8 +9,7 @@ import React, {
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 
 const DropdownMenuContent = styled(DropdownMenuPrimitive.DropdownMenuContent, {
-  mx: '$4',
-  p: '$2',
+  p: '$3',
   borderRadius: 8,
   zIndex: 5,
   background: '$neutralBg',
@@ -22,16 +21,18 @@ const DropdownMenuItem = styled(DropdownMenuPrimitive.DropdownMenuItem, {
   fontSize: 16,
   fontFamily: '$body',
   color: '$gray12',
-  px: '$2',
+  px: '$4',
   py: '$4',
   borderRadius: 8,
   outline: 'none',
   cursor: 'pointer',
+  backgroundColor: '$neutralBgActive',
+  $$focusColor: '$colors$focusColor',
   '&:hover': {
-    backgroundColor: '$gray5',
+    backgroundColor: '$neutralBgHover',
   },
-  '&:focus': {
-    backgroundColor: '$gray5',
+  '&[data-highlighted]': {
+    boxShadow: '0 0 0 2px $$focusColor',
   },
 })
 

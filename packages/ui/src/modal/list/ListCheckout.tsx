@@ -80,9 +80,9 @@ const ListCheckout: FC<ListCheckoutProps> = ({
       </Flex>
 
       <Flex direction="column" align="end" css={{ gap: '$1' }}>
-        {quantity && price && currency ? (
+        {price && currency ? (
           <FormatCryptoCurrency
-            amount={quantity * Number(price)}
+            amount={Number(price)}
             address={currency?.contract}
             symbol={currency?.symbol}
             textStyle="h6"
