@@ -619,7 +619,7 @@ export function ListModal({
                   <Flex
                     direction="column"
                     align="center"
-                    css={{ width: '100%', gap: '$2' }}
+                    css={{ width: '100%', gap: '$2', overflow: 'hidden' }}
                   >
                     <Img
                       src={token?.token?.image || collection?.image}
@@ -631,12 +631,12 @@ export function ListModal({
                         borderRadius: 4,
                       }}
                     />
-                    <Text style="h6">
+                    <Text style="h6" ellipsify>
                       {token?.token?.tokenId
                         ? `#${token?.token?.tokenId}`
                         : token?.token?.name}
                     </Text>
-                    <Text style="subtitle2" color="accent">
+                    <Text style="subtitle2" color="accent" ellipsify>
                       {collection?.name}
                     </Text>
                   </Flex>

@@ -34,13 +34,13 @@ const ListCheckout: FC<ListCheckoutProps> = ({
 
   return (
     <Flex align="center" justify="between" css={{ p: '$4', ...containerCss }}>
-      <Flex align="center" css={{ gap: '$3' }}>
+      <Flex align="center" css={{ gap: '$3', overflow: 'hidden' }}>
         <Img
           src={token?.token?.imageSmall || collection?.image}
           alt={token?.token?.name || collection?.name}
           css={{ width: 56, height: 56, borderRadius: 4, aspectRatio: '1/1' }}
         />
-        <Flex direction="column" css={{ gap: '$1' }}>
+        <Flex direction="column" css={{ gap: '$1', overflow: 'hidden' }}>
           <Text style="h6" ellipsify>
             {token?.token?.tokenId
               ? `#${token?.token?.tokenId}`
@@ -71,7 +71,7 @@ const ListCheckout: FC<ListCheckoutProps> = ({
                 px: '$2',
               }}
             >
-              <Text style="body3" color="subtle">
+              <Text style="body3" color="subtle" ellipsify>
                 {quantity} items
               </Text>
             </Flex>
@@ -79,7 +79,7 @@ const ListCheckout: FC<ListCheckoutProps> = ({
         </Flex>
       </Flex>
 
-      <Flex direction="column" align="end" css={{ gap: '$1' }}>
+      <Flex direction="column" align="end" css={{ gap: '$1', flexShrink: 0 }}>
         {price && currency ? (
           <FormatCryptoCurrency
             amount={Number(price)}

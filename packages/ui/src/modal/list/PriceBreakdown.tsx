@@ -129,7 +129,12 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
                   -
                 </Text>
                 <FormatCryptoCurrency
-                  amount={Number(price) * collection?.royalties?.bps}
+                  amount={
+                    quantity *
+                    Number(price) *
+                    (collection?.royalties?.bps || 0) *
+                    0.0001
+                  }
                   address={currency.contract}
                   symbol={currency.symbol}
                   textStyle="subtitle2"
@@ -149,7 +154,9 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
                   -
                 </Text>
                 <FormatCryptoCurrency
-                  amount={Number(price) * (marketplace?.fee?.percent / 100)}
+                  amount={
+                    quantity * Number(price) * (marketplace?.fee?.percent / 100)
+                  }
                   address={currency.contract}
                   symbol={currency.symbol}
                   textStyle="subtitle2"
