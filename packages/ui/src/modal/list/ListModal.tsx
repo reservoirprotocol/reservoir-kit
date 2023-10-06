@@ -28,7 +28,6 @@ import {
   ListModalRenderer,
   ListStep,
   ListModalStepData,
-  Orderbook,
 } from './ListModalRenderer'
 import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
 import { useFallbackState, useReservoirClient } from '../../hooks'
@@ -40,6 +39,7 @@ import QuantitySelector from '../QuantitySelector'
 import dayjs from 'dayjs'
 import { CurrencySelector } from '../CurrencySelector'
 import PriceBreakdown from './PriceBreakdown'
+import FloorDropdown from './FloorDropdown'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -60,10 +60,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
   collectionId?: string
-  orderbook?: Orderbook
   chainId?: number
   currencies?: Currency[]
-  nativeOnly?: boolean
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
   oracleEnabled?: boolean
@@ -90,7 +88,6 @@ export function ListModal({
   trigger,
   tokenId,
   collectionId,
-  orderbook,
   chainId,
   currencies,
   normalizeRoyalties,
@@ -125,7 +122,6 @@ export function ListModal({
       chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
-      orderbook={orderbook}
       currencies={currencies}
       normalizeRoyalties={normalizeRoyalties}
       enableOnChainRoyalties={enableOnChainRoyalties}
@@ -146,7 +142,7 @@ export function ListModal({
         transactionError,
         stepData,
         price,
-        supportedCurrencies,
+        currencies,
         currency,
         quantity,
         setPrice,
@@ -157,10 +153,7 @@ export function ListModal({
       }) => {
         const [expirationDate, setExpirationDate] = useState('')
 
-        const source =
-          marketplace?.orderbook === 'reservoir' && client?.source
-            ? client?.source
-            : marketplace?.domain
+        const source = client?.source ? client?.source : marketplace?.domain
 
         useEffect(() => {
           if (expirationOption && expirationOption.relativeTime) {
@@ -198,10 +191,6 @@ export function ListModal({
           }
         }, [transactionError])
 
-        const quantitySelectionAvailable =
-          marketplace?.orderbook === 'reservoir' ||
-          marketplace?.orderbook === 'opensea'
-
         let loading =
           !token ||
           !collection ||
@@ -212,8 +201,8 @@ export function ListModal({
         const decimalFloorPrice = collection?.floorAsk?.price?.amount?.decimal
         const nativeFloorPrice = collection?.floorAsk?.price?.amount?.native
         const usdFloorPrice = collection?.floorAsk?.price?.amount?.usd
-        const defaultCurrency = supportedCurrencies?.find(
-          (supportedCurrency) => supportedCurrency?.contract === zeroAddress
+        const defaultCurrency = currencies?.find(
+          (currency) => currency?.contract === zeroAddress
         )
 
         const floorButtonEnabled =
@@ -297,7 +286,7 @@ export function ListModal({
                   align="center"
                   css={{ width: '100%', p: '$4', gap: 24 }}
                 >
-                  {quantityAvailable > 1 && quantitySelectionAvailable && (
+                  {quantityAvailable > 1 && (
                     <Flex
                       align="center"
                       justify="between"
@@ -336,11 +325,11 @@ export function ListModal({
                         css={{ width: '100%' }}
                         containerCss={{ width: '100%', height: 44 }}
                       />
-                      {supportedCurrencies.length > 1 ? (
+                      {currencies.length > 1 ? (
                         <CurrencySelector
                           chainId={chainId}
                           currency={currency}
-                          currencies={supportedCurrencies}
+                          currencies={currencies}
                           setCurrency={setCurrency}
                           triggerCss={{
                             backgroundColor: '$neutralBgHover',
@@ -389,6 +378,12 @@ export function ListModal({
                           Floor
                         </Button>
                       ) : null}
+                      <FloorDropdown
+                        token={token}
+                        defaultCurrency={defaultCurrency}
+                        setPrice={setPrice}
+                        setCurrency={setCurrency}
+                      />
                     </Flex>
                     {Number(price) !== 0 && Number(price) < MINIMUM_AMOUNT && (
                       <Box>

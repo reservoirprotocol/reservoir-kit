@@ -17,12 +17,7 @@ import {
   useOnChainRoyalties,
 } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
-
-import {
-  Execute,
-  LogLevel,
-  ReservoirClientActions,
-} from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
@@ -37,12 +32,12 @@ export enum ListStep {
   Complete,
 }
 
-export type Listings = Parameters<
+export type Listing = Parameters<
   ReservoirClientActions['listToken']
->['0']['listings']
+>['0']['listings'][0]
 
 export type ListingData = {
-  listing: Listings[0]
+  listing: Listing
   marketplace: Marketplace
 }
 
@@ -52,10 +47,6 @@ export type ListModalStepData = {
   currentStep: Execute['steps'][0]
   listingData: ListingData[]
 }
-
-export type Orderbook = Parameters<
-  ReservoirClientActions['listToken']
->['0']['listings'][0]['orderbook']
 
 type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
@@ -71,7 +62,7 @@ type ChildrenProps = {
   transactionError?: Error | null
   stepData: ListModalStepData | null
   price: string
-  supportedCurrencies: Currency[]
+  currencies: Currency[]
   currency: Currency
   quantity: number
   royaltyBps?: number
@@ -87,7 +78,6 @@ type Props = {
   open: boolean
   tokenId?: string
   collectionId?: string
-  orderbook?: Orderbook
   chainId?: number
   currencies?: Currency[]
   normalizeRoyalties?: boolean
@@ -95,27 +85,6 @@ type Props = {
   oracleEnabled: boolean
   feesBps?: string[]
   children: (props: ChildrenProps) => ReactNode
-}
-
-const isCurrencyAllowed = (currency: Currency, marketplace: Marketplace) => {
-  if (marketplace.listingEnabled) {
-    if (currency.contract === zeroAddress) {
-      return true
-    }
-    switch (marketplace.orderbook) {
-      case 'reservoir':
-        return true
-
-      case 'opensea': {
-        return (
-          marketplace.paymentTokens?.find(
-            (token) => token.address === currency.contract
-          ) !== undefined
-        )
-      }
-    }
-  }
-  return false
 }
 
 const expirationOptions = [
@@ -132,7 +101,6 @@ export const ListModalRenderer: FC<Props> = ({
   open,
   tokenId,
   collectionId,
-  orderbook = 'reservoir',
   currencies,
   chainId,
   normalizeRoyalties,
@@ -163,27 +131,10 @@ export const ListModalRenderer: FC<Props> = ({
   )
 
   const marketplace = useMemo(() => {
-    if (!allMarketplaces || allMarketplaces.length == 0) {
-      return
-    }
-    const prefferedMarketplace = allMarketplaces.find(
-      (marketplace) => marketplace.orderbook === orderbook
+    return allMarketplaces.find(
+      (marketplace) => marketplace.orderbook === 'reservoir'
     )
-
-    if (prefferedMarketplace) {
-      return prefferedMarketplace
-    }
-    // Fallback to reservoir
-    else {
-      client?.log(
-        [`${orderbook} orderbook not found. Falling back to Reservoir`],
-        LogLevel.Warn
-      )
-      return allMarketplaces.find(
-        (marketplace) => marketplace.orderbook === 'reservoir'
-      )
-    }
-  }, [allMarketplaces, orderbook])
+  }, [allMarketplaces])
 
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<ListModalStepData | null>(null)
@@ -237,14 +188,6 @@ export const ListModalRenderer: FC<Props> = ({
     royaltyBps = onChainRoyaltyBps
   }
 
-  const [marketplaces, setMarketplaces] = useMarketplaces(
-    collectionId,
-    true,
-    feesBps,
-    rendererChain?.id,
-    open
-  )
-
   const { data: tokens } = useTokens(
     open && {
       tokens: [`${contract}:${tokenId}`],
@@ -282,45 +225,10 @@ export const ListModalRenderer: FC<Props> = ({
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
 
-  const supportedCurrencies = useMemo(() => {
-    if (!currencies || currencies.length === 0) {
-      return [defaultCurrency]
-    }
-
-    if (marketplace) {
-      const filteredCurrencies = currencies.filter((currency) =>
-        isCurrencyAllowed(currency, marketplace)
-      )
-
-      if (filteredCurrencies.length !== currencies.length) {
-        client?.log(
-          [
-            `One or more of the configured currencies are not supported for listing with the ${orderbook} orderbook.`,
-          ],
-          LogLevel.Warn
-        )
-      }
-
-      return filteredCurrencies.length > 0
-        ? filteredCurrencies
-        : [defaultCurrency]
-    }
-    return currencies
-  }, [currencies, marketplace])
-
   useEffect(() => {
     if (!open) {
       setListStep(ListStep.SetPrice)
       setTransactionError(null)
-      if (marketplaces.length > 0) {
-        setMarketplaces(
-          marketplaces.map((marketplace) => {
-            return {
-              ...marketplace,
-            }
-          })
-        )
-      }
       setPrice('')
       setStepData(null)
       setExpirationOption(expirationOptions[5])
@@ -380,7 +288,7 @@ export const ListModalRenderer: FC<Props> = ({
         .toString()
     }
 
-    const listing: Listings[0] = {
+    const listing: Listing = {
       token: `${contract}:${tokenId}`,
       weiPrice: (
         parseUnits(`${+price}`, currency.decimals || 18) * BigInt(quantity)
@@ -432,8 +340,6 @@ export const ListModalRenderer: FC<Props> = ({
     }
 
     if (oracleEnabled) {
-      // @TODO: can only do oracleEnabled orders on reservoir
-      // log a warning
       listing.options = {
         [`${listing.orderKind}`]: {
           useOffChainCancellation: true,
@@ -526,7 +432,6 @@ export const ListModalRenderer: FC<Props> = ({
       })
   }, [
     client,
-    marketplaces,
     wallet,
     collectionId,
     chainId,
@@ -538,6 +443,7 @@ export const ListModalRenderer: FC<Props> = ({
     onChainRoyalties,
     feesBps,
     price,
+    marketplace,
   ])
 
   return (
@@ -556,7 +462,7 @@ export const ListModalRenderer: FC<Props> = ({
         transactionError,
         stepData,
         price,
-        supportedCurrencies,
+        currencies: currencies || [defaultCurrency],
         currency,
         quantity,
         royaltyBps,

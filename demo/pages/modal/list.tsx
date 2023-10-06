@@ -34,7 +34,6 @@ const Index: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [chainId, setChainId] = useState('')
-  const [orderbook, setOrderbook] = useState('reservoir')
   const [currencies, setCurrencies] = useState<
     { contract: string; symbol: string; decimals?: number }[] | undefined
   >([
@@ -89,14 +88,6 @@ const Index: NextPage = () => {
         />
       </div>
       <div>
-        <label>Orderbook (reservoir | opensea | looks-rare | blur | x2y2): </label>
-        <input
-          type="text"
-          value={orderbook}
-          onChange={(e) => setOrderbook(e.target.value)}
-        />
-      </div>
-      <div>
         <label>Chain Override: </label>
         <input
           type="text"
@@ -145,16 +136,6 @@ const Index: NextPage = () => {
         />
       </div>
       <DeeplinkCheckbox />
-      <div>
-        <label>Native Only: </label>
-        <input
-          type="checkbox"
-          checked={nativeOnly}
-          onChange={(e) => {
-            setNativeOnly(e.target.checked)
-          }}
-        />
-      </div>
       <div>
         <label>Normalize Royalties: </label>
         <input
@@ -205,10 +186,8 @@ const Index: NextPage = () => {
             List Item
           </button>
         }
-        nativeOnly={nativeOnly}
         collectionId={collectionId}
         tokenId={tokenId}
-        orderbook={orderbook as Orderbook}
         currencies={currencies}
         normalizeRoyalties={normalizeRoyalties}
         enableOnChainRoyalties={enableOnChainRoyalties}
