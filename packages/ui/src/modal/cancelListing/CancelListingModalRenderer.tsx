@@ -186,20 +186,8 @@ export const CancelListingModalRenderer: FC<Props> = ({
           }
         },
       })
-      .catch((e: any) => {
-        const error = e as Error
-        const errorStatus = (error as any)?.statusCode
-        let message = 'Oops, something went wrong. Please try again.'
-        if (errorStatus >= 400 && errorStatus < 500) {
-          message = error.message
-        }
-        if (error.message.includes('rejected')) {
-          message = 'User rejected the request.'
-        }
-        const transactionError = new Error(message, {
-          cause: error,
-        })
-        setTransactionError(transactionError)
+      .catch((error: Error) => {
+        setTransactionError(error)
         setCancelStep(CancelStep.Cancel)
         setStepData(null)
         setSteps(null)
