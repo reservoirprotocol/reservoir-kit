@@ -11,36 +11,34 @@ import {
   useCoinConversion,
   useReservoirClient,
   useMarketplaces,
-  useListingPreapprovalCheck,
   useCollections,
   useUserTokens,
   useChainCurrency,
   useOnChainRoyalties,
 } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
-
 import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
-import expirationOptions from '../../lib/defaultExpirationOptions'
+import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { Currency } from '../../types/Currency'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 
 export enum ListStep {
-  SelectMarkets,
+  Unavailable,
   SetPrice,
-  ListItem,
+  Listing,
   Complete,
 }
 
-export type Listings = Parameters<
+export type Listing = Parameters<
   ReservoirClientActions['listToken']
->['0']['listings']
+>['0']['listings'][0]
 
 export type ListingData = {
-  listing: Listings[0]
+  listing: Listing
   marketplace: Marketplace
 }
 
@@ -59,22 +57,19 @@ type ChildrenProps = {
   usdPrice: number
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
-  marketplaces: Marketplace[]
-  unapprovedMarketplaces: Marketplace[]
-  isFetchingUnapprovedMarketplaces: boolean
+  marketplace?: Marketplace
   isFetchingOnChainRoyalties: boolean
-  localMarketplace: Marketplace | null
   listingData: ListingData[]
   transactionError?: Error | null
   stepData: ListModalStepData | null
+  price: string
   currencies: Currency[]
   currency: Currency
   quantity: number
   royaltyBps?: number
   setListStep: React.Dispatch<React.SetStateAction<ListStep>>
-  toggleMarketplace: (marketplace: Marketplace) => void
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
-  setMarketPrice: (price: number, market: Marketplace) => void
+  setPrice: React.Dispatch<React.SetStateAction<string>>
   setCurrency: (currency: Currency) => void
   setQuantity: React.Dispatch<React.SetStateAction<number>>
   listToken: () => void
@@ -93,26 +88,15 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
 }
 
-const isCurrencyAllowed = (currency: Currency, marketplace: Marketplace) => {
-  if (marketplace.listingEnabled) {
-    if (currency.contract === zeroAddress) {
-      return true
-    }
-    switch (marketplace.orderbook) {
-      case 'reservoir':
-        return true
-
-      case 'opensea': {
-        return (
-          marketplace.paymentTokens?.find(
-            (token) => token.address === currency.contract
-          ) !== undefined
-        )
-      }
-    }
-  }
-  return false
-}
+const expirationOptions = [
+  ...defaultExpirationOptions,
+  {
+    text: 'Custom',
+    value: 'custom',
+    relativeTime: null,
+    relativeTimeUnit: null,
+  },
+]
 
 export const ListModalRenderer: FC<Props> = ({
   open,
@@ -137,7 +121,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
-  const [listStep, setListStep] = useState<ListStep>(ListStep.SelectMarkets)
+  const [listStep, setListStep] = useState<ListStep>(ListStep.SetPrice)
   const [listingData, setListingData] = useState<ListingData[]>([])
   const [allMarketplaces] = useMarketplaces(
     collectionId,
@@ -146,12 +130,16 @@ export const ListModalRenderer: FC<Props> = ({
     rendererChain?.id,
     open
   )
-  const [loadedInitalPrice, setLoadedInitalPrice] = useState(false)
+
+  const marketplace = useMemo(() => {
+    return allMarketplaces.find(
+      (marketplace) => marketplace.orderbook === 'reservoir'
+    )
+  }, [allMarketplaces])
+
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<ListModalStepData | null>(null)
-  const [localMarketplace, setLocalMarketplace] = useState<Marketplace | null>(
-    null
-  )
+  const [price, setPrice] = useState('')
   const chainCurrency = useChainCurrency(rendererChain?.id)
   const defaultCurrency = {
     contract: chainCurrency.address,
@@ -201,23 +189,6 @@ export const ListModalRenderer: FC<Props> = ({
     royaltyBps = onChainRoyaltyBps
   }
 
-  const [marketplaces, setMarketplaces] = useMarketplaces(
-    collectionId,
-    true,
-    feesBps,
-    rendererChain?.id,
-    open
-  )
-  const {
-    data: unapprovedMarketplaces,
-    isFetching: isFetchingUnapprovedMarketplaces,
-  } = useListingPreapprovalCheck(
-    marketplaces,
-    open ? tokenId : undefined,
-    open ? contract : undefined,
-    rendererChain?.id
-  )
-
   const { data: tokens } = useTokens(
     open && {
       tokens: [`${contract}:${tokenId}`],
@@ -255,115 +226,23 @@ export const ListModalRenderer: FC<Props> = ({
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
 
-  const toggleMarketplace = (marketplace: Marketplace) => {
-    const updatedMarketplaces = marketplaces.map((market) => {
-      if (market.name == marketplace.name) {
-        return {
-          ...market,
-          isSelected: !market.isSelected,
-        }
-      } else {
-        return market
-      }
-    })
-    const hasNonNativeMarketplace = updatedMarketplaces.find(
-      (marketplace) =>
-        marketplace.isSelected && marketplace.orderbook !== 'reservoir'
-    )
-    if (hasNonNativeMarketplace) {
-      setQuantity(1)
-    }
-    setMarketplaces(updatedMarketplaces)
-  }
-
-  const setMarketPrice = (price: number | string, market: Marketplace) => {
-    let updatedMarketplaces = marketplaces.map((marketplace) => {
-      if (marketplace.name == market.name) {
-        return {
-          ...marketplace,
-          price: price,
-          truePrice: price,
-        }
-      }
-      return marketplace
-    })
-    setMarketplaces(updatedMarketplaces)
-  }
-
-  useEffect(() => {
-    if (
-      open &&
-      token &&
-      collection &&
-      !loadedInitalPrice &&
-      allMarketplaces.length > 0
-    ) {
-      let updatedMarketplaces = allMarketplaces.map(
-        (marketplace): Marketplace => {
-          const listingEnabled = isCurrencyAllowed(currency, marketplace)
-          return {
-            ...marketplace,
-            price: '',
-            truePrice: '',
-            listingEnabled,
-            isSelected: listingEnabled ? marketplace.isSelected : false,
-          }
-        }
-      )
-      setMarketplaces(updatedMarketplaces)
-      setLoadedInitalPrice(true)
-    }
-  }, [token, collection, loadedInitalPrice, open, marketplaces.length])
-
-  useEffect(() => {
-    if (open && loadedInitalPrice) {
-      let updatedMarketplaces = allMarketplaces.map(
-        (marketplace): Marketplace => {
-          const listingEnabled = isCurrencyAllowed(currency, marketplace)
-          return {
-            ...marketplace,
-            listingEnabled,
-            isSelected: listingEnabled ? marketplace.isSelected : false,
-          }
-        }
-      )
-      setMarketplaces(updatedMarketplaces)
-    }
-  }, [open, currency])
-
-  useEffect(() => {
-    if (marketplaces) {
-      setLocalMarketplace(
-        marketplaces.find(
-          (marketplace) => marketplace.orderbook === 'reservoir'
-        ) || null
-      )
-    } else {
-      setLocalMarketplace(null)
-    }
-  }, [marketplaces])
-
   useEffect(() => {
     if (!open) {
-      setListStep(ListStep.SelectMarkets)
+      setListStep(ListStep.SetPrice)
       setTransactionError(null)
-      if (marketplaces.length > 0) {
-        setMarketplaces(
-          marketplaces.map((marketplace) => {
-            return {
-              ...marketplace,
-              isSelected: marketplace.orderbook === 'reservoir',
-            }
-          })
-        )
-      }
-      setLoadedInitalPrice(false)
+      setPrice('')
       setStepData(null)
       setExpirationOption(expirationOptions[5])
       setQuantity(1)
     }
     setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
   }, [open])
+
+  useEffect(() => {
+    if (marketplace && !marketplace.listingEnabled) {
+      setListStep(ListStep.Unavailable)
+    }
+  }, [marketplace])
 
   useEffect(() => {
     if (currencies && currencies.length > 5) {
@@ -399,9 +278,13 @@ export const ListModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (!marketplace) {
+      const error = new Error('No marketplace found')
+      throw error
+    }
+
     setTransactionError(null)
 
-    const listingData: ListingData[] = []
     let expirationTime: string | null = null
 
     if (expirationOption.relativeTime && expirationOption.relativeTimeUnit) {
@@ -411,82 +294,70 @@ export const ListModalRenderer: FC<Props> = ({
         .toString()
     }
 
-    marketplaces.forEach((market) => {
-      if (market.isSelected) {
-        const listing: Listings[0] = {
-          token: `${contract}:${tokenId}`,
-          weiPrice: (
-            parseUnits(`${+market.price}`, currency.decimals || 18) *
-            BigInt(quantity)
-          ).toString(),
-          //@ts-ignore
-          orderbook: market.orderbook,
-          //@ts-ignore
-          orderKind: market.orderKind,
-        }
+    const listing: Listing = {
+      token: `${contract}:${tokenId}`,
+      weiPrice: (
+        parseUnits(`${+price}`, currency.decimals || 18) * BigInt(quantity)
+      ).toString(),
+      // @ts-ignore
+      orderbook: marketplace.orderbook,
+      // @ts-ignore
+      orderKind: marketplace.orderKind,
+    }
 
-        if (
-          enableOnChainRoyalties &&
-          onChainRoyalties &&
-          listing.orderKind?.includes('seaport')
-        ) {
-          const royalties = onChainRoyalties[0].map((recipient, i) => {
-            const bps =
-              (parseFloat(
-                formatUnits(onChainRoyalties[1][i], currency.decimals || 18)
-              ) /
-                1) *
-              10000
-            return `${recipient}:${bps}`
-          })
-          listing.automatedRoyalties = false
-          listing.fees = [...royalties]
-        }
+    if (
+      enableOnChainRoyalties &&
+      onChainRoyalties &&
+      listing.orderKind?.includes('seaport')
+    ) {
+      const royalties = onChainRoyalties[0].map((recipient, i) => {
+        const bps =
+          (parseFloat(
+            formatUnits(onChainRoyalties[1][i], currency.decimals || 18)
+          ) /
+            1) *
+          10000
+        return `${recipient}:${bps}`
+      })
+      listing.automatedRoyalties = false
+      listing.fees = [...royalties]
+    }
 
-        if (listing.orderbook === 'reservoir') {
-          const fees = feesBps || client.marketplaceFees
-          if (fees) {
-            if (!listing.fees) {
-              listing.fees = []
-            }
-            listing.fees = listing.fees.concat(fees)
-          }
-        }
-
-        if (quantity > 1) {
-          listing.quantity = quantity
-        }
-
-        if (expirationTime) {
-          listing.expirationTime = expirationTime
-        }
-
-        if (currency && currency.contract != zeroAddress) {
-          listing.currency = currency.contract
-        }
-
-        if (oracleEnabled) {
-          listing.options = {
-            [`${listing.orderKind}`]: {
-              useOffChainCancellation: true,
-            },
-          }
-        }
-
-        listingData.push({
-          listing,
-          marketplace: market,
-        })
+    const fees = feesBps || client.marketplaceFees
+    if (fees) {
+      if (!listing.fees) {
+        listing.fees = []
       }
-    })
+      listing.fees = listing.fees.concat(fees)
+    }
 
-    setListingData(listingData)
-    setListStep(ListStep.ListItem)
+    if (quantity > 1) {
+      listing.quantity = quantity
+    }
+
+    if (expirationTime) {
+      listing.expirationTime = expirationTime
+    }
+
+    if (currency && currency.contract != zeroAddress) {
+      listing.currency = currency.contract
+    }
+
+    if (oracleEnabled) {
+      listing.options = {
+        [`${listing.orderKind}`]: {
+          useOffChainCancellation: true,
+        },
+      }
+    }
+
+    setListingData([{ listing, marketplace }])
+    setListStep(ListStep.Listing)
 
     client.actions
       .listToken({
         chainId: rendererChain?.id,
-        listings: listingData.map((data) => data.listing),
+        listings: [listing],
         wallet,
         onProgress: (steps: Execute['steps']) => {
           const executableSteps = steps.filter(
@@ -555,16 +426,12 @@ export const ListModalRenderer: FC<Props> = ({
           }
         },
       })
-      .catch((e: any) => {
-        const error = e as Error
-        const transactionError = new Error(error?.message || '', {
-          cause: error,
-        })
-        setTransactionError(transactionError)
+      .catch((error: Error) => {
+        setListStep(ListStep.SetPrice)
+        setTransactionError(error)
       })
   }, [
     client,
-    marketplaces,
     wallet,
     collectionId,
     chainId,
@@ -575,6 +442,8 @@ export const ListModalRenderer: FC<Props> = ({
     enableOnChainRoyalties,
     onChainRoyalties,
     feesBps,
+    price,
+    marketplace,
   ])
 
   return (
@@ -585,23 +454,20 @@ export const ListModalRenderer: FC<Props> = ({
         collection,
         listStep,
         usdPrice,
+        marketplace,
         expirationOption,
         expirationOptions,
-        marketplaces,
-        unapprovedMarketplaces,
-        isFetchingUnapprovedMarketplaces,
         isFetchingOnChainRoyalties,
-        localMarketplace,
         listingData,
         transactionError,
         stepData,
+        price,
         currencies: currencies || [defaultCurrency],
         currency,
         quantity,
         royaltyBps,
         setListStep,
-        toggleMarketplace,
-        setMarketPrice,
+        setPrice,
         setCurrency,
         setExpirationOption,
         setQuantity,
