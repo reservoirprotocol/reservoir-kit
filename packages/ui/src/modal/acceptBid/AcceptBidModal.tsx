@@ -15,6 +15,7 @@ import {
   Box,
   Anchor,
   ErrorWell,
+  ChainIcon,
 } from '../../primitives'
 
 import { Modal } from '../Modal'
@@ -39,6 +40,7 @@ import { Collapsible } from '../../primitives/Collapsible'
 import { ApproveBidCollapsible } from './ApproveBidCollapsible'
 import SigninStep from '../SigninStep'
 import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
+import { truncateAddress } from '../../lib/truncate'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -217,12 +219,25 @@ export function AcceptBidModal({
             {acceptBidStep === AcceptBidStep.Checkout && !loading && (
               <Flex direction="column">
                 {transactionError && <ErrorWell error={transactionError} />}
-                <Flex justify="between" css={{ px: '$4', pt: '$4' }}>
+                <Flex css={{ px: '$4', pt: '$4' }} align="center">
                   <Text style="subtitle3" color="subtle">
-                    {bidCount > 1 ? `${bidCount} Items` : 'Item'}
+                    {`${bidCount} ${bidCount > 1 ? 'Items' : 'Item'}`}
                   </Text>
+                  <Box
+                    css={{
+                      background: '$neutralLine',
+                      height: 12,
+                      width: 2,
+                      margin: '0 5px',
+                    }}
+                  />
+                  <ChainIcon
+                    chainId={modalChain?.id}
+                    height={12}
+                    css={{ mr: 5 }}
+                  />
                   <Text style="subtitle3" color="subtle">
-                    Total Offer Value
+                    {modalChain?.name}
                   </Text>
                 </Flex>
                 {tokensData.map(({ tokenData, bidsPath }, i) => {
@@ -521,9 +536,7 @@ export function AcceptBidModal({
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
                     {stepData?.currentStep?.items?.map((item) => {
                       const txHash = item.txHash
-                        ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
-                            -4
-                          )}`
+                        ? `${truncateAddress(item.txHash)}`
                         : ''
                       return (
                         <Anchor

@@ -1,4 +1,37 @@
 
+## [v1.11.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7e913c881f274449ba29cf7403d2ceb8f66f0d72) (2023-10-05)
+
+* Improve transaction observability to reduce dependency on RPC [9347f698](https://github.com/reservoirprotocol/reservoir-kit/commit/9347f698ef341df963efe9396cdef5a06ee08bab)
+* Bidmodal: use supported marketplaces api to select the right exchange (orderKind) and follow restrictions [f3896827](https://github.com/reservoirprotocol/reservoir-kit/commit/f3896827fa2ad4265f0d954048961c66ed4c9a5f)
+
+### Breaking Changes:
+* All custom modals now defer the handling of errors to the UI, while now providing more explicit errors
+
+## [v1.10.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/819d348bf4dd526dfec6b6d779d0a518031232e6) (2023-10-04)
+
+* CollectModal: Purchase currency selector [e619f299](https://github.com/reservoirprotocol/reservoir-kit/commit/e619f299af3b5cf5ac8cbacc7d51cb61824903dd)
+
+### Breaking Change Migrations:
+* apiKey moved to root configuration object, no longer required on every chain configuration.
+* CollectModalRenderer: Changes to state parameters passed from renderer
+
+## [v1.9.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/12d26b9567d7c5242ca748c1e778f9cff87e93ea) (2023-10-03)
+
+* Update a8 testnet weth address [1b9332a4](https://github.com/reservoirprotocol/reservoir-kit/commit/1b9332a4b30f3ad95c9a5ead9768307dfc2e894b)
+
+## [v1.9.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/74b3e4195905f3ac7a6eb2ca7b22a0da137fae57) (2023-10-02)
+
+* Add ancient8 chain [55dfc452](https://github.com/reservoirprotocol/reservoir-kit/commit/55dfc4525a38e762f16e02d983b103047b94589a)
+
+* CartPopover: Fix insufficient balance currency icon [a559ae0e](https://github.com/reservoirprotocol/reservoir-kit/commit/a559ae0e89f0b1562f6304e4e7d1da77d34700e7)
+
+## [v1.9.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/cc38ed3743ea081bb7fd25277e54a2b68aea4bf9) (2023-09-25)
+
+* ListModal: Fix Creator royalty updating to wrong value when listing 721c [63d94241](https://github.com/reservoirprotocol/reservoir-kit/commit/63d94241966816bc91b8c3f1d60a9d5d1488cbf1)
+* CollectModal: Fix issue with disabled button after disconnecting [8ad67182](https://github.com/reservoirprotocol/reservoir-kit/commit/8ad6718245f774617ea1c48b2a1492a75645d02a)
+* Update all modals with ErrorWell logic [2608641c](https://github.com/reservoirprotocol/reservoir-kit/commit/2608641c69bd183632e663deb0aef7b4c55b38ed)
+
+
 ## [v1.9.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d19b2b186a9935e29dc837d48d725a23d24abef8) (2023-09-21)
 
 * BidModal & ListModal: Fix retry logic [15763bd7](https://github.com/reservoirprotocol/reservoir-kit/commit/15763bd7123259ab28314ab928e6671b5c45fec0)

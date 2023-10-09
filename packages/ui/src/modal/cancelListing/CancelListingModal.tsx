@@ -149,6 +149,7 @@ export function CancelListingModal({
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
                     chainId={modalChain?.id}
+                    chainName={modalChain?.name}
                     img={listingImg}
                     name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
@@ -183,6 +184,7 @@ export function CancelListingModal({
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
                     chainId={modalChain?.id}
+                    chainName={modalChain?.name}
                     img={listingImg}
                     name={listing?.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
