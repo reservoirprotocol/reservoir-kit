@@ -9,6 +9,7 @@ import {
   FormatCryptoCurrency,
   FormatCurrency,
   Loader,
+  ChainIcon,
 } from '../../primitives'
 import Popover from '../../primitives/Popover'
 import React, {
@@ -226,6 +227,16 @@ export function CartPopover({
                   message={`Mixed currency items are only available to be checked out with ${currency?.symbol}`}
                 />
               )}
+              <Flex align="center" css={{ mb: '$4' }}>
+                <ChainIcon
+                  chainId={cartChain?.id}
+                  height={12}
+                  css={{ mr: 5 }}
+                />
+                <Text style="body3" color="subtle">
+                  {cartChain?.name}
+                </Text>
+              </Flex>
               {unavailableItems.length > 0 && (
                 <CartToast
                   kind="error"
