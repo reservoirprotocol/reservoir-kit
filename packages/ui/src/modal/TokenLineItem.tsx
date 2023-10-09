@@ -26,6 +26,7 @@ type TokenLineItemProps = {
   sourceImg?: string
   css?: CSSProperties
   chainId?: number
+  chainName?: string
   showRoyalties?: boolean
   quantity?: number
 }
@@ -34,6 +35,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
   tokenDetails,
   collection,
   chainId,
+  chainName,
   usdConversion = 0,
   isUnavailable,
   price,
@@ -80,6 +82,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         warning={warning}
         source={sourceImg || ''}
         chainId={chainId}
+        chainName={chainName}
         isUnavailable={isUnavailable}
         priceSubtitle={priceSubtitle}
         royaltiesBps={royaltiesBps}

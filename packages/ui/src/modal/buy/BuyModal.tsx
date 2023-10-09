@@ -24,6 +24,7 @@ import { Execute } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
+import { truncateAddress } from '../../lib/truncate'
 
 type PurchaseData = {
   tokenId?: string
@@ -241,6 +242,7 @@ export function BuyModal({
               <Flex direction="column">
                 <TokenLineItem
                   chainId={modalChain?.id}
+                  chainName={modalChain?.name}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -287,6 +289,7 @@ export function BuyModal({
                 )}
                 <TokenLineItem
                   chainId={modalChain?.id}
+                  chainName={modalChain?.name}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -411,6 +414,7 @@ export function BuyModal({
               <Flex direction="column">
                 <TokenLineItem
                   chainId={modalChain?.id}
+                  chainName={modalChain?.name}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -505,9 +509,7 @@ export function BuyModal({
                     <Flex direction="column" css={{ gap: '$2' }}>
                       {stepData?.currentStep.items?.map((item) => {
                         const txHash = item.txHash
-                          ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
-                              -4
-                            )}`
+                          ? `${truncateAddress(item.txHash)}`
                           : ''
                         return (
                           <Anchor

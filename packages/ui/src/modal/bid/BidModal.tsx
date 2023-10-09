@@ -67,7 +67,6 @@ const ModalCopy = {
   titleSetPrice: 'Make an Offer',
   titleConfirm: 'Complete Offer',
   titleComplete: 'Offer Submitted',
-  titleUnavailable: 'Unavailable',
   ctaBidDisabled: 'Enter a Price',
   ctaBid: '',
   ctaConvertManually: 'Convert Manually',
@@ -103,13 +102,12 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 function titleForStep(step: BidStep, copy: typeof ModalCopy) {
   switch (step) {
     case BidStep.SetPrice:
+    case BidStep.Unavailable:
       return copy.titleSetPrice
     case BidStep.Offering:
       return copy.titleConfirm
     case BidStep.Complete:
       return copy.titleComplete
-    case BidStep.Unavailable:
-      return copy.titleUnavailable
   }
 }
 
@@ -381,6 +379,7 @@ export function BidModal({
               >
                 <TokenStats
                   chainId={modalChain?.id}
+                  chainName={modalChain?.name}
                   token={token ? token : undefined}
                   collection={collection}
                   trait={trait}
@@ -819,6 +818,7 @@ export function BidModal({
               >
                 <TransactionBidDetails
                   chainId={modalChain?.id}
+                  chainName={modalChain?.name}
                   token={token ? token : undefined}
                   collection={collection}
                   bidData={bidData}
