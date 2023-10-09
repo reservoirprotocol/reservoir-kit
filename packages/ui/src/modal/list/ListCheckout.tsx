@@ -1,5 +1,11 @@
 import React, { FC } from 'react'
-import { Flex, FormatCryptoCurrency, Img, Text } from '../../primitives'
+import {
+  ChainIcon,
+  Flex,
+  FormatCryptoCurrency,
+  Img,
+  Text,
+} from '../../primitives'
 import { useCollections, useTimeSince, useTokens } from '../../hooks'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { CSS } from '@stitches/react'
@@ -50,11 +56,12 @@ const ListCheckout: FC<ListCheckoutProps> = ({
             <Text style="subtitle2" color="subtle" ellipsify>
               {collection?.name}
             </Text>
-            {chain ? (
+            {chain && !expirationOption ? (
               <>
                 <Text style="subtitle1" css={{ color: '$neutralLine' }}>
                   |
                 </Text>
+                <ChainIcon chainId={chain.id} height={12} />
                 <Text style="subtitle2" color="subtle" ellipsify>
                   {chain.name}
                 </Text>
