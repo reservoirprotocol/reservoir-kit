@@ -91,6 +91,7 @@ export default function (overrides?: ReservoirKitOverrides): ReservoirKitTheme {
     },
     assets: {
       ethIcon: overrides?.ethIcon || 'gray',
+      chainIcon: overrides?.chainIcon || 'light',
     },
     ...sharedTheme,
   }

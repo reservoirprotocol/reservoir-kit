@@ -31,7 +31,6 @@ import { parseUnits } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
-import { Marketplace } from '../../hooks/useMarketplaces'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -520,12 +519,8 @@ export const BidModalRenderer: FC<Props> = ({
           }
         },
       })
-      .catch((e: any) => {
-        //@ts-ignore
-        const transactionError = new Error(e?.message || '', {
-          cause: e,
-        })
-        setTransactionError(transactionError)
+      .catch((e: Error) => {
+        setTransactionError(e)
       })
   }, [
     tokenId,

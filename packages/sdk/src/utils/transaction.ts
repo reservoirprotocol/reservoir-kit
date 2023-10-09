@@ -1,11 +1,14 @@
 import { PublicClient, Transaction } from 'viem'
 import { LogLevel, getClient } from '..'
 import { Execute, ReservoirWallet, TransactionStepItem } from '../types'
+import { TransactionTimeoutError } from '../errors'
 import axios, {
   AxiosRequestConfig,
   AxiosRequestHeaders,
   AxiosResponse,
 } from 'axios'
+import { customChains } from './customChains'
+import * as allChains from 'viem/chains'
 
 /**
  * Safe txhash.wait which handles replacements when users speed up the transaction
@@ -22,8 +25,9 @@ export async function sendTransactionSafely(
   request: AxiosRequestConfig,
   headers: AxiosRequestHeaders
 ) {
+  const client = getClient()
   let txHash = await wallet.handleSendTransactionStep(chainId, item, step)
-  const maximumAttempts = 30
+  const maximumAttempts = client.maxPollingAttemptsBeforeTimeout ?? 30
   let attemptCount = 0
   let waitingForConfirmation = true
   let transactionCancelled = false
@@ -88,8 +92,15 @@ export async function sendTransactionSafely(
   }
 
   if (attemptCount >= maximumAttempts) {
-    throw Error(
-      `Failed to get an ok response after ${attemptCount} attempt(s), aborting`
+    const wagmiChain: allChains.Chain | undefined = Object.values({
+      ...allChains,
+      ...customChains,
+    }).find(({ id }) => id === chainId)
+
+    throw new TransactionTimeoutError(
+      txHash,
+      attemptCount,
+      wagmiChain?.blockExplorers?.default.url
     )
   }
 
