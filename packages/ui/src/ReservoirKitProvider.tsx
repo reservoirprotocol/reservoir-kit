@@ -28,6 +28,7 @@ export type CoinGecko = {
 
 type ReservoirKitProviderOptions = {
   disablePoweredByReservoir?: boolean
+  disableJumperLink?: boolean
   coinGecko?: CoinGecko
 }
 export interface ReservoirKitProviderProps {

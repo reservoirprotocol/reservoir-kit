@@ -1,4 +1,11 @@
-import React, { FC, ReactNode, useCallback, useEffect, useState } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import {
   useChainCurrency,
   useCollections,
@@ -20,6 +27,7 @@ import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
 import { customChains } from '@reservoir0x/reservoir-sdk'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 export enum CollectStep {
   Idle,
@@ -75,6 +83,7 @@ export type ChildrenProps = {
   balance?: bigint
   isConnected: boolean
   contract: Address
+  disableJumperLink?: boolean
   hasEnoughCurrency: boolean
   addFundsLink: string
   blockExplorerBaseUrl: string
@@ -158,6 +167,9 @@ export const CollectModalRenderer: FC<Props> = ({
     ...allChains,
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
+
+  const providerOptions = useContext(ProviderOptionsContext)
+  const disableJumperLink = providerOptions?.disableJumperLink
 
   const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
@@ -714,6 +726,7 @@ export const CollectModalRenderer: FC<Props> = ({
         feeOnTop,
         feeUsd,
         usdPrice,
+        disableJumperLink,
         usdPriceRaw,
         isConnected: wallet !== undefined,
         currentChain,
