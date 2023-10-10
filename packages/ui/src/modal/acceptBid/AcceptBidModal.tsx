@@ -473,6 +473,28 @@ export function AcceptBidModal({
                   You can close this modal while it finalizes on the blockchain.
                   The transaction will continue in the background.
                 </Text>
+                <Flex
+                  direction="column"
+                  align="center"
+                  css={{ gap: '$2', mb: '$3', width: '100%' }}
+                >
+                  {stepData?.currentStep?.items?.map((item) => {
+                    const txHash = item.txHash
+                      ? `${truncateAddress(item.txHash)}`
+                      : ''
+                    return (
+                      <Anchor
+                        href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
+                        color="primary"
+                        weight="medium"
+                        target="_blank"
+                        css={{ fontSize: 12 }}
+                      >
+                        View transaction: {txHash}
+                      </Anchor>
+                    )
+                  })}
+                </Flex>
                 <Box
                   css={{
                     color: '$neutralSolid',
