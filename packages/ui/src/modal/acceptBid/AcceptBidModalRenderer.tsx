@@ -437,22 +437,9 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         },
         options,
       })
-      .catch((e: any) => {
-        const error = e as Error
-        const errorType = (error as any)?.type
-        let message = 'Oops, something went wrong. Please try again.'
-        if (errorType && errorType === 'price mismatch') {
-          message = error.message
-        }
-        if (error.message.includes('rejected')) {
-          message = 'User rejected the request.'
-        }
-        //@ts-ignore
-        const transactionError = new Error(message, {
-          cause: error,
-        })
+      .catch((e: Error) => {
         hasError = true
-        setTransactionError(transactionError)
+        setTransactionError(e)
         setAcceptBidStep(AcceptBidStep.Checkout)
         setStepData(null)
         fetchBidsPath(tokens)

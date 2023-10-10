@@ -1,4 +1,12 @@
 
+## [v1.11.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7e913c881f274449ba29cf7403d2ceb8f66f0d72) (2023-10-05)
+
+* Improve transaction observability to reduce dependency on RPC [9347f698](https://github.com/reservoirprotocol/reservoir-kit/commit/9347f698ef341df963efe9396cdef5a06ee08bab)
+* Bidmodal: use supported marketplaces api to select the right exchange (orderKind) and follow restrictions [f3896827](https://github.com/reservoirprotocol/reservoir-kit/commit/f3896827fa2ad4265f0d954048961c66ed4c9a5f)
+
+### Breaking Changes:
+* All custom modals now defer the handling of errors to the UI, while now providing more explicit errors
+
 ## [v1.10.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/819d348bf4dd526dfec6b6d779d0a518031232e6) (2023-10-04)
 
 * CollectModal: Purchase currency selector [e619f299](https://github.com/reservoirprotocol/reservoir-kit/commit/e619f299af3b5cf5ac8cbacc7d51cb61824903dd)

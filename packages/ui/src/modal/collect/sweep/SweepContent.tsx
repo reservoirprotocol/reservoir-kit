@@ -33,6 +33,7 @@ import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
 import { SelectPaymentToken } from '../../SelectPaymentToken'
 import { formatNumber } from '../../../lib/numbers'
+import { truncateAddress } from '../../../lib/truncate'
 
 export const SweepContent: FC<
   ChildrenProps & {
@@ -607,7 +608,7 @@ export const SweepContent: FC<
             <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
               {stepData?.currentStep?.items?.map((item, idx) => {
                 const txHash = item.txHash
-                  ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(-4)}`
+                  ? `${truncateAddress(item.txHash)}`
                   : ''
 
                 return (

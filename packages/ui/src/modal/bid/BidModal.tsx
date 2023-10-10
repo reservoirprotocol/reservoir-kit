@@ -40,6 +40,7 @@ import {
   faClose,
   faChevronDown,
   faCheckCircle,
+  faHand,
 } from '@fortawesome/free-solid-svg-icons'
 import Flatpickr from 'react-flatpickr'
 import TransactionProgress from '../TransactionProgress'
@@ -101,6 +102,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 function titleForStep(step: BidStep, copy: typeof ModalCopy) {
   switch (step) {
     case BidStep.SetPrice:
+    case BidStep.Unavailable:
       return copy.titleSetPrice
     case BidStep.Offering:
       return copy.titleConfirm
@@ -206,6 +208,10 @@ export function BidModal({
         setQuantity,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        loading,
+        traitBidSupported,
+        collectionBidSupported,
+        partialBidSupported,
         amountToWrap,
         balance,
         convertLink,
@@ -237,8 +243,10 @@ export function BidModal({
         const providerOptionsContext = useContext(ProviderOptionsContext)
 
         const quantityEnabled =
-          !tokenId ||
-          (token?.token?.kind === 'erc1155' && Number(token?.token?.supply) > 1)
+          partialBidSupported &&
+          (!tokenId ||
+            (token?.token?.kind === 'erc1155' &&
+              Number(token?.token?.supply) > 1))
 
         useEffect(() => {
           if (stepData) {
@@ -336,7 +344,11 @@ export function BidModal({
 
         return (
           <Modal
-            size={bidStep !== BidStep.Complete ? ModalSize.LG : ModalSize.MD}
+            size={
+              bidStep !== BidStep.Complete && bidStep !== BidStep.Unavailable
+                ? ModalSize.LG
+                : ModalSize.MD
+            }
             trigger={trigger}
             title={titleForStep(bidStep, copy)}
             open={open}
@@ -352,7 +364,7 @@ export function BidModal({
 
               setOpen(open)
             }}
-            loading={!collection}
+            loading={loading}
             onPointerDownOutside={(e) => {
               if (
                 e.target instanceof Element &&
@@ -368,7 +380,7 @@ export function BidModal({
               e.stopPropagation()
             }}
           >
-            {bidStep === BidStep.SetPrice && collection && (
+            {bidStep === BidStep.SetPrice && !loading && collection && (
               <ContentContainer
                 css={{
                   ...contentContainerCss,
@@ -530,7 +542,8 @@ export function BidModal({
                   {attributes &&
                     attributes.length > 0 &&
                     (attributesSelectable || trait) &&
-                    !tokenId && (
+                    !tokenId &&
+                    traitBidSupported && (
                       <>
                         <Text
                           as={Box}
@@ -931,6 +944,37 @@ export function BidModal({
                     {copy.ctaClose}
                   </Button>
                 )}
+              </Flex>
+            )}
+            {bidStep === BidStep.Unavailable && !loading && (
+              <Flex
+                direction="column"
+                align="center"
+                css={{ p: '$4', gap: '$5' }}
+              >
+                <Box css={{ color: '$neutralSolid', mt: 48 }}>
+                  <FontAwesomeIcon
+                    icon={faHand}
+                    style={{ width: '32px', height: '32px' }}
+                  />
+                </Box>
+
+                <Text
+                  style="h6"
+                  css={{ maxWidth: 350, mb: '$3', textAlign: 'center' }}
+                >
+                  {!collectionBidSupported
+                    ? 'This collection does not support placing a collection offer.'
+                    : 'Oops, this collection does not support bidding.'}
+                </Text>
+                <Button
+                  css={{ width: '100%' }}
+                  onClick={() => {
+                    setOpen(false)
+                  }}
+                >
+                  {copy.ctaClose}
+                </Button>
               </Flex>
             )}
           </Modal>

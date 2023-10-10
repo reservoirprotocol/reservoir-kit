@@ -31,6 +31,7 @@ import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import { truncateAddress } from '../../lib/truncate'
 
 type PurchaseData = {
   tokenId?: string
@@ -517,9 +518,7 @@ export function BuyModal({
                     <Flex direction="column" css={{ gap: '$2' }}>
                       {stepData?.currentStep.items?.map((item) => {
                         const txHash = item.txHash
-                          ? `${item.txHash.slice(0, 4)}...${item.txHash.slice(
-                              -4
-                            )}`
+                          ? `${truncateAddress(item.txHash)}`
                           : ''
                         return (
                           <Anchor
