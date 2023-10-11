@@ -24,7 +24,6 @@ const calendarCss = globalCss({
     lineHeight: '24px',
     borderRadius: 5,
     position: 'absolute',
-    width: 307.875,
     boxSizing: 'border-box',
     touchAction: 'manipulation',
     backgroundColor: '$contentBackground',
