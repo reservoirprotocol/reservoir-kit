@@ -6,21 +6,20 @@ import { BidData } from './BidModalRenderer'
 import { useTimeSince } from '../../hooks'
 import SelectedAttribute from './SelectedAttribute'
 import { formatEther } from 'viem'
+import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   bidData: BidData | null
-  chainId?: number
-  chainName?: string
+  chain?: ReservoirChain | null
 }
 
 const TransactionBidDetails: FC<Props> = ({
   token,
   collection,
   bidData,
-  chainId,
-  chainName,
+  chain,
 }) => {
   const [value, setValue] = useState('')
   const timeSince = useTimeSince(
@@ -43,12 +42,7 @@ const TransactionBidDetails: FC<Props> = ({
         p: '$4',
       }}
     >
-      <TokenStatsHeader
-        collection={collection}
-        token={token}
-        chainId={chainId}
-        chainName={chainName}
-      />
+      <TokenStatsHeader collection={collection} token={token} chain={chain} />
 
       <Box
         css={{
@@ -73,7 +67,7 @@ const TransactionBidDetails: FC<Props> = ({
           <Flex justify="between">
             <Text style="subtitle3">Offer Price</Text>
             <FormatWrappedCurrency
-              chainId={chainId}
+              chainId={chain?.id}
               amount={+value}
               textStyle="subtitle3"
               address={bidData?.currency}

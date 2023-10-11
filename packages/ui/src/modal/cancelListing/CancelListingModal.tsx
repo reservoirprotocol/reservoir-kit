@@ -148,8 +148,7 @@ export function CancelListingModal({
                 {transactionError && <ErrorWell error={transactionError} />}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    chainId={modalChain?.id}
-                    chainName={modalChain?.name}
+                    chain={modalChain}
                     img={listingImg}
                     name={listing.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}
@@ -183,8 +182,7 @@ export function CancelListingModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    chainId={modalChain?.id}
-                    chainName={modalChain?.name}
+                    chain={modalChain}
                     img={listingImg}
                     name={listing?.criteria?.data?.token?.name}
                     price={listing?.price?.amount?.decimal}

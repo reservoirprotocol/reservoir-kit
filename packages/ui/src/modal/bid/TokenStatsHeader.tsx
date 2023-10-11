@@ -3,6 +3,7 @@ import React, { FC } from 'react'
 import { styled } from '../../../stitches.config'
 import { Box, ChainIcon, Flex, Text } from '../../primitives'
 import optimizeImage from '../../lib/optimizeImage'
+import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
 const Img = styled('img', {
   width: '100%',
@@ -16,16 +17,10 @@ const Img = styled('img', {
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
-  chainId?: number
-  chainName?: string
+  chain?: ReservoirChain | null
 }
 
-const TokenStatsHeader: FC<Props> = ({
-  token,
-  collection,
-  chainId,
-  chainName,
-}) => {
+const TokenStatsHeader: FC<Props> = ({ token, collection, chain }) => {
   const img = token?.token?.imageSmall
     ? token.token.imageSmall
     : optimizeImage(collection?.image as string, 250)
@@ -69,11 +64,11 @@ const TokenStatsHeader: FC<Props> = ({
           </Text>
         </Box>
       )}
-      {chainId && chainName ? (
+      {chain?.id && chain?.name ? (
         <Flex align="center" css={{ mt: '$1' }}>
-          <ChainIcon chainId={chainId} css={{ marginRight: 5 }} height={12} />
+          <ChainIcon chainId={chain?.id} css={{ marginRight: 5 }} height={12} />
           <Text style="subtitle3" color="subtle" ellipsify>
-            {chainName}
+            {chain?.name}
           </Text>
         </Flex>
       ) : null}

@@ -147,8 +147,7 @@ export function CancelBidModal({
 
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    chainId={modalChain?.id}
-                    chainName={modalChain?.name}
+                    chain={modalChain}
                     img={bidImg}
                     name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
@@ -183,8 +182,7 @@ export function CancelBidModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    chainId={modalChain?.id}
-                    chainName={modalChain?.name}
+                    chain={modalChain}
                     img={bidImg}
                     name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
