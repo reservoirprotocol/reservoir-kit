@@ -346,7 +346,7 @@ export function ListModal({
                         onChange={(e) => {
                           setPrice(e.target.value)
                         }}
-                        placeholder="Enter a listing price"
+                        placeholder="Amount"
                         css={{ width: '100%' }}
                         containerCss={{ width: '100%', height: 44 }}
                       />
