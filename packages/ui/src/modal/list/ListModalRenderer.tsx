@@ -287,11 +287,15 @@ export const ListModalRenderer: FC<Props> = ({
 
     let expirationTime: string | null = null
 
-    if (expirationOption.relativeTime && expirationOption.relativeTimeUnit) {
-      expirationTime = dayjs()
-        .add(expirationOption.relativeTime, expirationOption.relativeTimeUnit)
-        .unix()
-        .toString()
+    if (expirationOption.relativeTime) {
+      if (expirationOption.relativeTimeUnit) {
+        expirationTime = dayjs()
+          .add(expirationOption.relativeTime, expirationOption.relativeTimeUnit)
+          .unix()
+          .toString()
+      } else {
+        expirationTime = `${expirationOption.relativeTime}`
+      }
     }
 
     const listing: Listing = {

@@ -34,9 +34,9 @@ const FloorDropdown: FC<FloorDropdownProps> = ({
   }, [token?.token?.attributes])
 
   const recentSalePrice = token?.token?.lastSale?.price
-  const decimalSalePrice = token?.token?.lastSale?.price?.amount?.decimal
-  const nativeSalePrice = token?.token?.lastSale?.price?.amount?.native
-  const usdSalePrice = token?.token?.lastSale?.price?.amount?.usd
+  const decimalSalePrice = recentSalePrice?.amount?.decimal
+  const nativeSalePrice = recentSalePrice?.amount?.native
+  const usdSalePrice = recentSalePrice?.amount?.usd
 
   const recentSale = useMemo(() => {
     // If currency matches recent sale currency, use decimal floor price
