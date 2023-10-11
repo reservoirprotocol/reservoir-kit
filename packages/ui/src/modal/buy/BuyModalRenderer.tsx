@@ -620,15 +620,7 @@ export const BuyModalRenderer: FC<Props> = ({
           const atomicFee = BigInt(fee)
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
-          console.log('convertedAtomicFee: ', convertedAtomicFee)
-          console.log('usdPriceRaw: ', usdPriceRaw)
           const currencyFee = convertedAtomicFee / usdPriceRaw
-          console.log('currencyFee: ', currencyFee)
-          // const parsedFee = formatUnits(
-          //   currencyFee,
-          //   paymentCurrency?.decimals || 18
-          // )
-          // console.log('parsedFee: ', parsedFee)
           return totalFees + currencyFee
         }, 0n)
         totalFees += fees
