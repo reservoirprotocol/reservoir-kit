@@ -134,7 +134,6 @@ const ancient8Testnet = {
   name: 'Ancient8 Testnet',
   baseApiUrl: 'https://api-ancient8-testnet.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[2863311531]
-
 } satisfies ReservoirBaseChain
 
 export const reservoirChains = { mainnet, goerli, polygon, mumbai, optimism, arbitrum, arbitrumNova, avalanche, sepolia, base, baseGoerli, bsc, scrollTestnet, linea, zora, zoraTestnet, zkSync, polygonZkEvm, ancient8Testnet }
