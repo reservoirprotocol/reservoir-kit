@@ -24,7 +24,10 @@ export const SelectPaymentToken: FC<Props> = ({
   return (
     <Flex direction="column" css={{ width: '100%', gap: '$1', px: '$3' }}>
       {paymentTokens
-        ?.sort((a, b) => Number(a.balance) - Number(b.balance))
+        ?.sort(
+          (a, b) =>
+            Number(a.currencyTotalFormatted) - Number(b.currencyTotalFormatted)
+        )
         ?.map((paymentToken) => {
           const isSelectedCurrency =
             currency?.address.toLowerCase() === paymentToken?.address
