@@ -429,7 +429,7 @@ export function BidModal({
                           currency={currency}
                           currencies={currencies}
                           setCurrency={setCurrency}
-                          triggerCss={{ width: 90 }}
+                          triggerCss={{ width: 95 }}
                         />
                       ) : (
                         <>
