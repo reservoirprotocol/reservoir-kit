@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { Collapsible } from '../../primitives/Collapsible'
 import {
   Button,
+  Divider,
   Flex,
   FormatCryptoCurrency,
   FormatCurrency,
@@ -165,14 +166,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
               </Flex>
             </Flex>
           ) : null}
-          <Span
-            css={{
-              width: '100%',
-              height: '1px',
-              borderBottom: '1px solid',
-              borderBottomColor: '$gray6',
-            }}
-          />
+          <Divider />
           <Flex justify="between" align="center">
             <Text style="subtitle2" color="subtle">
               Total Earnings
