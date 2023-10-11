@@ -66,7 +66,7 @@ type ChildrenProps = {
   transactionError?: Error | null
   hasEnoughCurrency: boolean
   addFundsLink: string
-  feeUsd: bigint
+  feeUsd: string
   totalUsd: bigint
   usdPrice: number
   balance?: bigint
@@ -232,7 +232,10 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const usdPrice = paymentCurrency?.usdPrice || 0
   const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
-  const feeUsd = feeOnTop * usdPriceRaw
+  const feeUsd = formatUnits(
+    feeOnTop * usdPriceRaw,
+    (paymentCurrency?.decimals || 18) + 6
+  )
   const totalUsd = totalIncludingFees * usdPriceRaw
 
   const addFundsLink = paymentCurrency?.address
@@ -529,8 +532,7 @@ export const BuyModalRenderer: FC<Props> = ({
       (!is1155 && isOwner)
     ) {
       setBuyStep(BuyStep.Unavailable)
-    }
-    if (!orderId && !is1155 && !token?.market?.floorAsk) {
+    } else if (!orderId && !is1155 && !token?.market?.floorAsk?.price) {
       setBuyStep(BuyStep.Unavailable)
     } else {
       setBuyStep(BuyStep.Checkout)
@@ -600,7 +602,7 @@ export const BuyModalRenderer: FC<Props> = ({
         }
         total = orderCurrencyTotal
       }
-    } else if (token?.market?.floorAsk) {
+    } else if (token?.market?.floorAsk?.price) {
       total = BigInt(token.market.floorAsk.price?.amount?.raw || 0)
     }
     let totalFees = 0n
