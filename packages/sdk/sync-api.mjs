@@ -1,7 +1,21 @@
 import fs from 'node:fs'
 import openapiTS from 'openapi-typescript'
+import fetch from 'node-fetch'
 
 const generateTypes = async () => {
+  // Fetch the OpenAPI schema
+  const response = await fetch('https://api.reservoir.tools/swagger.json')
+  const openapiSchema = await response.json()
+
+  // Extract paths
+  const pathsList = Object.keys(openapiSchema.paths)
+
+  // Save paths as a runtime-accessible module
+  fs.writeFileSync(
+    './src/routes/index.ts',
+    `export const routes = ${JSON.stringify(pathsList, null, 2)};`
+  )
+
   const options = {
     formatter: (schemaObject, metadata) => {
       if (
