@@ -191,24 +191,25 @@ export function AcceptBidModal({
             loading={loading}
           >
             {acceptBidStep === AcceptBidStep.Unavailable && !loading && (
-              <Flex direction="column" css={{ mt: 80 }}>
-                <Box css={{ color: '$neutralSolidHover', m: '0 auto' }}>
+              <Flex
+                direction="column"
+                align="center"
+                css={{ p: '$4', gap: '$5' }}
+              >
+                <Box css={{ color: '$neutralSolid', mt: 48 }}>
                   <FontAwesomeIcon
                     icon={faEnvelopeOpen}
-                    style={{ height: 24, width: 24 }}
+                    style={{ height: 32, width: 32 }}
                   />
                 </Box>
-                <Text
-                  style="body2"
-                  css={{ mt: '$2', mb: 74, textAlign: 'center' }}
-                >
-                  Offers are no longer available
+                <Text style="h6" css={{ mb: '$3', textAlign: 'center' }}>
+                  {tokens.length > 1 ? 'Offers are ' : 'Offer is '} no longer
+                  available
                 </Text>
                 <Button
                   onClick={() => setOpen(false)}
                   css={{
-                    m: '$4',
-                    flex: 1,
+                    width: '100%',
                   }}
                 >
                   {copy.ctaClose}
@@ -487,6 +488,28 @@ export function AcceptBidModal({
                   You can close this modal while it finalizes on the blockchain.
                   The transaction will continue in the background.
                 </Text>
+                <Flex
+                  direction="column"
+                  align="center"
+                  css={{ gap: '$2', mb: '$3', width: '100%' }}
+                >
+                  {stepData?.currentStep?.items?.map((item) => {
+                    const txHash = item.txHash
+                      ? `${truncateAddress(item.txHash)}`
+                      : ''
+                    return (
+                      <Anchor
+                        href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
+                        color="primary"
+                        weight="medium"
+                        target="_blank"
+                        css={{ fontSize: 12 }}
+                      >
+                        View transaction: {txHash}
+                      </Anchor>
+                    )
+                  })}
+                </Flex>
                 <Box
                   css={{
                     color: '$neutralSolid',
