@@ -40,3 +40,9 @@ jobs:
           git pull
           git merge --no-ff dev -m "Auto-merge dev into optimism"
           git push
+      - name: Sync sepolia with dev
+        run: |
+          git checkout sepolia
+          git pull
+          git merge --no-ff dev -m "Auto-merge dev into sepolia"
+          git push
