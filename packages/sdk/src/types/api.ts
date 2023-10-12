@@ -5391,7 +5391,8 @@ export interface definitions {
       | "rarible"
       | "sudoswap"
       | "nftx"
-      | "alienswap";
+      | "alienswap"
+      | "mint";
     data?: definitions["metadata"];
   };
   Model449: {

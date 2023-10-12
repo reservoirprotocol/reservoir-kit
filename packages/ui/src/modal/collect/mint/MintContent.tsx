@@ -56,6 +56,7 @@ export const MintContent: FC<
   contract,
   hasEnoughCurrency,
   addFundsLink,
+  disableJumperLink,
   blockExplorerBaseUrl,
   transactionError,
   stepData,
@@ -269,12 +270,15 @@ export const MintContent: FC<
                   />
                 </Flex>
                 <Button
+                  disabled={disableJumperLink}
                   onClick={() => {
                     window.open(addFundsLink, '_blank')
                   }}
                   css={{ mb: '$3', width: '100%' }}
                 >
-                  {copy.mintCtaInsufficientFunds}
+                  {disableJumperLink
+                    ? copy.mintCtaBuy
+                    : copy.mintCtaInsufficientFunds}
                 </Button>
               </Flex>
             )}
