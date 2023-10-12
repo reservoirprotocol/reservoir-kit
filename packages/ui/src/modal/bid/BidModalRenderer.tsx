@@ -175,7 +175,6 @@ export const BidModalRenderer: FC<Props> = ({
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
   const chainCurrency = useChainCurrency(rendererChain?.id)
-
   const nativeWrappedContractAddress =
     chainCurrency.chainId in wrappedContracts
       ? wrappedContracts[chainCurrency.chainId]
