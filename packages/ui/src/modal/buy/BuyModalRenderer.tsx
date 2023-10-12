@@ -187,8 +187,17 @@ export const BuyModalRenderer: FC<Props> = ({
     rendererChain?.id
   )
 
+  const [token, setToken] = useState<Token | undefined>(undefined)
+
+  useEffect(() => {
+    // Only update the token if there's new data from the tokens hook
+    if (tokens && tokens.length > 0) {
+      setToken(tokens[0])
+    }
+  }, [tokens])
+
   const collection = collections && collections[0] ? collections[0] : undefined
-  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
+  // const token = tokens && tokens.length > 0 ? tokens[0] : undefined
   const is1155 = token?.token?.kind === 'erc1155'
   const isOwner = token?.token?.owner?.toLowerCase() === address?.toLowerCase()
 
