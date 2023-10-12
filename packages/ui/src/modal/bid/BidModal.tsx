@@ -333,6 +333,15 @@ export function BidModal({
             : 12,
         }
 
+        const ctaButtonText =
+          copy.ctaBid.length > 0
+            ? copy.ctaBid
+            : token && token.token
+            ? 'Make an Offer'
+            : trait
+            ? 'Make an Attribute Offer'
+            : 'Make a Collection Offer'
+
         return (
           <Modal
             size={
@@ -420,7 +429,7 @@ export function BidModal({
                           currency={currency}
                           currencies={currencies}
                           setCurrency={setCurrency}
-                          triggerCss={{ width: 90 }}
+                          triggerCss={{ width: 95 }}
                         />
                       ) : (
                         <>
@@ -743,13 +752,7 @@ export function BidModal({
                         onClick={() => placeBid()}
                         css={{ width: '100%' }}
                       >
-                        {copy.ctaBid.length > 0
-                          ? copy.ctaBid
-                          : token && token.token
-                          ? 'Make an Offer'
-                          : trait
-                          ? 'Make an Attribute Offer'
-                          : 'Make a Collection Offer'}
+                        {ctaButtonText}
                       </Button>
                     )}
                     {bidAmountPerUnit !== '' && !hasEnoughWrappedCurrency && (
@@ -778,13 +781,16 @@ export function BidModal({
                           }}
                         >
                           <Button
+                            disabled={providerOptionsContext.disableJumperLink}
                             css={{ flex: '1 0 auto' }}
                             color="secondary"
                             onClick={() => {
                               window.open(convertLink, '_blank')
                             }}
                           >
-                            {copy.ctaConvertManually}
+                            {providerOptionsContext.disableJumperLink
+                              ? ctaButtonText
+                              : copy.ctaConvertManually}
                           </Button>
                           {canAutomaticallyConvert && (
                             <Button
