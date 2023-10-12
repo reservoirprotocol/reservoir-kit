@@ -147,7 +147,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
           {marketplace?.fee?.bps ? (
             <Flex justify="between" align="center">
               <Text style="subtitle2" color="subtle">
-                Marketplace Fee
+                {marketplace?.name || 'Marketplace'} Fee
               </Text>
 
               <Flex align="center" css={{ gap: '$1' }}>
