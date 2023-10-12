@@ -7,13 +7,13 @@ const generateTypes = async () => {
   const response = await fetch('https://api.reservoir.tools/swagger.json')
   const openapiSchema = await response.json()
 
-  // Extract paths
-  const pathsList = Object.keys(openapiSchema.paths)
+  // Extract routes
+  const routes = Object.keys(openapiSchema.paths)
 
-  // Save paths as a runtime-accessible module
+  // Save routes as a runtime export
   fs.writeFileSync(
     './src/routes/index.ts',
-    `export const routes = ${JSON.stringify(pathsList, null, 2)};`
+    `export const routes = ${JSON.stringify(routes, null, 2)};`
   )
 
   const options = {
