@@ -397,7 +397,12 @@ export function ListModal({
                         <Button
                           color="secondary"
                           size="none"
-                          css={{ height: 44, px: '$4', borderRadius: 8 }}
+                          css={{
+                            height: 44,
+                            px: '$4',
+                            borderRadius: 8,
+                            fontWeight: 500,
+                          }}
                           onClick={() => handleSetFloor()}
                         >
                           Floor
