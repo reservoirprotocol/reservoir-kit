@@ -133,8 +133,10 @@ const AppWrapper: FC<any> = ({ children }) => {
                 },
               ],
             },
+            // Sepolia dev
             {
               ...reservoirChains.sepolia,
+              baseApiUrl: 'https://api-sepolia.dev.reservoir.tools',
               active: CHAIN_ID === allChains.sepolia.id
             },
             {
