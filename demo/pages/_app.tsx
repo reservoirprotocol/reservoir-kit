@@ -95,19 +95,6 @@ const AppWrapper: FC<any> = ({ children }) => {
     <PrivyProvider
         appId={PRIVY_APP_ID}
         config={{
-          supportedChains: [
-            allChains.mainnet,
-            allChains.goerli,
-            allChains.sepolia,
-            allChains.polygon,
-            allChains.optimism,
-            allChains.arbitrum,
-            allChains.zora,
-            allChains.base,
-            allChains.avalanche,
-            allChains.linea,
-          ],
-         additionalChains: [allChains.zora],
           appearance: { 
             theme:'dark'
           }
