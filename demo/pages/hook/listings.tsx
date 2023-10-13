@@ -1,8 +1,8 @@
 import { NextPage } from 'next'
 import { useListings } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
+import { PrivyConnectButton } from 'components/PrivyConnectButton'
 
 const Listings: NextPage = () => {
   const {
@@ -38,7 +38,7 @@ const Listings: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectButton />
+      <PrivyConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Listings</h3>
       {listings.map((listing) => (
         <div key={listing?.id}>

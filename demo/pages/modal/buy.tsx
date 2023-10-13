@@ -1,10 +1,11 @@
 import { NextPage } from 'next'
 import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
+import { usePrivy } from '@privy-io/react-auth';
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
+import { PrivyConnectButton } from 'components/PrivyConnectButton'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -26,7 +27,7 @@ const BuyPage: NextPage = () => {
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
-  const { openConnectModal } = useConnectModal()
+  const { login } = usePrivy();
 
   return (
     <div
@@ -41,7 +42,7 @@ const BuyPage: NextPage = () => {
         paddingTop: 150,
       }}
     >
-      <ConnectButton />
+      <PrivyConnectButton />
 
       <div>
         <label>Collection Id: </label>
@@ -152,7 +153,7 @@ const BuyPage: NextPage = () => {
         normalizeRoyalties={normalizeRoyalties}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onConnectWallet={() => {
-          openConnectModal?.()
+          login?.()
         }}
         onGoToToken={() => console.log('Go to token')}
         onPurchaseComplete={(data) => {

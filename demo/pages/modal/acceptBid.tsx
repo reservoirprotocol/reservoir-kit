@@ -1,10 +1,10 @@
 import { NextPage } from 'next'
 import { AcceptBidModal } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState, useEffect, ComponentPropsWithoutRef } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
+import { PrivyConnectButton } from 'components/PrivyConnectButton'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -48,7 +48,7 @@ const AcceptBidPage: NextPage = () => {
         paddingTop: 150,
       }}
     >
-      <ConnectButton />
+      <PrivyConnectButton />
       <h3 style={{ marginBottom: 0 }}>Additional Options</h3>
       <DeeplinkCheckbox />
       <div>

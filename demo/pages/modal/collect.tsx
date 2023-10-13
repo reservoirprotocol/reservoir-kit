@@ -1,10 +1,11 @@
 import { NextPage } from 'next'
 import { CollectModal, CollectModalMode } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
+import { usePrivy } from '@privy-io/react-auth'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
+import { PrivyConnectButton } from 'components/PrivyConnectButton'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -16,7 +17,7 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 
 const CollectPage: NextPage = () => {
   const router = useRouter()
-  const { openConnectModal } = useConnectModal()
+  const { login } = usePrivy();
 
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState<string | undefined>(undefined)
@@ -42,7 +43,7 @@ const CollectPage: NextPage = () => {
         paddingTop: 150,
       }}
     >
-      <ConnectButton />
+      <PrivyConnectButton />
 
       <div>
         <label>Collection Id: </label>
@@ -157,7 +158,7 @@ const CollectPage: NextPage = () => {
       <CollectModal
         chainId={Number(chainId)}
         onConnectWallet={() => {
-          openConnectModal?.()        
+          login?.()        
         }}
         trigger={
           <button

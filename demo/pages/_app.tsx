@@ -9,14 +9,14 @@ import React, {
 } from 'react'
 import { darkTheme } from 'stitches.config'
 import { ThemeProvider } from 'next-themes'
-import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
-import { WagmiConfig, createConfig, configureChains } from 'wagmi'
+import { configureChains } from 'wagmi'
 import * as allChains from 'wagmi/chains'
+import { PrivyProvider } from '@privy-io/react-auth'
+import { PrivyWagmiConnector } from '@privy-io/wagmi-connector'
 
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import '../fonts.css'
-import '@rainbow-me/rainbowkit/styles.css'
 import {
   ReservoirKitProvider,
   darkTheme as defaultTheme,
@@ -41,8 +41,9 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 const WALLET_CONNECT_PROJECT_ID =
   process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || ''
+const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
 
-const { chains, publicClient } = configureChains(
+const configureChainsConfig = configureChains(
   [
     allChains.mainnet,
     allChains.goerli,
@@ -57,18 +58,6 @@ const { chains, publicClient } = configureChains(
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
-
-const { connectors } = getDefaultWallets({
-  appName: 'Reservoir Kit',
-  projectId: WALLET_CONNECT_PROJECT_ID,
-  chains,
-})
-
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-})
 
 export const ThemeSwitcherContext = React.createContext<{
   theme: ReservoirKitTheme
@@ -103,7 +92,28 @@ const AppWrapper: FC<any> = ({ children }) => {
     : undefined
 
   return (
-    <WagmiConfig config={wagmiConfig}>
+    <PrivyProvider
+        appId={PRIVY_APP_ID}
+        config={{
+          supportedChains: [
+            allChains.mainnet,
+            allChains.goerli,
+            allChains.sepolia,
+            allChains.polygon,
+            allChains.optimism,
+            allChains.arbitrum,
+            allChains.zora,
+            allChains.base,
+            allChains.avalanche,
+            allChains.linea,
+          ],
+         additionalChains: [allChains.zora],
+          appearance: { 
+            theme:'dark'
+          }
+        }}
+      >
+    <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
       <ReservoirKitProvider
         options={{
           apiKey: API_KEY,
@@ -189,11 +199,12 @@ const AppWrapper: FC<any> = ({ children }) => {
             enableSystem={false}
             storageKey={'demo-theme'}
           >
-            <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
+            {children}
           </ThemeProvider>
         </CartProvider>
       </ReservoirKitProvider>
-    </WagmiConfig>
+    </PrivyWagmiConnector>
+    </PrivyProvider>
   )
 }
 

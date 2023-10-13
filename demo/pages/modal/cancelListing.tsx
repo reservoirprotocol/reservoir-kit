@@ -1,10 +1,10 @@
 import { NextPage } from 'next'
 import { CancelListingModal } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState, useEffect } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
+import { PrivyConnectButton } from 'components/PrivyConnectButton'
 
 const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
@@ -39,7 +39,7 @@ const CancelListingPage: NextPage = () => {
         paddingTop: 150,
       }}
     >
-      <ConnectButton />
+      <PrivyConnectButton />
       <div>
         <label>Listing Id: </label>
         <input

@@ -1,8 +1,8 @@
 import { NextPage } from 'next'
 import { useCollections } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
+import { PrivyConnectButton } from 'components/PrivyConnectButton'
 
 const Collections: NextPage = () => {
   const { data: collections, fetchNextPage, hasNextPage } = useCollections({})
@@ -27,7 +27,7 @@ const Collections: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectButton />
+      <PrivyConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Collections</h3>
       {collections.map((collection, i) => (
         <pre>{JSON.stringify(collection, null, 2)}</pre>

@@ -1,8 +1,8 @@
 import { useSearchActivities } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { NextPage } from 'next'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
+import { PrivyConnectButton } from 'components/PrivyConnectButton'
 
 const Activity: NextPage = () => {
   const {
@@ -33,7 +33,7 @@ const Activity: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectButton />
+      <PrivyConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Activity</h3>
       {activity.map((activity, i) => (
         <pre>{JSON.stringify(activity, null, 2)}</pre>

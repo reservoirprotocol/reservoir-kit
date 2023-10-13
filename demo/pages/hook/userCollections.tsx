@@ -1,9 +1,9 @@
 import { NextPage } from 'next'
 import { useUserCollections } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useInView } from 'react-intersection-observer'
 import { createRef, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
+import { PrivyConnectButton } from 'components/PrivyConnectButton'
 
 const Collections: NextPage = () => {
   const { address: userAddress } = useAccount()
@@ -47,7 +47,7 @@ const Collections: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectButton />
+     <PrivyConnectButton />
       <div>
         <label>User: </label>
         <input type="text" ref={addressInput as any} />
