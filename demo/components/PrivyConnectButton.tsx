@@ -13,7 +13,6 @@ export const PrivyConnectButton = () => {
   if (!ready) return null;
 
   if (!authenticated) {
-    // Use Privy login instead of wagmi's connect
     return <button onClick={() => login()}>Connect Wallet</button>;
   }
 
