@@ -29,7 +29,6 @@ export const PrivyConnectButton = () => {
       <button onClick={logout}>Disconnect</button>
 
       {chain && <div>Connected to {chain.name}</div>}
-
       <p>Chain: </p>
       <select 
         value={chain?.id} 
