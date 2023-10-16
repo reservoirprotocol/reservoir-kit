@@ -1,47 +1,23 @@
 
 ## [v1.12.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/b4b2a91a1a1942f03260b72c820326c063477049) (2023-10-16)
 
-* Merge branch 'ted/grwth-3114-update-the-listing-modal-ui-to-a-simplified-version' of https://github.com/reservoirprotocol/reservoir-kit into ted/grwth-3114-update-the-listing-modal-ui-to-a-simplified-version [db2d2ac0](https://github.com/reservoirprotocol/reservoir-kit/commit/db2d2ac010d29782b2baf749773c6cc0b8ac428f)
-* Merge pull request #402 from reservoirprotocol/pedro/grwth-3318-add-chain-indicator-to-rk-modal [b26793b6](https://github.com/reservoirprotocol/reservoir-kit/commit/b26793b6d6491bf2489bd286ea0cccacb26f310a)
+* Add chain icons to all modals [ea3942b5](https://github.com/reservoirprotocol/reservoir-kit/commit/ea3942b5b02843be242067d1a24c23c39bbae6f0)
+
+### Breaking Changes:
+* Remove cross listing from ListModal in favor of Reservoir-only listing
+
 ## [v1.11.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/bc9ea4bddb80be047da7a3abd5f9eeafd153e0d7) (2023-10-12)
 
-* Merge pull request #407 from reservoirprotocol/ted/grwth-3381-accept-offer-modal-missing-tx-link [875e315b](https://github.com/reservoirprotocol/reservoir-kit/commit/875e315bd4f562429241c2496ffa9dbca8e1ee62)
-* Merge pull request #408 from reservoirprotocol/ted/grwth-3409-accept-offer-unavailable-ui-is-off [397c65fa](https://github.com/reservoirprotocol/reservoir-kit/commit/397c65fac8ee6154edba2acaa2e0f11ca6947c93)
-* qa feedback [111ba091](https://github.com/reservoirprotocol/reservoir-kit/commit/111ba091bbd8fa9ec11abaec7656e0f195ac6efc)
-* Merge pull request #410 from reservoirprotocol/armando/grwth-3392-probably-should-maintain-the-order-for-the-currencies [f18329e9](https://github.com/reservoirprotocol/reservoir-kit/commit/f18329e9aef4834fcaba7430bd429308aa3f751f)
-* Update input placeholder text [be6e262d](https://github.com/reservoirprotocol/reservoir-kit/commit/be6e262db5cd9d1ece29f032ad16b0125c012e77)
-* Fix date picker width bug [4072e02b](https://github.com/reservoirprotocol/reservoir-kit/commit/4072e02b753dd8be3351b4883d85c89ecc83b751)
-* Fix custom expiration date bug [b10c16b4](https://github.com/reservoirprotocol/reservoir-kit/commit/b10c16b445ceaabe14e00ce25cf50fd35f513332)
-* feat: feedback [685cb0a0](https://github.com/reservoirprotocol/reservoir-kit/commit/685cb0a029570c5ed979daf8abe218b947d6657c)
-* feat: sort by balance low to high [ea951916](https://github.com/reservoirprotocol/reservoir-kit/commit/ea95191637f1050056eca693fda09cb0a5fe22d6)
-* feat: increase trigger width [232369d3](https://github.com/reservoirprotocol/reservoir-kit/commit/232369d386a2cfa3dfa7587aa1054b56f72ec210)
 * Improve AcceptBidModal's unavailable ui [5ab15807](https://github.com/reservoirprotocol/reservoir-kit/commit/5ab1580734376470efca3e69642811c70a7d69dc)
-* Pr feedback [35aafb9b](https://github.com/reservoirprotocol/reservoir-kit/commit/35aafb9b5c400fe21533d26bb92bcc8c4dc4bc11)
-* Add tx link to AcceptModal finalizing step [87ee4048](https://github.com/reservoirprotocol/reservoir-kit/commit/87ee404858eeb079f3e98b9b442ad59144d596ed)
-* Add chain icon to ListModal [2e68b16d](https://github.com/reservoirprotocol/reservoir-kit/commit/2e68b16d0c16e06616840c04b38bec4a6427fe53)
-* Merge branch 'pedro/grwth-3318-add-chain-indicator-to-rk-modal' of https://github.com/reservoirprotocol/reservoir-kit into ted/grwth-3114-update-the-listing-modal-ui-to-a-simplified-version [fa5fd2ee](https://github.com/reservoirprotocol/reservoir-kit/commit/fa5fd2eecd57472c03b985061e42f2916cb949ba)
+
 ## [v1.11.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7d8a57c1ae608fbec38e73892efe77bf17de000e) (2023-10-06)
 
-* fix custom chains currency detection [d0314b21](https://github.com/reservoirprotocol/reservoir-kit/commit/d0314b210b1fb880c2162eea328cfcb834a3d38b)
-* Add chain name and icon to all modals [ea3942b5](https://github.com/reservoirprotocol/reservoir-kit/commit/ea3942b5b02843be242067d1a24c23c39bbae6f0)
-* Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
-* Fix overflow issues [56a75e99](https://github.com/reservoirprotocol/reservoir-kit/commit/56a75e994e1dda78854276c551c519d2e82f4e48)
-* wip [86368193](https://github.com/reservoirprotocol/reservoir-kit/commit/86368193ec4e9ad70da1a40aa171c8b10c9e8a49)
+* Fix custom chains currency detection [d0314b21](https://github.com/reservoirprotocol/reservoir-kit/commit/d0314b210b1fb880c2162eea328cfcb834a3d38b)
+
 ## [v1.11.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/bc866f8c4267598acf6bd54efeae47b75752a748) (2023-10-06)
 
 * Update A8 testnet WETH [bf41b19b](https://github.com/reservoirprotocol/reservoir-kit/commit/bf41b19b596bc8416dade1b1317000bfe06401aa)
-* Add chain images and ChainIcon component [abeee8ac](https://github.com/reservoirprotocol/reservoir-kit/commit/abeee8ac30374c6b177a8c6d1c88cd535a644d5d)
-* feat: Update button var [30a5aa95](https://github.com/reservoirprotocol/reservoir-kit/commit/30a5aa9572ad7bf042770aaf60eccf01110002d2)
-* wip [6329a268](https://github.com/reservoirprotocol/reservoir-kit/commit/6329a2688e2e73dc08931f03919eda19982c7a8c)
-* wip [5fe5b887](https://github.com/reservoirprotocol/reservoir-kit/commit/5fe5b8873c82dd50bad5a382879597a217bc9e94)
-* feat: Use var for btn [c3afc976](https://github.com/reservoirprotocol/reservoir-kit/commit/c3afc97619465bcaf0c586404b258831bc07719c)
-* feat: rm uneeded var [2bc17b43](https://github.com/reservoirprotocol/reservoir-kit/commit/2bc17b4319ce94a640b334624cb18bc0413c0636)
-* feat: CollectModal disable jumper logic [429b34ba](https://github.com/reservoirprotocol/reservoir-kit/commit/429b34ba73fe5108e2d10136da633802cbbb7190)
-* feat: BuyModal disable jumper logic [558b24a3](https://github.com/reservoirprotocol/reservoir-kit/commit/558b24a311bdcb8da3a2c4e739ce6079d07466ed)
-* feat: BidModal disable jumper logic [4697f7e1](https://github.com/reservoirprotocol/reservoir-kit/commit/4697f7e1334b06454431e1de6142c9e0b41750a5)
-* Revert "feat: Disable jumper with flag" [3f882386](https://github.com/reservoirprotocol/reservoir-kit/commit/3f88238610777dbe9472f59ab97298a9a3862c45)
-* feat: Disable jumper with flag [9fbf32b9](https://github.com/reservoirprotocol/reservoir-kit/commit/9fbf32b9953aaa50f7cc3ad2f30be2f383bfec89)
-* add chain icons [2fe2f912](https://github.com/reservoirprotocol/reservoir-kit/commit/2fe2f9121608ab75052cad915a84ce48da8c30bc)
+* Disable link jumper with flag [9fbf32b9](https://github.com/reservoirprotocol/reservoir-kit/commit/9fbf32b9953aaa50f7cc3ad2f30be2f383bfec89)
 
 ## [v1.11.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7e913c881f274449ba29cf7403d2ceb8f66f0d72) (2023-10-05)
 

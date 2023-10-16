@@ -1,11 +1,8 @@
 
 ## [v1.5.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/616788fec594f503ea9f62d9828b687eeae06a43) (2023-10-12)
 
-* Update names and comments [2fdc1d4b](https://github.com/reservoirprotocol/reservoir-kit/commit/2fdc1d4bd8baa6912703d3c967012fee44e0cb9f)
-* Export api routes as runtime export [fb73f4f5](https://github.com/reservoirprotocol/reservoir-kit/commit/fb73f4f5f875ca8bc417c243e6c1a1dcc6327170)
-* Pr feedback [35aafb9b](https://github.com/reservoirprotocol/reservoir-kit/commit/35aafb9b5c400fe21533d26bb92bcc8c4dc4bc11)
 * Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
-* Sync api [a0ac72e3](https://github.com/reservoirprotocol/reservoir-kit/commit/a0ac72e3fc916a7ba381769f2a47f4ea6f664278)
+* Export api routes as runtime export [fb73f4f5](https://github.com/reservoirprotocol/reservoir-kit/commit/fb73f4f5f875ca8bc417c243e6c1a1dcc6327170)
 
 ## [v1.5.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/af5f3d11d93bcfd4b484bb6960f754f38883ec69) (2023-10-05)
 
