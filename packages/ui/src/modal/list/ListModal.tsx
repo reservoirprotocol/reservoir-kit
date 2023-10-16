@@ -4,6 +4,7 @@ import React, {
   ReactElement,
   SetStateAction,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -81,8 +82,6 @@ const Image = styled('img', {})
 
 const MINIMUM_AMOUNT = 0.000001
 
-const minimumDate = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
-
 export function ListModal({
   openState,
   trigger,
@@ -151,11 +150,13 @@ export function ListModal({
         setExpirationOption,
         setQuantity,
       }) => {
-        const [expirationDate, setExpirationDate] = useState('')
-
         const source = client?.source ? client?.source : marketplace?.domain
 
-        useEffect(() => {
+        const minimumDate = useMemo(() => {
+          return dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
+        }, [open])
+
+        const expirationDate = useMemo(() => {
           if (expirationOption && expirationOption.relativeTime) {
             const newExpirationTime = expirationOption.relativeTimeUnit
               ? dayjs().add(
@@ -163,10 +164,9 @@ export function ListModal({
                   expirationOption.relativeTimeUnit
                 )
               : dayjs.unix(expirationOption.relativeTime)
-            setExpirationDate(newExpirationTime.format('MM/DD/YYYY h:mm A'))
-          } else {
-            setExpirationDate('')
+            return newExpirationTime.format('MM/DD/YYYY h:mm A')
           }
+          return ''
         }, [expirationOption])
 
         useEffect(() => {

@@ -16,6 +16,7 @@ import {
   Anchor,
   ErrorWell,
   ChainIcon,
+  Divider,
 } from '../../primitives'
 
 import { Modal } from '../Modal'
@@ -223,14 +224,7 @@ export function AcceptBidModal({
                   <Text style="subtitle3" color="subtle">
                     {`${bidCount} ${bidCount > 1 ? 'Items' : 'Item'}`}
                   </Text>
-                  <Box
-                    css={{
-                      background: '$neutralLine',
-                      height: 12,
-                      width: 2,
-                      margin: '0 5px',
-                    }}
-                  />
+                  <Divider direction="vertical" css={{ maxHeight: 12 }} />
                   <ChainIcon
                     chainId={modalChain?.id}
                     height={12}

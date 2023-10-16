@@ -14,9 +14,6 @@ import { Marketplace } from '../../hooks/useMarketplaces'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import InfoTooltip from '../../primitives/InfoTooltip'
-import { styled } from '@stitches/react'
-
-const Span = styled('span', {})
 
 type PriceBreakdownProps = {
   price: string
