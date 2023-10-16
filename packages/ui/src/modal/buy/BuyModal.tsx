@@ -251,6 +251,7 @@ export function BuyModal({
               <Flex direction="column">
                 <TokenLineItem
                   chainId={modalChain?.id}
+                  chainName={modalChain?.name}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -297,6 +298,7 @@ export function BuyModal({
                 )}
                 <TokenLineItem
                   chainId={modalChain?.id}
+                  chainName={modalChain?.name}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}
@@ -424,6 +426,7 @@ export function BuyModal({
               <Flex direction="column">
                 <TokenLineItem
                   chainId={modalChain?.id}
+                  chainName={modalChain?.name}
                   tokenDetails={token}
                   collection={collection}
                   usdConversion={usdPrice || 0}

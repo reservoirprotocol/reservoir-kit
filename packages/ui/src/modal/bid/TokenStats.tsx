@@ -12,9 +12,16 @@ type Props = {
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   trait?: Trait
   chainId?: number
+  chainName?: string
 }
 
-const TokenStats: FC<Props> = ({ token, chainId, collection, trait }) => {
+const TokenStats: FC<Props> = ({
+  token,
+  chainId,
+  chainName,
+  collection,
+  trait,
+}) => {
   let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = []
 
   stats.push(
@@ -116,7 +123,12 @@ const TokenStats: FC<Props> = ({ token, chainId, collection, trait }) => {
         p: '$4',
       }}
     >
-      <TokenStatsHeader collection={collection} token={token} />
+      <TokenStatsHeader
+        collection={collection}
+        token={token}
+        chainId={chainId}
+        chainName={chainName}
+      />
       <Grid
         css={{
           flex: 1,

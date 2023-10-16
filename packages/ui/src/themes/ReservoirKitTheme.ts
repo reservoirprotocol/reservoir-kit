@@ -10,6 +10,7 @@ export interface ReservoirKitTheme {
   colors: ReservoirKitThemeColors
   assets: {
     ethIcon: 'glyph' | 'gray' | 'purple'
+    chainIcon: 'dark' | 'light'
   }
 }
 
@@ -95,6 +96,7 @@ export type ReservoirKitOverrides = {
   popoverBackground?: string
   borderColor?: string
   ethIcon?: ReservoirKitTheme['assets']['ethIcon']
+  chainIcon?: ReservoirKitTheme['assets']['chainIcon']
 }
 
 type ReservoirKitSharedTheme = Pick<ReservoirKitTheme, 'fonts' | 'radii'>

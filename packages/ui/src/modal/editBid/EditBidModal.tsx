@@ -228,6 +228,7 @@ export function EditBidModal({
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
                     chainId={modalChain?.id}
+                    chainName={modalChain?.name}
                     img={itemImage}
                     name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
@@ -534,6 +535,7 @@ export function EditBidModal({
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
                     chainId={modalChain?.id}
+                    chainName={modalChain?.name}
                     img={itemImage}
                     name={bid?.criteria?.data?.token?.name}
                     price={Number(bidAmount)}

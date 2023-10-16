@@ -9,12 +9,14 @@ type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   chainId?: number
+  chainName?: string
   royaltyBps?: number
 }
 
 const TokenStats: FC<Props> = ({
   token,
   chainId,
+  chainName,
   collection,
   royaltyBps = 0,
 }) => {
@@ -38,7 +40,12 @@ const TokenStats: FC<Props> = ({
         p: '$4',
       }}
     >
-      <Token collection={collection} token={token} />
+      <Token
+        collection={collection}
+        token={token}
+        chainId={chainId}
+        chainName={chainName}
+      />
       <Box
         css={{
           flex: 1,
