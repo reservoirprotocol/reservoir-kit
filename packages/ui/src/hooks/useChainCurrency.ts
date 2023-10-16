@@ -1,4 +1,4 @@
-import { getClient } from '@reservoir0x/reservoir-sdk'
+import { getClient, customChains } from '@reservoir0x/reservoir-sdk'
 import { zeroAddress } from 'viem'
 import { Address } from 'wagmi'
 import * as allChains from 'viem/chains'
@@ -9,7 +9,7 @@ export default (chainId?: number) => {
     ? client.chains.find((chain) => chain.id === chainId)
     : client.currentChain()
 
-  const chains = Object.values(allChains)
+  const chains = Object.values({ ...allChains, ...customChains })
   let chain = chains.find((chain) => reservoirChain?.id === chain.id)
 
   if (!chain && chains.length > 0) {
