@@ -137,16 +137,6 @@ const Index: NextPage = () => {
       </div>
       <DeeplinkCheckbox />
       <div>
-        <label>Native Only: </label>
-        <input
-          type="checkbox"
-          checked={nativeOnly}
-          onChange={(e) => {
-            setNativeOnly(e.target.checked)
-          }}
-        />
-      </div>
-      <div>
         <label>Normalize Royalties: </label>
         <input
           type="checkbox"
@@ -196,7 +186,6 @@ const Index: NextPage = () => {
             List Item
           </button>
         }
-        nativeOnly={nativeOnly}
         collectionId={collectionId}
         tokenId={tokenId}
         currencies={currencies}
