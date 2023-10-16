@@ -12,6 +12,7 @@ type Props = {
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   bidData: BidData | null
   chainId?: number
+  chainName?: string
 }
 
 const TransactionBidDetails: FC<Props> = ({
@@ -19,6 +20,7 @@ const TransactionBidDetails: FC<Props> = ({
   collection,
   bidData,
   chainId,
+  chainName,
 }) => {
   const [value, setValue] = useState('')
   const timeSince = useTimeSince(
@@ -41,7 +43,12 @@ const TransactionBidDetails: FC<Props> = ({
         p: '$4',
       }}
     >
-      <TokenStatsHeader collection={collection} token={token} />
+      <TokenStatsHeader
+        collection={collection}
+        token={token}
+        chainId={chainId}
+        chainName={chainName}
+      />
 
       <Box
         css={{
