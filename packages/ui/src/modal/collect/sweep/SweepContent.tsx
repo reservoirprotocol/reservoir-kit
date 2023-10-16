@@ -44,7 +44,6 @@ export const SweepContent: FC<
   }
 > = ({
   chainId,
-  chainCurrency,
   collection,
   token,
   orders,
@@ -52,6 +51,7 @@ export const SweepContent: FC<
   itemAmount,
   setItemAmount,
   maxItemAmount,
+  disableJumperLink,
   paymentCurrency,
   setPaymentCurrency,
   total,
@@ -349,10 +349,15 @@ export const SweepContent: FC<
                 />
               </Flex>
               <Button
-                css={{ my: '$4', width: '100%' }}
-                onClick={() => window.open(addFundsLink, '_blank')}
+                disabled={disableJumperLink}
+                onClick={() => {
+                  window.open(addFundsLink, '_blank')
+                }}
+                css={{ width: '100%', mb: '$3' }}
               >
-                {copy.sweepCtaInsufficientFunds}
+                {disableJumperLink
+                  ? copy.mintCtaBuy
+                  : copy.mintCtaInsufficientFunds}
               </Button>
             </Flex>
           )}
