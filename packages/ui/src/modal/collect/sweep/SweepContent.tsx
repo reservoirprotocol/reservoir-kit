@@ -353,7 +353,7 @@ export const SweepContent: FC<
                 onClick={() => {
                   window.open(addFundsLink, '_blank')
                 }}
-                css={{ width: '100%', mb: '$3' }}
+                css={{ width: '100%', my: '$4' }}
               >
                 {disableJumperLink
                   ? copy.mintCtaBuy
