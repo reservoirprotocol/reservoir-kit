@@ -109,7 +109,6 @@ export function CartPopover({
         hasEnoughCurrency,
         balance,
         currency,
-        cartCurrencyConverted,
         transaction,
         blockExplorerBaseUrl,
         cartChain,
@@ -221,12 +220,6 @@ export function CartPopover({
                   <FontAwesomeIcon icon={faClose} width="16" height="16" />
                 </Button>
               </Flex>
-              {cartCurrencyConverted && (
-                <CartToast
-                  kind="warning"
-                  message={`Mixed currency items are only available to be checked out with ${currency?.symbol}`}
-                />
-              )}
               <Flex align="center" css={{ mb: '$4' }}>
                 <ChainIcon
                   chainId={cartChain?.id}

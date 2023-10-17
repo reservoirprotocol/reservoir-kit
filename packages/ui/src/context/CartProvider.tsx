@@ -9,6 +9,7 @@ import {
 import {
   useCurrencyConversion,
   useListings,
+  usePaymentTokens,
   useReservoirClient,
   useTokens,
 } from '../hooks'
@@ -23,8 +24,8 @@ import React, {
   FC,
   useState,
 } from 'react'
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { useAccount, useSwitchNetwork } from 'wagmi'
+import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { version } from '../../package.json'
 import { getNetwork, getWalletClient } from 'wagmi/actions'
 
@@ -35,7 +36,6 @@ type Token = NonNullable<ReturnType<typeof useTokens>['data'][0]>
 type TokensSchema = paths['/tokens/v6']['get']['responses']['200']['schema']
 type FloorAsk = NonNullable<NonNullable<Token['market']>['floorAsk']>
 type CartItemPrice = FloorAsk['price']
-type Currency = NonNullable<NonNullable<CartItemPrice>['currency']>
 type BuyTokenOptions = Parameters<
   ReservoirClientActions['buyToken']
 >['0']['options']
@@ -77,8 +77,10 @@ type CartItem = {
 
 export type Cart = {
   totalPrice: number
+  totalPriceRaw: bigint
   currency?: NonNullable<CartItemPrice>['currency']
   feeOnTop?: number
+  feeOnTopRaw?: bigint
   feesOnTopBps?: string[]
   feesOnTopUsd?: string[]
   items: CartItem[]
@@ -114,12 +116,12 @@ function cartStore({
   persist = true,
 }: CartStoreProps) {
   const { address } = useAccount()
-  const { chains } = useNetwork()
   const { switchNetworkAsync } = useSwitchNetwork()
   const [cartCurrency, setCartCurrency] = useState<Cart['currency']>()
   const [cartChain, setCartChain] = useState<Cart['chain']>()
   const cartData = useRef<Cart>({
     totalPrice: 0,
+    totalPriceRaw: 0n,
     feesOnTopBps: undefined,
     feesOnTopUsd: undefined,
     items: [],
@@ -135,6 +137,22 @@ function cartStore({
     cartCurrency?.contract,
     'usd'
   )
+  const chainCurrency = useChainCurrency(cartChain?.id)
+
+  const paymentTokens = usePaymentTokens(
+    false,
+    address as Address,
+    cartCurrency
+      ? {
+          symbol: cartCurrency.symbol as string,
+          address: cartCurrency?.contract as Address,
+          name: cartCurrency?.name,
+          decimals: cartCurrency.decimals as number,
+        }
+      : chainCurrency,
+    cartData.current.totalPriceRaw - (cartData.current.feeOnTopRaw ?? 0n),
+    cartChain?.id
+  )
   const usdPrice = Number(usdFeeConversion?.usd || 0)
 
   useEffect(() => {
@@ -147,18 +165,15 @@ function cartStore({
       const storedCart = window.localStorage.getItem(CartStorageKey)
       if (storedCart) {
         const rehydratedCart: Cart = JSON.parse(storedCart)
-        const currency = getCartCurrency(
-          rehydratedCart.items,
-          rehydratedCart.chain?.id || 1
-        )
         const pools = calculatePools(rehydratedCart.items)
-        const { totalPrice, feeOnTop } = calculatePricing(
-          rehydratedCart.items,
-          currency,
-          cartData.current.feesOnTopBps,
-          cartData.current.feesOnTopUsd,
-          usdPrice
-        )
+        const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+          calculatePricing(
+            rehydratedCart.items,
+            rehydratedCart.currency, //when rehydrating and the token doesn't exist in the payment tokens, is this a problem?
+            cartData.current.feesOnTopBps,
+            cartData.current.feesOnTopUsd,
+            usdPrice
+          )
         cartData.current = {
           ...cartData.current,
           chain:
@@ -166,8 +181,9 @@ function cartStore({
           items: rehydratedCart.items,
           pools,
           totalPrice,
+          totalPriceRaw,
           feeOnTop,
-          currency,
+          feeOnTopRaw,
         }
         subscribers.current.forEach((callback) => callback())
         validate()
@@ -176,29 +192,32 @@ function cartStore({
   }, [])
 
   useEffect(() => {
-    const currency = getCartCurrency(
-      cartData.current.items,
-      cartData.current.chain?.id || 1
-    )
+    // const currency = getCartCurrency(
+    //   cartData.current.items,
+    //   cartData.current.chain?.id || 1
+    // )
     const pools = calculatePools(cartData.current.items)
-    const { totalPrice, feeOnTop } = calculatePricing(
-      cartData.current.items,
-      currency,
-      feesOnTopBps,
-      feesOnTopUsd,
-      usdPrice
-    )
+    const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+      calculatePricing(
+        cartData.current.items,
+        cartCurrency,
+        feesOnTopBps,
+        feesOnTopUsd,
+        usdPrice
+      )
     cartData.current = {
       ...cartData.current,
       pools,
       totalPrice,
+      totalPriceRaw,
       feesOnTopBps,
       feesOnTopUsd,
       feeOnTop,
-      currency,
+      feeOnTopRaw,
+      currency: cartCurrency,
     }
     commit()
-  }, [feesOnTopBps, feesOnTopUsd, usdPrice])
+  }, [feesOnTopBps, feesOnTopUsd, usdPrice, cartCurrency])
 
   const get = useCallback(() => cartData.current, [])
   const set = useCallback((value: Partial<Cart>) => {
@@ -216,7 +235,11 @@ function cartStore({
     if (persist && typeof window !== 'undefined' && window.localStorage) {
       window.localStorage.setItem(
         CartStorageKey,
-        JSON.stringify(cartData.current)
+        JSON.stringify({
+          ...cartData.current,
+          totalPriceRaw: cartData.current.totalPriceRaw.toString(),
+          feeOnTopRaw: cartData.current.feeOnTopRaw?.toString() || undefined,
+        })
       )
     }
   }, [persist])
@@ -248,26 +271,29 @@ function cartStore({
       feesOnTopUsd?: Cart['feesOnTopUsd'],
       usdPrice?: number
     ) => {
+      let subtotal = 0
+      let subtotalRaw = 0n
       let feeOnTop = 0
-      let subtotal = items.reduce((total, { price, order }) => {
+      let feeOnTopRaw = 0n
+      items.forEach(({ price, order }) => {
         let amount = price?.amount?.decimal
-        if (price?.currency?.contract !== currency?.contract) {
-          amount = price?.amount?.native
-        }
+        let amountRaw = BigInt(price?.amount?.raw || 0)
 
         if (amount && order?.quantity) {
-          amount = amount * order?.quantity
+          amount = amount * order.quantity
+          amountRaw = amountRaw * BigInt(order.quantity)
         }
-        return (total += amount || 0)
-      }, 0)
+        subtotal += amount || 0
+        subtotalRaw += amountRaw || 0n
+      })
       if (feesOnTopBps) {
-        feeOnTop = feesOnTopBps.reduce((total, feeOnTopBps) => {
+        feesOnTopBps.forEach((feeOnTopBps) => {
           const [_, feeBps] = feeOnTopBps.split(':')
-          total += (Number(feeBps || 0) / 10000) * subtotal
-          return total
+          feeOnTop += (Number(feeBps || 0) / 10000) * subtotal
+          feeOnTopRaw += (BigInt(feeBps || 0n) / 10000n) * subtotalRaw
         }, 0)
       } else if (feesOnTopUsd && usdPrice && currency && currency?.decimals) {
-        feeOnTop = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
+        feesOnTopUsd.forEach((feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
           const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
           const atomicFee = BigInt(fee)
@@ -275,47 +301,22 @@ function cartStore({
             atomicFee * BigInt(10 ** (currency?.decimals || 18))
           const currencyFee = convertedAtomicFee / atomicUsdPrice
           const parsedFee = formatUnits(currencyFee, currency.decimals || 18)
-          return totalFees + Number(parsedFee)
+          feeOnTop += feeOnTop + Number(parsedFee)
+          feeOnTopRaw = BigInt(feeOnTop) + currencyFee
         }, 0)
       }
-      subtotal = subtotal + feeOnTop
       return {
-        totalPrice: subtotal,
+        totalPrice: subtotal + feeOnTop,
+        totalPriceRaw: subtotalRaw + feeOnTopRaw,
         feeOnTop,
+        feeOnTopRaw,
       }
     },
     []
   )
 
-  const getCartCurrency = useCallback(
-    (items: CartItem[], chainId: number): Currency | undefined => {
-      let currencies = new Set<string>()
-      let currenciesData: Record<string, Currency> = {}
-      for (let i = 0; i < items.length; i++) {
-        const currency = items[i].price?.currency
-        if (currency?.contract) {
-          currencies.add(currency.contract)
-          currenciesData[currency.contract] = currency
-        }
-        if (currencies.size > 1) {
-          break
-        }
-      }
-      if (currencies.size > 1) {
-        const chainCurrency = useChainCurrency(chainId)
-        return {
-          ...chainCurrency,
-          contract: chainCurrency.address,
-        }
-      } else if (currencies.size > 0) {
-        return Object.values(currenciesData)[0]
-      }
-    },
-    [chains]
-  )
-
   const fetchTokens = useCallback(
-    async (tokenIds: string[], chainId: number) => {
+    async (tokenIds: string[], chainId: number, currencyAddress: Address) => {
       if (!tokenIds || tokenIds.length === 0) {
         return { tokens: [] }
       }
@@ -329,6 +330,7 @@ function cartStore({
         tokens: tokenIds,
         limit: 100,
         includeDynamicPricing: true,
+        displayCurrency: currencyAddress,
       }
       if (client?.normalizeRoyalties !== undefined) {
         query.normalizeRoyalties = client?.normalizeRoyalties
@@ -509,30 +511,49 @@ function cartStore({
           items: updatedItems,
         }
       } else {
-        const currency = getCartCurrency(
-          updatedItems,
-          cartData.current.chain?.id || 1
-        )
-        const { totalPrice, feeOnTop } = calculatePricing(
-          updatedItems,
-          currency,
-          cartData.current.feesOnTopBps,
-          cartData.current.feesOnTopUsd,
-          usdPrice
-        )
+        // const currency = getCartCurrency(
+        //   updatedItems,
+        //   cartData.current.chain?.id || 1
+        // )
+        const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+          calculatePricing(
+            updatedItems,
+            cartData.current.currency,
+            cartData.current.feesOnTopBps,
+            cartData.current.feesOnTopUsd,
+            usdPrice
+          )
 
         cartData.current = {
           ...cartData.current,
           items: updatedItems,
           totalPrice,
+          totalPriceRaw,
+          feeOnTopRaw,
           feeOnTop,
-          currency,
         }
       }
 
       commit()
     },
     [commit, usdPrice]
+  )
+
+  const setCurrency = useCallback(
+    (currencyAddress: Address) => {
+      const paymentToken = paymentTokens.find(
+        (token) => token.address === currencyAddress
+      )
+      if (paymentToken) {
+        cartData.current = {
+          ...cartData.current,
+          currency: paymentToken,
+        }
+        validate()
+        commit()
+      }
+    },
+    [paymentTokens, commit]
   )
 
   type AsyncAddToCartOrder = { orderId: string }
@@ -606,7 +627,9 @@ function cartStore({
             new Promise(async (resolve) => {
               const { tokens: fetchedTokens } = await fetchTokens(
                 tokensToFetch,
-                chainId
+                chainId,
+                (cartData.current.currency?.contract ??
+                  chainCurrency.address) as Address
               )
               fetchedTokens?.forEach((tokenData) => {
                 const item = convertTokenToItem(tokenData)
@@ -692,22 +715,24 @@ function cartStore({
         }
 
         const pools = calculatePools(updatedItems)
-        const currency = getCartCurrency(updatedItems, chainId)
-        const { totalPrice, feeOnTop } = calculatePricing(
-          updatedItems,
-          currency,
-          cartData.current.feesOnTopBps,
-          cartData.current.feesOnTopUsd,
-          usdPrice
-        )
+        // const currency = getCartCurrency(updatedItems, chainId)
+        const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+          calculatePricing(
+            updatedItems,
+            cartData.current.currency,
+            cartData.current.feesOnTopBps,
+            cartData.current.feesOnTopUsd,
+            usdPrice
+          )
 
         cartData.current = {
           ...cartData.current,
           isValidating: false,
           items: updatedItems,
           totalPrice,
+          totalPriceRaw,
           feeOnTop,
-          currency,
+          feeOnTopRaw,
           pools,
         }
 
@@ -755,17 +780,18 @@ function cartStore({
         }
       })
       const pools = calculatePools(updatedItems)
-      const currency = getCartCurrency(
-        updatedItems,
-        cartData.current.chain?.id || 1
-      )
-      const { totalPrice, feeOnTop } = calculatePricing(
-        updatedItems,
-        currency,
-        cartData.current.feesOnTopBps,
-        cartData.current.feesOnTopUsd,
-        usdPrice
-      )
+      // const currency = getCartCurrency(
+      //   updatedItems,
+      //   cartData.current.chain?.id || 1
+      // )
+      const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+        calculatePricing(
+          updatedItems,
+          cartData.current.currency,
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopUsd,
+          usdPrice
+        )
 
       //Suppress pool price changes if the removed item was from the pool
       const removedPoolIds = removedItems.reduce((poolIds, item) => {
@@ -786,8 +812,9 @@ function cartStore({
         items: updatedItems,
         pools,
         totalPrice,
+        totalPriceRaw,
         feeOnTop,
-        currency,
+        feeOnTopRaw,
       }
       if (updatedItems.length === 0) {
         cartData.current.chain = undefined
@@ -844,7 +871,12 @@ function cartStore({
 
       if (tokensToFetch.length > 0) {
         promises.push(
-          fetchTokens(tokensToFetch, cartData.current.chain?.id as number)
+          fetchTokens(
+            tokensToFetch,
+            cartData.current.chain?.id as number,
+            (cartData.current.currency?.contract ??
+              chainCurrency.address) as Address
+          )
         )
       }
 
@@ -926,22 +958,24 @@ function cartStore({
       }
 
       const pools = calculatePools(items)
-      const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
-      const { totalPrice, feeOnTop } = calculatePricing(
-        items,
-        currency,
-        cartData.current.feesOnTopBps,
-        cartData.current.feesOnTopUsd,
-        usdPrice
-      )
+      // const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
+      const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+        calculatePricing(
+          items,
+          cartData.current.currency,
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopUsd,
+          usdPrice
+        )
       cartData.current = {
         ...cartData.current,
         items,
         pools,
         isValidating: false,
         totalPrice,
+        totalPriceRaw,
         feeOnTop,
-        currency,
+        feeOnTopRaw,
       }
 
       commit()
@@ -1140,6 +1174,9 @@ function cartStore({
                 cartData.current.items = []
                 cartData.current.pools = {}
                 cartData.current.totalPrice = 0
+                cartData.current.totalPriceRaw = 0n
+                cartData.current.feeOnTop = 0
+                cartData.current.feeOnTopRaw = 0n
                 cartData.current.currency = undefined
                 cartData.current.chain = undefined
               }
@@ -1163,6 +1200,9 @@ function cartStore({
               cartData.current.items = []
               cartData.current.pools = {}
               cartData.current.totalPrice = 0
+              cartData.current.totalPriceRaw = 0n
+              cartData.current.feeOnTop = 0
+              cartData.current.feeOnTopRaw = 0n
               cartData.current.currency = undefined
               cartData.current.chain = undefined
             }
@@ -1216,22 +1256,33 @@ function cartStore({
             ) {
               const items = [...cartData.current.transaction.items]
               const pools = calculatePools(items)
-              const currency = getCartCurrency(
-                items,
-                cartData.current.transaction.chain.id
-              )
-              const { totalPrice, feeOnTop } = calculatePricing(
-                items,
-                currency,
-                cartData.current.feesOnTopBps,
-                cartData.current.feesOnTopUsd,
-                usdPrice
-              )
+              // const currency = getCartCurrency(
+              //   items,
+              //   cartData.current.transaction.chain.id
+              // )
+              const firstValidItem = items.find((item) => item.price?.currency)
+              const currency =
+                paymentTokens.find(
+                  (token) =>
+                    token.address ===
+                    firstValidItem?.price?.currency?.contract?.toLowerCase()
+                ) || paymentTokens[0]
+
+              const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+                calculatePricing(
+                  items,
+                  currency,
+                  cartData.current.feesOnTopBps,
+                  cartData.current.feesOnTopUsd,
+                  usdPrice
+                )
               cartData.current.items = items
               cartData.current.pools = pools
               cartData.current.currency = currency
               cartData.current.totalPrice = totalPrice
+              cartData.current.totalPriceRaw = totalPriceRaw
               cartData.current.feeOnTop = feeOnTop
+              cartData.current.feeOnTopRaw = feeOnTopRaw
               cartData.current.chain = cartData.current.transaction.chain
             }
             commit()
@@ -1247,6 +1298,7 @@ function cartStore({
     set,
     subscribe,
     setQuantity,
+    setCurrency,
     add,
     remove,
     clear,

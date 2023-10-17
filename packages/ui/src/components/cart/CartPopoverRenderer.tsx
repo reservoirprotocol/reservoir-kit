@@ -1,9 +1,8 @@
 import { useCoinConversion, useCart, useReservoirClient } from '../../hooks'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
-import { zeroAddress, parseUnits } from 'viem'
+import { zeroAddress } from 'viem'
 import { UseBalanceToken } from '../../types/wagmi'
-import { toFixed } from '../../lib/numbers'
 import {
   Cart,
   CheckoutStatus,
@@ -13,9 +12,10 @@ import {
 type ChildrenProps = {
   loading: boolean
   currency?: NonNullable<Cart['items'][0]['price']>['currency']
-  cartCurrencyConverted?: Boolean
   totalPrice: number
+  totalPriceRaw: bigint
   feeOnTop?: number
+  feeOnTopRaw?: bigint
   usdPrice: number | null
   balance?: bigint
   hasEnoughCurrency: boolean
@@ -45,12 +45,15 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
   const {
     isValidating,
     totalPrice,
+    totalPriceRaw,
     items,
     currency,
     transaction,
     feeOnTop,
+    feeOnTopRaw,
     chain: cartChain,
   } = data
+
   const usdConversion = useCoinConversion(
     open ? 'USD' : undefined,
     currency?.symbol || currency?.name
@@ -61,10 +64,6 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
   const chain = chains.find((chain) => chain.id === transaction?.chain.id)
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
-  const cartCurrencyConverted = items.some(
-    (item) =>
-      item.price && item.price?.currency?.contract !== currency?.contract
-  )
 
   useEffect(() => {
     if (open) {
@@ -105,19 +104,15 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
 
   useEffect(() => {
     if (balance) {
-      const totalPriceTruncated = toFixed(totalPrice, currency?.decimals || 18)
       if (!balance.value) {
         setHasEnoughCurrency(false)
-      } else if (
-        balance.value <
-        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals || 18)
-      ) {
+      } else if (BigInt(balance.value) < totalPriceRaw) {
         setHasEnoughCurrency(false)
       } else {
         setHasEnoughCurrency(true)
       }
     }
-  }, [totalPrice, balance, currency])
+  }, [totalPriceRaw, balance, currency])
 
   useEffect(() => {
     if (
@@ -136,9 +131,10 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         unavailableItems,
         priceChangeItems,
         currency,
-        cartCurrencyConverted,
         totalPrice,
+        totalPriceRaw,
         feeOnTop,
+        feeOnTopRaw,
         usdPrice,
         hasEnoughCurrency,
         balance: balance?.value,
