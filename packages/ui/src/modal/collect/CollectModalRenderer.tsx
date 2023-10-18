@@ -464,7 +464,7 @@ export const CollectModalRenderer: FC<Props> = ({
       setPaymentCurrency(chainCurrency)
     } else if (selectedTokens.length > 0) {
       let firstListingCurrency
-      if (currentChain?.alwaysIncludeListingCurrency) {
+      if (providerOptions.alwaysIncludeListingCurrency !== false) {
         firstListingCurrency = {
           address: selectedTokens?.[0].currency as Address,
           decimals: selectedTokens?.[0].currencyDecimals || 18,
