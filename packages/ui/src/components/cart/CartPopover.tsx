@@ -10,6 +10,7 @@ import {
   FormatCurrency,
   Loader,
   ChainIcon,
+  CryptoCurrencyIcon,
 } from '../../primitives'
 import Popover from '../../primitives/Popover'
 import React, {
@@ -25,6 +26,7 @@ import React, {
 } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
+  faChevronRight,
   faClose,
   faLock,
   faRefresh,
@@ -33,7 +35,7 @@ import {
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import CartItem from './CartItem'
 import CartToast from './CartToast'
-import CartPopoverRenderer from './CartPopoverRenderer'
+import CartPopoverRenderer, { CartPopoverStep } from './CartPopoverRenderer'
 import {
   CheckoutStatus,
   CheckoutTransactionError,
@@ -104,7 +106,9 @@ export function CartPopover({
         unavailableItems,
         priceChangeItems,
         totalPrice,
+        totalPriceRaw,
         feeOnTop,
+        feeOnTopRaw,
         usdPrice,
         hasEnoughCurrency,
         balance,
@@ -112,6 +116,8 @@ export function CartPopover({
         transaction,
         blockExplorerBaseUrl,
         cartChain,
+        cartPopoverStep,
+        setCartPopoverStep,
         remove,
         clear,
         checkout,
@@ -334,8 +340,8 @@ export function CartPopover({
                     >
                       <FormatCryptoCurrency
                         textStyle="subtitle3"
-                        amount={feeOnTop}
-                        address={currency?.contract}
+                        amount={feeOnTopRaw}
+                        address={currency?.address}
                         decimals={currency?.decimals}
                         symbol={currency?.symbol}
                         logoWidth={12}
@@ -353,32 +359,73 @@ export function CartPopover({
                   </Flex>
                 ) : null}
                 {!isCartEmpty && (
-                  <Flex css={{ mb: 28 }}>
-                    <Text style="h6">Total</Text>
+                  <>
                     <Flex
                       direction="column"
-                      justify="center"
-                      css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
+                      css={{
+                        gap: '$2',
+                        py: '$3',
+                        borderRadius: '$3',
+                        '&:hover': {
+                          backgroundColor: '$neutralBgHover',
+                        },
+                      }}
+                      onClick={() =>
+                        setCartPopoverStep(CartPopoverStep.SelectPayment)
+                      }
                     >
-                      <FormatCryptoCurrency
-                        textStyle="h6"
-                        amount={totalPrice}
-                        address={currency?.contract}
-                        decimals={currency?.decimals}
-                        symbol={currency?.symbol}
-                        logoWidth={18}
-                        chainId={cartChain?.id}
-                      />
-                      {usdPrice && (
-                        <FormatCurrency
-                          amount={usdPrice * totalPrice}
-                          style="subtitle3"
-                          color="subtle"
-                          css={{ textAlign: 'end' }}
-                        />
-                      )}
+                      <Flex
+                        justify="between"
+                        align="center"
+                        css={{
+                          gap: '$1',
+                        }}
+                      >
+                        <Text style="subtitle2">Payment Method</Text>
+                        <Flex
+                          align="center"
+                          css={{ gap: '$2', cursor: 'pointer' }}
+                        >
+                          <Flex align="center">
+                            <CryptoCurrencyIcon
+                              address={currency?.address as string}
+                              css={{ width: 16, height: 16, mr: '$1' }}
+                            />
+                            <Text style="subtitle2">{currency?.symbol}</Text>
+                          </Flex>
+                          <Box css={{ color: '$neutralSolidHover' }}>
+                            <FontAwesomeIcon icon={faChevronRight} width={10} />
+                          </Box>
+                        </Flex>
+                      </Flex>
                     </Flex>
-                  </Flex>
+                    <Flex css={{ mb: 28 }}>
+                      <Text style="h6">You Pay</Text>
+                      <Flex
+                        direction="column"
+                        justify="center"
+                        css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
+                      >
+                        <FormatCryptoCurrency
+                          textStyle="h6"
+                          amount={totalPriceRaw}
+                          address={currency?.address}
+                          decimals={currency?.decimals}
+                          symbol={currency?.symbol}
+                          logoWidth={18}
+                          chainId={cartChain?.id}
+                        />
+                        {usdPrice && (
+                          <FormatCurrency
+                            amount={currency?.usdTotalPriceRaw}
+                            style="subtitle3"
+                            color="subtle"
+                            css={{ textAlign: 'end' }}
+                          />
+                        )}
+                      </Flex>
+                    </Flex>
+                  </>
                 )}
                 <CartCheckoutModal
                   open={
@@ -410,7 +457,7 @@ export function CartPopover({
                       textStyle="body3"
                       chainId={cartChain?.id}
                       amount={balance}
-                      address={currency?.contract}
+                      address={currency?.address}
                       decimals={currency?.decimals}
                       symbol={currency?.symbol}
                       logoWidth={10}

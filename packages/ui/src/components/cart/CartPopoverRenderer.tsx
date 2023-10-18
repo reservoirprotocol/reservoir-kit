@@ -1,4 +1,4 @@
-import { useCoinConversion, useCart, useReservoirClient } from '../../hooks'
+import { useCart, useReservoirClient } from '../../hooks'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
 import { zeroAddress } from 'viem'
@@ -9,9 +9,14 @@ import {
   CheckoutTransactionError,
 } from '../../context/CartProvider'
 
+export enum CartPopoverStep {
+  Idle,
+  SelectPayment,
+}
+
 type ChildrenProps = {
   loading: boolean
-  currency?: NonNullable<Cart['items'][0]['price']>['currency']
+  currency?: NonNullable<Cart['currency']>
   totalPrice: number
   totalPriceRaw: bigint
   feeOnTop?: number
@@ -30,6 +35,8 @@ type ChildrenProps = {
   remove: ReturnType<typeof useCart>['remove']
   add: ReturnType<typeof useCart>['add']
   validate: ReturnType<typeof useCart>['validate']
+  cartPopoverStep: CartPopoverStep
+  setCartPopoverStep: React.Dispatch<React.SetStateAction<CartPopoverStep>>
 }
 
 type Props = {
@@ -38,6 +45,9 @@ type Props = {
 }
 
 export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
+  const [cartPopoverStep, setCartPopoverStep] = useState<CartPopoverStep>(
+    CartPopoverStep.Idle
+  )
   const client = useReservoirClient()
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const { data, clear, clearTransaction, validate, remove, add, checkout } =
@@ -54,11 +64,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     chain: cartChain,
   } = data
 
-  const usdConversion = useCoinConversion(
-    open ? 'USD' : undefined,
-    currency?.symbol || currency?.name
-  )
-  const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
+  const usdPrice = currency?.usdPrice ?? 0
 
   const { chains } = useNetwork()
   const chain = chains.find((chain) => chain.id === transaction?.chain.id)
@@ -95,8 +101,8 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     chainId: cartChain?.id || client?.currentChain()?.id,
     address: address,
     token:
-      currency?.contract !== zeroAddress
-        ? (currency?.contract as UseBalanceToken)
+      currency?.address !== zeroAddress
+        ? (currency?.address as UseBalanceToken)
         : undefined,
     watch: open,
     formatUnits: currency?.decimals,
@@ -146,6 +152,8 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         remove,
         add,
         validate,
+        cartPopoverStep,
+        setCartPopoverStep,
       })}
     </>
   )

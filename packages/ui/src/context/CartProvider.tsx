@@ -12,8 +12,8 @@ import {
   usePaymentTokens,
   useReservoirClient,
   useTokens,
+  useChainCurrency,
 } from '../hooks'
-import { useChainCurrency } from '../hooks/index'
 import { defaultFetcher } from '../lib/swr'
 import React, {
   createContext,
@@ -28,6 +28,7 @@ import { useAccount, useSwitchNetwork } from 'wagmi'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { version } from '../../package.json'
 import { getNetwork, getWalletClient } from 'wagmi/actions'
+import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
@@ -78,7 +79,7 @@ type CartItem = {
 export type Cart = {
   totalPrice: number
   totalPriceRaw: bigint
-  currency?: NonNullable<CartItemPrice>['currency']
+  currency?: EnhancedCurrency
   feeOnTop?: number
   feeOnTopRaw?: bigint
   feesOnTopBps?: string[]
@@ -134,18 +135,18 @@ function cartStore({
   const client = useReservoirClient()
   const { data: usdFeeConversion } = useCurrencyConversion(
     cartChain?.id,
-    cartCurrency?.contract,
+    cartCurrency?.address,
     'usd'
   )
   const chainCurrency = useChainCurrency(cartChain?.id)
 
   const paymentTokens = usePaymentTokens(
-    false,
+    address !== undefined,
     address as Address,
     cartCurrency
       ? {
           symbol: cartCurrency.symbol as string,
-          address: cartCurrency?.contract as Address,
+          address: cartCurrency?.address as Address,
           name: cartCurrency?.name,
           decimals: cartCurrency.decimals as number,
         }
@@ -165,20 +166,35 @@ function cartStore({
       const storedCart = window.localStorage.getItem(CartStorageKey)
       if (storedCart) {
         const rehydratedCart: Cart = JSON.parse(storedCart)
+        const deserializedCurrency = rehydratedCart.currency
+          ? {
+              ...rehydratedCart.currency,
+              usdPriceRaw: BigInt(rehydratedCart.currency.usdPriceRaw ?? 0n),
+              currencyTotalRaw: BigInt(
+                rehydratedCart.currency.currencyTotalRaw ?? 0n
+              ),
+              usdTotalPriceRaw: BigInt(
+                rehydratedCart.currency.usdTotalPriceRaw ?? 0n
+              ),
+              balance: BigInt(rehydratedCart.currency.balance ?? 0n),
+            }
+          : undefined
         const pools = calculatePools(rehydratedCart.items)
         const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
           calculatePricing(
             rehydratedCart.items,
-            rehydratedCart.currency, //when rehydrating and the token doesn't exist in the payment tokens, is this a problem?
+            deserializedCurrency,
             cartData.current.feesOnTopBps,
             cartData.current.feesOnTopUsd,
             usdPrice
           )
+
         cartData.current = {
           ...cartData.current,
           chain:
             rehydratedCart.items.length > 0 ? rehydratedCart.chain : undefined,
           items: rehydratedCart.items,
+          currency: deserializedCurrency,
           pools,
           totalPrice,
           totalPriceRaw,
@@ -192,10 +208,6 @@ function cartStore({
   }, [])
 
   useEffect(() => {
-    // const currency = getCartCurrency(
-    //   cartData.current.items,
-    //   cartData.current.chain?.id || 1
-    // )
     const pools = calculatePools(cartData.current.items)
     const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
       calculatePricing(
@@ -214,7 +226,6 @@ function cartStore({
       feesOnTopUsd,
       feeOnTop,
       feeOnTopRaw,
-      currency: cartCurrency,
     }
     commit()
   }, [feesOnTopBps, feesOnTopUsd, usdPrice, cartCurrency])
@@ -233,12 +244,24 @@ function cartStore({
   const commit = useCallback(() => {
     subscribers.current.forEach((callback) => callback())
     if (persist && typeof window !== 'undefined' && window.localStorage) {
+      const serializedCurrency = cartData.current.currency
+        ? {
+            ...cartData.current.currency,
+            usdPriceRaw: cartData.current.currency.usdPriceRaw?.toString(),
+            currencyTotalRaw:
+              cartData.current.currency.currencyTotalRaw?.toString(),
+            usdTotalPriceRaw:
+              cartData.current.currency.usdTotalPriceRaw?.toString(),
+            balance: cartData.current.currency.balance?.toString(),
+          }
+        : undefined
       window.localStorage.setItem(
         CartStorageKey,
         JSON.stringify({
           ...cartData.current,
-          totalPriceRaw: cartData.current.totalPriceRaw.toString(),
-          feeOnTopRaw: cartData.current.feeOnTopRaw?.toString() || undefined,
+          currency: serializedCurrency,
+          totalPriceRaw: undefined,
+          feeOnTopRaw: undefined,
         })
       )
     }
@@ -316,7 +339,7 @@ function cartStore({
   )
 
   const fetchTokens = useCallback(
-    async (tokenIds: string[], chainId: number, currencyAddress: Address) => {
+    async (tokenIds: string[], chainId: number, currencyAddress?: Address) => {
       if (!tokenIds || tokenIds.length === 0) {
         return { tokens: [] }
       }
@@ -352,7 +375,7 @@ function cartStore({
   )
 
   const fetchOrders = useCallback(
-    async (orderIds: string[], chainId: number) => {
+    async (orderIds: string[], chainId: number, currencyAddress?: Address) => {
       if (!orderIds || orderIds.length === 0) {
         return { orders: [] }
       }
@@ -367,6 +390,7 @@ function cartStore({
         ids: orderIds,
         limit: 1000,
         includeCriteriaMetadata: true,
+        displayCurrency: currencyAddress,
       }
       if (client?.normalizeRoyalties !== undefined) {
         query.normalizeRoyalties = client?.normalizeRoyalties
@@ -476,6 +500,7 @@ function cartStore({
       totalPrice: 0,
       feeOnTop: 0,
       chain: undefined,
+      currency: undefined,
     }
     commit()
   }, [commit])
@@ -511,10 +536,6 @@ function cartStore({
           items: updatedItems,
         }
       } else {
-        // const currency = getCartCurrency(
-        //   updatedItems,
-        //   cartData.current.chain?.id || 1
-        // )
         const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
           calculatePricing(
             updatedItems,
@@ -556,6 +577,30 @@ function cartStore({
     [paymentTokens, commit]
   )
 
+  const getCurrency = useCallback(
+    (items?: Cart['items']) => {
+      items = items ? items : cartData.current.items
+
+      if (cartData.current.currency) {
+        return cartData.current.currency
+      }
+
+      if (paymentTokens && items.length > 0) {
+        const firstValidItem = items.find((item) => item.price?.currency)
+        return (
+          paymentTokens.find(
+            (token) =>
+              token.address ===
+              firstValidItem?.price?.currency?.contract?.toLowerCase()
+          ) || paymentTokens[0]
+        )
+      }
+
+      return undefined
+    },
+    [paymentTokens]
+  )
+
   type AsyncAddToCartOrder = { orderId: string }
   type AsyncAddToCartToken = { id: string }
   type AddToCartToken = AsyncAddToCartToken | AsyncAddToCartOrder | Token
@@ -570,7 +615,7 @@ function cartStore({
           throw 'Currently validating, adding items temporarily disabled'
         }
 
-        const updatedItems = [...cartData.current.items]
+        let updatedItems = [...cartData.current.items]
         const currentIds = cartData.current.items.map(
           (item) => `${item.collection.id}:${item.token.id}`
         )
@@ -620,106 +665,124 @@ function cartStore({
           }
         })
 
-        const promises: Promise<void>[] = []
+        let currency = getCurrency(updatedItems)
 
-        if (tokensToFetch.length > 0) {
-          promises.push(
-            new Promise(async (resolve) => {
-              const { tokens: fetchedTokens } = await fetchTokens(
-                tokensToFetch,
-                chainId,
-                (cartData.current.currency?.contract ??
-                  chainCurrency.address) as Address
-              )
-              fetchedTokens?.forEach((tokenData) => {
-                const item = convertTokenToItem(tokenData)
-                const id = `${item?.collection.id}:${item?.token.id}`
-                const maker = tokenData.market?.floorAsk?.maker
-                const duplicateListingDetected =
-                  item &&
-                  maker &&
-                  tokensByMaker[maker] &&
-                  tokensByMaker[maker].includes(id)
-                if (duplicateListingDetected) {
-                  client?.log(
-                    [
-                      'Detected adding duplicate listing to cart, aborting',
-                      tokenData,
-                      updatedItems,
-                    ],
-                    LogLevel.Error
-                  )
-                } else if (item) {
-                  updatedItems.push(item)
-                }
+        const createItems = async () => {
+          updatedItems = [...cartData.current.items]
+          const promises: Promise<void>[] = []
+
+          if (tokensToFetch.length > 0) {
+            promises.push(
+              new Promise(async (resolve) => {
+                const { tokens: fetchedTokens } = await fetchTokens(
+                  tokensToFetch,
+                  chainId,
+                  currency?.address
+                )
+
+                fetchedTokens?.forEach((tokenData) => {
+                  const item = convertTokenToItem(tokenData)
+                  const id = `${item?.collection.id}:${item?.token.id}`
+                  const maker = tokenData.market?.floorAsk?.maker
+                  const duplicateListingDetected =
+                    item &&
+                    maker &&
+                    tokensByMaker[maker] &&
+                    tokensByMaker[maker].includes(id)
+                  if (duplicateListingDetected) {
+                    client?.log(
+                      [
+                        'Detected adding duplicate listing to cart, aborting',
+                        tokenData,
+                        updatedItems,
+                      ],
+                      LogLevel.Error
+                    )
+                  } else if (item) {
+                    updatedItems.push(item)
+                  }
+                })
+
+                resolve()
               })
+            )
+          }
 
-              resolve()
-            })
-          )
-        }
+          if (ordersToFetch.length > 0) {
+            promises.push(
+              new Promise(async (resolve) => {
+                const { orders: fetchedOrders } = await fetchOrders(
+                  ordersToFetch,
+                  chainId
+                )
+                fetchedOrders?.forEach((orderData) => {
+                  const item = convertOrderToItem(orderData)
+                  const id = `${item?.collection.id}:${item?.token.id}`
+                  const duplicateListingDetected =
+                    item &&
+                    tokensByMaker[orderData.maker] &&
+                    tokensByMaker[orderData.maker].includes(id)
+                  if (duplicateListingDetected) {
+                    client?.log(
+                      [
+                        'Detected adding duplicate listing to cart, aborting',
+                        orderData,
+                        updatedItems,
+                      ],
+                      LogLevel.Error
+                    )
+                  } else if (item) {
+                    updatedItems.push(item)
+                  }
+                })
 
-        if (ordersToFetch.length > 0) {
-          promises.push(
-            new Promise(async (resolve) => {
-              const { orders: fetchedOrders } = await fetchOrders(
-                ordersToFetch,
-                chainId
-              )
-              fetchedOrders?.forEach((orderData) => {
-                const item = convertOrderToItem(orderData)
-                const id = `${item?.collection.id}:${item?.token.id}`
-                const duplicateListingDetected =
-                  item &&
-                  tokensByMaker[orderData.maker] &&
-                  tokensByMaker[orderData.maker].includes(id)
-                if (duplicateListingDetected) {
-                  client?.log(
-                    [
-                      'Detected adding duplicate listing to cart, aborting',
-                      orderData,
-                      updatedItems,
-                    ],
-                    LogLevel.Error
-                  )
-                } else if (item) {
-                  updatedItems.push(item)
-                }
+                resolve()
               })
+            )
+          }
 
-              resolve()
-            })
-          )
-        }
-
-        if (promises.length > 0) {
-          cartData.current.isValidating = true
-          subscribers.current.forEach((callback) => callback())
+          if (promises.length > 0) {
+            cartData.current.isValidating = true
+            subscribers.current.forEach((callback) => callback())
+          }
 
           await Promise.allSettled(promises)
+
+          if (tokens.length > 0) {
+            tokens.forEach((token) => {
+              if (
+                token.market?.floorAsk?.maker?.toLowerCase() !==
+                  address?.toLowerCase() &&
+                token.token?.owner?.toLowerCase() !== address?.toLowerCase()
+              ) {
+                const item = convertTokenToItem(token)
+                if (item) {
+                  updatedItems.push(item)
+                }
+              }
+            })
+          }
         }
 
-        if (tokens.length > 0) {
-          tokens.forEach((token) => {
-            if (
-              token.market?.floorAsk?.maker?.toLowerCase() !==
-                address?.toLowerCase() &&
-              token.token?.owner?.toLowerCase() !== address?.toLowerCase()
-            ) {
-              const item = convertTokenToItem(token)
-              if (item) {
-                updatedItems.push(item)
-              }
-            }
-          })
+        await createItems()
+
+        if (!currency) {
+          currency = getCurrency(updatedItems)
+          //In the case any of the items are not in the correct currency, we need to refresh the items
+          if (
+            updatedItems.some(
+              (item) => item.price?.currency?.contract !== currency?.address
+            )
+          ) {
+            await createItems()
+          }
         }
 
         const pools = calculatePools(updatedItems)
-        // const currency = getCartCurrency(updatedItems, chainId)
         const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
           calculatePricing(
             updatedItems,
-            cartData.current.currency,
+            currency,
             cartData.current.feesOnTopBps,
             cartData.current.feesOnTopUsd,
             usdPrice
@@ -734,6 +797,7 @@ function cartStore({
           feeOnTop,
           feeOnTopRaw,
           pools,
+          currency,
         }
 
         if (!cartData.current.chain) {
@@ -751,7 +815,7 @@ function cartStore({
         throw e
       }
     },
-    [fetchTokens, commit, address, usdPrice]
+    [fetchTokens, fetchOrders, commit, address, usdPrice]
   )
 
   /**
@@ -780,10 +844,6 @@ function cartStore({
         }
       })
       const pools = calculatePools(updatedItems)
-      // const currency = getCartCurrency(
-      //   updatedItems,
-      //   cartData.current.chain?.id || 1
-      // )
       const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
         calculatePricing(
           updatedItems,
@@ -815,6 +875,8 @@ function cartStore({
         totalPriceRaw,
         feeOnTop,
         feeOnTopRaw,
+        currency:
+          updatedItems.length > 0 ? cartData.current.currency : undefined,
       }
       if (updatedItems.length === 0) {
         cartData.current.chain = undefined
@@ -874,7 +936,7 @@ function cartStore({
           fetchTokens(
             tokensToFetch,
             cartData.current.chain?.id as number,
-            (cartData.current.currency?.contract ??
+            (cartData.current.currency?.address ??
               chainCurrency.address) as Address
           )
         )
@@ -959,6 +1021,7 @@ function cartStore({
 
       const pools = calculatePools(items)
       // const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
+      //todo do we need to handle currency when it's mismatched?
       const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
         calculatePricing(
           items,
@@ -1014,7 +1077,7 @@ function cartStore({
       if (!wallet) {
         throw 'Wallet/Signer not available'
       }
-
+      //todo remove this logic
       let isMixedCurrency = false
       const tokens = cartData.current.items.reduce(
         (items, { token, collection, price, order }) => {
@@ -1026,7 +1089,7 @@ function cartStore({
               quantity: order?.quantity,
             })
             if (
-              price.currency?.contract != cartData.current.currency?.contract
+              price.currency?.contract != cartData.current.currency?.address
             ) {
               isMixedCurrency = true
             }
@@ -1046,12 +1109,12 @@ function cartStore({
       const feeOnTop = cartData.current.feeOnTop ? cartData.current.feeOnTop : 0
       const expectedPrice = cartData.current.totalPrice - feeOnTop
       let currencyDecimals = cartData.current.currency?.decimals || 18
-
+      //todo fix!
       if (isMixedCurrency) {
         options.currency = zeroAddress
         currencyDecimals = chainCurrency.decimals
       } else {
-        options.currency = cartData.current.currency?.contract
+        options.currency = cartData.current.currency?.address
       }
 
       if (feeOnTop) {
@@ -1256,17 +1319,7 @@ function cartStore({
             ) {
               const items = [...cartData.current.transaction.items]
               const pools = calculatePools(items)
-              // const currency = getCartCurrency(
-              //   items,
-              //   cartData.current.transaction.chain.id
-              // )
-              const firstValidItem = items.find((item) => item.price?.currency)
-              const currency =
-                paymentTokens.find(
-                  (token) =>
-                    token.address ===
-                    firstValidItem?.price?.currency?.contract?.toLowerCase()
-                ) || paymentTokens[0]
+              const currency = getCurrency(items)
 
               const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
                 calculatePricing(

@@ -17,7 +17,7 @@ export type EnhancedCurrency =
     }
 
 export default function (
-  open: boolean,
+  enabled: boolean,
   address: Address,
   preferredCurrency: PaymentToken,
   preferredCurrencyTotalPrice: bigint,
@@ -49,7 +49,7 @@ export default function (
   }, [chain?.paymentTokens])
 
   const { data: nonNativeBalances } = useContractReads({
-    contracts: open
+    contracts: enabled
       ? nonNativeCurrencies?.map((currency) => ({
           abi: erc20ABI,
           address: currency.address as `0x${string}`,
@@ -58,24 +58,24 @@ export default function (
           args: [address],
         }))
       : [],
-    enabled: open,
+    enabled,
     allowFailure: false,
   })
 
   const nativeBalance = useBalance({
-    address: open ? address : undefined,
+    address: enabled ? address : undefined,
     chainId: chainId,
-    enabled: open,
+    enabled,
   })
 
   const preferredCurrencyConversions = useCurrencyConversions(
     preferredCurrency?.address,
     chain,
-    open ? allPaymentTokens : undefined
+    enabled ? allPaymentTokens : undefined
   )
 
   const paymentTokens = useMemo(() => {
-    if (!open) {
+    if (!enabled) {
       return []
     }
 
