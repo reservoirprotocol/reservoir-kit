@@ -118,5 +118,8 @@ export type ReservoirKitThemeContext = {
     ethIcon: {
       value: ReservoirKitTheme['assets']['ethIcon']
     }
+    chainIcon: {
+      value: ReservoirKitTheme['assets']['chainIcon']
+    }
   }
 } & typeof theme

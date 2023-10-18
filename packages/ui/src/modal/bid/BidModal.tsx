@@ -387,7 +387,7 @@ export function BidModal({
                 }}
               >
                 <TokenStats
-                  chainId={modalChain?.id}
+                  chain={modalChain}
                   token={token ? token : undefined}
                   collection={collection}
                   trait={trait}
@@ -822,7 +822,7 @@ export function BidModal({
                 }}
               >
                 <TransactionBidDetails
-                  chainId={modalChain?.id}
+                  chain={modalChain}
                   token={token ? token : undefined}
                   collection={collection}
                   bidData={bidData}

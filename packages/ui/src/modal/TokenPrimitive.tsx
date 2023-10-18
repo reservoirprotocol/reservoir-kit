@@ -7,8 +7,11 @@ import {
   Grid,
   FormatCurrency,
   FormatCryptoCurrency,
+  ChainIcon,
+  Divider,
 } from '../primitives'
 import InfoTooltip from '../primitives/InfoTooltip'
+import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
 type Props = {
   img?: string
@@ -26,7 +29,7 @@ type Props = {
   isUnavailable?: boolean
   priceSubtitle?: string
   royaltiesBps?: number
-  chainId?: number
+  chain?: ReservoirChain | null
   quantity?: number
 }
 
@@ -38,7 +41,7 @@ const Img = styled('img', {
 const TokenPrimitive: FC<Props> = ({
   img,
   name,
-  chainId,
+  chain,
   collection,
   currencyContract,
   currencyDecimals,
@@ -100,6 +103,14 @@ const TokenPrimitive: FC<Props> = ({
               >
                 {name ? name : collection}
               </Text>
+              {expires && quantity && quantity > 1 && !name ? (
+                <Flex>
+                  <ChainIcon chainId={chain?.id} height={12} css={{ mr: 5 }} />
+                  <Text style="tiny" color="subtle">
+                    {chain?.name}
+                  </Text>
+                </Flex>
+              ) : null}
               {expires && quantity && quantity > 1 ? (
                 <Flex
                   css={{
@@ -119,12 +130,31 @@ const TokenPrimitive: FC<Props> = ({
                 </Flex>
               ) : null}
             </Flex>
+            {!name && !quantity && expires ? (
+              <Flex align="center">
+                <ChainIcon chainId={chain?.id} height={12} css={{ mr: 5 }} />
+                <Text style="body3" color="subtle">
+                  {chain?.name}
+                </Text>
+              </Flex>
+            ) : null}
             {name && (
-              <Text style="body3" color={isUnavailable ? 'subtle' : 'base'}>
-                {collection}
+              <Flex>
+                <Text style="body3" color="subtle">
+                  {collection}
+                </Text>
+                <Divider direction="vertical" />
+                <ChainIcon chainId={chain?.id} css={{ mr: 5 }} height={12} />
+                <Text style="body3" color="subtle">
+                  {chain?.name}
+                </Text>
+              </Flex>
+            )}
+            {!!expires && (
+              <Text style="tiny" color="subtle" css={{ color: '$neutralText' }}>
+                Expires {expires}
               </Text>
             )}
-            {!!expires && <Text style="tiny">Expires {expires}</Text>}
             {!expires && quantity && quantity > 1 ? (
               <Flex
                 css={{
@@ -166,7 +196,7 @@ const TokenPrimitive: FC<Props> = ({
           {price ? (
             <FormatCryptoCurrency
               amount={price}
-              chainId={chainId}
+              chainId={chain?.id}
               textColor={isUnavailable ? 'subtle' : 'base'}
               address={currencyContract}
               decimals={currencyDecimals}

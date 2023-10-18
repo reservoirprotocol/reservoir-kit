@@ -3,6 +3,7 @@ import { Box } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 import { useCollections, useTokens } from '../hooks'
 import { CSSProperties } from '@stitches/react'
+import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
 type TokenLineItemProps = {
   tokenDetails?: NonNullable<
@@ -25,7 +26,7 @@ type TokenLineItemProps = {
   expires?: string
   sourceImg?: string
   css?: CSSProperties
-  chainId?: number
+  chain?: ReservoirChain | null
   showRoyalties?: boolean
   quantity?: number
 }
@@ -33,7 +34,7 @@ type TokenLineItemProps = {
 const TokenLineItem: FC<TokenLineItemProps> = ({
   tokenDetails,
   collection,
-  chainId,
+  chain,
   usdConversion = 0,
   isUnavailable,
   price,
@@ -79,7 +80,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         expires={expires}
         warning={warning}
         source={sourceImg || ''}
-        chainId={chainId}
+        chain={chain}
         isUnavailable={isUnavailable}
         priceSubtitle={priceSubtitle}
         royaltiesBps={royaltiesBps}

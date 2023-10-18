@@ -3,11 +3,11 @@ import React, {
   Dispatch,
   ReactElement,
   SetStateAction,
-  useContext,
   useEffect,
+  useMemo,
+  useRef,
   useState,
 } from 'react'
-
 import {
   Flex,
   Box,
@@ -16,10 +16,13 @@ import {
   Loader,
   Select,
   ErrorWell,
-  Popover,
+  Img,
+  DateInput,
+  CryptoCurrencyIcon,
+  Input,
 } from '../../primitives'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Flatpickr from 'react-flatpickr'
 import { Modal } from '../Modal'
 import {
   ListingData,
@@ -27,27 +30,17 @@ import {
   ListStep,
   ListModalStepData,
 } from './ListModalRenderer'
-import { ModalSize } from '../Modal'
-import {
-  faChevronLeft,
-  faCheckCircle,
-  faInfoCircle,
-} from '@fortawesome/free-solid-svg-icons'
-import TokenStats from './TokenStats'
-import MarketplaceToggle from './MarketplaceToggle'
-import MarketplacePriceInput from './MarketplacePriceInput'
-import TokenListingDetails from './TokenListingDetails'
+import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
 import { useFallbackState, useReservoirClient } from '../../hooks'
-import TransactionProgress from '../../modal/TransactionProgress'
-import ProgressBar from '../../modal/ProgressBar'
-import InfoTooltip from '../../primitives/InfoTooltip'
-import { Marketplace } from '../../hooks/useMarketplaces'
 import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'
-import { CurrencySelector } from '../CurrencySelector'
 import { zeroAddress } from 'viem'
-import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import { CSS } from '@stitches/react'
+import ListCheckout from './ListCheckout'
+import QuantitySelector from '../QuantitySelector'
+import dayjs from 'dayjs'
+import { CurrencySelector } from '../CurrencySelector'
+import PriceBreakdown from './PriceBreakdown'
+import FloorDropdown from './FloorDropdown'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -61,8 +54,6 @@ const ModalCopy = {
   ctaSetPrice: 'Set your price',
   ctaList: 'List for Sale',
   ctaAwaitingApproval: 'Waiting for Approval',
-  ctaEditListing: 'Edit Listing',
-  ctaRetry: 'Retry',
   ctaGoToToken: 'Go to Token',
 }
 
@@ -72,7 +63,6 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   chainId?: number
   currencies?: Currency[]
-  nativeOnly?: boolean
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
   oracleEnabled?: boolean
@@ -89,30 +79,6 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 }
 
 const Image = styled('img', {})
-const Span = styled('span', {})
-const ContentContainer = styled(Flex, {
-  width: '100%',
-  borderColor: '$borderColor',
-  flexDirection: 'column',
-  '@bp1': {
-    flexDirection: 'row',
-  },
-})
-
-const MainContainer = styled(Flex, {
-  flex: 1,
-  borderColor: '$borderColor',
-  borderTopWidth: 1,
-  borderLeftWidth: 0,
-  '@bp1': {
-    borderTopWidth: 0,
-    borderLeftWidth: 1,
-  },
-
-  defaultVariants: {
-    direction: 'column',
-  },
-})
 
 const MINIMUM_AMOUNT = 0.000001
 
@@ -123,7 +89,6 @@ export function ListModal({
   collectionId,
   chainId,
   currencies,
-  nativeOnly,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
   oracleEnabled = false,
@@ -140,6 +105,8 @@ export function ListModal({
     openState
   )
 
+  const datetimeElement = useRef<Flatpickr | null>(null)
+
   const client = useReservoirClient()
 
   const currentChain = client?.currentChain()
@@ -147,16 +114,6 @@ export function ListModal({
   const modalChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
-
-  const [marketplacesToApprove, setMarketplacesToApprove] = useState<
-    Marketplace[]
-  >([])
-
-  const providerOptionsContext = useContext(ProviderOptionsContext)
-
-  if (oracleEnabled) {
-    nativeOnly = true
-  }
 
   return (
     <ListModalRenderer
@@ -176,64 +133,41 @@ export function ListModal({
         collection,
         usdPrice,
         listStep,
+        marketplace,
         expirationOption,
         expirationOptions,
-        marketplaces,
-        unapprovedMarketplaces,
         isFetchingOnChainRoyalties,
-        localMarketplace,
         listingData,
         transactionError,
         stepData,
+        price,
         currencies,
         currency,
         quantity,
-        royaltyBps,
-        setListStep,
+        setPrice,
         listToken,
-        setMarketPrice,
         setCurrency,
-        toggleMarketplace,
         setExpirationOption,
         setQuantity,
       }) => {
-        const tokenImage =
-          token && token.token?.imageSmall
-            ? token.token.imageSmall
-            : (collection?.image as string)
+        const source = client?.source ? client?.source : marketplace?.domain
 
-        useEffect(() => {
-          if (nativeOnly) {
-            setListStep(ListStep.SetPrice)
-          }
-        }, [nativeOnly, open])
+        const minimumDate = useMemo(() => {
+          return dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
+        }, [open])
 
-        useEffect(() => {
-          if (unapprovedMarketplaces.length > 0) {
-            const unapprovedNames = unapprovedMarketplaces.reduce(
-              (names, marketplace) => {
-                if (
-                  marketplace.name &&
-                  localMarketplace?.orderKind !== marketplace.orderKind
-                ) {
-                  names.push(marketplace.name)
-                }
-                return names
-              },
-              [] as string[]
-            )
-            setMarketplacesToApprove(
-              marketplaces.filter(
-                (marketplace) =>
-                  marketplace.isSelected &&
-                  marketplace.name &&
-                  unapprovedNames.includes(marketplace.name)
-              )
-            )
-          } else {
-            setMarketplacesToApprove([])
+        const expirationDate = useMemo(() => {
+          if (expirationOption && expirationOption.relativeTime) {
+            const newExpirationTime = expirationOption.relativeTimeUnit
+              ? dayjs().add(
+                  expirationOption.relativeTime,
+                  expirationOption.relativeTimeUnit
+                )
+              : dayjs.unix(expirationOption.relativeTime)
+            return newExpirationTime.format('MM/DD/YYYY h:mm A')
           }
-        }, [unapprovedMarketplaces, marketplaces, localMarketplace])
+          return ''
+        }, [expirationOption])
 
         useEffect(() => {
           if (listStep === ListStep.Complete && onListingComplete) {
@@ -257,40 +191,57 @@ export function ListModal({
           }
         }, [transactionError])
 
-        const availableMarketplaces = marketplaces.filter((market) => {
-          const isNative = market.orderbook === 'reservoir'
-          return nativeOnly
-            ? market.listingEnabled && isNative
-            : market.listingEnabled
-        })
-
-        const selectedMarketplaces = availableMarketplaces.filter(
-          (marketplace) => marketplace.isSelected
-        )
-        const quantitySelectionAvailable = selectedMarketplaces.every(
-          (marketplace) =>
-            marketplace.orderbook === 'reservoir' ||
-            marketplace.orderbook === 'opensea'
-        )
-
         let loading =
           !token ||
           !collection ||
+          !marketplace ||
           (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false)
 
-        const contentContainerCss: CSS = {
-          borderBottomWidth: providerOptionsContext.disablePoweredByReservoir
-            ? 0
-            : 1,
-          marginBottom: providerOptionsContext.disablePoweredByReservoir
-            ? 0
-            : 12,
+        const floorAskPrice = collection?.floorAsk?.price
+        const decimalFloorPrice = collection?.floorAsk?.price?.amount?.decimal
+        const nativeFloorPrice = collection?.floorAsk?.price?.amount?.native
+        const usdFloorPrice = collection?.floorAsk?.price?.amount?.usd
+        const defaultCurrency = currencies?.find(
+          (currency) => currency?.contract === zeroAddress
+        )
+
+        const floorButtonEnabled =
+          (currency.contract === floorAskPrice?.currency?.contract &&
+            decimalFloorPrice) ||
+          (currency.symbol === 'USDC' && usdFloorPrice) ||
+          (nativeFloorPrice && currency.contract === zeroAddress) ||
+          (nativeFloorPrice && defaultCurrency)
+
+        const handleSetFloor = () => {
+          // If currency matches floor ask currency, use decimal floor price
+          if (
+            currency.contract === floorAskPrice?.currency?.contract &&
+            decimalFloorPrice
+          ) {
+            setPrice(decimalFloorPrice.toString())
+          }
+
+          // If currency is USDC, use usd floor price
+          else if (currency.symbol === 'USDC' && usdFloorPrice) {
+            setPrice(usdFloorPrice?.toString())
+          } else if (nativeFloorPrice) {
+            // If currency is native currency, use native floor price
+            if (currency.contract === zeroAddress) {
+              setPrice(nativeFloorPrice.toString())
+            }
+            // Fallback to default currency if it exists
+            else {
+              if (defaultCurrency) {
+                setCurrency(defaultCurrency)
+                setPrice(nativeFloorPrice.toString())
+              }
+            }
+          }
         }
 
         return (
           <Modal
             trigger={trigger}
-            size={ModalSize.LG}
             title={copy.title}
             open={open}
             onOpenChange={(open) => {
@@ -306,332 +257,200 @@ export function ListModal({
               setOpen(open)
             }}
             loading={loading}
+            onPointerDownOutside={(e) => {
+              if (
+                e.target instanceof Element &&
+                datetimeElement.current?.flatpickr?.calendarContainer &&
+                datetimeElement.current.flatpickr.calendarContainer.contains(
+                  e.target
+                )
+              ) {
+                e.preventDefault()
+              }
+            }}
+            onFocusCapture={(e) => {
+              e.stopPropagation()
+            }}
           >
-            {!loading && listStep == ListStep.SelectMarkets && (
-              <ContentContainer
-                css={{
-                  ...contentContainerCss,
-                }}
+            {!loading && listStep == ListStep.Unavailable && (
+              <Flex
+                direction="column"
+                align="center"
+                css={{ p: '$4', gap: '$5' }}
               >
-                <TokenStats
-                  chainId={modalChain?.id}
-                  token={token}
-                  collection={collection}
-                  royaltyBps={royaltyBps}
-                />
+                <Box css={{ color: '$neutralSolid', mt: 48 }}>
+                  <FontAwesomeIcon
+                    icon={faTag}
+                    style={{ width: '32px', height: '32px' }}
+                  />
+                </Box>
 
-                <MainContainer>
-                  <Box css={{ p: '$4', flex: 1 }}>
-                    {currencies.length > 1 ? (
-                      <Text
-                        style="subtitle1"
-                        as={Flex}
-                        css={{ mb: '$4', gap: '$2', alignItems: 'center' }}
-                      >
-                        List item in
-                        <CurrencySelector
-                          chainId={modalChain?.id}
-                          currency={currency}
-                          currencies={currencies}
-                          setCurrency={setCurrency}
-                        />
-                      </Text>
-                    ) : (
-                      <Text style="subtitle1" as="h3" css={{ mb: '$4' }}>
-                        {availableMarketplaces.length > 1
-                          ? 'Select Marketplaces'
-                          : 'Available Marketplace'}
-                      </Text>
-                    )}
-
-                    <Text style="subtitle3" as="p" color="subtle">
-                      Default
-                    </Text>
-                    <Flex align="center" css={{ mb: '$4', mt: '$2' }}>
-                      <Box css={{ mr: '$2' }}>
-                        <img
-                          src={localMarketplace?.imageUrl || ''}
-                          style={{
-                            height: 32,
-                            width: 32,
-                            borderRadius: 4,
-                            visibility: localMarketplace?.imageUrl
-                              ? 'visible'
-                              : 'hidden',
-                          }}
-                        />
-                      </Box>
-                      <Box css={{ mr: '$2', flex: 1 }}>
-                        <Text style="body3">{localMarketplace?.name}</Text>
-                        <Flex css={{ alignItems: 'center', gap: 8 }}>
-                          <Text style="body3" color="subtle" as="div">
-                            on Reservoir
-                          </Text>
-                          <InfoTooltip
-                            side="bottom"
-                            width={200}
-                            content={
-                              'Listings made on this marketplace will be distributed across the reservoir ecosystem'
-                            }
-                          />
-                        </Flex>
-                      </Box>
-                      <Text style="subtitle3" color="subtle" css={{ mr: '$2' }}>
-                        Marketplace fee:{' '}
-                        {((localMarketplace?.fee?.bps || 0) / 10000) * 100}%
-                      </Text>
-                    </Flex>
-                    {availableMarketplaces.length > 1 && (
-                      <Text
-                        style="subtitle3"
-                        color="subtle"
-                        as="p"
-                        css={{ mb: '$2' }}
-                      >
-                        Select other marketplaces to list on
-                      </Text>
-                    )}
-                    {availableMarketplaces
-                      .filter(
-                        (marketplace) => marketplace.orderbook !== 'reservoir'
-                      )
-                      .map((marketplace) => (
-                        <Box key={marketplace.name} css={{ mb: '$3' }}>
-                          <MarketplaceToggle
-                            marketplace={marketplace}
-                            onSelection={() => {
-                              toggleMarketplace(marketplace)
-                            }}
-                          />
-                        </Box>
-                      ))}
-                  </Box>
-                  <Box css={{ p: '$4', width: '100%' }}>
-                    {marketplacesToApprove.length > 0 && (
-                      <Text
-                        color="accent"
-                        style="subtitle3"
-                        css={{
-                          my: 10,
-                          width: '100%',
-                          textAlign: 'center',
-                          display: 'block',
-                        }}
-                      >
-                        {`Additional Gas fee required to approve listing (${marketplacesToApprove
-                          .map((marketplace) => marketplace.name)
-                          .join(', ')})`}
-                      </Text>
-                    )}
-                    {oracleEnabled && (
-                      <Text
-                        style="body3"
-                        color="subtle"
-                        css={{
-                          mb: 10,
-                          textAlign: 'center',
-                          width: '100%',
-                          display: 'block',
-                        }}
-                      >
-                        You can change or cancel your listing for free on{' '}
-                        {localMarketplace?.name}.
-                      </Text>
-                    )}
-                    <Button
-                      onClick={() => setListStep(ListStep.SetPrice)}
-                      css={{ width: '100%' }}
-                    >
-                      {copy.ctaSetPrice}
-                    </Button>
-                  </Box>
-                </MainContainer>
-              </ContentContainer>
+                <Text style="h6" css={{ mb: '$3', textAlign: 'center' }}>
+                  Listing is not available for this collection.
+                </Text>
+                <Button
+                  css={{ width: '100%' }}
+                  onClick={() => {
+                    setOpen(false)
+                  }}
+                >
+                  {copy.ctaClose}
+                </Button>
+              </Flex>
             )}
             {!loading && listStep == ListStep.SetPrice && (
-              <ContentContainer
-                css={{
-                  ...contentContainerCss,
-                }}
-              >
-                <TokenStats
-                  chainId={modalChain?.id}
-                  token={token}
+              <Flex direction="column">
+                {transactionError && <ErrorWell error={transactionError} />}
+                <ListCheckout
                   collection={collection}
-                  royaltyBps={royaltyBps}
+                  token={token}
+                  chain={modalChain}
                 />
-
-                <MainContainer>
-                  <Box css={{ p: '$4', flex: 1 }}>
-                    <Flex align="center" css={{ mb: '$4' }}>
-                      {!nativeOnly ? (
-                        <Button
-                          color="ghost"
-                          size="none"
-                          css={{ mr: '$2', color: '$neutralText' }}
-                          onClick={() => setListStep(ListStep.SelectMarkets)}
-                        >
-                          <FontAwesomeIcon
-                            icon={faChevronLeft}
-                            width={16}
-                            height={16}
-                          />
-                        </Button>
-                      ) : null}
-                      <Text style="subtitle1" as="h3">
-                        Set Your Price
-                      </Text>
-                    </Flex>
-                    {quantityAvailable > 1 && quantitySelectionAvailable && (
-                      <>
-                        <Box css={{ mb: '$2' }}>
-                          <Text
-                            as="div"
-                            css={{ mb: '$2' }}
-                            style="subtitle3"
-                            color="subtle"
-                          >
-                            Quantity
-                          </Text>
-                          <Select
-                            value={`${quantity}`}
-                            onValueChange={(value: string) => {
-                              setQuantity(Number(value))
-                            }}
-                          >
-                            {[...Array(quantityAvailable)].map((_a, i) => (
-                              <Select.Item key={i} value={`${i + 1}`}>
-                                <Select.ItemText>{i + 1}</Select.ItemText>
-                              </Select.Item>
-                            ))}
-                          </Select>
-                        </Box>
-                        <Text
-                          style="body2"
-                          css={{ mb: 24, display: 'inline-block' }}
-                        >
+                <Flex
+                  direction="column"
+                  align="center"
+                  css={{ width: '100%', p: '$4', gap: 24 }}
+                >
+                  {quantityAvailable > 1 && (
+                    <Flex
+                      align="center"
+                      justify="between"
+                      css={{ width: '100%', gap: '$3', '@bp1': { gap: '$6' } }}
+                    >
+                      <Flex
+                        align="start"
+                        direction="column"
+                        css={{ gap: '$1', flexShrink: 0 }}
+                      >
+                        <Text style="subtitle2">Quantity</Text>
+                        <Text style="body3" color="subtle">
                           {quantityAvailable} items available
                         </Text>
-                      </>
-                    )}
-                    <Flex css={{ mb: '$2' }} justify="between">
-                      <Text style="subtitle3" color="subtle" as="p">
-                        {quantityAvailable > 1 && quantitySelectionAvailable
-                          ? 'Unit Price'
-                          : 'Price'}
-                      </Text>
-                      <Flex css={{ alignItems: 'center', gap: 8 }}>
-                        <Text style="subtitle3" color="subtle" as="p">
-                          {quantityAvailable > 1 && quantitySelectionAvailable
-                            ? 'Total Profit'
-                            : 'Profit'}
-                        </Text>
-                        {nativeOnly ? (
-                          <Popover
-                            side="left"
-                            content={
-                              <Flex direction="column" css={{ gap: '$3' }}>
-                                <Flex justify="between" css={{ gap: '$4' }}>
-                                  <Text style="body3">Marketplace Fee</Text>
-                                  <Text style="subtitle3" color="subtle">
-                                    {localMarketplace?.fee?.percent || 0}%
-                                  </Text>
-                                </Flex>
-                                <Flex justify="between" css={{ gap: '$4' }}>
-                                  <Text style="body3">Creator Royalties</Text>
-                                  <Text style="subtitle3" color="subtle">
-                                    {(royaltyBps || 0) * 0.01}%
-                                  </Text>
-                                </Flex>
-                              </Flex>
-                            }
-                          >
-                            <Box
-                              css={{
-                                color: '$neutralText',
-                              }}
-                            >
-                              <FontAwesomeIcon icon={faInfoCircle} />
-                            </Box>
-                          </Popover>
-                        ) : (
-                          <InfoTooltip
-                            side="left"
-                            width={200}
-                            content={`How much ${currency.symbol} you will receive after marketplace fees and creator royalties are subtracted.`}
-                          />
-                        )}
                       </Flex>
+                      <QuantitySelector
+                        quantity={quantity}
+                        setQuantity={setQuantity}
+                        min={1}
+                        max={quantityAvailable}
+                        css={{ width: '100%', justifyContent: 'space-between' }}
+                      />
                     </Flex>
+                  )}
 
-                    {selectedMarketplaces.map((marketplace) => (
-                      <Box key={marketplace.name} css={{ mb: '$3' }}>
-                        <MarketplacePriceInput
-                          chainId={modalChain?.id}
-                          marketplace={marketplace}
-                          collection={collection}
+                  <Flex direction="column" css={{ gap: '$2', width: '100%' }}>
+                    <Text style="subtitle2">Enter a price</Text>
+                    <Flex align="center" justify="between" css={{ gap: '$2' }}>
+                      <Input
+                        type="number"
+                        value={price}
+                        onChange={(e) => {
+                          setPrice(e.target.value)
+                        }}
+                        placeholder="Amount"
+                        css={{ width: '100%' }}
+                        containerCss={{ width: '100%', height: 44 }}
+                      />
+                      {currencies.length > 1 ? (
+                        <CurrencySelector
+                          chainId={chainId}
                           currency={currency}
                           currencies={currencies}
                           setCurrency={setCurrency}
-                          usdPrice={usdPrice}
-                          quantity={quantity}
-                          nativeOnly={nativeOnly}
-                          onChange={(e) => {
-                            setMarketPrice(e.target.value, marketplace)
+                          triggerCss={{
+                            backgroundColor: '$neutralBgHover',
+                            borderRadius: 8,
+                            p: '$3',
+                            width: 120,
+                            flexShrink: 0,
+                            height: 44,
                           }}
-                          onBlur={() => {
-                            if (marketplace.price === '') {
-                              setMarketPrice(0, marketplace)
-                            }
+                          valueCss={{
+                            justifyContent: 'space-between',
+                            width: '100%',
                           }}
                         />
-                        {marketplace.truePrice !== '' &&
-                          marketplace.truePrice !== null &&
-                          Number(marketplace.truePrice) !== 0 &&
-                          Number(marketplace.truePrice) < MINIMUM_AMOUNT && (
-                            <Box>
-                              <Text style="body2" color="error">
-                                Amount must be higher than {MINIMUM_AMOUNT}
-                              </Text>
-                            </Box>
-                          )}
-                        {collection &&
-                          collection?.floorAsk?.price?.amount?.native !==
-                            undefined &&
-                          marketplace.truePrice !== '' &&
-                          marketplace.truePrice !== null &&
-                          Number(marketplace.truePrice) !== 0 &&
-                          Number(marketplace.truePrice) >= MINIMUM_AMOUNT &&
-                          currency.contract === zeroAddress &&
-                          Number(marketplace.truePrice) <
-                            collection?.floorAsk?.price.amount.native && (
-                            <Box>
-                              <Text style="body2" color="error">
-                                Price is{' '}
-                                {Math.round(
-                                  ((collection.floorAsk.price.amount.native -
-                                    +marketplace.truePrice) /
-                                    ((collection.floorAsk.price.amount.native +
-                                      +marketplace.truePrice) /
-                                      2)) *
-                                    100 *
-                                    1000
-                                ) / 1000}
-                                % below the floor
-                              </Text>
-                            </Box>
-                          )}
+                      ) : (
+                        <Flex align="center" css={{ flexShrink: 0, px: '$2' }}>
+                          <Box
+                            css={{
+                              width: 'auto',
+                              height: 20,
+                            }}
+                          >
+                            <CryptoCurrencyIcon
+                              chainId={chainId}
+                              css={{ height: 18 }}
+                              address={currency.contract}
+                            />
+                          </Box>
+                          <Text
+                            style="body1"
+                            color="subtle"
+                            css={{ ml: '$1' }}
+                            as="p"
+                          >
+                            {currency.symbol}
+                          </Text>
+                        </Flex>
+                      )}
+                      {floorButtonEnabled ? (
+                        <Button
+                          color="secondary"
+                          size="none"
+                          css={{
+                            height: 44,
+                            px: '$4',
+                            borderRadius: 8,
+                            fontWeight: 500,
+                          }}
+                          onClick={() => handleSetFloor()}
+                        >
+                          Floor
+                        </Button>
+                      ) : null}
+                      <FloorDropdown
+                        token={token}
+                        currency={currency}
+                        defaultCurrency={defaultCurrency}
+                        setPrice={setPrice}
+                        setCurrency={setCurrency}
+                      />
+                    </Flex>
+                    {Number(price) !== 0 && Number(price) < MINIMUM_AMOUNT && (
+                      <Box>
+                        <Text style="body2" color="error">
+                          Amount must be higher than {MINIMUM_AMOUNT}
+                        </Text>
                       </Box>
-                    ))}
-                    <Box css={{ mb: '$3', mt: '$4' }}>
-                      <Text
-                        as="div"
-                        css={{ mb: '$2' }}
-                        style="subtitle3"
-                        color="subtle"
-                      >
-                        Expiration Date
-                      </Text>
+                    )}
+                    {collection &&
+                      collection?.floorAsk?.price?.amount?.native !==
+                        undefined &&
+                      Number(price) !== 0 &&
+                      Number(price) >= MINIMUM_AMOUNT &&
+                      currency.contract === zeroAddress &&
+                      Number(price) <
+                        collection?.floorAsk?.price.amount.native && (
+                        <Box>
+                          <Text style="body2" color="error">
+                            Price is{' '}
+                            {Math.round(
+                              ((collection.floorAsk.price.amount.native -
+                                +price) /
+                                ((collection.floorAsk.price.amount.native +
+                                  +price) /
+                                  2)) *
+                                100 *
+                                1000
+                            ) / 1000}
+                            % below the floor
+                          </Text>
+                        </Box>
+                      )}
+                  </Flex>
+                  <Flex direction="column" css={{ width: '100%', gap: '$2' }}>
+                    <Text style="subtitle2">Expiration Date</Text>
+                    <Flex align="center" css={{ gap: '$2' }}>
                       <Select
                         value={expirationOption?.text || ''}
                         onValueChange={(value: string) => {
@@ -642,6 +461,7 @@ export function ListModal({
                             setExpirationOption(option)
                           }
                         }}
+                        css={{ borderRadius: 8, maxWidth: 160, height: 44 }}
                       >
                         {expirationOptions.map((option) => (
                           <Select.Item key={option.text} value={option.value}>
@@ -649,230 +469,243 @@ export function ListModal({
                           </Select.Item>
                         ))}
                       </Select>
-                    </Box>
-                  </Box>
-                  <Box css={{ p: '$4', width: '100%' }}>
-                    <Button
-                      disabled={selectedMarketplaces.some(
-                        (marketplace) =>
-                          marketplace.price === '' ||
-                          marketplace.price == 0 ||
-                          Number(marketplace.price) < MINIMUM_AMOUNT
-                      )}
-                      onClick={listToken}
-                      css={{ width: '100%' }}
-                    >
-                      {copy.ctaList}
-                    </Button>
-                  </Box>
-                </MainContainer>
-              </ContentContainer>
-            )}
-            {!loading && listStep == ListStep.ListItem && (
-              <ContentContainer
-                css={{
-                  ...contentContainerCss,
-                }}
-              >
-                <TokenListingDetails
-                  chainId={modalChain?.id}
-                  token={token}
-                  collection={collection}
-                  listingData={listingData}
-                  currency={currency}
-                />
-                <MainContainer css={{ p: '$4' }}>
-                  <ProgressBar
-                    value={stepData?.stepProgress || 0}
-                    max={stepData?.totalSteps || 0}
+                      <DateInput
+                        ref={datetimeElement}
+                        icon={
+                          <FontAwesomeIcon
+                            icon={faCalendar}
+                            width={14}
+                            height={16}
+                          />
+                        }
+                        value={expirationDate}
+                        options={{
+                          chainId: modalChain?.id,
+                          minDate: minimumDate,
+                          enableTime: true,
+                          minuteIncrement: 1,
+                        }}
+                        defaultValue={expirationDate}
+                        onChange={(e: any) => {
+                          if (Array.isArray(e)) {
+                            const customOption = expirationOptions.find(
+                              (option) => option.value === 'custom'
+                            )
+                            if (customOption) {
+                              setExpirationOption({
+                                ...customOption,
+                                relativeTime: e[0] / 1000,
+                              })
+                            }
+                          }
+                        }}
+                        containerCss={{
+                          height: 44,
+                          width: 46,
+                          '@bp1': {
+                            flex: 1,
+                            width: '100%',
+                          },
+                        }}
+                        css={{
+                          padding: 0,
+                          '@bp1': {
+                            padding: '12px 16px 12px 48px',
+                          },
+                        }}
+                      />
+                    </Flex>
+                  </Flex>
+                  <PriceBreakdown
+                    price={price}
+                    usdPrice={usdPrice}
+                    currency={currency}
+                    quantity={quantity}
+                    collection={collection}
+                    marketplace={marketplace}
                   />
-                  {transactionError && (
-                    <ErrorWell error={transactionError} css={{ mt: 24 }} />
-                  )}
+                </Flex>
+                <Box css={{ p: '$4', width: '100%' }}>
+                  <Button
+                    disabled={
+                      Number(price) == 0 || Number(price) < MINIMUM_AMOUNT
+                    }
+                    onClick={listToken}
+                    css={{ width: '100%' }}
+                  >
+                    {copy.ctaList}
+                  </Button>
+                </Box>
+              </Flex>
+            )}
+            {!loading && listStep == ListStep.Listing && (
+              <Flex direction="column">
+                <ListCheckout
+                  collection={collection}
+                  token={token}
+                  price={price}
+                  currency={currency}
+                  quantity={quantity}
+                  expirationOption={expirationOption}
+                  containerCss={{
+                    borderBottom: '1px solid',
+                    borderBottomColor: '$neutralLine',
+                    borderColor: '$neutralLine',
+                  }}
+                />
+                <Flex
+                  direction="column"
+                  align="center"
+                  css={{ width: '100%', p: 24, gap: '$4' }}
+                >
                   {stepData && stepData.currentStep.id === 'auth' ? (
                     <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
                   ) : null}
                   {stepData && stepData.currentStep.id !== 'auth' ? (
                     <>
-                      <Text
-                        css={{ textAlign: 'center', mt: 48, mb: 28 }}
-                        style="subtitle1"
-                      >
+                      <Text css={{ textAlign: 'center' }} style="h6">
                         {stepData.currentStep.kind === 'transaction'
-                          ? 'Approve access to items\nin your wallet'
+                          ? 'Approve Collections'
                           : 'Confirm listing in your wallet'}
                       </Text>
-                      <TransactionProgress
-                        justify="center"
-                        fromImg={tokenImage}
-                        toImgs={stepData?.listingData.map(
-                          (listing) => listing.marketplace.imageUrl || ''
-                        )}
-                      />
                       <Text
                         css={{
                           textAlign: 'center',
-                          mt: 24,
                           maxWidth: 395,
                           mx: 'auto',
-                          mb: '$4',
                         }}
-                        style="body3"
+                        style="body1"
                         color="subtle"
                       >
                         {stepData?.currentStep.description}
                       </Text>
+                      <Flex css={{ color: '$neutralSolid' }}>
+                        <FontAwesomeIcon
+                          icon={
+                            stepData.currentStep.kind === 'transaction'
+                              ? faImages
+                              : faTag
+                          }
+                          size="2x"
+                        />
+                      </Flex>
                     </>
                   ) : null}
                   {!stepData && (
                     <Flex
-                      css={{ height: '100%' }}
+                      css={{ height: '100%', py: '$5' }}
                       justify="center"
                       align="center"
                     >
                       <Loader />
                     </Flex>
                   )}
-                  {!transactionError && (
-                    <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
-                      <Loader />
-                      {copy.ctaAwaitingApproval}
-                    </Button>
-                  )}
-                  {transactionError && (
-                    <Flex css={{ mt: 'auto', gap: 10 }}>
-                      <Button
-                        color="secondary"
-                        css={{ flex: 1 }}
-                        onClick={() => setListStep(ListStep.SetPrice)}
-                      >
-                        {copy.ctaEditListing}
-                      </Button>
-                      <Button css={{ flex: 1 }} onClick={listToken}>
-                        {copy.ctaRetry}
-                      </Button>
-                    </Flex>
-                  )}
-                </MainContainer>
-              </ContentContainer>
+                </Flex>
+                <Flex css={{ width: '100%', p: '$4' }}>
+                  <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
+                    <Loader />
+                    {copy.ctaAwaitingApproval}
+                  </Button>
+                </Flex>
+              </Flex>
             )}
             {!loading && listStep == ListStep.Complete && (
-              <ContentContainer
-                css={{
-                  ...contentContainerCss,
-                }}
-              >
-                <TokenListingDetails
-                  chainId={modalChain?.id}
-                  token={token}
-                  collection={collection}
-                  listingData={listingData}
-                  currency={currency}
-                />
-                <MainContainer css={{ p: '$4' }}>
-                  <ProgressBar
-                    value={stepData?.totalSteps || 0}
-                    max={stepData?.totalSteps || 0}
-                  />
+              <Flex direction="column" align="center">
+                <Flex
+                  direction="column"
+                  align="center"
+                  css={{ width: '100%', px: '$5', pt: '$5', gap: 24 }}
+                >
                   <Flex
-                    align="center"
-                    justify="center"
                     direction="column"
-                    css={{ flex: 1, textAlign: 'center', py: '$5' }}
+                    align="center"
+                    css={{ width: '100%', gap: '$2', overflow: 'hidden' }}
                   >
-                    <Box css={{ color: '$successAccent', mb: 24 }}>
-                      <FontAwesomeIcon icon={faCheckCircle} size="3x" />
-                    </Box>
-                    <Text style="h5" css={{ mb: '$2' }} as="h5">
-                      Your item has been listed!
+                    <Img
+                      src={token?.token?.image || collection?.image}
+                      alt={token?.token?.name || token?.token?.tokenId}
+                      css={{
+                        width: 120,
+                        height: 120,
+                        aspectRatio: '1/1',
+                        borderRadius: 4,
+                      }}
+                    />
+                    <Text style="h6" ellipsify>
+                      {token?.token?.tokenId
+                        ? `#${token?.token?.tokenId}`
+                        : token?.token?.name}
                     </Text>
-                    <Text
-                      style="body3"
-                      color="subtle"
-                      as="p"
-                      css={{ mb: 24, maxWidth: 300, overflow: 'hidden' }}
-                    >
-                      <Text color="accent" ellipsify style="body3">
-                        {token?.token?.name
-                          ? token?.token?.name
-                          : `#${token?.token?.tokenId}`}
-                      </Text>{' '}
-                      from{' '}
-                      <Span css={{ color: '$accentText' }}>
-                        {token?.token?.collection?.name}
-                      </Span>{' '}
-                      has been listed for sale
+                    <Text style="subtitle2" color="accent" ellipsify>
+                      {collection?.name}
                     </Text>
-                    <Text style="subtitle3" as="p" css={{ mb: '$3' }}>
-                      View Listing on
-                    </Text>
-                    <Flex css={{ gap: '$3' }}>
-                      {listingData.map((data) => {
-                        const source =
-                          data.listing.orderbook === 'reservoir' &&
-                          client?.source
-                            ? client?.source
-                            : data.marketplace.domain
-                        return (
-                          <a
-                            key={data.listing.orderbook}
-                            target="_blank"
-                            href={`${modalChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
-                          >
-                            <Image
-                              css={{ width: 24 }}
-                              src={data.marketplace.imageUrl}
-                            />
-                          </a>
-                        )
-                      })}
-                    </Flex>
                   </Flex>
+                  <Text style="h5" as="h5">
+                    Your item has been listed!
+                  </Text>
 
-                  <Flex
-                    css={{
-                      flexDirection: 'column',
-                      gap: '$3',
-                      '@bp1': {
-                        flexDirection: 'row',
-                      },
-                    }}
-                  >
-                    {!!onGoToToken ? (
-                      <>
-                        <Button
-                          onClick={() => {
-                            setOpen(false)
-                          }}
-                          css={{ flex: 1 }}
-                          color="secondary"
-                        >
-                          {copy.ctaClose}
-                        </Button>
-                        <Button
-                          style={{ flex: 1 }}
-                          color="primary"
-                          onClick={() => {
-                            onGoToToken()
-                          }}
-                        >
-                          {copy.ctaGoToToken}
-                        </Button>
-                      </>
-                    ) : (
+                  {source ? (
+                    <Flex direction="column" align="center" css={{ gap: '$2' }}>
+                      <Text style="subtitle3" color="subtle" as="p">
+                        View Listing on
+                      </Text>
+                      <a
+                        target="_blank"
+                        href={`${modalChain?.baseApiUrl}/redirect/sources/${source}/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`}
+                      >
+                        <Image
+                          css={{ width: 24, borderRadius: 4 }}
+                          src={marketplace?.imageUrl}
+                        />
+                      </a>
+                    </Flex>
+                  ) : null}
+                </Flex>
+                <Flex
+                  css={{
+                    p: '$4',
+                    width: '100%',
+                    flexDirection: 'column',
+                    gap: '$3',
+                    '@bp1': {
+                      flexDirection: 'row',
+                    },
+                  }}
+                >
+                  {!!onGoToToken ? (
+                    <>
                       <Button
                         onClick={() => {
                           setOpen(false)
                         }}
-                        style={{ flex: 1 }}
-                        color="primary"
+                        css={{ flex: 1 }}
+                        color="secondary"
                       >
                         {copy.ctaClose}
                       </Button>
-                    )}
-                  </Flex>
-                </MainContainer>
-              </ContentContainer>
+                      <Button
+                        style={{ flex: 1 }}
+                        color="primary"
+                        onClick={() => {
+                          onGoToToken()
+                        }}
+                      >
+                        {copy.ctaGoToToken}
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        setOpen(false)
+                      }}
+                      style={{ flex: 1 }}
+                      color="primary"
+                    >
+                      {copy.ctaClose}
+                    </Button>
+                  )}
+                </Flex>
+              </Flex>
             )}
           </Modal>
         )

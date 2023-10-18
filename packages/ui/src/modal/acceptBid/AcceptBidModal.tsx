@@ -15,6 +15,8 @@ import {
   Box,
   Anchor,
   ErrorWell,
+  ChainIcon,
+  Divider,
 } from '../../primitives'
 
 import { Modal } from '../Modal'
@@ -219,12 +221,18 @@ export function AcceptBidModal({
             {acceptBidStep === AcceptBidStep.Checkout && !loading && (
               <Flex direction="column">
                 {transactionError && <ErrorWell error={transactionError} />}
-                <Flex justify="between" css={{ px: '$4', pt: '$4' }}>
+                <Flex css={{ px: '$4', pt: '$4' }} align="center">
                   <Text style="subtitle3" color="subtle">
-                    {bidCount > 1 ? `${bidCount} Items` : 'Item'}
+                    {`${bidCount} ${bidCount > 1 ? 'Items' : 'Item'}`}
                   </Text>
+                  <Divider direction="vertical" css={{ maxHeight: 12 }} />
+                  <ChainIcon
+                    chainId={modalChain?.id}
+                    height={12}
+                    css={{ mr: 5 }}
+                  />
                   <Text style="subtitle3" color="subtle">
-                    Total Offer Value
+                    {modalChain?.name}
                   </Text>
                 </Flex>
                 {tokensData.map(({ tokenData, bidsPath }, i) => {

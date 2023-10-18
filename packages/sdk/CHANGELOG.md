@@ -1,4 +1,9 @@
 
+## [v1.5.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/616788fec594f503ea9f62d9828b687eeae06a43) (2023-10-12)
+
+* Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
+* Export api routes as runtime export [fb73f4f5](https://github.com/reservoirprotocol/reservoir-kit/commit/fb73f4f5f875ca8bc417c243e6c1a1dcc6327170)
+
 ## [v1.5.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/af5f3d11d93bcfd4b484bb6960f754f38883ec69) (2023-10-05)
 
 * Sync api [39a0cff0](https://github.com/reservoirprotocol/reservoir-kit/commit/39a0cff04e47dac0ca19890d9f665d732db92760)
