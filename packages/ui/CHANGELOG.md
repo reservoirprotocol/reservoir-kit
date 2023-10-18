@@ -1,4 +1,9 @@
 
+## [v1.12.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6ca77f1588fcaf4c41bec614f549b7116583a7e3) (2023-10-18)
+
+* Fix broken import in EditListingModalRenderer [51f7a43f](https://github.com/reservoirprotocol/reservoir-kit/commit/51f7a43f8edfe6516a41bc286fe62c68ae471c12)
+* Fix feesOnTopUsd bug in collect modal [ec631cab](https://github.com/reservoirprotocol/reservoir-kit/commit/ec631cab53b94cabd2ad119d2e20aed3e938390b)
+
 ## [v1.12.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/b4b2a91a1a1942f03260b72c820326c063477049) (2023-10-16)
 
 * Add chain icons to all modals [ea3942b5](https://github.com/reservoirprotocol/reservoir-kit/commit/ea3942b5b02843be242067d1a24c23c39bbae6f0)
