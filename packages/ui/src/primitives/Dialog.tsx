@@ -155,6 +155,7 @@ const Dialog = forwardRef<
           }
         }}
         open={dialogOpen}
+        modal={false}
       >
         <DialogPrimitive.DialogTrigger asChild>
           {trigger}

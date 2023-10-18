@@ -74,7 +74,18 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
         open={open}
         onOpenChange={onOpenChange}
         size={size}
-        onPointerDownOutside={onPointerDownOutside}
+        onPointerDownOutside={(e) => {
+          const privyLayer = document.getElementById('privy-dialog')
+
+          const clickedInsidePrivyLayer =
+            privyLayer && e.target
+              ? privyLayer.contains(e.target as Node)
+              : false
+
+          if (clickedInsidePrivyLayer) {
+            e.preventDefault()
+          }
+        }}
         onFocusCapture={onFocusCapture}
       >
         <Flex
