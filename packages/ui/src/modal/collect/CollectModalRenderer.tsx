@@ -74,7 +74,7 @@ export type ChildrenProps = {
   total: bigint
   totalIncludingFees: bigint
   feeOnTop: bigint
-  feeUsd: bigint
+  feeUsd: string
   usdPrice: number
   usdPriceRaw: bigint
   mintPrice: bigint
@@ -221,7 +221,10 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const usdPrice = paymentCurrency?.usdPrice || 0
   const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
-  const feeUsd = feeOnTop * usdPriceRaw
+  const feeUsd = formatUnits(
+    feeOnTop * usdPriceRaw,
+    (paymentCurrency?.decimals || 18) + 6
+  )
 
   const fetchBuyPath = useCallback(() => {
     if (!client) {
@@ -362,10 +365,7 @@ export const CollectModalRenderer: FC<Props> = ({
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
           const currencyFee = convertedAtomicFee / usdPriceRaw
-          const parsedFee = formatUnits(
-            currencyFee,
-            paymentCurrency?.decimals || 18
-          )
+          const parsedFee = formatUnits(currencyFee, 0)
           return totalFees + BigInt(parsedFee)
         }, 0n)
       }
