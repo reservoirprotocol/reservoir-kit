@@ -463,10 +463,20 @@ export const CollectModalRenderer: FC<Props> = ({
     if (contentMode === 'mint') {
       setPaymentCurrency(chainCurrency)
     } else if (selectedTokens.length > 0) {
-      const firstListingCurrency =
-        paymentTokens.find(
-          (token) => token.address === selectedTokens[0].currency?.toLowerCase()
-        ) || paymentTokens[0]
+      let firstListingCurrency
+      if (currentChain?.alwaysIncludeListingCurrency) {
+        firstListingCurrency = {
+          address: selectedTokens?.[0].currency as Address,
+          decimals: selectedTokens?.[0].currencyDecimals || 18,
+          symbol: selectedTokens?.[0].currencySymbol || '',
+        }
+      } else {
+        firstListingCurrency =
+          paymentTokens.find(
+            (token) =>
+              token.address === selectedTokens[0].currency?.toLowerCase()
+          ) || paymentTokens[0]
+      }
 
       setPaymentCurrency(firstListingCurrency)
     }

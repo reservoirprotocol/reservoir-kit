@@ -11,6 +11,7 @@ export type ReservoirChain = {
   baseApiUrl: string
   active: boolean
   paymentTokens?: PaymentToken[]
+  alwaysIncludeListingCurrency?: boolean
 }
 
 export type ReservoirEventListener = (
@@ -77,6 +78,10 @@ export class ReservoirClient {
       paymentTokens: chain?.paymentTokens
         ? chain?.paymentTokens
         : chainPaymentTokensMap[chain.id],
+      alwaysIncludeListingCurrency:
+        chain?.alwaysIncludeListingCurrency !== undefined
+          ? chain?.alwaysIncludeListingCurrency
+          : true,
     }))
     this.apiKey = options.apiKey
     this.uiVersion = options.uiVersion
@@ -101,6 +106,10 @@ export class ReservoirClient {
           paymentTokens: chain?.paymentTokens
             ? chain?.paymentTokens
             : chainPaymentTokensMap[chain.id],
+          alwaysIncludeListingCurrency:
+            chain?.alwaysIncludeListingCurrency !== undefined
+              ? chain?.alwaysIncludeListingCurrency
+              : true,
         }))
       : this.chains
     this.marketplaceFees = options.marketplaceFees
