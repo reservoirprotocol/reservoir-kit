@@ -1,10 +1,8 @@
 
 ## [v1.12.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6ca77f1588fcaf4c41bec614f549b7116583a7e3) (2023-10-18)
 
-* Merge pull request #415 from reservoirprotocol/ted/grwth-3425-fee-on-top-usd-broken-in-collect-modal-with-new-payment [93d6d80f](https://github.com/reservoirprotocol/reservoir-kit/commit/93d6d80ffb572f272eb4037cf487762219023d9c)
-* Fix: resolve build error for broken import in EditListModalRenderer [51f7a43f](https://github.com/reservoirprotocol/reservoir-kit/commit/51f7a43f8edfe6516a41bc286fe62c68ae471c12)
+* Fix broken import in EditListingModalRenderer [51f7a43f](https://github.com/reservoirprotocol/reservoir-kit/commit/51f7a43f8edfe6516a41bc286fe62c68ae471c12)
 * Fix feesOnTopUsd bug in collect modal [ec631cab](https://github.com/reservoirprotocol/reservoir-kit/commit/ec631cab53b94cabd2ad119d2e20aed3e938390b)
-* Update changelogs [48c951cc](https://github.com/reservoirprotocol/reservoir-kit/commit/48c951ccf2855b365bf0c90981b48d6df46b5899)
 
 ## [v1.12.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/b4b2a91a1a1942f03260b72c820326c063477049) (2023-10-16)
 
