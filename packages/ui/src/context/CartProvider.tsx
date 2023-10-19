@@ -560,6 +560,178 @@ function cartStore({
     [commit, usdPrice]
   )
 
+  //todo test validation
+  const validate = useCallback(async () => {
+    try {
+      if (cartData.current.items.length === 0) {
+        return false
+      }
+      cartData.current = { ...cartData.current, isValidating: true }
+      commit()
+
+      const items = [...cartData.current.items]
+
+      const positionMap =
+        cartData.current.items.reduce((items, item, index) => {
+          if (item.order?.id) {
+            items[`${item.order.id}`] = index
+          } else if (item.collection.id && item.token?.id) {
+            items[`${item.collection.id}:${item.token.id}`] = index
+          }
+          return items
+        }, {} as Record<string, number>) || {}
+
+      const tokensToFetch: string[] = []
+      const ordersToFetch: string[] = []
+
+      //find tokens and order ids to fetch
+      cartData.current.items.map((item) => {
+        if (item.order?.id) {
+          ordersToFetch.push(item.order.id)
+        } else {
+          const contract = item.collection.id.split(':')[0]
+          tokensToFetch.push(`${contract}:${item.token.id}`)
+        }
+      })
+
+      //fetch tokens and orders in tandem
+      const promises: (
+        | ReturnType<typeof fetchOrders>
+        | ReturnType<typeof fetchTokens>
+      )[] = []
+
+      if (ordersToFetch.length > 0) {
+        promises.push(
+          fetchOrders(
+            ordersToFetch,
+            cartData.current.chain?.id as number,
+            (cartData.current.currency?.address ??
+              chainCurrency.address) as Address
+          )
+        )
+      }
+
+      if (tokensToFetch.length > 0) {
+        promises.push(
+          fetchTokens(
+            tokensToFetch,
+            cartData.current.chain?.id as number,
+            (cartData.current.currency?.address ??
+              chainCurrency.address) as Address
+          )
+        )
+      }
+
+      const responses = await Promise.allSettled(promises)
+
+      // hashmap of items to remove { orderId/tokenId: item index }
+      let itemsToRemove: Record<string, number> = {}
+
+      responses.forEach((response) => {
+        if (response.status === 'fulfilled') {
+          const ordersResponse = response.value as OrdersSchema
+          const tokensResponse = response.value as TokensSchema
+
+          if (ordersResponse && ordersResponse.orders) {
+            // process orders response
+            ordersResponse.orders.map((order) => {
+              let index = positionMap[order.id]
+              if (
+                address &&
+                order.maker.toLowerCase() === address?.toLowerCase()
+              ) {
+                itemsToRemove[order.id] = index
+              } else if (order.status !== 'active') {
+                items[index] = {
+                  ...items[index],
+                  price: undefined,
+                }
+              }
+            })
+          } else if (tokensResponse && tokensResponse.tokens) {
+            // process tokens response
+            tokensResponse.tokens.map(({ token, market }) => {
+              const index =
+                positionMap[`${token?.collection?.id}:${token?.tokenId}`]
+
+              if (
+                address &&
+                (token?.owner?.toLowerCase() === address?.toLowerCase() ||
+                  market?.floorAsk?.maker?.toLowerCase() ===
+                    address?.toLowerCase())
+              ) {
+                if (token?.collection?.id && token?.tokenId) {
+                  itemsToRemove[`${token.collection.id}:${token.tokenId}`] =
+                    index
+                }
+              } else {
+                const dynamicPricing = market?.floorAsk?.dynamicPricing
+
+                items[index] = {
+                  ...items[index],
+                  previousPrice: items[index].price,
+                  price: market?.floorAsk?.price,
+                  poolId:
+                    dynamicPricing?.kind === 'pool'
+                      ? (dynamicPricing.data?.pool as string)
+                      : undefined,
+                  poolPrices:
+                    dynamicPricing?.kind === 'pool'
+                      ? (dynamicPricing.data?.prices as CartItemPrice[])
+                      : undefined,
+                }
+                if (token?.name) {
+                  items[index].token.name = token.name
+                }
+                if (token?.collection?.name) {
+                  items[index].collection.name = token.collection.name
+                }
+              }
+            })
+          }
+        }
+      })
+
+      // Remove all items in itemsToRemove
+      if (Object.values(itemsToRemove).length > 0) {
+        Object.values(itemsToRemove).map((index) => {
+          items.splice(index, 1)
+        })
+      }
+
+      const pools = calculatePools(items)
+      // const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
+      //todo do we need to handle currency when it's mismatched?
+      const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+        calculatePricing(
+          items,
+          cartData.current.currency,
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopUsd,
+          usdPrice
+        )
+      cartData.current = {
+        ...cartData.current,
+        items,
+        pools,
+        isValidating: false,
+        totalPrice,
+        totalPriceRaw,
+        feeOnTop,
+        feeOnTopRaw,
+      }
+
+      commit()
+      return true
+    } catch (e) {
+      if (cartData.current.isValidating) {
+        cartData.current.isValidating = false
+        commit()
+      }
+      throw e
+    }
+  }, [fetchTokens, fetchOrders, address, usdPrice])
+
   const setCurrency = useCallback(
     (currencyAddress: Address) => {
       const paymentToken = paymentTokens.find(
@@ -574,7 +746,7 @@ function cartStore({
         commit()
       }
     },
-    [paymentTokens, commit]
+    [paymentTokens, commit, validate]
   )
 
   const getCurrency = useCallback(
@@ -585,6 +757,7 @@ function cartStore({
         return cartData.current.currency
       }
 
+      //todo add logic for alwaysIncludeListingCurrency
       if (paymentTokens && items.length > 0) {
         const firstValidItem = items.find((item) => item.price?.currency)
         return (
@@ -713,7 +886,8 @@ function cartStore({
               new Promise(async (resolve) => {
                 const { orders: fetchedOrders } = await fetchOrders(
                   ordersToFetch,
-                  chainId
+                  chainId,
+                  currency?.address
                 )
                 fetchedOrders?.forEach((orderData) => {
                   const item = convertOrderToItem(orderData)
@@ -886,172 +1060,7 @@ function cartStore({
     [usdPrice]
   )
 
-  const validate = useCallback(async () => {
-    try {
-      if (cartData.current.items.length === 0) {
-        return false
-      }
-      cartData.current = { ...cartData.current, isValidating: true }
-      commit()
-
-      const items = [...cartData.current.items]
-
-      const positionMap =
-        cartData.current.items.reduce((items, item, index) => {
-          if (item.order?.id) {
-            items[`${item.order.id}`] = index
-          } else if (item.collection.id && item.token?.id) {
-            items[`${item.collection.id}:${item.token.id}`] = index
-          }
-          return items
-        }, {} as Record<string, number>) || {}
-
-      const tokensToFetch: string[] = []
-      const ordersToFetch: string[] = []
-
-      //find tokens and order ids to fetch
-      cartData.current.items.map((item) => {
-        if (item.order?.id) {
-          ordersToFetch.push(item.order.id)
-        } else {
-          const contract = item.collection.id.split(':')[0]
-          tokensToFetch.push(`${contract}:${item.token.id}`)
-        }
-      })
-
-      //fetch tokens and orders in tandem
-      const promises: (
-        | ReturnType<typeof fetchOrders>
-        | ReturnType<typeof fetchTokens>
-      )[] = []
-
-      if (ordersToFetch.length > 0) {
-        promises.push(
-          fetchOrders(ordersToFetch, cartData.current.chain?.id as number)
-        )
-      }
-
-      if (tokensToFetch.length > 0) {
-        promises.push(
-          fetchTokens(
-            tokensToFetch,
-            cartData.current.chain?.id as number,
-            (cartData.current.currency?.address ??
-              chainCurrency.address) as Address
-          )
-        )
-      }
-
-      const responses = await Promise.allSettled(promises)
-
-      // hashmap of items to remove { orderId/tokenId: item index }
-      let itemsToRemove: Record<string, number> = {}
-
-      responses.forEach((response) => {
-        if (response.status === 'fulfilled') {
-          const ordersResponse = response.value as OrdersSchema
-          const tokensResponse = response.value as TokensSchema
-
-          if (ordersResponse && ordersResponse.orders) {
-            // process orders response
-            ordersResponse.orders.map((order) => {
-              let index = positionMap[order.id]
-              if (
-                address &&
-                order.maker.toLowerCase() === address?.toLowerCase()
-              ) {
-                itemsToRemove[order.id] = index
-              } else if (order.status !== 'active') {
-                items[index] = {
-                  ...items[index],
-                  price: undefined,
-                }
-              }
-            })
-          } else if (tokensResponse && tokensResponse.tokens) {
-            // process tokens response
-            tokensResponse.tokens.map(({ token, market }) => {
-              const index =
-                positionMap[`${token?.collection?.id}:${token?.tokenId}`]
-
-              if (
-                address &&
-                (token?.owner?.toLowerCase() === address?.toLowerCase() ||
-                  market?.floorAsk?.maker?.toLowerCase() ===
-                    address?.toLowerCase())
-              ) {
-                if (token?.collection?.id && token?.tokenId) {
-                  itemsToRemove[`${token.collection.id}:${token.tokenId}`] =
-                    index
-                }
-              } else {
-                const dynamicPricing = market?.floorAsk?.dynamicPricing
-
-                items[index] = {
-                  ...items[index],
-                  previousPrice: items[index].price,
-                  price: market?.floorAsk?.price,
-                  poolId:
-                    dynamicPricing?.kind === 'pool'
-                      ? (dynamicPricing.data?.pool as string)
-                      : undefined,
-                  poolPrices:
-                    dynamicPricing?.kind === 'pool'
-                      ? (dynamicPricing.data?.prices as CartItemPrice[])
-                      : undefined,
-                }
-                if (token?.name) {
-                  items[index].token.name = token.name
-                }
-                if (token?.collection?.name) {
-                  items[index].collection.name = token.collection.name
-                }
-              }
-            })
-          }
-        }
-      })
-
-      // Remove all items in itemsToRemove
-      if (Object.values(itemsToRemove).length > 0) {
-        Object.values(itemsToRemove).map((index) => {
-          items.splice(index, 1)
-        })
-      }
-
-      const pools = calculatePools(items)
-      // const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
-      //todo do we need to handle currency when it's mismatched?
-      const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
-        calculatePricing(
-          items,
-          cartData.current.currency,
-          cartData.current.feesOnTopBps,
-          cartData.current.feesOnTopUsd,
-          usdPrice
-        )
-      cartData.current = {
-        ...cartData.current,
-        items,
-        pools,
-        isValidating: false,
-        totalPrice,
-        totalPriceRaw,
-        feeOnTop,
-        feeOnTopRaw,
-      }
-
-      commit()
-      return true
-    } catch (e) {
-      if (cartData.current.isValidating) {
-        cartData.current.isValidating = false
-        commit()
-      }
-      throw e
-    }
-  }, [fetchTokens, fetchOrders, address, usdPrice])
-
+  //todo handle different currencies
   const checkout = useCallback(
     async (options: BuyTokenOptions = {}) => {
       if (!client) {

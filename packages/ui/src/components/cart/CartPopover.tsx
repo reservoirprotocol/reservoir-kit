@@ -371,6 +371,8 @@ export function CartPopover({
                         },
                       }}
                       onClick={() =>
+                        //todo create select payment ui
+                        //todo usePaymentTokens and see if it's cached
                         setCartPopoverStep(CartPopoverStep.SelectPayment)
                       }
                     >

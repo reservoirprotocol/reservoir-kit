@@ -72,6 +72,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   useEffect(() => {
+    //todo reset step state to idle
     if (open) {
       validate()
     } else if (
@@ -97,6 +98,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     [items]
   )
   const { address } = useAccount()
+  //todo do we need this now that we have balance in the currency?
   const { data: balance } = useBalance({
     chainId: cartChain?.id || client?.currentChain()?.id,
     address: address,
