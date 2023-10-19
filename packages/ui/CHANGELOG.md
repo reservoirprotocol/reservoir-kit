@@ -1,4 +1,7 @@
 
+## [v1.12.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/407d390d9949777343fc625becb5056e71a9c6e2) (2023-10-19)
+
+
 ## [v1.12.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/eb50f080518c76253f966eef6cdd658e446db536) (2023-10-19)
 
 * Add scroll chain icons [b0a5565a](https://github.com/reservoirprotocol/reservoir-kit/commit/b0a5565a01b0cbc058b3c6a5516e6792b363f87e)
