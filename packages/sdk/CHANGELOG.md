@@ -1,14 +1,8 @@
 
-* Add scroll chain [4d8e05b8](https://github.com/reservoirprotocol/reservoir-kit/commit/4d8e05b8b0ff27558541b3cc97f7b4c85ed4ca0e)
-* Update changelogs [48c951cc](https://github.com/reservoirprotocol/reservoir-kit/commit/48c951ccf2855b365bf0c90981b48d6df46b5899)
-* Pr feedback [35aafb9b](https://github.com/reservoirprotocol/reservoir-kit/commit/35aafb9b5c400fe21533d26bb92bcc8c4dc4bc11)
-* Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
-* Sync api [a0ac72e3](https://github.com/reservoirprotocol/reservoir-kit/commit/a0ac72e3fc916a7ba381769f2a47f4ea6f664278)
+## [v1.5.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4852820a4075edce4e447c81d08c3dad9c2c57e9) (2023-10-19)
 
-* Update changelogs [48c951cc](https://github.com/reservoirprotocol/reservoir-kit/commit/48c951ccf2855b365bf0c90981b48d6df46b5899)
-* Pr feedback [35aafb9b](https://github.com/reservoirprotocol/reservoir-kit/commit/35aafb9b5c400fe21533d26bb92bcc8c4dc4bc11)
+* Add scroll chain [4d8e05b8](https://github.com/reservoirprotocol/reservoir-kit/commit/4d8e05b8b0ff27558541b3cc97f7b4c85ed4ca0e)
 * Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
-* Sync api [a0ac72e3](https://github.com/reservoirprotocol/reservoir-kit/commit/a0ac72e3fc916a7ba381769f2a47f4ea6f664278)
 
 ## [v1.5.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/616788fec594f503ea9f62d9828b687eeae06a43) (2023-10-12)
 
