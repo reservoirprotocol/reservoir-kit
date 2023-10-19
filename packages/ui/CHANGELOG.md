@@ -1,4 +1,10 @@
 
+## [v1.12.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/eb50f080518c76253f966eef6cdd658e446db536) (2023-10-19)
+
+* Add scroll chain icons [b0a5565a](https://github.com/reservoirprotocol/reservoir-kit/commit/b0a5565a01b0cbc058b3c6a5516e6792b363f87e)
+* Add scroll chain [4d8e05b8](https://github.com/reservoirprotocol/reservoir-kit/commit/4d8e05b8b0ff27558541b3cc97f7b4c85ed4ca0e)
+* Update Changelog [5dea83c4](https://github.com/reservoirprotocol/reservoir-kit/commit/5dea83c424af6de74e14e26e2dcae804ad0ec4e7)
+
 ## [v1.12.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6ca77f1588fcaf4c41bec614f549b7116583a7e3) (2023-10-18)
 
 * Fix broken import in EditListingModalRenderer [51f7a43f](https://github.com/reservoirprotocol/reservoir-kit/commit/51f7a43f8edfe6516a41bc286fe62c68ae471c12)
