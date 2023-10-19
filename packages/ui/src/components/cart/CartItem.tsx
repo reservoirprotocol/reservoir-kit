@@ -56,32 +56,26 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
     setQuantity,
   } = useCart((cart) => cart.currency)
   const { data: cartChain } = useCart((cart) => cart.chain)
-
-  const currencyConverted =
-    item.price && item.price?.currency?.contract !== cartCurrency?.contract
-  let price = currencyConverted
-    ? item.price?.amount?.native
-    : item.price?.amount?.decimal
+  let price = BigInt(item.price?.amount?.raw ?? 0n)
   let previousPrice =
-    item.previousPrice?.currency?.contract !== cartCurrency?.contract
-      ? item.previousPrice?.amount?.native
-      : item.previousPrice?.amount?.decimal
-  let priceDiff = 0
+    item.previousPrice?.currency?.contract === cartCurrency?.address
+      ? BigInt(item.previousPrice?.amount?.raw ?? 0n)
+      : undefined
+  let priceDiff = 0n
   let priceIncrease = false
   let priceDecrease = false
   if (price !== undefined && previousPrice !== undefined) {
-    priceDiff = Math.abs(((price - previousPrice) / price) * 100)
+    priceDiff = ((price - previousPrice) / price) * 100n
+    priceDiff = priceDiff < 0n ? -priceDiff : priceDiff
     priceIncrease = price > previousPrice
     priceDecrease = price < previousPrice
   }
-  let usdPrice = (usdConversion || 0) * (price || 0)
   const reservoirChain = client?.chains.find(
     (chain) => cartChain?.id === chain.id
   )
 
   if (price && order?.quantity) {
-    price = price * order.quantity
-    usdPrice = usdPrice * order.quantity
+    price = price * BigInt(order.quantity ?? 1n)
   }
 
   return (
@@ -188,16 +182,6 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               Listing no longer available
             </Text>
           )}
-          {!priceIncrease && !priceDecrease && currencyConverted && (
-            <Flex
-              css={{ gap: '$1', color: '$accentSolidHover' }}
-              align="center"
-            >
-              <Text style="body3" color="accent">
-                Currency converted
-              </Text>
-            </Flex>
-          )}
           {priceIncrease && (
             <Flex
               css={{ gap: '$1', color: '$accentSolidHover' }}
@@ -205,7 +189,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             >
               <FontAwesomeIcon width="11" icon={faArrowUp} />
               <Text style="body2" color="accent">
-                Price has gone up {formatNumber(priceDiff)}%
+                Price has gone up {formatNumber(Number(priceDiff.toString()))}%
               </Text>
             </Flex>
           )}
@@ -235,15 +219,16 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             <FormatCryptoCurrency
               textStyle="subtitle3"
               amount={price}
-              address={cartCurrency?.contract}
+              address={cartCurrency?.address}
               decimals={cartCurrency?.decimals}
               symbol={cartCurrency?.symbol}
               logoWidth={12}
               chainId={cartChain?.id}
             />
-            {usdPrice && usdPrice > 0 ? (
+            {cartCurrency?.usdTotalPriceRaw &&
+            cartCurrency.usdTotalPriceRaw > 0n ? (
               <FormatCurrency
-                amount={usdPrice}
+                amount={cartCurrency.usdTotalPriceRaw}
                 style="tiny"
                 color="subtle"
                 css={{ textAlign: 'end' }}
