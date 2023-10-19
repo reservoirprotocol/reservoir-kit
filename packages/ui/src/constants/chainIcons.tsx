@@ -22,8 +22,8 @@ import LineaIconDark from '../img/chains/LineaIconDark'
 import LineaIconLight from '../img/chains/LineaIconLight'
 import OptimismIconDark from '../img/chains/OptimismIconDark'
 import OptimismIconLight from '../img/chains/OptimismIconLight'
-import ScrollTestnetIconDark from '../img/chains/ScrollTestnetIconDark'
-import ScrollTestnetIconLight from '../img/chains/ScrollTestnetIconLight'
+import ScrollIconDark from '../img/chains/ScrollIconDark'
+import ScrollIconLight from '../img/chains/ScrollIconLight'
 import PolygonZkevmIconDark from '../img/chains/PolygonZkevmIconDark'
 import PolygonZkevmIconLight from '../img/chains/PolygonZkevmIconLight'
 import ZksyncIconDark from '../img/chains/ZksyncIconDark'
@@ -93,8 +93,12 @@ const chainIcons = {
     dark: <PolygonIconLight />,
   },
   [reservoirChains.scrollTestnet.id]: {
-    light: <ScrollTestnetIconDark />,
-    dark: <ScrollTestnetIconLight />,
+    light: <ScrollIconDark />,
+    dark: <ScrollIconLight />,
+  },
+  [reservoirChains.scroll.id]: {
+    light: <ScrollIconDark />,
+    dark: <ScrollIconLight />,
   },
   [reservoirChains.zkSync.id]: {
     light: <ZksyncIconDark />,

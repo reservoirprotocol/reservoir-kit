@@ -15,6 +15,7 @@ const wrappedContractNames: Record<number, string> = {
   8453: 'WETH', //base
   84531: 'WETH', //base goerli
   534353: 'WETH', //scrolltestnet
+  534352: 'WETH', //scroll
   7777777: 'WETH', //zora
   11155111: 'WETH', //sepolia
   2863311531: 'WETH', //ancient8
