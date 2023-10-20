@@ -1,0 +1,24 @@
+name: Sync privy with main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-privy:
+    runs-on: ubuntu-latest
+    name: Syncing privy with main
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set Git config
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"
+      - name: Sync privy with main
+        run: |
+          git fetch --unshallow
+          git checkout privy
+          git pull
+          git merge --no-ff main -m "Auto-merge main into privy"
+          git push
