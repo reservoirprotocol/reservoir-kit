@@ -107,7 +107,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const blockExplorerBaseUrl =
-    wagmiChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+    wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   const [isFetchingBidPath, setIsFetchingBidPath] = useState(false)
   const [bidsPath, setBidsPath] = useState<SellPath | null>(null)

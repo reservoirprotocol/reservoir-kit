@@ -8,6 +8,7 @@ import {
   FormatCurrency,
   FormatCryptoCurrency,
   ChainIcon,
+  Divider,
 } from '../primitives'
 import InfoTooltip from '../primitives/InfoTooltip'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
@@ -142,14 +143,7 @@ const TokenPrimitive: FC<Props> = ({
                 <Text style="body3" color="subtle">
                   {collection}
                 </Text>
-                <Box
-                  css={{
-                    background: '$neutralLine',
-                    height: '100%',
-                    width: 2,
-                    margin: '0 5px',
-                  }}
-                />
+                <Divider direction="vertical" />
                 <ChainIcon chainId={chain?.id} css={{ mr: 5 }} height={12} />
                 <Text style="body3" color="subtle">
                   {chain?.name}
