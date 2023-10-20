@@ -1,9 +1,11 @@
-import { erc20ABI, useBalance, useContractReads } from 'wagmi'
+import { erc20ABI, useContractReads } from 'wagmi'
+import { fetchBalance } from '@wagmi/core'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useReservoirClient, useCurrencyConversions } from '.'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
+import useSWR from 'swr'
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
@@ -15,6 +17,21 @@ export type EnhancedCurrency =
       currencyTotalRaw?: bigint
       currencyTotalFormatted?: string
     }
+
+// Fetcher function
+const fetchNativeBalances = async (tokens?: PaymentToken[]) => {
+  const balancePromises = tokens?.map((currency) =>
+    fetchBalance({ address: currency.address })
+  )
+
+  const settledResults = balancePromises
+    ? await Promise.allSettled(balancePromises)
+    : []
+
+  return settledResults.map((result) =>
+    result.status === 'fulfilled' ? result.value : null
+  )
+}
 
 export default function (
   open: boolean,
@@ -46,7 +63,13 @@ export default function (
     return allPaymentTokens?.filter(
       (currency) => currency.address !== zeroAddress
     )
-  }, [chain?.paymentTokens])
+  }, [allPaymentTokens])
+
+  const nativeCurrencies = useMemo(() => {
+    return allPaymentTokens?.filter(
+      (currency) => currency.address === zeroAddress
+    )
+  }, [allPaymentTokens])
 
   const { data: nonNativeBalances } = useContractReads({
     contracts: open
@@ -62,11 +85,14 @@ export default function (
     allowFailure: false,
   })
 
-  const nativeBalance = useBalance({
-    address: open ? address : undefined,
-    chainId: chainId,
-    enabled: open,
-  })
+  const { data: nativeBalances } = useSWR(
+    allPaymentTokens,
+    () => fetchNativeBalances(allPaymentTokens),
+    {
+      revalidateOnFocus: false, // you can customize SWR behavior using its options
+      // ... other SWR options
+    }
+  )
 
   const preferredCurrencyConversions = useCurrencyConversions(
     preferredCurrency?.address,
@@ -83,7 +109,14 @@ export default function (
       ?.map((currency, i) => {
         let balance: string | number | bigint = 0n
         if (currency.address === zeroAddress) {
-          balance = nativeBalance.data?.value || 0n
+          const index =
+            nativeCurrencies?.findIndex(
+              (nativeCurrency) =>
+                nativeCurrency.symbol === currency.symbol &&
+                nativeCurrency.chainId === currency.chainId
+            ) || 0
+
+          balance = nativeBalances?.[index]?.value.toBigInt() ?? 0n
         } else {
           const index =
             nonNativeCurrencies?.findIndex(
@@ -154,7 +187,8 @@ export default function (
     chainId,
     allPaymentTokens,
     nonNativeBalances,
-    nativeBalance,
+    nativeBalances,
+    // nativeBalance,
   ])
 
   return paymentTokens
