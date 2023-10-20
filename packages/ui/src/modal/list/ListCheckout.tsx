@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import {
   ChainIcon,
+  Divider,
   Flex,
   FormatCryptoCurrency,
   Img,
@@ -58,9 +59,7 @@ const ListCheckout: FC<ListCheckoutProps> = ({
             </Text>
             {chain && !expirationOption ? (
               <>
-                <Text style="subtitle1" css={{ color: '$neutralLine' }}>
-                  |
-                </Text>
+                <Divider direction="vertical" />
                 <ChainIcon chainId={chain.id} height={12} />
                 <Text style="subtitle2" color="subtle" ellipsify>
                   {chain.name}

@@ -87,6 +87,13 @@ const scrollTestnet = {
   paymentTokens: chainPaymentTokensMap[534353]
 } satisfies ReservoirBaseChain
 
+const scroll = {
+  id: 534352,
+  name: 'Scroll',
+  baseApiUrl: 'https://api-scroll.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[534352]
+} satisfies ReservoirBaseChain
+
 const linea = {
   id: 59144,
   name: 'Linea',
@@ -136,4 +143,4 @@ const ancient8Testnet = {
   paymentTokens: chainPaymentTokensMap[2863311531]
 } satisfies ReservoirBaseChain
 
-export const reservoirChains = { mainnet, goerli, polygon, mumbai, optimism, arbitrum, arbitrumNova, avalanche, sepolia, base, baseGoerli, bsc, scrollTestnet, linea, zora, zoraTestnet, zkSync, polygonZkEvm, ancient8Testnet }
+export const reservoirChains = { mainnet, goerli, polygon, mumbai, optimism, arbitrum, arbitrumNova, avalanche, sepolia, base, baseGoerli, bsc, scrollTestnet, scroll, linea, zora, zoraTestnet, zkSync, polygonZkEvm, ancient8Testnet }
