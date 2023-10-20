@@ -21,7 +21,7 @@ import { Execute } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
-import { Listings } from '../list/ListModalRenderer'
+import { Listing } from '../list/ListModalRenderer'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 
@@ -267,7 +267,7 @@ export const EditListingModalRenderer: FC<Props> = ({
         .toString()
     }
 
-    const listing: Listings[0] = {
+    const listing: Listing = {
       token: `${contract}:${tokenId}`,
       weiPrice: (
         parseUnits(`${price as number}`, currency?.decimals || 18) *
