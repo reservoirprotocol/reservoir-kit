@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivySmartAccount } from '@zerodev/privy'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
@@ -27,7 +27,7 @@ const BuyPage: NextPage = () => {
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
-  const { login } = usePrivy();
+  const { login } = usePrivySmartAccount();
 
   return (
     <div

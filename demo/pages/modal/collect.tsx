@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { CollectModal, CollectModalMode } from '@reservoir0x/reservoir-kit-ui'
-import { usePrivy } from '@privy-io/react-auth'
+import { usePrivySmartAccount } from '@zerodev/privy'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
@@ -17,7 +17,7 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 
 const CollectPage: NextPage = () => {
   const router = useRouter()
-  const { login } = usePrivy();
+  const { login } = usePrivySmartAccount();
 
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState<string | undefined>(undefined)

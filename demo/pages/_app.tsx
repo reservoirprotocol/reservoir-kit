@@ -13,6 +13,7 @@ import { configureChains } from 'wagmi'
 import * as allChains from 'wagmi/chains'
 import { PrivyProvider } from '@privy-io/react-auth'
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector'
+import { ZeroDevProvider } from '@zerodev/privy'
 
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
@@ -42,6 +43,7 @@ const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 const WALLET_CONNECT_PROJECT_ID =
   process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || ''
 const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
+const ZERO_DEV_PROJECT_ID= process.env.NEXT_PUBLIC_ZERO_DEV_PROJECT_ID || ''
 
 const configureChainsConfig = configureChains(
   [
@@ -93,111 +95,117 @@ const AppWrapper: FC<any> = ({ children }) => {
     : undefined
 
   return (
-    <PrivyProvider
-        appId={PRIVY_APP_ID}
-        config={{
-          appearance: { 
-            theme:'dark'
+    <ZeroDevProvider projectId={ZERO_DEV_PROJECT_ID}>
+      <PrivyProvider
+          appId={PRIVY_APP_ID}
+          config={{
+            appearance: { 
+              theme:'dark'
+            },
+            embeddedWallets: {
+              createOnLogin: 'users-without-wallets',
+              noPromptOnSignature: true
           }
-        }}
-      >
-    <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-      <ReservoirKitProvider
-        options={{
-          apiKey: API_KEY,
-          chains: [
-            {
-              ...reservoirChains.mainnet,
-              active: CHAIN_ID === allChains.mainnet.id,
-            },
-            {
-              ...reservoirChains.goerli,
-              active: CHAIN_ID === allChains.goerli.id,
-              paymentTokens: [
-                ...reservoirChains.goerli.paymentTokens,
-                {
-                  address: '0x68B7E050E6e2C7eFE11439045c9d49813C1724B8',
-                  symbol: 'phUSDC',
-                  name: 'phUSDC',
-                  decimals: 6,
-                  coinGeckoId: 'usd-coin',
-                },
-                {
-                  address: '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844',
-                  symbol: 'DAI',
-                  name: 'Dai',
-                  decimals: 18,
-                  coinGeckoId: 'dai',
-                },
-              ],
-            },
-            {
-              ...reservoirChains.sepolia,
-              active: CHAIN_ID === allChains.sepolia.id
-            },
-            {
-              ...reservoirChains.polygon,
-              active: CHAIN_ID === allChains.polygon.id,
-            },
-            {
-              ...reservoirChains.optimism,
-              active: CHAIN_ID === allChains.optimism.id,
-            },
-            {
-              ...reservoirChains.arbitrum,
-              active: CHAIN_ID === allChains.arbitrum.id,
-            },
-            {
-              ...reservoirChains.zora,
-              active: CHAIN_ID === allChains.zora.id,
-            },
-            {
-              ...reservoirChains.base,
-              active: CHAIN_ID === allChains.base.id,
-            },
-            {
-              ...reservoirChains.linea,
-              active: CHAIN_ID === allChains.linea.id,
-            },
-            {
-              ...reservoirChains.arbitrumNova,
-              active: CHAIN_ID === allChains.arbitrumNova.id
-            },
-            {
-              ...reservoirChains.ancient8Testnet,
-              id: customChains.ancient8Testnet.id,
-              active: CHAIN_ID === customChains.ancient8Testnet.id,
-            },
-            {
-              ...reservoirChains.scroll,
-              id: customChains.scroll.id,
-              active: CHAIN_ID === customChains.scroll.id,
-            }
-          ],
-          marketplaceFees: MARKETPLACE_FEES,
-          source: SOURCE,
-          normalizeRoyalties: NORMALIZE_ROYALTIES,
-          logLevel: LogLevel.Verbose,
-        }}
-        theme={theme}
-      >
-        <CartProvider feesOnTopBps={cartFeeBps} feesOnTopUsd={cartFeeUsd}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            value={{
-              dark: darkTheme.className,
-              light: 'light',
-            }}
-            enableSystem={false}
-            storageKey={'demo-theme'}
-          >
-            {children}
-          </ThemeProvider>
-        </CartProvider>
-      </ReservoirKitProvider>
-    </PrivyWagmiConnector>
-    </PrivyProvider>
+          }}
+        >
+      <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
+        <ReservoirKitProvider
+          options={{
+            apiKey: API_KEY,
+            chains: [
+              {
+                ...reservoirChains.mainnet,
+                active: CHAIN_ID === allChains.mainnet.id,
+              },
+              {
+                ...reservoirChains.goerli,
+                active: CHAIN_ID === allChains.goerli.id,
+                paymentTokens: [
+                  ...reservoirChains.goerli.paymentTokens,
+                  {
+                    address: '0x68B7E050E6e2C7eFE11439045c9d49813C1724B8',
+                    symbol: 'phUSDC',
+                    name: 'phUSDC',
+                    decimals: 6,
+                    coinGeckoId: 'usd-coin',
+                  },
+                  {
+                    address: '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844',
+                    symbol: 'DAI',
+                    name: 'Dai',
+                    decimals: 18,
+                    coinGeckoId: 'dai',
+                  },
+                ],
+              },
+              {
+                ...reservoirChains.sepolia,
+                active: CHAIN_ID === allChains.sepolia.id
+              },
+              {
+                ...reservoirChains.polygon,
+                active: CHAIN_ID === allChains.polygon.id,
+              },
+              {
+                ...reservoirChains.optimism,
+                active: CHAIN_ID === allChains.optimism.id,
+              },
+              {
+                ...reservoirChains.arbitrum,
+                active: CHAIN_ID === allChains.arbitrum.id,
+              },
+              {
+                ...reservoirChains.zora,
+                active: CHAIN_ID === allChains.zora.id,
+              },
+              {
+                ...reservoirChains.base,
+                active: CHAIN_ID === allChains.base.id,
+              },
+              {
+                ...reservoirChains.linea,
+                active: CHAIN_ID === allChains.linea.id,
+              },
+              {
+                ...reservoirChains.arbitrumNova,
+                active: CHAIN_ID === allChains.arbitrumNova.id
+              },
+              {
+                ...reservoirChains.ancient8Testnet,
+                id: customChains.ancient8Testnet.id,
+                active: CHAIN_ID === customChains.ancient8Testnet.id,
+              },
+              {
+                ...reservoirChains.scroll,
+                id: customChains.scroll.id,
+                active: CHAIN_ID === customChains.scroll.id,
+              }
+            ],
+            marketplaceFees: MARKETPLACE_FEES,
+            source: SOURCE,
+            normalizeRoyalties: NORMALIZE_ROYALTIES,
+            logLevel: LogLevel.Verbose,
+          }}
+          theme={theme}
+        >
+          <CartProvider feesOnTopBps={cartFeeBps} feesOnTopUsd={cartFeeUsd}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              value={{
+                dark: darkTheme.className,
+                light: 'light',
+              }}
+              enableSystem={false}
+              storageKey={'demo-theme'}
+            >
+              {children}
+            </ThemeProvider>
+          </CartProvider>
+        </ReservoirKitProvider>
+      </PrivyWagmiConnector>
+      </PrivyProvider>
+    </ZeroDevProvider>
   )
 }
 

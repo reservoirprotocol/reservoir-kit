@@ -1,15 +1,11 @@
-import {usePrivy, useWallets} from '@privy-io/react-auth'
-import {usePrivyWagmi} from '@privy-io/wagmi-connector'
-import { useNetwork } from 'wagmi'
+import {  useWallets } from '@privy-io/react-auth'
+import { usePrivySmartAccount } from '@zerodev/privy'
+import { usePrivyWagmi } from '@privy-io/wagmi-connector'
 
 export const PrivyConnectButton = () => {
-  const { login, logout, ready, authenticated, connectWallet, linkWallet, unlinkWallet} = usePrivy()
+  const { login, logout, ready, authenticated, connectWallet, linkWallet, unlinkWallet, zeroDevReady} = usePrivySmartAccount();
   const { wallets } = useWallets()
   const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi()
-  const { chain } = useNetwork()
-
-
-  console.log(wallets)
 
   if (!ready) return null;
 

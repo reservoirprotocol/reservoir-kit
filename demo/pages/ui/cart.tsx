@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { CartPopover, useDynamicTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useState } from 'react'
 import ThemeSwitcher from 'components/ThemeSwitcher'
-import { usePrivy } from '@privy-io/react-auth'
+import { usePrivySmartAccount } from '@zerodev/privy'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -11,7 +11,7 @@ const DEFAULT_COLLECTION_ID =
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const CartPage: NextPage = () => {
-  const { login } = usePrivy()
+  const { login } = usePrivySmartAccount()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [orderId, setOrderId] = useState('')
 
