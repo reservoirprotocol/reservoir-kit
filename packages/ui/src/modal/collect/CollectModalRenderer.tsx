@@ -216,7 +216,9 @@ export const CollectModalRenderer: FC<Props> = ({
   )
 
   const paymentCurrency = paymentTokens?.find(
-    (paymentToken) => paymentToken?.address === _paymentCurrency?.address
+    (paymentToken) =>
+      paymentToken?.address === _paymentCurrency?.address &&
+      paymentToken?.chainId === _paymentCurrency?.chainId
   )
 
   const usdPrice = paymentCurrency?.usdPrice || 0
@@ -537,12 +539,15 @@ export const CollectModalRenderer: FC<Props> = ({
     }
 
     let activeWalletChain = getNetwork().chain
-    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+    if (
+      activeWalletChain &&
+      paymentCurrency?.chainId !== activeWalletChain?.id
+    ) {
       activeWalletChain = await switchNetwork({
-        chainId: rendererChain?.id as number,
+        chainId: paymentCurrency?.chainId as number,
       })
     }
-    if (rendererChain?.id !== activeWalletChain?.id) {
+    if (paymentCurrency?.chainId !== activeWalletChain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error

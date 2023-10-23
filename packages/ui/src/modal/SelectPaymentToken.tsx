@@ -28,7 +28,7 @@ export const SelectPaymentToken: FC<Props> = ({
           (a, b) =>
             Number(a.currencyTotalFormatted) - Number(b.currencyTotalFormatted)
         )
-        ?.map((paymentToken) => {
+        ?.map((paymentToken, idx) => {
           const isSelectedCurrency =
             currency?.address.toLowerCase() === paymentToken?.address &&
             currency?.chainId === paymentToken?.chainId
@@ -36,14 +36,10 @@ export const SelectPaymentToken: FC<Props> = ({
             BigInt(paymentToken?.balance || 0),
             paymentToken?.decimals || 18
           )
-          console.log('-------------')
-          console.log(paymentToken)
-          console.log('formatted balance: ', formattedBalance)
-
           if (paymentToken?.currencyTotalRaw != undefined)
             return (
               <Button
-                key={paymentToken?.address}
+                key={idx}
                 color="ghost"
                 size="none"
                 css={{

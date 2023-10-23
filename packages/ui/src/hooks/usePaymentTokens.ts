@@ -7,10 +7,6 @@ import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
 import useSWR from 'swr'
 
-// @TODO:
-// only fetch balance when enabled
-// fix balance number formatting
-
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
       usdPrice?: number
@@ -23,9 +19,15 @@ export type EnhancedCurrency =
     }
 
 // Fetcher function
-const fetchNativeBalances = async (tokens?: PaymentToken[]) => {
+const fetchNativeBalances = async (
+  address: Address,
+  tokens?: PaymentToken[]
+) => {
   const balancePromises = tokens?.map((currency) =>
-    fetchBalance({ address: currency.address, chainId: currency?.chainId })
+    fetchBalance({
+      address: address,
+      chainId: currency?.chainId,
+    })
   )
 
   const settledResults = balancePromises
@@ -33,7 +35,6 @@ const fetchNativeBalances = async (tokens?: PaymentToken[]) => {
     : []
 
   return settledResults.map((result) => {
-    console.log(result)
     return result.status === 'fulfilled' ? result.value : null
   })
 }
@@ -91,8 +92,8 @@ export default function (
   })
 
   const { data: nativeBalances } = useSWR(
-    allPaymentTokens,
-    () => fetchNativeBalances(nativeCurrencies),
+    open ? allPaymentTokens : undefined,
+    () => fetchNativeBalances(address, nativeCurrencies),
     {
       revalidateOnFocus: false,
     }
@@ -178,9 +179,17 @@ export default function (
       })
       .sort((a, b) => {
         // If user has a balance for the listed currency, return first. Otherwise sort currencies by total usdPrice
-        if (a.address === preferredCurrency.address && Number(a.balance) > 0)
+        if (
+          a.address === preferredCurrency.address &&
+          a.chainId === preferredCurrency.chainId &&
+          Number(a.balance) > 0
+        )
           return -1
-        if (b.address === preferredCurrency.address && Number(b.balance) > 0)
+        if (
+          b.address === preferredCurrency.address &&
+          b.chainId === preferredCurrency.chainId &&
+          Number(b.balance) > 0
+        )
           return 1
         return Number(b.usdPrice ?? 0) - Number(a.usdPrice ?? 0)
       }) as EnhancedCurrency[]
