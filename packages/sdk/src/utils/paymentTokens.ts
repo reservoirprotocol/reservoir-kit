@@ -44,6 +44,13 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
     {
+      chainId: 11155111,
+      address: zeroAddress,
+      symbol: 'Sepolia ETH',
+      name: 'Sepolia ETH',
+      decimals: 18,
+    },
+    {
       chainId: 5,
       address: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
       symbol: 'WETH',
@@ -212,6 +219,13 @@ export const chainPaymentTokensMap = {
   // Sepolia
   11155111: [
     {
+      chainId: 5,
+      address: zeroAddress,
+      symbol: 'Goerli ETH',
+      name: 'Goerli ETH',
+      decimals: 18,
+    },
+    {
       chainId: 11155111,
       address: zeroAddress,
       symbol: 'ETH',
@@ -254,6 +268,13 @@ export const chainPaymentTokensMap = {
 
   // Base Goerli
   84531: [
+    {
+      chainId: 5,
+      address: zeroAddress,
+      symbol: 'Goerli ETH',
+      name: 'Goerli ETH',
+      decimals: 18,
+    },
     {
       chainId: 84531,
       address: zeroAddress,

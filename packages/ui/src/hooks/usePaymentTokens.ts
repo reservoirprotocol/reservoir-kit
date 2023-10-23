@@ -1,11 +1,15 @@
 import { erc20ABI, useContractReads } from 'wagmi'
-import { fetchBalance } from '@wagmi/core'
+import { fetchBalance } from 'wagmi/actions'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useReservoirClient, useCurrencyConversions } from '.'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
 import useSWR from 'swr'
+
+// @TODO:
+// only fetch balance when enabled
+// fix balance number formatting
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
@@ -21,16 +25,17 @@ export type EnhancedCurrency =
 // Fetcher function
 const fetchNativeBalances = async (tokens?: PaymentToken[]) => {
   const balancePromises = tokens?.map((currency) =>
-    fetchBalance({ address: currency.address })
+    fetchBalance({ address: currency.address, chainId: currency?.chainId })
   )
 
   const settledResults = balancePromises
     ? await Promise.allSettled(balancePromises)
     : []
 
-  return settledResults.map((result) =>
-    result.status === 'fulfilled' ? result.value : null
-  )
+  return settledResults.map((result) => {
+    console.log(result)
+    return result.status === 'fulfilled' ? result.value : null
+  })
 }
 
 export default function (
@@ -87,10 +92,9 @@ export default function (
 
   const { data: nativeBalances } = useSWR(
     allPaymentTokens,
-    () => fetchNativeBalances(allPaymentTokens),
+    () => fetchNativeBalances(nativeCurrencies),
     {
-      revalidateOnFocus: false, // you can customize SWR behavior using its options
-      // ... other SWR options
+      revalidateOnFocus: false,
     }
   )
 
@@ -116,7 +120,7 @@ export default function (
                 nativeCurrency.chainId === currency.chainId
             ) || 0
 
-          balance = nativeBalances?.[index]?.value.toBigInt() ?? 0n
+          balance = nativeBalances?.[index]?.value ?? 0n
         } else {
           const index =
             nonNativeCurrencies?.findIndex(
@@ -188,7 +192,6 @@ export default function (
     allPaymentTokens,
     nonNativeBalances,
     nativeBalances,
-    // nativeBalance,
   ])
 
   return paymentTokens

@@ -30,11 +30,15 @@ export const SelectPaymentToken: FC<Props> = ({
         )
         ?.map((paymentToken) => {
           const isSelectedCurrency =
-            currency?.address.toLowerCase() === paymentToken?.address
+            currency?.address.toLowerCase() === paymentToken?.address &&
+            currency?.chainId === paymentToken?.chainId
           const formattedBalance = formatUnits(
             BigInt(paymentToken?.balance || 0),
             paymentToken?.decimals || 18
           )
+          console.log('-------------')
+          console.log(paymentToken)
+          console.log('formatted balance: ', formattedBalance)
 
           if (paymentToken?.currencyTotalRaw != undefined)
             return (

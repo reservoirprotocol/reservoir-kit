@@ -235,6 +235,7 @@ export const CollectModalRenderer: FC<Props> = ({
       partial: true,
       onlyPath: true,
       currency: paymentCurrency?.address,
+      currencyChainId: paymentCurrency?.chainId,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -322,6 +323,7 @@ export const CollectModalRenderer: FC<Props> = ({
     mode,
     token?.token?.tokenId,
     paymentCurrency?.address,
+    paymentCurrency?.chainId,
     is1155,
   ])
 
@@ -556,6 +558,7 @@ export const CollectModalRenderer: FC<Props> = ({
     let options: BuyTokenOptions = {
       partial: true,
       currency: paymentCurrency?.address,
+      currencyChainId: paymentCurrency?.chainId,
     }
 
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
@@ -700,7 +703,8 @@ export const CollectModalRenderer: FC<Props> = ({
     feesOnTopUsd,
     contentMode,
     itemAmount,
-    paymentCurrency,
+    paymentCurrency?.address,
+    paymentCurrency?.chainId,
   ])
 
   return (
