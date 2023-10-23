@@ -18,6 +18,7 @@ import { Cart } from '../../context/CartProvider'
 import { formatNumber } from '../../lib/numbers'
 import QuantitySelector from '../../modal/QuantitySelector'
 import * as allChains from 'viem/chains'
+import { Chain } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 
 type Props = {
@@ -96,14 +97,15 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
     >
       <Flex
         onClick={() => {
-          let chain = Object.values(allChains).find(
+          let chain: Chain | undefined = Object.values(allChains).find(
             (chain) => cartChain?.id === chain.id
           )
 
           if (!chain) {
-            chain = Object.values(customChains).find(
-              (chain) => chain.id === (reservoirChain?.id || 1)
-            )
+            chain =
+              Object.values(customChains).find(
+                (chain) => chain.id === reservoirChain?.id
+              ) ?? allChains.mainnet
           }
 
           let url: string | undefined = tokenUrl
