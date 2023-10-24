@@ -212,6 +212,8 @@ export const routes = [
   "/execute/results/v1",
   "/execute/sell/v6",
   "/execute/sell/v7",
+  "/execute/solve/v1",
+  "/execute/status/v1",
   "/execute/transfer/v1",
   "/tokens/flag/v1",
   "/tokens/refresh/v1",

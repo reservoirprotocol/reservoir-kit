@@ -1120,6 +1120,12 @@ export interface paths {
     /** Use this API to accept bids. We recommend using the SDK over this API as the SDK will iterate through the steps and return callbacks. Please mark `excludeEOA` as `true` to exclude Blur orders. */
     post: operations["postExecuteSellV7"];
   };
+  "/execute/solve/v1": {
+    post: operations["postExecuteSolveV1"];
+  };
+  "/execute/status/v1": {
+    post: operations["postExecuteStatusV1"];
+  };
   "/execute/transfer/v1": {
     post: operations["postExecuteTransferV1"];
   };
@@ -1659,6 +1665,8 @@ export interface definitions {
     twitterUsername?: string;
     openseaVerificationStatus?: string;
     description?: string;
+    /** @default false */
+    isSpam?: boolean;
     sampleImages?: definitions["sampleImages"];
     /** @description Total tokens within the collection. */
     tokenCount?: string;
@@ -2183,6 +2191,8 @@ export interface definitions {
     kind?: string;
     /** @default false */
     isFlagged?: boolean;
+    /** @default false */
+    isSpam?: boolean;
     lastFlagUpdate?: string;
     lastFlagChange?: string;
     /** @description Can be higher than 1 if erc1155 */
@@ -4250,6 +4260,8 @@ export interface definitions {
     /** @description Open Sea slug */
     slug?: string;
     imageUrl?: string;
+    /** @default false */
+    isSpam?: boolean;
     openseaVerificationStatus?: string;
     floorAskPrice?: definitions["Model314"];
     royaltiesBps?: number;
@@ -4298,6 +4310,8 @@ export interface definitions {
     media?: string;
     /** @default false */
     isFlagged?: boolean;
+    /** @default false */
+    isSpam?: boolean;
     lastFlagUpdate?: string;
     lastFlagChange?: string;
     collection?: definitions["Model317"];
@@ -5514,6 +5528,8 @@ export interface definitions {
      * @enum {string}
      */
     swapProvider?: "uniswap" | "1inch";
+    /** @enum {string} */
+    executionMethod?: "seaport-v1.5-intent";
     /** @description Referrer address (where supported) */
     referrer?: string;
     /** @description Mint comment (where suported) */
@@ -5524,6 +5540,13 @@ export interface definitions {
     openseaApiKey?: string;
     /** @description Advanced use case to pass personal blurAuthToken; the API will generate one if left empty. */
     blurAuth?: string;
+  };
+  /** @description The details of the endpoint for checking the status of the step */
+  check: {
+    endpoint: string;
+    /** @enum {string} */
+    method: "POST";
+    body?: string;
   };
   Model454: {
     /**
@@ -5536,6 +5559,7 @@ export interface definitions {
     data?: definitions["metadata"];
     /** @description Approximation of gas used (only applies to `transaction` items) */
     gasEstimate?: number;
+    check?: definitions["check"];
   };
   Model455: definitions["Model454"][];
   Model456: {
@@ -6018,17 +6042,46 @@ export interface definitions {
     path?: definitions["Model499"];
   };
   Model500: {
+    /** @enum {string} */
+    kind: "seaport-v1.5-intent";
+    order: string;
+  };
+  status: {
+    endpoint: string;
+    /** @enum {string} */
+    method: "POST";
+    body?: string;
+  };
+  postExecuteSolveV1Response: {
+    status?: definitions["status"];
+  };
+  Model501: {
+    /**
+     * @description Execution kind
+     * @enum {string}
+     */
+    kind: "cross-chain-intent" | "seaport-v1.5-intent" | "transaction";
+    /** @description The id of the execution (eg. transaction / order / intent hash) */
+    id: string;
+  };
+  postExecuteStatusV1Response: {
+    /** @enum {string} */
+    status: "unknown" | "pending" | "success" | "failure";
+    details?: string;
+    time?: number;
+  };
+  Model502: {
     token: string;
     /** @default 1 */
     quantity?: number;
   };
-  Model501: definitions["Model500"][];
-  Model502: {
+  Model503: definitions["Model502"][];
+  Model504: {
     from: string;
     to: string;
-    items?: definitions["Model501"];
+    items?: definitions["Model503"];
   };
-  Model503: {
+  Model505: {
     /**
      * @description Returns `complete` or `incomplete`.
      * @enum {string}
@@ -6036,8 +6089,8 @@ export interface definitions {
     status: "complete" | "incomplete";
     data?: definitions["metadata"];
   };
-  Model504: definitions["Model503"][];
-  Model505: {
+  Model506: definitions["Model505"][];
+  Model507: {
     /** @description Returns `nft-approval` or `transfer` */
     id: string;
     /**
@@ -6047,13 +6100,13 @@ export interface definitions {
     kind: "transaction";
     action: string;
     description: string;
-    items: definitions["Model504"];
+    items: definitions["Model506"];
   };
-  Model506: definitions["Model505"][];
+  Model508: definitions["Model507"][];
   postExecuteTransferV1Response: {
-    steps?: definitions["Model506"];
+    steps?: definitions["Model508"];
   };
-  Model507: {
+  Model509: {
     /** @description The token to update the flag status for. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -6062,7 +6115,7 @@ export interface definitions {
      */
     flag: 0 | 1;
   };
-  Model508: {
+  Model510: {
     /** @description Refresh the given token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -6076,7 +6129,7 @@ export interface definitions {
      */
     overrideCoolDown?: boolean;
   };
-  Model509: {
+  Model511: {
     token?: string;
     /**
      * @default v6
@@ -6084,10 +6137,10 @@ export interface definitions {
      */
     router?: "v5" | "v6";
   };
-  Model510: {
+  Model512: {
     token?: string;
   };
-  Model511: {
+  Model513: {
     id: string;
     /** @default false */
     skipRevalidation?: boolean;
@@ -10405,6 +10458,8 @@ export interface operations {
         includeLastSale?: boolean;
         /** If true, raw data is included in the response. */
         includeRawData?: boolean;
+        /** If true, will filter any tokens marked as spam. */
+        filterSpamTokens?: boolean;
         /** If true, will return the collection non flagged floor ask. */
         useNonFlaggedFloorAsk?: boolean;
         /** Input any ERC20 address to return result in given currency. Applies to `topBid` and `floorAsk`. */
@@ -11823,10 +11878,40 @@ export interface operations {
       };
     };
   };
+  postExecuteSolveV1: {
+    parameters: {
+      query: {
+        /** Signature for the solve request */
+        signature?: string;
+      };
+      body: {
+        body?: definitions["Model500"];
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["postExecuteSolveV1Response"];
+      };
+    };
+  };
+  postExecuteStatusV1: {
+    parameters: {
+      body: {
+        body?: definitions["Model501"];
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["postExecuteStatusV1Response"];
+      };
+    };
+  };
   postExecuteTransferV1: {
     parameters: {
       body: {
-        body?: definitions["Model502"];
+        body?: definitions["Model504"];
       };
     };
     responses: {
@@ -11839,7 +11924,7 @@ export interface operations {
   postTokensFlagV1: {
     parameters: {
       body: {
-        body?: definitions["Model507"];
+        body?: definitions["Model509"];
       };
     };
     responses: {
@@ -11857,7 +11942,7 @@ export interface operations {
   postTokensRefreshV1: {
     parameters: {
       body: {
-        body?: definitions["Model508"];
+        body?: definitions["Model510"];
       };
     };
     responses: {
@@ -11870,7 +11955,7 @@ export interface operations {
   postTokensSimulatefloorV1: {
     parameters: {
       body: {
-        body?: definitions["Model509"];
+        body?: definitions["Model511"];
       };
     };
     responses: {
@@ -11883,7 +11968,7 @@ export interface operations {
   postTokensSimulatetopbidV1: {
     parameters: {
       body: {
-        body?: definitions["Model510"];
+        body?: definitions["Model512"];
       };
     };
     responses: {
@@ -11896,7 +11981,7 @@ export interface operations {
   postManagementOrdersSimulateV1: {
     parameters: {
       body: {
-        body?: definitions["Model511"];
+        body?: definitions["Model513"];
       };
     };
     responses: {
