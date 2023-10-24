@@ -359,8 +359,14 @@ export async function executeSteps(
                     request.headers['x-rkui-version'] = client.uiVersion
                   }
 
+                  // if chainId is present in the tx data field then you should relay the tx on that chain
+                  // otherwise, it's assumed the chain id matched the network the api request was made on
+                  // @TODO: cleanup
+                  const transactionChainId =
+                    stepItem?.data?.chainId ?? reservoirChain?.id ?? 1
+
                   await sendTransactionSafely(
-                    reservoirChain?.id || 1,
+                    transactionChainId,
                     viemClient,
                     stepItem as TransactionStepItem,
                     step,
@@ -379,7 +385,8 @@ export async function executeSteps(
                       }
                     },
                     request,
-                    headers
+                    headers,
+                    stepItem?.check !== undefined
                   )
 
                   //Confirm that on-chain tx has been picked up by the indexer
