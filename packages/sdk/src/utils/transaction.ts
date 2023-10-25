@@ -70,7 +70,6 @@ export async function sendTransactionSafely(
       LogLevel.Verbose
     )
     if (isCrossChainIntent) {
-      console.log(res)
       return res.status === 200 && res.data && res.data.status === 'success'
     }
     return res.status === 200 && res.data && res.data.synced
