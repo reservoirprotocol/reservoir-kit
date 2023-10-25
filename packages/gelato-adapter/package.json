@@ -52,7 +52,7 @@
     },
     "peerDependencies": {
         "@reservoir0x/reservoir-sdk": "workspace:*",
-        "ethers": "^5.7.2",
+        "ethers": "^5.6.1",
         "viem": "~1.6.4"
     }
 }
