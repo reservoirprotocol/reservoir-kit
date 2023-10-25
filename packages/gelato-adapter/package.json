@@ -44,7 +44,7 @@
         "sdk-adapter"
     ],
     "dependencies": {
-        "@gelatonetwork/relay-sdk": "^5.0.0",
+        "@gelatonetwork/relay-sdk": "^4.0.0",
         "axios": "^0.27.2"
     },
     "publishConfig": {
@@ -52,7 +52,7 @@
     },
     "peerDependencies": {
         "@reservoir0x/reservoir-sdk": "workspace:*",
-        "ethers": "^5.6.1",
+        "ethers": "^5.7.2",
         "viem": "~1.6.4"
     }
 }
