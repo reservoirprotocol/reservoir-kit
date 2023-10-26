@@ -365,6 +365,8 @@ export async function executeSteps(
                   const transactionChainId =
                     stepItem?.data?.chainId ?? reservoirChain?.id ?? 1
 
+                  const isCrossChainIntent = stepItem?.check !== undefined
+
                   await sendTransactionSafely(
                     transactionChainId,
                     viemClient,
@@ -386,8 +388,12 @@ export async function executeSteps(
                     },
                     request,
                     headers,
-                    stepItem?.check !== undefined
+                    isCrossChainIntent
                   )
+
+                  console.log('isCrossChainIntent: ', isCrossChainIntent)
+                  console.log('step: ', step)
+                  console.log('stepItem: ', stepItem)
 
                   //Confirm that on-chain tx has been picked up by the indexer
                   if (

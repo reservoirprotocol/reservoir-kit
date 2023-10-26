@@ -70,6 +70,9 @@ export async function sendTransactionSafely(
       LogLevel.Verbose
     )
     if (isCrossChainIntent) {
+      if (res.status === 200 && res.data && res.data.status === 'failure') {
+        throw Error('Transaction failed')
+      }
       return res.status === 200 && res.data && res.data.status === 'success'
     }
     return res.status === 200 && res.data && res.data.synced
@@ -106,7 +109,14 @@ export async function sendTransactionSafely(
     if (validate(res)) {
       waitingForConfirmation = false // transaction confirmed
     } else {
-      attemptCount++
+      // @TODO - if pending transaction, don't increase attempt count
+      if (
+        !isCrossChainIntent ||
+        (isCrossChainIntent && res.data.status !== 'pending')
+      ) {
+        attemptCount++
+      }
+
       await new Promise((resolve) => setTimeout(resolve, 5000)) // wait for 5 seconds
     }
   }
