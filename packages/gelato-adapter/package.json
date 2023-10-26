@@ -44,7 +44,7 @@
         "sdk-adapter"
     ],
     "dependencies": {
-        "@gelatonetwork/relay-sdk": "^5.0.0",
+        "@gelatonetwork/relay-sdk": "^4.0.0",
         "axios": "^0.27.2"
     },
     "publishConfig": {
