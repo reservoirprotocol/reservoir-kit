@@ -3,7 +3,7 @@ import useSWR, { SWRConfiguration } from 'swr'
 import useReservoirClient from './useReservoirClient'
 
 type AttributesResponse =
-  paths['/collections/{collection}/attributes/all/v2']['get']['responses']['200']['schema']
+  paths['/collections/{collection}/attributes/all/v4']['get']['responses']['200']['schema']
 
 export default function (
   collection?: string | undefined,
@@ -16,7 +16,7 @@ export default function (
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
 
-  const pathname = `${chain?.baseApiUrl}/collections/${collection}/attributes/all/v2`
+  const pathname = `${chain?.baseApiUrl}/collections/${collection}/attributes/all/v4`
 
   const path = collection ? new URL(pathname) : null
 
