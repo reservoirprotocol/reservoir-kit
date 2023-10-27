@@ -1,4 +1,11 @@
 
+## [v1.13.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/9b9a97a613e99cc12bca61f0d9db30a8aa3ba0fc) (2023-10-27)
+
+### Breaking Changes:
+* Update useAttributes hook [8bd954e2](https://github.com/reservoirprotocol/reservoir-kit/commit/8bd954e2f768ecb42f60a07075cf46b5475c3570)
+  1. A new parameter displayCurrency - returns the price in a given currency
+  2. floorAskPrice now returns an object. Previously returned a number.
+
 ## [v1.12.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/407d390d9949777343fc625becb5056e71a9c6e2) (2023-10-19)
 * Bump version to update SDK
 
