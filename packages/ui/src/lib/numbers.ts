@@ -18,7 +18,7 @@ function formatNumber(
   const { format } = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: maximumFractionDigits,
   })
-  if (!amount) {
+  if (amount === null || amount === undefined) {
     return '-'
   }
   return format(amount)
