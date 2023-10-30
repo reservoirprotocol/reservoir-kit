@@ -28,7 +28,7 @@ import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
 import { parseUnits } from 'viem'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { GetWalletClientResult, getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 
@@ -121,6 +121,7 @@ type Props = {
   feesBps?: string[] | null
   orderKind?: BidData['orderKind']
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: GetWalletClientResult
 }
 
 export type BidData = Parameters<
@@ -145,6 +146,7 @@ export const BidModalRenderer: FC<Props> = ({
   oracleEnabled = false,
   feesBps,
   children,
+  walletClient
 }) => {
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -158,7 +160,9 @@ export const BidModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id})
+
+  const wallet = walletClient || wagmiWallet;
 
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()

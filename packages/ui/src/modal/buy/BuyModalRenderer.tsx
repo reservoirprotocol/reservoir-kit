@@ -15,7 +15,7 @@ import {
   useCurrencyConversion,
 } from '../../hooks'
 import { useAccount, useBalance, useWalletClient } from 'wagmi'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { GetWalletClientResult, getNetwork, switchNetwork } from 'wagmi/actions'
 
 import {
   BuyPath,
@@ -101,6 +101,7 @@ type Props = {
   normalizeRoyalties?: boolean
   onConnectWallet: () => void
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: GetWalletClientResult
 }
 
 export const BuyModalRenderer: FC<Props> = ({
@@ -114,6 +115,7 @@ export const BuyModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   onConnectWallet,
   children,
+  walletClient
 }) => {
   const [totalPrice, setTotalPrice] = useState(0)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0)
@@ -142,7 +144,9 @@ export const BuyModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wagmiWalletClient } = useWalletClient({ chainId: rendererChain?.id })
+  
+  const wallet = walletClient || wagmiWalletClient
 
   const chainCurrency = useChainCurrency(rendererChain?.id)
   const blockExplorerBaseUrl =
