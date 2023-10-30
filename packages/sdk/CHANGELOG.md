@@ -1,4 +1,9 @@
 
+## [v1.5.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/37c66eb4a5df3a641c5b78d648714ec522a6b6a0) (2023-10-27)
+
+* Sync api [a9d57efb](https://github.com/reservoirprotocol/reservoir-kit/commit/a9d57efb9a4e47cd631b34810e3693b1c0c8f2b3)
+* Add websocket urls to reservoir chains [c9e6467c](https://github.com/reservoirprotocol/reservoir-kit/commit/c9e6467cbd283388c806b1e7c70dc75b84e3a319)
+
 ## [v1.5.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4852820a4075edce4e447c81d08c3dad9c2c57e9) (2023-10-19)
 
 * Add scroll chain [4d8e05b8](https://github.com/reservoirprotocol/reservoir-kit/commit/4d8e05b8b0ff27558541b3cc97f7b4c85ed4ca0e)

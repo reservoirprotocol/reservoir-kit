@@ -7,42 +7,48 @@ const mainnet = {
   id: 1,
   name: 'Ethereum',
   baseApiUrl: 'https://api.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[1]
+  paymentTokens: chainPaymentTokensMap[1],
+  websocketUrl: 'wss://ws.reservoir.tools'
 } satisfies ReservoirBaseChain
 
 const goerli = {
   id: 5,
   name: 'Goerli',
   baseApiUrl: 'https://api-goerli.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[5]
+  paymentTokens: chainPaymentTokensMap[5],
+  websocketUrl: 'wss://ws-goerli.reservoir.tools'
 } satisfies ReservoirBaseChain
 
 const optimism = {
   id: 10,
   name: 'Optimism',
   baseApiUrl: 'https://api-optimism.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[10]
+  paymentTokens: chainPaymentTokensMap[10],
+  websocketUrl: 'wss://ws-optimism.reservoir.tools'
 } satisfies ReservoirBaseChain
 
 const polygon = {
   id: 137,
   name: 'Polygon',
   baseApiUrl: 'https://api-polygon.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[137]
+  paymentTokens: chainPaymentTokensMap[137],
+  websocketUrl: 'wss://ws-polygon.reservoir.tools'
 } satisfies ReservoirBaseChain
 
 const mumbai = {
   id: 80001,
   name: 'Polygon Mumbai',
   baseApiUrl: 'https://api-mumbai.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[80001]
+  paymentTokens: chainPaymentTokensMap[80001],
+  websocketUrl: 'wss://ws-mumbai.reservoir.tools'
 } satisfies ReservoirBaseChain
 
 const arbitrum = {
   id: 42161,
   name: 'Arbitrum',
   baseApiUrl: 'https://api-arbitrum.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[42161]
+  paymentTokens: chainPaymentTokensMap[42161],
+  websocketUrl: 'wss://ws-arbitrum.reservoir.tools'
 } satisfies ReservoirBaseChain
 
 const arbitrumNova = {
@@ -63,14 +69,16 @@ const sepolia = {
   id: 11155111,
   name: 'Sepolia',
   baseApiUrl: 'https://api-sepolia.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[11155111]
+  paymentTokens: chainPaymentTokensMap[11155111],
+  websocketUrl: 'wss://ws-sepolia.reservoir.tools'
 } satisfies ReservoirBaseChain
 
 const base = {
   id: 8453,
   name: 'Base',
   baseApiUrl: 'https://api-base.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[8453]
+  paymentTokens: chainPaymentTokensMap[8453],
+  websocketUrl: 'wss://ws-base.reservoir.tools'
 } satisfies ReservoirBaseChain
 
 const baseGoerli = {
@@ -105,7 +113,8 @@ const bsc = {
   id: 56,
   name: 'BNB Smart Chain',
   baseApiUrl: 'https://api-bsc.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[56]
+  paymentTokens: chainPaymentTokensMap[56],
+  websocketUrl: 'wss://ws-bsc.reservoir.tools'
 } satisfies ReservoirBaseChain
 
 const zora = {

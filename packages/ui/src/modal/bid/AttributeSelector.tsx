@@ -114,7 +114,11 @@ const AttributeSelector: FC<Props> = ({
                     }}
                     as="button"
                     onClick={() => {
-                      setTrait({ key, value, floorAskPrice })
+                      setTrait({
+                        key,
+                        value,
+                        floorAskPrice: floorAskPrice?.amount?.decimal,
+                      })
                       setOpen(false)
                     }}
                   >
@@ -139,7 +143,7 @@ const AttributeSelector: FC<Props> = ({
                       <Box css={{ flex: 'none' }}>
                         <FormatCryptoCurrency
                           chainId={chainId}
-                          amount={floorAskPrice}
+                          amount={floorAskPrice?.amount?.decimal}
                           logoWidth={10}
                           maximumFractionDigits={1}
                           textStyle="subtitle3"
