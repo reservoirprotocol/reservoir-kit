@@ -74,7 +74,7 @@ export type ChildrenProps = {
   total: bigint
   totalIncludingFees: bigint
   feeOnTop: bigint
-  feeUsd: bigint
+  feeUsd: string
   usdPrice: number
   usdPriceRaw: bigint
   mintPrice: bigint
@@ -221,7 +221,10 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const usdPrice = paymentCurrency?.usdPrice || 0
   const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
-  const feeUsd = feeOnTop * usdPriceRaw
+  const feeUsd = formatUnits(
+    feeOnTop * usdPriceRaw,
+    (paymentCurrency?.decimals || 18) + 6
+  )
 
   const fetchBuyPath = useCallback(() => {
     if (!client) {
@@ -362,10 +365,7 @@ export const CollectModalRenderer: FC<Props> = ({
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
           const currencyFee = convertedAtomicFee / usdPriceRaw
-          const parsedFee = formatUnits(
-            currencyFee,
-            paymentCurrency?.decimals || 18
-          )
+          const parsedFee = formatUnits(currencyFee, 0)
           return totalFees + BigInt(parsedFee)
         }, 0n)
       }
@@ -463,14 +463,29 @@ export const CollectModalRenderer: FC<Props> = ({
     if (contentMode === 'mint') {
       setPaymentCurrency(chainCurrency)
     } else if (selectedTokens.length > 0) {
-      const firstListingCurrency =
-        paymentTokens.find(
-          (token) => token.address === selectedTokens[0].currency?.toLowerCase()
-        ) || paymentTokens[0]
+      let firstListingCurrency
+      if (providerOptions.alwaysIncludeListingCurrency !== false) {
+        firstListingCurrency = {
+          address: selectedTokens?.[0].currency as Address,
+          decimals: selectedTokens?.[0].currencyDecimals || 18,
+          symbol: selectedTokens?.[0].currencySymbol || '',
+        }
+      } else {
+        firstListingCurrency =
+          paymentTokens.find(
+            (token) =>
+              token.address === selectedTokens[0].currency?.toLowerCase()
+          ) || paymentTokens[0]
+      }
 
       setPaymentCurrency(firstListingCurrency)
     }
-  }, [paymentTokens, chainCurrency, selectedTokens])
+  }, [
+    paymentTokens,
+    chainCurrency,
+    selectedTokens,
+    providerOptions.alwaysIncludeListingCurrency,
+  ])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`

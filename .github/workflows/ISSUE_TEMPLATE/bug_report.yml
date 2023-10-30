@@ -1,0 +1,46 @@
+name: Bug Report
+description: File a bug/issue
+title: 'bug: <title>'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: input
+    attributes:
+      label: Package Version
+      description: What version of reservoir-kit are you using?
+      placeholder: 1.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Current Behavior
+      description: A concise description of what you're experiencing.
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: A concise description of what you expected to happen.
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Steps To Reproduce
+      description: Steps or code snippets to reproduce the behavior.
+    validations:
+      required: false
+
+  - type: input
+    attributes:
+      label: Link to Minimal Reproducible Example (CodeSandbox, StackBlitz, GitHub repo etc.)
+      description: |
+        Please provide a link via the [ReservoirKit QuickStart Sandbox](https://codesandbox.io/s/reservoir-kit-quick-start-sandbox-s5zznw) or a link to a minimal repository that can reproduce the problem you ran into.
+      placeholder: https://codesandbox.io/s/reservoir-kit-quick-start-sandbox-s5zznw
+    validations:
+      required: false

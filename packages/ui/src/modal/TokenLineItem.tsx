@@ -5,6 +5,7 @@ import { useCollections, useTokens } from '../hooks'
 import { CSSProperties } from '@stitches/react'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
+import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
 type TokenLineItemProps = {
   tokenDetails?: NonNullable<
@@ -23,7 +24,7 @@ type TokenLineItemProps = {
   expires?: string
   sourceImg?: string
   css?: CSSProperties
-  chainId?: number
+  chain?: ReservoirChain | null
   showRoyalties?: boolean
   quantity?: number
 }
@@ -31,8 +32,8 @@ type TokenLineItemProps = {
 const TokenLineItem: FC<TokenLineItemProps> = ({
   tokenDetails,
   collection,
-  chainId,
   usdPrice,
+  chain,
   isUnavailable,
   price,
   priceSubtitle,
@@ -77,7 +78,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
         expires={expires}
         warning={warning}
         source={sourceImg || ''}
-        chainId={chainId}
+        chain={chain}
         isUnavailable={isUnavailable}
         priceSubtitle={priceSubtitle}
         royaltiesBps={royaltiesBps}

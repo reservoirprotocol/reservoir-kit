@@ -6,15 +6,16 @@ import { useTokens, useCollections } from '../../hooks'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { Trait } from './BidModalRenderer'
 import SelectedAttribute from './SelectedAttribute'
+import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   trait?: Trait
-  chainId?: number
+  chain?: ReservoirChain | null
 }
 
-const TokenStats: FC<Props> = ({ token, chainId, collection, trait }) => {
+const TokenStats: FC<Props> = ({ token, chain, collection, trait }) => {
   let stats: (ComponentPropsWithoutRef<typeof Stat> & { id: number })[] = []
 
   stats.push(
@@ -116,7 +117,7 @@ const TokenStats: FC<Props> = ({ token, chainId, collection, trait }) => {
         p: '$4',
       }}
     >
-      <TokenStatsHeader collection={collection} token={token} />
+      <TokenStatsHeader collection={collection} token={token} chain={chain} />
       <Grid
         css={{
           flex: 1,
@@ -138,7 +139,7 @@ const TokenStats: FC<Props> = ({ token, chainId, collection, trait }) => {
           }}
         >
           {stats.map((stat) => (
-            <Stat chainId={chainId} key={stat.id} {...stat} />
+            <Stat chainId={chain?.id} key={stat.id} {...stat} />
           ))}
         </Box>
       </Grid>

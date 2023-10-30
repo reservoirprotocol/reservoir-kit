@@ -129,7 +129,7 @@ getClient().actions.buyToken({
     usePermit: true,
     currency: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
   },
-  wallet: adaptGelatoRelayer(signer, undefined, '/api/relay'),
+  wallet,
   onProgress: () => {},
 })
 ```

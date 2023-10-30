@@ -167,10 +167,20 @@ export const SweepContent: FC<
                 <Flex
                   direction="column"
                   align="start"
-                  css={{ gap: '$1', flexShrink: 0 }}
+                  css={{
+                    gap: '$1',
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    maxWidth: 200,
+                  }}
                 >
                   <Text style="subtitle2">Quantity</Text>
-                  <Text style="body3" color="subtle">
+                  <Text
+                    style="body3"
+                    color="subtle"
+                    ellipsify
+                    css={{ width: '100%' }}
+                  >
                     {formatNumber(maxItemAmount)}{' '}
                     {maxItemAmount === 1 ? 'item' : 'items'} available
                   </Text>
@@ -180,7 +190,11 @@ export const SweepContent: FC<
                   setQuantity={setItemAmount}
                   min={1}
                   max={maxItemAmount}
-                  css={{ width: '100%', justifyContent: 'space-between' }}
+                  css={{
+                    width: '100%',
+                    justifyContent: 'space-between',
+                    minWidth: 200,
+                  }}
                 />
               </Flex>
               {itemAmount > 1 ? (
@@ -353,7 +367,7 @@ export const SweepContent: FC<
                 onClick={() => {
                   window.open(addFundsLink, '_blank')
                 }}
-                css={{ width: '100%', mb: '$3' }}
+                css={{ width: '100%', my: '$4' }}
               >
                 {disableJumperLink
                   ? copy.mintCtaBuy

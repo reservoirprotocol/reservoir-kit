@@ -227,7 +227,7 @@ export function EditBidModal({
                 {transactionError && <ErrorWell error={transactionError} />}
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    chainId={modalChain?.id}
+                    chain={modalChain}
                     img={itemImage}
                     name={bid?.criteria?.data?.token?.name}
                     price={bid?.price?.amount?.decimal}
@@ -533,7 +533,7 @@ export function EditBidModal({
               <Flex direction="column">
                 <Box css={{ p: '$4', borderBottom: '1px solid $borderColor' }}>
                   <TokenPrimitive
-                    chainId={modalChain?.id}
+                    chain={modalChain}
                     img={itemImage}
                     name={bid?.criteria?.data?.token?.name}
                     price={Number(bidAmount)}

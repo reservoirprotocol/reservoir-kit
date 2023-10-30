@@ -54,6 +54,7 @@ const { chains, publicClient } = configureChains(
     allChains.base,
     allChains.avalanche,
     allChains.linea,
+    allChains.scroll
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
@@ -169,6 +170,10 @@ const AppWrapper: FC<any> = ({ children }) => {
               ...reservoirChains.ancient8Testnet,
               id: customChains.ancient8Testnet.id,
               active: CHAIN_ID === customChains.ancient8Testnet.id,
+            },
+            {
+              ...reservoirChains.scroll,
+              active: CHAIN_ID === allChains.scroll.id,
             }
           ],
           marketplaceFees: MARKETPLACE_FEES,

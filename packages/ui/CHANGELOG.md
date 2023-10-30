@@ -1,4 +1,43 @@
 
+## [v1.13.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/9b9a97a613e99cc12bca61f0d9db30a8aa3ba0fc) (2023-10-27)
+
+### Breaking Changes:
+* Update useAttributes hook [8bd954e2](https://github.com/reservoirprotocol/reservoir-kit/commit/8bd954e2f768ecb42f60a07075cf46b5475c3570)
+  1. A new parameter displayCurrency - returns the price in a given currency
+  2. floorAskPrice now returns an object. Previously returned a number.
+
+## [v1.12.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/407d390d9949777343fc625becb5056e71a9c6e2) (2023-10-19)
+* Bump version to update SDK
+
+## [v1.12.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/eb50f080518c76253f966eef6cdd658e446db536) (2023-10-19)
+
+* Add scroll chain [4d8e05b8](https://github.com/reservoirprotocol/reservoir-kit/commit/4d8e05b8b0ff27558541b3cc97f7b4c85ed4ca0e)
+
+## [v1.12.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6ca77f1588fcaf4c41bec614f549b7116583a7e3) (2023-10-18)
+
+* Fix broken import in EditListingModalRenderer [51f7a43f](https://github.com/reservoirprotocol/reservoir-kit/commit/51f7a43f8edfe6516a41bc286fe62c68ae471c12)
+* Fix feesOnTopUsd bug in collect modal [ec631cab](https://github.com/reservoirprotocol/reservoir-kit/commit/ec631cab53b94cabd2ad119d2e20aed3e938390b)
+
+## [v1.12.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/b4b2a91a1a1942f03260b72c820326c063477049) (2023-10-16)
+
+* Add chain icons to all modals [ea3942b5](https://github.com/reservoirprotocol/reservoir-kit/commit/ea3942b5b02843be242067d1a24c23c39bbae6f0)
+
+### Breaking Changes:
+* Remove cross listing from ListModal in favor of Reservoir-only listing
+
+## [v1.11.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/bc9ea4bddb80be047da7a3abd5f9eeafd153e0d7) (2023-10-12)
+
+* Improve AcceptBidModal's unavailable ui [5ab15807](https://github.com/reservoirprotocol/reservoir-kit/commit/5ab1580734376470efca3e69642811c70a7d69dc)
+
+## [v1.11.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7d8a57c1ae608fbec38e73892efe77bf17de000e) (2023-10-06)
+
+* Fix custom chains currency detection [d0314b21](https://github.com/reservoirprotocol/reservoir-kit/commit/d0314b210b1fb880c2162eea328cfcb834a3d38b)
+
+## [v1.11.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/bc866f8c4267598acf6bd54efeae47b75752a748) (2023-10-06)
+
+* Update A8 testnet WETH [bf41b19b](https://github.com/reservoirprotocol/reservoir-kit/commit/bf41b19b596bc8416dade1b1317000bfe06401aa)
+* Disable link jumper with flag [9fbf32b9](https://github.com/reservoirprotocol/reservoir-kit/commit/9fbf32b9953aaa50f7cc3ad2f30be2f383bfec89)
+
 ## [v1.11.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7e913c881f274449ba29cf7403d2ceb8f66f0d72) (2023-10-05)
 
 * Improve transaction observability to reduce dependency on RPC [9347f698](https://github.com/reservoirprotocol/reservoir-kit/commit/9347f698ef341df963efe9396cdef5a06ee08bab)

@@ -21,6 +21,7 @@ const slideUp = keyframes({
 
 const CollapsibleContent = styled(CollapsiblePrimitive.CollapsibleContent, {
   background: 'transparent',
+  overflow: 'hidden',
   border: 'none',
   borderRadius: 0,
   '&[data-state="open"]': {

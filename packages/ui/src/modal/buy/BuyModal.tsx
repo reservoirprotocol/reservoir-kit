@@ -255,7 +255,7 @@ export function BuyModal({
             {buyStep === BuyStep.Unavailable && !loading && (
               <Flex direction="column">
                 <TokenLineItem
-                  chainId={modalChain?.id}
+                  chain={modalChain}
                   tokenDetails={token}
                   collection={collection}
                   usdPrice={paymentCurrency?.usdTotalFormatted}
@@ -302,7 +302,7 @@ export function BuyModal({
               <Flex direction="column">
                 {transactionError && <ErrorWell error={transactionError} />}
                 <TokenLineItem
-                  chainId={modalChain?.id}
+                  chain={modalChain}
                   tokenDetails={token}
                   collection={collection}
                   usdPrice={paymentCurrency?.usdTotalFormatted}
@@ -477,7 +477,7 @@ export function BuyModal({
             {buyStep === BuyStep.Approving && token && (
               <Flex direction="column">
                 <TokenLineItem
-                  chainId={modalChain?.id}
+                  chain={modalChain}
                   tokenDetails={token}
                   collection={collection}
                   usdPrice={paymentCurrency?.usdTotalFormatted}
