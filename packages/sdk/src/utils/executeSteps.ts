@@ -391,10 +391,6 @@ export async function executeSteps(
                     isCrossChainIntent
                   )
 
-                  console.log('isCrossChainIntent: ', isCrossChainIntent)
-                  console.log('step: ', step)
-                  console.log('stepItem: ', stepItem)
-
                   //Confirm that on-chain tx has been picked up by the indexer
                   if (
                     step.id === 'sale' &&

@@ -18,7 +18,6 @@ export type EnhancedCurrency =
       currencyTotalFormatted?: string
     }
 
-// Fetcher function
 const fetchNativeBalances = async (
   address: Address,
   tokens?: PaymentToken[]
