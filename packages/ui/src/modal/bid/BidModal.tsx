@@ -81,6 +81,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
+  orderKind?: BidData['orderKind']
   chainId?: number
   collectionId?: string
   attribute?: Trait
@@ -148,6 +149,7 @@ export function BidModal({
   oracleEnabled = false,
   copyOverrides,
   feesBps,
+  orderKind,
   onViewOffers,
   onClose,
   onBidComplete,
@@ -182,6 +184,7 @@ export function BidModal({
   return (
     <BidModalRenderer
       open={open}
+      orderKind={orderKind}
       chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
