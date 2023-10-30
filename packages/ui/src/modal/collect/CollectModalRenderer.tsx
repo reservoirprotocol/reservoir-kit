@@ -480,7 +480,12 @@ export const CollectModalRenderer: FC<Props> = ({
 
       setPaymentCurrency(firstListingCurrency)
     }
-  }, [paymentTokens, chainCurrency, selectedTokens])
+  }, [
+    paymentTokens,
+    chainCurrency,
+    selectedTokens,
+    providerOptions.alwaysIncludeListingCurrency,
+  ])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
