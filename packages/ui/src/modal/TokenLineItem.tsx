@@ -3,9 +3,9 @@ import { Box } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 import { useCollections, useTokens } from '../hooks'
 import { CSSProperties } from '@stitches/react'
-import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
+import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
 type TokenLineItemProps = {
   tokenDetails?: NonNullable<
@@ -32,8 +32,8 @@ type TokenLineItemProps = {
 const TokenLineItem: FC<TokenLineItemProps> = ({
   tokenDetails,
   collection,
-  chain,
   usdPrice,
+  chain,
   isUnavailable,
   price,
   priceSubtitle,
