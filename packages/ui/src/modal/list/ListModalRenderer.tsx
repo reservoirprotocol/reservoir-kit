@@ -80,6 +80,7 @@ type Props = {
   tokenId?: string
   collectionId?: string
   chainId?: number
+  orderKind?: ListingData['listing']['orderKind']
   currencies?: Currency[]
   normalizeRoyalties?: boolean
   enableOnChainRoyalties: boolean
@@ -102,6 +103,7 @@ export const ListModalRenderer: FC<Props> = ({
   open,
   tokenId,
   collectionId,
+  orderKind,
   currencies,
   chainId,
   normalizeRoyalties,
@@ -306,7 +308,7 @@ export const ListModalRenderer: FC<Props> = ({
       // @ts-ignore
       orderbook: marketplace.orderbook,
       // @ts-ignore
-      orderKind: marketplace.orderKind,
+      orderKind: orderKind || marketplace.orderKind,
     }
 
     if (

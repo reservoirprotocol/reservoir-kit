@@ -614,11 +614,12 @@ export const BuyModalRenderer: FC<Props> = ({
       total = BigInt(token.market.floorAsk.price?.amount?.raw || 0)
     }
     let totalFees = 0n
+
     if (total > 0) {
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (BigInt(fee) / 10000n) * total
+          return totalFees + (BigInt(fee) * total) / 10000n
         }, 0n)
         totalFees += fees
         setFeeOnTop(fees)
