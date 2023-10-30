@@ -1007,7 +1007,7 @@ function cartStore({
       }
       const chainCurrency = useChainCurrency(cartData.current.chain?.id || 1)
       const currencyChain = client.chains.find(
-        (chain) => (chainCurrency.chainId = chain.id)
+        (chain) => chainCurrency.chainId === chain.id
       )
       const feeOnTop = cartData.current.feeOnTop ? cartData.current.feeOnTop : 0
       const expectedPrice = cartData.current.totalPrice - feeOnTop

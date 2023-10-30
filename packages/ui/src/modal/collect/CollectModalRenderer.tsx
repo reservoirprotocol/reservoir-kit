@@ -355,7 +355,7 @@ export const CollectModalRenderer: FC<Props> = ({
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (BigInt(fee) / 10000n) * totalPrice
+          return totalFees + (BigInt(fee) * totalPrice) / 10000n
         }, 0n)
       } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
         fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
@@ -462,14 +462,29 @@ export const CollectModalRenderer: FC<Props> = ({
     if (contentMode === 'mint') {
       setPaymentCurrency(chainCurrency)
     } else if (selectedTokens.length > 0) {
-      const firstListingCurrency =
-        paymentTokens.find(
-          (token) => token.address === selectedTokens[0].currency?.toLowerCase()
-        ) || paymentTokens[0]
+      let firstListingCurrency
+      if (providerOptions.alwaysIncludeListingCurrency !== false) {
+        firstListingCurrency = {
+          address: selectedTokens?.[0].currency as Address,
+          decimals: selectedTokens?.[0].currencyDecimals || 18,
+          symbol: selectedTokens?.[0].currencySymbol || '',
+        }
+      } else {
+        firstListingCurrency =
+          paymentTokens.find(
+            (token) =>
+              token.address === selectedTokens[0].currency?.toLowerCase()
+          ) || paymentTokens[0]
+      }
 
       setPaymentCurrency(firstListingCurrency)
     }
-  }, [paymentTokens, chainCurrency, selectedTokens])
+  }, [
+    paymentTokens,
+    chainCurrency,
+    selectedTokens,
+    providerOptions.alwaysIncludeListingCurrency,
+  ])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`

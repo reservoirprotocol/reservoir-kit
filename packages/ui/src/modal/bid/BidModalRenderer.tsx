@@ -119,6 +119,7 @@ type Props = {
   currencies?: Currency[]
   oracleEnabled: boolean
   feesBps?: string[] | null
+  orderKind?: BidData['orderKind']
   children: (props: ChildrenProps) => ReactNode
 }
 
@@ -137,6 +138,7 @@ export const BidModalRenderer: FC<Props> = ({
   tokenId,
   chainId,
   collectionId,
+  orderKind,
   attribute,
   normalizeRoyalties,
   currencies,
@@ -432,7 +434,9 @@ export const BidModalRenderer: FC<Props> = ({
       weiPrice: atomicBidAmount,
       orderbook: 'reservoir',
       orderKind:
-        (reservoirMarketplace?.orderKind as BidData['orderKind']) || 'seaport',
+        orderKind ||
+        (reservoirMarketplace?.orderKind as BidData['orderKind']) ||
+        'seaport',
       attributeKey: traitBidSupported ? trait?.key : undefined,
       attributeValue: traitBidSupported ? trait?.value : undefined,
     }
