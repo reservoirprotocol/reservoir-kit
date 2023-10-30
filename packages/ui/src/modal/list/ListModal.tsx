@@ -472,49 +472,49 @@ export function ListModal({
                         ))}
                       </Select>
                       <DateInput
-                        ref={datetimeElement}
-                        icon={
-                          <FontAwesomeIcon
-                            icon={faCalendar}
-                            width={14}
-                            height={16}
-                          />
-                        }
-                        value={expirationDate}
-                        options={{
-                          chainId: modalChain?.id,
-                          minDate: minimumDate,
-                          enableTime: true,
-                          minuteIncrement: 1,
-                        }}
-                        defaultValue={expirationDate}
-                        onChange={(e: any) => {
-                          if (Array.isArray(e)) {
-                            const customOption = expirationOptions.find(
-                              (option) => option.value === 'custom'
-                            )
-                            if (customOption) {
-                              setExpirationOption({
-                                ...customOption,
-                                relativeTime: e[0] / 1000,
-                              })
-                            }
-                          }
-                        }}
-                        containerCss={{
-                          height: 44,
-                          width: 46,
-                          '@bp1': {
-                            flex: 1,
-                            width: '100%',
-                          },
-                        }}
-                        css={{
-                          padding: 0,
-                          '@bp1': {
-                            padding: '12px 16px 12px 48px',
-                          },
-                        }}
+                      // ref={datetimeElement}
+                      // icon={
+                      //   <FontAwesomeIcon
+                      //     icon={faCalendar}
+                      //     width={14}
+                      //     height={16}
+                      //   />
+                      // }
+                      // value={expirationDate}
+                      // options={{
+                      //   chainId: modalChain?.id,
+                      //   minDate: minimumDate,
+                      //   enableTime: true,
+                      //   minuteIncrement: 1,
+                      // }}
+                      // defaultValue={expirationDate}
+                      // onChange={(e: any) => {
+                      //   if (Array.isArray(e)) {
+                      //     const customOption = expirationOptions.find(
+                      //       (option) => option.value === 'custom'
+                      //     )
+                      //     if (customOption) {
+                      //       setExpirationOption({
+                      //         ...customOption,
+                      //         relativeTime: e[0] / 1000,
+                      //       })
+                      //     }
+                      //   }
+                      // }}
+                      // containerCss={{
+                      //   height: 44,
+                      //   width: 46,
+                      //   '@bp1': {
+                      //     flex: 1,
+                      //     width: '100%',
+                      //   },
+                      // }}
+                      // css={{
+                      //   padding: 0,
+                      //   '@bp1': {
+                      //     padding: '12px 16px 12px 48px',
+                      //   },
+                      // }}
                       />
                     </Flex>
                   </Flex>
