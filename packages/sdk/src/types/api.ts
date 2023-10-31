@@ -6077,10 +6077,12 @@ export interface definitions {
     /** @description The id of the execution (eg. transaction / order / intent hash) */
     id: string;
   };
+  txHashes: string[];
   postExecuteStatusV1Response: {
     /** @enum {string} */
     status: "unknown" | "pending" | "received" | "success" | "failure";
     details?: string;
+    txHashes?: definitions["txHashes"];
     time?: number;
   };
   Model502: {
@@ -10472,7 +10474,7 @@ export interface operations {
         /** If true, raw data is included in the response. */
         includeRawData?: boolean;
         /** If true, will filter any tokens marked as spam. */
-        filterSpam?: boolean;
+        excludeSpam?: boolean;
         /** If true, will return the collection non flagged floor ask. */
         useNonFlaggedFloorAsk?: boolean;
         /** Input any ERC20 address to return result in given currency. Applies to `topBid` and `floorAsk`. */
