@@ -211,7 +211,8 @@ export const CollectModalRenderer: FC<Props> = ({
     address as Address,
     _paymentCurrency ?? chainCurrency,
     totalIncludingFees,
-    rendererChain?.id
+    rendererChain?.id,
+    contentMode === 'mint'
   )
 
   const paymentCurrency = paymentTokens?.find(

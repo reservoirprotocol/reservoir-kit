@@ -43,7 +43,8 @@ export default function (
   address: Address,
   preferredCurrency: PaymentToken,
   preferredCurrencyTotalPrice: bigint,
-  chainId?: number
+  chainId?: number,
+  nativeOnly?: boolean
 ) {
   const client = useReservoirClient()
   const chain =
@@ -54,6 +55,12 @@ export default function (
   const allPaymentTokens = useMemo(() => {
     let paymentTokens = chain?.paymentTokens
 
+    if (nativeOnly) {
+      paymentTokens = paymentTokens?.filter(
+        (token) => token.address === zeroAddress
+      )
+    }
+
     if (
       !paymentTokens
         ?.map((currency) => currency.address.toLowerCase())
@@ -62,7 +69,7 @@ export default function (
       paymentTokens?.push(preferredCurrency)
     }
     return paymentTokens
-  }, [chain?.paymentTokens, preferredCurrency.address])
+  }, [chain?.paymentTokens, preferredCurrency.address, nativeOnly])
 
   const nonNativeCurrencies = useMemo(() => {
     return allPaymentTokens?.filter(

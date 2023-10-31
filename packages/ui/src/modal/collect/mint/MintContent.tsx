@@ -97,10 +97,6 @@ export const MintContent: FC<
   const failedMints = itemAmount - totalMints
   const successfulMints = itemAmount - failedMints
 
-  const quantitySubject = itemAmount > 1 ? 'Items' : 'Item'
-
-  const hasQuantitySet = itemAmount >= 1
-
   return (
     <>
       {orders?.length === 0 || maxItemAmount === 0 ? (
@@ -274,79 +270,6 @@ export const MintContent: FC<
                 </Flex>
               </Flex>
             </Flex>
-            {/* <Flex
-              direction="column"
-              css={{ px: '$4', pt: '$4', pb: '$2', gap: '$5' }}
-            >
-              <Flex direction="column" css={{ gap: 10 }}>
-                {hasQuantitySet ? (
-                  <Flex justify="between" align="center" css={{ gap: '$4' }}>
-                    <Text style="subtitle3" color="subtle">
-                      {itemAmount} {quantitySubject}
-                    </Text>
-                    <Flex css={{ gap: '$1' }}>
-                      <FormatCryptoCurrency
-                        chainId={chainId}
-                        amount={mintPrice}
-                        address={paymentCurrency?.address}
-                        decimals={paymentCurrency?.decimals}
-                        symbol={paymentCurrency?.symbol}
-                        logoWidth={12}
-                        css={{ color: '$neutralText' }}
-                      />
-                      <Text style="subtitle3" color="subtle">
-                        x {itemAmount}
-                      </Text>
-                    </Flex>
-                  </Flex>
-                ) : null}
-              </Flex>
-              <Flex direction="column" css={{ gap: '$5' }}>
-                {feeOnTop > 0 && (
-                  <Flex
-                    justify="between"
-                    align="start"
-                    css={{ py: '$4', width: '100%' }}
-                  >
-                    <Text style="subtitle3">Referral Fee</Text>
-                    <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                      <FormatCryptoCurrency
-                        chainId={chainId}
-                        amount={feeOnTop}
-                        address={paymentCurrency?.address}
-                        decimals={paymentCurrency?.decimals}
-                        symbol={paymentCurrency?.symbol}
-                      />
-                      <FormatCurrency
-                        amount={feeUsd}
-                        color="subtle"
-                        style="tiny"
-                      />
-                    </Flex>
-                  </Flex>
-                )}
-
-                <Flex justify="between" align="start" css={{ height: 34 }}>
-                  <Text style="h6">You Pay</Text>
-                  <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                    <FormatCryptoCurrency
-                      chainId={chainId}
-                      textStyle="h6"
-                      amount={paymentCurrency?.currencyTotalRaw}
-                      address={paymentCurrency?.address}
-                      decimals={paymentCurrency?.decimals}
-                      symbol={paymentCurrency?.symbol}
-                      logoWidth={18}
-                    />
-                    <FormatCurrency
-                      amount={paymentCurrency?.usdTotalPriceRaw}
-                      style="subtitle3"
-                      color="subtle"
-                    />
-                  </Flex>
-                </Flex>
-              </Flex>
-            </Flex> */}
             {hasEnoughCurrency || !isConnected ? (
               <Button
                 css={{ m: '$4' }}
