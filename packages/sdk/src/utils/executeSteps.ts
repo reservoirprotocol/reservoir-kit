@@ -361,11 +361,12 @@ export async function executeSteps(
 
                   // if chainId is present in the tx data field then you should relay the tx on that chain
                   // otherwise, it's assumed the chain id matched the network the api request was made on
-                  // @TODO: cleanup
                   const transactionChainId =
                     stepItem?.data?.chainId ?? reservoirChain?.id ?? 1
 
-                  const isCrossChainIntent = stepItem?.check !== undefined
+                  const isCrossChainIntent =
+                    stepItem?.data?.chainId &&
+                    stepItem?.data?.chainId != reservoirChain?.id
 
                   await sendTransactionSafely(
                     transactionChainId,

@@ -147,8 +147,7 @@ export const CollectModalRenderer: FC<Props> = ({
     }
   })
 
-  // const mintPrice = orders?.[0]?.totalPrice || 0
-  const mintPrice = BigInt(orders?.[0]?.totalRawPrice || '0')
+  // const mintPrice = BigInt(orders?.[0]?.totalRawPrice || '0')
 
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
@@ -219,6 +218,12 @@ export const CollectModalRenderer: FC<Props> = ({
     (paymentToken) =>
       paymentToken?.address === _paymentCurrency?.address &&
       paymentToken?.chainId === _paymentCurrency?.chainId
+  )
+
+  const mintPrice = BigInt(
+    (orders?.[0]?.currency?.toLowerCase() !== paymentCurrency?.address
+      ? orders?.[0]?.buyInRawQuote
+      : orders?.[0]?.totalRawPrice) || 0
   )
 
   const usdPrice = paymentCurrency?.usdPrice || 0
@@ -389,7 +394,13 @@ export const CollectModalRenderer: FC<Props> = ({
       for (const order of orders) {
         if (remainingQuantity >= 0) {
           let orderQuantity = order?.quantity || 1
-          let orderPricePerItem = BigInt(order?.totalRawPrice || '0')
+          // let orderPricePerItem = BigInt(order?.totalRawPrice || '0')
+
+          let orderPricePerItem = BigInt(
+            (order?.currency?.toLowerCase() !== paymentCurrency?.address
+              ? order?.buyInRawQuote
+              : order?.totalRawPrice) || 0
+          )
 
           if (remainingQuantity >= orderQuantity) {
             updatedTotal += orderPricePerItem * BigInt(orderQuantity)
