@@ -148,13 +148,15 @@ export default function (
 
         const conversionData = preferredCurrencyConversions?.data?.[i]
 
-        const currencyTotalRaw = conversionData?.conversion
-          ? (preferredCurrencyTotalPrice * parseUnits('1', currency.decimals)) /
-            parseUnits(
-              conversionData?.conversion?.toString(),
-              preferredCurrency.decimals
-            )
-          : undefined
+        const currencyTotalRaw =
+          conversionData?.conversion && conversionData?.conversion !== '0'
+            ? (preferredCurrencyTotalPrice *
+                parseUnits('1', currency.decimals)) /
+              parseUnits(
+                conversionData?.conversion?.toString(),
+                preferredCurrency.decimals
+              )
+            : undefined
 
         const currencyTotalFormatted = currencyTotalRaw
           ? formatUnits(currencyTotalRaw, currency.decimals)
