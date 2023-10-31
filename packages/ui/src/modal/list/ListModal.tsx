@@ -61,6 +61,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   chainId?: number
+  orderKind?: ListingData['listing']['orderKind']
   currencies?: Currency[]
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
@@ -87,6 +88,7 @@ export function ListModal({
   tokenId,
   collectionId,
   chainId,
+  orderKind,
   currencies,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
@@ -117,6 +119,7 @@ export function ListModal({
   return (
     <ListModalRenderer
       open={open}
+      orderKind={orderKind}
       chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}

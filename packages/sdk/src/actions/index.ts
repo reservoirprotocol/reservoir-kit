@@ -11,6 +11,7 @@ export type ReservoirChain = {
   baseApiUrl: string
   active: boolean
   paymentTokens?: PaymentToken[]
+  websocketUrl?: string
 }
 
 export type ReservoirEventListener = (

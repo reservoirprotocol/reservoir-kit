@@ -1658,6 +1658,7 @@ export interface definitions {
     /** @description Time when updated in indexer */
     updatedAt?: string;
     name?: string;
+    symbol?: string;
     image?: string;
     banner?: string;
     discordUrl?: string;
@@ -2159,6 +2160,7 @@ export interface definitions {
     name?: string;
     image?: string;
     slug?: string;
+    symbol?: string;
     creator?: string;
     tokenCount?: number;
   };
@@ -2546,6 +2548,7 @@ export interface definitions {
     banner?: string;
     description?: string;
     primaryContract?: string;
+    contract?: string;
     count?: number;
     volume?: number;
     volumePercentChange?: number;
@@ -4259,6 +4262,7 @@ export interface definitions {
     name?: string;
     /** @description Open Sea slug */
     slug?: string;
+    symbol?: string;
     imageUrl?: string;
     /** @default false */
     isSpam?: boolean;
@@ -4300,6 +4304,7 @@ export interface definitions {
     imageSmall?: string;
     imageLarge?: string;
     metadata?: definitions["metadata"];
+    description?: string;
     /** @description Can be higher than one if erc1155. */
     supply?: number;
     remainingSupply?: number;
@@ -5124,8 +5129,12 @@ export interface definitions {
     "seaport-v1.4"?: definitions["seaport-v1.4"];
     "seaport-v1.5"?: definitions["seaport-v1.4"];
   };
-  /** @description List of fees (formatted as `feeRecipient:feeBps`) to be bundled within the order. 1 BPS = 0.01% Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00:100` */
+  /** @description Deprecated, use `marketplaceFees` and/or `customRoyalties` */
   Model425: string[];
+  /** @description List of marketplace fees (formatted as `feeRecipient:feeBps`) to be bundled within the order. 1 BPS = 0.01% Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00:100` */
+  marketplaceFees: string[];
+  /** @description List of custom royalties (formatted as `feeRecipient:feeBps`) to be bundled within the order. 1 BPS = 0.01% Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00:100` */
+  customRoyalties: string[];
   Model426: {
     /** @description Bid on a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token?: string;
@@ -5174,6 +5183,8 @@ export interface definitions {
     /** @description Set a maximum amount of royalties to pay, rather than the full amount. Only relevant when using automated royalties. 1 BPS = 0.01% Note: OpenSea does not support values below 50 bps. */
     royaltyBps?: number;
     fees?: definitions["Model425"];
+    marketplaceFees?: definitions["marketplaceFees"];
+    customRoyalties?: definitions["customRoyalties"];
     /**
      * @description If true flagged tokens will be excluded
      * @default false
@@ -5529,7 +5540,7 @@ export interface definitions {
      */
     swapProvider?: "uniswap" | "1inch";
     /** @enum {string} */
-    executionMethod?: "seaport-v1.5-intent";
+    executionMethod?: "seaport-intent";
     /** @description Referrer address (where supported) */
     referrer?: string;
     /** @description Mint comment (where suported) */
@@ -5784,6 +5795,8 @@ export interface definitions {
     /** @description Set a maximum amount of royalties to pay, rather than the full amount. Only relevant when using automated royalties. 1 BPS = 0.01% Note: OpenSea does not support values below 50 bps. */
     royaltyBps?: number;
     fees?: definitions["Model425"];
+    marketplaceFees?: definitions["marketplaceFees"];
+    customRoyalties?: definitions["customRoyalties"];
     /** @description Unix timestamp (seconds) indicating when listing will be listed. Example: `1656080318` */
     listingTime?: string;
     /** @description Unix timestamp (seconds) indicating when listing will expire. Example: `1656080318` */
@@ -6043,7 +6056,7 @@ export interface definitions {
   };
   Model500: {
     /** @enum {string} */
-    kind: "seaport-v1.5-intent";
+    kind: "seaport-intent";
     order: string;
   };
   status: {
@@ -6060,13 +6073,13 @@ export interface definitions {
      * @description Execution kind
      * @enum {string}
      */
-    kind: "cross-chain-intent" | "seaport-v1.5-intent" | "transaction";
+    kind: "cross-chain-intent" | "seaport-intent" | "transaction";
     /** @description The id of the execution (eg. transaction / order / intent hash) */
     id: string;
   };
   postExecuteStatusV1Response: {
     /** @enum {string} */
-    status: "unknown" | "pending" | "success" | "failure";
+    status: "unknown" | "pending" | "received" | "success" | "failure";
     details?: string;
     time?: number;
   };
@@ -10459,7 +10472,7 @@ export interface operations {
         /** If true, raw data is included in the response. */
         includeRawData?: boolean;
         /** If true, will filter any tokens marked as spam. */
-        filterSpamTokens?: boolean;
+        filterSpam?: boolean;
         /** If true, will return the collection non flagged floor ask. */
         useNonFlaggedFloorAsk?: boolean;
         /** Input any ERC20 address to return result in given currency. Applies to `topBid` and `floorAsk`. */

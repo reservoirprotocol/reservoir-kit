@@ -476,16 +476,33 @@ export const CollectModalRenderer: FC<Props> = ({
       return
     }
     if (contentMode === 'mint') {
+      // @TODO: what should be the default mint currency?
       setPaymentCurrency(chainCurrency)
     } else if (selectedTokens.length > 0) {
-      const firstListingCurrency =
-        paymentTokens.find(
-          (token) => token.address === selectedTokens[0].currency?.toLowerCase()
-        ) || paymentTokens[0]
+      let firstListingCurrency
+      if (providerOptions.alwaysIncludeListingCurrency !== false) {
+        firstListingCurrency = {
+          address: selectedTokens?.[0].currency as Address,
+          decimals: selectedTokens?.[0].currencyDecimals || 18,
+          symbol: selectedTokens?.[0].currencySymbol || '',
+          chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1, // @TODO: test
+        }
+      } else {
+        firstListingCurrency =
+          paymentTokens.find(
+            (token) =>
+              token.address === selectedTokens[0].currency?.toLowerCase()
+          ) || paymentTokens[0]
+      }
 
       setPaymentCurrency(firstListingCurrency)
     }
-  }, [paymentTokens, chainCurrency, selectedTokens])
+  }, [
+    paymentTokens,
+    chainCurrency,
+    selectedTokens,
+    providerOptions.alwaysIncludeListingCurrency,
+  ])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
