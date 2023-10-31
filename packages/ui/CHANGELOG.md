@@ -1,4 +1,13 @@
 
+## [v1.15.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/671af6f970b343527e1ba24d69b4d0c9154532f2) (2023-10-31)
+
+* ListModal: fix fee bugs [abec457b](https://github.com/reservoirprotocol/reservoir-kit/commit/abec457b179152df8d0b311f4b99a7a24b81ab31)
+* BuyModal: Add purchase currency selection functionality [91c0d6ad](https://github.com/reservoirprotocol/reservoir-kit/commit/91c0d6ad36f4b8d1db29779964d58e1191b55ce9)
+* CollectModal: Fix 1155 mint supply bug [6a63031c](https://github.com/reservoirprotocol/reservoir-kit/commit/6a63031c9aeee75c8c32d2ac29c3b1cdcf2746fa)
+* Fix issue when payment token conversion is 0 [5f4ea7be](https://github.com/reservoirprotocol/reservoir-kit/commit/5f4ea7bebfa83bb245eae3e88cbacb745424743d)
+* Fix feesOnTop in BPS not working with small percentages [13fa0f08](https://github.com/reservoirprotocol/reservoir-kit/commit/13fa0f08080c8e3b2133465463e6a7543ca6fdd3)
+* Fix loading ui bug when token is refetched [498dc7ac](https://github.com/reservoirprotocol/reservoir-kit/commit/498dc7acc000ad8385c821c1acb8d182fcf2eb04)
+
 ## [v1.14.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2e0da48aace205a516f505f96ae06518e8468982) (2023-10-30)
 
 * Fix attribute selector ts errors after upgrading hook [fbc1ffd8](https://github.com/reservoirprotocol/reservoir-kit/commit/fbc1ffd83aab237ee89e786c5033b3cee40d2a9e)
