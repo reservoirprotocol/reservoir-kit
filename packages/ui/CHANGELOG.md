@@ -2,15 +2,14 @@
 ## [v1.14.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2e0da48aace205a516f505f96ae06518e8468982) (2023-10-30)
 
 * Fix attribute selector ts errors after upgrading hook [fbc1ffd8](https://github.com/reservoirprotocol/reservoir-kit/commit/fbc1ffd83aab237ee89e786c5033b3cee40d2a9e)
+
 ## [v1.14.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d9e91bb8e9759cb2c7d22db8f701b41b1065df30) (2023-10-30)
 
-* Merge pull request #416 from reservoirprotocol/ted/grwth-3434-how-should-we-treat-originally-listed-token-currency-ux [4320e927](https://github.com/reservoirprotocol/reservoir-kit/commit/4320e927838b38bbf29ac0a41a17dd2ed414aeba)
-* feat: orderKind override for listing [7b116eef](https://github.com/reservoirprotocol/reservoir-kit/commit/7b116eef5d90893a11e998e61ca2cfd9a130febd)
-* feat: support orderKind prop [b863ab02](https://github.com/reservoirprotocol/reservoir-kit/commit/b863ab029e67bc81ad80fc329dd3c48026b1a4b8)
-* Update changelogs [d2d1a16b](https://github.com/reservoirprotocol/reservoir-kit/commit/d2d1a16b1972bcfbaec1f9bba90c1bfd023c34b1)
+* Handle original listing currency [4320e927](https://github.com/reservoirprotocol/reservoir-kit/commit/4320e927838b38bbf29ac0a41a17dd2ed414aeba)
+* ListModal: OrderKind override for listing [7b116eef](https://github.com/reservoirprotocol/reservoir-kit/commit/7b116eef5d90893a11e998e61ca2cfd9a130febd)
+* BidModal: support orderKind prop [b863ab02](https://github.com/reservoirprotocol/reservoir-kit/commit/b863ab029e67bc81ad80fc329dd3c48026b1a4b8)
 * Upgrade wagmi to v~1.4.3 and viem to v~1.16.3 [38611577](https://github.com/reservoirprotocol/reservoir-kit/commit/38611577d63a546c02b135b92b4a7b9868486ed7)
-* Move alwaysIncludeListingCurrency to ReservoirKitProvider options [499fdfb6](https://github.com/reservoirprotocol/reservoir-kit/commit/499fdfb6d8e28bad3337d49f376d7acc76fd6029)
-* Add alwaysIncludeListingCurrency flag to ReservoirChain [b8d6dad8](https://github.com/reservoirprotocol/reservoir-kit/commit/b8d6dad824aa7a9a90d4ca4b1ffbc3c078799fdc)
+* Add alwaysIncludeListingCurrency flag [b8d6dad8](https://github.com/reservoirprotocol/reservoir-kit/commit/b8d6dad824aa7a9a90d4ca4b1ffbc3c078799fdc)
 
 ## [v1.13.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/9b9a97a613e99cc12bca61f0d9db30a8aa3ba0fc) (2023-10-27)
 
