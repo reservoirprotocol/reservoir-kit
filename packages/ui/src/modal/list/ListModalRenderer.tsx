@@ -317,12 +317,14 @@ export const ListModalRenderer: FC<Props> = ({
       listing.orderKind?.includes('seaport')
     ) {
       const royalties = onChainRoyalties[0].map((recipient, i) => {
-        const bps =
+        const bps = Math.floor(
           (parseFloat(
-            formatUnits(onChainRoyalties[1][i], currency.decimals || 18)
+            formatUnits(onChainRoyalties[1][i], chainCurrency.decimals || 18)
           ) /
             1) *
-          10000
+            10000
+        )
+
         return `${recipient}:${bps}`
       })
       listing.automatedRoyalties = false
