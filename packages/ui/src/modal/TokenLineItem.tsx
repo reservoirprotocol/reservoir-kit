@@ -3,6 +3,8 @@ import { Box } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 import { useCollections, useTokens } from '../hooks'
 import { CSSProperties } from '@stitches/react'
+import { EnhancedCurrency } from '../hooks/usePaymentTokens'
+import { formatUnits } from 'viem'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
 type TokenLineItemProps = {
@@ -13,16 +15,12 @@ type TokenLineItemProps = {
     NonNullable<ReturnType<typeof useCollections>['data']>[0],
     'name' | 'royalties' | 'image'
   >
-  usdConversion?: number
+  usdPrice?: string
   isUnavailable?: boolean
   warning?: string
-  price: number
+  price: bigint
   priceSubtitle?: string
-  currency?: {
-    contract?: string
-    decimals?: number
-    symbol?: string
-  }
+  currency?: EnhancedCurrency
   expires?: string
   sourceImg?: string
   css?: CSSProperties
@@ -34,8 +32,8 @@ type TokenLineItemProps = {
 const TokenLineItem: FC<TokenLineItemProps> = ({
   tokenDetails,
   collection,
+  usdPrice,
   chain,
-  usdConversion = 0,
   isUnavailable,
   price,
   priceSubtitle,
@@ -51,7 +49,7 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
     return null
   }
 
-  const usdPrice = price * usdConversion
+  const formattedPrice = Number(formatUnits(price, currency?.decimals || 18))
 
   const name = tokenDetails?.token?.name || `#${tokenDetails?.token?.tokenId}`
   const collectionName =
@@ -71,10 +69,10 @@ const TokenLineItem: FC<TokenLineItemProps> = ({
       <TokenPrimitive
         img={img}
         name={name}
-        price={price}
+        price={formattedPrice}
         usdPrice={usdPrice}
         collection={collectionName}
-        currencyContract={currency?.contract}
+        currencyContract={currency?.address}
         currencyDecimals={currency?.decimals}
         currencySymbol={currency?.symbol}
         expires={expires}
