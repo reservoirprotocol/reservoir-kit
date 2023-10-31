@@ -395,8 +395,6 @@ export const CollectModalRenderer: FC<Props> = ({
       for (const order of orders) {
         if (remainingQuantity >= 0) {
           let orderQuantity = order?.quantity || 1
-          // let orderPricePerItem = BigInt(order?.totalRawPrice || '0')
-
           let orderPricePerItem = BigInt(
             (order?.currency?.toLowerCase() !== paymentCurrency?.address
               ? order?.buyInRawQuote
