@@ -356,7 +356,7 @@ export const CollectModalRenderer: FC<Props> = ({
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (BigInt(fee) / 10000n) * totalPrice
+          return totalFees + (BigInt(fee) * totalPrice) / 10000n
         }, 0n)
       } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
         fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
