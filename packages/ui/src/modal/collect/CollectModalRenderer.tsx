@@ -105,6 +105,7 @@ type Props = {
   tokenId?: string
   onConnectWallet: () => void
   chainId?: number
+  defaultQuantity?: number
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
@@ -120,6 +121,7 @@ export const CollectModalRenderer: FC<Props> = ({
   tokenId,
   feesOnTopBps,
   feesOnTopUsd,
+  defaultQuantity,
   onConnectWallet,
   normalizeRoyalties,
   children,
@@ -130,7 +132,7 @@ export const CollectModalRenderer: FC<Props> = ({
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
   const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
   const [orders, setOrders] = useState<NonNullable<BuyPath>>([])
-  const [itemAmount, setItemAmount] = useState<number>(1)
+  const [itemAmount, setItemAmount] = useState<number>(defaultQuantity || 1)
   const [maxItemAmount, setMaxItemAmount] = useState<number>(1)
   const [collectStep, setCollectStep] = useState<CollectStep>(CollectStep.Idle)
   const [stepData, setStepData] = useState<CollectModalStepData | null>(null)
@@ -536,7 +538,7 @@ export const CollectModalRenderer: FC<Props> = ({
     if (!open) {
       setSelectedTokens([])
       setOrders([])
-      setItemAmount(1)
+      setItemAmount(defaultQuantity || 1)
       setMaxItemAmount(1)
       setCollectStep(CollectStep.Idle)
       setContentMode(undefined)
@@ -735,7 +737,7 @@ export const CollectModalRenderer: FC<Props> = ({
         address: address,
         selectedTokens,
         setSelectedTokens,
-        itemAmount,
+        itemAmount: itemAmount > maxItemAmount ? maxItemAmount : itemAmount,
         setItemAmount,
         maxItemAmount,
         setMaxItemAmount,
