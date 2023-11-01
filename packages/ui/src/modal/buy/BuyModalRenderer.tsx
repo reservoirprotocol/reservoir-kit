@@ -91,6 +91,7 @@ type Props = {
   open: boolean
   tokenId?: string
   chainId?: number
+  defaultQuantity?: number
   collectionId?: string
   orderId?: string
   feesOnTopBps?: string[] | null
@@ -108,6 +109,7 @@ export const BuyModalRenderer: FC<Props> = ({
   collectionId,
   orderId,
   feesOnTopBps,
+  defaultQuantity,
   feesOnTopUsd,
   normalizeRoyalties,
   onConnectWallet,
@@ -125,7 +127,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [stepData, setStepData] = useState<BuyModalStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
-  const [quantity, setQuantity] = useState(1)
+  const [quantity, setQuantity] = useState(defaultQuantity || 1)
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -689,7 +691,7 @@ export const BuyModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setStepData(null)
       setSteps(null)
-      setQuantity(1)
+      setQuantity(defaultQuantity || 1)
       setPath(undefined)
       setPaymentCurrency(undefined)
     }
@@ -728,7 +730,7 @@ export const BuyModalRenderer: FC<Props> = ({
         blockExplorerBaseName,
         steps,
         stepData,
-        quantity,
+        quantity: quantity > quantityRemaining ? quantityRemaining : quantity,
         isConnected: wallet !== undefined,
         isOwner,
         setPaymentCurrency,

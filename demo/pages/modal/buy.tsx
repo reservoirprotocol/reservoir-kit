@@ -144,6 +144,7 @@ const BuyPage: NextPage = () => {
             Buy Now
           </button>
         }
+        defaultQuantity={4}
         collectionId={collectionId}
         tokenId={tokenId}
         orderId={orderId}

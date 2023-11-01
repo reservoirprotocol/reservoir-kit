@@ -65,6 +65,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   chainId?: number
+  defaultQuantity?: number
   orderId?: string
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
@@ -110,6 +111,7 @@ export function BuyModal({
   feesOnTopBps,
   feesOnTopUsd,
   normalizeRoyalties,
+  defaultQuantity,
   copyOverrides,
   walletClient,
   onConnectWallet,
@@ -138,6 +140,7 @@ export function BuyModal({
     <BuyModalRenderer
       chainId={modalChain?.id}
       open={open}
+      defaultQuantity={defaultQuantity}
       tokenId={tokenId}
       collectionId={collectionId}
       orderId={orderId}
