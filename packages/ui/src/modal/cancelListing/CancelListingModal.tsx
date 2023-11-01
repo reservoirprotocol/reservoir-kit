@@ -18,6 +18,8 @@ import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGasPump } from '@fortawesome/free-solid-svg-icons'
+import { WalletClient } from 'viem'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 
 const ModalCopy = {
   title: 'Cancel Listing',
@@ -33,6 +35,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
   onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
@@ -45,6 +48,7 @@ export function CancelListingModal({
   trigger,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
   onClose,
   onCancelComplete,
   onCancelError,
@@ -69,6 +73,7 @@ export function CancelListingModal({
       listingId={listingId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
     >
       {({
         loading,
