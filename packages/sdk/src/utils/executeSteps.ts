@@ -487,15 +487,14 @@ export async function executeSteps(
                   )
 
                   try {
+                    const headers: AxiosRequestHeaders = {
+                      'Content-Type': 'application/json',
+                      'x-rkc-version': version,
+                    }
+                    if (request.headers && request.headers['x-api-key']) {
+                      headers['x-api-key'] = request.headers['x-api-key']
+                    }
                     const getData = async function () {
-                      const headers: AxiosRequestHeaders = {
-                        'Content-Type': 'application/json',
-                        'x-rkc-version': version,
-                      }
-                      if (request.headers && request.headers['x-api-key']) {
-                        headers['x-api-key'] = request.headers['x-api-key']
-                      }
-
                       let response = await axios.post(
                         postOrderUrl.href,
                         JSON.stringify(postData.body),
@@ -511,32 +510,31 @@ export async function executeSteps(
 
                     const res = await getData()
 
-                    // if(res.status.body.kind === 'cross-chain-intent') {
-                    //   await pollUntilOk(
-                    //     {
-                    //       url: indexerConfirmationUrl.href,
-                    //       method: 'get',
-                    //       headers: headers,
-                    //     },
-                    //     (res) => {
-                    //       client.log(
-                    //         [
-                    //           'Execute Steps: Polling transfers to check if indexed',
-                    //           res,
-                    //         ],
-                    //         LogLevel.Verbose
-                    //       )
-                    //       if (res.status === 200) {
-                    //         transfersData = res.data
-                    //         return transfersData.transfers &&
-                    //           transfersData.transfers.length > 0
-                    //           ? true
-                    //           : false
-                    //       }
-                    //       return false
-                    //     }
-                    //   )
-                    // }
+                    if (
+                      res?.data?.status?.body?.kind === 'cross-chain-intent'
+                    ) {
+                      await pollUntilOk(
+                        {
+                          url: `${request.baseURL}${res?.data?.status?.endpoint}`,
+                          method: res?.data?.status?.method,
+                          headers: headers,
+                          data: res?.data?.status?.body,
+                        },
+                        (res) => {
+                          client.log(
+                            [
+                              `Execute Steps: Polling execute status to check if indexed`,
+                              res,
+                            ],
+                            LogLevel.Verbose
+                          )
+                          if (res?.data?.status === 'success') {
+                            return true
+                          }
+                          return false
+                        }
+                      )
+                    }
 
                     if (res.status > 299 || res.status < 200) throw res.data
 

@@ -109,7 +109,9 @@ export async function sendTransactionSafely(
 
     if (validate(res)) {
       waitingForConfirmation = false // transaction confirmed
-      txHash = res.data.txHashes[0] as Address
+      if (res.data.txHashes) {
+        txHash = res.data.txHashes[0] as Address
+      }
     } else {
       if (
         !isCrossChainIntent ||
