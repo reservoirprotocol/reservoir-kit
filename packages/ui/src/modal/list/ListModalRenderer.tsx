@@ -17,13 +17,17 @@ import {
   useOnChainRoyalties,
 } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
-import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
+import {
+  Execute,
+  ReservoirClientActions,
+  ReservoirWallet,
+} from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { Currency } from '../../types/Currency'
-import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 
 export enum ListStep {
@@ -87,6 +91,7 @@ type Props = {
   oracleEnabled: boolean
   feesBps?: string[]
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: ReservoirWallet | WalletClient
 }
 
 const expirationOptions = [
@@ -111,6 +116,7 @@ export const ListModalRenderer: FC<Props> = ({
   oracleEnabled = false,
   feesBps,
   children,
+  walletClient,
 }) => {
   const account = useAccount()
 
@@ -121,7 +127,9 @@ export const ListModalRenderer: FC<Props> = ({
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id })
+
+  const wallet = walletClient || wagmiWallet
 
   const [listStep, setListStep] = useState<ListStep>(ListStep.SetPrice)
   const [listingData, setListingData] = useState<ListingData[]>([])
@@ -317,12 +325,14 @@ export const ListModalRenderer: FC<Props> = ({
       listing.orderKind?.includes('seaport')
     ) {
       const royalties = onChainRoyalties[0].map((recipient, i) => {
-        const bps =
+        const bps = Math.floor(
           (parseFloat(
-            formatUnits(onChainRoyalties[1][i], currency.decimals || 18)
+            formatUnits(onChainRoyalties[1][i], chainCurrency.decimals || 18)
           ) /
             1) *
-          10000
+            10000
+        )
+
         return `${recipient}:${bps}`
       })
       listing.automatedRoyalties = false
