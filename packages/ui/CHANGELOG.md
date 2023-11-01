@@ -1,4 +1,8 @@
 
+## [v1.16.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3ae515e1c544a2a9964a826336f0ef6be38cbab8) (2023-11-01)
+
+* Add walletClient prop to modals and add to cart provider [cc827f2f](https://github.com/reservoirprotocol/reservoir-kit/commit/cc827f2fc3b6453521a963ec619ce6a74e0702db)
+
 ## [v1.15.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/671af6f970b343527e1ba24d69b4d0c9154532f2) (2023-10-31)
 
 * ListModal: fix fee bugs [abec457b](https://github.com/reservoirprotocol/reservoir-kit/commit/abec457b179152df8d0b311f4b99a7a24b81ab31)
