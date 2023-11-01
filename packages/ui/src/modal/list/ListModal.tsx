@@ -33,13 +33,14 @@ import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'
-import { zeroAddress } from 'viem'
+import { WalletClient, zeroAddress } from 'viem'
 import ListCheckout from './ListCheckout'
 import QuantitySelector from '../QuantitySelector'
 import dayjs from 'dayjs'
 import { CurrencySelector } from '../CurrencySelector'
 import PriceBreakdown from './PriceBreakdown'
 import FloorDropdown from './FloorDropdown'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -68,6 +69,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   oracleEnabled?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   feesBps?: string[]
+  walletClient?: ReservoirWallet | WalletClient
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
   onListingError?: (error: Error, data: ListingCallbackData) => void
@@ -95,6 +97,7 @@ export function ListModal({
   oracleEnabled = false,
   copyOverrides,
   feesBps,
+  walletClient,
   onGoToToken,
   onListingComplete,
   onListingError,
@@ -128,6 +131,7 @@ export function ListModal({
       enableOnChainRoyalties={enableOnChainRoyalties}
       oracleEnabled={oracleEnabled}
       feesBps={feesBps}
+      walletClient={walletClient}
     >
       {({
         token,
