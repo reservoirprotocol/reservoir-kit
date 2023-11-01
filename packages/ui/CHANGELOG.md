@@ -1,4 +1,12 @@
 
+* Merge pull request #418 from reservoirprotocol/armando/grwth-3422-ts-sdk-wrong-package-json-export-411 [bf530b05](https://github.com/reservoirprotocol/reservoir-kit/commit/bf530b058819cf1de6f2d1ee4b2f4207c8a79a1b)
+## [v1.16.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3ae515e1c544a2a9964a826336f0ef6be38cbab8) (2023-11-01)
+
+* update walletClient prop to modals and add to cart provider [cc827f2f](https://github.com/reservoirprotocol/reservoir-kit/commit/cc827f2fc3b6453521a963ec619ce6a74e0702db)
+* Merge branch 'feat/add-wallet-client-modals' into feat/add-wallet-client-modals [15cf29dd](https://github.com/reservoirprotocol/reservoir-kit/commit/15cf29dd1ea2b6f6ffe28dfbae912da74ccfd925)
+* feat: add wallet client optional for all the modals [2f162a46](https://github.com/reservoirprotocol/reservoir-kit/commit/2f162a46d226bdf540dda72460fd3706bce20f81)
+* feat: Update imports [6612f546](https://github.com/reservoirprotocol/reservoir-kit/commit/6612f546487969e5a09e2d2ae87bc10519c6eded)
+
 ## [v1.15.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/671af6f970b343527e1ba24d69b4d0c9154532f2) (2023-10-31)
 
 * ListModal: fix fee bugs [abec457b](https://github.com/reservoirprotocol/reservoir-kit/commit/abec457b179152df8d0b311f4b99a7a24b81ab31)
