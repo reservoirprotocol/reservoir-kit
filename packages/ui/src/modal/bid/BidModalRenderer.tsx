@@ -18,7 +18,11 @@ import {
 import { useAccount, useBalance, useWalletClient } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 
-import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
+import {
+  Execute,
+  ReservoirClientActions,
+  ReservoirWallet,
+} from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
@@ -27,8 +31,8 @@ import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
-import { parseUnits } from 'viem'
-import { GetWalletClientResult, getNetwork, switchNetwork } from 'wagmi/actions'
+import { WalletClient, parseUnits } from 'viem'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 
@@ -121,7 +125,7 @@ type Props = {
   feesBps?: string[] | null
   orderKind?: BidData['orderKind']
   children: (props: ChildrenProps) => ReactNode
-  walletClient?: GetWalletClientResult
+  walletClient?: ReservoirWallet | WalletClient
 }
 
 export type BidData = Parameters<
@@ -146,7 +150,7 @@ export const BidModalRenderer: FC<Props> = ({
   oracleEnabled = false,
   feesBps,
   children,
-  walletClient
+  walletClient,
 }) => {
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -160,9 +164,9 @@ export const BidModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id})
+  const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id })
 
-  const wallet = walletClient || wagmiWallet;
+  const wallet = walletClient || wagmiWallet
 
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()

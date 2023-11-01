@@ -12,7 +12,7 @@ import {
 import { useWalletClient, useAccount, useBalance } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 
-import { Execute } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
@@ -25,8 +25,8 @@ import {
   Traits,
 } from '../bid/BidModalRenderer'
 import { formatBN } from '../../lib/numbers'
-import { parseUnits } from 'viem'
-import { GetWalletClientResult, getNetwork, switchNetwork } from 'wagmi/actions'
+import { WalletClient, parseUnits } from 'viem'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 
@@ -92,7 +92,7 @@ type Props = {
   collectionId?: string
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
-  walletClient?: GetWalletClientResult
+  walletClient?: ReservoirWallet | WalletClient
 }
 
 export const EditBidModalRenderer: FC<Props> = ({
@@ -103,6 +103,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   collectionId,
   attribute,
   normalizeRoyalties,
+  walletClient,
   children,
 }) => {
   const client = useReservoirClient()
