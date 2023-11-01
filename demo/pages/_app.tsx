@@ -1,36 +1,31 @@
-import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
-import { ThemeProvider } from 'next-themes'
 import type { AppProps } from 'next/app'
 import React, {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
   useState,
+  useContext,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+  FC,
 } from 'react'
 import { darkTheme } from 'stitches.config'
-import { WagmiConfig, configureChains, createConfig } from 'wagmi'
+import { ThemeProvider } from 'next-themes'
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
+import { WagmiConfig, createConfig, configureChains } from 'wagmi'
 import * as allChains from 'wagmi/chains'
 
+import { publicProvider } from 'wagmi/providers/public'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
+import '../fonts.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import {
-  CartProvider,
   ReservoirKitProvider,
-  ReservoirKitTheme,
   darkTheme as defaultTheme,
+  ReservoirKitTheme,
+  CartProvider,
 } from '@reservoir0x/reservoir-kit-ui'
-import {
-  LogLevel,
-  customChains,
-  reservoirChains,
-} from '@reservoir0x/reservoir-sdk'
+import { LogLevel } from '@reservoir0x/reservoir-sdk'
+import configuredChains from '../utils/chains'
 import { useRouter } from 'next/router'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { publicProvider } from 'wagmi/providers/public'
-import configuredChains from 'utils/chains'
-
 import '../fonts.css'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
