@@ -197,6 +197,7 @@ export function BidModal({
       oracleEnabled={oracleEnabled}
       currencies={currencies}
       feesBps={feesBps}
+      walletClient={walletClient}
     >
       {({
         token,
