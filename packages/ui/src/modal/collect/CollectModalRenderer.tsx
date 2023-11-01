@@ -278,13 +278,13 @@ export const CollectModalRenderer: FC<Props> = ({
             if (is1155) {
               let totalMaxQuantity = data.maxQuantities.reduce(
                 (total, currentQuantity) =>
-                  total + Number(currentQuantity.maxQuantity),
+                  total + Number(currentQuantity.maxQuantity ?? 1),
                 0
               )
               setMaxItemAmount(totalMaxQuantity)
             } else {
               let maxQuantity = data.maxQuantities?.[0].maxQuantity
-              setMaxItemAmount(maxQuantity ? Number(maxQuantity) : 50) // if value is null/undefined, we don't know max quantity, so set it to 50
+              setMaxItemAmount(maxQuantity ? Number(maxQuantity) : 1) // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
             }
           } else {
             setMaxItemAmount(0)
@@ -356,7 +356,7 @@ export const CollectModalRenderer: FC<Props> = ({
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (BigInt(fee) / 10000n) * totalPrice
+          return totalFees + (BigInt(fee) * totalPrice) / 10000n
         }, 0n)
       } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
         fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {

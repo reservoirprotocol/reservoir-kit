@@ -1,4 +1,25 @@
 
+## [v1.15.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/671af6f970b343527e1ba24d69b4d0c9154532f2) (2023-10-31)
+
+* ListModal: fix fee bugs [abec457b](https://github.com/reservoirprotocol/reservoir-kit/commit/abec457b179152df8d0b311f4b99a7a24b81ab31)
+* BuyModal: Add purchase currency selection functionality [91c0d6ad](https://github.com/reservoirprotocol/reservoir-kit/commit/91c0d6ad36f4b8d1db29779964d58e1191b55ce9)
+* CollectModal: Fix 1155 mint supply bug [6a63031c](https://github.com/reservoirprotocol/reservoir-kit/commit/6a63031c9aeee75c8c32d2ac29c3b1cdcf2746fa)
+* Fix issue when payment token conversion is 0 [5f4ea7be](https://github.com/reservoirprotocol/reservoir-kit/commit/5f4ea7bebfa83bb245eae3e88cbacb745424743d)
+* Fix feesOnTop in BPS not working with small percentages [13fa0f08](https://github.com/reservoirprotocol/reservoir-kit/commit/13fa0f08080c8e3b2133465463e6a7543ca6fdd3)
+* Fix loading ui bug when token is refetched [498dc7ac](https://github.com/reservoirprotocol/reservoir-kit/commit/498dc7acc000ad8385c821c1acb8d182fcf2eb04)
+
+## [v1.14.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2e0da48aace205a516f505f96ae06518e8468982) (2023-10-30)
+
+* Fix attribute selector ts errors after upgrading hook [fbc1ffd8](https://github.com/reservoirprotocol/reservoir-kit/commit/fbc1ffd83aab237ee89e786c5033b3cee40d2a9e)
+
+## [v1.14.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d9e91bb8e9759cb2c7d22db8f701b41b1065df30) (2023-10-30)
+
+* Handle original listing currency [4320e927](https://github.com/reservoirprotocol/reservoir-kit/commit/4320e927838b38bbf29ac0a41a17dd2ed414aeba)
+* ListModal: OrderKind override for listing [7b116eef](https://github.com/reservoirprotocol/reservoir-kit/commit/7b116eef5d90893a11e998e61ca2cfd9a130febd)
+* BidModal: support orderKind prop [b863ab02](https://github.com/reservoirprotocol/reservoir-kit/commit/b863ab029e67bc81ad80fc329dd3c48026b1a4b8)
+* Upgrade wagmi to v~1.4.3 and viem to v~1.16.3 [38611577](https://github.com/reservoirprotocol/reservoir-kit/commit/38611577d63a546c02b135b92b4a7b9868486ed7)
+* Add alwaysIncludeListingCurrency flag [b8d6dad8](https://github.com/reservoirprotocol/reservoir-kit/commit/b8d6dad824aa7a9a90d4ca4b1ffbc3c078799fdc)
+
 ## [v1.13.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/9b9a97a613e99cc12bca61f0d9db30a8aa3ba0fc) (2023-10-27)
 
 ### Breaking Changes:

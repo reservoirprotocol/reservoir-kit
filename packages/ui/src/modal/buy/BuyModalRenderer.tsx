@@ -12,23 +12,21 @@ import {
   useCollections,
   useListings,
   useChainCurrency,
-  useCurrencyConversion,
 } from '../../hooks'
-import { useAccount, useBalance, useWalletClient } from 'wagmi'
+import { useAccount, useWalletClient, useBalance } from 'wagmi'
 import { GetWalletClientResult, getNetwork, switchNetwork } from 'wagmi/actions'
-
 import {
   BuyPath,
   Execute,
   LogLevel,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
-import { UseBalanceToken } from '../../types/wagmi'
-import { toFixed } from '../../lib/numbers'
-import { formatUnits, parseUnits, zeroAddress } from 'viem'
-import { Currency } from '../../types/Currency'
+import { Address, formatUnits, zeroAddress } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
+import usePaymentTokens, {
+  EnhancedCurrency,
+} from '../../hooks/usePaymentTokens'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
@@ -37,6 +35,7 @@ export enum BuyStep {
   Approving,
   Complete,
   Unavailable,
+  SelectPayment,
 }
 
 export type BuyModalStepData = {
@@ -57,24 +56,18 @@ type ChildrenProps = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listing?: NonNullable<ReturnType<typeof useListings>['data']>[0]
   quantityAvailable: number
-  averageUnitPrice: number
-  currency?: NonNullable<
-    NonNullable<
-      NonNullable<
-        NonNullable<NonNullable<Token>['market']>['floorAsk']
-      >['price']
-    >['currency']
-  >
-  mixedCurrencies: boolean
-  totalPrice: number
-  totalIncludingFees: number
-  feeOnTop: number
+  averageUnitPrice: bigint
+  paymentCurrency?: EnhancedCurrency
+  paymentTokens: EnhancedCurrency[]
+  totalPrice: bigint
+  totalIncludingFees: bigint
+  feeOnTop: bigint
   buyStep: BuyStep
   transactionError?: Error | null
   hasEnoughCurrency: boolean
   addFundsLink: string
-  feeUsd: number
-  totalUsd: number
+  feeUsd: string
+  totalUsd: bigint
   usdPrice: number
   balance?: bigint
   address?: string
@@ -85,6 +78,9 @@ type ChildrenProps = {
   quantity: number
   isConnected: boolean
   isOwner: boolean
+  setPaymentCurrency: React.Dispatch<
+    React.SetStateAction<EnhancedCurrency | undefined>
+  >
   setBuyStep: React.Dispatch<React.SetStateAction<BuyStep>>
   setQuantity: React.Dispatch<React.SetStateAction<number>>
   buyToken: () => void
@@ -117,14 +113,12 @@ export const BuyModalRenderer: FC<Props> = ({
   children,
   walletClient
 }) => {
-  const [totalPrice, setTotalPrice] = useState(0)
-  const [totalIncludingFees, setTotalIncludingFees] = useState(0)
-  const [averageUnitPrice, setAverageUnitPrice] = useState(0)
+  const [totalPrice, setTotalPrice] = useState(0n)
+  const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
+  const [averageUnitPrice, setAverageUnitPrice] = useState(0n)
   const [path, setPath] = useState<BuyPath>([])
   const [isFetchingPath, setIsFetchingPath] = useState(false)
-  const [currency, setCurrency] = useState<undefined | Currency>()
-  const [mixedCurrencies, setMixedCurrencies] = useState(false)
-  const [feeOnTop, setFeeOnTop] = useState(0)
+  const [feeOnTop, setFeeOnTop] = useState(0n)
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
@@ -156,18 +150,38 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
+  const { address } = useAccount()
+
+  const [_paymentCurrency, setPaymentCurrency] = useState<
+    EnhancedCurrency | undefined
+  >(undefined)
+
+  const paymentTokens = usePaymentTokens(
+    open,
+    address as Address,
+    _paymentCurrency ?? chainCurrency,
+    totalIncludingFees,
+    rendererChain?.id
+  )
+
+  const paymentCurrency = paymentTokens?.find(
+    (paymentToken) => paymentToken?.address === _paymentCurrency?.address
+  )
+
   const { data: tokens, mutate: mutateTokens } = useTokens(
     open && {
       tokens: [`${contract}:${tokenId}`],
       includeLastSale: true,
       includeQuantity: true,
       normalizeRoyalties,
+      displayCurrency: paymentCurrency?.address,
     },
     {
       revalidateFirstPage: true,
     },
     rendererChain?.id
   )
+
   const { data: collections, mutate: mutateCollection } = useCollections(
     open && {
       id: collectionId,
@@ -176,20 +190,17 @@ export const BuyModalRenderer: FC<Props> = ({
     {},
     rendererChain?.id
   )
-  const { address } = useAccount()
-  const { data: balance } = useBalance({
-    chainId: rendererChain?.id,
-    address: address,
-    token:
-      currency?.contract !== zeroAddress
-        ? (currency?.contract as UseBalanceToken)
-        : undefined,
-    watch: open,
-    formatUnits: currency?.decimals,
-  })
+
+  const [token, setToken] = useState<Token | undefined>(undefined)
+
+  useEffect(() => {
+    // Only update the token if there's new data from the tokens hook
+    if (tokens && tokens.length > 0) {
+      setToken(tokens[0])
+    }
+  }, [tokens])
 
   const collection = collections && collections[0] ? collections[0] : undefined
-  const token = tokens && tokens.length > 0 ? tokens[0] : undefined
   const is1155 = token?.token?.kind === 'erc1155'
   const isOwner = token?.token?.owner?.toLowerCase() === address?.toLowerCase()
 
@@ -205,6 +216,7 @@ export const BuyModalRenderer: FC<Props> = ({
       status: 'active',
       limit: 1,
       sortBy: 'price',
+      displayCurrency: paymentCurrency?.address,
     },
     {
       revalidateFirstPage: true,
@@ -230,17 +242,16 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   }, [listing, token, path, is1155, orderId])
 
-  const { data: usdFeeConversion } = useCurrencyConversion(
-    rendererChain?.id,
-    currency?.contract,
-    'usd'
+  const usdPrice = paymentCurrency?.usdPrice || 0
+  const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
+  const feeUsd = formatUnits(
+    feeOnTop * usdPriceRaw,
+    (paymentCurrency?.decimals || 18) + 6
   )
-  const usdPrice = Number(usdFeeConversion?.usd || 0)
-  const feeUsd = feeOnTop * usdPrice
-  const totalUsd = totalIncludingFees * usdPrice
+  const totalUsd = totalIncludingFees * usdPriceRaw
 
-  const addFundsLink = currency?.contract
-    ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${currency?.contract}`
+  const addFundsLink = paymentCurrency?.address
+    ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
 
   const fetchPath = useCallback(() => {
@@ -254,6 +265,7 @@ export const BuyModalRenderer: FC<Props> = ({
     const options: BuyTokenOptions = {
       onlyPath: true,
       partial: true,
+      currency: paymentCurrency?.address,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -303,11 +315,41 @@ export const BuyModalRenderer: FC<Props> = ({
     orderId,
     normalizeRoyalties,
     rendererChain,
+    paymentCurrency?.address,
   ])
 
   useEffect(() => {
     fetchPath()
   }, [fetchPath])
+
+  useEffect(() => {
+    if (!paymentTokens[0] || paymentCurrency) {
+      return
+    }
+
+    let selectedCurrency
+
+    if (orderId) {
+      selectedCurrency =
+        paymentTokens.find(
+          (token) =>
+            token.address === listing?.price?.currency?.contract?.toLowerCase()
+        ) || paymentTokens[0]
+    } else if (is1155) {
+      selectedCurrency =
+        paymentTokens.find(
+          (token) => token.address === path?.[0].currency?.toLowerCase()
+        ) || paymentTokens[0]
+    } else {
+      selectedCurrency =
+        paymentTokens.find(
+          (paymentToken) =>
+            paymentToken.address ===
+            token?.market?.floorAsk?.price?.currency?.contract?.toLowerCase()
+        ) || paymentTokens[0]
+    }
+    setPaymentCurrency(selectedCurrency)
+  }, [paymentTokens, chainCurrency])
 
   const buyToken = useCallback(async () => {
     if (!wallet) {
@@ -347,35 +389,25 @@ export const BuyModalRenderer: FC<Props> = ({
     const contract = collectionId?.split(':')[0]
 
     let options: BuyTokenOptions = {
-      currency: currency?.contract,
+      currency: paymentCurrency?.address,
     }
 
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
-        const totalFeeTruncated = toFixed(
-          totalIncludingFees - feeOnTop,
-          currency?.decimals || 18
-        )
-        const fee = Math.floor(
-          Number(
-            parseUnits(
-              `${Number(totalFeeTruncated)}`,
-              currency?.decimals || 18
-            ) * BigInt(feeBps)
-          ) / 10000
-        )
+        const totalFeeTruncated = totalIncludingFees - feeOnTop
+        const fee = Number(totalFeeTruncated * BigInt(feeBps)) / 10000
         const atomicUnitsFee = formatUnits(BigInt(fee), 0)
         return `${referrer}:${atomicUnitsFee}`
       })
       options.feesOnTop = fixedFees
-    } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPrice) {
+    } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
       const feesOnTopFixed = feesOnTopUsd.map((feeOnTop) => {
         const [recipient, fee] = feeOnTop.split(':')
-        const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
         const atomicFee = BigInt(fee)
-        const convertedAtomicFee = atomicFee * BigInt(10 ** currency?.decimals!)
-        const currencyFee = convertedAtomicFee / atomicUsdPrice
+        const convertedAtomicFee =
+          atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
+        const currencyFee = convertedAtomicFee / usdPriceRaw
         const parsedFee = formatUnits(currencyFee, 0)
         return `${recipient}:${parsedFee}`
       })
@@ -411,11 +443,10 @@ export const BuyModalRenderer: FC<Props> = ({
         chainId: rendererChain?.id,
         items: items,
         expectedPrice: {
-          [currency?.contract || zeroAddress]: {
-            amount: totalPrice,
-            raw: parseUnits(`${totalPrice}`, currency?.decimals || 18),
-            currencyAddress: currency?.contract,
-            currencyDecimals: currency?.decimals,
+          [paymentCurrency?.address || zeroAddress]: {
+            raw: totalPrice,
+            currencyAddress: paymentCurrency?.address,
+            currencyDecimals: paymentCurrency?.decimals || 18,
           },
         },
         wallet,
@@ -493,12 +524,12 @@ export const BuyModalRenderer: FC<Props> = ({
     normalizeRoyalties,
     is1155,
     client,
-    currency,
     totalPrice,
     rendererChain,
     rendererChain,
     totalIncludingFees,
     wallet,
+    paymentCurrency?.address,
     mutateListings,
     mutateTokens,
     mutateCollection,
@@ -506,7 +537,29 @@ export const BuyModalRenderer: FC<Props> = ({
   ])
 
   useEffect(() => {
-    let currency: Currency | undefined
+    if (
+      !token ||
+      (orderId && !listing && isValidatingListing) ||
+      (is1155 && !path && isFetchingPath) ||
+      (!is1155 && isOwner)
+    ) {
+      setBuyStep(BuyStep.Unavailable)
+    } else if (!orderId && !is1155 && !token?.market?.floorAsk?.price) {
+      setBuyStep(BuyStep.Unavailable)
+    } else {
+      setBuyStep(BuyStep.Checkout)
+    }
+  }, [
+    listing,
+    path,
+    isValidatingListing,
+    isFetchingPath,
+    is1155,
+    orderId,
+    token,
+  ])
+
+  useEffect(() => {
     if (quantity === -1) return
     if (
       !token ||
@@ -515,43 +568,35 @@ export const BuyModalRenderer: FC<Props> = ({
       (!is1155 && isOwner)
     ) {
       setBuyStep(BuyStep.Unavailable)
-      setTotalPrice(0)
-      setTotalIncludingFees(0)
-      setAverageUnitPrice(0)
-      setCurrency(undefined)
-      setMixedCurrencies(false)
+      setTotalPrice(0n)
+      setTotalIncludingFees(0n)
+      setAverageUnitPrice(0n)
       return
     }
 
-    let total = 0
+    let total = 0n
     if (orderId) {
-      total = (listing?.price?.amount?.decimal || 0) * quantity
-      if (listing?.price?.currency) {
-        currency = listing?.price?.currency as Currency
-        setCurrency(currency)
-      }
-      setMixedCurrencies(false)
+      total = BigInt(listing?.price?.amount?.raw || 0) * BigInt(quantity)
     } else if (is1155) {
       let orders: Record<string, number> = {}
-      let mixedCurrencies = false
-      let currencies: string[] = []
-      let nativeTotal = 0
-      let orderCurrencyTotal = 0
+      let orderCurrencyTotal = 0n
       let totalQuantity = 0
       if (path && path.length > 0) {
         for (let i = 0; i < path.length; i++) {
           const pathItem = path[i]
           const pathQuantity = pathItem.quantity || 0
-          const pathPrice = pathItem.totalPrice || 0
+          const pathPrice = BigInt(
+            (pathItem?.currency?.toLowerCase() !== paymentCurrency?.address
+              ? pathItem?.buyInRawQuote
+              : pathItem?.totalRawPrice) || 0
+          )
+
           const listingId = pathItem.orderId
           if (!pathItem?.currency || !listingId) {
             continue
           }
           const quantityLeft = quantity - totalQuantity
-          if (!currencies.includes(pathItem.currency)) {
-            currencies.push(pathItem.currency)
-            mixedCurrencies = currencies.length >= 2
-          }
+
           let quantityToTake = 0
           if (quantityLeft >= pathQuantity) {
             quantityToTake = pathQuantity
@@ -559,8 +604,7 @@ export const BuyModalRenderer: FC<Props> = ({
             quantityToTake = quantityLeft
           }
 
-          nativeTotal += (pathItem.buyInQuote || pathPrice) * quantityToTake
-          orderCurrencyTotal += pathPrice * quantityToTake
+          orderCurrencyTotal += pathPrice * BigInt(quantityToTake)
           orders[listingId] = quantityToTake
           totalQuantity += quantityToTake
 
@@ -568,66 +612,43 @@ export const BuyModalRenderer: FC<Props> = ({
             break
           }
         }
-        total = mixedCurrencies ? nativeTotal : orderCurrencyTotal
-        currency = mixedCurrencies
-          ? {
-              contract: chainCurrency.address,
-              symbol: chainCurrency.symbol,
-              decimals: chainCurrency.decimals,
-            }
-          : {
-              contract: path[0].currency as string,
-              symbol: path[0].currencySymbol as string,
-              decimals: path[0].currencyDecimals as number,
-            }
-        setCurrency(currency)
-        setMixedCurrencies(mixedCurrencies)
+        total = orderCurrencyTotal
       }
-    } else if (token?.market?.floorAsk) {
-      total = token.market.floorAsk.price?.amount?.decimal || 0
-      if (token.market.floorAsk.price?.currency) {
-        currency = token.market.floorAsk.price?.currency as Currency
-        setCurrency(currency)
-      }
-      setMixedCurrencies(false)
+    } else if (token?.market?.floorAsk?.price) {
+      total = BigInt(token.market.floorAsk.price?.amount?.raw || 0)
     }
-    let totalFees = 0
+    let totalFees = 0n
+
     if (total > 0) {
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (Number(fee) / 10000) * total
-        }, 0)
+          return totalFees + (BigInt(fee) * total) / 10000n
+        }, 0n)
         totalFees += fees
         setFeeOnTop(fees)
-      } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPrice) {
+      } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
         const fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
           const atomicFee = BigInt(fee)
           const convertedAtomicFee =
-            atomicFee * BigInt(10 ** currency?.decimals!)
-          const currencyFee = convertedAtomicFee / atomicUsdPrice
-          const parsedFee = formatUnits(currencyFee, currency?.decimals || 18)
-          return totalFees + Number(parsedFee)
-        }, 0)
+            atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
+          const currencyFee = convertedAtomicFee / usdPriceRaw
+          return totalFees + currencyFee
+        }, 0n)
         totalFees += fees
         setFeeOnTop(fees)
       } else {
-        setFeeOnTop(0)
+        setFeeOnTop(0n)
       }
 
       setTotalPrice(total)
       setTotalIncludingFees(total + totalFees)
-      setAverageUnitPrice(total / quantity)
-      setBuyStep(BuyStep.Checkout)
+      setAverageUnitPrice(total / BigInt(quantity))
     } else {
-      setBuyStep(BuyStep.Unavailable)
-      setTotalIncludingFees(0)
-      setTotalPrice(0)
-      setAverageUnitPrice(0)
-      setCurrency(undefined)
-      setMixedCurrencies(false)
+      setTotalIncludingFees(0n)
+      setTotalPrice(0n)
+      setAverageUnitPrice(0n)
     }
   }, [
     listing,
@@ -644,26 +665,20 @@ export const BuyModalRenderer: FC<Props> = ({
     token,
     chainCurrency.address,
     isOwner,
+    paymentCurrency,
   ])
 
   useEffect(() => {
-    if (balance) {
-      const totalPriceTruncated = toFixed(
-        totalIncludingFees,
-        currency?.decimals || 18
-      )
-      if (!balance.value) {
-        setHasEnoughCurrency(false)
-      } else if (
-        balance.value <
-        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals || 18)
-      ) {
-        setHasEnoughCurrency(false)
-      } else {
-        setHasEnoughCurrency(true)
-      }
+    if (
+      paymentCurrency?.balance != undefined &&
+      paymentCurrency?.currencyTotalRaw != undefined &&
+      BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
+    ) {
+      setHasEnoughCurrency(false)
+    } else {
+      setHasEnoughCurrency(true)
     }
-  }, [totalIncludingFees, balance, currency])
+  }, [totalIncludingFees, paymentCurrency])
 
   useEffect(() => {
     if (!open) {
@@ -673,6 +688,7 @@ export const BuyModalRenderer: FC<Props> = ({
       setSteps(null)
       setQuantity(1)
       setPath(undefined)
+      setPaymentCurrency(undefined)
     }
   }, [open])
 
@@ -688,8 +704,8 @@ export const BuyModalRenderer: FC<Props> = ({
         collection,
         listing,
         quantityAvailable: quantityRemaining || 1,
-        currency,
-        mixedCurrencies,
+        paymentCurrency,
+        paymentTokens,
         totalPrice,
         totalIncludingFees,
         averageUnitPrice,
@@ -701,7 +717,9 @@ export const BuyModalRenderer: FC<Props> = ({
         feeUsd,
         totalUsd,
         usdPrice,
-        balance: balance?.value,
+        balance: paymentCurrency?.balance
+          ? BigInt(paymentCurrency.balance)
+          : undefined,
         address: address,
         blockExplorerBaseUrl,
         blockExplorerBaseName,
@@ -710,6 +728,7 @@ export const BuyModalRenderer: FC<Props> = ({
         quantity,
         isConnected: wallet !== undefined,
         isOwner,
+        setPaymentCurrency,
         setQuantity,
         setBuyStep,
         buyToken,
