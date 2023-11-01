@@ -1,4 +1,4 @@
-import { PublicClient, Transaction } from 'viem'
+import { Address, PublicClient, Transaction } from 'viem'
 import { LogLevel, getClient } from '..'
 import { Execute, ReservoirWallet, TransactionStepItem } from '../types'
 import { TransactionTimeoutError } from '../errors'
@@ -86,7 +86,6 @@ export async function sendTransactionSafely(
   ) {
     let res
 
-    // @TODO
     if (isCrossChainIntent && item?.check?.endpoint) {
       res = await axios.request({
         url: `${request.baseURL}${item?.check?.endpoint}`,
@@ -95,6 +94,8 @@ export async function sendTransactionSafely(
         data: {
           // @ts-ignore
           kind: item?.check?.body?.kind,
+          // @ts-ignore
+          chainId: item?.check?.body?.chainId,
           id: txHash,
         },
       })
@@ -108,8 +109,8 @@ export async function sendTransactionSafely(
 
     if (validate(res)) {
       waitingForConfirmation = false // transaction confirmed
+      txHash = res.data.txHashes[0] as Address
     } else {
-      // @TODO - if pending transaction, don't increase attempt count
       if (
         !isCrossChainIntent ||
         (isCrossChainIntent && res.data.status !== 'pending')

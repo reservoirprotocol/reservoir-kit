@@ -511,6 +511,33 @@ export async function executeSteps(
 
                     const res = await getData()
 
+                    // if(res.status.body.kind === 'cross-chain-intent') {
+                    //   await pollUntilOk(
+                    //     {
+                    //       url: indexerConfirmationUrl.href,
+                    //       method: 'get',
+                    //       headers: headers,
+                    //     },
+                    //     (res) => {
+                    //       client.log(
+                    //         [
+                    //           'Execute Steps: Polling transfers to check if indexed',
+                    //           res,
+                    //         ],
+                    //         LogLevel.Verbose
+                    //       )
+                    //       if (res.status === 200) {
+                    //         transfersData = res.data
+                    //         return transfersData.transfers &&
+                    //           transfersData.transfers.length > 0
+                    //           ? true
+                    //           : false
+                    //       }
+                    //       return false
+                    //     }
+                    //   )
+                    // }
+
                     if (res.status > 299 || res.status < 200) throw res.data
 
                     if (res.data.results) {
