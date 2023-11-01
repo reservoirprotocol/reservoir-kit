@@ -23,7 +23,7 @@ import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import { Listing } from '../list/ListModalRenderer'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { GetWalletClientResult, getNetwork, switchNetwork } from 'wagmi/actions'
 
 export enum EditListingStep {
   Edit,
@@ -77,6 +77,7 @@ type Props = {
   normalizeRoyalties?: boolean
   enableOnChainRoyalties: boolean
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: GetWalletClientResult
 }
 
 export const EditListingModalRenderer: FC<Props> = ({
@@ -88,6 +89,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   enableOnChainRoyalties = false,
   children,
+  walletClient
 }) => {
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -96,7 +98,8 @@ export const EditListingModalRenderer: FC<Props> = ({
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wagmiWalletClient } = useWalletClient({ chainId: rendererChain?.id })
+  const wallet = walletClient || wagmiWalletClient
   const account = useAccount()
   const [editListingStep, setEditListingStep] = useState<EditListingStep>(
     EditListingStep.Edit

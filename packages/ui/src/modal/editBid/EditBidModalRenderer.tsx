@@ -26,7 +26,7 @@ import {
 } from '../bid/BidModalRenderer'
 import { formatBN } from '../../lib/numbers'
 import { parseUnits } from 'viem'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { GetWalletClientResult, getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 
@@ -92,6 +92,7 @@ type Props = {
   collectionId?: string
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: GetWalletClientResult
 }
 
 export const EditBidModalRenderer: FC<Props> = ({
