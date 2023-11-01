@@ -428,7 +428,10 @@ export async function executeSteps(
                         return false
                       }
                     )
-                    stepItem.transfersData = transfersData.transfers
+                    const taker = await wallet.address()
+                    stepItem.transfersData = transfersData.transfers?.filter(
+                      (transfer) => transfer.to === taker
+                    )
                     setState([...json?.steps], path)
                   }
                   executeResults({
