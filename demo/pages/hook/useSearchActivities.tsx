@@ -3,6 +3,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { NextPage } from 'next'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
+import ChainSwitcher from 'components/ChainSwitcher'
 
 const Activity: NextPage = () => {
   const {
@@ -54,6 +55,7 @@ const Activity: NextPage = () => {
       ) : (
         <div>No more data</div>
       )}
+      <ChainSwitcher />
     </div>
   )
 }

@@ -1,8 +1,8 @@
-import { useContext } from 'react'
+import { CSSProperties, useContext } from 'react'
 import chains from 'utils/chains'
 import { ChainSwitcherContext } from '../pages/_app'
 
-export default () => {
+export default ({ style }: { style?: CSSProperties }) => {
   const { setChain } = useContext(ChainSwitcherContext)
 
   return (
@@ -14,9 +14,8 @@ export default () => {
         if (setChain) {
           setChain(+e.target.value)
         }
-        // localStorage.removeItem('demo-theme')
       }}
-      style={{ position: 'fixed', top: 16, right: 125 }}
+      style={{ position: 'fixed', top: 16, right: 125, ...style }}
     >
       {chains.map((chain) => (
         <option value={chain.id}>{chain.name}</option>

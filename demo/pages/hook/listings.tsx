@@ -3,6 +3,7 @@ import { useListings } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
+import ChainSwitcher from 'components/ChainSwitcher'
 
 const Listings: NextPage = () => {
   const {
@@ -63,6 +64,7 @@ const Listings: NextPage = () => {
       ) : (
         <div>No more data</div>
       )}
+      <ChainSwitcher style={{ right: 16 }} />
     </div>
   )
 }
