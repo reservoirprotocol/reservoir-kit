@@ -1,10 +1,11 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useListings } from '../../hooks'
 import { useWalletClient } from 'wagmi'
-import { Execute } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
+import { WalletClient } from 'viem'
 
 export enum CancelStep {
   Cancel,
@@ -42,6 +43,7 @@ type Props = {
   chainId?: number
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: ReservoirWallet | WalletClient
 }
 
 export const CancelListingModalRenderer: FC<Props> = ({
@@ -50,6 +52,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
   chainId,
   normalizeRoyalties,
   children,
+  walletClient,
 }) => {
   const [cancelStep, setCancelStep] = useState<CancelStep>(CancelStep.Cancel)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -68,8 +71,9 @@ export const CancelListingModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id })
 
+  const wallet = walletClient || wagmiWallet
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.default.url || 'https://etherscan.io'
 

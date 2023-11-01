@@ -33,6 +33,8 @@ import {
   faChevronDown,
   faClose,
 } from '@fortawesome/free-solid-svg-icons'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { WalletClient } from 'viem'
 const ModalCopy = {
   title: 'Edit Offer',
   ctaClose: 'Close',
@@ -52,6 +54,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
   onClose?: (data: any, currentStep: EditBidStep) => void
   onEditBidComplete?: (data: any) => void
   onEditBidError?: (error: Error, data: any) => void
@@ -66,6 +69,7 @@ export function EditBidModal({
   trigger,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
   onClose,
   onEditBidComplete,
   onEditBidError,
@@ -92,6 +96,7 @@ export function EditBidModal({
       collectionId={collectionId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
     >
       {({
         loading,
