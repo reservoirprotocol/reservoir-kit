@@ -1,9 +1,7 @@
 
 ## [v1.16.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7aa430e37a3519eb77a432072d8f16c53c4bb06d) (2023-11-01)
 
-* Fix: pass walletClient to BidModalRenderer [7f17ed3f](https://github.com/reservoirprotocol/reservoir-kit/commit/7f17ed3f7d12de5146035a898d36e0493451315b)
-* Merge pull request #418 from reservoirprotocol/armando/grwth-3422-ts-sdk-wrong-package-json-export-411 [bf530b05](https://github.com/reservoirprotocol/reservoir-kit/commit/bf530b058819cf1de6f2d1ee4b2f4207c8a79a1b)
-* feat: Update imports [6612f546](https://github.com/reservoirprotocol/reservoir-kit/commit/6612f546487969e5a09e2d2ae87bc10519c6eded)
+* BidModal: fix walletClient not being passed to renderer [7f17ed3f](https://github.com/reservoirprotocol/reservoir-kit/commit/7f17ed3f7d12de5146035a898d36e0493451315b)
 
 ## [v1.16.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3ae515e1c544a2a9964a826336f0ef6be38cbab8) (2023-11-01)
 
