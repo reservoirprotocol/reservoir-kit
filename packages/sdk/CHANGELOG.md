@@ -1,3 +1,15 @@
+
+* Merge branch 'feature/use-permit-support' [e2ae0e0b](https://github.com/reservoirprotocol/reservoir-kit/commit/e2ae0e0bfcbc91998a83e6dd7556cbeded5d65fe)
+## [v1.6.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/bb2bced78527154cca38c621a75a21bb333187ac) (2023-11-02)
+
+* Add use permit props to BuyModal and BidModal [fd80d39d](https://github.com/reservoirprotocol/reservoir-kit/commit/fd80d39ddbc44201a05a8edbc673e40bd89253a1)
+* Merge pull request #437 from reservoirprotocol/ted/grwth-3479-the-message-seems-off-for-a-successful-purchase-for-erc721c [01481d78](https://github.com/reservoirprotocol/reservoir-kit/commit/01481d78fdb363c316463dc0cb3997e0ed099378)
+* Fix issue with transaction detection for IERC2771 [559bf563](https://github.com/reservoirprotocol/reservoir-kit/commit/559bf563689ee7948e971a265877c215463312ac)
+## [🎉 Release ui package v1.16.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/7aa430e37a3519eb77a432072d8f16c53c4bb06d) (2023-11-01)
+
+* Fix: only include transfers to taker in transferData [53a867d5](https://github.com/reservoirprotocol/reservoir-kit/commit/53a867d55e520eef4bcef2bea78dbd12220013bd)
+* Merge pull request #418 from reservoirprotocol/armando/grwth-3422-ts-sdk-wrong-package-json-export-411 [bf530b05](https://github.com/reservoirprotocol/reservoir-kit/commit/bf530b058819cf1de6f2d1ee4b2f4207c8a79a1b)
+* feat: Update imports [6612f546](https://github.com/reservoirprotocol/reservoir-kit/commit/6612f546487969e5a09e2d2ae87bc10519c6eded)
 ## [v1.6.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/78145884b50ab26db180c710d23c2976ed3bfe5e) (2023-10-30)
 
 * Upgrade wagmi to v~1.4.3 and viem to v~1.16.3 [38611577](https://github.com/reservoirprotocol/reservoir-kit/commit/38611577d63a546c02b135b92b4a7b9868486ed7)
