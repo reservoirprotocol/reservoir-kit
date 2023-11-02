@@ -71,6 +71,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
   onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -112,6 +113,7 @@ export function BuyModal({
   normalizeRoyalties,
   copyOverrides,
   walletClient,
+  usePermit,
   onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
@@ -145,6 +147,7 @@ export function BuyModal({
       feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
       walletClient={walletClient}
+      usePermit={usePermit}
       onConnectWallet={onConnectWallet}
     >
       {({

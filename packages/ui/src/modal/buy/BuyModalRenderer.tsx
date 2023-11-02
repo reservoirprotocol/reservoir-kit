@@ -99,6 +99,7 @@ type Props = {
   onConnectWallet: () => void
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
 }
 
 export const BuyModalRenderer: FC<Props> = ({
@@ -113,6 +114,7 @@ export const BuyModalRenderer: FC<Props> = ({
   onConnectWallet,
   children,
   walletClient,
+  usePermit,
 }) => {
   const [totalPrice, setTotalPrice] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
@@ -423,6 +425,10 @@ export const BuyModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
+    if (usePermit) {
+      options.usePermit = true
+    }
+
     setBuyStep(BuyStep.Approving)
     const items: Item[] = []
     const item: Item = {
@@ -533,6 +539,7 @@ export const BuyModalRenderer: FC<Props> = ({
     totalIncludingFees,
     wallet,
     paymentCurrency?.address,
+    usePermit,
     mutateListings,
     mutateTokens,
     mutateCollection,

@@ -110,6 +110,7 @@ type Props = {
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
 }
 
 export const CollectModalRenderer: FC<Props> = ({
@@ -124,6 +125,7 @@ export const CollectModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
   walletClient,
+  usePermit,
 }) => {
   const client = useReservoirClient()
   const { address } = useAccount()
@@ -611,6 +613,10 @@ export const CollectModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
+    if (usePermit) {
+      options.usePermit = true
+    }
+
     setCollectStep(CollectStep.Approving)
 
     client.actions
@@ -723,6 +729,7 @@ export const CollectModalRenderer: FC<Props> = ({
     contentMode,
     itemAmount,
     paymentCurrency,
+    usePermit,
   ])
 
   return (

@@ -1,4 +1,9 @@
 
+## [v1.16.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/b6cdb7327075859d9d06e00fda007c8ecac6fd8c) (2023-11-02)
+
+* CollectModal: add usePermit prop [dd82d674](https://github.com/reservoirprotocol/reservoir-kit/commit/dd82d6741eabb712bc787242434f1fa63a64d5b6)
+* Add use permit props to BuyModal and BidModal [fd80d39d](https://github.com/reservoirprotocol/reservoir-kit/commit/fd80d39ddbc44201a05a8edbc673e40bd89253a1)
+
 ## [v1.16.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7aa430e37a3519eb77a432072d8f16c53c4bb06d) (2023-11-01)
 
 * BidModal: fix walletClient not being passed to renderer [7f17ed3f](https://github.com/reservoirprotocol/reservoir-kit/commit/7f17ed3f7d12de5146035a898d36e0493451315b)
