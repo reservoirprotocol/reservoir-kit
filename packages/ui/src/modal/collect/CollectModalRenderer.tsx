@@ -692,14 +692,17 @@ export const CollectModalRenderer: FC<Props> = ({
 
           // @TODO: do we need a finalizing step?
           // if so, need to change logic here. maybe can check if currentStep is last and is transaction
-          // if (
-          //   transactionSteps.length > 0 &&
-          //   transactionSteps.every((step) =>
-          //     step.items?.every((item) => item.txHash)
-          //   )
-          // ) {
-          //   setCollectStep(CollectStep.Finalizing)
-          // }
+          console.log('currentStepIndex: ', currentStepIndex)
+          console.log('executableSteps.length: ', executableSteps.length)
+          if (
+            currentStepIndex === executableSteps.length &&
+            transactionSteps.length > 0 &&
+            transactionSteps.every((step) =>
+              step.items?.every((item) => item.txHash)
+            )
+          ) {
+            setCollectStep(CollectStep.Finalizing)
+          }
 
           if (
             steps.every(

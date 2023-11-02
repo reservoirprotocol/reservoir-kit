@@ -461,7 +461,6 @@ export async function executeSteps(
 
                     const res = await getData()
 
-                    // @TODO: keep where is, or move below checks below
                     // If check, poll check until validated
                     if (stepItem?.check) {
                       await pollUntilOk(
@@ -480,7 +479,7 @@ export async function executeSteps(
                             LogLevel.Verbose
                           )
                           if (res?.data?.status === 'success') {
-                            console.log('setting txHash')
+                            //  @TODO: update
                             stepItem.txHash = res?.data?.txHashes?.[0]
                             return true
                           } else if (res?.data?.status === 'failure') {
@@ -577,7 +576,16 @@ export async function executeSteps(
                   return false
                 }
               )
-              stepItem.transfersData = transfersData.transfers
+
+              const taker = await wallet.address()
+              const contracts = path
+                ?.filter((order) => order.contract)
+                .map((order) => order.contract?.toLowerCase())
+              stepItem.transfersData = transfersData.transfers?.filter(
+                (transfer) =>
+                  transfer.to?.toLowerCase() === taker.toLowerCase() &&
+                  contracts?.includes(transfer?.token?.contract?.toLowerCase())
+              )
               setState([...json?.steps], path)
             }
 

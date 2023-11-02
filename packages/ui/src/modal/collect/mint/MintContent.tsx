@@ -20,6 +20,7 @@ import {
   faCircleExclamation,
   faCube,
   faEye,
+  faPenNib,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import QuantitySelector from '../../QuantitySelector'
@@ -364,17 +365,64 @@ export const MintContent: FC<
                 <Loader />
               </Flex>
             ) : null}
+
+            {stepData?.currentStep &&
+            stepData.currentStep.id !== 'auth' &&
+            stepData.currentStep.id !== 'sale' ? (
+              <>
+                <Flex
+                  css={{ color: '$neutralText', py: '$5' }}
+                  direction="column"
+                  justify="center"
+                  align="center"
+                >
+                  <Text
+                    style="h6"
+                    color="base"
+                    css={{ mb: '$2', textAlign: 'center' }}
+                  >
+                    {stepData.currentStep.action}{' '}
+                    {stepData?.currentStep?.items &&
+                    stepData.currentStep.items.length > 1
+                      ? `(${
+                          stepData.currentStep.items.filter(
+                            (item) => item.status === 'complete'
+                          ).length
+                        }/${stepData.currentStep.items.length})`
+                      : null}
+                  </Text>
+                  <Text
+                    style="subtitle3"
+                    color="subtle"
+                    css={{ mb: 20, textAlign: 'center' }}
+                  >
+                    {stepData.currentStep.description}
+                  </Text>
+                  <FontAwesomeIcon
+                    icon={faPenNib}
+                    width={32}
+                    height={32}
+                    style={{ height: 32 }}
+                  />
+                </Flex>
+                <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
+                  <Loader />
+                  {copy.sweepCtaAwaitingApproval}
+                </Button>
+              </>
+            ) : null}
+
             {stepData?.currentStep && stepData.currentStep.id === 'auth' ? (
               <>
                 <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
                 <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                   <Loader />
-                  {copy.mintCtaAwaitingApproval}
+                  {copy.sweepCtaAwaitingApproval}
                 </Button>
               </>
             ) : null}
 
-            {stepData?.currentStep && stepData?.currentStep?.id !== 'auth' ? (
+            {stepData?.currentStep && stepData?.currentStep?.id === 'sale' ? (
               <>
                 {stepData?.currentStep?.items &&
                 stepData?.currentStep?.items.length > 1 ? (
@@ -387,9 +435,9 @@ export const MintContent: FC<
                       {stepData?.currentStep?.items.length} separate
                       transactions.
                     </Text>
-                    {stepData?.currentStep?.items.map((item, index) => (
+                    {stepData?.currentStep?.items.map((item, idx) => (
                       <ApprovePurchasingCollapsible
-                        key={index}
+                        key={idx}
                         item={item}
                         pathMap={pathMap}
                         usdPrice={+usdPrice}
@@ -417,7 +465,7 @@ export const MintContent: FC<
                     </Box>
                     <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                       <Loader />
-                      {copy.mintCtaAwaitingApproval}
+                      {copy.sweepCtaAwaitingApproval}
                     </Button>
                   </Flex>
                 )}

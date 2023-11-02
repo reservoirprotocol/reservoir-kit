@@ -109,6 +109,7 @@ export async function sendTransactionSafely(
 
     if (validate(res)) {
       waitingForConfirmation = false // transaction confirmed
+      // @TODO: verify
       if (res.data.txHashes) {
         txHash = res.data.txHashes[0] as Address
       }
