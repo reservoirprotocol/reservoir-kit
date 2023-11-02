@@ -21,12 +21,15 @@ import {
   ReservoirChain,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
-import { Address, formatUnits, zeroAddress } from 'viem'
-import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
+import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
-import { customChains } from '@reservoir0x/reservoir-sdk'
+import {
+  customChains,
+  ReservoirWallet,
+  BuyResponses,
+} from '@reservoir0x/reservoir-sdk'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 export enum CollectStep {
@@ -74,7 +77,7 @@ export type ChildrenProps = {
   total: bigint
   totalIncludingFees: bigint
   feeOnTop: bigint
-  feeUsd: bigint
+  feeUsd: string
   usdPrice: number
   usdPriceRaw: bigint
   mintPrice: bigint
@@ -106,6 +109,7 @@ type Props = {
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: ReservoirWallet | WalletClient
 }
 
 export const CollectModalRenderer: FC<Props> = ({
@@ -119,6 +123,7 @@ export const CollectModalRenderer: FC<Props> = ({
   onConnectWallet,
   normalizeRoyalties,
   children,
+  walletClient,
 }) => {
   const client = useReservoirClient()
   const { address } = useAccount()
@@ -171,7 +176,9 @@ export const CollectModalRenderer: FC<Props> = ({
   const providerOptions = useContext(ProviderOptionsContext)
   const disableJumperLink = providerOptions?.disableJumperLink
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id })
+
+  const wallet = walletClient || wagmiWallet
 
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
@@ -221,7 +228,10 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const usdPrice = paymentCurrency?.usdPrice || 0
   const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
-  const feeUsd = feeOnTop * usdPriceRaw
+  const feeUsd = formatUnits(
+    feeOnTop * usdPriceRaw,
+    (paymentCurrency?.decimals || 18) + 6
+  )
 
   const fetchBuyPath = useCallback(() => {
     if (!client) {
@@ -275,13 +285,13 @@ export const CollectModalRenderer: FC<Props> = ({
             if (is1155) {
               let totalMaxQuantity = data.maxQuantities.reduce(
                 (total, currentQuantity) =>
-                  total + Number(currentQuantity.maxQuantity),
+                  total + Number(currentQuantity.maxQuantity ?? 1),
                 0
               )
               setMaxItemAmount(totalMaxQuantity)
             } else {
               let maxQuantity = data.maxQuantities?.[0].maxQuantity
-              setMaxItemAmount(maxQuantity ? Number(maxQuantity) : 50) // if value is null/undefined, we don't know max quantity, so set it to 50
+              setMaxItemAmount(maxQuantity ? Number(maxQuantity) : 1) // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
             }
           } else {
             setMaxItemAmount(0)
@@ -353,7 +363,7 @@ export const CollectModalRenderer: FC<Props> = ({
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (BigInt(fee) / 10000n) * totalPrice
+          return totalFees + (BigInt(fee) * totalPrice) / 10000n
         }, 0n)
       } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
         fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
@@ -362,10 +372,7 @@ export const CollectModalRenderer: FC<Props> = ({
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
           const currencyFee = convertedAtomicFee / usdPriceRaw
-          const parsedFee = formatUnits(
-            currencyFee,
-            paymentCurrency?.decimals || 18
-          )
+          const parsedFee = formatUnits(currencyFee, 0)
           return totalFees + BigInt(parsedFee)
         }, 0n)
       }
@@ -463,14 +470,29 @@ export const CollectModalRenderer: FC<Props> = ({
     if (contentMode === 'mint') {
       setPaymentCurrency(chainCurrency)
     } else if (selectedTokens.length > 0) {
-      const firstListingCurrency =
-        paymentTokens.find(
-          (token) => token.address === selectedTokens[0].currency?.toLowerCase()
-        ) || paymentTokens[0]
+      let firstListingCurrency
+      if (providerOptions.alwaysIncludeListingCurrency !== false) {
+        firstListingCurrency = {
+          address: selectedTokens?.[0].currency as Address,
+          decimals: selectedTokens?.[0].currencyDecimals || 18,
+          symbol: selectedTokens?.[0].currencySymbol || '',
+        }
+      } else {
+        firstListingCurrency =
+          paymentTokens.find(
+            (token) =>
+              token.address === selectedTokens[0].currency?.toLowerCase()
+          ) || paymentTokens[0]
+      }
 
       setPaymentCurrency(firstListingCurrency)
     }
-  }, [paymentTokens, chainCurrency, selectedTokens])
+  }, [
+    paymentTokens,
+    chainCurrency,
+    selectedTokens,
+    providerOptions.alwaysIncludeListingCurrency,
+  ])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`

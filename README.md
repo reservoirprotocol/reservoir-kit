@@ -15,5 +15,5 @@ Also make sure to install the peer dependencies required by ReservoirKit if your
 yarn add wagmi viem react react-dom
 ```
 
-Head over to our [docs](https://docs.reservoir.tools/docs/reservoir-kit) to learn more.  
-Running into installation issues? Check out our [troubleshooting guide](https://docs.reservoir.tools/docs/rk-ui-troubleshooting).
+Head over to our [docs](https://docs.reservoir.tools/reference/reservoirkit) to learn more.  
+Running into installation issues? Check out our [troubleshooting guide](https://docs.reservoir.tools/reference/troubleshooting).

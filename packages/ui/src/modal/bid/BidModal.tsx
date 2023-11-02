@@ -56,6 +56,8 @@ import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { WalletClient } from 'viem'
 
 type BidCallbackData = {
   tokenId?: string
@@ -81,6 +83,7 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokenId?: string
+  orderKind?: BidData['orderKind']
   chainId?: number
   collectionId?: string
   attribute?: Trait
@@ -89,6 +92,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   oracleEnabled?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   feesBps?: string[] | null
+  walletClient?: ReservoirWallet | WalletClient
   onViewOffers?: () => void
   onClose?: (
     data: BidCallbackData,
@@ -148,6 +152,8 @@ export function BidModal({
   oracleEnabled = false,
   copyOverrides,
   feesBps,
+  orderKind,
+  walletClient,
   onViewOffers,
   onClose,
   onBidComplete,
@@ -182,6 +188,7 @@ export function BidModal({
   return (
     <BidModalRenderer
       open={open}
+      orderKind={orderKind}
       chainId={modalChain?.id}
       tokenId={tokenId}
       collectionId={collectionId}
@@ -190,6 +197,7 @@ export function BidModal({
       oracleEnabled={oracleEnabled}
       currencies={currencies}
       feesBps={feesBps}
+      walletClient={walletClient}
     >
       {({
         token,
@@ -387,8 +395,7 @@ export function BidModal({
                 }}
               >
                 <TokenStats
-                  chainId={modalChain?.id}
-                  chainName={modalChain?.name}
+                  chain={modalChain}
                   token={token ? token : undefined}
                   collection={collection}
                   trait={trait}
@@ -823,8 +830,7 @@ export function BidModal({
                 }}
               >
                 <TransactionBidDetails
-                  chainId={modalChain?.id}
-                  chainName={modalChain?.name}
+                  chain={modalChain}
                   token={token ? token : undefined}
                   collection={collection}
                   bidData={bidData}

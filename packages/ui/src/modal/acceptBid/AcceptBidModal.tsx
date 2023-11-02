@@ -16,6 +16,7 @@ import {
   Anchor,
   ErrorWell,
   ChainIcon,
+  Divider,
 } from '../../primitives'
 
 import { Modal } from '../Modal'
@@ -41,6 +42,8 @@ import { ApproveBidCollapsible } from './ApproveBidCollapsible'
 import SigninStep from '../SigninStep'
 import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
 import { truncateAddress } from '../../lib/truncate'
+import { WalletClient } from 'viem'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -63,6 +66,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
   onBidAccepted?: (data: BidData) => void
   onClose?: (
     data: BidData,
@@ -80,6 +84,7 @@ export function AcceptBidModal({
   tokens,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
   onBidAccepted,
   onClose,
   onBidAcceptError,
@@ -107,6 +112,7 @@ export function AcceptBidModal({
       chainId={modalChain?.id}
       tokens={tokens}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
     >
       {({
         loading,
@@ -224,14 +230,7 @@ export function AcceptBidModal({
                   <Text style="subtitle3" color="subtle">
                     {`${bidCount} ${bidCount > 1 ? 'Items' : 'Item'}`}
                   </Text>
-                  <Box
-                    css={{
-                      background: '$neutralLine',
-                      height: 12,
-                      width: 2,
-                      margin: '0 5px',
-                    }}
-                  />
+                  <Divider direction="vertical" css={{ maxHeight: 12 }} />
                   <ChainIcon
                     chainId={modalChain?.id}
                     height={12}

@@ -265,6 +265,22 @@ export const chainPaymentTokensMap = {
     },
   ],
 
+  // Scroll
+  534352: [
+    {
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      address: '0x5300000000000000000000000000000000000004',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
+
   // Linea
   59144: [
     {

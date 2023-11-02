@@ -18,7 +18,11 @@ import {
 import { useAccount, useBalance, useWalletClient } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 
-import { Execute, ReservoirClientActions } from '@reservoir0x/reservoir-sdk'
+import {
+  Execute,
+  ReservoirClientActions,
+  ReservoirWallet,
+} from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
@@ -27,7 +31,7 @@ import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
-import { parseUnits } from 'viem'
+import { WalletClient, parseUnits } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
@@ -119,7 +123,9 @@ type Props = {
   currencies?: Currency[]
   oracleEnabled: boolean
   feesBps?: string[] | null
+  orderKind?: BidData['orderKind']
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: ReservoirWallet | WalletClient
 }
 
 export type BidData = Parameters<
@@ -137,12 +143,14 @@ export const BidModalRenderer: FC<Props> = ({
   tokenId,
   chainId,
   collectionId,
+  orderKind,
   attribute,
   normalizeRoyalties,
   currencies,
   oracleEnabled = false,
   feesBps,
   children,
+  walletClient,
 }) => {
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -156,7 +164,9 @@ export const BidModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id })
+
+  const wallet = walletClient || wagmiWallet
 
   const [bidStep, setBidStep] = useState<BidStep>(BidStep.SetPrice)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -432,7 +442,9 @@ export const BidModalRenderer: FC<Props> = ({
       weiPrice: atomicBidAmount,
       orderbook: 'reservoir',
       orderKind:
-        (reservoirMarketplace?.orderKind as BidData['orderKind']) || 'seaport',
+        orderKind ||
+        (reservoirMarketplace?.orderKind as BidData['orderKind']) ||
+        'seaport',
       attributeKey: traitBidSupported ? trait?.key : undefined,
       attributeValue: traitBidSupported ? trait?.value : undefined,
     }

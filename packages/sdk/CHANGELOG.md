@@ -1,3 +1,21 @@
+## [v1.6.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/78145884b50ab26db180c710d23c2976ed3bfe5e) (2023-10-30)
+
+* Upgrade wagmi to v~1.4.3 and viem to v~1.16.3 [38611577](https://github.com/reservoirprotocol/reservoir-kit/commit/38611577d63a546c02b135b92b4a7b9868486ed7)
+
+## [v1.5.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/37c66eb4a5df3a641c5b78d648714ec522a6b6a0) (2023-10-27)
+
+* Sync api [a9d57efb](https://github.com/reservoirprotocol/reservoir-kit/commit/a9d57efb9a4e47cd631b34810e3693b1c0c8f2b3)
+* Add websocket urls to reservoir chains [c9e6467c](https://github.com/reservoirprotocol/reservoir-kit/commit/c9e6467cbd283388c806b1e7c70dc75b84e3a319)
+
+## [v1.5.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4852820a4075edce4e447c81d08c3dad9c2c57e9) (2023-10-19)
+
+* Add scroll chain [4d8e05b8](https://github.com/reservoirprotocol/reservoir-kit/commit/4d8e05b8b0ff27558541b3cc97f7b4c85ed4ca0e)
+* Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
+
+## [v1.5.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/616788fec594f503ea9f62d9828b687eeae06a43) (2023-10-12)
+
+* Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
+* Export api routes as runtime export [fb73f4f5](https://github.com/reservoirprotocol/reservoir-kit/commit/fb73f4f5f875ca8bc417c243e6c1a1dcc6327170)
 
 ## [v1.5.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/af5f3d11d93bcfd4b484bb6960f754f38883ec69) (2023-10-05)
 

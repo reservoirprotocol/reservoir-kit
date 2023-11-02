@@ -3,6 +3,7 @@ import {
   LogLevel,
   ReservoirChain,
   ReservoirClientActions,
+  ReservoirWallet,
   paths,
   setParams,
 } from '@reservoir0x/reservoir-sdk'
@@ -25,7 +26,13 @@ import React, {
   useState,
 } from 'react'
 import { useAccount, useSwitchNetwork } from 'wagmi'
-import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
+import {
+  Address,
+  WalletClient,
+  formatUnits,
+  parseUnits,
+  zeroAddress,
+} from 'viem'
 import { version } from '../../package.json'
 import { getNetwork, getWalletClient } from 'wagmi/actions'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
@@ -109,12 +116,14 @@ type CartStoreProps = {
   feesOnTopBps?: string[]
   feesOnTopUsd?: string[]
   persist?: boolean
+  walletClient?: ReservoirWallet | WalletClient
 }
 
 function cartStore({
   feesOnTopBps,
   feesOnTopUsd,
   persist = true,
+  walletClient,
 }: CartStoreProps) {
   const { address } = useAccount()
   const { switchNetworkAsync } = useSwitchNetwork()
@@ -1079,9 +1088,11 @@ function cartStore({
         }
       }
 
-      const wallet = await getWalletClient({
+      const wagmiWalletClient = await getWalletClient({
         chainId: cartData.current.chain?.id,
       })
+
+      const wallet = walletClient || wagmiWalletClient
 
       if (!wallet) {
         throw 'Wallet/Signer not available'
@@ -1113,7 +1124,7 @@ function cartStore({
       }
       const chainCurrency = useChainCurrency(cartData.current.chain?.id || 1)
       const currencyChain = client.chains.find(
-        (chain) => (chainCurrency.chainId = chain.id)
+        (chain) => chainCurrency.chainId === chain.id
       )
       const feeOnTop = cartData.current.feeOnTop ? cartData.current.feeOnTop : 0
       const expectedPrice = cartData.current.totalPrice - feeOnTop
@@ -1352,7 +1363,7 @@ function cartStore({
           }
         })
     },
-    [client, switchNetworkAsync, usdPrice]
+    [client, switchNetworkAsync, usdPrice, walletClient]
   )
 
   return {

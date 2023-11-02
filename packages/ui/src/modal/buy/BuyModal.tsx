@@ -16,22 +16,27 @@ import {
   FormatCryptoCurrency,
   Loader,
   ErrorWell,
+  CryptoCurrencyIcon,
 } from '../../primitives'
 import Progress from '../Progress'
 import { Modal } from '../Modal'
 import {
   faCircleExclamation,
   faCheckCircle,
+  faChevronLeft,
+  faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
-import { Execute } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { truncateAddress } from '../../lib/truncate'
+import { SelectPaymentToken } from '../SelectPaymentToken'
+import { WalletClient } from 'viem'
 
 type PurchaseData = {
   tokenId?: string
@@ -65,6 +70,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
   onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -105,6 +111,7 @@ export function BuyModal({
   feesOnTopUsd,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
   onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
@@ -137,6 +144,7 @@ export function BuyModal({
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
       onConnectWallet={onConnectWallet}
     >
       {({
@@ -146,11 +154,11 @@ export function BuyModal({
         quantityAvailable,
         quantity,
         averageUnitPrice,
-        currency,
-        mixedCurrencies,
         totalPrice,
         totalIncludingFees,
         feeOnTop,
+        paymentCurrency,
+        paymentTokens,
         buyStep,
         transactionError,
         hasEnoughCurrency,
@@ -166,6 +174,7 @@ export function BuyModal({
         blockExplorerBaseName,
         isConnected,
         isOwner,
+        setPaymentCurrency,
         setQuantity,
         setBuyStep,
         buyToken,
@@ -215,7 +224,7 @@ export function BuyModal({
         const finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
 
         const price =
-          totalPrice || token?.token?.lastSale?.price?.amount?.decimal || 0
+          totalPrice || BigInt(token?.token?.lastSale?.price?.amount?.raw || 0)
 
         return (
           <Modal
@@ -250,14 +259,13 @@ export function BuyModal({
             {buyStep === BuyStep.Unavailable && !loading && (
               <Flex direction="column">
                 <TokenLineItem
-                  chainId={modalChain?.id}
-                  chainName={modalChain?.name}
+                  chain={modalChain}
                   tokenDetails={token}
                   collection={collection}
-                  usdConversion={usdPrice || 0}
+                  usdPrice={paymentCurrency?.usdTotalFormatted}
                   isUnavailable={true}
                   price={quantity > 1 ? averageUnitPrice : price}
-                  currency={currency}
+                  currency={paymentCurrency}
                   priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
                   showRoyalties={true}
                 />
@@ -272,38 +280,38 @@ export function BuyModal({
               </Flex>
             )}
 
+            {buyStep === BuyStep.SelectPayment && (
+              <Flex direction="column" css={{ py: 20 }}>
+                <Flex align="center" css={{ gap: '$2', px: '$4' }}>
+                  <Button
+                    onClick={() => setBuyStep(BuyStep.Checkout)}
+                    color="ghost"
+                    size="xs"
+                    css={{ color: '$neutralSolidHover' }}
+                  >
+                    <FontAwesomeIcon icon={faChevronLeft} width={10} />
+                  </Button>
+                  <Text style="subtitle2">Select A Token</Text>
+                </Flex>
+                <SelectPaymentToken
+                  paymentTokens={paymentTokens}
+                  currency={paymentCurrency}
+                  setCurrency={setPaymentCurrency}
+                  goBack={() => setBuyStep(BuyStep.Checkout)}
+                />
+              </Flex>
+            )}
+
             {buyStep === BuyStep.Checkout && !loading && (
               <Flex direction="column">
                 {transactionError && <ErrorWell error={transactionError} />}
-                {mixedCurrencies && (
-                  <Flex
-                    css={{
-                      color: '$errorAccent',
-                      p: '$4',
-                      gap: '$2',
-                      background: '$wellBackground',
-                    }}
-                    align="center"
-                  >
-                    <FontAwesomeIcon
-                      icon={faCircleExclamation}
-                      width={16}
-                      height={16}
-                    />
-                    <Text style="body3" color="errorLight">
-                      Mixed currency listings are only available to checkout
-                      with {currency?.symbol || 'ETH'}.
-                    </Text>
-                  </Flex>
-                )}
                 <TokenLineItem
-                  chainId={modalChain?.id}
-                  chainName={modalChain?.name}
+                  chain={modalChain}
                   tokenDetails={token}
                   collection={collection}
-                  usdConversion={usdPrice || 0}
+                  usdPrice={paymentCurrency?.usdTotalFormatted}
                   price={quantity > 1 ? averageUnitPrice : price}
-                  currency={currency}
+                  currency={paymentCurrency}
                   css={{ border: 0 }}
                   priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
                   showRoyalties={true}
@@ -329,53 +337,98 @@ export function BuyModal({
                     />
                   </Flex>
                 )}
-                {feeOnTop > 0 && (
-                  <>
+                <Flex
+                  direction="column"
+                  css={{ pt: '$4', pb: '$2', gap: '$4' }}
+                >
+                  {paymentTokens.length > 1 ? (
                     <Flex
-                      align="center"
+                      direction="column"
+                      css={{
+                        gap: '$2',
+                        py: '$3',
+                        px: '$4',
+                        borderRadius: '$3',
+                        '&:hover': {
+                          backgroundColor: '$neutralBgHover',
+                        },
+                      }}
+                      onClick={() => setBuyStep(BuyStep.SelectPayment)}
+                    >
+                      <Flex
+                        justify="between"
+                        align="center"
+                        css={{
+                          gap: '$1',
+                        }}
+                      >
+                        <Text style="subtitle2">Payment Method</Text>
+                        <Flex
+                          align="center"
+                          css={{ gap: '$2', cursor: 'pointer' }}
+                        >
+                          <Flex align="center">
+                            <CryptoCurrencyIcon
+                              address={paymentCurrency?.address as string}
+                              css={{ width: 16, height: 16, mr: '$1' }}
+                            />
+                            <Text style="subtitle2">
+                              {paymentCurrency?.symbol}
+                            </Text>
+                          </Flex>
+                          <Box css={{ color: '$neutralSolidHover' }}>
+                            <FontAwesomeIcon icon={faChevronRight} width={10} />
+                          </Box>
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                  ) : null}
+                  {feeOnTop > 0 && (
+                    <Flex
                       justify="between"
-                      css={{ pt: '$4', px: '$4' }}
+                      align="start"
+                      css={{ px: '$4', py: '$3', width: '100%' }}
                     >
                       <Text style="subtitle3">Referral Fee</Text>
+                      <Flex direction="column" align="end" css={{ gap: '$1' }}>
+                        <FormatCryptoCurrency
+                          chainId={chainId}
+                          amount={feeOnTop}
+                          address={paymentCurrency?.address}
+                          decimals={paymentCurrency?.decimals}
+                          symbol={paymentCurrency?.symbol}
+                        />
+                        <FormatCurrency
+                          amount={feeUsd}
+                          color="subtle"
+                          style="tiny"
+                        />
+                      </Flex>
+                    </Flex>
+                  )}
+                  <Flex
+                    justify="between"
+                    align="start"
+                    css={{ height: 34, px: '$4' }}
+                  >
+                    <Text style="h6">You Pay</Text>
+                    <Flex direction="column" align="end" css={{ gap: '$1' }}>
                       <FormatCryptoCurrency
-                        chainId={modalChain?.id}
-                        amount={feeOnTop}
-                        address={currency?.contract}
-                        decimals={currency?.decimals}
-                        symbol={currency?.symbol}
+                        chainId={chainId}
+                        textStyle="h6"
+                        amount={paymentCurrency?.currencyTotalRaw}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
+                        logoWidth={18}
                       />
-                    </Flex>
-                    <Flex justify="end">
                       <FormatCurrency
-                        amount={feeUsd}
+                        amount={paymentCurrency?.usdTotalPriceRaw}
+                        style="tiny"
                         color="subtle"
-                        css={{ pr: '$4' }}
                       />
                     </Flex>
-                  </>
-                )}
-
-                <Flex
-                  align="center"
-                  justify="between"
-                  css={{ pt: '$4', px: '$4' }}
-                >
-                  <Text style="h6">Total</Text>
-                  <FormatCryptoCurrency
-                    textStyle="h6"
-                    chainId={modalChain?.id}
-                    amount={totalIncludingFees}
-                    address={currency?.contract}
-                    decimals={currency?.decimals}
-                    symbol={currency?.symbol}
-                  />
-                </Flex>
-                <Flex justify="end">
-                  <FormatCurrency
-                    amount={totalUsd}
-                    color="subtle"
-                    css={{ mr: '$4' }}
-                  />
+                  </Flex>
                 </Flex>
 
                 <Box css={{ p: '$4', width: '100%' }}>
@@ -393,14 +446,17 @@ export function BuyModal({
                       <Flex align="center" css={{ mb: '$3' }}>
                         <Text css={{ mr: '$3' }} color="error" style="body3">
                           Insufficient Balance
+                          {paymentTokens.length > 1
+                            ? ', select another token or add funds'
+                            : null}
                         </Text>
 
                         <FormatCryptoCurrency
                           chainId={modalChain?.id}
-                          amount={balance}
-                          address={currency?.contract}
-                          decimals={currency?.decimals}
-                          symbol={currency?.symbol}
+                          amount={paymentCurrency?.balance}
+                          address={paymentCurrency?.address}
+                          decimals={paymentCurrency?.decimals}
+                          symbol={paymentCurrency?.symbol}
                           textStyle="body3"
                         />
                       </Flex>
@@ -425,13 +481,12 @@ export function BuyModal({
             {buyStep === BuyStep.Approving && token && (
               <Flex direction="column">
                 <TokenLineItem
-                  chainId={modalChain?.id}
-                  chainName={modalChain?.name}
+                  chain={modalChain}
                   tokenDetails={token}
                   collection={collection}
-                  usdConversion={usdPrice || 0}
+                  usdPrice={paymentCurrency?.usdTotalFormatted}
                   price={quantity > 1 ? averageUnitPrice : price}
-                  currency={currency}
+                  currency={paymentCurrency}
                   priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
                   quantity={quantity}
                 />

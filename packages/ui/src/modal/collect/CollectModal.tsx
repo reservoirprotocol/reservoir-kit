@@ -11,6 +11,8 @@ import {
 import { MintContent } from './mint/MintContent'
 import { SweepContent } from './sweep/SweepContent'
 import { Flex, Text } from '../../primitives'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { WalletClient } from 'viem'
 
 type CollectCallbackData = {
   collectionId?: string
@@ -48,6 +50,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof CollectModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
   onCollectComplete?: (data: CollectCallbackData) => void
   onCollectError?: (error: Error, data: CollectCallbackData) => void
   onClose?: (data: CollectCallbackData, currentStep: CollectStep) => void
@@ -57,7 +60,6 @@ export function CollectModal({
   mode,
   openState,
   trigger,
-  onConnectWallet,
   collectionId,
   tokenId,
   chainId,
@@ -65,9 +67,11 @@ export function CollectModal({
   feesOnTopUsd,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
   onCollectComplete,
   onCollectError,
   onClose,
+  onConnectWallet,
 }: Props): ReactElement {
   const copy: typeof CollectModalCopy = {
     ...CollectModalCopy,
@@ -97,6 +101,7 @@ export function CollectModal({
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
     >
       {(props) => {
         const {

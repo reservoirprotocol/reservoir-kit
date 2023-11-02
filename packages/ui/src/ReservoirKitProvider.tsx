@@ -30,6 +30,7 @@ type ReservoirKitProviderOptions = {
   disablePoweredByReservoir?: boolean
   disableJumperLink?: boolean
   coinGecko?: CoinGecko
+  alwaysIncludeListingCurrency?: boolean
 }
 export interface ReservoirKitProviderProps {
   children: ReactNode
