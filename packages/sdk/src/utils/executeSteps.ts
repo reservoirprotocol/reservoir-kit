@@ -392,55 +392,6 @@ export async function executeSteps(
                     isCrossChainIntent
                   )
 
-                  //Confirm that on-chain tx has been picked up by the indexer
-                  if (
-                    step.id === 'sale' &&
-                    stepItem.txHash &&
-                    (isSell || isBuy)
-                  ) {
-                    client.log(
-                      [
-                        'Execute Steps: Polling transfers to verify transaction was indexed',
-                      ],
-                      LogLevel.Verbose
-                    )
-                    const indexerConfirmationUrl = new URL(
-                      `${request.baseURL}/transfers/bulk/v1`
-                    )
-                    const queryParams: paths['/transfers/bulk/v1']['get']['parameters']['query'] =
-                      {
-                        txHash: stepItem.txHash,
-                      }
-                    setParams(indexerConfirmationUrl, queryParams)
-                    let transfersData: paths['/transfers/bulk/v1']['get']['responses']['200']['schema'] =
-                      {}
-                    await pollUntilOk(
-                      {
-                        url: indexerConfirmationUrl.href,
-                        method: 'get',
-                        headers: headers,
-                      },
-                      (res) => {
-                        client.log(
-                          [
-                            'Execute Steps: Polling transfers to check if indexed',
-                            res,
-                          ],
-                          LogLevel.Verbose
-                        )
-                        if (res.status === 200) {
-                          transfersData = res.data
-                          return transfersData.transfers &&
-                            transfersData.transfers.length > 0
-                            ? true
-                            : false
-                        }
-                        return false
-                      }
-                    )
-                    stepItem.transfersData = transfersData.transfers
-                    setState([...json?.steps], path)
-                  }
                   executeResults({
                     request,
                     stepId: step.id,
@@ -510,15 +461,15 @@ export async function executeSteps(
 
                     const res = await getData()
 
-                    if (
-                      res?.data?.status?.body?.kind === 'cross-chain-intent'
-                    ) {
+                    // @TODO: keep where is, or move below checks below
+                    // If check, poll check until validated
+                    if (stepItem?.check) {
                       await pollUntilOk(
                         {
-                          url: `${request.baseURL}${res?.data?.status?.endpoint}`,
-                          method: res?.data?.status?.method,
+                          url: `${request.baseURL}${stepItem?.check.endpoint}`,
+                          method: stepItem?.check.method,
                           headers: headers,
-                          data: res?.data?.status?.body,
+                          data: stepItem?.check?.body,
                         },
                         (res) => {
                           client.log(
@@ -529,7 +480,13 @@ export async function executeSteps(
                             LogLevel.Verbose
                           )
                           if (res?.data?.status === 'success') {
+                            console.log('setting txHash')
+                            stepItem.txHash = res?.data?.txHashes?.[0]
                             return true
+                          } else if (res?.data?.status === 'failure') {
+                            throw Error(
+                              res?.data?.details || 'Transaction failed'
+                            )
                           }
                           return false
                         }
@@ -561,6 +518,69 @@ export async function executeSteps(
               default:
                 break
             }
+            //Confirm that on-chain tx has been picked up by the indexer
+            if (
+              (step.id === 'sale' || step.id === 'order-signature') &&
+              stepItem.txHash &&
+              (isSell || isBuy)
+            ) {
+              // @TODO: global headers declaration
+              const headers: AxiosRequestHeaders = {
+                'x-rkc-version': version,
+              }
+
+              if (request.headers && request.headers['x-api-key']) {
+                headers['x-api-key'] = request.headers['x-api-key']
+              }
+
+              if (request.headers && client?.uiVersion) {
+                request.headers['x-rkui-version'] = client.uiVersion
+              }
+
+              client.log(
+                [
+                  'Execute Steps: Polling transfers to verify transaction was indexed',
+                ],
+                LogLevel.Verbose
+              )
+              const indexerConfirmationUrl = new URL(
+                `${request.baseURL}/transfers/bulk/v1`
+              )
+              const queryParams: paths['/transfers/bulk/v1']['get']['parameters']['query'] =
+                {
+                  txHash: stepItem.txHash,
+                }
+              setParams(indexerConfirmationUrl, queryParams)
+              let transfersData: paths['/transfers/bulk/v1']['get']['responses']['200']['schema'] =
+                {}
+              await pollUntilOk(
+                {
+                  url: indexerConfirmationUrl.href,
+                  method: 'get',
+                  headers: headers,
+                },
+                (res) => {
+                  client.log(
+                    [
+                      'Execute Steps: Polling transfers to check if indexed',
+                      res,
+                    ],
+                    LogLevel.Verbose
+                  )
+                  if (res.status === 200) {
+                    transfersData = res.data
+                    return transfersData.transfers &&
+                      transfersData.transfers.length > 0
+                      ? true
+                      : false
+                  }
+                  return false
+                }
+              )
+              stepItem.transfersData = transfersData.transfers
+              setState([...json?.steps], path)
+            }
+
             stepItem.status = 'complete'
             setState([...json?.steps], path)
             resolve(stepItem)

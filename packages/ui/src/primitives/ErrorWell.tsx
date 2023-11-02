@@ -20,7 +20,7 @@ export default function ErrorWell({ error, css }: Props) {
   const errorStatus = (error as any)?.statusCode
 
   if (error) {
-    if (error.message.includes('rejected')) {
+    if (error?.message?.includes('rejected')) {
       message = 'User rejected the request.'
     } else if (errorType && errorType === 'price mismatch') {
       message = error.message

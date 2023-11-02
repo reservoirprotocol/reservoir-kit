@@ -147,8 +147,6 @@ export const CollectModalRenderer: FC<Props> = ({
     }
   })
 
-  // const mintPrice = BigInt(orders?.[0]?.totalRawPrice || '0')
-
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
 
@@ -692,14 +690,16 @@ export const CollectModalRenderer: FC<Props> = ({
               step.items?.length > 0
           )
 
-          if (
-            transactionSteps.length > 0 &&
-            transactionSteps.every((step) =>
-              step.items?.every((item) => item.txHash)
-            )
-          ) {
-            setCollectStep(CollectStep.Finalizing)
-          }
+          // @TODO: do we need a finalizing step?
+          // if so, need to change logic here. maybe can check if currentStep is last and is transaction
+          // if (
+          //   transactionSteps.length > 0 &&
+          //   transactionSteps.every((step) =>
+          //     step.items?.every((item) => item.txHash)
+          //   )
+          // ) {
+          //   setCollectStep(CollectStep.Finalizing)
+          // }
 
           if (
             steps.every(
