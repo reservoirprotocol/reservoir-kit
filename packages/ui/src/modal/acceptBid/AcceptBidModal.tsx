@@ -487,21 +487,29 @@ export function AcceptBidModal({
                   align="center"
                   css={{ gap: '$2', mb: '$3', width: '100%' }}
                 >
-                  {stepData?.currentStep?.items?.map((item) => {
-                    const txHash = item.txHash
-                      ? `${truncateAddress(item.txHash)}`
-                      : ''
-                    return (
-                      <Anchor
-                        href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                        color="primary"
-                        weight="medium"
-                        target="_blank"
-                        css={{ fontSize: 12 }}
-                      >
-                        View transaction: {txHash}
-                      </Anchor>
-                    )
+                  {stepData?.currentStep?.items?.map((item, itemIndex) => {
+                    if (
+                      Array.isArray(item?.txHashes) &&
+                      item?.txHashes.length > 0
+                    ) {
+                      return item.txHashes.map((txHash, txHashIndex) => {
+                        const truncatedTxHash = truncateAddress(txHash)
+                        return (
+                          <Anchor
+                            key={`${itemIndex}-${txHashIndex}`}
+                            href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                            color="primary"
+                            weight="medium"
+                            target="_blank"
+                            css={{ fontSize: 12 }}
+                          >
+                            View transaction: {truncatedTxHash}
+                          </Anchor>
+                        )
+                      })
+                    } else {
+                      return null
+                    }
                   })}
                 </Flex>
                 <Box
@@ -551,21 +559,29 @@ export function AcceptBidModal({
                       : `${totalSales > 1 ? 'Offers' : 'Offer'} accepted!`}
                   </Text>
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-                    {stepData?.currentStep?.items?.map((item) => {
-                      const txHash = item.txHash
-                        ? `${truncateAddress(item.txHash)}`
-                        : ''
-                      return (
-                        <Anchor
-                          href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                          color="primary"
-                          weight="medium"
-                          target="_blank"
-                          css={{ fontSize: 12 }}
-                        >
-                          View transaction: {txHash}
-                        </Anchor>
-                      )
+                    {stepData?.currentStep?.items?.map((item, itemIndex) => {
+                      if (
+                        Array.isArray(item?.txHashes) &&
+                        item?.txHashes.length > 0
+                      ) {
+                        return item.txHashes.map((txHash, txHashIndex) => {
+                          const truncatedTxHash = truncateAddress(txHash)
+                          return (
+                            <Anchor
+                              key={`${itemIndex}-${txHashIndex}`}
+                              href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                              color="primary"
+                              weight="medium"
+                              target="_blank"
+                              css={{ fontSize: 12 }}
+                            >
+                              View transaction: {truncatedTxHash}
+                            </Anchor>
+                          )
+                        })
+                      } else {
+                        return null
+                      }
                     })}
                   </Flex>
                 </Flex>

@@ -382,7 +382,7 @@ export async function executeSteps(
                         ],
                         LogLevel.Verbose
                       )
-                      stepItem.txHash = tx
+                      stepItem.txHashes = [tx]
                       if (json) {
                         setState([...json.steps], path)
                       }
@@ -392,20 +392,24 @@ export async function executeSteps(
                     isCrossChainIntent
                   )
 
-                  executeResults({
-                    request,
-                    stepId: step.id,
-                    requestId: json?.requestId,
-                    txHash: stepItem.txHash,
+                  stepItem?.txHashes?.forEach((txHash) => {
+                    executeResults({
+                      request,
+                      stepId: step.id,
+                      requestId: json?.requestId,
+                      txHash,
+                    })
                   })
                 } catch (e) {
-                  executeResults({
-                    request,
-                    stepId: step.id,
-                    requestId: json?.requestId,
-                    txHash: stepItem.txHash,
-                    error: e,
+                  stepItem?.txHashes?.forEach((txHash) => {
+                    executeResults({
+                      request,
+                      stepId: step.id,
+                      requestId: json?.requestId,
+                      txHash,
+                    })
                   })
+
                   throw e
                 }
                 break
@@ -478,9 +482,11 @@ export async function executeSteps(
                             ],
                             LogLevel.Verbose
                           )
-                          if (res?.data?.status === 'success') {
-                            //  @TODO: update
-                            stepItem.txHash = res?.data?.txHashes?.[0]
+                          if (
+                            res?.data?.status === 'success' &&
+                            res?.data?.txHashes
+                          ) {
+                            stepItem.txHashes = res?.data?.txHashes
                             return true
                           } else if (res?.data?.status === 'failure') {
                             throw Error(
@@ -520,7 +526,7 @@ export async function executeSteps(
             //Confirm that on-chain tx has been picked up by the indexer
             if (
               (step.id === 'sale' || step.id === 'order-signature') &&
-              stepItem.txHash &&
+              stepItem.txHashes &&
               (isSell || isBuy)
             ) {
               // @TODO: global headers declaration
@@ -547,7 +553,8 @@ export async function executeSteps(
               )
               const queryParams: paths['/transfers/bulk/v1']['get']['parameters']['query'] =
                 {
-                  txHash: stepItem.txHash,
+                  // @ts-ignore
+                  txHash: stepItem.txHashes,
                 }
               setParams(indexerConfirmationUrl, queryParams)
               let transfersData: paths['/transfers/bulk/v1']['get']['responses']['200']['schema'] =
@@ -568,8 +575,16 @@ export async function executeSteps(
                   )
                   if (res.status === 200) {
                     transfersData = res.data
+
+                    const transferTxHashes = transfersData?.transfers?.map(
+                      (transfer) => transfer.txHash
+                    )
+
                     return transfersData.transfers &&
-                      transfersData.transfers.length > 0
+                      transfersData.transfers.length > 0 &&
+                      stepItem.txHashes?.every((txHash) =>
+                        transferTxHashes?.includes(txHash)
+                      )
                       ? true
                       : false
                   }

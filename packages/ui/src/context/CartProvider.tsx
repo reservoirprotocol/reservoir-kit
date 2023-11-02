@@ -88,7 +88,7 @@ export type Cart = {
   pendingTransactionId?: string
   transaction: {
     id?: string
-    txHash?: string
+    txHashes?: string[]
     chain: ReservoirChain
     items: CartItem[]
     error?: Error
@@ -1132,7 +1132,7 @@ function cartStore({
             if (
               transactionSteps.length > 0 &&
               transactionSteps.every((step) =>
-                step.items?.every((item) => item.txHash)
+                step.items?.every((item) => item.txHashes)
               )
             ) {
               status = CheckoutStatus.Finalizing
@@ -1171,7 +1171,8 @@ function cartStore({
               cartData.current.transaction.status = status
               cartData.current.transaction.currentStep = currentStep
               if (currentStepItem) {
-                cartData.current.transaction.txHash = currentStepItem?.txHash
+                cartData.current.transaction.txHashes =
+                  currentStepItem?.txHashes
                 cartData.current.transaction.steps = steps
                 cartData.current.transaction.path = path
               }

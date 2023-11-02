@@ -69,7 +69,7 @@ export type Execute = {
       orderIds?: string[]
       // Manually added
       error?: string
-      txHash?: string
+      txHashes?: string[]
       orderData?: {
         crossPostingOrderId?: string
         orderId: string

@@ -1667,6 +1667,8 @@ export interface definitions {
     updatedAt?: string;
     name?: string;
     symbol?: string;
+    /** @description Time when contract was deployed */
+    contractDeployedAt?: string;
     image?: string;
     banner?: string;
     discordUrl?: string;
@@ -4792,6 +4794,12 @@ export interface definitions {
   };
   ips: string[];
   origins: string[];
+  permissions: {
+    override_collection_refresh_cool_down?: boolean;
+    assign_collection_to_community?: boolean;
+    update_metadata_disabled?: boolean;
+    update_spam_status?: boolean;
+  };
   Model393: {
     /** @description The api key to update */
     apiKey?: string;
@@ -4799,6 +4807,7 @@ export interface definitions {
     active?: boolean;
     ips?: definitions["ips"];
     origins?: definitions["origins"];
+    permissions?: definitions["permissions"];
     revShareBps?: number;
   };
   Model394: {
@@ -8995,8 +9004,7 @@ export interface operations {
         startTimestamp?: number;
         /** Get events before a particular unix timestamp (inclusive) */
         endTimestamp?: number;
-        /** Filter to a particular transaction. Example: `0x04654cc4c81882ed4d20b958e0eeb107915d75730110cce65333221439de6afc` */
-        txHash?: string;
+        txHash?: string[] | string;
         /** Amount of items returned in response. Max limit is 1000. */
         limit?: number;
         /** Order the items are returned in the response. Options are `timestamp`, and `updatedAt`. Default is `timestamp`. */

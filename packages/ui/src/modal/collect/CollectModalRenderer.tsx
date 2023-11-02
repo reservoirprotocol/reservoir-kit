@@ -473,7 +473,6 @@ export const CollectModalRenderer: FC<Props> = ({
       return
     }
     if (contentMode === 'mint') {
-      // @TODO: what should be the default mint currency?
       setPaymentCurrency(chainCurrency)
     } else if (selectedTokens.length > 0) {
       let firstListingCurrency
@@ -482,7 +481,7 @@ export const CollectModalRenderer: FC<Props> = ({
           address: selectedTokens?.[0].currency as Address,
           decimals: selectedTokens?.[0].currencyDecimals || 18,
           symbol: selectedTokens?.[0].currencySymbol || '',
-          chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1, // @TODO: test
+          chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
         }
       } else {
         firstListingCurrency =
@@ -683,23 +682,9 @@ export const CollectModalRenderer: FC<Props> = ({
             })
           }
 
-          const transactionSteps = steps.filter(
-            (step) =>
-              step.kind === 'transaction' &&
-              step.items &&
-              step.items?.length > 0
-          )
-
-          // @TODO: do we need a finalizing step?
-          // if so, need to change logic here. maybe can check if currentStep is last and is transaction
-          console.log('currentStepIndex: ', currentStepIndex)
-          console.log('executableSteps.length: ', executableSteps.length)
           if (
-            currentStepIndex === executableSteps.length &&
-            transactionSteps.length > 0 &&
-            transactionSteps.every((step) =>
-              step.items?.every((item) => item.txHash)
-            )
+            currentStepIndex + 1 === executableSteps.length &&
+            currentStep?.items?.every((item) => item.txHashes)
           ) {
             setCollectStep(CollectStep.Finalizing)
           }

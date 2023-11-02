@@ -1,4 +1,4 @@
-import { Address, PublicClient, Transaction } from 'viem'
+import { PublicClient, Transaction } from 'viem'
 import { LogLevel, getClient } from '..'
 import { Execute, ReservoirWallet, TransactionStepItem } from '../types'
 import { TransactionTimeoutError } from '../errors'
@@ -109,10 +109,6 @@ export async function sendTransactionSafely(
 
     if (validate(res)) {
       waitingForConfirmation = false // transaction confirmed
-      // @TODO: verify
-      if (res.data.txHashes) {
-        txHash = res.data.txHashes[0] as Address
-      }
     } else {
       if (
         !isCrossChainIntent ||

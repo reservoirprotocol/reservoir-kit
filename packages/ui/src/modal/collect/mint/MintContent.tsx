@@ -575,23 +575,29 @@ export const MintContent: FC<
               </Text>
             </Flex>
             <Flex direction="column" css={{ gap: '$2', mb: '$3', px: '$5' }}>
-              {stepData?.currentStep?.items?.map((item, index) => {
-                const txHash = item.txHash
-                  ? `${truncateAddress(item.txHash)}`
-                  : ''
-
-                return (
-                  <Anchor
-                    key={index}
-                    href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                    color="primary"
-                    weight="medium"
-                    target="_blank"
-                    css={{ fontSize: 12 }}
-                  >
-                    View transaction: {txHash}
-                  </Anchor>
-                )
+              {stepData?.currentStep?.items?.map((item, itemIndex) => {
+                if (
+                  Array.isArray(item?.txHashes) &&
+                  item?.txHashes.length > 0
+                ) {
+                  return item.txHashes.map((txHash, txHashIndex) => {
+                    const truncatedTxHash = truncateAddress(txHash)
+                    return (
+                      <Anchor
+                        key={`${itemIndex}-${txHashIndex}`}
+                        href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                        color="primary"
+                        weight="medium"
+                        target="_blank"
+                        css={{ fontSize: 12 }}
+                      >
+                        View transaction: {truncatedTxHash}
+                      </Anchor>
+                    )
+                  })
+                } else {
+                  return null
+                }
               })}
             </Flex>
           </Flex>
