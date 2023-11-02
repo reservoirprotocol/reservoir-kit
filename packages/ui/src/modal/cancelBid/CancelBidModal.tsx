@@ -16,6 +16,8 @@ import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGasPump } from '@fortawesome/free-solid-svg-icons'
 import { truncateAddress } from '../../lib/truncate'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { WalletClient } from 'viem'
 
 const ModalCopy = {
   title: 'Cancel Offer',
@@ -31,6 +33,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
   onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
@@ -43,6 +46,7 @@ export function CancelBidModal({
   trigger,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
   onClose,
   onCancelComplete,
   onCancelError,
@@ -67,6 +71,7 @@ export function CancelBidModal({
       bidId={bidId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
     >
       {({
         loading,

@@ -29,13 +29,14 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
-import { Execute } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { truncateAddress } from '../../lib/truncate'
 import { SelectPaymentToken } from '../SelectPaymentToken'
+import { WalletClient } from 'viem'
 
 type PurchaseData = {
   tokenId?: string
@@ -69,6 +70,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
   onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -109,6 +112,8 @@ export function BuyModal({
   feesOnTopUsd,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
+  usePermit,
   onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
@@ -141,6 +146,8 @@ export function BuyModal({
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
+      usePermit={usePermit}
       onConnectWallet={onConnectWallet}
     >
       {({

@@ -42,6 +42,8 @@ import { ApproveBidCollapsible } from './ApproveBidCollapsible'
 import SigninStep from '../SigninStep'
 import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
 import { truncateAddress } from '../../lib/truncate'
+import { WalletClient } from 'viem'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -64,6 +66,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
   onBidAccepted?: (data: BidData) => void
   onClose?: (
     data: BidData,
@@ -81,6 +84,7 @@ export function AcceptBidModal({
   tokens,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
   onBidAccepted,
   onClose,
   onBidAcceptError,
@@ -108,6 +112,7 @@ export function AcceptBidModal({
       chainId={modalChain?.id}
       tokens={tokens}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
     >
       {({
         loading,

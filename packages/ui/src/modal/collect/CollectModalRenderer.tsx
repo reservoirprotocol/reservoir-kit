@@ -21,12 +21,15 @@ import {
   ReservoirChain,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
-import { Address, formatUnits, zeroAddress } from 'viem'
-import { BuyResponses } from '@reservoir0x/reservoir-sdk/src/types'
+import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
-import { customChains } from '@reservoir0x/reservoir-sdk'
+import {
+  customChains,
+  ReservoirWallet,
+  BuyResponses,
+} from '@reservoir0x/reservoir-sdk'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 export enum CollectStep {
@@ -106,6 +109,8 @@ type Props = {
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
 }
 
 export const CollectModalRenderer: FC<Props> = ({
@@ -119,6 +124,8 @@ export const CollectModalRenderer: FC<Props> = ({
   onConnectWallet,
   normalizeRoyalties,
   children,
+  walletClient,
+  usePermit,
 }) => {
   const client = useReservoirClient()
   const { address } = useAccount()
@@ -168,7 +175,9 @@ export const CollectModalRenderer: FC<Props> = ({
   const providerOptions = useContext(ProviderOptionsContext)
   const disableJumperLink = providerOptions?.disableJumperLink
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id })
+
+  const wallet = walletClient || wagmiWallet
 
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
@@ -621,6 +630,10 @@ export const CollectModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
+    if (usePermit) {
+      options.usePermit = true
+    }
+
     setCollectStep(CollectStep.Approving)
 
     client.actions
@@ -725,6 +738,7 @@ export const CollectModalRenderer: FC<Props> = ({
     itemAmount,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
+    usePermit,
   ])
 
   return (

@@ -20,8 +20,9 @@ import {
   Execute,
   LogLevel,
   ReservoirClientActions,
+  ReservoirWallet,
 } from '@reservoir0x/reservoir-sdk'
-import { Address, formatUnits, zeroAddress } from 'viem'
+import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import usePaymentTokens, {
@@ -97,6 +98,8 @@ type Props = {
   normalizeRoyalties?: boolean
   onConnectWallet: () => void
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
 }
 
 export const BuyModalRenderer: FC<Props> = ({
@@ -110,6 +113,8 @@ export const BuyModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   onConnectWallet,
   children,
+  walletClient,
+  usePermit,
 }) => {
   const [totalPrice, setTotalPrice] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
@@ -136,7 +141,11 @@ export const BuyModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wagmiWalletClient } = useWalletClient({
+    chainId: rendererChain?.id,
+  })
+
+  const wallet = walletClient || wagmiWalletClient
 
   const chainCurrency = useChainCurrency(rendererChain?.id)
   const blockExplorerBaseUrl =
@@ -424,6 +433,10 @@ export const BuyModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
+    if (usePermit) {
+      options.usePermit = true
+    }
+
     setBuyStep(BuyStep.Approving)
     const items: Item[] = []
     const item: Item = {
@@ -535,6 +548,7 @@ export const BuyModalRenderer: FC<Props> = ({
     wallet,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
+    usePermit,
     mutateListings,
     mutateTokens,
     mutateCollection,
