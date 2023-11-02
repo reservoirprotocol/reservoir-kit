@@ -1,10 +1,8 @@
-
-* Merge branch 'feature/use-permit-support' [e2ae0e0b](https://github.com/reservoirprotocol/reservoir-kit/commit/e2ae0e0bfcbc91998a83e6dd7556cbeded5d65fe)
 ## [v1.6.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/bb2bced78527154cca38c621a75a21bb333187ac) (2023-11-02)
 
-* Add use permit props to BuyModal and BidModal [fd80d39d](https://github.com/reservoirprotocol/reservoir-kit/commit/fd80d39ddbc44201a05a8edbc673e40bd89253a1)
-* Merge pull request #437 from reservoirprotocol/ted/grwth-3479-the-message-seems-off-for-a-successful-purchase-for-erc721c [01481d78](https://github.com/reservoirprotocol/reservoir-kit/commit/01481d78fdb363c316463dc0cb3997e0ed099378)
+* Sync api
 * Fix issue with transaction detection for IERC2771 [559bf563](https://github.com/reservoirprotocol/reservoir-kit/commit/559bf563689ee7948e971a265877c215463312ac)
+
 ## [🎉 Release ui package v1.16.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/7aa430e37a3519eb77a432072d8f16c53c4bb06d) (2023-11-01)
 
 * Fix: only include transfers to taker in transferData [53a867d5](https://github.com/reservoirprotocol/reservoir-kit/commit/53a867d55e520eef4bcef2bea78dbd12220013bd)
