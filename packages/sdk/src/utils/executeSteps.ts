@@ -428,7 +428,17 @@ export async function executeSteps(
                         return false
                       }
                     )
-                    stepItem.transfersData = transfersData.transfers
+                    const taker = await wallet.address()
+                    const contracts = path
+                      ?.filter((order) => order.contract)
+                      .map((order) => order.contract?.toLowerCase())
+                    stepItem.transfersData = transfersData.transfers?.filter(
+                      (transfer) =>
+                        transfer.to?.toLowerCase() === taker.toLowerCase() &&
+                        contracts?.includes(
+                          transfer?.token?.contract?.toLowerCase()
+                        )
+                    )
                     setState([...json?.steps], path)
                   }
                   executeResults({
