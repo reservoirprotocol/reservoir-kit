@@ -54,7 +54,8 @@ const { chains, publicClient } = configureChains(
     allChains.base,
     allChains.avalanche,
     allChains.linea,
-    allChains.scroll
+    allChains.scroll,
+    allChains.arbitrumNova
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
@@ -174,6 +175,10 @@ const AppWrapper: FC<any> = ({ children }) => {
             {
               ...reservoirChains.scroll,
               active: CHAIN_ID === allChains.scroll.id,
+            },
+            {
+              ...reservoirChains.arbitrumNova,
+              active: CHAIN_ID === allChains.arbitrumNova.id,
             }
           ],
           marketplaceFees: MARKETPLACE_FEES,
