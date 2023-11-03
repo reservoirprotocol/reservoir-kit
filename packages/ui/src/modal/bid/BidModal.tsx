@@ -93,6 +93,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   copyOverrides?: Partial<typeof ModalCopy>
   feesBps?: string[] | null
   walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
   onViewOffers?: () => void
   onClose?: (
     data: BidCallbackData,
@@ -154,6 +155,7 @@ export function BidModal({
   feesBps,
   orderKind,
   walletClient,
+  usePermit,
   onViewOffers,
   onClose,
   onBidComplete,
@@ -197,6 +199,8 @@ export function BidModal({
       oracleEnabled={oracleEnabled}
       currencies={currencies}
       feesBps={feesBps}
+      walletClient={walletClient}
+      usePermit={usePermit}
     >
       {({
         token,

@@ -556,17 +556,17 @@ export function EditBidModal({
                   <>
                     <Progress
                       title={
-                        stepData?.currentStepItem.txHash
+                        stepData?.currentStepItem.txHashes
                           ? 'Finalizing on blockchain'
                           : 'Approve Reservoir Oracle to update the offer'
                       }
-                      txHash={stepData?.currentStepItem.txHash}
+                      txHashes={stepData?.currentStepItem?.txHashes}
                     />
                   </>
                 )}
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
-                  {stepData?.currentStepItem.txHash
+                  {stepData?.currentStepItem.txHashes
                     ? copy.ctaAwaitingValidation
                     : copy.ctaAwaitingApproval}
                 </Button>
