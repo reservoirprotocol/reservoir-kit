@@ -411,7 +411,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
             } else if (currentStep.id === 'sale') {
               if (
-                currentStep.items?.every((item) => item.txHash !== undefined)
+                currentStep.items?.every((item) => item.txHashes !== undefined)
               ) {
                 setAcceptBidStep(AcceptBidStep.Finalizing)
               } else {

@@ -154,9 +154,6 @@ export const CollectModalRenderer: FC<Props> = ({
     }
   })
 
-  // const mintPrice = orders?.[0]?.totalPrice || 0
-  const mintPrice = BigInt(orders?.[0]?.totalRawPrice || '0')
-
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
 
@@ -221,11 +218,20 @@ export const CollectModalRenderer: FC<Props> = ({
     address as Address,
     _paymentCurrency ?? chainCurrency,
     totalIncludingFees,
-    rendererChain?.id
+    rendererChain?.id,
+    contentMode === 'mint'
   )
 
   const paymentCurrency = paymentTokens?.find(
-    (paymentToken) => paymentToken?.address === _paymentCurrency?.address
+    (paymentToken) =>
+      paymentToken?.address === _paymentCurrency?.address &&
+      paymentToken?.chainId === _paymentCurrency?.chainId
+  )
+
+  const mintPrice = BigInt(
+    (orders?.[0]?.currency?.toLowerCase() !== paymentCurrency?.address
+      ? orders?.[0]?.buyInRawQuote
+      : orders?.[0]?.totalRawPrice) || 0
   )
 
   const usdPrice = paymentCurrency?.usdPrice || 0
@@ -244,6 +250,7 @@ export const CollectModalRenderer: FC<Props> = ({
       partial: true,
       onlyPath: true,
       currency: paymentCurrency?.address,
+      currencyChainId: paymentCurrency?.chainId,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -331,6 +338,7 @@ export const CollectModalRenderer: FC<Props> = ({
     mode,
     token?.token?.tokenId,
     paymentCurrency?.address,
+    paymentCurrency?.chainId,
     is1155,
   ])
 
@@ -394,7 +402,11 @@ export const CollectModalRenderer: FC<Props> = ({
       for (const order of orders) {
         if (remainingQuantity >= 0) {
           let orderQuantity = order?.quantity || 1
-          let orderPricePerItem = BigInt(order?.totalRawPrice || '0')
+          let orderPricePerItem = BigInt(
+            (order?.currency?.toLowerCase() !== paymentCurrency?.address
+              ? order?.buyInRawQuote
+              : order?.totalRawPrice) || 0
+          )
 
           if (remainingQuantity >= orderQuantity) {
             updatedTotal += orderPricePerItem * BigInt(orderQuantity)
@@ -478,6 +490,7 @@ export const CollectModalRenderer: FC<Props> = ({
           address: selectedTokens?.[0].currency as Address,
           decimals: selectedTokens?.[0].currencyDecimals || 18,
           symbol: selectedTokens?.[0].currencySymbol || '',
+          chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
         }
       } else {
         firstListingCurrency =
@@ -559,12 +572,15 @@ export const CollectModalRenderer: FC<Props> = ({
     }
 
     let activeWalletChain = getNetwork().chain
-    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+    if (
+      activeWalletChain &&
+      paymentCurrency?.chainId !== activeWalletChain?.id
+    ) {
       activeWalletChain = await switchNetwork({
-        chainId: rendererChain?.id as number,
+        chainId: paymentCurrency?.chainId as number,
       })
     }
-    if (rendererChain?.id !== activeWalletChain?.id) {
+    if (paymentCurrency?.chainId !== activeWalletChain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
@@ -580,6 +596,7 @@ export const CollectModalRenderer: FC<Props> = ({
     let options: BuyTokenOptions = {
       partial: true,
       currency: paymentCurrency?.address,
+      currencyChainId: paymentCurrency?.chainId,
     }
 
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
@@ -678,18 +695,9 @@ export const CollectModalRenderer: FC<Props> = ({
             })
           }
 
-          const transactionSteps = steps.filter(
-            (step) =>
-              step.kind === 'transaction' &&
-              step.items &&
-              step.items?.length > 0
-          )
-
           if (
-            transactionSteps.length > 0 &&
-            transactionSteps.every((step) =>
-              step.items?.every((item) => item.txHash)
-            )
+            currentStepIndex + 1 === executableSteps.length &&
+            currentStep?.items?.every((item) => item.txHashes)
           ) {
             setCollectStep(CollectStep.Finalizing)
           }
@@ -728,7 +736,8 @@ export const CollectModalRenderer: FC<Props> = ({
     feesOnTopUsd,
     contentMode,
     itemAmount,
-    paymentCurrency,
+    paymentCurrency?.address,
+    paymentCurrency?.chainId,
     usePermit,
   ])
 

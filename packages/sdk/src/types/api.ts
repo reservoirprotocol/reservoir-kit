@@ -9004,8 +9004,7 @@ export interface operations {
         startTimestamp?: number;
         /** Get events before a particular unix timestamp (inclusive) */
         endTimestamp?: number;
-        /** Filter to a particular transaction. Example: `0x04654cc4c81882ed4d20b958e0eeb107915d75730110cce65333221439de6afc` */
-        txHash?: string;
+        txHash?: string[] | string;
         /** Amount of items returned in response. Max limit is 1000. */
         limit?: number;
         /** Order the items are returned in the response. Options are `timestamp`, and `updatedAt`. Default is `timestamp`. */

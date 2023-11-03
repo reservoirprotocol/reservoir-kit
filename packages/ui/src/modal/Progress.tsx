@@ -2,16 +2,16 @@ import { Anchor, Box, Flex, Text } from '../primitives'
 import React, { FC } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCube, faWallet } from '@fortawesome/free-solid-svg-icons'
-import { useNetwork } from 'wagmi'
+import { truncateAddress } from '../lib/truncate'
 
 type Props = {
   title: string
-  txHash?: string
+  txHashes?: string[]
   blockExplorerBaseUrl?: string
 }
 
-const Progress: FC<Props> = ({ title, txHash, blockExplorerBaseUrl }) => {
-  const { chain: activeChain } = useNetwork()
+const Progress: FC<Props> = ({ title, txHashes, blockExplorerBaseUrl }) => {
+  const hasTxHashes = txHashes && txHashes.length > 0
 
   return (
     <Flex
@@ -26,7 +26,7 @@ const Progress: FC<Props> = ({ title, txHash, blockExplorerBaseUrl }) => {
       <Text style="h6">{title}</Text>
       <Box css={{ color: '$neutralText' }}>
         <FontAwesomeIcon
-          icon={txHash ? faCube : faWallet}
+          icon={hasTxHashes ? faCube : faWallet}
           style={{
             width: '32px',
             height: '32px',
@@ -34,18 +34,25 @@ const Progress: FC<Props> = ({ title, txHash, blockExplorerBaseUrl }) => {
           }}
         />
       </Box>
-      <Anchor
-        color="primary"
-        weight="medium"
-        css={{
-          fontSize: 12,
-          visibility: txHash ? 'visible' : 'hidden',
-        }}
-        href={blockExplorerBaseUrl}
-        target="_blank"
-      >
-        View on {activeChain?.blockExplorers?.default.name || 'Etherscan'}
-      </Anchor>
+      {hasTxHashes ? (
+        <Flex direction="column" align="center" css={{ gap: '$2' }}>
+          {txHashes?.map((txHash, index) => {
+            const truncatedTxHash = truncateAddress(txHash)
+            return (
+              <Anchor
+                key={index}
+                href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                color="primary"
+                weight="medium"
+                target="_blank"
+                css={{ fontSize: 12 }}
+              >
+                View transaction: {truncatedTxHash}
+              </Anchor>
+            )
+          })}
+        </Flex>
+      ) : null}
     </Flex>
   )
 }
