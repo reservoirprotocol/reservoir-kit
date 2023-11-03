@@ -1,6 +1,6 @@
-import { PublicClient, Transaction } from 'viem'
+import { Address, PublicClient, Transaction, serializeTransaction } from 'viem'
 import { LogLevel, getClient } from '..'
-import { Execute, ReservoirWallet, TransactionStepItem } from '../types'
+import { Execute, ReservoirWallet, TransactionStepItem, paths } from '../types'
 import { TransactionTimeoutError } from '../errors'
 import axios, {
   AxiosRequestConfig,
@@ -28,6 +28,14 @@ export async function sendTransactionSafely(
 ) {
   const client = getClient()
   let txHash = await wallet.handleSendTransactionStep(chainId, item, step)
+  submitTransactionToSolver({
+    chainId,
+    viemClient,
+    step,
+    request,
+    headers,
+    txHash,
+  })
   const maximumAttempts = client.maxPollingAttemptsBeforeTimeout ?? 30
   let attemptCount = 0
   let waitingForConfirmation = true
@@ -55,6 +63,14 @@ export async function sendTransactionSafely(
           ['Transaction replaced', replacement],
           LogLevel.Verbose
         )
+        submitTransactionToSolver({
+          chainId,
+          viemClient,
+          step,
+          request,
+          headers,
+          txHash,
+        })
       },
     })
     .catch((error) => {
@@ -96,7 +112,8 @@ export async function sendTransactionSafely(
           kind: item?.check?.body?.kind,
           // @ts-ignore
           chainId: item?.check?.body?.chainId,
-          id: txHash,
+          // @ts-ignore
+          id: item?.check?.body?.id ?? txHash,
         },
       })
     } else {
@@ -139,4 +156,75 @@ export async function sendTransactionSafely(
   }
 
   return true
+}
+
+const submitTransactionToSolver = async ({
+  chainId,
+  viemClient,
+  request,
+  headers,
+  step,
+  txHash,
+}: {
+  chainId: number
+  viemClient: PublicClient
+  step: Execute['steps'][0]
+  request: AxiosRequestConfig
+  headers: AxiosRequestHeaders
+  txHash: Address | undefined
+}) => {
+  if (step.id === 'deposit' && txHash) {
+    getClient()?.log(['Submitting transaction to solver'], LogLevel.Verbose)
+    try {
+      const tx = await viemClient.getTransaction({
+        hash: txHash,
+      })
+      const serializedTx = serializeTransaction(
+        {
+          type: tx.type,
+          chainId: tx.chainId ?? chainId,
+          gas: tx.gas,
+          nonce: tx.nonce,
+          to: tx.to || undefined,
+          value: tx.value,
+          maxFeePerGas: tx.maxFeePerGas,
+          maxPriorityFeePerGas: tx.maxPriorityFeePerGas,
+          accessList: tx.accessList,
+          data: tx.input,
+        },
+        {
+          v: tx.v,
+          r: tx.r,
+          s: tx.s,
+        }
+      )
+
+      const solveData: paths['/execute/solve/v1']['post']['parameters']['body']['body'] =
+        {
+          //@ts-ignore
+          kind: 'cross-chain-intent',
+          tx: serializedTx,
+          chainId: chainId,
+        }
+
+      axios
+        .request({
+          url: `${request.baseURL}/execute/solve/v1`,
+          method: 'POST',
+          headers: headers,
+          data: solveData,
+        })
+        .then(() => {
+          getClient()?.log(
+            ['Transaction submitted to solver'],
+            LogLevel.Verbose
+          )
+        })
+    } catch (e) {
+      getClient()?.log(
+        ['Failed to submit transaction to solver', e],
+        LogLevel.Warn
+      )
+    }
+  }
 }
