@@ -478,7 +478,7 @@ export const BidModalRenderer: FC<Props> = ({
           'fees',
         fees
       )
-    } else if (!feeBps) {
+    } else if (!feesBps) {
       delete bid.fees
     } else if (!customRoyalties) {
       delete bid.customRoyalties
@@ -580,6 +580,8 @@ export const BidModalRenderer: FC<Props> = ({
     trait,
     quantity,
     feesBps,
+    customRoyalties,
+    marketplaceFees,
     reservoirMarketplace,
     usePermit,
   ])
