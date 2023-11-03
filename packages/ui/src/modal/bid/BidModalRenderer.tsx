@@ -123,6 +123,8 @@ type Props = {
   currencies?: Currency[]
   oracleEnabled: boolean
   feesBps?: string[] | null
+  marketplaceFees?: string[] | null
+  customRoyalties?: string[] | null
   orderKind?: BidData['orderKind']
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
@@ -139,6 +141,19 @@ export type BidModalStepData = {
   currentStep: Execute['steps'][0]
 }
 
+function addFeesToBid(
+  bid: BidData,
+  feeType: 'marketplaceFees' | 'fees' | 'customRoyalties',
+  fees?: string[] | string
+): void {
+  if (fees) {
+    if (!bid[feeType]) {
+      bid[feeType] = []
+    }
+    bid[feeType] = bid?.[feeType]?.concat(fees)
+  }
+}
+
 export const BidModalRenderer: FC<Props> = ({
   open,
   tokenId,
@@ -150,6 +165,8 @@ export const BidModalRenderer: FC<Props> = ({
   currencies,
   oracleEnabled = false,
   feesBps,
+  marketplaceFees,
+  customRoyalties,
   children,
   walletClient,
   usePermit,
@@ -451,10 +468,22 @@ export const BidModalRenderer: FC<Props> = ({
       attributeValue: traitBidSupported ? trait?.value : undefined,
     }
 
-    if (feesBps && feesBps?.length > 0) {
-      bid.fees = feesBps
-    } else if (!feesBps) {
+    const fees = feesBps || customRoyalties || marketplaceFees
+
+    if (fees && fees?.length > 0) {
+      addFeesToBid(
+        bid,
+        (marketplaceFees && 'marketplaceFees') ||
+          (customRoyalties && 'customRoyalties') ||
+          'fees',
+        fees
+      )
+    } else if (!feeBps) {
       delete bid.fees
+    } else if (!customRoyalties) {
+      delete bid.customRoyalties
+    } else if (!marketplaceFees) {
+      delete bid.marketplaceFees
     }
 
     if (currency) {
