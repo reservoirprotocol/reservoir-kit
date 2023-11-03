@@ -109,12 +109,12 @@ const expirationOptions = [
 function addFeesToListing(
   listing: ListingData['listing'],
   feeType: 'marketplaceFees' | 'fees' | 'customRoyalties',
-  fees?: string[]
+  fees: string[]
 ): void {
   if (!listing[feeType]) {
     listing[feeType] = []
   }
-  listing[feeType] = listing?.[feeType]?.concat(fees!)
+  listing[feeType] = listing?.[feeType]?.concat(fees)
 }
 
 export const ListModalRenderer: FC<Props> = ({
@@ -357,13 +357,15 @@ export const ListModalRenderer: FC<Props> = ({
     const fees =
       feesBps || marketplaceFees || customRoyalties || client.marketplaceFees
 
-    addFeesToListing(
-      listing,
-      (marketplaceFees && 'marketplaceFees') ||
-        (customRoyalties && 'customRoyalties') ||
-        'fees',
-      fees
-    )
+     if (fees) {
+      addFeesToListing(
+        listing,
+        (marketplaceFees && 'marketplaceFees') ||
+          (customRoyalties && 'customRoyalties') ||
+          'fees',
+        fees
+      )
+     } 
 
     if (quantity > 1) {
       listing.quantity = quantity

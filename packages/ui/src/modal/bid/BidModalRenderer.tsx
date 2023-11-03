@@ -144,7 +144,7 @@ export type BidModalStepData = {
 function addFeesToBid(
   bid: BidData,
   feeType: 'marketplaceFees' | 'fees' | 'customRoyalties',
-  fees?: string[] | string
+  fees: string[] | string
 ): void {
   if (!bid[feeType]) {
     bid[feeType] = []
