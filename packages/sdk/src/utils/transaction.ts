@@ -23,7 +23,8 @@ export async function sendTransactionSafely(
   wallet: ReservoirWallet,
   setTx: (tx: Transaction['hash']) => void,
   request: AxiosRequestConfig,
-  headers: AxiosRequestHeaders
+  headers: AxiosRequestHeaders,
+  isCrossChainIntent?: boolean
 ) {
   const client = getClient()
   let txHash = await wallet.handleSendTransactionStep(chainId, item, step)
@@ -68,6 +69,12 @@ export async function sendTransactionSafely(
       ['Execute Steps: Polling for confirmation', res],
       LogLevel.Verbose
     )
+    if (isCrossChainIntent) {
+      if (res.status === 200 && res.data && res.data.status === 'failure') {
+        throw Error('Transaction failed')
+      }
+      return res.status === 200 && res.data && res.data.status === 'success'
+    }
     return res.status === 200 && res.data && res.data.synced
   }
 
@@ -77,16 +84,39 @@ export async function sendTransactionSafely(
     attemptCount < maximumAttempts &&
     !transactionCancelled
   ) {
-    const res = await axios.request({
-      url: `${request.baseURL}/transactions/${txHash}/synced/v1`,
-      method: 'get',
-      headers: headers,
-    })
+    let res
+
+    if (isCrossChainIntent && item?.check?.endpoint) {
+      res = await axios.request({
+        url: `${request.baseURL}${item?.check?.endpoint}`,
+        method: 'POST',
+        headers: headers,
+        data: {
+          // @ts-ignore
+          kind: item?.check?.body?.kind,
+          // @ts-ignore
+          chainId: item?.check?.body?.chainId,
+          id: txHash,
+        },
+      })
+    } else {
+      res = await axios.request({
+        url: `${request.baseURL}/transactions/${txHash}/synced/v1`,
+        method: 'get',
+        headers: headers,
+      })
+    }
 
     if (validate(res)) {
       waitingForConfirmation = false // transaction confirmed
     } else {
-      attemptCount++
+      if (
+        !isCrossChainIntent ||
+        (isCrossChainIntent && res.data.status !== 'pending')
+      ) {
+        attemptCount++
+      }
+
       await new Promise((resolve) => setTimeout(resolve, 5000)) // wait for 5 seconds
     }
   }
