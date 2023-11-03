@@ -549,15 +549,14 @@ export async function executeSteps(
                 LogLevel.Verbose
               )
               const indexerConfirmationUrl = new URL(
-                `${request.baseURL}/transfers/bulk/v1`
+                `${request.baseURL}/transfers/bulk/v2`
               )
-              const queryParams: paths['/transfers/bulk/v1']['get']['parameters']['query'] =
+              const queryParams: paths['/transfers/bulk/v2']['get']['parameters']['query'] =
                 {
-                  // @ts-ignore @TODO: remove when types are synced
                   txHash: stepItem.txHashes,
                 }
               setParams(indexerConfirmationUrl, queryParams)
-              let transfersData: paths['/transfers/bulk/v1']['get']['responses']['200']['schema'] =
+              let transfersData: paths['/transfers/bulk/v2']['get']['responses']['200']['schema'] =
                 {}
               await pollUntilOk(
                 {
