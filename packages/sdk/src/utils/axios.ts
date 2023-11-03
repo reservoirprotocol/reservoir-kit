@@ -14,9 +14,11 @@ axios.interceptors.response.use(
     return _res
   },
   (error) => {
+    debugger
     return Promise.reject(
-      APIError(
-        `${error.message}: ${error.response?.data?.message || 'Unknown Reason'}`
+      new APIError(
+        error.response?.data?.message || 'Unknown Reason',
+        error.response?.data?.statusCode || 500
       )
     )
   }

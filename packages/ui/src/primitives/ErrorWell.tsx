@@ -18,7 +18,6 @@ export default function ErrorWell({ error, css }: Props) {
 
   const errorType = (error as any)?.type
   const errorStatus = (error as any)?.statusCode
-
   if (error) {
     if (error?.message?.includes('rejected')) {
       message = 'User rejected the request.'
