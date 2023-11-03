@@ -35,6 +35,7 @@ export async function sendTransactionSafely(
     request,
     headers,
     txHash,
+    isCrossChainIntent,
   })
   const maximumAttempts = client.maxPollingAttemptsBeforeTimeout ?? 30
   let attemptCount = 0
@@ -70,6 +71,7 @@ export async function sendTransactionSafely(
           request,
           headers,
           txHash,
+          isCrossChainIntent,
         })
       },
     })
@@ -165,6 +167,7 @@ const submitTransactionToSolver = async ({
   headers,
   step,
   txHash,
+  isCrossChainIntent,
 }: {
   chainId: number
   viemClient: PublicClient
@@ -172,8 +175,9 @@ const submitTransactionToSolver = async ({
   request: AxiosRequestConfig
   headers: AxiosRequestHeaders
   txHash: Address | undefined
+  isCrossChainIntent?: boolean
 }) => {
-  if (step.id === 'deposit' && txHash) {
+  if (step.id === 'sale' && txHash && isCrossChainIntent) {
     getClient()?.log(['Submitting transaction to solver'], LogLevel.Verbose)
     try {
       const tx = await viemClient.getTransaction({

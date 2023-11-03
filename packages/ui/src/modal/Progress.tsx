@@ -2,7 +2,6 @@ import { Anchor, Box, Flex, Text } from '../primitives'
 import React, { FC } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCube, faWallet } from '@fortawesome/free-solid-svg-icons'
-import { useNetwork } from 'wagmi'
 import { truncateAddress } from '../lib/truncate'
 
 type Props = {
@@ -12,8 +11,6 @@ type Props = {
 }
 
 const Progress: FC<Props> = ({ title, txHashes, blockExplorerBaseUrl }) => {
-  const { chain: activeChain } = useNetwork()
-
   const hasTxHashes = txHashes && txHashes.length > 0
 
   return (
