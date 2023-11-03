@@ -56,18 +56,6 @@ const Progress: FC<Props> = ({ title, txHashes, blockExplorerBaseUrl }) => {
           })}
         </Flex>
       ) : null}
-      <Anchor
-        color="primary"
-        weight="medium"
-        css={{
-          fontSize: 12,
-          visibility: hasTxHashes ? 'visible' : 'hidden',
-        }}
-        href={blockExplorerBaseUrl}
-        target="_blank"
-      >
-        View on {activeChain?.blockExplorers?.default.name || 'Etherscan'}
-      </Anchor>
     </Flex>
   )
 }
