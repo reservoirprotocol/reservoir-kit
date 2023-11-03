@@ -36,7 +36,7 @@ export type SignatureStepItem = Pick<
 }
 export type TransactionStepItem = Pick<
   NonNullable<Execute['steps'][0]['items']>[0],
-  'status' | 'orderIds' | 'orderIndexes' | 'orderData'
+  'status' | 'orderIds' | 'orderIndexes' | 'orderData' | 'check'
 > & {
   data: {
     data: any
@@ -64,11 +64,12 @@ export type Execute = {
     items?: {
       status: 'complete' | 'incomplete'
       data?: any
+      check?: NonNullable<BuyResponses['steps']>['0']['items'][0]['check']
       orderIndexes?: number[]
       orderIds?: string[]
       // Manually added
       error?: string
-      txHash?: string
+      txHashes?: string[]
       orderData?: {
         crossPostingOrderId?: string
         orderId: string

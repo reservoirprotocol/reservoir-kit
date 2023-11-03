@@ -126,6 +126,7 @@ type Props = {
   orderKind?: BidData['orderKind']
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
 }
 
 export type BidData = Parameters<
@@ -151,6 +152,7 @@ export const BidModalRenderer: FC<Props> = ({
   feesBps,
   children,
   walletClient,
+  usePermit,
 }) => {
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -485,6 +487,10 @@ export const BidModalRenderer: FC<Props> = ({
       }
     }
 
+    if (usePermit) {
+      bid.usePermit = true
+    }
+
     if (quantity > 1) {
       bid.quantity = quantity
     }
@@ -546,6 +552,7 @@ export const BidModalRenderer: FC<Props> = ({
     quantity,
     feesBps,
     reservoirMarketplace,
+    usePermit,
   ])
 
   return (
