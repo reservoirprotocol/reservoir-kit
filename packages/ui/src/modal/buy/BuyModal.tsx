@@ -352,6 +352,7 @@ export function BuyModal({
                         py: '$3',
                         px: '$4',
                         borderRadius: '$3',
+                        cursor: 'pointer',
                         '&:hover': {
                           backgroundColor: '$neutralBgHover',
                         },

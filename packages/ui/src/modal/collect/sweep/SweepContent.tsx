@@ -256,6 +256,7 @@ export const SweepContent: FC<
                   py: '$3',
                   px: '$4',
                   borderRadius: '$3',
+                  cursor: 'pointer',
                   '&:hover': {
                     backgroundColor: '$neutralBgHover',
                   },
@@ -270,7 +271,7 @@ export const SweepContent: FC<
                   }}
                 >
                   <Text style="subtitle2">Payment Method</Text>
-                  <Flex align="center" css={{ gap: '$2', cursor: 'pointer' }}>
+                  <Flex align="center" css={{ gap: '$2' }}>
                     <Flex align="center">
                       <CryptoCurrencyIcon
                         address={paymentCurrency?.address as string}

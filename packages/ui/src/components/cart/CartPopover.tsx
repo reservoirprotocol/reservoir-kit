@@ -236,325 +236,356 @@ export function CartPopover({
                   {cartChain?.name}
                 </Text>
               </Flex>
-              {unavailableItems.length > 0 && (
-                <CartToast
-                  kind="error"
-                  message={`${unavailableItems.length} ${unavailableItemsSubject} no longer available`}
-                  link={
-                    <Text
-                      color="accent"
-                      style="subtitle3"
-                      css={{ ml: 'auto', mt: 3, cursor: 'pointer' }}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        remove(
-                          unavailableItems.map(
-                            (item) => `${item.collection.id}:${item.token.id}`
-                          )
-                        )
-                      }}
-                    >
-                      Remove {unavailableItemsSubject}
-                    </Text>
-                  }
-                />
-              )}
-              {priceChangeItems.length > 0 && (
-                <CartToast
-                  kind="warning"
-                  message={`${priceChangeItems.length} ${priceChangeItemsSubject} updated`}
-                />
-              )}
-              {transaction?.error && (
-                <CartToast
-                  kind="error"
-                  message={
-                    transaction.errorType ===
-                    CheckoutTransactionError.UserDenied
-                      ? 'User denied transaction signature.'
-                      : transaction.error.message
-                  }
-                />
-              )}
-              {purchaseComplete && (
-                <CartToast
-                  message={`Transaction Complete`}
-                  link={
-                    <Anchor
-                      href={`${blockExplorerBaseUrl}/tx/${transaction?.txHash}`}
-                      target="_blank"
-                      css={{ ml: 'auto', fontSize: 12, mt: 2 }}
-                      weight="medium"
-                      color="primary"
-                    >
-                      Etherscan
-                    </Anchor>
-                  }
-                />
-              )}
-              {!isCartEmpty && (
-                <Flex
-                  direction="column"
-                  css={{ gap: '$4', mb: '$4', overflowY: 'auto', mx: -24 }}
-                >
-                  {items.map((item) => (
-                    <CartItem
-                      key={`${item.collection.id}:${item.token.id}`}
-                      item={item}
-                      usdConversion={usdPrice}
-                      tokenUrl={tokenUrl}
-                    />
-                  ))}
-                </Flex>
-              )}
-              {isCartEmpty &&
-                !(
-                  displayPendingTransaction &&
-                  transaction?.status === CheckoutStatus.Finalizing
-                ) && (
-                  <Flex
-                    direction="column"
-                    align="center"
-                    justify="center"
-                    css={{ color: '$neutralBorderHover', flex: 1, gap: '$5' }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faShoppingCart}
-                      width="30"
-                      height="30"
-                      style={{ height: 30 }}
-                    />
-                    <Text style="body2" color="subtle">
-                      No items in your cart
-                    </Text>
-                  </Flex>
-                )}
-              <Flex direction="column" css={{ mt: 'auto', pb: 10 }}>
-                {!isCartEmpty && feeOnTop ? (
-                  <Flex css={{ mb: '$4' }}>
-                    <Text style="subtitle3">Referrer Fee</Text>
-                    <Flex
-                      direction="column"
-                      justify="center"
-                      css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
-                    >
-                      <FormatCryptoCurrency
-                        textStyle="subtitle3"
-                        amount={feeOnTopRaw}
-                        address={currency?.address}
-                        decimals={currency?.decimals}
-                        symbol={currency?.symbol}
-                        logoWidth={12}
-                        chainId={cartChain?.id}
-                      />
-                      {usdPrice && (
-                        <FormatCurrency
-                          amount={usdPrice * feeOnTop}
+              {cartPopoverStep === CartPopoverStep.Idle && (
+                <>
+                  {unavailableItems.length > 0 && (
+                    <CartToast
+                      kind="error"
+                      message={`${unavailableItems.length} ${unavailableItemsSubject} no longer available`}
+                      link={
+                        <Text
+                          color="accent"
                           style="subtitle3"
-                          color="subtle"
-                          css={{ textAlign: 'end' }}
-                        />
-                      )}
-                    </Flex>
-                  </Flex>
-                ) : null}
-                {!isCartEmpty && (
-                  <>
+                          css={{ ml: 'auto', mt: 3, cursor: 'pointer' }}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            remove(
+                              unavailableItems.map(
+                                (item) =>
+                                  `${item.collection.id}:${item.token.id}`
+                              )
+                            )
+                          }}
+                        >
+                          Remove {unavailableItemsSubject}
+                        </Text>
+                      }
+                    />
+                  )}
+                  {priceChangeItems.length > 0 && (
+                    <CartToast
+                      kind="warning"
+                      message={`${priceChangeItems.length} ${priceChangeItemsSubject} updated`}
+                    />
+                  )}
+                  {transaction?.error && (
+                    <CartToast
+                      kind="error"
+                      message={
+                        transaction.errorType ===
+                        CheckoutTransactionError.UserDenied
+                          ? 'User denied transaction signature.'
+                          : transaction.error.message
+                      }
+                    />
+                  )}
+                  {purchaseComplete && (
+                    <CartToast
+                      message={`Transaction Complete`}
+                      link={
+                        <Anchor
+                          href={`${blockExplorerBaseUrl}/tx/${transaction?.txHash}`}
+                          target="_blank"
+                          css={{ ml: 'auto', fontSize: 12, mt: 2 }}
+                          weight="medium"
+                          color="primary"
+                        >
+                          Etherscan
+                        </Anchor>
+                      }
+                    />
+                  )}
+                  {!isCartEmpty && (
                     <Flex
                       direction="column"
-                      css={{
-                        gap: '$2',
-                        py: '$3',
-                        borderRadius: '$3',
-                        '&:hover': {
-                          backgroundColor: '$neutralBgHover',
-                        },
-                      }}
-                      onClick={() =>
-                        //todo create select payment ui
-                        //todo usePaymentTokens and see if it's cached
-                        setCartPopoverStep(CartPopoverStep.SelectPayment)
-                      }
+                      css={{ gap: '$4', mb: '$4', overflowY: 'auto', mx: -24 }}
                     >
-                      <Flex
-                        justify="between"
-                        align="center"
-                        css={{
-                          gap: '$1',
-                        }}
-                      >
-                        <Text style="subtitle2">Payment Method</Text>
-                        <Flex
-                          align="center"
-                          css={{ gap: '$2', cursor: 'pointer' }}
-                        >
-                          <Flex align="center">
-                            <CryptoCurrencyIcon
-                              address={currency?.address as string}
-                              css={{ width: 16, height: 16, mr: '$1' }}
-                            />
-                            <Text style="subtitle2">{currency?.symbol}</Text>
-                          </Flex>
-                          <Box css={{ color: '$neutralSolidHover' }}>
-                            <FontAwesomeIcon icon={faChevronRight} width={10} />
-                          </Box>
-                        </Flex>
-                      </Flex>
+                      {items.map((item) => (
+                        <CartItem
+                          key={`${item.collection.id}:${item.token.id}`}
+                          item={item}
+                          usdConversion={usdPrice}
+                          tokenUrl={tokenUrl}
+                        />
+                      ))}
                     </Flex>
-                    <Flex css={{ mb: 28 }}>
-                      <Text style="h6">You Pay</Text>
+                  )}
+                  {isCartEmpty &&
+                    !(
+                      displayPendingTransaction &&
+                      transaction?.status === CheckoutStatus.Finalizing
+                    ) && (
                       <Flex
                         direction="column"
+                        align="center"
                         justify="center"
-                        css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
+                        css={{
+                          color: '$neutralBorderHover',
+                          flex: 1,
+                          gap: '$5',
+                        }}
                       >
+                        <FontAwesomeIcon
+                          icon={faShoppingCart}
+                          width="30"
+                          height="30"
+                          style={{ height: 30 }}
+                        />
+                        <Text style="body2" color="subtle">
+                          No items in your cart
+                        </Text>
+                      </Flex>
+                    )}
+                  <Flex direction="column" css={{ mt: 'auto', pb: 10 }}>
+                    {!isCartEmpty && feeOnTop ? (
+                      <Flex css={{ mb: '$4' }}>
+                        <Text style="subtitle3">Referrer Fee</Text>
+                        <Flex
+                          direction="column"
+                          justify="center"
+                          css={{
+                            ml: 'auto',
+                            gap: '$1',
+                            '> div': { ml: 'auto' },
+                          }}
+                        >
+                          <FormatCryptoCurrency
+                            textStyle="subtitle3"
+                            amount={feeOnTopRaw}
+                            address={currency?.address}
+                            decimals={currency?.decimals}
+                            symbol={currency?.symbol}
+                            logoWidth={12}
+                            chainId={cartChain?.id}
+                          />
+                          {usdPrice && (
+                            <FormatCurrency
+                              amount={usdPrice * feeOnTop}
+                              style="subtitle3"
+                              color="subtle"
+                              css={{ textAlign: 'end' }}
+                            />
+                          )}
+                        </Flex>
+                      </Flex>
+                    ) : null}
+                    {!isCartEmpty && (
+                      <>
+                        <Flex
+                          direction="column"
+                          css={{
+                            gap: '$2',
+                            py: '$3',
+                            px: 24,
+                            borderRadius: '$3',
+                            mx: -24,
+                            mb: '$4',
+                            cursor: 'pointer',
+                            '&:hover': {
+                              backgroundColor: '$neutralBgHover',
+                            },
+                          }}
+                          onClick={() =>
+                            //todo usePaymentTokens and see if it's cached
+                            setCartPopoverStep(CartPopoverStep.SelectPayment)
+                          }
+                        >
+                          <Flex
+                            justify="between"
+                            align="center"
+                            css={{
+                              gap: '$1',
+                            }}
+                          >
+                            <Text style="subtitle2">Payment Method</Text>
+                            <Flex align="center" css={{ gap: '$2' }}>
+                              <Flex align="center">
+                                <CryptoCurrencyIcon
+                                  address={currency?.address as string}
+                                  css={{ width: 16, height: 16, mr: '$1' }}
+                                />
+                                <Text style="subtitle2">
+                                  {currency?.symbol}
+                                </Text>
+                              </Flex>
+                              <Box css={{ color: '$neutralSolidHover' }}>
+                                <FontAwesomeIcon
+                                  icon={faChevronRight}
+                                  width={10}
+                                />
+                              </Box>
+                            </Flex>
+                          </Flex>
+                        </Flex>
+                        <Flex css={{ mb: 28 }}>
+                          <Text style="h6">You Pay</Text>
+                          <Flex
+                            direction="column"
+                            justify="center"
+                            css={{
+                              ml: 'auto',
+                              gap: '$1',
+                              '> div': { ml: 'auto' },
+                            }}
+                          >
+                            <FormatCryptoCurrency
+                              textStyle="h6"
+                              amount={totalPriceRaw}
+                              address={currency?.address}
+                              decimals={currency?.decimals}
+                              symbol={currency?.symbol}
+                              logoWidth={18}
+                              chainId={cartChain?.id}
+                            />
+                            {usdPrice && (
+                              <FormatCurrency
+                                amount={currency?.usdTotalPriceRaw}
+                                style="subtitle3"
+                                color="subtle"
+                                css={{ textAlign: 'end' }}
+                              />
+                            )}
+                          </Flex>
+                        </Flex>
+                      </>
+                    )}
+                    <CartCheckoutModal
+                      open={
+                        (transaction?.status == CheckoutStatus.Approving ||
+                          transaction?.status == CheckoutStatus.Finalizing ||
+                          transaction?.status == CheckoutStatus.Complete) &&
+                        !transaction?.error
+                      }
+                      items={items}
+                      currency={currency}
+                      totalPrice={totalPrice}
+                      usdPrice={usdPrice || 0}
+                      transaction={transaction}
+                      cartChain={cartChain}
+                      blockExplorerBaseUrl={blockExplorerBaseUrl}
+                      setCartPopoverOpen={setOpen}
+                    />
+
+                    {!hasEnoughCurrency && isConnected && (
+                      <Flex
+                        align="center"
+                        justify="center"
+                        css={{ mb: '$2', gap: '$2' }}
+                      >
+                        <Text style="body3" color="error">
+                          Insufficient balance
+                        </Text>
                         <FormatCryptoCurrency
-                          textStyle="h6"
-                          amount={totalPriceRaw}
+                          textStyle="body3"
+                          chainId={cartChain?.id}
+                          amount={balance}
                           address={currency?.address}
                           decimals={currency?.decimals}
                           symbol={currency?.symbol}
-                          logoWidth={18}
-                          chainId={cartChain?.id}
+                          logoWidth={10}
                         />
-                        {usdPrice && (
-                          <FormatCurrency
-                            amount={currency?.usdTotalPriceRaw}
-                            style="subtitle3"
-                            color="subtle"
-                            css={{ textAlign: 'end' }}
-                          />
-                        )}
                       </Flex>
-                    </Flex>
-                  </>
-                )}
-                <CartCheckoutModal
-                  open={
-                    (transaction?.status == CheckoutStatus.Approving ||
-                      transaction?.status == CheckoutStatus.Finalizing ||
-                      transaction?.status == CheckoutStatus.Complete) &&
-                    !transaction?.error
-                  }
-                  items={items}
-                  currency={currency}
-                  totalPrice={totalPrice}
-                  usdPrice={usdPrice || 0}
-                  transaction={transaction}
-                  cartChain={cartChain}
-                  blockExplorerBaseUrl={blockExplorerBaseUrl}
-                  setCartPopoverOpen={setOpen}
-                />
-
-                {!hasEnoughCurrency && isConnected && (
-                  <Flex
-                    align="center"
-                    justify="center"
-                    css={{ mb: '$2', gap: '$2' }}
-                  >
-                    <Text style="body3" color="error">
-                      Insufficient balance
-                    </Text>
-                    <FormatCryptoCurrency
-                      textStyle="body3"
-                      chainId={cartChain?.id}
-                      amount={balance}
-                      address={currency?.address}
-                      decimals={currency?.decimals}
-                      symbol={currency?.symbol}
-                      logoWidth={10}
-                    />
-                  </Flex>
-                )}
-                {isCartEmpty && !displayPendingTransaction && (
-                  <Button disabled={true}>Select Items to Buy</Button>
-                )}
-                {!isCartEmpty &&
-                  hasValidItems &&
-                  (transaction?.status === CheckoutStatus.Idle ||
-                    !displayPendingTransaction) && (
-                    <Button
-                      disabled={!hasEnoughCurrency && isConnected}
-                      onClick={async () => {
-                        if (!isConnected) {
-                          onConnectWallet?.()
-                        } else {
-                          checkout()
-                            .then(() => {
-                              setDisplayPendingTransaction(true)
-                            })
-                            .catch((e) => {
-                              console.error(e)
-                              setDisplayPendingTransaction(false)
-                            })
-                        }
-                      }}
-                    >
-                      {hasEnoughCurrency || !isConnected
-                        ? 'Purchase'
-                        : 'Add Funds to Purchase'}
-                    </Button>
-                  )}
-                {!isCartEmpty && !hasValidItems && (
-                  <Button
-                    color="secondary"
-                    onClick={() => {
-                      clear()
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faRefresh} width="16" height="16" />
-                    Refresh Cart
-                  </Button>
-                )}
-
-                {!providerOptionsContext.disablePoweredByReservoir && (
-                  <Flex
-                    align="center"
-                    css={{
-                      mx: 'auto',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mt: 26,
-                      gap: '$1',
-                      visibility: '$poweredByReservoirVisibility',
-                    }}
-                  >
-                    <Box css={{ color: '$neutralBorderHover' }}>
-                      <FontAwesomeIcon icon={faLock} width={9} height={10} />
-                    </Box>
-                    <Text
-                      style="tiny"
-                      color="subtle"
-                      css={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
-                        lineHeight: '14px',
-                        fontWeight: 400,
-                        color: '$neutralText',
-                      }}
-                    >
-                      Powered by{' '}
-                      <Anchor
-                        href="https://reservoir.tools/"
-                        target="_blank"
-                        weight="heavy"
-                        color="gray"
-                        css={{
-                          height: 12,
-                          fontSize: 12,
-                          '&:hover': {
-                            color: '$neutralSolid',
-                            fill: '$neutralSolid',
-                          },
+                    )}
+                    {isCartEmpty && !displayPendingTransaction && (
+                      <Button disabled={true}>Select Items to Buy</Button>
+                    )}
+                    {!isCartEmpty &&
+                      hasValidItems &&
+                      (transaction?.status === CheckoutStatus.Idle ||
+                        !displayPendingTransaction) && (
+                        <Button
+                          disabled={!hasEnoughCurrency && isConnected}
+                          onClick={async () => {
+                            if (!isConnected) {
+                              onConnectWallet?.()
+                            } else {
+                              checkout()
+                                .then(() => {
+                                  setDisplayPendingTransaction(true)
+                                })
+                                .catch((e) => {
+                                  console.error(e)
+                                  setDisplayPendingTransaction(false)
+                                })
+                            }
+                          }}
+                        >
+                          {hasEnoughCurrency || !isConnected
+                            ? 'Purchase'
+                            : 'Add Funds to Purchase'}
+                        </Button>
+                      )}
+                    {!isCartEmpty && !hasValidItems && (
+                      <Button
+                        color="secondary"
+                        onClick={() => {
+                          clear()
                         }}
                       >
-                        <Logo />
-                      </Anchor>
-                    </Text>
+                        <FontAwesomeIcon
+                          icon={faRefresh}
+                          width="16"
+                          height="16"
+                        />
+                        Refresh Cart
+                      </Button>
+                    )}
+
+                    {!providerOptionsContext.disablePoweredByReservoir && (
+                      <Flex
+                        align="center"
+                        css={{
+                          mx: 'auto',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          mt: 26,
+                          gap: '$1',
+                          visibility: '$poweredByReservoirVisibility',
+                        }}
+                      >
+                        <Box css={{ color: '$neutralBorderHover' }}>
+                          <FontAwesomeIcon
+                            icon={faLock}
+                            width={9}
+                            height={10}
+                          />
+                        </Box>
+                        <Text
+                          style="tiny"
+                          color="subtle"
+                          css={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            lineHeight: '14px',
+                            fontWeight: 400,
+                            color: '$neutralText',
+                          }}
+                        >
+                          Powered by{' '}
+                          <Anchor
+                            href="https://reservoir.tools/"
+                            target="_blank"
+                            weight="heavy"
+                            color="gray"
+                            css={{
+                              height: 12,
+                              fontSize: 12,
+                              '&:hover': {
+                                color: '$neutralSolid',
+                                fill: '$neutralSolid',
+                              },
+                            }}
+                          >
+                            <Logo />
+                          </Anchor>
+                        </Text>
+                      </Flex>
+                    )}
                   </Flex>
-                )}
-              </Flex>
+                </>
+              )}
+              {cartPopoverStep === CartPopoverStep.SelectPayment && <></>}
             </Popover.Content>
             {open && (
               <Box
