@@ -41,6 +41,7 @@ import {
 import { useAccount } from 'wagmi'
 import { CartCheckoutModal } from './CartCheckoutModal'
 import { Logo } from '../../modal/Modal'
+import { truncateAddress } from '../../lib/truncate'
 
 const scaleUp = keyframes({
   '0%': { opacity: 0, transform: 'scale(0.9) translateY(-10px)' },
@@ -277,22 +278,27 @@ export function CartPopover({
                   }
                 />
               )}
-              {purchaseComplete && (
-                <CartToast
-                  message={`Transaction Complete`}
-                  link={
-                    <Anchor
-                      href={`${blockExplorerBaseUrl}/tx/${transaction?.txHash}`}
-                      target="_blank"
-                      css={{ ml: 'auto', fontSize: 12, mt: 2 }}
-                      weight="medium"
-                      color="primary"
-                    >
-                      Etherscan
-                    </Anchor>
-                  }
-                />
-              )}
+              {purchaseComplete
+                ? transaction?.txHashes?.map((txHash) => {
+                    const truncatedTxHash = truncateAddress(txHash)
+                    return (
+                      <CartToast
+                        message={`Transaction Complete`}
+                        link={
+                          <Anchor
+                            href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                            target="_blank"
+                            css={{ ml: 'auto', fontSize: 12, mt: 2 }}
+                            weight="medium"
+                            color="primary"
+                          >
+                            View transaction: {truncatedTxHash}
+                          </Anchor>
+                        }
+                      />
+                    )
+                  })
+                : null}
               {!isCartEmpty && (
                 <Flex
                   direction="column"
