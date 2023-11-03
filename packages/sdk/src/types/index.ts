@@ -75,7 +75,7 @@ export type Execute = {
         orderId: string
         orderIndex: string
       }[]
-      transfersData?: paths['/transfers/bulk/v1']['get']['responses']['200']['schema']['transfers']
+      transfersData?: paths['/transfers/bulk/v2']['get']['responses']['200']['schema']['transfers']
       //
     }[]
   }[]
