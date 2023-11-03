@@ -111,12 +111,10 @@ function addFeesToListing(
   feeType: 'marketplaceFees' | 'fees' | 'customRoyalties',
   fees?: string[]
 ): void {
-  if (fees) {
-    if (!listing[feeType]) {
-      listing[feeType] = []
-    }
-    listing[feeType] = listing?.[feeType]?.concat(fees)
+  if (!listing[feeType]) {
+    listing[feeType] = []
   }
+  listing[feeType] = listing?.[feeType]?.concat(fees!)
 }
 
 export const ListModalRenderer: FC<Props> = ({

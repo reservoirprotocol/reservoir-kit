@@ -146,12 +146,10 @@ function addFeesToBid(
   feeType: 'marketplaceFees' | 'fees' | 'customRoyalties',
   fees?: string[] | string
 ): void {
-  if (fees) {
-    if (!bid[feeType]) {
-      bid[feeType] = []
-    }
-    bid[feeType] = bid?.[feeType]?.concat(fees)
+  if (!bid[feeType]) {
+    bid[feeType] = []
   }
+  bid[feeType] = bid?.[feeType]?.concat(fees!)
 }
 
 export const BidModalRenderer: FC<Props> = ({
