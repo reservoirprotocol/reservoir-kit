@@ -374,15 +374,15 @@ export async function executeSteps(
                     stepItem as TransactionStepItem,
                     step,
                     wallet,
-                    (tx) => {
+                    (txHashes) => {
                       client.log(
                         [
-                          'Execute Steps: Transaction step, got transaction',
-                          tx,
+                          'Execute Steps: Transaction step, got transactions',
+                          txHashes,
                         ],
                         LogLevel.Verbose
                       )
-                      stepItem.txHashes = [tx]
+                      stepItem.txHashes = txHashes
                       if (json) {
                         setState([...json.steps], path)
                       }
