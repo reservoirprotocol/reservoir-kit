@@ -20,6 +20,7 @@ import SigninStep from '../../modal/SigninStep'
 import { ApprovePurchasingCollapsible } from '../../modal/ApprovePurchasingCollapsible'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import { Logo } from '../../modal/Modal'
+import { truncateAddress } from '../../lib/truncate'
 
 const Title = styled(DialogPrimitive.Title, {
   margin: 0,
@@ -314,25 +315,35 @@ export function CartCheckoutModal({
                             : 'Congrats! Purchase was successful.'}
                         </Text>
                         <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-                          {transaction.currentStep?.items?.map((item) => {
-                            const txHash = item.txHash
-                              ? `${item.txHash.slice(
-                                  0,
-                                  4
-                                )}...${item.txHash.slice(-4)}`
-                              : ''
-                            return (
-                              <Anchor
-                                href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                                color="primary"
-                                weight="medium"
-                                target="_blank"
-                                css={{ fontSize: 12 }}
-                              >
-                                View transaction: {txHash}
-                              </Anchor>
-                            )
-                          })}
+                          {transaction?.currentStep?.items?.map(
+                            (item, itemIndex) => {
+                              if (
+                                Array.isArray(item?.txHashes) &&
+                                item?.txHashes.length > 0
+                              ) {
+                                return item.txHashes.map(
+                                  (txHash, txHashIndex) => {
+                                    const truncatedTxHash =
+                                      truncateAddress(txHash)
+                                    return (
+                                      <Anchor
+                                        key={`${itemIndex}-${txHashIndex}`}
+                                        href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                                        color="primary"
+                                        weight="medium"
+                                        target="_blank"
+                                        css={{ fontSize: 12 }}
+                                      >
+                                        View transaction: {truncatedTxHash}
+                                      </Anchor>
+                                    )
+                                  }
+                                )
+                              } else {
+                                return null
+                              }
+                            }
+                          )}
                         </Flex>
                       </Flex>
                     </Flex>

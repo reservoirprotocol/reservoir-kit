@@ -1,4 +1,3 @@
-
 ## [v1.6.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/78145884b50ab26db180c710d23c2976ed3bfe5e) (2023-10-30)
 
 * Upgrade wagmi to v~1.4.3 and viem to v~1.16.3 [38611577](https://github.com/reservoirprotocol/reservoir-kit/commit/38611577d63a546c02b135b92b4a7b9868486ed7)
