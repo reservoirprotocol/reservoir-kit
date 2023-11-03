@@ -21,7 +21,7 @@ export async function sendTransactionSafely(
   item: TransactionStepItem,
   step: Execute['steps'][0],
   wallet: ReservoirWallet,
-  setTx: (tx: Transaction['hash']) => void,
+  setTxHashes: (tx: Transaction['hash'][]) => void,
   request: AxiosRequestConfig,
   headers: AxiosRequestHeaders,
   isCrossChainIntent?: boolean
@@ -45,7 +45,7 @@ export async function sendTransactionSafely(
   if (!txHash) {
     throw Error('Transaction hash not returned from sendTransaction method')
   }
-  setTx(txHash)
+  setTxHashes([txHash])
 
   // Handle transaction replacements and cancellations
   viemClient
@@ -57,7 +57,7 @@ export async function sendTransactionSafely(
           throw Error('Transaction cancelled')
         }
 
-        setTx(replacement.transaction.hash)
+        setTxHashes([replacement.transaction.hash])
         txHash = replacement.transaction.hash
         attemptCount = 0 // reset attempt count
         getClient()?.log(
@@ -91,7 +91,11 @@ export async function sendTransactionSafely(
       if (res.status === 200 && res.data && res.data.status === 'failure') {
         throw Error('Transaction failed')
       }
-      return res.status === 200 && res.data && res.data.status === 'success'
+      if (res.status === 200 && res.data && res.data.status === 'success') {
+        setTxHashes(res.data.txHashes)
+        return true
+      }
+      return false
     }
     return res.status === 200 && res.data && res.data.synced
   }
