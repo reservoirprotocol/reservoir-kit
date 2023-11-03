@@ -69,6 +69,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   oracleEnabled?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   feesBps?: string[]
+  marketplaceFees?: string[]
+  customRoyalties?: string[]
   walletClient?: ReservoirWallet | WalletClient
   onGoToToken?: () => any
   onListingComplete?: (data: ListingCallbackData) => void
@@ -97,6 +99,8 @@ export function ListModal({
   oracleEnabled = false,
   copyOverrides,
   feesBps,
+  customRoyalties,
+  marketplaceFees,
   walletClient,
   onGoToToken,
   onListingComplete,
@@ -131,6 +135,8 @@ export function ListModal({
       enableOnChainRoyalties={enableOnChainRoyalties}
       oracleEnabled={oracleEnabled}
       feesBps={feesBps}
+      marketplaceFees={marketplaceFees}
+      customRoyalties={customRoyalties}
       walletClient={walletClient}
     >
       {({

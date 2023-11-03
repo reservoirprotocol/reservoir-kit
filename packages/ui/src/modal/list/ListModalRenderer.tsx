@@ -90,6 +90,8 @@ type Props = {
   enableOnChainRoyalties: boolean
   oracleEnabled: boolean
   feesBps?: string[]
+  marketplaceFees?: string[]
+  customRoyalties?: string[]
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
 }
@@ -104,6 +106,19 @@ const expirationOptions = [
   },
 ]
 
+function addFeesToListing(
+  listing: ListingData['listing'],
+  feeType: 'marketplaceFees' | 'fees' | 'customRoyalties',
+  fees?: string[]
+): void {
+  if (fees) {
+    if (!listing[feeType]) {
+      listing[feeType] = []
+    }
+    listing[feeType] = listing?.[feeType]?.concat(fees)
+  }
+}
+
 export const ListModalRenderer: FC<Props> = ({
   open,
   tokenId,
@@ -115,6 +130,8 @@ export const ListModalRenderer: FC<Props> = ({
   enableOnChainRoyalties = false,
   oracleEnabled = false,
   feesBps,
+  customRoyalties,
+  marketplaceFees,
   children,
   walletClient,
 }) => {
@@ -339,13 +356,16 @@ export const ListModalRenderer: FC<Props> = ({
       listing.fees = [...royalties]
     }
 
-    const fees = feesBps || client.marketplaceFees
-    if (fees) {
-      if (!listing.fees) {
-        listing.fees = []
-      }
-      listing.fees = listing.fees.concat(fees)
-    }
+    const fees =
+      feesBps || marketplaceFees || customRoyalties || client.marketplaceFees
+
+    addFeesToListing(
+      listing,
+      (marketplaceFees && 'marketplaceFees') ||
+        (customRoyalties && 'customRoyalties') ||
+        'fees',
+      fees
+    )
 
     if (quantity > 1) {
       listing.quantity = quantity
