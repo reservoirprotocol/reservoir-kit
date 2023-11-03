@@ -19,6 +19,20 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
     {
+      chainId: 8453,
+      address: zeroAddress,
+      symbol: 'Base ETH',
+      name: 'Base ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 10,
+      address: zeroAddress,
+      symbol: 'Optimism ETH',
+      name: 'Optimism ETH',
+      decimals: 18,
+    },
+    {
       chainId: 1,
       address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
       symbol: 'USDC',
@@ -68,6 +82,20 @@ export const chainPaymentTokensMap = {
 
   // Optimism
   10: [
+    {
+      chainId: 1,
+      address: zeroAddress,
+      symbol: 'Mainnet ETH',
+      name: 'Mainnet ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 8453,
+      address: zeroAddress,
+      symbol: 'Base ETH',
+      name: 'Base ETH',
+      decimals: 18,
+    },
     {
       chainId: 10,
       address: zeroAddress,
@@ -144,6 +172,20 @@ export const chainPaymentTokensMap = {
   // Arbitrum
   42161: [
     {
+      chainId: 1,
+      address: zeroAddress,
+      symbol: 'Mainnet ETH',
+      name: 'Mainnet ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 8453,
+      address: zeroAddress,
+      symbol: 'Base ETH',
+      name: 'Base ETH',
+      decimals: 18,
+    },
+    {
       chainId: 42161,
       address: zeroAddress,
       symbol: 'ETH',
@@ -168,6 +210,20 @@ export const chainPaymentTokensMap = {
 
   // Arbitrum Nova
   42170: [
+    {
+      chainId: 1,
+      address: zeroAddress,
+      symbol: 'Mainnet ETH',
+      name: 'Mainnet ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 8453,
+      address: zeroAddress,
+      symbol: 'Base ETH',
+      name: 'Base ETH',
+      decimals: 18,
+    },
     {
       chainId: 42170,
       address: zeroAddress,
@@ -243,6 +299,13 @@ export const chainPaymentTokensMap = {
 
   // Base
   8453: [
+    {
+      chainId: 1,
+      address: zeroAddress,
+      symbol: 'Mainnet ETH',
+      name: 'Mainnet ETH',
+      decimals: 18,
+    },
     {
       chainId: 8453,
       address: zeroAddress,
@@ -393,6 +456,20 @@ export const chainPaymentTokensMap = {
   // Zora
   7777777: [
     {
+      chainId: 1,
+      address: zeroAddress,
+      symbol: 'Mainnet ETH',
+      name: 'Mainnet ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 8453,
+      address: zeroAddress,
+      symbol: 'Base ETH',
+      name: 'Base ETH',
+      decimals: 18,
+    },
+    {
       chainId: 7777777,
       address: zeroAddress,
       symbol: 'ETH',
@@ -410,6 +487,13 @@ export const chainPaymentTokensMap = {
 
   // Zora Testnet
   999: [
+    {
+      chainId: 5,
+      address: zeroAddress,
+      symbol: 'Goerli ETH',
+      name: 'Goerli ETH',
+      decimals: 18,
+    },
     {
       chainId: 999,
       address: zeroAddress,
