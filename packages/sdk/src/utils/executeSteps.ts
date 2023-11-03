@@ -553,7 +553,7 @@ export async function executeSteps(
               )
               const queryParams: paths['/transfers/bulk/v1']['get']['parameters']['query'] =
                 {
-                  // @ts-ignore
+                  // @ts-ignore @TODO: remove when types are synced
                   txHash: stepItem.txHashes,
                 }
               setParams(indexerConfirmationUrl, queryParams)
