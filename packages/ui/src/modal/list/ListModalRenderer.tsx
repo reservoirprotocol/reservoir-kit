@@ -478,6 +478,8 @@ export const ListModalRenderer: FC<Props> = ({
     enableOnChainRoyalties,
     onChainRoyalties,
     feesBps,
+    customRoyalties,
+    marketplaceFees,
     price,
     marketplace,
   ])
