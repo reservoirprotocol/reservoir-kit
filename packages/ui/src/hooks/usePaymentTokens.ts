@@ -203,6 +203,7 @@ export default function (
       }) as EnhancedCurrency[]
   }, [
     address,
+    preferredCurrencyConversions,
     preferredCurrency.address,
     preferredCurrencyTotalPrice,
     chainId,
