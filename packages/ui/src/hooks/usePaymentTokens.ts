@@ -98,7 +98,7 @@ export default function (
   })
 
   const { data: nativeBalances } = useSWR(
-    open ? allPaymentTokens : undefined,
+    open ? address : undefined,
     () => fetchNativeBalances(address, nativeCurrencies),
     {
       revalidateOnFocus: false,
