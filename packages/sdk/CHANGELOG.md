@@ -1,3 +1,22 @@
+
+## [v1.7.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/359f02dd05fe07deee4a09a8cf969bb762420c94) (2023-11-03)
+
+* Merge pull request #428 from reservoirprotocol/ted/grwth-3463-cross-chain-frontend-mvp [54beebcd](https://github.com/reservoirprotocol/reservoir-kit/commit/54beebcd5a520699260499c9ed7087570f6ef736)
+* Fix txHash observing cross chain purchases [b9ef4995](https://github.com/reservoirprotocol/reservoir-kit/commit/b9ef4995d5cf80af2d03c6e731e820a87bd23ee1)
+* Standardize APIError by extending error and adding custom props [34ce97f2](https://github.com/reservoirprotocol/reservoir-kit/commit/34ce97f2f0c2092320ad66e4bb06c7ca9df148ac)
+* Merge branch 'ted/grwth-3463-cross-chain-frontend-mvp' of github.com:reservoirprotocol/reservoir-kit into ted/grwth-3463-cross-chain-frontend-mvp [2d72037e](https://github.com/reservoirprotocol/reservoir-kit/commit/2d72037e71427becd9cfb76dad6a01148b02d72b)
+* Add fast solver logic [ecccdbd4](https://github.com/reservoirprotocol/reservoir-kit/commit/ecccdbd4395b2c245ef86c4fa1ad831e000fbfc1)
+* wip [cf31dafe](https://github.com/reservoirprotocol/reservoir-kit/commit/cf31dafed57f56c136f4d772d84649671a35fce7)
+* Merge conflicts [4711c78f](https://github.com/reservoirprotocol/reservoir-kit/commit/4711c78fa5e3b3abd44b26b7488194b1b835540f)
+* Merge branch 'feature/use-permit-support' [e2ae0e0b](https://github.com/reservoirprotocol/reservoir-kit/commit/e2ae0e0bfcbc91998a83e6dd7556cbeded5d65fe)
+* Merge pull request #437 from reservoirprotocol/ted/grwth-3479-the-message-seems-off-for-a-successful-purchase-for-erc721c [01481d78](https://github.com/reservoirprotocol/reservoir-kit/commit/01481d78fdb363c316463dc0cb3997e0ed099378)
+* Fix issue with transaction detection for IERC2771 [559bf563](https://github.com/reservoirprotocol/reservoir-kit/commit/559bf563689ee7948e971a265877c215463312ac)
+* Fix: only include transfers to taker in transferData [53a867d5](https://github.com/reservoirprotocol/reservoir-kit/commit/53a867d55e520eef4bcef2bea78dbd12220013bd)
+* wip [0b613de3](https://github.com/reservoirprotocol/reservoir-kit/commit/0b613de39fec1f83c0d7355ae7e1e6d7d5e28b48)
+* Sync api [60b9557c](https://github.com/reservoirprotocol/reservoir-kit/commit/60b9557cdc581c7b029e3ad4f255eb7ae7b86d76)
+* wip [3f79b491](https://github.com/reservoirprotocol/reservoir-kit/commit/3f79b4916994f57dc2b1bb304a524876ac24d1f7)
+* Sync api [3bfcf339](https://github.com/reservoirprotocol/reservoir-kit/commit/3bfcf339f9edfcacfab5383eb33f0e3509c14e07)
+* Sync api [81f1c5a7](https://github.com/reservoirprotocol/reservoir-kit/commit/81f1c5a7dd54222403dc93718174792300042c87)
 ## [v1.6.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/bb2bced78527154cca38c621a75a21bb333187ac) (2023-11-02)
 
 * Sync api
