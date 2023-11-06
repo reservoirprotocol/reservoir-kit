@@ -328,11 +328,14 @@ export const BuyModalRenderer: FC<Props> = ({
   ])
 
   useEffect(() => {
-    fetchPath()
-  }, [fetchPath])
+    // ensure the tokens api has been fetched first
+    if (token) {
+      fetchPath()
+    }
+  }, [fetchPath, token])
 
   useEffect(() => {
-    if (!paymentTokens[0] || paymentCurrency) {
+    if (!paymentTokens[0] || !token || paymentCurrency) {
       return
     }
 
@@ -345,10 +348,12 @@ export const BuyModalRenderer: FC<Props> = ({
             token.address === listing?.price?.currency?.contract?.toLowerCase()
         ) || paymentTokens[0]
     } else if (is1155) {
-      selectedCurrency =
-        paymentTokens.find(
-          (token) => token.address === path?.[0].currency?.toLowerCase()
-        ) || paymentTokens[0]
+      if (path) {
+        selectedCurrency =
+          paymentTokens.find(
+            (token) => token.address === path?.[0].currency?.toLowerCase()
+          ) || paymentTokens[0]
+      }
     } else {
       selectedCurrency =
         paymentTokens.find(
@@ -357,8 +362,10 @@ export const BuyModalRenderer: FC<Props> = ({
             token?.market?.floorAsk?.price?.currency?.contract?.toLowerCase()
         ) || paymentTokens[0]
     }
+
+    console.log('setting currency to: ', selectedCurrency)
     setPaymentCurrency(selectedCurrency)
-  }, [paymentTokens, chainCurrency])
+  }, [paymentTokens, chainCurrency, is1155, orderId, token])
 
   const buyToken = useCallback(async () => {
     if (!wallet) {
