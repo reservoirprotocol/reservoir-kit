@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { useCart, useReservoirClient } from '../../hooks'
 import {
   Button,
@@ -20,6 +20,7 @@ import QuantitySelector from '../../modal/QuantitySelector'
 import * as allChains from 'viem/chains'
 import { Chain } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type Props = {
   item: Cart['items'][0]
@@ -48,6 +49,7 @@ const CloseButton = styled(Button, {
 })
 
 const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
+  const providerOptionsContext = useContext(ProviderOptionsContext)
   const { token, collection, order } = item
   const contract = collection.id.split(':')[0]
   const client = useReservoirClient()
@@ -234,23 +236,48 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               '> div': { ml: 'auto' },
             }}
           >
-            <FormatCryptoCurrency
-              textStyle="subtitle3"
-              amount={price}
-              address={cartCurrency?.contract}
-              decimals={cartCurrency?.decimals}
-              symbol={cartCurrency?.symbol}
-              logoWidth={12}
-              chainId={cartChain?.id}
-            />
-            {usdPrice && usdPrice > 0 ? (
-              <FormatCurrency
-                amount={usdPrice}
-                style="tiny"
-                color="subtle"
-                css={{ textAlign: 'end' }}
-              />
-            ) : null}
+            {providerOptionsContext.switchMainCurrency &&
+            usdPrice &&
+            usdPrice > 0 ? (
+              <>
+                <FormatCurrency
+                  amount={usdPrice}
+                  style="subtitle3"
+                  color="base"
+                  css={{ textAlign: 'end' }}
+                />
+                <FormatCryptoCurrency
+                  textStyle="tiny"
+                  textColor="subtle"
+                  amount={price}
+                  address={cartCurrency?.contract}
+                  decimals={cartCurrency?.decimals}
+                  symbol={cartCurrency?.symbol}
+                  logoWidth={10}
+                  chainId={cartChain?.id}
+                />
+              </>
+            ) : (
+              <>
+                <FormatCryptoCurrency
+                  textStyle="subtitle3"
+                  amount={price}
+                  address={cartCurrency?.contract}
+                  decimals={cartCurrency?.decimals}
+                  symbol={cartCurrency?.symbol}
+                  logoWidth={12}
+                  chainId={cartChain?.id}
+                />
+                {usdPrice && usdPrice > 0 ? (
+                  <FormatCurrency
+                    amount={usdPrice}
+                    style="tiny"
+                    color="subtle"
+                    css={{ textAlign: 'end' }}
+                  />
+                ) : null}
+              </>
+            )}
           </Flex>
         ) : null}
       </Flex>
