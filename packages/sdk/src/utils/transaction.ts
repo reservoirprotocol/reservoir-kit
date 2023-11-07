@@ -1,7 +1,7 @@
 import { Address, PublicClient, Transaction, serializeTransaction } from 'viem'
 import { LogLevel, getClient } from '..'
 import { Execute, ReservoirWallet, TransactionStepItem, paths } from '../types'
-import { TransactionTimeoutError } from '../errors'
+import { CrossChainTransactionError, TransactionTimeoutError } from '../errors'
 import axios, {
   AxiosRequestConfig,
   AxiosRequestHeaders,
@@ -145,16 +145,20 @@ export async function sendTransactionSafely(
   }
 
   if (attemptCount >= maximumAttempts) {
-    const wagmiChain: allChains.Chain | undefined = Object.values({
-      ...allChains,
-      ...customChains,
-    }).find(({ id }) => id === chainId)
+    if (isCrossChainIntent) {
+      throw new CrossChainTransactionError()
+    } else {
+      const wagmiChain: allChains.Chain | undefined = Object.values({
+        ...allChains,
+        ...customChains,
+      }).find(({ id }) => id === chainId)
 
-    throw new TransactionTimeoutError(
-      txHash,
-      attemptCount,
-      wagmiChain?.blockExplorers?.default.url
-    )
+      throw new TransactionTimeoutError(
+        txHash,
+        attemptCount,
+        wagmiChain?.blockExplorers?.default.url
+      )
+    }
   }
 
   if (transactionCancelled) {
