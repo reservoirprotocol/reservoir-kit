@@ -3,6 +3,7 @@ import { useBids } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
 import { PrivyConnectButton } from 'components/PrivyConnectButton'
+import ChainSwitcher from 'components/ChainSwitcher'
 
 const Bids: NextPage = () => {
   const {
@@ -58,6 +59,7 @@ const Bids: NextPage = () => {
       ) : (
         <div>No more data</div>
       )}
+      <ChainSwitcher style={{ right: 16 }} />
     </div>
   )
 }

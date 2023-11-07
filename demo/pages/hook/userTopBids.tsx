@@ -4,6 +4,7 @@ import { useInView } from 'react-intersection-observer'
 import { createRef, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { PrivyConnectButton } from 'components/PrivyConnectButton'
+import ChainSwitcher from 'components/ChainSwitcher'
 
 const UserTopBids: NextPage = () => {
   const { address: userAddress } = useAccount()
@@ -101,6 +102,7 @@ const UserTopBids: NextPage = () => {
       ) : (
         <div>No more data</div>
       )}
+      <ChainSwitcher />
     </div>
   )
 }

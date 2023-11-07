@@ -5,6 +5,7 @@ import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import { PrivyConnectButton } from 'components/PrivyConnectButton'
+import ChainSwitcher from 'components/ChainSwitcher'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -206,6 +207,7 @@ const Index: NextPage = () => {
         }}
       />
       <ThemeSwitcher />
+      <ChainSwitcher />
     </div>
   )
 }
