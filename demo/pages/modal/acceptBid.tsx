@@ -5,6 +5,7 @@ import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState, useEffect, ComponentPropsWithoutRef } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
+import ChainSwitcher from 'components/ChainSwitcher'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -164,6 +165,7 @@ const AcceptBidPage: NextPage = () => {
           console.log('AcceptBidModal Closed')
         }}
       />
+      <ChainSwitcher /> 
       <ThemeSwitcher />
     </div>
   )

@@ -5,6 +5,7 @@ import ThemeSwitcher from 'components/ThemeSwitcher'
 import { ComponentPropsWithoutRef, useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
+import ChainSwitcher from 'components/ChainSwitcher'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -233,6 +234,7 @@ const BidPage: NextPage = () => {
           console.log('On View offers clicked')
         }}
       />
+      <ChainSwitcher />
       <ThemeSwitcher />
     </div>
   )
