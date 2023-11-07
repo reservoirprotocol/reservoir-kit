@@ -1,11 +1,10 @@
 
 ## [v1.7.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4809c45d8ee9489886b8b0a8c8af0f4de334432d) (2023-11-07)
 
-* Merge pull request #452 from reservoirprotocol/fix/error-message-xchain [551b721f](https://github.com/reservoirprotocol/reservoir-kit/commit/551b721f59dad975da3cd03906c8ec5f44f2fc6a)
-* Fix error not being properly handled when json is not available [235c7559](https://github.com/reservoirprotocol/reservoir-kit/commit/235c7559e0b2da5961a29dae04e5c4ddca15bf8a)
-* Merge pull request #446 from reservoirprotocol/ted/grwth-3536-configurable-polling-interval-for-transaction-in-sdk [fb7fe63b](https://github.com/reservoirprotocol/reservoir-kit/commit/fb7fe63b2fdaffb608ce145d9373934002e82fe6)
+*Fix error message for crosschain transactions [551b721f](https://github.com/reservoirprotocol/reservoir-kit/commit/551b721f59dad975da3cd03906c8ec5f44f2fc6a)
+* Configurable polling interval for transaction [fb7fe63b](https://github.com/reservoirprotocol/reservoir-kit/commit/fb7fe63b2fdaffb608ce145d9373934002e82fe6)
 * Improve crosschain transaction failure error handling [ba2c9736](https://github.com/reservoirprotocol/reservoir-kit/commit/ba2c9736661add665b8e89eaadd60ef644aca4f7)
-* Add configurable polling interval to reservoir chains [d13c706a](https://github.com/reservoirprotocol/reservoir-kit/commit/d13c706aa86cce57be630265f21380b959f52225)
+* Sync Api
 
 ## [v1.7.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/359f02dd05fe07deee4a09a8cf969bb762420c94) (2023-11-03)
 
