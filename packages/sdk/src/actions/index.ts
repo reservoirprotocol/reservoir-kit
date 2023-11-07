@@ -170,7 +170,14 @@ export class ReservoirClient {
       LogLevel.Verbose
     )
     _eventListeners.forEach((listener) => {
-      listener(event, chainId)
+      try {
+        listener(event, chainId)
+      } catch (e) {
+        this.log(
+          [`ReservoirClient: Listener error`, event, chainId, e],
+          LogLevel.Verbose
+        )
+      }
     })
   }
 }
