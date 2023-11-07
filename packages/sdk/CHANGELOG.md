@@ -1,4 +1,16 @@
 
+## [v1.7.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/359f02dd05fe07deee4a09a8cf969bb762420c94) (2023-11-03)
+
+* Cross Chain Transactions [54beebcd](https://github.com/reservoirprotocol/reservoir-kit/commit/54beebcd5a520699260499c9ed7087570f6ef736)
+* Standardize APIError by extending error and adding custom props [34ce97f2](https://github.com/reservoirprotocol/reservoir-kit/commit/34ce97f2f0c2092320ad66e4bb06c7ca9df148ac)
+* Fix issue with transaction detection for IERC2771 [559bf563](https://github.com/reservoirprotocol/reservoir-kit/commit/559bf563689ee7948e971a265877c215463312ac)
+* Sync api [60b9557c](https://github.com/reservoirprotocol/reservoir-kit/commit/60b9557cdc581c7b029e3ad4f255eb7ae7b86d76)
+
+## [v1.6.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/bb2bced78527154cca38c621a75a21bb333187ac) (2023-11-02)
+
+* Sync api
+* Fix issue with transaction detection for IERC2771 [559bf563](https://github.com/reservoirprotocol/reservoir-kit/commit/559bf563689ee7948e971a265877c215463312ac)
+
 ## [v1.6.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/78145884b50ab26db180c710d23c2976ed3bfe5e) (2023-10-30)
 
 * Upgrade wagmi to v~1.4.3 and viem to v~1.16.3 [38611577](https://github.com/reservoirprotocol/reservoir-kit/commit/38611577d63a546c02b135b92b4a7b9868486ed7)

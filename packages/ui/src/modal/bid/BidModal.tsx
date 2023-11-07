@@ -56,6 +56,8 @@ import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { WalletClient } from 'viem'
 
 type BidCallbackData = {
   tokenId?: string
@@ -90,6 +92,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   oracleEnabled?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   feesBps?: string[] | null
+  walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
   onViewOffers?: () => void
   onClose?: (
     data: BidCallbackData,
@@ -150,6 +154,8 @@ export function BidModal({
   copyOverrides,
   feesBps,
   orderKind,
+  walletClient,
+  usePermit,
   onViewOffers,
   onClose,
   onBidComplete,
@@ -193,6 +199,8 @@ export function BidModal({
       oracleEnabled={oracleEnabled}
       currencies={currencies}
       feesBps={feesBps}
+      walletClient={walletClient}
+      usePermit={usePermit}
     >
       {({
         token,

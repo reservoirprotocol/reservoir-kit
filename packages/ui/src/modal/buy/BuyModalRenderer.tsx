@@ -20,8 +20,9 @@ import {
   Execute,
   LogLevel,
   ReservoirClientActions,
+  ReservoirWallet,
 } from '@reservoir0x/reservoir-sdk'
-import { Address, formatUnits, zeroAddress } from 'viem'
+import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import usePaymentTokens, {
@@ -97,6 +98,8 @@ type Props = {
   normalizeRoyalties?: boolean
   onConnectWallet: () => void
   children: (props: ChildrenProps) => ReactNode
+  walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
 }
 
 export const BuyModalRenderer: FC<Props> = ({
@@ -110,6 +113,8 @@ export const BuyModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   onConnectWallet,
   children,
+  walletClient,
+  usePermit,
 }) => {
   const [totalPrice, setTotalPrice] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
@@ -136,7 +141,11 @@ export const BuyModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: wagmiWalletClient } = useWalletClient({
+    chainId: rendererChain?.id,
+  })
+
+  const wallet = walletClient || wagmiWalletClient
 
   const chainCurrency = useChainCurrency(rendererChain?.id)
   const blockExplorerBaseUrl =
@@ -161,7 +170,9 @@ export const BuyModalRenderer: FC<Props> = ({
   )
 
   const paymentCurrency = paymentTokens?.find(
-    (paymentToken) => paymentToken?.address === _paymentCurrency?.address
+    (paymentToken) =>
+      paymentToken?.address === _paymentCurrency?.address &&
+      paymentToken?.chainId === _paymentCurrency?.chainId
   )
 
   const { data: tokens, mutate: mutateTokens } = useTokens(
@@ -262,6 +273,7 @@ export const BuyModalRenderer: FC<Props> = ({
       onlyPath: true,
       partial: true,
       currency: paymentCurrency?.address,
+      currencyChainId: paymentCurrency?.chainId,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -312,6 +324,7 @@ export const BuyModalRenderer: FC<Props> = ({
     normalizeRoyalties,
     rendererChain,
     paymentCurrency?.address,
+    paymentCurrency?.chainId,
   ])
 
   useEffect(() => {
@@ -358,13 +371,16 @@ export const BuyModalRenderer: FC<Props> = ({
     }
 
     let activeWalletChain = getNetwork().chain
-    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+    if (
+      activeWalletChain &&
+      paymentCurrency?.chainId !== activeWalletChain?.id
+    ) {
       activeWalletChain = await switchNetwork({
-        chainId: rendererChain?.id as number,
+        chainId: paymentCurrency?.chainId as number,
       })
     }
 
-    if (rendererChain?.id !== activeWalletChain?.id) {
+    if (paymentCurrency?.chainId !== activeWalletChain?.id) {
       const error = new Error(`Mismatching chainIds`)
       setTransactionError(error)
       throw error
@@ -386,6 +402,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
     let options: BuyTokenOptions = {
       currency: paymentCurrency?.address,
+      currencyChainId: paymentCurrency?.chainId,
     }
 
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
@@ -414,6 +431,10 @@ export const BuyModalRenderer: FC<Props> = ({
 
     if (normalizeRoyalties !== undefined) {
       options.normalizeRoyalties = normalizeRoyalties
+    }
+
+    if (usePermit) {
+      options.usePermit = true
     }
 
     setBuyStep(BuyStep.Approving)
@@ -526,6 +547,8 @@ export const BuyModalRenderer: FC<Props> = ({
     totalIncludingFees,
     wallet,
     paymentCurrency?.address,
+    paymentCurrency?.chainId,
+    usePermit,
     mutateListings,
     mutateTokens,
     mutateCollection,

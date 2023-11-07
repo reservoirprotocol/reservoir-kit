@@ -20,7 +20,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import PriceInput from './PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
-import { zeroAddress } from 'viem'
+import { WalletClient, zeroAddress } from 'viem'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 
 const ModalCopy = {
   title: 'Edit Listing',
@@ -41,6 +42,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   normalizeRoyalties?: boolean
   enableOnChainRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
   onClose?: (data: any, currentStep: EditListingStep) => void
   onEditListingComplete?: (data: any) => void
   onEditListingError?: (error: Error, data: any) => void
@@ -58,6 +60,7 @@ export function EditListingModal({
   normalizeRoyalties,
   enableOnChainRoyalties = false,
   copyOverrides,
+  walletClient,
   onClose,
   onEditListingComplete,
   onEditListingError,
@@ -84,6 +87,7 @@ export function EditListingModal({
       open={open}
       normalizeRoyalties={normalizeRoyalties}
       enableOnChainRoyalties={enableOnChainRoyalties}
+      walletClient={walletClient}
     >
       {({
         loading,
@@ -394,17 +398,17 @@ export function EditListingModal({
                   <>
                     <Progress
                       title={
-                        stepData?.currentStepItem.txHash
+                        stepData?.currentStepItem.txHashes
                           ? 'Finalizing on blockchain'
                           : 'Approve Reservoir Oracle to update the listing'
                       }
-                      txHash={stepData?.currentStepItem.txHash}
+                      txHashes={stepData?.currentStepItem?.txHashes}
                     />
                   </>
                 )}
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
-                  {stepData?.currentStepItem.txHash
+                  {stepData?.currentStepItem?.txHashes
                     ? copy.ctaAwaitingValidation
                     : copy.ctaAwaitingApproval}
                 </Button>

@@ -3,6 +3,7 @@ import {
   LogLevel,
   ReservoirChain,
   ReservoirClientActions,
+  ReservoirWallet,
   paths,
   setParams,
 } from '@reservoir0x/reservoir-sdk'
@@ -24,7 +25,7 @@ import React, {
   useState,
 } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { version } from '../../package.json'
 import { getNetwork, getWalletClient } from 'wagmi/actions'
 
@@ -88,7 +89,7 @@ export type Cart = {
   pendingTransactionId?: string
   transaction: {
     id?: string
-    txHash?: string
+    txHashes?: string[]
     chain: ReservoirChain
     items: CartItem[]
     error?: Error
@@ -106,12 +107,14 @@ type CartStoreProps = {
   feesOnTopBps?: string[]
   feesOnTopUsd?: string[]
   persist?: boolean
+  walletClient?: ReservoirWallet | WalletClient
 }
 
 function cartStore({
   feesOnTopBps,
   feesOnTopUsd,
   persist = true,
+  walletClient,
 }: CartStoreProps) {
   const { address } = useAccount()
   const { chains } = useNetwork()
@@ -973,9 +976,11 @@ function cartStore({
         }
       }
 
-      const wallet = await getWalletClient({
+      const wagmiWalletClient = await getWalletClient({
         chainId: cartData.current.chain?.id,
       })
+
+      const wallet = walletClient || wagmiWalletClient
 
       if (!wallet) {
         throw 'Wallet/Signer not available'
@@ -1132,7 +1137,7 @@ function cartStore({
             if (
               transactionSteps.length > 0 &&
               transactionSteps.every((step) =>
-                step.items?.every((item) => item.txHash)
+                step.items?.every((item) => item.txHashes)
               )
             ) {
               status = CheckoutStatus.Finalizing
@@ -1171,7 +1176,8 @@ function cartStore({
               cartData.current.transaction.status = status
               cartData.current.transaction.currentStep = currentStep
               if (currentStepItem) {
-                cartData.current.transaction.txHash = currentStepItem?.txHash
+                cartData.current.transaction.txHashes =
+                  currentStepItem?.txHashes
                 cartData.current.transaction.steps = steps
                 cartData.current.transaction.path = path
               }
@@ -1239,7 +1245,7 @@ function cartStore({
           }
         })
     },
-    [client, switchNetworkAsync, usdPrice]
+    [client, switchNetworkAsync, usdPrice, walletClient]
   )
 
   return {

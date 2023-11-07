@@ -22,8 +22,7 @@ const FloorDropdown: FC<FloorDropdownProps> = ({
   setCurrency,
 }) => {
   const highestTraitFloor = useMemo(() => {
-    // @TODO: do we want to have a max size of attributes?
-    if (token?.token?.attributes && token?.token?.attributes?.length < 200) {
+    if (token?.token?.attributes && token?.token?.attributes?.length < 2000) {
       return Math.max(
         ...token.token.attributes.map((attr: any) =>
           Number(attr.floorAskPrice)
