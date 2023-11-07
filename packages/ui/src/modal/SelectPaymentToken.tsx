@@ -71,7 +71,7 @@ export const SelectPaymentToken: FC<Props> = ({
                     css={{ width: 24, height: 24 }}
                   />
                   <Flex direction="column" align="start">
-                    <Text style="subtitle2">{paymentToken?.symbol}</Text>
+                    <Text style="subtitle2">{paymentToken?.name}</Text>
                     <Text style="body2" color="subtle">
                       Balance: {formatNumber(Number(formattedBalance), 6)}
                     </Text>

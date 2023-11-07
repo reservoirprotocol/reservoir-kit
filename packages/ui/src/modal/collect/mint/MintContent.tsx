@@ -237,7 +237,7 @@ export const MintContent: FC<
                       amount={feeOnTop}
                       address={paymentCurrency?.address}
                       decimals={paymentCurrency?.decimals}
-                      symbol={paymentCurrency?.symbol}
+                      symbol={paymentCurrency?.name}
                     />
                     <FormatCurrency
                       amount={feeUsd}
@@ -260,7 +260,7 @@ export const MintContent: FC<
                     amount={paymentCurrency?.currencyTotalRaw}
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
-                    symbol={paymentCurrency?.symbol}
+                    symbol={paymentCurrency?.name}
                     logoWidth={18}
                   />
                   <FormatCurrency
@@ -295,7 +295,7 @@ export const MintContent: FC<
                     amount={paymentCurrency?.balance}
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
-                    symbol={paymentCurrency?.symbol}
+                    symbol={paymentCurrency?.name}
                     textStyle="body3"
                   />
                 </Flex>

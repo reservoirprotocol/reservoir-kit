@@ -210,7 +210,7 @@ export const SweepContent: FC<
                           amount={cheapestTokenPrice}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                           maximumFractionDigits={2}
                         />
                         <Text style="subtitle3" color="subtle">
@@ -221,7 +221,7 @@ export const SweepContent: FC<
                           amount={mostExpensiveTokenPrice}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                           maximumFractionDigits={2}
                         />
                       </Flex>
@@ -239,7 +239,7 @@ export const SweepContent: FC<
                       amount={total / BigInt(itemAmount)}
                       address={paymentCurrency?.address}
                       decimals={paymentCurrency?.decimals}
-                      symbol={paymentCurrency?.symbol}
+                      symbol={paymentCurrency?.name}
                       maximumFractionDigits={2}
                     />
                   </Flex>
@@ -298,7 +298,7 @@ export const SweepContent: FC<
                     amount={feeOnTop}
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
-                    symbol={paymentCurrency?.symbol}
+                    symbol={paymentCurrency?.name}
                   />
                   <FormatCurrency amount={feeUsd} color="subtle" style="tiny" />
                 </Flex>
@@ -358,7 +358,7 @@ export const SweepContent: FC<
                   amount={paymentCurrency?.balance}
                   address={paymentCurrency?.address}
                   decimals={paymentCurrency?.decimals}
-                  symbol={paymentCurrency?.symbol}
+                  symbol={paymentCurrency?.name}
                   textStyle="body3"
                 />
               </Flex>

@@ -399,7 +399,7 @@ export function BuyModal({
                           amount={feeOnTop}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                         />
                         <FormatCurrency
                           amount={feeUsd}
@@ -422,7 +422,7 @@ export function BuyModal({
                         amount={paymentCurrency?.currencyTotalRaw}
                         address={paymentCurrency?.address}
                         decimals={paymentCurrency?.decimals}
-                        symbol={paymentCurrency?.symbol}
+                        symbol={paymentCurrency?.name}
                         logoWidth={18}
                       />
                       <FormatCurrency
@@ -459,7 +459,7 @@ export function BuyModal({
                           amount={paymentCurrency?.balance}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                           textStyle="body3"
                         />
                       </Flex>
