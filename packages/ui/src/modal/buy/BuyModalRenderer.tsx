@@ -127,7 +127,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [stepData, setStepData] = useState<BuyModalStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
-  const [quantity, setQuantity] = useState(defaultQuantity || 1)
+  const [quantity, setQuantity] = useState(1)
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -691,11 +691,19 @@ export const BuyModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setStepData(null)
       setSteps(null)
-      setQuantity(defaultQuantity || 1)
+      setQuantity(1)
       setPath(undefined)
       setPaymentCurrency(undefined)
+    } else {
+      setQuantity(defaultQuantity || 1)
     }
   }, [open])
+
+  useEffect(() => {
+    if (quantity > quantityRemaining) {
+      setQuantity(quantityRemaining)
+    }
+  }, [quantityRemaining, quantity])
 
   return (
     <>
@@ -730,7 +738,7 @@ export const BuyModalRenderer: FC<Props> = ({
         blockExplorerBaseName,
         steps,
         stepData,
-        quantity: quantity > quantityRemaining ? quantityRemaining : quantity,
+        quantity,
         isConnected: wallet !== undefined,
         isOwner,
         setPaymentCurrency,
