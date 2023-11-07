@@ -145,16 +145,20 @@ export async function sendTransactionSafely(
   }
 
   if (attemptCount >= maximumAttempts) {
-    const wagmiChain: allChains.Chain | undefined = Object.values({
-      ...allChains,
-      ...customChains,
-    }).find(({ id }) => id === chainId)
+    if (isCrossChainIntent) {
+      throw Error('Crosschain transaction failed. Please try again.')
+    } else {
+      const wagmiChain: allChains.Chain | undefined = Object.values({
+        ...allChains,
+        ...customChains,
+      }).find(({ id }) => id === chainId)
 
-    throw new TransactionTimeoutError(
-      txHash,
-      attemptCount,
-      wagmiChain?.blockExplorers?.default.url
-    )
+      throw new TransactionTimeoutError(
+        txHash,
+        attemptCount,
+        wagmiChain?.blockExplorers?.default.url
+      )
+    }
   }
 
   if (transactionCancelled) {
