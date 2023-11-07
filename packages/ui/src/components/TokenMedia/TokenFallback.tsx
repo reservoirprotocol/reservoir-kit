@@ -37,7 +37,7 @@ const TokenFallback: FC<TokenFallbackProps> = ({
       css={{ gap: '$2', aspectRatio: '1/1', p: '$2', ...style }}
       className={className}
     >
-      {mode === 'simple' ? (
+      {mode === 'simple' || !token?.collection?.id ? (
         <FontAwesomeIcon icon={faImage} style={{ height: '50%' }} />
       ) : (
         <>
