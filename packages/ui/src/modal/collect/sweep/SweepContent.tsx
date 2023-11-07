@@ -56,6 +56,7 @@ export const SweepContent: FC<
   setPaymentCurrency,
   total,
   totalIncludingFees,
+  gasCost,
   feeOnTop,
   feeUsd,
   isConnected,
@@ -314,7 +315,11 @@ export const SweepContent: FC<
                 <FormatCryptoCurrency
                   chainId={chainId}
                   textStyle="h6"
-                  amount={paymentCurrency?.currencyTotalRaw}
+                  amount={
+                    paymentCurrency?.currencyTotalRaw
+                      ? paymentCurrency?.currencyTotalRaw + gasCost
+                      : undefined
+                  }
                   address={paymentCurrency?.address}
                   decimals={paymentCurrency?.decimals}
                   symbol={paymentCurrency?.symbol}
