@@ -1,4 +1,20 @@
 
+## [v1.17.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/599c765e34df0ecce1fad708c95cb76b32db60af) (2023-11-07)
+
+* Merge pull request #449 from reservoirprotocol/pedro/grwth-3508-improve-tokenmedia-fallback-logic [03410e3f](https://github.com/reservoirprotocol/reservoir-kit/commit/03410e3f01a36c32ce8927fff899bdb559a732fa)
+* TokenMedia: if no collection [2023-11-07](https://github.com/reservoirprotocol/reservoir-kit/commit/8196229f)
+* Merge pull request #445 from reservoirprotocol/ted/grwth-3537-incorrect-default-currency-in-new-buy-modal [6d33fa22](https://github.com/reservoirprotocol/reservoir-kit/commit/6d33fa22bf829044e27be48d89694f2a5623b1fd)
+* Improve crosschain transaction failure error handling [ba2c9736](https://github.com/reservoirprotocol/reservoir-kit/commit/ba2c9736661add665b8e89eaadd60ef644aca4f7)
+* feat: address feedback [8b5e16c2](https://github.com/reservoirprotocol/reservoir-kit/commit/8b5e16c24ee38e57e2aebbd0d4e8a39798fc08ba)
+* Add support for including listing currency in BuyModal payment tokens [56609f4c](https://github.com/reservoirprotocol/reservoir-kit/commit/56609f4c2afd889232a3d7528d1f035f3f14dbc1)
+* feat: resolve feedback [b5cfe2a2](https://github.com/reservoirprotocol/reservoir-kit/commit/b5cfe2a285449364ca5a9dc8a058113f7628b0ff)
+## [v1.17.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/fd8dcca3c1a97547c2a562266d252bb73fc05759) (2023-11-06)
+
+* Merge pull request #443 from reservoirprotocol/ted/fix-balances [f53b93c7](https://github.com/reservoirprotocol/reservoir-kit/commit/f53b93c7dcdf20e20ff89811d51d38656b53a941)
+* Fix: update swr key for nativeBalances [edb87d23](https://github.com/reservoirprotocol/reservoir-kit/commit/edb87d23eda4ed9b3d589f95765959f833b9b1ca)
+* feat: CollectModal default quantity [f90d1853](https://github.com/reservoirprotocol/reservoir-kit/commit/f90d1853563a9a493fad8baeecde7377babdc250)
+* feat: BuyModal default quantity [8913851a](https://github.com/reservoirprotocol/reservoir-kit/commit/8913851a9ac66efc2bb21ca18b96fc6c0248d67d)
+
 ## [v1.17.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f150275dad1aa5cd59890f4ce6f897f04094c0f0) (2023-11-06)
 
 * Fix: Add currency conversions to paymentTokens dependencies array [34b4b88b](https://github.com/reservoirprotocol/reservoir-kit/commit/34b4b88b51a0b7c17b54d3e75fe2e847600f5fc5)
