@@ -16,10 +16,23 @@ export function request(config: AxiosRequestConfig = {}) {
   return axios.request({ headers: headers, ...config })
 }
 
-export function APIError(message: string) {
-  return new Error(message, { cause: 'APIError' })
-}
-
 export function isAPIError(error?: Error) {
   return error && error.cause === 'APIError'
+}
+
+export class APIError extends Error {
+  type: string
+  statusCode: number
+
+  constructor(
+    message: string,
+    statusCode: number,
+    type: string = 'APIError',
+    options: any = {}
+  ) {
+    super(message, { ...options, cause: 'APIError' })
+    this.name = 'APIError'
+    this.type = type
+    this.statusCode = statusCode
+  }
 }

@@ -18,6 +18,9 @@ import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGasPump } from '@fortawesome/free-solid-svg-icons'
+import { truncateAddress } from '../../lib/truncate'
+import { WalletClient } from 'viem'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 
 const ModalCopy = {
   title: 'Cancel Listing',
@@ -33,6 +36,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
   onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
@@ -45,6 +49,7 @@ export function CancelListingModal({
   trigger,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
   onClose,
   onCancelComplete,
   onCancelError,
@@ -69,6 +74,7 @@ export function CancelListingModal({
       listingId={listingId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
     >
       {({
         loading,
@@ -200,18 +206,18 @@ export function CancelListingModal({
                   <>
                     <Progress
                       title={
-                        stepData?.currentStepItem.txHash
+                        stepData?.currentStepItem.txHashes
                           ? 'Finalizing on blockchain'
                           : 'Confirm cancelation in your wallet'
                       }
-                      txHash={stepData?.currentStepItem.txHash}
-                      blockExplorerBaseUrl={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
+                      txHashes={stepData?.currentStepItem?.txHashes}
+                      blockExplorerBaseUrl={blockExplorerBaseUrl}
                     />
                   </>
                 )}
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
-                  {stepData?.currentStepItem.txHash
+                  {stepData?.currentStepItem.txHashes
                     ? copy.ctaAwaitingValidation
                     : copy.ctaAwaitingApproval}
                 </Button>
@@ -246,16 +252,25 @@ export function CancelListingModal({
                       {listing?.price?.currency?.symbol} has been canceled.
                     </>
                   </Text>
-
-                  <Anchor
-                    color="primary"
-                    weight="medium"
-                    css={{ fontSize: 12 }}
-                    href={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
-                    target="_blank"
-                  >
-                    View on {blockExplorerName}
-                  </Anchor>
+                  <Flex direction="column" align="center" css={{ gap: '$2' }}>
+                    {stepData?.currentStepItem?.txHashes?.map(
+                      (txHash, index) => {
+                        const truncatedTxHash = truncateAddress(txHash)
+                        return (
+                          <Anchor
+                            key={index}
+                            href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                            color="primary"
+                            weight="medium"
+                            target="_blank"
+                            css={{ fontSize: 12 }}
+                          >
+                            View transaction: {truncatedTxHash}
+                          </Anchor>
+                        )
+                      }
+                    )}
+                  </Flex>
                 </Flex>
                 <Button
                   onClick={() => {

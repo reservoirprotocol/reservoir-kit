@@ -29,13 +29,14 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
-import { Execute } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { truncateAddress } from '../../lib/truncate'
 import { SelectPaymentToken } from '../SelectPaymentToken'
+import { WalletClient } from 'viem'
 
 type PurchaseData = {
   tokenId?: string
@@ -69,6 +70,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
   onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -109,6 +112,8 @@ export function BuyModal({
   feesOnTopUsd,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
+  usePermit,
   onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
@@ -141,6 +146,8 @@ export function BuyModal({
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
+      usePermit={usePermit}
       onConnectWallet={onConnectWallet}
     >
       {({
@@ -217,7 +224,7 @@ export function BuyModal({
 
         const failedPurchases = quantity - totalPurchases
         const successfulPurchases = quantity - failedPurchases
-        const finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
+        const finalTxHashes = lastStepItems[lastStepItems.length - 1]?.txHashes
 
         const price =
           totalPrice || BigInt(token?.token?.lastSale?.price?.amount?.raw || 0)
@@ -497,13 +504,13 @@ export function BuyModal({
                 {stepData && (
                   <Progress
                     title={stepData?.currentStep.action || ''}
-                    txHash={stepData?.currentStepItem.txHash}
-                    blockExplorerBaseUrl={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
+                    txHashes={stepData?.currentStepItem.txHashes}
+                    blockExplorerBaseUrl={blockExplorerBaseUrl}
                   />
                 )}
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
-                  {stepData?.currentStepItem.txHash
+                  {stepData?.currentStepItem?.txHashes
                     ? copy.ctaAwaitingValidation
                     : copy.ctaAwaitingApproval}
                 </Button>
@@ -570,21 +577,29 @@ export function BuyModal({
                   )}
                   {totalPurchases > 1 && (
                     <Flex direction="column" css={{ gap: '$2' }}>
-                      {stepData?.currentStep.items?.map((item) => {
-                        const txHash = item.txHash
-                          ? `${truncateAddress(item.txHash)}`
-                          : ''
-                        return (
-                          <Anchor
-                            href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                            color="primary"
-                            weight="medium"
-                            target="_blank"
-                            css={{ fontSize: 12 }}
-                          >
-                            View transaction: {txHash}
-                          </Anchor>
-                        )
+                      {stepData?.currentStep?.items?.map((item, itemIndex) => {
+                        if (
+                          Array.isArray(item?.txHashes) &&
+                          item?.txHashes.length > 0
+                        ) {
+                          return item.txHashes.map((txHash, txHashIndex) => {
+                            const truncatedTxHash = truncateAddress(txHash)
+                            return (
+                              <Anchor
+                                key={`${itemIndex}-${txHashIndex}`}
+                                href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                                color="primary"
+                                weight="medium"
+                                target="_blank"
+                                css={{ fontSize: 12 }}
+                              >
+                                View transaction: {truncatedTxHash}
+                              </Anchor>
+                            )
+                          })
+                        } else {
+                          return null
+                        }
                       })}
                     </Flex>
                   )}
@@ -626,15 +641,28 @@ export function BuyModal({
                           Your transaction went through successfully
                         </Text>
                       </Flex>
-                      <Anchor
-                        color="primary"
-                        weight="medium"
-                        css={{ fontSize: 12 }}
-                        href={`${blockExplorerBaseUrl}/tx/${finalTxHash}`}
-                        target="_blank"
+
+                      <Flex
+                        direction="column"
+                        align="center"
+                        css={{ gap: '$2' }}
                       >
-                        View on {blockExplorerBaseName}
-                      </Anchor>
+                        {finalTxHashes?.map((txHash, index) => {
+                          const truncatedTxHash = truncateAddress(txHash)
+                          return (
+                            <Anchor
+                              key={index}
+                              href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                              color="primary"
+                              weight="medium"
+                              target="_blank"
+                              css={{ fontSize: 12 }}
+                            >
+                              View transaction: {truncatedTxHash}
+                            </Anchor>
+                          )
+                        })}
+                      </Flex>
                     </>
                   )}
                 </Flex>

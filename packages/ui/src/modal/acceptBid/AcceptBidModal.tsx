@@ -42,6 +42,8 @@ import { ApproveBidCollapsible } from './ApproveBidCollapsible'
 import SigninStep from '../SigninStep'
 import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
 import { truncateAddress } from '../../lib/truncate'
+import { WalletClient } from 'viem'
+import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -64,6 +66,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   chainId?: number
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
+  walletClient?: ReservoirWallet | WalletClient
   onBidAccepted?: (data: BidData) => void
   onClose?: (
     data: BidData,
@@ -81,6 +84,7 @@ export function AcceptBidModal({
   tokens,
   normalizeRoyalties,
   copyOverrides,
+  walletClient,
   onBidAccepted,
   onClose,
   onBidAcceptError,
@@ -108,6 +112,7 @@ export function AcceptBidModal({
       chainId={modalChain?.id}
       tokens={tokens}
       normalizeRoyalties={normalizeRoyalties}
+      walletClient={walletClient}
     >
       {({
         loading,
@@ -487,21 +492,29 @@ export function AcceptBidModal({
                   align="center"
                   css={{ gap: '$2', mb: '$3', width: '100%' }}
                 >
-                  {stepData?.currentStep?.items?.map((item) => {
-                    const txHash = item.txHash
-                      ? `${truncateAddress(item.txHash)}`
-                      : ''
-                    return (
-                      <Anchor
-                        href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                        color="primary"
-                        weight="medium"
-                        target="_blank"
-                        css={{ fontSize: 12 }}
-                      >
-                        View transaction: {txHash}
-                      </Anchor>
-                    )
+                  {stepData?.currentStep?.items?.map((item, itemIndex) => {
+                    if (
+                      Array.isArray(item?.txHashes) &&
+                      item?.txHashes.length > 0
+                    ) {
+                      return item.txHashes.map((txHash, txHashIndex) => {
+                        const truncatedTxHash = truncateAddress(txHash)
+                        return (
+                          <Anchor
+                            key={`${itemIndex}-${txHashIndex}`}
+                            href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                            color="primary"
+                            weight="medium"
+                            target="_blank"
+                            css={{ fontSize: 12 }}
+                          >
+                            View transaction: {truncatedTxHash}
+                          </Anchor>
+                        )
+                      })
+                    } else {
+                      return null
+                    }
                   })}
                 </Flex>
                 <Box
@@ -551,21 +564,29 @@ export function AcceptBidModal({
                       : `${totalSales > 1 ? 'Offers' : 'Offer'} accepted!`}
                   </Text>
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-                    {stepData?.currentStep?.items?.map((item) => {
-                      const txHash = item.txHash
-                        ? `${truncateAddress(item.txHash)}`
-                        : ''
-                      return (
-                        <Anchor
-                          href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                          color="primary"
-                          weight="medium"
-                          target="_blank"
-                          css={{ fontSize: 12 }}
-                        >
-                          View transaction: {txHash}
-                        </Anchor>
-                      )
+                    {stepData?.currentStep?.items?.map((item, itemIndex) => {
+                      if (
+                        Array.isArray(item?.txHashes) &&
+                        item?.txHashes.length > 0
+                      ) {
+                        return item.txHashes.map((txHash, txHashIndex) => {
+                          const truncatedTxHash = truncateAddress(txHash)
+                          return (
+                            <Anchor
+                              key={`${itemIndex}-${txHashIndex}`}
+                              href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                              color="primary"
+                              weight="medium"
+                              target="_blank"
+                              css={{ fontSize: 12 }}
+                            >
+                              View transaction: {truncatedTxHash}
+                            </Anchor>
+                          )
+                        })
+                      } else {
+                        return null
+                      }
                     })}
                   </Flex>
                 </Flex>
