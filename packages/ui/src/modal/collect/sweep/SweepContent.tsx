@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { ChildrenProps, CollectStep } from '../CollectModalRenderer'
 import {
   Anchor,
@@ -74,6 +74,8 @@ export const SweepContent: FC<
   copy,
   setOpen,
 }) => {
+  const [buttonClicked, setButtonClicked] = useState(false)
+
   const hasTokens = orders && orders.length > 0
 
   const is1155 = collection?.contractKind === 'erc1155'
@@ -333,9 +335,16 @@ export const SweepContent: FC<
               css={{ m: '$4' }}
               disabled={
                 !(selectedTokens.length > 0) ||
-                (!hasEnoughCurrency && isConnected)
+                (!hasEnoughCurrency && isConnected) ||
+                buttonClicked
               }
-              onClick={collectTokens}
+              onClick={async () => {
+                if (!buttonClicked) {
+                  setButtonClicked(true)
+                  await collectTokens().catch(() => {})
+                  setButtonClicked(false)
+                }
+              }}
             >
               {!isConnected
                 ? copy.ctaConnect

@@ -95,7 +95,8 @@ export type ChildrenProps = {
   setStepData: React.Dispatch<React.SetStateAction<CollectModalStepData | null>>
   collectStep: CollectStep
   setCollectStep: React.Dispatch<React.SetStateAction<CollectStep>>
-  collectTokens: () => void
+  // collectTokens: () => void
+  collectTokens: () => Promise<void>
 }
 
 type Props = {
