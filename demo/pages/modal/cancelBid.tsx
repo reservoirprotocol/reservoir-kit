@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import { PrivyConnectButton } from 'components/PrivyConnectButton'
+import ChainSwitcher from 'components/ChainSwitcher'
 
 const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
@@ -102,6 +103,7 @@ const CancelBidPage: NextPage = () => {
           console.log('CancelBidModal Closed')
         }}
       />
+      <ChainSwitcher />
       <ThemeSwitcher />
     </div>
   )
