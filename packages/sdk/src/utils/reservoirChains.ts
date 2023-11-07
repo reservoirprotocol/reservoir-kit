@@ -16,7 +16,8 @@ const goerli = {
   name: 'Goerli',
   baseApiUrl: 'https://api-goerli.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[5],
-  websocketUrl: 'wss://ws-goerli.reservoir.tools'
+  websocketUrl: 'wss://ws-goerli.reservoir.tools',
+  transactionPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const optimism = {
@@ -70,7 +71,8 @@ const sepolia = {
   name: 'Sepolia',
   baseApiUrl: 'https://api-sepolia.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[11155111],
-  websocketUrl: 'wss://ws-sepolia.reservoir.tools'
+  websocketUrl: 'wss://ws-sepolia.reservoir.tools',
+  transactionPollingInterval: 2000
 } satisfies ReservoirBaseChain
 
 const base = {
