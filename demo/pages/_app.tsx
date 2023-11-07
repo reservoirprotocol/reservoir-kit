@@ -53,6 +53,7 @@ const { chains, publicClient } = configureChains(
     allChains.avalanche,
     allChains.linea,
     allChains.scroll,
+    allChains.arbitrumNova
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
