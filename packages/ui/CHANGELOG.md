@@ -1,4 +1,25 @@
 
+## [v1.17.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f150275dad1aa5cd59890f4ce6f897f04094c0f0) (2023-11-06)
+
+* Fix: Add currency conversions to paymentTokens dependencies array [34b4b88b](https://github.com/reservoirprotocol/reservoir-kit/commit/34b4b88b51a0b7c17b54d3e75fe2e847600f5fc5)
+## [v1.17.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/18b82188e2faf7317f6ffeff7e81e773e6d05588) (2023-11-03)
+
+* Cross chain Transactions [54beebcd](https://github.com/reservoirprotocol/reservoir-kit/commit/54beebcd5a520699260499c9ed7087570f6ef736)
+* Standardize APIError by extending error and adding custom props [34ce97f2](https://github.com/reservoirprotocol/reservoir-kit/commit/34ce97f2f0c2092320ad66e4bb06c7ca9df148ac)
+
+### Breaking Changes:
+* Errors are now standardized, please check for any custom error handling from the SDK/client actions.
+* Payment tokens now require a chainId to be specified
+
+## [v1.16.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/b6cdb7327075859d9d06e00fda007c8ecac6fd8c) (2023-11-02)
+
+* CollectModal: add usePermit prop [dd82d674](https://github.com/reservoirprotocol/reservoir-kit/commit/dd82d6741eabb712bc787242434f1fa63a64d5b6)
+* BuyModal and BidModal: add usePermit prop [fd80d39d](https://github.com/reservoirprotocol/reservoir-kit/commit/fd80d39ddbc44201a05a8edbc673e40bd89253a1)
+
+## [v1.16.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7aa430e37a3519eb77a432072d8f16c53c4bb06d) (2023-11-01)
+
+* BidModal: fix walletClient not being passed to renderer [7f17ed3f](https://github.com/reservoirprotocol/reservoir-kit/commit/7f17ed3f7d12de5146035a898d36e0493451315b)
+
 ## [v1.16.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3ae515e1c544a2a9964a826336f0ef6be38cbab8) (2023-11-01)
 
 * Add walletClient prop to modals and add to cart provider [cc827f2f](https://github.com/reservoirprotocol/reservoir-kit/commit/cc827f2fc3b6453521a963ec619ce6a74e0702db)

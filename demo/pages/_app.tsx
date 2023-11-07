@@ -23,12 +23,10 @@ import {
   ReservoirKitTheme,
   CartProvider,
 } from '@reservoir0x/reservoir-kit-ui'
-import {
-  LogLevel,
-  customChains,
-  reservoirChains,
-} from '@reservoir0x/reservoir-sdk'
+import { LogLevel } from '@reservoir0x/reservoir-sdk'
+import configuredChains from '../utils/chains'
 import { useRouter } from 'next/router'
+import '../fonts.css'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
 const SOURCE = process.env.NEXT_PUBLIC_SOURCE || 'reservoirkit.demo'
@@ -54,7 +52,8 @@ const { chains, publicClient } = configureChains(
     allChains.base,
     allChains.avalanche,
     allChains.linea,
-    allChains.scroll
+    allChains.scroll,
+    allChains.arbitrumNova
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
@@ -89,12 +88,31 @@ const ThemeSwitcher: FC<any> = ({ children }) => {
   )
 }
 
+export const ChainSwitcherContext = React.createContext<{
+  chain: number
+  setChain: Dispatch<SetStateAction<number>> | null
+}>({
+  chain: CHAIN_ID,
+  setChain: null,
+})
+
+const ChainSwitcher: FC<any> = ({ children }) => {
+  const [chain, setChain] = useState<number>(CHAIN_ID)
+  return (
+    <ChainSwitcherContext.Provider value={{ chain, setChain }}>
+      {children}
+    </ChainSwitcherContext.Provider>
+  )
+}
+
 type AppWrapperProps = {
   children: ReactNode
 }
 
-const AppWrapper: FC<any> = ({ children }) => {
+const AppWrapper: FC<AppWrapperProps> = ({ children }) => {
   const { theme } = useContext(ThemeSwitcherContext)
+  const { chain } = useContext(ChainSwitcherContext)
+
   const router = useRouter()
   const cartFeeBps = router.query.cartFeeBps
     ? JSON.parse(router.query.cartFeeBps as string)
@@ -108,74 +126,12 @@ const AppWrapper: FC<any> = ({ children }) => {
       <ReservoirKitProvider
         options={{
           apiKey: API_KEY,
-          chains: [
-            {
-              ...reservoirChains.mainnet,
-              active: CHAIN_ID === allChains.mainnet.id,
-            },
-            {
-              ...reservoirChains.goerli,
-              active: CHAIN_ID === allChains.goerli.id,
-              paymentTokens: [
-                ...reservoirChains.goerli.paymentTokens,
-                {
-                  address: '0x68B7E050E6e2C7eFE11439045c9d49813C1724B8',
-                  symbol: 'phUSDC',
-                  name: 'phUSDC',
-                  decimals: 6,
-                  coinGeckoId: 'usd-coin',
-                },
-                {
-                  address: '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844',
-                  symbol: 'DAI',
-                  name: 'Dai',
-                  decimals: 18,
-                  coinGeckoId: 'dai',
-                },
-              ],
-            },
-            {
-              ...reservoirChains.sepolia,
-              active: CHAIN_ID === allChains.sepolia.id
-            },
-            {
-              ...reservoirChains.polygon,
-              active: CHAIN_ID === allChains.polygon.id,
-            },
-            {
-              ...reservoirChains.optimism,
-              active: CHAIN_ID === allChains.optimism.id,
-            },
-            {
-              ...reservoirChains.arbitrum,
-              active: CHAIN_ID === allChains.arbitrum.id,
-            },
-            {
-              ...reservoirChains.zora,
-              active: CHAIN_ID === allChains.zora.id,
-            },
-            {
-              ...reservoirChains.base,
-              active: CHAIN_ID === allChains.base.id,
-            },
-            {
-              ...reservoirChains.linea,
-              active: CHAIN_ID === allChains.linea.id,
-            },
-            {
-              ...reservoirChains.arbitrumNova,
-              active: CHAIN_ID === allChains.arbitrumNova.id
-            },
-            {
-              ...reservoirChains.ancient8Testnet,
-              id: customChains.ancient8Testnet.id,
-              active: CHAIN_ID === customChains.ancient8Testnet.id,
-            },
-            {
-              ...reservoirChains.scroll,
-              active: CHAIN_ID === allChains.scroll.id,
+          chains: configuredChains.map((c) => {
+            return {
+              ...c,
+              active: chain === c.id,
             }
-          ],
+          }),
           marketplaceFees: MARKETPLACE_FEES,
           source: SOURCE,
           normalizeRoyalties: NORMALIZE_ROYALTIES,
@@ -204,12 +160,14 @@ const AppWrapper: FC<any> = ({ children }) => {
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ThemeSwitcher>
-      <AppWrapper>
-        {/* @ts-ignore */}
-        <Component {...pageProps} />
-      </AppWrapper>
-    </ThemeSwitcher>
+    <ChainSwitcher>
+      <ThemeSwitcher>
+        <AppWrapper>
+          {/* @ts-ignore */}
+          <Component {...pageProps} />
+        </AppWrapper>
+      </ThemeSwitcher>
+    </ChainSwitcher>
   )
 }
 

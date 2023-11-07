@@ -99,7 +99,7 @@ export async function acceptOffer(data: Data) {
       }
 
       const res = await axios.request(request)
-      if (res.status !== 200) throw APIError(res.data)
+      if (res.status !== 200) throw new APIError(res.data, res.status)
       const data = res.data as Execute
       onProgress(data['steps'], data['path'])
       return data

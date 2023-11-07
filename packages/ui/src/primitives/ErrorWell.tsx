@@ -18,14 +18,15 @@ export default function ErrorWell({ error, css }: Props) {
 
   const errorType = (error as any)?.type
   const errorStatus = (error as any)?.statusCode
-
   if (error) {
-    if (error.message.includes('rejected')) {
+    if (error?.message?.includes('rejected')) {
       message = 'User rejected the request.'
     } else if (errorType && errorType === 'price mismatch') {
       message = error.message
     } else if (error.name === 'TransactionTimeoutError') {
       txHash = (error as TransactionTimeoutError).txHash
+    } else if (error.name === 'CrossChainTransactionError') {
+      message = error.message
     } else if (errorStatus >= 400 && errorStatus < 500) {
       message = error.message
     }

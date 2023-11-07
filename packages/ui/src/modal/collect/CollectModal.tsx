@@ -52,6 +52,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof CollectModalCopy>
   walletClient?: ReservoirWallet | WalletClient
+  usePermit?: boolean
   onCollectComplete?: (data: CollectCallbackData) => void
   onCollectError?: (error: Error, data: CollectCallbackData) => void
   onClose?: (data: CollectCallbackData, currentStep: CollectStep) => void
@@ -69,6 +70,7 @@ export function CollectModal({
   normalizeRoyalties,
   copyOverrides,
   walletClient,
+  usePermit,
   onCollectComplete,
   onCollectError,
   onClose,
@@ -105,6 +107,7 @@ export function CollectModal({
       feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
       walletClient={walletClient}
+      usePermit={usePermit}
     >
       {(props) => {
         const {
