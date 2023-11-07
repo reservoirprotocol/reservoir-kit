@@ -93,6 +93,7 @@ type Props = {
   open: boolean
   tokenId?: string
   chainId?: number
+  defaultQuantity?: number
   collectionId?: string
   orderId?: string
   feesOnTopBps?: string[] | null
@@ -111,6 +112,7 @@ export const BuyModalRenderer: FC<Props> = ({
   collectionId,
   orderId,
   feesOnTopBps,
+  defaultQuantity,
   feesOnTopUsd,
   normalizeRoyalties,
   onConnectWallet,
@@ -758,8 +760,16 @@ export const BuyModalRenderer: FC<Props> = ({
       setPath(undefined)
       setPaymentCurrency(undefined)
       setToken(undefined)
+    } else {
+      setQuantity(defaultQuantity || 1)
     }
   }, [open])
+
+  useEffect(() => {
+    if (quantity > quantityRemaining) {
+      setQuantity(quantityRemaining)
+    }
+  }, [quantityRemaining, quantity])
 
   return (
     <>
