@@ -376,7 +376,7 @@ export function BuyModal({
                               css={{ width: 16, height: 16, mr: '$1' }}
                             />
                             <Text style="subtitle2">
-                              {paymentCurrency?.symbol}
+                              {paymentCurrency?.name}
                             </Text>
                           </Flex>
                           <Box css={{ color: '$neutralSolidHover' }}>

@@ -276,7 +276,7 @@ export const SweepContent: FC<
                         address={paymentCurrency?.address as string}
                         css={{ width: 16, height: 16, mr: '$1' }}
                       />
-                      <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                      <Text style="subtitle2">{paymentCurrency?.name}</Text>
                     </Flex>
                     <Box css={{ color: '$neutralSolidHover' }}>
                       <FontAwesomeIcon icon={faChevronRight} width={10} />
