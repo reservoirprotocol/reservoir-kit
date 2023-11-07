@@ -53,8 +53,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 5,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Goerli ETH',
+      name: 'Goerli ETH',
       decimals: 18,
     },
     {
@@ -85,8 +85,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 1,
       address: zeroAddress,
-      symbol: 'Mainnet ETH',
-      name: 'Mainnet ETH',
+      symbol: 'ETH',
+      name: 'ETH',
       decimals: 18,
     },
     {
@@ -99,8 +99,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 10,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Optimism ETH',
+      name: 'Optimism ETH',
       decimals: 18,
     },
     {
@@ -174,8 +174,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 1,
       address: zeroAddress,
-      symbol: 'Mainnet ETH',
-      name: 'Mainnet ETH',
+      symbol: 'ETH',
+      name: 'ETH',
       decimals: 18,
     },
     {
@@ -188,8 +188,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 42161,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Arbitrum ETH',
+      name: 'Arbitrum ETH',
       decimals: 18,
     },
     {
@@ -213,8 +213,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 1,
       address: zeroAddress,
-      symbol: 'Mainnet ETH',
-      name: 'Mainnet ETH',
+      symbol: 'ETH',
+      name: 'ETH',
       decimals: 18,
     },
     {
@@ -227,8 +227,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 42170,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Arbitrum Nova ETH',
+      name: 'Arbitrum Nova ETH',
       decimals: 18,
     },
     {
@@ -252,8 +252,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 43114,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Avalanche ETH',
+      name: 'Avalanche ETH',
       decimals: 18,
     },
     {
@@ -284,8 +284,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 11155111,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Sepolia ETH',
+      name: 'Sepolia ETH',
       decimals: 18,
     },
     {
@@ -302,15 +302,15 @@ export const chainPaymentTokensMap = {
     {
       chainId: 1,
       address: zeroAddress,
-      symbol: 'Mainnet ETH',
-      name: 'Mainnet ETH',
+      symbol: 'ETH',
+      name: 'ETH',
       decimals: 18,
     },
     {
       chainId: 8453,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Base ETH',
+      name: 'Base ETH',
       decimals: 18,
     },
     {
@@ -341,8 +341,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 84531,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Base Goerli ETH',
+      name: 'Base Goerli ETH',
       decimals: 18,
     },
     {
@@ -365,8 +365,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 534353,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Scroll Testnet ETH',
+      name: 'Scroll Testnet ETH',
       decimals: 18,
     },
     {
@@ -390,8 +390,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 534352,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Scroll ETH',
+      name: 'Scroll ETH',
       decimals: 18,
     },
     {
@@ -433,8 +433,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 56,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'BSC ETH',
+      name: 'BSC ETH',
       decimals: 18,
     },
     {
@@ -458,8 +458,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 1,
       address: zeroAddress,
-      symbol: 'Mainnet ETH',
-      name: 'Mainnet ETH',
+      symbol: 'ETH',
+      name: 'ETH',
       decimals: 18,
     },
     {
@@ -472,8 +472,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 7777777,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Zora ETH',
+      name: 'Zora ETH',
       decimals: 18,
     },
     {
@@ -497,8 +497,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 999,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Zora Testnet ETH',
+      name: 'Zora Testnet ETH',
       decimals: 18,
     },
     {
@@ -515,8 +515,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 324,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'zkSync ETH',
+      name: 'zkSync ETH',
       decimals: 18,
     },
     {
@@ -533,8 +533,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 1101,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Polygon zkEVM ETH',
+      name: 'Polygon zkEVM ETH',
       decimals: 18,
     },
     {
@@ -551,8 +551,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 2863311531,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'Ancient8 Testnet ETH',
+      name: 'Ancient8 Testnet ETH',
       decimals: 18,
     },
     {
