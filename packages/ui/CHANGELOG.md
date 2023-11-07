@@ -1,4 +1,8 @@
 
+## [v1.17.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/21df44f0fd17ba8ff45952cf58e6b0c089515d7a) (2023-11-07)
+
+* Fix default quantity sometimes being set to 0 initially [66abe09d](https://github.com/reservoirprotocol/reservoir-kit/commit/66abe09deb0fef30d4fa438f395ba21d3ea6fe69)
+
 ## [v1.17.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/599c765e34df0ecce1fad708c95cb76b32db60af) (2023-11-07)
 
 * Improve tokenmedia fallback logic [03410e3f](https://github.com/reservoirprotocol/reservoir-kit/commit/03410e3f01a36c32ce8927fff899bdb559a732fa)
