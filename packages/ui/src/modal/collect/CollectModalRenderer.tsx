@@ -132,7 +132,7 @@ export const CollectModalRenderer: FC<Props> = ({
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
   const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
   const [orders, setOrders] = useState<NonNullable<BuyPath>>([])
-  const [itemAmount, setItemAmount] = useState<number>(defaultQuantity || 1)
+  const [itemAmount, setItemAmount] = useState<number>(1)
   const [maxItemAmount, setMaxItemAmount] = useState<number>(1)
   const [collectStep, setCollectStep] = useState<CollectStep>(CollectStep.Idle)
   const [stepData, setStepData] = useState<CollectModalStepData | null>(null)
@@ -538,15 +538,23 @@ export const CollectModalRenderer: FC<Props> = ({
     if (!open) {
       setSelectedTokens([])
       setOrders([])
-      setItemAmount(defaultQuantity || 1)
+      setItemAmount(1)
       setMaxItemAmount(1)
       setCollectStep(CollectStep.Idle)
       setContentMode(undefined)
       setTransactionError(null)
       setFetchedInitialOrders(false)
       setPaymentCurrency(undefined)
+    } else {
+      setItemAmount(defaultQuantity || 1)
     }
   }, [open])
+
+  useEffect(() => {
+    if (itemAmount > maxItemAmount) {
+      setItemAmount(maxItemAmount)
+    }
+  }, [maxItemAmount, itemAmount])
 
   const collectTokens = useCallback(async () => {
     if (!wallet) {
@@ -737,7 +745,7 @@ export const CollectModalRenderer: FC<Props> = ({
         address: address,
         selectedTokens,
         setSelectedTokens,
-        itemAmount: itemAmount > maxItemAmount ? maxItemAmount : itemAmount,
+        itemAmount,
         setItemAmount,
         maxItemAmount,
         setMaxItemAmount,
