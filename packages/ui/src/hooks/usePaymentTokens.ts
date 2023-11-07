@@ -199,6 +199,20 @@ export default function (
           Number(b.balance) > 0
         )
           return 1
+        if (Number(b.usdPrice) === Number(a.usdPrice)) {
+          if (
+            a.chainId === preferredCurrency.chainId &&
+            b.chainId !== preferredCurrency.chainId
+          ) {
+            return -1
+          }
+          if (
+            a.chainId !== preferredCurrency.chainId &&
+            b.chainId === preferredCurrency.chainId
+          ) {
+            return 1
+          }
+        }
         return Number(b.usdPrice ?? 0) - Number(a.usdPrice ?? 0)
       }) as EnhancedCurrency[]
   }, [
