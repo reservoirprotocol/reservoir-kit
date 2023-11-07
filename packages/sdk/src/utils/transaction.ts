@@ -1,7 +1,7 @@
 import { Address, PublicClient, Transaction, serializeTransaction } from 'viem'
 import { LogLevel, getClient } from '..'
 import { Execute, ReservoirWallet, TransactionStepItem, paths } from '../types'
-import { TransactionTimeoutError } from '../errors'
+import { CrossChainTransactionError, TransactionTimeoutError } from '../errors'
 import axios, {
   AxiosRequestConfig,
   AxiosRequestHeaders,
@@ -146,7 +146,7 @@ export async function sendTransactionSafely(
 
   if (attemptCount >= maximumAttempts) {
     if (isCrossChainIntent) {
-      throw Error('Crosschain transaction failed. Please try again.')
+      throw new CrossChainTransactionError()
     } else {
       const wagmiChain: allChains.Chain | undefined = Object.values({
         ...allChains,

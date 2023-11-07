@@ -25,9 +25,9 @@ export default function ErrorWell({ error, css }: Props) {
       message = error.message
     } else if (error.name === 'TransactionTimeoutError') {
       txHash = (error as TransactionTimeoutError).txHash
-    } else if (errorStatus >= 400 && errorStatus < 500) {
+    } else if (error.name === 'CrossChainTransactionError') {
       message = error.message
-    } else if (error?.message?.includes('Crosschain')) {
+    } else if (errorStatus >= 400 && errorStatus < 500) {
       message = error.message
     }
   }
