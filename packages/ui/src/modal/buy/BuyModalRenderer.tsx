@@ -5,6 +5,7 @@ import React, {
   useCallback,
   ReactNode,
   useMemo,
+  useContext,
 } from 'react'
 import {
   useTokens,
@@ -28,6 +29,7 @@ import * as allChains from 'viem/chains'
 import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
@@ -131,6 +133,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
+  const providerOptionsContext = useContext(ProviderOptionsContext)
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -334,38 +337,77 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   }, [fetchPath, token])
 
+  const getCurrencyDetails = useCallback(() => {
+    if (orderId) {
+      return {
+        currency: listing?.price?.currency?.contract,
+        decimals: listing?.price?.currency?.decimals,
+        symbol: listing?.price?.currency?.symbol,
+        chainId: rendererChain?.id || 1,
+      }
+    } else if (is1155) {
+      return {
+        currency: path?.[0]?.currency,
+        decimals: path?.[0]?.currencyDecimals,
+        symbol: path?.[0]?.currencySymbol,
+        chainId: rendererChain?.id || 1,
+      }
+    } else {
+      return {
+        currency: token?.market?.floorAsk?.price?.currency?.contract,
+        decimals: token?.market?.floorAsk?.price?.currency?.decimals,
+        symbol: token?.market?.floorAsk?.price?.currency?.symbol,
+        chainId: rendererChain?.id || 1,
+      }
+    }
+  }, [orderId, is1155, listing, path, token, rendererChain])
+
   useEffect(() => {
-    if (!paymentTokens[0] || !token || paymentCurrency) {
+    if (
+      !paymentTokens[0] ||
+      paymentCurrency ||
+      !token ||
+      (orderId && !listing) ||
+      (is1155 && !path)
+    ) {
       return
     }
 
-    let selectedCurrency
+    const { currency, decimals, symbol, chainId } = getCurrencyDetails()
 
-    if (orderId) {
-      selectedCurrency =
-        paymentTokens.find(
-          (token) =>
-            token.address === listing?.price?.currency?.contract?.toLowerCase()
-        ) || paymentTokens[0]
-    } else if (is1155) {
-      if (path) {
-        selectedCurrency =
-          paymentTokens.find(
-            (token) => token.address === path?.[0].currency?.toLowerCase()
-          ) || paymentTokens[0]
+    // Determine whether to include the listing currency unconditionally
+    const includeListingCurrency =
+      providerOptionsContext.alwaysIncludeListingCurrency !== false
+
+    let selectedCurrency
+    if (includeListingCurrency && currency) {
+      selectedCurrency = {
+        address: currency.toLowerCase() as Address,
+        decimals: decimals || 18,
+        symbol: symbol || '',
+        chainId: chainId,
       }
     } else {
-      selectedCurrency =
-        paymentTokens.find(
-          (paymentToken) =>
-            paymentToken.address ===
-            token?.market?.floorAsk?.price?.currency?.contract?.toLowerCase()
-        ) || paymentTokens[0]
+      selectedCurrency = paymentTokens.find(
+        (token) => token.address === currency?.toLowerCase()
+      )
+
+      if (!selectedCurrency) {
+        selectedCurrency = paymentTokens[0]
+      }
     }
 
-    console.log('setting currency to: ', selectedCurrency)
     setPaymentCurrency(selectedCurrency)
-  }, [paymentTokens, chainCurrency, is1155, orderId, token])
+  }, [
+    paymentTokens,
+    paymentCurrency,
+    orderId,
+    is1155,
+    listing,
+    path,
+    token,
+    providerOptionsContext.alwaysIncludeListingCurrency,
+  ])
 
   const buyToken = useCallback(async () => {
     if (!wallet) {
@@ -715,6 +757,7 @@ export const BuyModalRenderer: FC<Props> = ({
       setQuantity(1)
       setPath(undefined)
       setPaymentCurrency(undefined)
+      setToken(undefined)
     }
   }, [open])
 
