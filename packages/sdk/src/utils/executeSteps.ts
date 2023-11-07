@@ -646,6 +646,12 @@ export async function executeSteps(
     if (json) {
       json.error = errorMessage
       setState([...json?.steps], json.path)
+    } else {
+      json = {
+        error: errorMessage,
+        path: undefined,
+        steps: [],
+      }
     }
 
     client._sendEvent(generateEvent(request, json), reservoirChain?.id || 1)
