@@ -566,7 +566,7 @@ export const CollectModalRenderer: FC<Props> = ({
   }, [open])
 
   useEffect(() => {
-    if (itemAmount > maxItemAmount) {
+    if (maxItemAmount > 0 && itemAmount > maxItemAmount) {
       setItemAmount(maxItemAmount)
     }
   }, [maxItemAmount, itemAmount])

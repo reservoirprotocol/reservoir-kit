@@ -766,7 +766,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [open])
 
   useEffect(() => {
-    if (quantity > quantityRemaining) {
+    if (quantityRemaining > 0 && quantity > quantityRemaining) {
       setQuantity(quantityRemaining)
     }
   }, [quantityRemaining, quantity])
