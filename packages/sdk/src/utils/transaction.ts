@@ -27,6 +27,8 @@ export async function sendTransactionSafely(
   isCrossChainIntent?: boolean
 ) {
   const client = getClient()
+  const reservoirChain =
+    client.chains.find((chain) => chain.id == chainId) || null
   let txHash = await wallet.handleSendTransactionStep(chainId, item, step)
   submitTransactionToSolver({
     chainId,
@@ -37,7 +39,10 @@ export async function sendTransactionSafely(
     txHash,
     isCrossChainIntent,
   })
-  const maximumAttempts = client.maxPollingAttemptsBeforeTimeout ?? 30
+  const pollingInterval = reservoirChain?.transactionPollingInterval ?? 5000
+  const maximumAttempts =
+    client.maxPollingAttemptsBeforeTimeout ??
+    (2.5 * 60 * 1000) / pollingInterval // default to 2 minutes and 30 seconds worth of attempts
   let attemptCount = 0
   let waitingForConfirmation = true
   let transactionCancelled = false
@@ -140,7 +145,7 @@ export async function sendTransactionSafely(
         attemptCount++
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 5000)) // wait for 5 seconds
+      await new Promise((resolve) => setTimeout(resolve, pollingInterval))
     }
   }
 
