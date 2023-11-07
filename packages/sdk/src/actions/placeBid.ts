@@ -63,7 +63,7 @@ export async function placeBid({ bids, wallet, chainId, onProgress }: Data) {
         client.marketplaceFees &&
         !('fees' in bid)
       ) {
-        bid.fees = client.marketplaceFees
+        bid.marketplaceFees = client.marketplaceFees
       }
 
       if (!('automatedRoyalties' in bid) && 'automatedRoyalties' in client) {

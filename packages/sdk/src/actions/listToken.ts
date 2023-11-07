@@ -61,7 +61,7 @@ export async function listToken(
         client.marketplaceFees &&
         !('fees' in listing)
       ) {
-        listing.fees = client.marketplaceFees
+        listing.marketplaceFees = client.marketplaceFees
       }
 
       if (

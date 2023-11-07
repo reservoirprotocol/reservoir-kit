@@ -452,7 +452,7 @@ export const BidModalRenderer: FC<Props> = ({
     }
 
     if (feesBps && feesBps?.length > 0) {
-      bid.fees = feesBps
+      bid.customRoyalties = feesBps
     } else if (!feesBps) {
       delete bid.fees
     }

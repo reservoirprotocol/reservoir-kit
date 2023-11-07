@@ -336,15 +336,7 @@ export const ListModalRenderer: FC<Props> = ({
         return `${recipient}:${bps}`
       })
       listing.automatedRoyalties = false
-      listing.fees = [...royalties]
-    }
-
-    const fees = feesBps || client.marketplaceFees
-    if (fees) {
-      if (!listing.fees) {
-        listing.fees = []
-      }
-      listing.fees = listing.fees.concat(fees)
+      listing.customRoyalties = [...royalties]
     }
 
     if (quantity > 1) {
