@@ -15,6 +15,7 @@ import {
 } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
 import {
+  APIError,
   BuyPath,
   Execute,
   LogLevel,
@@ -137,7 +138,9 @@ export const CollectModalRenderer: FC<Props> = ({
   const [maxItemAmount, setMaxItemAmount] = useState<number>(1)
   const [collectStep, setCollectStep] = useState<CollectStep>(CollectStep.Idle)
   const [stepData, setStepData] = useState<CollectModalStepData | null>(null)
-  const [transactionError, setTransactionError] = useState<Error | null>()
+  const [transactionError, setTransactionError] = useState<
+    APIError | Error | null
+  >()
   const [total, setTotal] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
   const [gasCost, setGasCost] = useState(0n)
@@ -322,8 +325,19 @@ export const CollectModalRenderer: FC<Props> = ({
         setContentMode(intendedContentMode)
       })
       .catch((err) => {
-        setContentMode(mode === 'mint' ? 'mint' : 'sweep')
-        setOrders([])
+        if (
+          paymentCurrency?.chainId !== rendererChain?.id &&
+          err?.code === 'ERR_BAD_REQUEST' &&
+          err?.response?.status === 400
+        ) {
+          setTransactionError(
+            new APIError(err.response?.data?.message || 'Unknown Reason', 400)
+          )
+          setPaymentCurrency(undefined)
+        } else {
+          setContentMode(mode === 'mint' ? 'mint' : 'sweep')
+          setOrders([])
+        }
         throw err
       })
       .finally(() => {
@@ -486,6 +500,7 @@ export const CollectModalRenderer: FC<Props> = ({
     if (!paymentTokens[0] || paymentCurrency) {
       return
     }
+
     if (contentMode === 'mint') {
       setPaymentCurrency(chainCurrency)
     } else if (selectedTokens.length > 0) {
@@ -498,8 +513,18 @@ export const CollectModalRenderer: FC<Props> = ({
           chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
         }
       } else {
+        let availableTokens = [...paymentTokens]
+
+        if (
+          transactionError &&
+          (transactionError as APIError)?.statusCode === 400
+        ) {
+          availableTokens = paymentTokens.filter(
+            (token) => token.chainId === rendererChain?.id
+          )
+        }
         firstListingCurrency =
-          paymentTokens.find(
+          availableTokens.find(
             (token) =>
               token.address === selectedTokens[0].currency?.toLowerCase()
           ) || paymentTokens[0]
@@ -512,6 +537,8 @@ export const CollectModalRenderer: FC<Props> = ({
     chainCurrency,
     selectedTokens,
     providerOptions.alwaysIncludeListingCurrency,
+    transactionError,
+    rendererChain,
   ])
 
   const addFundsLink = paymentCurrency?.address
