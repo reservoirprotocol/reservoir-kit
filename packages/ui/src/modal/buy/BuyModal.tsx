@@ -169,6 +169,7 @@ export function BuyModal({
         steps,
         stepData,
         feeUsd,
+        gasCost,
         totalUsd,
         usdPrice,
         balance,
@@ -463,6 +464,22 @@ export function BuyModal({
                           textStyle="body3"
                         />
                       </Flex>
+
+                      {gasCost > 0n && (
+                        <Flex align="center">
+                          <Text css={{ mr: '$3' }} color="error" style="body3">
+                            Estimated Gas Cost
+                          </Text>
+                          <FormatCryptoCurrency
+                            chainId={chainId}
+                            amount={gasCost}
+                            address={paymentCurrency?.address}
+                            decimals={paymentCurrency?.decimals}
+                            symbol={paymentCurrency?.symbol}
+                            textStyle="body3"
+                          />
+                        </Flex>
+                      )}
 
                       <Button
                         disabled={providerOptions.disableJumperLink}
