@@ -44,7 +44,8 @@ export default function (
   preferredCurrency: PaymentToken,
   preferredCurrencyTotalPrice: bigint,
   chainId?: number,
-  nativeOnly?: boolean
+  nativeOnly?: boolean,
+  crossChainDisabled?: boolean
 ) {
   const client = useReservoirClient()
   const chain =
@@ -58,6 +59,12 @@ export default function (
     if (nativeOnly) {
       paymentTokens = paymentTokens?.filter(
         (token) => token.address === zeroAddress
+      )
+    }
+
+    if (crossChainDisabled) {
+      paymentTokens = paymentTokens?.filter(
+        (token) => token.chainId === chain?.id
       )
     }
 
