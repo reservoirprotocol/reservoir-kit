@@ -2,6 +2,7 @@ import { NextPage } from 'next'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import Link from 'next/link'
+import ChainSwitcher from 'components/ChainSwitcher'
 
 const Index: NextPage = () => {
   return (
@@ -18,6 +19,7 @@ const Index: NextPage = () => {
     >
       <ConnectButton />
       <ThemeSwitcher />
+      <ChainSwitcher/>
 
       <h2>Modals</h2>
       <nav style={{ display: 'flex', gap: 15 }}>

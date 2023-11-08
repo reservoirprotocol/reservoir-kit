@@ -4,6 +4,7 @@ import {
   Anchor,
   Box,
   Button,
+  CryptoCurrencyIcon,
   ErrorWell,
   Flex,
   FormatCryptoCurrency,
@@ -14,9 +15,12 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
+  faChevronLeft,
+  faChevronRight,
   faCircleExclamation,
   faCube,
   faEye,
+  faPenNib,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import QuantitySelector from '../../QuantitySelector'
@@ -30,6 +34,7 @@ import { CollectionInfo } from '../CollectionInfo'
 import { TokenInfo } from '../TokenInfo'
 import { formatNumber } from '../../../lib/numbers'
 import { truncateAddress } from '../../../lib/truncate'
+import { SelectPaymentToken } from '../../SelectPaymentToken'
 
 export const MintContent: FC<
   ChildrenProps & {
@@ -44,10 +49,13 @@ export const MintContent: FC<
   orders,
   chainId,
   mintPrice,
+  gasCost,
   itemAmount,
   setItemAmount,
   maxItemAmount,
+  paymentTokens,
   paymentCurrency,
+  setPaymentCurrency,
   usdPrice,
   usdPriceRaw,
   feeOnTop,
@@ -61,6 +69,7 @@ export const MintContent: FC<
   transactionError,
   stepData,
   collectStep,
+  setCollectStep,
   isConnected,
   collectTokens,
   copy,
@@ -89,10 +98,6 @@ export const MintContent: FC<
 
   const failedMints = itemAmount - totalMints
   const successfulMints = itemAmount - failedMints
-
-  const quantitySubject = itemAmount > 1 ? 'Items' : 'Item'
-
-  const hasQuantitySet = itemAmount >= 1
 
   return (
     <>
@@ -182,76 +187,88 @@ export const MintContent: FC<
                 </Flex>
               </Flex>
             </Flex>
-            <Flex
-              direction="column"
-              css={{ px: '$4', pt: '$4', pb: '$2', gap: '$5' }}
-            >
-              <Flex direction="column" css={{ gap: 10 }}>
-                {hasQuantitySet ? (
-                  <Flex justify="between" align="center" css={{ gap: '$4' }}>
-                    <Text style="subtitle3" color="subtle">
-                      {itemAmount} {quantitySubject}
-                    </Text>
-                    <Flex css={{ gap: '$1' }}>
-                      <FormatCryptoCurrency
-                        chainId={chainId}
-                        amount={mintPrice}
-                        address={paymentCurrency?.address}
-                        decimals={paymentCurrency?.decimals}
-                        symbol={paymentCurrency?.symbol}
-                        logoWidth={12}
-                        css={{ color: '$neutralText' }}
-                      />
-                      <Text style="subtitle3" color="subtle">
-                        x {itemAmount}
-                      </Text>
-                    </Flex>
-                  </Flex>
-                ) : null}
-              </Flex>
-              <Flex direction="column" css={{ gap: '$5' }}>
-                {feeOnTop > 0 && (
+            <Flex direction="column" css={{ pt: '$4', pb: '$2', gap: '$4' }}>
+              {paymentTokens.length > 1 ? (
+                <Flex
+                  direction="column"
+                  css={{
+                    gap: '$2',
+                    py: '$3',
+                    px: '$4',
+                    borderRadius: '$3',
+                    '&:hover': {
+                      backgroundColor: '$neutralBgHover',
+                    },
+                  }}
+                  onClick={() => setCollectStep(CollectStep.SelectPayment)}
+                >
                   <Flex
                     justify="between"
-                    align="start"
-                    css={{ py: '$4', width: '100%' }}
+                    align="center"
+                    css={{
+                      gap: '$1',
+                    }}
                   >
-                    <Text style="subtitle3">Referral Fee</Text>
-                    <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                      <FormatCryptoCurrency
-                        chainId={chainId}
-                        amount={feeOnTop}
-                        address={paymentCurrency?.address}
-                        decimals={paymentCurrency?.decimals}
-                        symbol={paymentCurrency?.symbol}
-                      />
-                      <FormatCurrency
-                        amount={feeUsd}
-                        color="subtle"
-                        style="tiny"
-                      />
+                    <Text style="subtitle2">Payment Method</Text>
+                    <Flex align="center" css={{ gap: '$2', cursor: 'pointer' }}>
+                      <Flex align="center">
+                        <CryptoCurrencyIcon
+                          address={paymentCurrency?.address as string}
+                          css={{ width: 16, height: 16, mr: '$1' }}
+                        />
+                        <Text style="subtitle2">{paymentCurrency?.name}</Text>
+                      </Flex>
+                      <Box css={{ color: '$neutralSolidHover' }}>
+                        <FontAwesomeIcon icon={faChevronRight} width={10} />
+                      </Box>
                     </Flex>
                   </Flex>
-                )}
-
-                <Flex justify="between" align="start" css={{ height: 34 }}>
-                  <Text style="h6">You Pay</Text>
+                </Flex>
+              ) : null}
+              {feeOnTop > 0 && (
+                <Flex
+                  justify="between"
+                  align="start"
+                  css={{ px: '$4', py: '$3', width: '100%' }}
+                >
+                  <Text style="subtitle3">Referral Fee</Text>
                   <Flex direction="column" align="end" css={{ gap: '$1' }}>
                     <FormatCryptoCurrency
                       chainId={chainId}
-                      textStyle="h6"
-                      amount={paymentCurrency?.currencyTotalRaw}
+                      amount={feeOnTop}
                       address={paymentCurrency?.address}
                       decimals={paymentCurrency?.decimals}
-                      symbol={paymentCurrency?.symbol}
-                      logoWidth={18}
+                      symbol={paymentCurrency?.name}
                     />
                     <FormatCurrency
-                      amount={paymentCurrency?.usdTotalPriceRaw}
-                      style="subtitle3"
+                      amount={feeUsd}
                       color="subtle"
+                      style="tiny"
                     />
                   </Flex>
+                </Flex>
+              )}
+              <Flex
+                justify="between"
+                align="start"
+                css={{ height: 34, px: '$4' }}
+              >
+                <Text style="h6">You Pay</Text>
+                <Flex direction="column" align="end" css={{ gap: '$1' }}>
+                  <FormatCryptoCurrency
+                    chainId={chainId}
+                    textStyle="h6"
+                    amount={paymentCurrency?.currencyTotalRaw}
+                    address={paymentCurrency?.address}
+                    decimals={paymentCurrency?.decimals}
+                    symbol={paymentCurrency?.name}
+                    logoWidth={18}
+                  />
+                  <FormatCurrency
+                    amount={paymentCurrency?.usdTotalPriceRaw}
+                    style="tiny"
+                    color="subtle"
+                  />
                 </Flex>
               </Flex>
             </Flex>
@@ -279,10 +296,25 @@ export const MintContent: FC<
                     amount={paymentCurrency?.balance}
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
-                    symbol={paymentCurrency?.symbol}
+                    symbol={paymentCurrency?.name}
                     textStyle="body3"
                   />
                 </Flex>
+                {gasCost > 0n && (
+                  <Flex align="center" css={{ mt: '$1' }}>
+                    <Text css={{ mr: '$3' }} color="error" style="body3">
+                      Estimated Gas Cost
+                    </Text>
+                    <FormatCryptoCurrency
+                      chainId={chainId}
+                      amount={gasCost}
+                      address={paymentCurrency?.address}
+                      decimals={paymentCurrency?.decimals}
+                      symbol={paymentCurrency?.symbol}
+                      textStyle="body3"
+                    />
+                  </Flex>
+                )}
                 <Button
                   disabled={disableJumperLink}
                   onClick={() => {
@@ -298,6 +330,28 @@ export const MintContent: FC<
             )}
           </Flex>
         )}
+
+      {collectStep === CollectStep.SelectPayment && (
+        <Flex direction="column" css={{ py: 20 }}>
+          <Flex align="center" css={{ gap: '$2', px: '$4' }}>
+            <Button
+              onClick={() => setCollectStep(CollectStep.Idle)}
+              color="ghost"
+              size="xs"
+              css={{ color: '$neutralSolidHover' }}
+            >
+              <FontAwesomeIcon icon={faChevronLeft} width={10} />
+            </Button>
+            <Text style="subtitle2">Select A Token</Text>
+          </Flex>
+          <SelectPaymentToken
+            paymentTokens={paymentTokens}
+            currency={paymentCurrency}
+            setCurrency={setPaymentCurrency}
+            goBack={() => setCollectStep(CollectStep.Idle)}
+          />
+        </Flex>
+      )}
 
       {collectStep === CollectStep.Approving && (
         <Flex direction="column">
@@ -327,17 +381,64 @@ export const MintContent: FC<
                 <Loader />
               </Flex>
             ) : null}
+
+            {stepData?.currentStep &&
+            stepData.currentStep.id !== 'auth' &&
+            stepData.currentStep.id !== 'sale' ? (
+              <>
+                <Flex
+                  css={{ color: '$neutralText', py: '$5' }}
+                  direction="column"
+                  justify="center"
+                  align="center"
+                >
+                  <Text
+                    style="h6"
+                    color="base"
+                    css={{ mb: '$2', textAlign: 'center' }}
+                  >
+                    {stepData.currentStep.action}{' '}
+                    {stepData?.currentStep?.items &&
+                    stepData.currentStep.items.length > 1
+                      ? `(${
+                          stepData.currentStep.items.filter(
+                            (item) => item.status === 'complete'
+                          ).length
+                        }/${stepData.currentStep.items.length})`
+                      : null}
+                  </Text>
+                  <Text
+                    style="subtitle3"
+                    color="subtle"
+                    css={{ mb: 20, textAlign: 'center' }}
+                  >
+                    {stepData.currentStep.description}
+                  </Text>
+                  <FontAwesomeIcon
+                    icon={faPenNib}
+                    width={32}
+                    height={32}
+                    style={{ height: 32 }}
+                  />
+                </Flex>
+                <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
+                  <Loader />
+                  {copy.sweepCtaAwaitingApproval}
+                </Button>
+              </>
+            ) : null}
+
             {stepData?.currentStep && stepData.currentStep.id === 'auth' ? (
               <>
                 <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
                 <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                   <Loader />
-                  {copy.mintCtaAwaitingApproval}
+                  {copy.sweepCtaAwaitingApproval}
                 </Button>
               </>
             ) : null}
 
-            {stepData?.currentStep && stepData?.currentStep?.id !== 'auth' ? (
+            {stepData?.currentStep && stepData?.currentStep?.id === 'sale' ? (
               <>
                 {stepData?.currentStep?.items &&
                 stepData?.currentStep?.items.length > 1 ? (
@@ -350,9 +451,9 @@ export const MintContent: FC<
                       {stepData?.currentStep?.items.length} separate
                       transactions.
                     </Text>
-                    {stepData?.currentStep?.items.map((item, index) => (
+                    {stepData?.currentStep?.items.map((item, idx) => (
                       <ApprovePurchasingCollapsible
-                        key={index}
+                        key={idx}
                         item={item}
                         pathMap={pathMap}
                         usdPrice={+usdPrice}
@@ -380,7 +481,7 @@ export const MintContent: FC<
                     </Box>
                     <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                       <Loader />
-                      {copy.mintCtaAwaitingApproval}
+                      {copy.sweepCtaAwaitingApproval}
                     </Button>
                   </Flex>
                 )}
@@ -490,23 +591,29 @@ export const MintContent: FC<
               </Text>
             </Flex>
             <Flex direction="column" css={{ gap: '$2', mb: '$3', px: '$5' }}>
-              {stepData?.currentStep?.items?.map((item, index) => {
-                const txHash = item.txHash
-                  ? `${truncateAddress(item.txHash)}`
-                  : ''
-
-                return (
-                  <Anchor
-                    key={index}
-                    href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                    color="primary"
-                    weight="medium"
-                    target="_blank"
-                    css={{ fontSize: 12 }}
-                  >
-                    View transaction: {txHash}
-                  </Anchor>
-                )
+              {stepData?.currentStep?.items?.map((item, itemIndex) => {
+                if (
+                  Array.isArray(item?.txHashes) &&
+                  item?.txHashes.length > 0
+                ) {
+                  return item.txHashes.map((txHash, txHashIndex) => {
+                    const truncatedTxHash = truncateAddress(txHash)
+                    return (
+                      <Anchor
+                        key={`${itemIndex}-${txHashIndex}`}
+                        href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                        color="primary"
+                        weight="medium"
+                        target="_blank"
+                        css={{ fontSize: 12 }}
+                      >
+                        View transaction: {truncatedTxHash}
+                      </Anchor>
+                    )
+                  })
+                } else {
+                  return null
+                }
               })}
             </Flex>
           </Flex>

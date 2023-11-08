@@ -43,13 +43,15 @@ export async function pollUntilHasData(
  * @param validate A function that checks if the request is "ok" or valid
  * @param maximumAttempts The maximum amount of tries for this poll
  * @param attemptCount The amount of attempts already done by the poll, should be left blank
+ * @param pollingInterval The frequency the api will be polled
  * @returns When it has finished polling
  */
 export async function pollUntilOk(
   request: AxiosRequestConfig,
   validate?: (res: AxiosResponse) => boolean,
   maximumAttempts: number = 15,
-  attemptCount: number = 0
+  attemptCount: number = 0,
+  pollingInterval: number = 5000
 ) {
   if (attemptCount >= maximumAttempts) {
     throw `Failed to get an ok response after ${attemptCount} attempt(s), aborting`
@@ -64,9 +66,15 @@ export async function pollUntilOk(
   if (validate(res)) {
     return true
   } else {
-    // The response is still unchanged. Check again in five seconds
-    await new Promise((resolve) => setTimeout(resolve, 5000))
+    // The response is still unchanged
+    await new Promise((resolve) => setTimeout(resolve, pollingInterval))
     attemptCount++
-    await pollUntilOk(request, validate, maximumAttempts, attemptCount)
+    await pollUntilOk(
+      request,
+      validate,
+      maximumAttempts,
+      attemptCount,
+      pollingInterval
+    )
   }
 }

@@ -28,18 +28,18 @@ export const SelectPaymentToken: FC<Props> = ({
           (a, b) =>
             Number(a.currencyTotalFormatted) - Number(b.currencyTotalFormatted)
         )
-        ?.map((paymentToken) => {
+        ?.map((paymentToken, idx) => {
           const isSelectedCurrency =
-            currency?.address.toLowerCase() === paymentToken?.address
+            currency?.address.toLowerCase() === paymentToken?.address &&
+            currency?.chainId === paymentToken?.chainId
           const formattedBalance = formatUnits(
             BigInt(paymentToken?.balance || 0),
             paymentToken?.decimals || 18
           )
-
           if (paymentToken?.currencyTotalRaw != undefined)
             return (
               <Button
-                key={paymentToken?.address}
+                key={idx}
                 color="ghost"
                 size="none"
                 css={{
@@ -71,7 +71,7 @@ export const SelectPaymentToken: FC<Props> = ({
                     css={{ width: 24, height: 24 }}
                   />
                   <Flex direction="column" align="start">
-                    <Text style="subtitle2">{paymentToken?.symbol}</Text>
+                    <Text style="subtitle2">{paymentToken?.name}</Text>
                     <Text style="body2" color="subtle">
                       Balance: {formatNumber(Number(formattedBalance), 6)}
                     </Text>

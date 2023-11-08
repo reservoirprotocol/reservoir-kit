@@ -5,6 +5,7 @@ import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState, useEffect } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
+import ChainSwitcher from 'components/ChainSwitcher'
 
 const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
@@ -102,6 +103,7 @@ const CancelListingPage: NextPage = () => {
           console.log('CancelListingModal Closed')
         }}
       />
+      <ChainSwitcher />
       <ThemeSwitcher />
     </div>
   )

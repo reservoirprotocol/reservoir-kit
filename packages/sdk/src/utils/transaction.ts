@@ -1,7 +1,7 @@
-import { PublicClient, Transaction } from 'viem'
+import { Address, PublicClient, Transaction, serializeTransaction } from 'viem'
 import { LogLevel, getClient } from '..'
-import { Execute, ReservoirWallet, TransactionStepItem } from '../types'
-import { TransactionTimeoutError } from '../errors'
+import { Execute, ReservoirWallet, TransactionStepItem, paths } from '../types'
+import { CrossChainTransactionError, TransactionTimeoutError } from '../errors'
 import axios, {
   AxiosRequestConfig,
   AxiosRequestHeaders,
@@ -21,13 +21,28 @@ export async function sendTransactionSafely(
   item: TransactionStepItem,
   step: Execute['steps'][0],
   wallet: ReservoirWallet,
-  setTx: (tx: Transaction['hash']) => void,
+  setTxHashes: (tx: Transaction['hash'][]) => void,
   request: AxiosRequestConfig,
-  headers: AxiosRequestHeaders
+  headers: AxiosRequestHeaders,
+  isCrossChainIntent?: boolean
 ) {
   const client = getClient()
+  const reservoirChain =
+    client.chains.find((chain) => chain.id == chainId) || null
   let txHash = await wallet.handleSendTransactionStep(chainId, item, step)
-  const maximumAttempts = client.maxPollingAttemptsBeforeTimeout ?? 30
+  submitTransactionToSolver({
+    chainId,
+    viemClient,
+    step,
+    request,
+    headers,
+    txHash,
+    isCrossChainIntent,
+  })
+  const pollingInterval = reservoirChain?.checkPollingInterval ?? 5000
+  const maximumAttempts =
+    client.maxPollingAttemptsBeforeTimeout ??
+    (2.5 * 60 * 1000) / pollingInterval // default to 2 minutes and 30 seconds worth of attempts
   let attemptCount = 0
   let waitingForConfirmation = true
   let transactionCancelled = false
@@ -35,7 +50,7 @@ export async function sendTransactionSafely(
   if (!txHash) {
     throw Error('Transaction hash not returned from sendTransaction method')
   }
-  setTx(txHash)
+  setTxHashes([txHash])
 
   // Handle transaction replacements and cancellations
   viemClient
@@ -47,13 +62,22 @@ export async function sendTransactionSafely(
           throw Error('Transaction cancelled')
         }
 
-        setTx(replacement.transaction.hash)
+        setTxHashes([replacement.transaction.hash])
         txHash = replacement.transaction.hash
         attemptCount = 0 // reset attempt count
         getClient()?.log(
           ['Transaction replaced', replacement],
           LogLevel.Verbose
         )
+        submitTransactionToSolver({
+          chainId,
+          viemClient,
+          step,
+          request,
+          headers,
+          txHash,
+          isCrossChainIntent,
+        })
       },
     })
     .catch((error) => {
@@ -68,6 +92,16 @@ export async function sendTransactionSafely(
       ['Execute Steps: Polling for confirmation', res],
       LogLevel.Verbose
     )
+    if (isCrossChainIntent) {
+      if (res.status === 200 && res.data && res.data.status === 'failure') {
+        throw Error('Transaction failed')
+      }
+      if (res.status === 200 && res.data && res.data.status === 'success') {
+        setTxHashes(res.data.txHashes)
+        return true
+      }
+      return false
+    }
     return res.status === 200 && res.data && res.data.synced
   }
 
@@ -77,31 +111,59 @@ export async function sendTransactionSafely(
     attemptCount < maximumAttempts &&
     !transactionCancelled
   ) {
-    const res = await axios.request({
-      url: `${request.baseURL}/transactions/${txHash}/synced/v1`,
-      method: 'get',
-      headers: headers,
-    })
+    let res
+
+    if (isCrossChainIntent && item?.check?.endpoint) {
+      res = await axios.request({
+        url: `${request.baseURL}${item?.check?.endpoint}`,
+        method: 'POST',
+        headers: headers,
+        data: {
+          // @ts-ignore
+          kind: item?.check?.body?.kind,
+          // @ts-ignore
+          chainId: item?.check?.body?.chainId,
+          // @ts-ignore
+          id: item?.check?.body?.id ?? txHash,
+        },
+      })
+    } else {
+      res = await axios.request({
+        url: `${request.baseURL}/transactions/${txHash}/synced/v1`,
+        method: 'get',
+        headers: headers,
+      })
+    }
 
     if (validate(res)) {
       waitingForConfirmation = false // transaction confirmed
     } else {
-      attemptCount++
-      await new Promise((resolve) => setTimeout(resolve, 5000)) // wait for 5 seconds
+      if (
+        !isCrossChainIntent ||
+        (isCrossChainIntent && res.data.status !== 'pending')
+      ) {
+        attemptCount++
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, pollingInterval))
     }
   }
 
   if (attemptCount >= maximumAttempts) {
-    const wagmiChain: allChains.Chain | undefined = Object.values({
-      ...allChains,
-      ...customChains,
-    }).find(({ id }) => id === chainId)
+    if (isCrossChainIntent) {
+      throw new CrossChainTransactionError()
+    } else {
+      const wagmiChain: allChains.Chain | undefined = Object.values({
+        ...allChains,
+        ...customChains,
+      }).find(({ id }) => id === chainId)
 
-    throw new TransactionTimeoutError(
-      txHash,
-      attemptCount,
-      wagmiChain?.blockExplorers?.default.url
-    )
+      throw new TransactionTimeoutError(
+        txHash,
+        attemptCount,
+        wagmiChain?.blockExplorers?.default.url
+      )
+    }
   }
 
   if (transactionCancelled) {
@@ -109,4 +171,78 @@ export async function sendTransactionSafely(
   }
 
   return true
+}
+
+const submitTransactionToSolver = async ({
+  chainId,
+  viemClient,
+  request,
+  headers,
+  step,
+  txHash,
+  isCrossChainIntent,
+}: {
+  chainId: number
+  viemClient: PublicClient
+  step: Execute['steps'][0]
+  request: AxiosRequestConfig
+  headers: AxiosRequestHeaders
+  txHash: Address | undefined
+  isCrossChainIntent?: boolean
+}) => {
+  if (step.id === 'sale' && txHash && isCrossChainIntent) {
+    getClient()?.log(['Submitting transaction to solver'], LogLevel.Verbose)
+    try {
+      const tx = await viemClient.getTransaction({
+        hash: txHash,
+      })
+      const serializedTx = serializeTransaction(
+        {
+          type: tx.type,
+          chainId: tx.chainId ?? chainId,
+          gas: tx.gas,
+          nonce: tx.nonce,
+          to: tx.to || undefined,
+          from: tx.from || undefined,
+          value: tx.value,
+          maxFeePerGas: tx.maxFeePerGas,
+          maxPriorityFeePerGas: tx.maxPriorityFeePerGas,
+          accessList: tx.accessList,
+          data: tx.input,
+        },
+        {
+          v: tx.v,
+          r: tx.r,
+          s: tx.s,
+        }
+      )
+
+      const solveData: paths['/execute/solve/v1']['post']['parameters']['body']['body'] =
+        {
+          //@ts-ignore
+          kind: 'cross-chain-intent',
+          tx: serializedTx,
+          chainId: chainId,
+        }
+
+      axios
+        .request({
+          url: `${request.baseURL}/execute/solve/v1`,
+          method: 'POST',
+          headers: headers,
+          data: solveData,
+        })
+        .then(() => {
+          getClient()?.log(
+            ['Transaction submitted to solver'],
+            LogLevel.Verbose
+          )
+        })
+    } catch (e) {
+      getClient()?.log(
+        ['Failed to submit transaction to solver', e],
+        LogLevel.Warn
+      )
+    }
+  }
 }

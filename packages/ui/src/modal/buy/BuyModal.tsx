@@ -65,6 +65,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   tokenId?: string
   collectionId?: string
   chainId?: number
+  defaultQuantity?: number
   orderId?: string
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
@@ -111,6 +112,7 @@ export function BuyModal({
   feesOnTopBps,
   feesOnTopUsd,
   normalizeRoyalties,
+  defaultQuantity,
   copyOverrides,
   walletClient,
   usePermit,
@@ -140,6 +142,7 @@ export function BuyModal({
     <BuyModalRenderer
       chainId={modalChain?.id}
       open={open}
+      defaultQuantity={defaultQuantity}
       tokenId={tokenId}
       collectionId={collectionId}
       orderId={orderId}
@@ -169,6 +172,7 @@ export function BuyModal({
         steps,
         stepData,
         feeUsd,
+        gasCost,
         totalUsd,
         usdPrice,
         balance,
@@ -224,7 +228,7 @@ export function BuyModal({
 
         const failedPurchases = quantity - totalPurchases
         const successfulPurchases = quantity - failedPurchases
-        const finalTxHash = lastStepItems[lastStepItems.length - 1]?.txHash
+        const finalTxHashes = lastStepItems[lastStepItems.length - 1]?.txHashes
 
         const price =
           totalPrice || BigInt(token?.token?.lastSale?.price?.amount?.raw || 0)
@@ -377,7 +381,7 @@ export function BuyModal({
                               css={{ width: 16, height: 16, mr: '$1' }}
                             />
                             <Text style="subtitle2">
-                              {paymentCurrency?.symbol}
+                              {paymentCurrency?.name}
                             </Text>
                           </Flex>
                           <Box css={{ color: '$neutralSolidHover' }}>
@@ -400,7 +404,7 @@ export function BuyModal({
                           amount={feeOnTop}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                         />
                         <FormatCurrency
                           amount={feeUsd}
@@ -423,7 +427,7 @@ export function BuyModal({
                         amount={paymentCurrency?.currencyTotalRaw}
                         address={paymentCurrency?.address}
                         decimals={paymentCurrency?.decimals}
-                        symbol={paymentCurrency?.symbol}
+                        symbol={paymentCurrency?.name}
                         logoWidth={18}
                       />
                       <FormatCurrency
@@ -460,10 +464,26 @@ export function BuyModal({
                           amount={paymentCurrency?.balance}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                           textStyle="body3"
                         />
                       </Flex>
+
+                      {gasCost > 0n && (
+                        <Flex align="center">
+                          <Text css={{ mr: '$3' }} color="error" style="body3">
+                            Estimated Gas Cost
+                          </Text>
+                          <FormatCryptoCurrency
+                            chainId={chainId}
+                            amount={gasCost}
+                            address={paymentCurrency?.address}
+                            decimals={paymentCurrency?.decimals}
+                            symbol={paymentCurrency?.symbol}
+                            textStyle="body3"
+                          />
+                        </Flex>
+                      )}
 
                       <Button
                         disabled={providerOptions.disableJumperLink}
@@ -505,13 +525,13 @@ export function BuyModal({
                 {stepData && (
                   <Progress
                     title={stepData?.currentStep.action || ''}
-                    txHash={stepData?.currentStepItem.txHash}
-                    blockExplorerBaseUrl={`${blockExplorerBaseUrl}/tx/${stepData?.currentStepItem.txHash}`}
+                    txHashes={stepData?.currentStepItem.txHashes}
+                    blockExplorerBaseUrl={blockExplorerBaseUrl}
                   />
                 )}
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
-                  {stepData?.currentStepItem.txHash
+                  {stepData?.currentStepItem?.txHashes
                     ? copy.ctaAwaitingValidation
                     : copy.ctaAwaitingApproval}
                 </Button>
@@ -578,21 +598,29 @@ export function BuyModal({
                   )}
                   {totalPurchases > 1 && (
                     <Flex direction="column" css={{ gap: '$2' }}>
-                      {stepData?.currentStep.items?.map((item) => {
-                        const txHash = item.txHash
-                          ? `${truncateAddress(item.txHash)}`
-                          : ''
-                        return (
-                          <Anchor
-                            href={`${blockExplorerBaseUrl}/tx/${item?.txHash}`}
-                            color="primary"
-                            weight="medium"
-                            target="_blank"
-                            css={{ fontSize: 12 }}
-                          >
-                            View transaction: {txHash}
-                          </Anchor>
-                        )
+                      {stepData?.currentStep?.items?.map((item, itemIndex) => {
+                        if (
+                          Array.isArray(item?.txHashes) &&
+                          item?.txHashes.length > 0
+                        ) {
+                          return item.txHashes.map((txHash, txHashIndex) => {
+                            const truncatedTxHash = truncateAddress(txHash)
+                            return (
+                              <Anchor
+                                key={`${itemIndex}-${txHashIndex}`}
+                                href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                                color="primary"
+                                weight="medium"
+                                target="_blank"
+                                css={{ fontSize: 12 }}
+                              >
+                                View transaction: {truncatedTxHash}
+                              </Anchor>
+                            )
+                          })
+                        } else {
+                          return null
+                        }
                       })}
                     </Flex>
                   )}
@@ -634,15 +662,28 @@ export function BuyModal({
                           Your transaction went through successfully
                         </Text>
                       </Flex>
-                      <Anchor
-                        color="primary"
-                        weight="medium"
-                        css={{ fontSize: 12 }}
-                        href={`${blockExplorerBaseUrl}/tx/${finalTxHash}`}
-                        target="_blank"
+
+                      <Flex
+                        direction="column"
+                        align="center"
+                        css={{ gap: '$2' }}
                       >
-                        View on {blockExplorerBaseName}
-                      </Anchor>
+                        {finalTxHashes?.map((txHash, index) => {
+                          const truncatedTxHash = truncateAddress(txHash)
+                          return (
+                            <Anchor
+                              key={index}
+                              href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                              color="primary"
+                              weight="medium"
+                              target="_blank"
+                              css={{ fontSize: 12 }}
+                            >
+                              View transaction: {truncatedTxHash}
+                            </Anchor>
+                          )
+                        })}
+                      </Flex>
                     </>
                   )}
                 </Flex>
