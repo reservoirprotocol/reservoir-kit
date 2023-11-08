@@ -56,6 +56,7 @@ export const SweepContent: FC<
   setPaymentCurrency,
   total,
   totalIncludingFees,
+  gasCost,
   feeOnTop,
   feeUsd,
   isConnected,
@@ -362,6 +363,21 @@ export const SweepContent: FC<
                   textStyle="body3"
                 />
               </Flex>
+              {gasCost > 0n && (
+                <Flex align="center" css={{ mt: '$1' }}>
+                  <Text css={{ mr: '$3' }} color="error" style="body3">
+                    Estimated Gas Cost
+                  </Text>
+                  <FormatCryptoCurrency
+                    chainId={chainId}
+                    amount={gasCost}
+                    address={paymentCurrency?.address}
+                    decimals={paymentCurrency?.decimals}
+                    symbol={paymentCurrency?.symbol}
+                    textStyle="body3"
+                  />
+                </Flex>
+              )}
               <Button
                 disabled={disableJumperLink}
                 onClick={() => {
