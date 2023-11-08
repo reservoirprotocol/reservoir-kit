@@ -9,7 +9,7 @@ const mainnet = {
   baseApiUrl: 'https://api.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[1],
   websocketUrl: 'wss://ws.reservoir.tools',
-  transactionPollingInterval: 2000,
+  checkPollingInterval: 2000,
 } satisfies ReservoirBaseChain
 
 const goerli = {
@@ -18,7 +18,7 @@ const goerli = {
   baseApiUrl: 'https://api-goerli.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[5],
   websocketUrl: 'wss://ws-goerli.reservoir.tools',
-  transactionPollingInterval: 2000,
+  checkPollingInterval: 2000,
 } satisfies ReservoirBaseChain
 
 const optimism = {
@@ -27,7 +27,7 @@ const optimism = {
   baseApiUrl: 'https://api-optimism.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[10],
   websocketUrl: 'wss://ws-optimism.reservoir.tools',
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const polygon = {
@@ -36,7 +36,7 @@ const polygon = {
   baseApiUrl: 'https://api-polygon.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[137],
   websocketUrl: 'wss://ws-polygon.reservoir.tools',
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const mumbai = {
@@ -45,7 +45,7 @@ const mumbai = {
   baseApiUrl: 'https://api-mumbai.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[80001],
   websocketUrl: 'wss://ws-mumbai.reservoir.tools',
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const arbitrum = {
@@ -54,7 +54,7 @@ const arbitrum = {
   baseApiUrl: 'https://api-arbitrum.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[42161],
   websocketUrl: 'wss://ws-arbitrum.reservoir.tools',
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const arbitrumNova = {
@@ -62,7 +62,7 @@ const arbitrumNova = {
   name: 'Arbitrum Nova',
   baseApiUrl: 'https://api-arbitrum-nova.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[42170],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const avalanche = {
@@ -70,7 +70,7 @@ const avalanche = {
   name: 'Avalanche',
   baseApiUrl: 'https://api-avalanche.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[43114],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const sepolia = {
@@ -79,7 +79,7 @@ const sepolia = {
   baseApiUrl: 'https://api-sepolia.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[11155111],
   websocketUrl: 'wss://ws-sepolia.reservoir.tools',
-  transactionPollingInterval: 2000
+  checkPollingInterval: 2000
 } satisfies ReservoirBaseChain
 
 const base = {
@@ -88,7 +88,7 @@ const base = {
   baseApiUrl: 'https://api-base.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[8453],
   websocketUrl: 'wss://ws-base.reservoir.tools',
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const baseGoerli = {
@@ -96,7 +96,7 @@ const baseGoerli = {
   name: 'Base Goerli',
   baseApiUrl: 'https://api-base-goerli.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[84531],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const scrollTestnet = {
@@ -104,7 +104,7 @@ const scrollTestnet = {
   name: 'Scroll Testnet',
   baseApiUrl: 'https://api-scroll-alpha.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[534353],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const scroll = {
@@ -112,7 +112,7 @@ const scroll = {
   name: 'Scroll',
   baseApiUrl: 'https://api-scroll.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[534352],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const linea = {
@@ -120,7 +120,7 @@ const linea = {
   name: 'Linea',
   baseApiUrl: 'https://api-linea.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[59144],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const bsc = {
@@ -129,7 +129,7 @@ const bsc = {
   baseApiUrl: 'https://api-bsc.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[56],
   websocketUrl: 'wss://ws-bsc.reservoir.tools',
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const zora = {
@@ -137,7 +137,7 @@ const zora = {
   name: 'Zora',
   baseApiUrl: 'https://api-zora.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[7777777],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const zoraTestnet = {
@@ -145,7 +145,7 @@ const zoraTestnet = {
   name: 'Zora Testnet',
   baseApiUrl: 'https://api-zora-testnet.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[999],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const zkSync = {
@@ -153,7 +153,7 @@ const zkSync = {
   name: 'zkSync',
   baseApiUrl: 'https://api-zksync.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[324],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const polygonZkEvm = {
@@ -161,7 +161,7 @@ const polygonZkEvm = {
   name: 'Polygon zkEVM',
   baseApiUrl: 'https://api-polygon-zkevm.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[1101],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 const ancient8Testnet = {
@@ -169,7 +169,7 @@ const ancient8Testnet = {
   name: 'Ancient8 Testnet',
   baseApiUrl: 'https://api-ancient8-testnet.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[2863311531],
-  transactionPollingInterval: 1000,
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 export const reservoirChains = { mainnet, goerli, polygon, mumbai, optimism, arbitrum, arbitrumNova, avalanche, sepolia, base, baseGoerli, bsc, scrollTestnet, scroll, linea, zora, zoraTestnet, zkSync, polygonZkEvm, ancient8Testnet }

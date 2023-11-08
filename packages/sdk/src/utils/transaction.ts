@@ -39,7 +39,7 @@ export async function sendTransactionSafely(
     txHash,
     isCrossChainIntent,
   })
-  const pollingInterval = reservoirChain?.transactionPollingInterval ?? 5000
+  const pollingInterval = reservoirChain?.checkPollingInterval ?? 5000
   const maximumAttempts =
     client.maxPollingAttemptsBeforeTimeout ??
     (2.5 * 60 * 1000) / pollingInterval // default to 2 minutes and 30 seconds worth of attempts
