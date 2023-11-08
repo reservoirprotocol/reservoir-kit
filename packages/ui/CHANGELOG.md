@@ -1,4 +1,19 @@
 
+## [v1.17.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/21df44f0fd17ba8ff45952cf58e6b0c089515d7a) (2023-11-07)
+
+* Fix default quantity sometimes being set to 0 initially [66abe09d](https://github.com/reservoirprotocol/reservoir-kit/commit/66abe09deb0fef30d4fa438f395ba21d3ea6fe69)
+
+## [v1.17.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/599c765e34df0ecce1fad708c95cb76b32db60af) (2023-11-07)
+
+* Improve tokenmedia fallback logic [03410e3f](https://github.com/reservoirprotocol/reservoir-kit/commit/03410e3f01a36c32ce8927fff899bdb559a732fa)
+* BuyModal: Fix incorrect defaultcurrency [6d33fa22](https://github.com/reservoirprotocol/reservoir-kit/commit/6d33fa22bf829044e27be48d89694f2a5623b1fd)
+* Improve crosschain transaction failure error handling [ba2c9736](https://github.com/reservoirprotocol/reservoir-kit/commit/ba2c9736661add665b8e89eaadd60ef644aca4f7)
+* feat: CollectModal default quantity [f90d1853](https://github.com/reservoirprotocol/reservoir-kit/commit/f90d1853563a9a493fad8baeecde7377babdc250)
+
+## [v1.17.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/fd8dcca3c1a97547c2a562266d252bb73fc05759) (2023-11-06)
+
+* Fix: update swr key for nativeBalances [edb87d23](https://github.com/reservoirprotocol/reservoir-kit/commit/edb87d23eda4ed9b3d589f95765959f833b9b1ca)
+
 ## [v1.17.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f150275dad1aa5cd59890f4ce6f897f04094c0f0) (2023-11-06)
 
 * Fix: Add currency conversions to paymentTokens dependencies array [34b4b88b](https://github.com/reservoirprotocol/reservoir-kit/commit/34b4b88b51a0b7c17b54d3e75fe2e847600f5fc5)

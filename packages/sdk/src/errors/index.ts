@@ -15,3 +15,10 @@ export class TransactionTimeoutError extends Error {
     this.blockExplorerBaseUrl = blockExplorerBaseUrl
   }
 }
+
+export class CrossChainTransactionError extends Error {
+  constructor() {
+    super('Crosschain transaction failed. Please try again.')
+    this.name = 'CrossChainTransactionError'
+  }
+}

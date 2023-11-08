@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/ethers-wallet-adapter",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "description": "An adapter used to convert an ethersjs signer to a Reservoir Wallet for use in the @reservoir0x/reservoir-sdk",
     "exports": {
         ".": {

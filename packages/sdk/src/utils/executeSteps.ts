@@ -124,6 +124,12 @@ export async function executeSteps(
     reservoirChain = client.chains.find((chain) => chain.id == chainId) || null
   }
 
+  const pollingInterval = reservoirChain?.checkPollingInterval ?? 5000
+
+  const maximumAttempts =
+    client.maxPollingAttemptsBeforeTimeout ??
+    (2.5 * 60 * 1000) / pollingInterval // default to 2 minutes and 30 seconds worth of attempts
+
   let viemChain: allChains.Chain
   const customChain = Object.values(customChains).find(
     (chain) => chain.id == (reservoirChain?.id || 1)
@@ -494,7 +500,10 @@ export async function executeSteps(
                             )
                           }
                           return false
-                        }
+                        },
+                        maximumAttempts,
+                        0,
+                        pollingInterval
                       )
                     }
 
@@ -588,7 +597,10 @@ export async function executeSteps(
                       : false
                   }
                   return false
-                }
+                },
+                maximumAttempts,
+                0,
+                pollingInterval
               )
 
               const taker = await wallet.address()
@@ -646,6 +658,12 @@ export async function executeSteps(
     if (json) {
       json.error = errorMessage
       setState([...json?.steps], json.path)
+    } else {
+      json = {
+        error: errorMessage,
+        path: undefined,
+        steps: [],
+      }
     }
 
     client._sendEvent(generateEvent(request, json), reservoirChain?.id || 1)

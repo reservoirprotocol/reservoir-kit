@@ -107,6 +107,7 @@ type Props = {
   tokenId?: string
   onConnectWallet: () => void
   chainId?: number
+  defaultQuantity?: number
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
@@ -123,6 +124,7 @@ export const CollectModalRenderer: FC<Props> = ({
   tokenId,
   feesOnTopBps,
   feesOnTopUsd,
+  defaultQuantity,
   onConnectWallet,
   normalizeRoyalties,
   children,
@@ -591,8 +593,16 @@ export const CollectModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setFetchedInitialOrders(false)
       setPaymentCurrency(undefined)
+    } else {
+      setItemAmount(defaultQuantity || 1)
     }
   }, [open])
+
+  useEffect(() => {
+    if (maxItemAmount > 0 && itemAmount > maxItemAmount) {
+      setItemAmount(maxItemAmount)
+    }
+  }, [maxItemAmount, itemAmount])
 
   const collectTokens = useCallback(async () => {
     if (!wallet) {

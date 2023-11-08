@@ -44,6 +44,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
   tokenId?: string
+  defaultQuantity?: number
   onConnectWallet: () => void
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
@@ -74,6 +75,7 @@ export function CollectModal({
   onCollectError,
   onClose,
   onConnectWallet,
+  defaultQuantity,
 }: Props): ReactElement {
   const copy: typeof CollectModalCopy = {
     ...CollectModalCopy,
@@ -96,6 +98,7 @@ export function CollectModal({
     <CollectModalRenderer
       onConnectWallet={onConnectWallet}
       chainId={modalChain?.id}
+      defaultQuantity={defaultQuantity}
       open={open}
       mode={mode}
       collectionId={collectionId}

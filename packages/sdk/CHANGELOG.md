@@ -1,4 +1,11 @@
 
+## [v1.7.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4809c45d8ee9489886b8b0a8c8af0f4de334432d) (2023-11-07)
+
+*Fix error message for crosschain transactions [551b721f](https://github.com/reservoirprotocol/reservoir-kit/commit/551b721f59dad975da3cd03906c8ec5f44f2fc6a)
+* Configurable polling interval for transaction [fb7fe63b](https://github.com/reservoirprotocol/reservoir-kit/commit/fb7fe63b2fdaffb608ce145d9373934002e82fe6)
+* Improve crosschain transaction failure error handling [ba2c9736](https://github.com/reservoirprotocol/reservoir-kit/commit/ba2c9736661add665b8e89eaadd60ef644aca4f7)
+* Sync Api
+
 ## [v1.7.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/359f02dd05fe07deee4a09a8cf969bb762420c94) (2023-11-03)
 
 * Cross Chain Transactions [54beebcd](https://github.com/reservoirprotocol/reservoir-kit/commit/54beebcd5a520699260499c9ed7087570f6ef736)
