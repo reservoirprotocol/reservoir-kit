@@ -301,7 +301,7 @@ export const MintContent: FC<
                   />
                 </Flex>
                 {gasCost > 0n && (
-                  <Flex align="center">
+                  <Flex align="center" css={{ mt: '$1' }}>
                     <Text css={{ mr: '$3' }} color="error" style="body3">
                       Estimated Gas Cost
                     </Text>

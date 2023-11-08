@@ -192,6 +192,12 @@ export default function (
           currencyTotalFormatted,
         }
       })
+      .filter((currency) =>
+        currency.chainId !== chain?.id &&
+        (currency.currencyTotalRaw || 0) > 50000000000000000n
+          ? false
+          : true
+      )
       .sort((a, b) => {
         // If user has a balance for the listed currency, return first. Otherwise sort currencies by total usdPrice
         if (
