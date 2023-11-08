@@ -171,7 +171,9 @@ export const BuyModalRenderer: FC<Props> = ({
     address as Address,
     _paymentCurrency ?? chainCurrency,
     totalIncludingFees,
-    rendererChain?.id
+    rendererChain?.id,
+    false,
+    true
   )
 
   const paymentCurrency = paymentTokens?.find(
