@@ -339,6 +339,11 @@ export const ListModalRenderer: FC<Props> = ({
       listing.customRoyalties = [...royalties]
     }
 
+    const fees = feesBps || client.marketplaceFees
+    if (fees) {
+      listing.marketplaceFees = fees
+    }
+
     if (quantity > 1) {
       listing.quantity = quantity
     }
