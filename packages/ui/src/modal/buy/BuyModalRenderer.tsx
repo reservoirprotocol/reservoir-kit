@@ -67,6 +67,7 @@ type ChildrenProps = {
   transactionError?: Error | null
   hasEnoughCurrency: boolean
   addFundsLink: string
+  gasCost: bigint
   feeUsd: string
   totalUsd: bigint
   usdPrice: number
@@ -118,6 +119,7 @@ export const BuyModalRenderer: FC<Props> = ({
 }) => {
   const [totalPrice, setTotalPrice] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
+  const [gasCost, setGasCost] = useState(0n)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0n)
   const [path, setPath] = useState<BuyPath>([])
   const [isFetchingPath, setIsFetchingPath] = useState(false)
@@ -594,6 +596,8 @@ export const BuyModalRenderer: FC<Props> = ({
     }
 
     let total = 0n
+    let gasCost = 0n
+
     if (orderId) {
       total = BigInt(listing?.price?.amount?.raw || 0) * BigInt(quantity)
     } else if (is1155) {
@@ -624,6 +628,7 @@ export const BuyModalRenderer: FC<Props> = ({
           }
 
           orderCurrencyTotal += pathPrice * BigInt(quantityToTake)
+          gasCost += BigInt(pathItem.gasCost || 0n)
           orders[listingId] = quantityToTake
           totalQuantity += quantityToTake
 
@@ -663,6 +668,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
       setTotalPrice(total)
       setTotalIncludingFees(total + totalFees)
+      setGasCost(gasCost)
       setAverageUnitPrice(total / BigInt(quantity))
     } else {
       setTotalIncludingFees(0n)
@@ -691,13 +697,14 @@ export const BuyModalRenderer: FC<Props> = ({
     if (
       paymentCurrency?.balance != undefined &&
       paymentCurrency?.currencyTotalRaw != undefined &&
-      BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
+      BigInt(paymentCurrency?.balance) <
+        paymentCurrency?.currencyTotalRaw + gasCost
     ) {
       setHasEnoughCurrency(false)
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [totalIncludingFees, paymentCurrency])
+  }, [totalIncludingFees, paymentCurrency, gasCost])
 
   useEffect(() => {
     if (!open) {
@@ -728,6 +735,7 @@ export const BuyModalRenderer: FC<Props> = ({
         totalPrice,
         totalIncludingFees,
         averageUnitPrice,
+        gasCost,
         feeOnTop,
         buyStep,
         transactionError,
