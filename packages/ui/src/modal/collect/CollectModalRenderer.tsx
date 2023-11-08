@@ -15,7 +15,6 @@ import {
 } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
 import {
-  APIError,
   BuyPath,
   Execute,
   LogLevel,
