@@ -467,6 +467,13 @@ export async function executeSteps(
 
                     // If check, poll check until validated
                     if (stepItem?.check) {
+                      const pollingInterval =
+                        reservoirChain?.transactionPollingInterval ?? 5000
+
+                      const maximumAttempts =
+                        client.maxPollingAttemptsBeforeTimeout ??
+                        (2.5 * 60 * 1000) / pollingInterval // default to 2 minutes and 30 seconds worth of attempts
+
                       await pollUntilOk(
                         {
                           url: `${request.baseURL}${stepItem?.check.endpoint}`,
@@ -494,7 +501,10 @@ export async function executeSteps(
                             )
                           }
                           return false
-                        }
+                        },
+                        maximumAttempts,
+                        0,
+                        pollingInterval
                       )
                     }
 
