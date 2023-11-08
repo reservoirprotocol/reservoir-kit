@@ -203,6 +203,7 @@ const submitTransactionToSolver = async ({
           gas: tx.gas,
           nonce: tx.nonce,
           to: tx.to || undefined,
+          from: tx.from || undefined,
           value: tx.value,
           maxFeePerGas: tx.maxFeePerGas,
           maxPriorityFeePerGas: tx.maxPriorityFeePerGas,
