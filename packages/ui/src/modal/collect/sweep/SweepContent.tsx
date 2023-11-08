@@ -56,6 +56,7 @@ export const SweepContent: FC<
   setPaymentCurrency,
   total,
   totalIncludingFees,
+  gasCost,
   feeOnTop,
   feeUsd,
   isConnected,
@@ -210,7 +211,7 @@ export const SweepContent: FC<
                           amount={cheapestTokenPrice}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                           maximumFractionDigits={2}
                         />
                         <Text style="subtitle3" color="subtle">
@@ -221,7 +222,7 @@ export const SweepContent: FC<
                           amount={mostExpensiveTokenPrice}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                           maximumFractionDigits={2}
                         />
                       </Flex>
@@ -239,7 +240,7 @@ export const SweepContent: FC<
                       amount={total / BigInt(itemAmount)}
                       address={paymentCurrency?.address}
                       decimals={paymentCurrency?.decimals}
-                      symbol={paymentCurrency?.symbol}
+                      symbol={paymentCurrency?.name}
                       maximumFractionDigits={2}
                     />
                   </Flex>
@@ -276,7 +277,7 @@ export const SweepContent: FC<
                         address={paymentCurrency?.address as string}
                         css={{ width: 16, height: 16, mr: '$1' }}
                       />
-                      <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                      <Text style="subtitle2">{paymentCurrency?.name}</Text>
                     </Flex>
                     <Box css={{ color: '$neutralSolidHover' }}>
                       <FontAwesomeIcon icon={faChevronRight} width={10} />
@@ -298,7 +299,7 @@ export const SweepContent: FC<
                     amount={feeOnTop}
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
-                    symbol={paymentCurrency?.symbol}
+                    symbol={paymentCurrency?.name}
                   />
                   <FormatCurrency amount={feeUsd} color="subtle" style="tiny" />
                 </Flex>
@@ -358,10 +359,25 @@ export const SweepContent: FC<
                   amount={paymentCurrency?.balance}
                   address={paymentCurrency?.address}
                   decimals={paymentCurrency?.decimals}
-                  symbol={paymentCurrency?.symbol}
+                  symbol={paymentCurrency?.name}
                   textStyle="body3"
                 />
               </Flex>
+              {gasCost > 0n && (
+                <Flex align="center" css={{ mt: '$1' }}>
+                  <Text css={{ mr: '$3' }} color="error" style="body3">
+                    Estimated Gas Cost
+                  </Text>
+                  <FormatCryptoCurrency
+                    chainId={chainId}
+                    amount={gasCost}
+                    address={paymentCurrency?.address}
+                    decimals={paymentCurrency?.decimals}
+                    symbol={paymentCurrency?.symbol}
+                    textStyle="body3"
+                  />
+                </Flex>
+              )}
               <Button
                 disabled={disableJumperLink}
                 onClick={() => {
