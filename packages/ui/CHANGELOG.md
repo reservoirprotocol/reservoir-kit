@@ -1,4 +1,22 @@
 
+## [v1.18.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c78ccc64bf55958ab8f5ca8bd97b4df6a2fcf6cd) (2023-11-09)
+
+* Fix payment tokens loading bug [e059354b](https://github.com/reservoirprotocol/reservoir-kit/commit/e059354bb3e557ca58ce55c43f0fd95c1abc9bf3)
+* Fix two ui states showing simultaneously in CollectModal [4dd57c82](https://github.com/reservoirprotocol/reservoir-kit/commit/4dd57c82ebb82addb694a96822278c8ada16196d)
+* Update cross-chain purchase error and ErrorWell primitive [1e42a456](https://github.com/reservoirprotocol/reservoir-kit/commit/1e42a456ca42287dfd988f16a0836ea49fca8598)
+
+## [v1.18.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d026e3c8d7bbad5e9e54178ba6c79f56e348158a) (2023-11-08)
+
+## [v1.18.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/70fc0c1bf13663745f086fe37145b2233de8b271) (2023-11-08)
+
+* Disable cross-chain payment tokens on the BuyModal [3d872206](https://github.com/reservoirprotocol/reservoir-kit/commit/3d8722068da9f3326adf57757e68faf5088c8185)
+
+## [v1.18.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e046f1bd94b3d7f719ed6bd56872e0eb17a62496) (2023-11-08)
+
+* Add gasCost logic to BuyModal [27c5c0dd](https://github.com/reservoirprotocol/reservoir-kit/commit/27c5c0dd408d3b8cb53392f720bed82baedbeb2e)
+* Add gasCost disclaimer message [781faae6](https://github.com/reservoirprotocol/reservoir-kit/commit/781faae60a11343aec30315b4114df1b9f23585f)
+* Sync api and add gasCost to CollectModal [575285ec](https://github.com/reservoirprotocol/reservoir-kit/commit/575285ecdafd9ac4e49c5df2c00f8fd6aefab585)
+
 ## [v1.17.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/21df44f0fd17ba8ff45952cf58e6b0c089515d7a) (2023-11-07)
 
 * Fix default quantity sometimes being set to 0 initially [66abe09d](https://github.com/reservoirprotocol/reservoir-kit/commit/66abe09deb0fef30d4fa438f395ba21d3ea6fe69)
