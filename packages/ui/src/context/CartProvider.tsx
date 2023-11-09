@@ -162,7 +162,9 @@ function cartStore({
         }
       : chainCurrency,
     cartData.current.totalPriceRaw - (cartData.current.feeOnTopRaw ?? 0n),
-    cartChain?.id
+    cartChain?.id,
+    false,
+    true
   )
   const usdPrice = Number(usdFeeConversion?.usd || 0)
 
@@ -743,9 +745,9 @@ function cartStore({
   }, [fetchTokens, fetchOrders, address, usdPrice])
 
   const setCurrency = useCallback(
-    (currencyAddress: Address) => {
+    (currency: EnhancedCurrency | undefined) => {
       const paymentToken = paymentTokens.find(
-        (token) => token.address === currencyAddress
+        (token) => token.address === currency?.address
       )
       if (paymentToken) {
         cartData.current = {

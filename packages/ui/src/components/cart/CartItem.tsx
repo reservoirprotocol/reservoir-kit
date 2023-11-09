@@ -125,8 +125,8 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
         }}
         css={{
           width: '100%',
-          px: 24,
-          py: 8,
+          px: '$4',
+          py: '$2',
           cursor: 'pointer',
         }}
       >

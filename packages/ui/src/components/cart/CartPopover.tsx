@@ -27,6 +27,7 @@ import React, {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronRight,
+  faChevronLeft,
   faClose,
   faLock,
   faRefresh,
@@ -44,6 +45,7 @@ import { useAccount } from 'wagmi'
 import { CartCheckoutModal } from './CartCheckoutModal'
 import { Logo } from '../../modal/Modal'
 import { truncateAddress } from '../../lib/truncate'
+import { SelectPaymentToken } from '../../modal/SelectPaymentToken'
 
 const scaleUp = keyframes({
   '0%': { opacity: 0, transform: 'scale(0.9) translateY(-10px)' },
@@ -118,7 +120,9 @@ export function CartPopover({
         blockExplorerBaseUrl,
         cartChain,
         cartPopoverStep,
+        paymentTokens,
         setCartPopoverStep,
+        setCurrency,
         remove,
         clear,
         checkout,
@@ -157,7 +161,7 @@ export function CartPopover({
                 $$shadowColor: '$colors$gray7',
                 boxShadow: 'box-shadow: 0px 2px 16px $$shadowColor',
                 border: '1px solid $borderColor',
-                p: 24,
+                p: '$4',
                 minHeight: 500,
                 width: 395,
                 maxHeight: `calc(100vh - ${
@@ -227,18 +231,18 @@ export function CartPopover({
                   <FontAwesomeIcon icon={faClose} width="16" height="16" />
                 </Button>
               </Flex>
-              <Flex align="center" css={{ mb: '$4' }}>
-                <ChainIcon
-                  chainId={cartChain?.id}
-                  height={12}
-                  css={{ mr: 5 }}
-                />
-                <Text style="body3" color="subtle">
-                  {cartChain?.name}
-                </Text>
-              </Flex>
               {cartPopoverStep === CartPopoverStep.Idle && (
                 <>
+                  <Flex align="center" css={{ mb: '$4' }}>
+                    <ChainIcon
+                      chainId={cartChain?.id}
+                      height={12}
+                      css={{ mr: 5 }}
+                    />
+                    <Text style="body3" color="subtle">
+                      {cartChain?.name}
+                    </Text>
+                  </Flex>
                   {unavailableItems.length > 0 && (
                     <CartToast
                       kind="error"
@@ -304,7 +308,7 @@ export function CartPopover({
                   {!isCartEmpty && (
                     <Flex
                       direction="column"
-                      css={{ gap: '$4', mb: '$4', overflowY: 'auto', mx: -24 }}
+                      css={{ gap: '$4', mb: '$4', overflowY: 'auto', mx: -16 }}
                     >
                       {items.map((item) => (
                         <CartItem
@@ -382,9 +386,9 @@ export function CartPopover({
                           css={{
                             gap: '$2',
                             py: '$3',
-                            px: 24,
+                            px: '$4',
                             borderRadius: '$3',
-                            mx: -24,
+                            mx: -16,
                             mb: '$4',
                             cursor: 'pointer',
                             '&:hover': {
@@ -392,7 +396,6 @@ export function CartPopover({
                             },
                           }}
                           onClick={() =>
-                            //todo usePaymentTokens and see if it's cached
                             setCartPopoverStep(CartPopoverStep.SelectPayment)
                           }
                         >
@@ -536,60 +539,83 @@ export function CartPopover({
                         Refresh Cart
                       </Button>
                     )}
-
-                    {!providerOptionsContext.disablePoweredByReservoir && (
-                      <Flex
-                        align="center"
-                        css={{
-                          mx: 'auto',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          mt: 26,
-                          gap: '$1',
-                          visibility: '$poweredByReservoirVisibility',
-                        }}
-                      >
-                        <Box css={{ color: '$neutralBorderHover' }}>
-                          <FontAwesomeIcon
-                            icon={faLock}
-                            width={9}
-                            height={10}
-                          />
-                        </Box>
-                        <Text
-                          style="tiny"
-                          color="subtle"
-                          css={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 4,
-                            lineHeight: '14px',
-                            fontWeight: 400,
-                            color: '$neutralText',
-                          }}
-                        >
-                          Powered by{' '}
-                          <Anchor
-                            href="https://reservoir.tools/"
-                            target="_blank"
-                            weight="heavy"
-                            color="gray"
-                            css={{
-                              height: 12,
-                              fontSize: 12,
-                              '&:hover': {
-                                color: '$neutralSolid',
-                                fill: '$neutralSolid',
-                              },
-                            }}
-                          >
-                            <Logo />
-                          </Anchor>
-                        </Text>
-                      </Flex>
-                    )}
                   </Flex>
                 </>
+              )}
+              {cartPopoverStep === CartPopoverStep.SelectPayment && (
+                <>
+                  <Flex
+                    css={{ gap: '$4', cursor: 'pointer' }}
+                    onClick={() => {
+                      setCartPopoverStep(CartPopoverStep.Idle)
+                    }}
+                  >
+                    <Box css={{ color: '$neutralSolidHover' }}>
+                      <FontAwesomeIcon icon={faChevronLeft} width={10} />
+                    </Box>
+                    <Text style="subtitle2">Select A Token</Text>
+                  </Flex>
+                  <SelectPaymentToken
+                    paymentTokens={paymentTokens}
+                    currency={currency}
+                    setCurrency={setCurrency}
+                    goBack={() => setCartPopoverStep(CartPopoverStep.Idle)}
+                    css={{
+                      padding: 0,
+                      ml: '-16px',
+                      mt: '$4',
+                      width: 'calc(100% + 20px)',
+                      mb: 'auto',
+                    }}
+                  />
+                </>
+              )}
+              {!providerOptionsContext.disablePoweredByReservoir && (
+                <Flex
+                  align="center"
+                  css={{
+                    mx: 'auto',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mt: 26,
+                    gap: '$1',
+                    visibility: '$poweredByReservoirVisibility',
+                  }}
+                >
+                  <Box css={{ color: '$neutralBorderHover' }}>
+                    <FontAwesomeIcon icon={faLock} width={9} height={10} />
+                  </Box>
+                  <Text
+                    style="tiny"
+                    color="subtle"
+                    css={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      lineHeight: '14px',
+                      fontWeight: 400,
+                      color: '$neutralText',
+                    }}
+                  >
+                    Powered by{' '}
+                    <Anchor
+                      href="https://reservoir.tools/"
+                      target="_blank"
+                      weight="heavy"
+                      color="gray"
+                      css={{
+                        height: 12,
+                        fontSize: 12,
+                        '&:hover': {
+                          color: '$neutralSolid',
+                          fill: '$neutralSolid',
+                        },
+                      }}
+                    >
+                      <Logo />
+                    </Anchor>
+                  </Text>
+                </Flex>
               )}
             </Popover.Content>
             {open && (

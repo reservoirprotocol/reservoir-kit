@@ -1,8 +1,7 @@
-import { useCart, useReservoirClient } from '../../hooks'
+import { useCart, useChainCurrency, usePaymentTokens } from '../../hooks'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
-import { useAccount, useBalance, useNetwork } from 'wagmi'
-import { zeroAddress } from 'viem'
-import { UseBalanceToken } from '../../types/wagmi'
+import { useAccount, useNetwork } from 'wagmi'
+import { Address } from 'viem'
 import {
   Cart,
   CheckoutStatus,
@@ -30,6 +29,7 @@ type ChildrenProps = {
   transaction?: Cart['transaction']
   blockExplorerBaseUrl: string
   cartChain: Cart['chain']
+  paymentTokens?: NonNullable<Cart['currency']>[]
   checkout: ReturnType<typeof useCart>['checkout']
   clear: ReturnType<typeof useCart>['clear']
   remove: ReturnType<typeof useCart>['remove']
@@ -37,6 +37,7 @@ type ChildrenProps = {
   validate: ReturnType<typeof useCart>['validate']
   cartPopoverStep: CartPopoverStep
   setCartPopoverStep: React.Dispatch<React.SetStateAction<CartPopoverStep>>
+  setCurrency: ReturnType<typeof useCart>['setCurrency']
 }
 
 type Props = {
@@ -48,10 +49,17 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
   const [cartPopoverStep, setCartPopoverStep] = useState<CartPopoverStep>(
     CartPopoverStep.Idle
   )
-  const client = useReservoirClient()
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
-  const { data, clear, clearTransaction, validate, remove, add, checkout } =
-    useCart((cart) => cart)
+  const {
+    data,
+    clear,
+    clearTransaction,
+    validate,
+    remove,
+    add,
+    checkout,
+    setCurrency,
+  } = useCart((cart) => cart)
   const {
     isValidating,
     totalPrice,
@@ -68,13 +76,14 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
 
   const { chains } = useNetwork()
   const chain = chains.find((chain) => chain.id === transaction?.chain.id)
+  const chainCurrency = useChainCurrency(cartChain?.id)
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   useEffect(() => {
-    //todo reset step state to idle
     if (open) {
       validate()
+      setCartPopoverStep(CartPopoverStep.Idle)
     } else if (
       transaction?.status === CheckoutStatus.Complete ||
       transaction?.error
@@ -98,29 +107,35 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     [items]
   )
   const { address } = useAccount()
-  //todo do we need this now that we have balance in the currency?
-  const { data: balance } = useBalance({
-    chainId: cartChain?.id || client?.currentChain()?.id,
-    address: address,
-    token:
-      currency?.address !== zeroAddress
-        ? (currency?.address as UseBalanceToken)
-        : undefined,
-    watch: open,
-    formatUnits: currency?.decimals,
-  })
+  const paymentTokens = usePaymentTokens(
+    address !== undefined,
+    address as Address,
+    currency
+      ? {
+          symbol: currency.symbol as string,
+          address: currency?.address as Address,
+          name: currency?.name,
+          decimals: currency.decimals as number,
+          chainId: currency.chainId,
+        }
+      : chainCurrency,
+    totalPriceRaw - (feeOnTopRaw ?? 0n),
+    cartChain?.id,
+    false,
+    true
+  )
 
   useEffect(() => {
-    if (balance) {
-      if (!balance.value) {
+    if (currency?.balance) {
+      if (!currency?.balance) {
         setHasEnoughCurrency(false)
-      } else if (BigInt(balance.value) < totalPriceRaw) {
+      } else if (BigInt(currency.balance) < totalPriceRaw) {
         setHasEnoughCurrency(false)
       } else {
         setHasEnoughCurrency(true)
       }
     }
-  }, [totalPriceRaw, balance, currency])
+  }, [totalPriceRaw, currency])
 
   useEffect(() => {
     if (
@@ -145,10 +160,11 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         feeOnTopRaw,
         usdPrice,
         hasEnoughCurrency,
-        balance: balance?.value,
+        balance: currency?.balance ? BigInt(currency?.balance) : undefined,
         transaction,
         blockExplorerBaseUrl,
         cartChain,
+        paymentTokens,
         checkout,
         clear,
         remove,
@@ -156,6 +172,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         validate,
         cartPopoverStep,
         setCartPopoverStep,
+        setCurrency,
       })}
     </>
   )

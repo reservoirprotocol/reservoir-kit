@@ -5,14 +5,14 @@ import { formatUnits } from 'viem'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { formatBN, formatNumber } from '../lib/numbers'
+import { CSS } from '@stitches/react'
 
 type Props = {
-  paymentTokens: EnhancedCurrency[]
-  setCurrency: React.Dispatch<
-    React.SetStateAction<EnhancedCurrency | undefined>
-  >
+  paymentTokens?: EnhancedCurrency[]
+  setCurrency: (currency: EnhancedCurrency | undefined) => void
   goBack: () => void
   currency?: EnhancedCurrency
+  css?: CSS
 }
 
 export const SelectPaymentToken: FC<Props> = ({
@@ -20,9 +20,13 @@ export const SelectPaymentToken: FC<Props> = ({
   setCurrency,
   goBack,
   currency,
+  css,
 }) => {
   return (
-    <Flex direction="column" css={{ width: '100%', gap: '$1', px: '$3' }}>
+    <Flex
+      direction="column"
+      css={{ width: '100%', gap: '$1', px: '$3', ...css }}
+    >
       {paymentTokens
         ?.sort(
           (a, b) =>
