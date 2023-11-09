@@ -101,7 +101,8 @@ export const MintContent: FC<
 
   return (
     <>
-      {orders?.length === 0 || maxItemAmount === 0 ? (
+      {(orders?.length === 0 || maxItemAmount === 0) &&
+      collectStep === CollectStep.Idle ? (
         <Flex
           direction="column"
           align="center"

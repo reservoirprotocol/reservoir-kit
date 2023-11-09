@@ -117,7 +117,8 @@ export const SweepContent: FC<
 
   return (
     <>
-      {!hasTokens || maxItemAmount === 0 ? (
+      {!hasTokens ||
+      (maxItemAmount === 0 && collectStep === CollectStep.Idle) ? (
         <Flex
           direction="column"
           align="center"
