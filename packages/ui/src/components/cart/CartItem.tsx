@@ -15,7 +15,7 @@ import {
   faClose,
 } from '@fortawesome/free-solid-svg-icons'
 import { Cart } from '../../context/CartProvider'
-import { formatNumber } from '../../lib/numbers'
+import { formatBN, formatNumber } from '../../lib/numbers'
 import QuantitySelector from '../../modal/QuantitySelector'
 import * as allChains from 'viem/chains'
 import { Chain } from 'viem'
@@ -191,7 +191,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             >
               <FontAwesomeIcon width="11" icon={faArrowUp} />
               <Text style="body2" color="accent">
-                Price has gone up {formatNumber(Number(priceDiff.toString()))}%
+                Price has gone up {formatBN(priceDiff, 2)}%
               </Text>
             </Flex>
           )}
@@ -202,7 +202,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             >
               <FontAwesomeIcon width="11" icon={faArrowDown} />
               <Text style="body3" color="accent">
-                Price went down {formatNumber(priceDiff)}%
+                Price went down {formatBN(priceDiff, 2)}%
               </Text>
             </Flex>
           )}

@@ -985,7 +985,6 @@ function cartStore({
           pools,
           currency,
         }
-
         if (!cartData.current.chain) {
           cartData.current.chain =
             client?.chains.find((chain) => chain.id === chainId) ||
@@ -1100,8 +1099,6 @@ function cartStore({
       if (!wallet) {
         throw 'Wallet/Signer not available'
       }
-      //todo remove this logic
-      let isMixedCurrency = false
       const tokens = cartData.current.items.reduce(
         (items, { token, collection, price, order }) => {
           if (price) {
@@ -1111,11 +1108,6 @@ function cartStore({
               orderId: order?.id,
               quantity: order?.quantity,
             })
-            if (
-              price.currency?.contract != cartData.current.currency?.address
-            ) {
-              isMixedCurrency = true
-            }
           }
           return items
         },
@@ -1132,13 +1124,8 @@ function cartStore({
       const feeOnTop = cartData.current.feeOnTop ? cartData.current.feeOnTop : 0
       const expectedPrice = cartData.current.totalPrice - feeOnTop
       let currencyDecimals = cartData.current.currency?.decimals || 18
-      //todo fix!
-      if (isMixedCurrency) {
-        options.currency = zeroAddress
-        currencyDecimals = chainCurrency.decimals
-      } else {
-        options.currency = cartData.current.currency?.address
-      }
+
+      options.currency = cartData.current.currency?.address
 
       if (feeOnTop) {
         if (cartData.current.feesOnTopBps) {

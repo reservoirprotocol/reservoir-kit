@@ -102,7 +102,8 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         ({ previousPrice, price }) =>
           previousPrice &&
           price?.amount?.decimal !== undefined &&
-          previousPrice.amount?.decimal !== price?.amount?.decimal
+          previousPrice.amount?.decimal !== price?.amount?.decimal &&
+          previousPrice.currency?.contract === price?.currency?.contract
       ),
     [items]
   )
@@ -126,7 +127,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
   )
 
   useEffect(() => {
-    if (currency?.balance) {
+    if (currency?.balance !== undefined) {
       if (!currency?.balance) {
         setHasEnoughCurrency(false)
       } else if (BigInt(currency.balance) < totalPriceRaw) {

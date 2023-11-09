@@ -446,14 +446,14 @@ export function CartPopover({
                               logoWidth={18}
                               chainId={cartChain?.id}
                             />
-                            {usdPrice && (
+                            {usdPrice ? (
                               <FormatCurrency
                                 amount={currency?.usdTotalPriceRaw}
                                 style="subtitle3"
                                 color="subtle"
                                 css={{ textAlign: 'end' }}
                               />
-                            )}
+                            ) : null}
                           </Flex>
                         </Flex>
                       </>
@@ -564,7 +564,7 @@ export function CartPopover({
                       padding: 0,
                       ml: '-16px',
                       mt: '$4',
-                      width: 'calc(100% + 20px)',
+                      width: 'calc(100% + 16px)',
                       mb: 'auto',
                     }}
                   />
