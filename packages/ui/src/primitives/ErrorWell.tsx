@@ -50,7 +50,7 @@ export default function ErrorWell({ error, css }: Props) {
           used for another purchase. For assistance or withdrawal help, please
           contact{' '}
           <Anchor
-            href={`https://reservoir.tools/`}
+            href={`https://reservoir.tools/#contact-us`}
             color="primary"
             weight="medium"
             target="_blank"
