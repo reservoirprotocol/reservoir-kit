@@ -195,7 +195,7 @@ const TokenPrimitive: FC<Props> = ({
               css={{ w: 17, h: 17, borderRadius: 99999, overflow: 'hidden' }}
             />
           )}
-          {providerOptions.switchMainCurrency && usdPrice ? (
+          {providerOptions.preferDisplayFiatTotal && usdPrice ? (
             <>
               <FormatCurrency
                 amount={usdPrice}

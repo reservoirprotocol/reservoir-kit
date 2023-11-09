@@ -373,7 +373,8 @@ export function CartPopover({
                       justify="center"
                       css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
                     >
-                      {providerOptionsContext.switchMainCurrency && usdPrice ? (
+                      {providerOptionsContext.preferDisplayFiatTotal &&
+                      usdPrice ? (
                         <>
                           <FormatCurrency
                             amount={usdPrice * totalPrice}

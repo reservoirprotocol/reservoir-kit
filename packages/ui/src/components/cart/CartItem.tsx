@@ -236,7 +236,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               '> div': { ml: 'auto' },
             }}
           >
-            {providerOptionsContext.switchMainCurrency &&
+            {providerOptionsContext.preferDisplayFiatTotal &&
             usdPrice &&
             usdPrice > 0 ? (
               <>

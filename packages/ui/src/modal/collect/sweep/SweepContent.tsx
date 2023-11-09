@@ -313,7 +313,7 @@ export const SweepContent: FC<
             >
               <Text style="h6">You Pay</Text>
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                {providerOptions.switchMainCurrency ? (
+                {providerOptions.preferDisplayFiatTotal ? (
                   <>
                     <FormatCurrency
                       amount={paymentCurrency?.usdTotalPriceRaw}
