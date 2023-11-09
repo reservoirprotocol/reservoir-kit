@@ -765,7 +765,7 @@ export const CollectModalRenderer: FC<Props> = ({
         contentMode,
         collection,
         token,
-        loading: !fetchedInitialOrders,
+        loading: !fetchedInitialOrders || !(paymentTokens.length > 0),
         address: address,
         selectedTokens,
         setSelectedTokens,
