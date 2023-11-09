@@ -172,6 +172,7 @@ export function BuyModal({
         steps,
         stepData,
         feeUsd,
+        gasCost,
         totalUsd,
         usdPrice,
         balance,
@@ -379,7 +380,7 @@ export function BuyModal({
                               css={{ width: 16, height: 16, mr: '$1' }}
                             />
                             <Text style="subtitle2">
-                              {paymentCurrency?.symbol}
+                              {paymentCurrency?.name}
                             </Text>
                           </Flex>
                           <Box css={{ color: '$neutralSolidHover' }}>
@@ -402,7 +403,7 @@ export function BuyModal({
                           amount={feeOnTop}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                         />
                         <FormatCurrency
                           amount={feeUsd}
@@ -485,10 +486,26 @@ export function BuyModal({
                           amount={paymentCurrency?.balance}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                           textStyle="body3"
                         />
                       </Flex>
+
+                      {gasCost > 0n && (
+                        <Flex align="center">
+                          <Text css={{ mr: '$3' }} color="error" style="body3">
+                            Estimated Gas Cost
+                          </Text>
+                          <FormatCryptoCurrency
+                            chainId={chainId}
+                            amount={gasCost}
+                            address={paymentCurrency?.address}
+                            decimals={paymentCurrency?.decimals}
+                            symbol={paymentCurrency?.symbol}
+                            textStyle="body3"
+                          />
+                        </Flex>
+                      )}
 
                       <Button
                         disabled={providerOptions.disableJumperLink}
