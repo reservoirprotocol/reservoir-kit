@@ -140,7 +140,11 @@ const TokenPrimitive: FC<Props> = ({
             ) : null}
             {name && (
               <Flex>
-                <Text style="body3" color="subtle">
+                <Text style="body3" color="subtle" css={{
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis'
+                }}>
                   {collection}
                 </Text>
                 <Divider direction="vertical" />
