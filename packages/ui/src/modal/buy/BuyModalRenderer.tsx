@@ -787,7 +787,8 @@ export const BuyModalRenderer: FC<Props> = ({
           (!listing && isValidatingListing) ||
           !token ||
           isFetchingPath ||
-          (is1155 && !path && !orderId),
+          (is1155 && !path && !orderId) ||
+          !(paymentTokens.length > 0),
         token,
         collection,
         listing,
