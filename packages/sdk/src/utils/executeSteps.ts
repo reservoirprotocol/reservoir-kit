@@ -495,7 +495,7 @@ export async function executeSteps(
                             res?.data?.status === 'success' &&
                             res?.data?.txHashes
                           ) {
-                            const convertedTxHashes: NonNullable<
+                            const chainTxHashes: NonNullable<
                               Execute['steps'][0]['items']
                             >[0]['txHashes'] = res.data?.txHashes?.map(
                               (hash: Address) => {
@@ -505,7 +505,7 @@ export async function executeSteps(
                                 }
                               }
                             )
-                            stepItem.txHashes = convertedTxHashes
+                            stepItem.txHashes = chainTxHashes
                             return true
                           } else if (res?.data?.status === 'failure') {
                             throw Error(

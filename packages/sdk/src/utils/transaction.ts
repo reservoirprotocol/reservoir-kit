@@ -102,12 +102,12 @@ export async function sendTransactionSafely(
         throw Error('Transaction failed')
       }
       if (res.status === 200 && res.data && res.data.status === 'success') {
-        const convertedTxHashes: NonNullable<
+        const chainTxHashes: NonNullable<
           Execute['steps'][0]['items']
         >[0]['txHashes'] = res.data?.txHashes?.map((hash: Address) => {
           return { txHash: hash, chainId: crossChainIntentChainId }
         })
-        setTxHashes(convertedTxHashes)
+        setTxHashes(chainTxHashes)
         return true
       }
       return false
