@@ -388,6 +388,7 @@ export async function executeSteps(
                         ],
                         LogLevel.Verbose
                       )
+                      const convertedTxHashes = txHashes
                       stepItem.txHashes = txHashes
                       if (json) {
                         setState([...json.steps], path)
@@ -398,21 +399,21 @@ export async function executeSteps(
                     isCrossChainIntent
                   )
 
-                  stepItem?.txHashes?.forEach((txHash) => {
+                  stepItem?.txHashes?.forEach((hash) => {
                     executeResults({
                       request,
                       stepId: step.id,
                       requestId: json?.requestId,
-                      txHash,
+                      hash.txHash,
                     })
                   })
                 } catch (e) {
-                  stepItem?.txHashes?.forEach((txHash) => {
+                  stepItem?.txHashes?.forEach((hash) => {
                     executeResults({
                       request,
                       stepId: step.id,
                       requestId: json?.requestId,
-                      txHash,
+                      hash.txHash,
                     })
                   })
 
@@ -562,7 +563,7 @@ export async function executeSteps(
               )
               const queryParams: paths['/transfers/bulk/v2']['get']['parameters']['query'] =
                 {
-                  txHash: stepItem.txHashes,
+                  txHash: stepItem.txHashes?.map((txHash) => txHash.hash),
                 }
               setParams(indexerConfirmationUrl, queryParams)
               let transfersData: paths['/transfers/bulk/v2']['get']['responses']['200']['schema'] =
@@ -591,7 +592,7 @@ export async function executeSteps(
                     return transfersData.transfers &&
                       transfersData.transfers.length > 0 &&
                       stepItem.txHashes?.every((txHash) =>
-                        transferTxHashes?.includes(txHash)
+                        transferTxHashes?.includes(txHash.hash)
                       )
                       ? true
                       : false

@@ -69,7 +69,12 @@ export type Execute = {
       orderIds?: string[]
       // Manually added
       error?: string
-      txHashes?: string[]
+      // txHashes?: string[]
+      txHashes?: {
+        hash: string
+        chainId: number
+        blockExplorerUrl?: string
+      }[]
       orderData?: {
         crossPostingOrderId?: string
         orderId: string
