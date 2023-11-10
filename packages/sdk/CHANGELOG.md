@@ -1,7 +1,12 @@
 
+## [v1.8.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/fadbf9e9d3e369d4a1ca75f9e3686f63c78ec55b) (2023-11-10)
+
+* feat: Use new fee params [6c4332a7](https://github.com/reservoirprotocol/reservoir-kit/commit/6c4332a7a42ae707689b65e39ccc9fac6eae2062)
+
 ## [v1.8.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/25cb72c9d788393e926b7ea52330e5643b262dc0) (2023-11-09)
 
-* Update cross-chain purchase error and ErrorWell primitive [1e42a456](https://github.com/reservoirprotocol/reservoir-kit/commit/1e42a456ca42287dfd988f16a0836ea49fca8598)
+* Update cross-chain purchase error [1e42a456](https://github.com/reservoirprotocol/reservoir-kit/commit/1e42a456ca42287dfd988f16a0836ea49fca8598)
+
 ## [v1.8.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8e85ad4f0ca2c59b6af349b77b658d8c9783a0ed) (2023-11-08)
 
 * Fix serialization of tx for solver api [7ef4512a](https://github.com/reservoirprotocol/reservoir-kit/commit/7ef4512ae3fdd2c6d1f173c5610b88c15dbb356a)
