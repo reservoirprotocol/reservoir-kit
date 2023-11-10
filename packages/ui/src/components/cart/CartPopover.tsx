@@ -175,6 +175,18 @@ export function CartPopover({
                   minHeight: '100%',
                 },
               }}
+              onPointerDownOutside={(e) => {
+                const dismissableLayers = Array.from(
+                  document.querySelectorAll('div[data-radix-dismissable]')
+                )
+                const clickedDismissableLayer = dismissableLayers.some((el) =>
+                  e.target ? el.contains(e.target as Node) : false
+                )
+
+                if (!clickedDismissableLayer && dismissableLayers.length > 0) {
+                  e.preventDefault()
+                }
+              }}
             >
               {loading && (
                 <Loader
@@ -379,7 +391,7 @@ export function CartPopover({
                         </Flex>
                       </Flex>
                     ) : null}
-                    {!isCartEmpty && (
+                    {!isCartEmpty && isConnected && (
                       <>
                         <Flex
                           direction="column"
@@ -412,6 +424,7 @@ export function CartPopover({
                                 <CryptoCurrencyIcon
                                   address={currency?.address as string}
                                   css={{ width: 16, height: 16, mr: '$1' }}
+                                  chainId={currency?.chainId}
                                 />
                                 <Text style="subtitle2">
                                   {currency?.symbol}
@@ -507,6 +520,9 @@ export function CartPopover({
                           onClick={async () => {
                             if (!isConnected) {
                               onConnectWallet?.()
+                              if (document.body.style) {
+                                document.body.style.pointerEvents = 'auto'
+                              }
                             } else {
                               checkout()
                                 .then(() => {
@@ -519,9 +535,11 @@ export function CartPopover({
                             }
                           }}
                         >
-                          {hasEnoughCurrency || !isConnected
-                            ? 'Purchase'
-                            : 'Add Funds to Purchase'}
+                          {isConnected
+                            ? hasEnoughCurrency
+                              ? 'Purchase'
+                              : 'Add Funds to Purchase'
+                            : 'Connect'}
                         </Button>
                       )}
                     {!isCartEmpty && !hasValidItems && (
@@ -626,6 +644,7 @@ export function CartPopover({
                   inset: 0,
                   zIndex: 1000,
                 }}
+                data-radix-dismissable
               ></Box>
             )}
           </Popover.Root>

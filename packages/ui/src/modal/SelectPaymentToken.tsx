@@ -72,6 +72,7 @@ export const SelectPaymentToken: FC<Props> = ({
                 >
                   <CryptoCurrencyIcon
                     address={paymentToken?.address as string}
+                    chainId={paymentToken.chainId}
                     css={{ width: 24, height: 24 }}
                   />
                   <Flex direction="column" align="start">

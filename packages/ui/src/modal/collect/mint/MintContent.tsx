@@ -215,6 +215,7 @@ export const MintContent: FC<
                         <CryptoCurrencyIcon
                           address={paymentCurrency?.address as string}
                           css={{ width: 16, height: 16, mr: '$1' }}
+                          chainId={paymentCurrency?.chainId}
                         />
                         <Text style="subtitle2">{paymentCurrency?.name}</Text>
                       </Flex>

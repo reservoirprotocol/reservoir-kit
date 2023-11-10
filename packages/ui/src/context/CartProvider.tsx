@@ -60,6 +60,7 @@ export enum CheckoutTransactionError {
   PiceMismatch,
   InsufficientBalance,
   UserDenied,
+  TransactionTimeOut,
 }
 
 type CartItem = {
@@ -1071,7 +1072,6 @@ function cartStore({
     [usdPrice]
   )
 
-  //todo handle different currencies
   const checkout = useCallback(
     async (options: BuyTokenOptions = {}) => {
       if (!client) {
@@ -1303,16 +1303,22 @@ function cartStore({
 
           if (error?.message && error?.message.includes('ETH balance')) {
             errorType = CheckoutTransactionError.InsufficientBalance
-          } else if (error?.code && error?.code == 4001) {
+          } else if (
+            (error?.code && error?.code == 4001) ||
+            error?.message?.includes('rejected')
+          ) {
             errorType = CheckoutTransactionError.UserDenied
           } else {
             let message = 'Oops, something went wrong. Please try again.'
             if (errorStatus >= 400 && errorStatus < 500) {
               message = error.message
-            }
-            if (error?.type && error?.type === 'price mismatch') {
+            } else if (error?.type && error?.type === 'price mismatch') {
               errorType = CheckoutTransactionError.PiceMismatch
               message = error.message
+            } else if (error.name === 'TransactionTimeoutError') {
+              errorType = CheckoutTransactionError.TransactionTimeOut
+              message =
+                'Your transaction was sent, but is taking longer to process.'
             }
 
             //@ts-ignore: Should be fixed in an update to typescript
