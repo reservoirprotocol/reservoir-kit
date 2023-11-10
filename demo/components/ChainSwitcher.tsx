@@ -18,7 +18,7 @@ export default ({ style }: { style?: CSSProperties }) => {
       style={{ position: 'fixed', top: 16, right: 125, ...style }}
     >
       {chains.map((chain) => (
-        <option value={chain.id}>{chain.name}</option>
+        <option key={chain.id} value={chain.id}>{chain.name}</option>
       ))}
     </select>
   )

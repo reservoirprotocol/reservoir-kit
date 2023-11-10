@@ -44,6 +44,7 @@ import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
 import { truncateAddress } from '../../lib/truncate'
 import { WalletClient } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -123,7 +124,6 @@ export function AcceptBidModal({
         prices,
         tokensData,
         address,
-        blockExplorerBaseUrl,
         stepData,
         acceptBid,
       }) => {
@@ -497,12 +497,15 @@ export function AcceptBidModal({
                       Array.isArray(item?.txHashes) &&
                       item?.txHashes.length > 0
                     ) {
-                      return item.txHashes.map((txHash, txHashIndex) => {
-                        const truncatedTxHash = truncateAddress(txHash)
+                      return item.txHashes.map((hash, txHashIndex) => {
+                        const truncatedTxHash = truncateAddress(hash.txHash)
+                        const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                          hash.chainId
+                        )
                         return (
                           <Anchor
                             key={`${itemIndex}-${txHashIndex}`}
-                            href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                            href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                             color="primary"
                             weight="medium"
                             target="_blank"
@@ -569,12 +572,15 @@ export function AcceptBidModal({
                         Array.isArray(item?.txHashes) &&
                         item?.txHashes.length > 0
                       ) {
-                        return item.txHashes.map((txHash, txHashIndex) => {
-                          const truncatedTxHash = truncateAddress(txHash)
+                        return item.txHashes.map((hash, txHashIndex) => {
+                          const truncatedTxHash = truncateAddress(hash.txHash)
+                          const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                            hash.chainId
+                          )
                           return (
                             <Anchor
                               key={`${itemIndex}-${txHashIndex}`}
-                              href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                              href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                               color="primary"
                               weight="medium"
                               target="_blank"

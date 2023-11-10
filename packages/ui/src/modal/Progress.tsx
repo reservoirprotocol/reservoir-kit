@@ -3,14 +3,15 @@ import React, { FC } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCube, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { truncateAddress } from '../lib/truncate'
+import { Execute } from '@reservoir0x/reservoir-sdk'
+import getChainBlockExplorerUrl from '../lib/getChainBlockExplorerUrl'
 
 type Props = {
   title: string
-  txHashes?: string[]
-  blockExplorerBaseUrl?: string
+  txHashes?: NonNullable<Execute['steps'][0]['items']>[0]['txHashes']
 }
 
-const Progress: FC<Props> = ({ title, txHashes, blockExplorerBaseUrl }) => {
+const Progress: FC<Props> = ({ title, txHashes }) => {
   const hasTxHashes = txHashes && txHashes.length > 0
 
   return (
@@ -36,12 +37,13 @@ const Progress: FC<Props> = ({ title, txHashes, blockExplorerBaseUrl }) => {
       </Box>
       {hasTxHashes ? (
         <Flex direction="column" align="center" css={{ gap: '$2' }}>
-          {txHashes?.map((txHash, index) => {
-            const truncatedTxHash = truncateAddress(txHash)
+          {txHashes?.map((hash, index) => {
+            const truncatedTxHash = truncateAddress(hash.txHash)
+            const blockExplorerBaseUrl = getChainBlockExplorerUrl(hash.chainId)
             return (
               <Anchor
                 key={index}
-                href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                 color="primary"
                 weight="medium"
                 target="_blank"

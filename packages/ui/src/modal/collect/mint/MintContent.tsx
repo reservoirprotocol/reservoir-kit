@@ -35,6 +35,7 @@ import { TokenInfo } from '../TokenInfo'
 import { formatNumber } from '../../../lib/numbers'
 import { truncateAddress } from '../../../lib/truncate'
 import { SelectPaymentToken } from '../../SelectPaymentToken'
+import getChainBlockExplorerUrl from '../../../lib/getChainBlockExplorerUrl'
 
 export const MintContent: FC<
   ChildrenProps & {
@@ -65,7 +66,6 @@ export const MintContent: FC<
   hasEnoughCurrency,
   addFundsLink,
   disableJumperLink,
-  blockExplorerBaseUrl,
   transactionError,
   stepData,
   collectStep,
@@ -597,12 +597,15 @@ export const MintContent: FC<
                   Array.isArray(item?.txHashes) &&
                   item?.txHashes.length > 0
                 ) {
-                  return item.txHashes.map((txHash, txHashIndex) => {
-                    const truncatedTxHash = truncateAddress(txHash)
+                  return item.txHashes.map((hash, txHashIndex) => {
+                    const truncatedTxHash = truncateAddress(hash.txHash)
+                    const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                      hash.chainId
+                    )
                     return (
                       <Anchor
                         key={`${itemIndex}-${txHashIndex}`}
-                        href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                        href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                         color="primary"
                         weight="medium"
                         target="_blank"
