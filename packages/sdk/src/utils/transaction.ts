@@ -211,7 +211,7 @@ const submitTransactionToSolver = async ({
           data: tx.input,
         },
         {
-          v: tx.v,
+          v: tx.v < 27n ? tx.v + 27n : tx.v,
           r: tx.r,
           s: tx.s,
         }
