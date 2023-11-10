@@ -59,9 +59,10 @@ export async function listToken(
       if (
         (!listing.orderbook || listing.orderbook === 'reservoir') &&
         client.marketplaceFees &&
-        !('fees' in listing)
+        !('fees' in listing) &&
+        !('marketplaceFees' in listing)
       ) {
-        listing.fees = client.marketplaceFees
+        listing.marketplaceFees = client.marketplaceFees
       }
 
       if (
