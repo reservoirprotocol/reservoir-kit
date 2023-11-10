@@ -63,10 +63,11 @@ export async function listToken(
         !('fees' in listing) &&
         !('marketplaceFees' in listing)
       ) {
-        listing.marketplaceFees =
-          chain?.marketplaceFees && chain.marketplaceFees.length > 0
-            ? chain.marketplaceFees
-            : client.marketplaceFees
+        if (chain?.marketplaceFees && chain?.marketplaceFees?.length > 0) {
+          listing.marketplaceFees = chain.marketplaceFees
+        } else if (client.marketplaceFees && client?.marketplaceFees?.length > 0) {
+          listing.marketplaceFees = client.marketplaceFees
+        }
       }
 
       if (
