@@ -28,7 +28,8 @@ export async function placeBid({ bids, wallet, chainId, onProgress }: Data) {
     ? adaptViemWallet(wallet)
     : wallet
   const maker = await reservoirWallet.address()
-  let baseApiUrl = client.currentChain()?.baseApiUrl
+  const chain = client.currentChain()
+  let baseApiUrl = chain?.baseApiUrl
 
   if (chainId) {
     baseApiUrl =
@@ -60,11 +61,13 @@ export async function placeBid({ bids, wallet, chainId, onProgress }: Data) {
       }
       if (
         (!bid.orderbook || bid.orderbook === 'reservoir') &&
-        client.marketplaceFees &&
         !('fees' in bid) &&
         !('marketplaceFees' in bid)
       ) {
-        bid.marketplaceFees = client.marketplaceFees
+        bid.marketplaceFees =
+          chain?.marketplaceFees && chain.marketplaceFees.length > 0
+            ? chain.marketplaceFees
+            : client.marketplaceFees
       }
 
       if (!('automatedRoyalties' in bid) && 'automatedRoyalties' in client) {

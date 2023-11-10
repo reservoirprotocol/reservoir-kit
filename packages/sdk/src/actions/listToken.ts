@@ -37,7 +37,9 @@ export async function listToken(
     ? adaptViemWallet(wallet)
     : wallet
   const maker = await reservoirWallet.address()
-  let baseApiUrl = client.currentChain()?.baseApiUrl
+  const chain = client.currentChain()
+
+  let baseApiUrl = chain?.baseApiUrl
 
   if (chainId) {
     baseApiUrl =
@@ -58,11 +60,13 @@ export async function listToken(
     listings.forEach((listing) => {
       if (
         (!listing.orderbook || listing.orderbook === 'reservoir') &&
-        client.marketplaceFees &&
         !('fees' in listing) &&
         !('marketplaceFees' in listing)
       ) {
-        listing.marketplaceFees = client.marketplaceFees
+        listing.marketplaceFees =
+          chain?.marketplaceFees && chain.marketplaceFees.length > 0
+            ? chain.marketplaceFees
+            : client.marketplaceFees
       }
 
       if (
