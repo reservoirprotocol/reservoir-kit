@@ -24,6 +24,7 @@ import React, {
   useEffect,
   FC,
   useState,
+  useContext,
 } from 'react'
 import { useAccount, useSwitchNetwork } from 'wagmi'
 import {
@@ -36,6 +37,7 @@ import {
 import { version } from '../../package.json'
 import { getNetwork, getWalletClient } from 'wagmi/actions'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
+import { ProviderOptionsContext } from '../ReservoirKitProvider'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
@@ -126,6 +128,7 @@ function cartStore({
   persist = true,
   walletClient,
 }: CartStoreProps) {
+  const providerOptionsContext = useContext(ProviderOptionsContext)
   const { address } = useAccount()
   const { switchNetworkAsync } = useSwitchNetwork()
   const [cartCurrency, setCartCurrency] = useState<Cart['currency']>()
@@ -573,7 +576,6 @@ function cartStore({
     [commit, usdPrice]
   )
 
-  //todo test validation
   const validate = useCallback(async () => {
     try {
       if (cartData.current.items.length === 0) {
@@ -713,12 +715,11 @@ function cartStore({
       }
 
       const pools = calculatePools(items)
-      // const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
-      //todo do we need to handle currency when it's mismatched?
+      const currency = getCurrency(items)
       const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
         calculatePricing(
           items,
-          cartData.current.currency,
+          currency,
           cartData.current.feesOnTopBps,
           cartData.current.feesOnTopUsd,
           usdPrice
@@ -770,21 +771,37 @@ function cartStore({
         return cartData.current.currency
       }
 
-      //todo add logic for alwaysIncludeListingCurrency
-      if (paymentTokens && items.length > 0) {
+      const includeListingCurrency =
+        providerOptionsContext.alwaysIncludeListingCurrency !== false
+
+      if (items.length > 0 && paymentTokens) {
         const firstValidItem = items.find((item) => item.price?.currency)
-        return (
-          paymentTokens.find(
-            (token) =>
-              token.address ===
-              firstValidItem?.price?.currency?.contract?.toLowerCase()
-          ) || paymentTokens[0]
-        )
+        if (includeListingCurrency) {
+          const firstValidItemCurrency = firstValidItem?.price?.currency
+          return {
+            address: firstValidItemCurrency?.contract?.toLowerCase() as Address,
+            decimals: firstValidItemCurrency?.decimals || 18,
+            symbol: firstValidItemCurrency?.symbol || '',
+            chainId: cartChain?.id,
+          }
+        } else {
+          return (
+            paymentTokens.find(
+              (token) =>
+                token.address ===
+                firstValidItem?.price?.currency?.contract?.toLowerCase()
+            ) || paymentTokens[0]
+          )
+        }
       }
 
       return undefined
     },
-    [paymentTokens]
+    [
+      paymentTokens,
+      providerOptionsContext.alwaysIncludeListingCurrency,
+      cartChain,
+    ]
   )
 
   type AsyncAddToCartOrder = { orderId: string }
@@ -1174,6 +1191,7 @@ function cartStore({
 
       client.actions
         .buyToken({
+          chainId: cartData.current.chain?.id,
           expectedPrice: {
             [options.currency || zeroAddress]: {
               amount: expectedPrice,

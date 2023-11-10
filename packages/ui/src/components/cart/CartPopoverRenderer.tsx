@@ -167,7 +167,10 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         cartChain,
         paymentTokens,
         checkout,
-        clear,
+        clear: () => {
+          clear()
+          setCartPopoverStep(CartPopoverStep.Idle)
+        },
         remove,
         add,
         validate,
