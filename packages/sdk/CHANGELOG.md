@@ -1,4 +1,24 @@
 
+## [v1.8.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/fadbf9e9d3e369d4a1ca75f9e3686f63c78ec55b) (2023-11-10)
+
+* feat: Use new fee params [6c4332a7](https://github.com/reservoirprotocol/reservoir-kit/commit/6c4332a7a42ae707689b65e39ccc9fac6eae2062)
+
+## [v1.8.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/25cb72c9d788393e926b7ea52330e5643b262dc0) (2023-11-09)
+
+* Update cross-chain purchase error [1e42a456](https://github.com/reservoirprotocol/reservoir-kit/commit/1e42a456ca42287dfd988f16a0836ea49fca8598)
+
+## [v1.8.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8e85ad4f0ca2c59b6af349b77b658d8c9783a0ed) (2023-11-08)
+
+* Fix serialization of tx for solver api [7ef4512a](https://github.com/reservoirprotocol/reservoir-kit/commit/7ef4512ae3fdd2c6d1f173c5610b88c15dbb356a)
+## [v1.8.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e49108009f7f2c62594c58c2ac90fe285e8ec06a) (2023-11-08)
+
+* Merge pull request #450 from reservoirprotocol/ted/update-payment-token-names [1633bab5](https://github.com/reservoirprotocol/reservoir-kit/commit/1633bab5da045956b3fa5d0c33226aea95691623)
+* Remove cross chain payment tokens from defaults [239ebf93](https://github.com/reservoirprotocol/reservoir-kit/commit/239ebf9345997972ecd7d9b09ec0d79d3706401c)
+## [v1.8.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/9ca1db7463ba59be32452832dfb2a07fb9b5fa3d) (2023-11-08)
+
+* Fix transaction polling interval when signature step [37cbbd04](https://github.com/reservoirprotocol/reservoir-kit/commit/37cbbd0444437fe1e492b312645e43af33ae2809)
+* Sync api and add gasCost to CollectModal [575285ec](https://github.com/reservoirprotocol/reservoir-kit/commit/575285ecdafd9ac4e49c5df2c00f8fd6aefab585)
+
 ## [v1.7.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4809c45d8ee9489886b8b0a8c8af0f4de334432d) (2023-11-07)
 
 *Fix error message for crosschain transactions [551b721f](https://github.com/reservoirprotocol/reservoir-kit/commit/551b721f59dad975da3cd03906c8ec5f44f2fc6a)
