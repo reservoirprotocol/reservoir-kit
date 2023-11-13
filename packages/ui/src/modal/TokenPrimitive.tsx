@@ -197,7 +197,6 @@ const TokenPrimitive: FC<Props> = ({
             <FormatCryptoCurrency
               amount={price}
               chainId={chain?.id}
-              textStyle={'subtitle3'}
               textColor={isUnavailable ? 'subtle' : 'base'}
               address={currencyContract}
               decimals={currencyDecimals}
