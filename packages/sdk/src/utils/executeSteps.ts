@@ -395,6 +395,12 @@ export async function executeSteps(
                         setState([...json.steps], path)
                       }
                     },
+                    (internalTxHashes) => {
+                      stepItem.internalTxHashes = internalTxHashes
+                      if (json) {
+                        setState([...json.steps], path)
+                      }
+                    },
                     request,
                     headers,
                     isCrossChainIntent,

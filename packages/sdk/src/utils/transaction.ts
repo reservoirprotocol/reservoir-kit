@@ -24,6 +24,9 @@ export async function sendTransactionSafely(
   setTxHashes: (
     tx: NonNullable<Execute['steps'][0]['items']>[0]['txHashes']
   ) => void,
+  setInternalTxHashes: (
+    tx: NonNullable<Execute['steps'][0]['items']>[0]['internalTxHashes']
+  ) => void,
   request: AxiosRequestConfig,
   headers: AxiosRequestHeaders,
   isCrossChainIntent?: boolean,
@@ -102,6 +105,12 @@ export async function sendTransactionSafely(
         throw Error('Transaction failed')
       }
       if (res.status === 200 && res.data && res.data.status === 'success') {
+        console.log('inside of the txhash updates')
+        if (txHash) {
+          console.log('Setting internal transaction')
+          setInternalTxHashes([{ txHash: txHash, chainId: chainId }])
+        }
+
         const chainTxHashes: NonNullable<
           Execute['steps'][0]['items']
         >[0]['txHashes'] = res.data?.txHashes?.map((hash: Address) => {

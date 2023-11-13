@@ -115,6 +115,9 @@ export const SweepContent: FC<
   const failedSales = itemAmount - totalSales
   const successfulSales = itemAmount - failedSales
 
+  // @TODO: remove
+  console.log(stepData?.currentStep)
+
   return (
     <>
       {!hasTokens ||

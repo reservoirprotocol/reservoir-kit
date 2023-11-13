@@ -99,6 +99,9 @@ export const MintContent: FC<
   const failedMints = itemAmount - totalMints
   const successfulMints = itemAmount - failedMints
 
+  // @TODO: remove
+  console.log(stepData?.currentStep)
+
   return (
     <>
       {(orders?.length === 0 || maxItemAmount === 0) &&
