@@ -1,4 +1,10 @@
 
+## [v1.18.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/71bef10a2ffef6cf525afc7f4e46dbde57b8d9c0) (2023-11-10)
+
+* Fix select currency icon aspect ratio [b95aca22](https://github.com/reservoirprotocol/reservoir-kit/commit/b95aca22cdb55b181d0190155ddc6becac75f091)
+* Fix token media refresh to use contract instead of collectionId [a35dcc24](https://github.com/reservoirprotocol/reservoir-kit/commit/a35dcc24b229dfc501520ac3a33ee50fa0ec46b1)
+* feat: Use new fee params [6c4332a7](https://github.com/reservoirprotocol/reservoir-kit/commit/6c4332a7a42ae707689b65e39ccc9fac6eae2062)
+
 ## [v1.18.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c78ccc64bf55958ab8f5ca8bd97b4df6a2fcf6cd) (2023-11-09)
 
 * Fix payment tokens loading bug [e059354b](https://github.com/reservoirprotocol/reservoir-kit/commit/e059354bb3e557ca58ce55c43f0fd95c1abc9bf3)
