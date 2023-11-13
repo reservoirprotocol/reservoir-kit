@@ -44,7 +44,7 @@
         "@ethersproject/hash": "^5.7.0",
         "@ethersproject/providers": "^5.7.2",
         "@openzeppelin/defender-relay-client": "^1.47.1",
-        "@reservoir0x/ethers-wallet-adapter": "^0.6.3",
+        "@reservoir0x/ethers-wallet-adapter": "^0.6.4",
         "axios": "^0.27.2"
     },
     "publishConfig": {
