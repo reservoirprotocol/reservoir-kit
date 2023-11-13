@@ -1,5 +1,5 @@
 import { styled } from '../../stitches.config'
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
 import {
   Box,
   Flex,
@@ -12,7 +12,6 @@ import {
 } from '../primitives'
 import InfoTooltip from '../primitives/InfoTooltip'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
-import { ProviderOptionsContext } from '../ReservoirKitProvider'
 
 type Props = {
   img?: string
@@ -58,7 +57,6 @@ const TokenPrimitive: FC<Props> = ({
   quantity,
 }) => {
   const royaltyPercent = royaltiesBps ? royaltiesBps / 100 : royaltiesBps
-  const providerOptions = useContext(ProviderOptionsContext)
 
   return (
     <Box>
@@ -195,59 +193,25 @@ const TokenPrimitive: FC<Props> = ({
               css={{ w: 17, h: 17, borderRadius: 99999, overflow: 'hidden' }}
             />
           )}
-          {providerOptions.preferDisplayFiatTotal && usdPrice ? (
-            <>
-              <FormatCurrency
-                amount={usdPrice}
-                style="subtitle3"
-                color="base"
-              />
-              {price ? (
-                <FormatCryptoCurrency
-                  amount={price}
-                  chainId={chain?.id}
-                  textStyle="tiny"
-                  textColor={isUnavailable ? 'subtle' : 'base'}
-                  address={currencyContract}
-                  decimals={currencyDecimals}
-                  symbol={currencySymbol}
-                  logoWidth={12}
-                />
-              ) : (
-                <Text
-                  style="subtitle3"
-                  color={isUnavailable ? 'subtle' : 'base'}
-                >
-                  --
-                </Text>
-              )}
-            </>
+          {price ? (
+            <FormatCryptoCurrency
+              amount={price}
+              chainId={chain?.id}
+              textStyle={'subtitle3'}
+              textColor={isUnavailable ? 'subtle' : 'base'}
+              address={currencyContract}
+              decimals={currencyDecimals}
+              symbol={currencySymbol}
+              logoWidth={14.5}
+            />
           ) : (
-            <>
-              {price ? (
-                <FormatCryptoCurrency
-                  amount={price}
-                  chainId={chain?.id}
-                  textStyle={'subtitle3'}
-                  textColor={isUnavailable ? 'subtle' : 'base'}
-                  address={currencyContract}
-                  decimals={currencyDecimals}
-                  symbol={currencySymbol}
-                  logoWidth={14.5}
-                />
-              ) : (
-                <Text
-                  style="subtitle3"
-                  color={isUnavailable ? 'subtle' : 'base'}
-                >
-                  --
-                </Text>
-              )}
-              {usdPrice ? (
-                <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
-              ) : null}
-            </>
+            <Text style="subtitle3" color={isUnavailable ? 'subtle' : 'base'}>
+              --
+            </Text>
           )}
+          {usdPrice ? (
+            <FormatCurrency amount={usdPrice} style="tiny" color="subtle" />
+          ) : null}
           {warning && (
             <Text style="subtitle3" color="error">
               {warning}
