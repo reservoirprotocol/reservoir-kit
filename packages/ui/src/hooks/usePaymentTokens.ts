@@ -3,9 +3,12 @@ import { fetchBalance } from 'wagmi/actions'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useReservoirClient, useCurrencyConversions } from '.'
 import { useMemo } from 'react'
-import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { ReservoirChain, paths } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
 import useSWR from 'swr'
+
+type SolverCapacityResponse =
+  paths['/execute/solve/capacity/v1']['post']['responses']['200']['schema']
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
@@ -112,6 +115,16 @@ export default function (
     }
   )
 
+  const path = new URL(`${chain?.baseApiUrl}/execute/solve/capacity/v1`)
+
+  const { data: solverCapacity } = useSWR<SolverCapacityResponse>(
+    path ? [path.href, client?.apiKey, client?.version] : null,
+    null,
+    {
+      revalidateOnMount: true,
+    }
+  )
+
   const preferredCurrencyConversions = useCurrencyConversions(
     preferredCurrency?.address,
     chain,
@@ -194,8 +207,11 @@ export default function (
       })
       .filter((currency) =>
         currency.chainId !== chain?.id &&
-        (currency.currencyTotalRaw || 0) > 50000000000000000n
-          ? false
+        solverCapacity &&
+        currency.currencyTotalRaw &&
+        currency.currencyTotalRaw > BigInt(solverCapacity?.maxPricePerItem)
+          ? // (currency.currencyTotalRaw || 0) > 50000000000000000n
+            false
           : true
       )
       .sort((a, b) => {
