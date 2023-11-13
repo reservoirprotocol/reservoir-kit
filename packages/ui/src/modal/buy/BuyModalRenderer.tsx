@@ -523,8 +523,6 @@ export const BuyModalRenderer: FC<Props> = ({
         },
         wallet,
         onProgress: (steps: Execute['steps']) => {
-          console.log(steps, 'STEPS')
-
           if (!steps) {
             return
           }
