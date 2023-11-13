@@ -56,7 +56,10 @@ export default function (
           const data = getLocalMarketplaceData()
           marketplace.name = data.title
           marketplace.domain = client?.source
-          const marketplaceFees = fees || client?.marketplaceFees
+          const marketplaceFees =
+            fees || (chain?.marketplaceFees && chain.marketplaceFees.length > 0)
+              ? chain?.marketplaceFees
+              : client?.marketplaceFees
           const feeBps = marketplaceFees?.reduce((total, fee) => {
             const bps = Number(fee.split(':')[1])
             total += bps
@@ -78,7 +81,7 @@ export default function (
       })
       setMarketplaces(updatedMarketplaces)
     }
-  }, [data, listingEnabledOnly, chainId, fees])
+  }, [data, listingEnabledOnly, chain, chainId, fees])
 
   return [marketplaces, setMarketplaces]
 }
