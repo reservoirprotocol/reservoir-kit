@@ -23,10 +23,12 @@ export function isAPIError(error?: Error) {
 export class APIError extends Error {
   type: string
   statusCode: number
+  rawError: any
 
   constructor(
-    message: string,
+    message: string = 'Unknown Reason',
     statusCode: number,
+    rawError?: any,
     type: string = 'APIError',
     options: any = {}
   ) {
@@ -34,5 +36,6 @@ export class APIError extends Error {
     this.name = 'APIError'
     this.type = type
     this.statusCode = statusCode
+    this.rawError = rawError
   }
 }
