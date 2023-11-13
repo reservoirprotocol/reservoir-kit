@@ -2,10 +2,11 @@ import { erc20ABI, useContractReads } from 'wagmi'
 import { fetchBalance } from 'wagmi/actions'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useReservoirClient, useCurrencyConversions } from '.'
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
 import useSWR from 'swr'
+import { ProviderOptionsContext } from '../ReservoirKitProvider'
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
@@ -45,26 +46,43 @@ export default function (
   preferredCurrencyTotalPrice: bigint,
   chainId?: number,
   nativeOnly?: boolean,
-  crossChainDisabled?: boolean
+  crossChainDisabled?: boolean,
+  listingCurrency?: EnhancedCurrency
 ) {
   const client = useReservoirClient()
+  const providerOptions = useContext(ProviderOptionsContext)
   const chain =
     chainId !== undefined
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
 
+  const includeListingCurrency =
+    providerOptions.alwaysIncludeListingCurrency !== false
+
   const allPaymentTokens = useMemo(() => {
     let paymentTokens = chain?.paymentTokens
 
-    if (nativeOnly) {
-      paymentTokens = paymentTokens?.filter(
-        (token) => token.address === zeroAddress
+    if (includeListingCurrency) {
+      const listingCurrencyAlreadyExists = paymentTokens?.some(
+        (token) =>
+          token.address.toLowerCase() ===
+            listingCurrency?.address?.toLowerCase() &&
+          token.chainId === listingCurrency?.chainId
       )
+      if (!listingCurrencyAlreadyExists && listingCurrency) {
+        paymentTokens?.push(listingCurrency)
+      }
     }
 
     if (crossChainDisabled) {
       paymentTokens = paymentTokens?.filter(
         (token) => token.chainId === chain?.id
+      )
+    }
+
+    if (nativeOnly) {
+      paymentTokens = paymentTokens?.filter(
+        (token) => token.address === zeroAddress
       )
     }
 
@@ -76,7 +94,14 @@ export default function (
       paymentTokens?.push(preferredCurrency)
     }
     return paymentTokens
-  }, [chain?.paymentTokens, preferredCurrency.address, nativeOnly])
+  }, [
+    chain?.paymentTokens,
+    preferredCurrency.address,
+    crossChainDisabled,
+    nativeOnly,
+    listingCurrency,
+    includeListingCurrency,
+  ])
 
   const nonNativeCurrencies = useMemo(() => {
     return allPaymentTokens?.filter(
@@ -201,14 +226,16 @@ export default function (
       .sort((a, b) => {
         // If user has a balance for the listed currency, return first. Otherwise sort currencies by total usdPrice
         if (
-          a.address === preferredCurrency.address &&
-          a.chainId === preferredCurrency.chainId &&
+          listingCurrency &&
+          a.address === listingCurrency.address &&
+          a.chainId === listingCurrency.chainId &&
           Number(a.balance) > 0
         )
           return -1
         if (
-          b.address === preferredCurrency.address &&
-          b.chainId === preferredCurrency.chainId &&
+          listingCurrency &&
+          b.address === listingCurrency.address &&
+          b.chainId === listingCurrency.chainId &&
           Number(b.balance) > 0
         )
           return 1
@@ -237,6 +264,7 @@ export default function (
     allPaymentTokens,
     nonNativeBalances,
     nativeBalances,
+    listingCurrency,
   ])
 
   return paymentTokens

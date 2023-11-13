@@ -213,6 +213,10 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
 
+  const [listingCurrency, setListingCurrency] = useState<
+    EnhancedCurrency | undefined
+  >(undefined)
+
   const [_paymentCurrency, setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
@@ -223,7 +227,9 @@ export const CollectModalRenderer: FC<Props> = ({
     _paymentCurrency ?? chainCurrency,
     totalIncludingFees,
     rendererChain?.id,
-    contentMode === 'mint'
+    contentMode === 'mint',
+    false,
+    listingCurrency
   )
 
   const paymentCurrency = paymentTokens?.find(
@@ -484,37 +490,35 @@ export const CollectModalRenderer: FC<Props> = ({
     orders,
   ])
 
+  // Set paymentCurrency to first paymentToken
   useEffect(() => {
-    if (!paymentTokens[0] || paymentCurrency) {
+    if (paymentTokens[0] && listingCurrency && !paymentCurrency) {
+      setPaymentCurrency(paymentTokens[0])
+    }
+  }, [paymentTokens, listingCurrency, paymentCurrency])
+
+  // Set listing currency
+  useEffect(() => {
+    if (listingCurrency || !open || !fetchedInitialOrders) {
       return
     }
-
     if (contentMode === 'mint') {
-      setPaymentCurrency(chainCurrency)
-    } else if (selectedTokens.length > 0) {
-      let firstListingCurrency
-      if (providerOptions.alwaysIncludeListingCurrency !== false) {
-        firstListingCurrency = {
-          address: selectedTokens?.[0].currency as Address,
-          decimals: selectedTokens?.[0].currencyDecimals || 18,
-          symbol: selectedTokens?.[0].currencySymbol || '',
-          chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
-        }
-      } else {
-        firstListingCurrency =
-          paymentTokens.find(
-            (token) =>
-              token.address === selectedTokens[0].currency?.toLowerCase()
-          ) || paymentTokens[0]
-      }
-
-      setPaymentCurrency(firstListingCurrency)
+      setListingCurrency(chainCurrency)
+    } else if (selectedTokens[0]) {
+      setListingCurrency({
+        address: selectedTokens?.[0].currency as Address,
+        decimals: selectedTokens?.[0].currencyDecimals || 18,
+        symbol: selectedTokens?.[0].currencySymbol || '',
+        name: selectedTokens?.[0].currencySymbol || '',
+        chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
+      })
     }
   }, [
-    paymentTokens,
-    chainCurrency,
+    listingCurrency,
+    open,
+    fetchedInitialOrders,
+    contentMode,
     selectedTokens,
-    providerOptions.alwaysIncludeListingCurrency,
     rendererChain,
   ])
 
@@ -568,6 +572,7 @@ export const CollectModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setFetchedInitialOrders(false)
       setPaymentCurrency(undefined)
+      setListingCurrency(undefined)
     } else {
       setItemAmount(defaultQuantity || 1)
     }
