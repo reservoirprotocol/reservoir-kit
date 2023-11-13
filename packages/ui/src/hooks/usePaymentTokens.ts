@@ -224,21 +224,55 @@ export default function (
           : true
       )
       .sort((a, b) => {
-        // If user has a balance for the listed currency, return first. Otherwise sort currencies by total usdPrice
+        // If user has enough balance in the listing currency, return first. Otherwise sort currencies by balance and chainId
+
+        // User has enough balance in listing currency
         if (
           listingCurrency &&
           a.address === listingCurrency.address &&
           a.chainId === listingCurrency.chainId &&
-          Number(a.balance) > 0
-        )
+          a.currencyTotalRaw &&
+          BigInt(a.balance) > a.currencyTotalRaw
+        ) {
           return -1
+        }
         if (
           listingCurrency &&
           b.address === listingCurrency.address &&
           b.chainId === listingCurrency.chainId &&
-          Number(b.balance) > 0
-        )
+          b.currencyTotalRaw &&
+          BigInt(b.balance) > b.currencyTotalRaw
+        ) {
           return 1
+        }
+
+        // User has enough balance in non-listing currency
+        if (a.currencyTotalRaw && BigInt(a.balance) > a.currencyTotalRaw) {
+          return -1
+        }
+
+        if (b.currencyTotalRaw && BigInt(b.balance) > b.currencyTotalRaw) {
+          return 1
+        }
+
+        // Currency is the listing currency
+        if (
+          listingCurrency &&
+          a.address === listingCurrency.address &&
+          a.chainId === listingCurrency.chainId
+        ) {
+          return -1
+        }
+
+        if (
+          listingCurrency &&
+          b.address === listingCurrency.address &&
+          b.chainId === listingCurrency.chainId
+        ) {
+          return 1
+        }
+
+        // Otherwise sort by usdPrice and chaindId
         if (Number(b.usdPrice) === Number(a.usdPrice)) {
           if (
             a.chainId === preferredCurrency.chainId &&
