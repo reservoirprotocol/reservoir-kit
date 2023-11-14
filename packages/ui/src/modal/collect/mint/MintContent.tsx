@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { ChildrenProps, CollectStep } from '../CollectModalRenderer'
 import {
   Anchor,
@@ -35,6 +35,7 @@ import { TokenInfo } from '../TokenInfo'
 import { formatNumber } from '../../../lib/numbers'
 import { truncateAddress } from '../../../lib/truncate'
 import { SelectPaymentToken } from '../../SelectPaymentToken'
+import { ProviderOptionsContext } from '../../../ReservoirKitProvider'
 
 export const MintContent: FC<
   ChildrenProps & {
@@ -75,6 +76,7 @@ export const MintContent: FC<
   copy,
   setOpen,
 }) => {
+  const providerOptions = useContext(ProviderOptionsContext)
   const pathMap = stepData?.path
     ? (stepData.path as Path[]).reduce(
         (paths: Record<string, Path>, path: Path) => {
@@ -256,20 +258,43 @@ export const MintContent: FC<
               >
                 <Text style="h6">You Pay</Text>
                 <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                  <FormatCryptoCurrency
-                    chainId={chainId}
-                    textStyle="h6"
-                    amount={paymentCurrency?.currencyTotalRaw}
-                    address={paymentCurrency?.address}
-                    decimals={paymentCurrency?.decimals}
-                    symbol={paymentCurrency?.name}
-                    logoWidth={18}
-                  />
-                  <FormatCurrency
-                    amount={paymentCurrency?.usdTotalPriceRaw}
-                    style="tiny"
-                    color="subtle"
-                  />
+                  {providerOptions.preferDisplayFiatTotal ? (
+                    <>
+                      <FormatCurrency
+                        amount={paymentCurrency?.usdTotalPriceRaw}
+                        style="h6"
+                        color="base"
+                      />
+                      <FormatCryptoCurrency
+                        chainId={chainId}
+                        textStyle="tiny"
+                        textColor="subtle"
+                        amount={paymentCurrency?.currencyTotalRaw}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
+                        logoWidth={12}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <FormatCryptoCurrency
+                        chainId={chainId}
+                        textStyle="h6"
+                        textColor="base"
+                        amount={paymentCurrency?.currencyTotalRaw}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
+                        logoWidth={18}
+                      />
+                      <FormatCurrency
+                        amount={paymentCurrency?.usdTotalPriceRaw}
+                        style="tiny"
+                        color="subtle"
+                      />
+                    </>
+                  )}
                 </Flex>
               </Flex>
             </Flex>
