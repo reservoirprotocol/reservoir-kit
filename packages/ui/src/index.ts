@@ -24,6 +24,7 @@ export {
   useCart,
   useDynamicTokens,
   useTrendingCollections,
+  useTrendingMints,
 } from './hooks'
 
 // Themes
