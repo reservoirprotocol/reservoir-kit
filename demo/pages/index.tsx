@@ -86,6 +86,9 @@ const Index: NextPage = () => {
         <Link href="/hook/userCollections">
           <a>useUserCollections</a>
         </Link>
+        <Link href="/hook/useTrendingCollections">
+          <a>useTrendingCollections</a>
+        </Link>
       </nav>
       <h2>UI Components</h2>
       <nav style={{ display: 'flex', gap: 15 }}>

@@ -26,7 +26,7 @@ export default function (
         return null;
       }
 
-      const url = new URL(`${chain?.baseApiUrl}/tokens/v6`);
+      const url = new URL(`${chain?.baseApiUrl}/collections/trending/v1`);
       let query: TrendingCollectionsQuery = { ...options };
 
       if (
