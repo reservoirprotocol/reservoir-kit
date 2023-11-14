@@ -350,6 +350,7 @@ export const MintContent: FC<
             currency={paymentCurrency}
             setCurrency={setPaymentCurrency}
             goBack={() => setCollectStep(CollectStep.Idle)}
+            itemAmount={itemAmount}
           />
         </Flex>
       )}

@@ -20,6 +20,8 @@ export type EnhancedCurrency =
       balance?: string | number | bigint
       currencyTotalRaw?: bigint
       currencyTotalFormatted?: string
+      maxItems?: number
+      maxPricePerItem?: bigint
     }
 
 const fetchNativeBalances = async (
@@ -116,7 +118,26 @@ export default function (
     }
   )
 
-  const { data: solverCapacities } = useSolverCapacities
+  const crosschainChainIds = useMemo(() => {
+    if (crossChainDisabled) {
+      return []
+    } else {
+      return (
+        allPaymentTokens
+          ?.filter((token) => token?.chainId !== chain?.id)
+          ?.map((token) => token?.chainId) ?? []
+      )
+    }
+  }, [allPaymentTokens, crossChainDisabled])
+
+  console.log('crosschainChainIds: ', crosschainChainIds)
+
+  const { data: solverCapacityChainIdMap } = useSolverCapacities(
+    open ? crosschainChainIds : [],
+    chain
+  )
+
+  console.log('solverCapacityChainIdMap: ', solverCapacityChainIdMap)
 
   const preferredCurrencyConversions = useCurrencyConversions(
     preferredCurrency?.address,
@@ -186,6 +207,25 @@ export default function (
           ? formatUnits(usdTotalPriceRaw, 6)
           : undefined
 
+        let maxItems: EnhancedCurrency['maxItems'] = undefined
+        let maxPricePerItem: EnhancedCurrency['maxPricePerItem'] = undefined
+
+        if (
+          !crossChainDisabled &&
+          crosschainChainIds?.length > 0 &&
+          solverCapacityChainIdMap &&
+          currency.chainId !== chain?.id
+        ) {
+          const solverCapacity = solverCapacityChainIdMap.get(currency.chainId)
+
+          if (solverCapacity) {
+            maxItems = solverCapacity.maxItems
+            if (typeof solverCapacity.maxPricePerItem === 'string') {
+              maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
+            }
+          }
+        }
+
         return {
           ...currency,
           address: currency.address.toLowerCase(),
@@ -196,14 +236,10 @@ export default function (
           balance,
           currencyTotalRaw,
           currencyTotalFormatted,
+          maxItems,
+          maxPricePerItem,
         }
       })
-      .filter((currency) =>
-        currency.chainId !== chain?.id
-          ? // (currency.currencyTotalRaw || 0) > 50000000000000000n
-            false
-          : true
-      )
       .sort((a, b) => {
         // If user has a balance for the listed currency, return first. Otherwise sort currencies by total usdPrice
         if (

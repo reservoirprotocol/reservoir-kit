@@ -1,16 +1,25 @@
-import useSWR from 'swr/immutable'
-import { axios, paths } from '@reservoir0x/reservoir-sdk'
-import { useReservoirClient } from '.'
+import useSWR from 'swr'
+import { ReservoirChain, axios, paths } from '@reservoir0x/reservoir-sdk'
+import { useMemo } from 'react'
 
 type SolverCapacityResponse =
-  paths['/execute/solve/capacity/v1']['post']['responses']['200']['schema']
+  paths['/execute/solve/capacity/v1']['post']['responses']['200']['schema'] & {
+    fromChainId: number
+  }
 
-const fetcher = async (requests) => {
-  const fetches = requests.map(
+const fetcher = async (
+  requests: {
+    url: string
+    fromChainId: number
+  }[]
+) => {
+  const fetches = requests?.map(
     ({ url, fromChainId }) =>
       axios
         .post(url, { kind: 'cross-chain-intent', fromChainId: fromChainId })
-        .then((res) => res.data)
+        .then((res) => {
+          return { ...res.data, fromChainId: fromChainId }
+        })
         .catch(() => undefined) // If a fetch fails, return undefined
   )
 
@@ -20,27 +29,38 @@ const fetcher = async (requests) => {
   )
 }
 
-export default function (chainIds: number[]) {
-  const client = useReservoirClient()
-  const requests = chainIds
-    .map((chainId) => {
-      const baseUrl = client?.chains.find(
-        (chain) => chain?.id === chainId
-      )?.baseApiUrl
-      if (!baseUrl) return null
-      return {
-        url: `${baseUrl}/execute/solve/capacity/v1`,
-        fromChainId: chainId,
-      }
-    })
-    .filter(Boolean) // Filter out null values
-
-  const { data, error } = useSWR<SolverCapacityResponse[]>(requests, fetcher, {
-    dedupingInterval: 3600000, // 1 hour cache duration
+export default function (
+  fromChainIds: number[],
+  chain?: ReservoirChain | null
+) {
+  const requests = fromChainIds.map((fromChainId) => {
+    return {
+      url: `${chain?.baseApiUrl}/execute/solve/capacity/v1`,
+      fromChainId: fromChainId,
+    }
   })
 
+  const { data, error } = useSWR<SolverCapacityResponse[]>(
+    requests?.length > 0 ? requests : undefined,
+    fetcher,
+    {
+      dedupingInterval: 3600000, // 1 hour cache duration
+    }
+  )
+
+  // Transform the array of responses into a map with fromChainId as the key
+  const solverCapacityChainIdMap = useMemo(() => {
+    const map = new Map<number, SolverCapacityResponse>()
+    data?.forEach((item) => {
+      if (item) {
+        map.set(item.fromChainId, item)
+      }
+    })
+    return map
+  }, [data])
+
   return {
-    data,
+    data: solverCapacityChainIdMap,
     isError: !!error,
     isLoading: !data && !error,
   }

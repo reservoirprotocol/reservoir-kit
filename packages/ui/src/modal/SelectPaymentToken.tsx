@@ -13,6 +13,7 @@ type Props = {
   >
   goBack: () => void
   currency?: EnhancedCurrency
+  itemAmount: number
 }
 
 export const SelectPaymentToken: FC<Props> = ({
@@ -36,6 +37,7 @@ export const SelectPaymentToken: FC<Props> = ({
             BigInt(paymentToken?.balance || 0),
             paymentToken?.decimals || 18
           )
+
           if (paymentToken?.currencyTotalRaw != undefined)
             return (
               <Button
