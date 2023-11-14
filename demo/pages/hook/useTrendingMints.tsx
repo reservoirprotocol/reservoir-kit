@@ -26,7 +26,7 @@ const Mints: NextPage = () => {
     >
       <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Trending Mints</h3>
-      {mints.map((mint, i) => (
+      {mints?.map((mint, i) => (
         <div key={`${mint?.id}-${i}`}>
           <div>Id: {mint?.id}</div>
           <div>Name: {mint?.name}</div>
