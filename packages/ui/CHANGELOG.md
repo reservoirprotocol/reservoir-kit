@@ -1,4 +1,33 @@
 
+## [v1.18.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4ad23190b1c0ae1c0f6390ffc34ca0071ac30adf) (2023-11-14)
+
+* Fix marketplace fee breakdown on ListModal [addfc729](https://github.com/reservoirprotocol/reservoir-kit/commit/addfc72973159f7aab872bc6817493c9787bcc46)
+## [v1.18.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c46d6307568b472423c70c1d5dcd2e3e5db9e419) (2023-11-14)
+
+* Merge pull request #474 from reservoirprotocol/armando/grwth-3592-trending-collections-hook [fa0db2f5](https://github.com/reservoirprotocol/reservoir-kit/commit/fa0db2f5a324584814f51318a6189816a44ac8fa)
+* Merge pull request #451 from reservoirprotocol/jaden/grwth-3514-switch-the-hierarchy-of-fiat-crypto-price-for-buycollectcart [701aba3c](https://github.com/reservoirprotocol/reservoir-kit/commit/701aba3c46662a45bca46aec6220eada3ccd274a)
+* Merge pull request #471 from reservoirprotocol/armando/grwth-3575-round-currency-icons-reservoir-kit [f57ad566](https://github.com/reservoirprotocol/reservoir-kit/commit/f57ad5666dd89ccb572146370eb0e2c3e1744af6)
+* fix: build issues [86bd881d](https://github.com/reservoirprotocol/reservoir-kit/commit/86bd881ded6fb87fe8cbea5a1973c394c4486001)
+* fix: useSWR hook: [ec106c9a](https://github.com/reservoirprotocol/reservoir-kit/commit/ec106c9a983f7a68e7d540f44144a856e39e39d5)
+* fix: useSWR hook [1410c240](https://github.com/reservoirprotocol/reservoir-kit/commit/1410c240240ce4c12c420f64c6094c75ec4cc4d5)
+* feat: exports and demo [d04c53e9](https://github.com/reservoirprotocol/reservoir-kit/commit/d04c53e9d924910a22a60fabdabe38f24bf6bb2a)
+* feat: demo & exports [e4ab6e4e](https://github.com/reservoirprotocol/reservoir-kit/commit/e4ab6e4e62bb27b83f752d938fd1bf05afc6e292)
+* feat: trendingCollections Hook [ce204cdc](https://github.com/reservoirprotocol/reservoir-kit/commit/ce204cdcf1025c2ae0576eca103cf80301393c63)
+* feat: trendingMints Hook [9759359b](https://github.com/reservoirprotocol/reservoir-kit/commit/9759359ba90f57b7801b8887afc6c83eeeedae44)
+## [v1.18.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a9048b549e6e92da33681c5f5fe1d830b47d6131) (2023-11-13)
+
+## [v1.18.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/9b76a9e5b59783d02d1cdaec5f3b8b5670a84f52) (2023-11-13)
+
+* fix: cleaning up [d61d91a8](https://github.com/reservoirprotocol/reservoir-kit/commit/d61d91a8c539df04e1525f3e48fa2227758f5bc2)
+* feat: removing preferDisplayFiatTotal logic from token primitive [f2768cec](https://github.com/reservoirprotocol/reservoir-kit/commit/f2768cec6c3d79cb8ef9f0a545ae0539535ee8da)
+* feat: Rounded currency icon [343f12f7](https://github.com/reservoirprotocol/reservoir-kit/commit/343f12f7bc2280e11894dc158b93950226c570b0)
+* Merge pull request #464 from reservoirprotocol/armando/grwth-3467-truncate-the-collection-name-when-it-is-too-long [8b2b3094](https://github.com/reservoirprotocol/reservoir-kit/commit/8b2b3094ad33fd7c4f832f393dd4dca7ae3049de)
+* feat: Address feedback [cb01b778](https://github.com/reservoirprotocol/reservoir-kit/commit/cb01b7783ce1a361c7228e8663539806c7be2148)
+* feat: Marketplace fees per chain [754a16b0](https://github.com/reservoirprotocol/reservoir-kit/commit/754a16b0fed932491bd8836f618f38a31cf24ae4)
+* feat: truncuate collection name [2bcf1acf](https://github.com/reservoirprotocol/reservoir-kit/commit/2bcf1acfc044baa0cb068323b53f23f8bf79090e)
+* feat: changing option name [30047f16](https://github.com/reservoirprotocol/reservoir-kit/commit/30047f16bc768b260247ff28512eeae4a09e76db)
+* feat: adding switch for fiat and crypto price in buy/collect/cart modal [ace6af5d](https://github.com/reservoirprotocol/reservoir-kit/commit/ace6af5d642f4360fd1a142496a313f0b172d118)
+
 ## [v1.18.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/71bef10a2ffef6cf525afc7f4e46dbde57b8d9c0) (2023-11-10)
 
 * Fix select currency icon aspect ratio [b95aca22](https://github.com/reservoirprotocol/reservoir-kit/commit/b95aca22cdb55b181d0190155ddc6becac75f091)

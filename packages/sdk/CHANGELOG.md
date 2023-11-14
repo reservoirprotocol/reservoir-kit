@@ -1,4 +1,18 @@
 
+## [v1.8.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/9312dc4a3045ad0cb0a15a3d279f602ebefdd639) (2023-11-13)
+
+## [🎉 Release ui package v1.18.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/9b76a9e5b59783d02d1cdaec5f3b8b5670a84f52) (2023-11-13)
+
+## [v1.8.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/bc99616b5ff1b518e75f44b4f7b8de4aa54b2734) (2023-11-13)
+
+* Merge pull request #468 from reservoirprotocol/armando/grwth-3570-different-marketplacefee-configuration-per-chain [2526b707](https://github.com/reservoirprotocol/reservoir-kit/commit/2526b7075fa5c0c5f938185d49cca46426717025)
+* Merge pull request #470 from reservoirprotocol/pedro/grwth-3578-bubble-up-full-api-error-from-sdk-actions [282f2f54](https://github.com/reservoirprotocol/reservoir-kit/commit/282f2f5441b0bd290bed6a935ed9ec15902649ba)
+* Bubble up full error data when executing actions [57622109](https://github.com/reservoirprotocol/reservoir-kit/commit/57622109a537d08456191dbfe6556a5f590edc53)
+* feat: Update condtionals [b73e9eac](https://github.com/reservoirprotocol/reservoir-kit/commit/b73e9eac48e0b403659686b88a4003a69b91a83e)
+* feat: Marketplace fees per chain [754a16b0](https://github.com/reservoirprotocol/reservoir-kit/commit/754a16b0fed932491bd8836f618f38a31cf24ae4)
+* Remove from field from serializeTransaction [7d9b233a](https://github.com/reservoirprotocol/reservoir-kit/commit/7d9b233ac95691456cac0a22ad583d437b4dd691)
+* Fix serialize transaction signature [34583c8b](https://github.com/reservoirprotocol/reservoir-kit/commit/34583c8b844e03b7ff408b920e57d24c151072ea)
+
 ## [v1.8.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/fadbf9e9d3e369d4a1ca75f9e3686f63c78ec55b) (2023-11-10)
 
 * feat: Use new fee params [6c4332a7](https://github.com/reservoirprotocol/reservoir-kit/commit/6c4332a7a42ae707689b65e39ccc9fac6eae2062)
