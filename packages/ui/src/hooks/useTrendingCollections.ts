@@ -1,58 +1,40 @@
-import { paths, setParams } from "@reservoir0x/reservoir-sdk";
-import { useMemo } from "react";
-import { SWRInfiniteConfiguration } from "swr/infinite";
-import { useInfiniteApi, useReservoirClient } from ".";
+import { paths, setParams } from '@reservoir0x/reservoir-sdk'
+import useSWR, { SWRConfiguration } from 'swr'
+import { useReservoirClient } from './'
 
 type TrendingCollectionsResponse =
-  paths["/collections/trending/v1"]["get"]["responses"]["200"]["schema"];
+  paths['/collections/v1']['get']['responses']['200']['schema']
 
 type TrendingCollectionsQuery =
-  paths["/collections/trending/v1"]["get"]["parameters"]["query"];
+  paths['/collections/v1']['get']['parameters']['query']
 
 export default function (
-  options?: TrendingCollectionsQuery | false,
-  swrOptions: SWRInfiniteConfiguration = {},
-  chainId?: number
+  options: TrendingCollectionsQuery | false,
+  chainId?: number,
+  swrOptions: SWRConfiguration = {}
 ) {
-  const client = useReservoirClient();
+  const client = useReservoirClient()
   const chain =
     chainId !== undefined
       ? client?.chains.find((chain) => chain.id === chainId)
-      : client?.currentChain();
+      : client?.currentChain()
 
-  const response = useInfiniteApi<TrendingCollectionsResponse>(
-    (pageIndex, previousPageData) => {
-      if (!options) {
-        return null;
+  const url = new URL(`${chain?.baseApiUrl}/collections/v1`)
+  let query: TrendingCollectionsQuery = { ...options }
+
+  setParams(url, query)
+
+  const { data, mutate, error, isValidating } =
+    useSWR<TrendingCollectionsResponse>(
+      url && options ? [url.href, client?.apiKey, client?.version] : null,
+      null,
+      {
+        revalidateOnMount: true,
+        ...swrOptions,
       }
+    )
 
-      const url = new URL(`${chain?.baseApiUrl}/collections/trending/v1`);
-      let query: TrendingCollectionsQuery = { ...options };
-
-      if (
-        query.normalizeRoyalties === undefined &&
-        client?.normalizeRoyalties !== undefined
-      ) {
-        query.normalizeRoyalties = client.normalizeRoyalties;
-      }
-
-      setParams(url, query);
-      return [url.href, client?.apiKey, client?.version];
-    },
-    {
-      revalidateOnMount: true,
-      revalidateFirstPage: false,
-      ...swrOptions,
-    }
-  );
-
-  const collections = useMemo(
-    () => response.data?.flatMap((page) => page.collections || []) ?? [],
-    [response.data]
-  );
-
-  return {
-    ...response,
-    data: collections,
-  };
+  const collections: TrendingCollectionsResponse['collections'] | null =
+    data && data.collections ? data.collections : null
+  return { response: data, data: collections, mutate, error, isValidating }
 }
