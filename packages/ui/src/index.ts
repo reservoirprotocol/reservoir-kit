@@ -23,6 +23,7 @@ export {
   useUserCollections,
   useCart,
   useDynamicTokens,
+  useTrendingMints,
 } from './hooks'
 
 // Themes
