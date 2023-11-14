@@ -6,7 +6,7 @@ import { NextPage } from 'next';
 const Collections: NextPage = () => {
 
   const {
-    data: collections,
+    data: mints,
   } = useTrendingMints({
     period: '24h',
     limit: 50,
@@ -26,10 +26,10 @@ const Collections: NextPage = () => {
     >
       <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Trending Mints</h3>
-      {collections.map((collection, i) => (
-        <div key={`${collection?.id}-${i}`}>
-          <div>Id: {collection?.id}</div>
-          <div>Name: {collection?.name}</div>
+      {mints.map((mint, i) => (
+        <div key={`${mint?.id}-${i}`}>
+          <div>Id: {mint?.id}</div>
+          <div>Name: {mint?.name}</div>
         </div>
       ))}
       <ChainSwitcher />
