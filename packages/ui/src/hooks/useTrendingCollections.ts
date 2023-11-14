@@ -3,10 +3,10 @@ import useSWR, { SWRConfiguration } from 'swr'
 import { useReservoirClient } from './'
 
 type TrendingCollectionsResponse =
-  paths['/collections/v1']['get']['responses']['200']['schema']
+paths['/collections/trending/v1']['get']['responses']['200']['schema']
 
 type TrendingCollectionsQuery =
-  paths['/collections/v1']['get']['parameters']['query']
+  paths['/collections/trending/v1']['get']['parameters']['query']
 
 export default function (
   options: TrendingCollectionsQuery | false,
@@ -19,7 +19,7 @@ export default function (
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
 
-  const url = new URL(`${chain?.baseApiUrl}/collections/v1`)
+  const url = new URL(`${chain?.baseApiUrl}/collections/trending/v1`)
   let query: TrendingCollectionsQuery = { ...options }
 
   setParams(url, query)

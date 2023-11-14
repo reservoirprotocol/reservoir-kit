@@ -26,7 +26,7 @@ const Collections: NextPage = () => {
     >
       <ConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Trending Collections</h3>
-      {collections.map((collection, i) => (
+      {collections?.map((collection, i) => (
         <div key={`${collection?.id}-${i}`}>
           <div>Id: {collection?.id}</div>
           <div>Name: {collection?.name}</div>
