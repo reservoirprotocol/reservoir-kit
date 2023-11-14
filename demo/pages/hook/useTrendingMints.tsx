@@ -3,7 +3,7 @@ import { useTrendingMints } from '@reservoir0x/reservoir-kit-ui';
 import ChainSwitcher from 'components/ChainSwitcher';
 import { NextPage } from 'next';
 
-const Collections: NextPage = () => {
+const Mints: NextPage = () => {
 
   const {
     data: mints,
@@ -37,4 +37,4 @@ const Collections: NextPage = () => {
   )
 }
 
-export default Collections
+export default Mints
