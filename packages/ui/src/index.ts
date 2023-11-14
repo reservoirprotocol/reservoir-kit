@@ -23,6 +23,7 @@ export {
   useUserCollections,
   useCart,
   useDynamicTokens,
+  useTrendingCollections,
   useTrendingMints,
 } from './hooks'
 
