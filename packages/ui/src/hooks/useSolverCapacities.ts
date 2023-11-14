@@ -7,6 +7,7 @@ type SolverCapacityResponse =
     fromChainId: number
   }
 
+// @TODO: cache requests
 const fetcher = async (
   requests: {
     url: string
