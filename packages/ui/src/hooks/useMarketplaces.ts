@@ -57,9 +57,9 @@ export default function (
           marketplace.name = data.title
           marketplace.domain = client?.source
           let marketplaceFees = fees
-          if (chain?.marketplaceFees) {
+          if (!fees && chain?.marketplaceFees) {
             marketplaceFees = chain?.marketplaceFees
-          } else if (client?.marketplaceFees) {
+          } else if (!fees && client?.marketplaceFees) {
             marketplaceFees = client.marketplaceFees
           }
           const feeBps = marketplaceFees?.reduce((total, fee) => {
