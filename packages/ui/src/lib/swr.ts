@@ -66,6 +66,7 @@ export const localStorageProvider = (): Cache<any> => {
       const ttl: number = cacheTTL[key]
       const response = map.get(key) as any
       let purge = false
+
       if (Date.now() >= ttl) {
         purge = true
       } else if (
@@ -102,7 +103,11 @@ export const localStorageProvider = (): Cache<any> => {
   if (typeof window !== 'undefined') {
     //Allowlist of all domains or urls we want to cache locally
     window.addEventListener('beforeunload', () => {
-      const cachedApis = ['api.coingecko.com', '/currencies/conversion/v']
+      const cachedApis = [
+        'api.coingecko.com',
+        '/currencies/conversion/v',
+        '/execute/solve/capacity/v1',
+      ]
       for (let url of map.keys()) {
         if (
           !cachedApis.some((cachedApi) => (url as string).includes(cachedApi))

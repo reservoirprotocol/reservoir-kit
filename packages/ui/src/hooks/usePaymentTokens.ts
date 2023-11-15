@@ -130,14 +130,10 @@ export default function (
     }
   }, [allPaymentTokens, crossChainDisabled])
 
-  console.log('crosschainChainIds: ', crosschainChainIds)
-
   const { data: solverCapacityChainIdMap } = useSolverCapacities(
     open ? crosschainChainIds : [],
     chain
   )
-
-  console.log('solverCapacityChainIdMap: ', solverCapacityChainIdMap)
 
   const preferredCurrencyConversions = useCurrencyConversions(
     preferredCurrency?.address,

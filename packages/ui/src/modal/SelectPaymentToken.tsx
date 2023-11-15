@@ -39,8 +39,6 @@ export const SelectPaymentToken: FC<Props> = ({
             paymentToken?.decimals || 18
           )
 
-          // @TODO: improve
-
           const hasMaxItemAmount = paymentToken?.maxItems != undefined
           const hasMaxPricePerItem = paymentToken?.maxPricePerItem != undefined
           const hasCurrencyTotalRaw =
@@ -49,15 +47,17 @@ export const SelectPaymentToken: FC<Props> = ({
           const maxPurchasablePrice =
             BigInt(itemAmount) * BigInt(paymentToken?.maxPricePerItem ?? 0)
           const maxItemAmount = paymentToken?.maxItems
+            ? BigInt(paymentToken?.maxItems)
+            : undefined
 
           const isEnabledPaymentToken =
             isSelectedCurrency ||
             (!hasMaxPricePerItem && !hasMaxItemAmount && hasCurrencyTotalRaw) ||
             (maxPurchasablePrice &&
               paymentToken?.currencyTotalRaw &&
-              maxPurchasablePrice < paymentToken?.currencyTotalRaw &&
+              maxPurchasablePrice >= paymentToken?.currencyTotalRaw &&
               maxItemAmount &&
-              maxItemAmount <= itemAmount)
+              maxItemAmount >= itemAmount)
 
           if (isEnabledPaymentToken)
             return (

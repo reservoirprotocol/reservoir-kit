@@ -1,4 +1,4 @@
-import useSWR from 'swr'
+import useSWR from 'swr/immutable'
 import { ReservoirChain, axios, paths } from '@reservoir0x/reservoir-sdk'
 import { useMemo } from 'react'
 
@@ -7,7 +7,6 @@ type SolverCapacityResponse =
     fromChainId: number
   }
 
-// @TODO: cache requests
 const fetcher = async (
   requests: {
     url: string
@@ -45,7 +44,7 @@ export default function (
     requests?.length > 0 ? requests : undefined,
     fetcher,
     {
-      dedupingInterval: 3600000, // 1 hour cache duration
+      refreshInterval: 300000, //5m
     }
   )
 
