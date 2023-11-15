@@ -22,6 +22,7 @@ import { useMeasure } from '@react-hookz/web'
 import TokenFallback from './TokenFallback'
 import { Address, erc721ABI, useContractRead } from 'wagmi'
 import { convertTokenUriToImage } from '../../lib/processTokenURI'
+import { erc1155ABI } from '../../constants/abis'
 
 type MediaType =
   | 'mp4'
@@ -60,7 +61,13 @@ type Token = NonNullable<
 
 type RequiredTokenProps = Pick<
   NonNullable<Token>,
-  'image' | 'media' | 'collection' | 'tokenId' | 'imageSmall' | 'imageLarge'
+  | 'image'
+  | 'media'
+  | 'collection'
+  | 'tokenId'
+  | 'imageSmall'
+  | 'imageLarge'
+  | 'kind'
 >
 
 type Props = {
@@ -142,16 +149,21 @@ const TokenMedia: FC<Props> = ({
   const [onChainImageBroken, setOnChainImageBroken] = useState(false)
   const [isUpdatingOnChainImage, setIsUpdatingOnChainImage] = useState(false)
 
+  console.log('Token Media: ', contract, token, chainId)
+
+  const is1155 = token?.kind === 'erc1155'
+
   const {
     data: tokenURI,
     isLoading: isFetchingTokenURI,
     isError: fetchTokenURIError,
   } = useContractRead(
+    // @ts-ignore
     !disableOnChainRendering && (error || (!media && !tokenImage))
       ? {
           address: contract,
-          abi: erc721ABI,
-          functionName: 'tokenURI',
+          abi: is1155 ? erc1155ABI : erc721ABI,
+          functionName: is1155 ? 'uri' : 'tokenURI',
           args: token?.tokenId ? [BigInt(token?.tokenId)] : undefined,
           chainId: chainId,
         }
@@ -163,9 +175,11 @@ const TokenMedia: FC<Props> = ({
       setIsUpdatingOnChainImage(true)
       ;(async () => {
         const updatedOnChainImage = await convertTokenUriToImage(tokenURI)
+        console.log('updatedOnChainImage: '), updatedOnChainImage
         setOnChainImage(updatedOnChainImage)
-      })()
-      setIsUpdatingOnChainImage(false)
+      })().then(() => {
+        setIsUpdatingOnChainImage(false)
+      })
     }
   }, [tokenURI])
 
@@ -196,6 +210,8 @@ const TokenMedia: FC<Props> = ({
               style={{ ...computedStyle }}
               alt="Token Image"
               onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                console.log(e)
+                console.log('setting onchain image to broken')
                 setOnChainImageBroken(true)
               }}
             />

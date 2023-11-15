@@ -6,6 +6,7 @@ const gatewayConfig = {
 const convertToGatewayUrl = (url: string) => {
   for (const [protocol, gateway] of Object.entries(gatewayConfig)) {
     if (url.includes(protocol)) {
+      console.log('replacing ', protocol, gateway)
       return url.replace(protocol, gateway)
     }
   }
@@ -13,6 +14,7 @@ const convertToGatewayUrl = (url: string) => {
 }
 
 const fetchUri = async (uri: string) => {
+  console.log('uri: ', uri)
   const response = await fetch(convertToGatewayUrl(uri), {
     method: 'GET',
   })
@@ -28,8 +30,11 @@ export const convertTokenUriToImage = async (uri: string): Promise<string> => {
   try {
     const json = await fetchUri(uri)
 
+    console.log('json: ', json)
+
     if (json.image) {
       const image = convertToGatewayUrl(json.image)
+      console.log('image: ', image)
       return image
     }
 

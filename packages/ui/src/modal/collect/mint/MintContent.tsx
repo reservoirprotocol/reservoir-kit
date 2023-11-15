@@ -582,7 +582,10 @@ export const MintContent: FC<
             <Text style="h5" css={{ px: '$5' }}>
               Your mint is complete!
             </Text>
-            <MintImages stepData={stepData} contract={contract} />
+            <MintImages
+              stepData={stepData}
+              tokenKind={collection?.contractKind}
+            />
             <Flex align="center" css={{ gap: '$2', px: '$5' }}>
               <Box
                 css={{
