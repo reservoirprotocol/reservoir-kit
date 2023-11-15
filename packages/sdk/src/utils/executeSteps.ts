@@ -243,7 +243,7 @@ export async function executeSteps(
 
       if (error) {
         json.steps[0].error = error.message
-        json.steps[0].errorData = json.path
+        json.steps[0].errorData = error
         setState([...json?.steps], path)
         throw error
       }
@@ -627,6 +627,7 @@ export async function executeSteps(
             if (error && json?.steps) {
               json.steps[incompleteStepIndex].error = errorMessage
               stepItem.error = errorMessage
+              stepItem.errorData = (e as any)?.response?.data || e
               setState([...json?.steps], path)
             }
             reject(error)
@@ -652,15 +653,13 @@ export async function executeSteps(
       ['Execute Steps: An error occurred', err, 'Block Number:', blockNumber],
       LogLevel.Error
     )
-    const error = err as Error
-    const errorMessage = error ? error.message : 'Error: something went wrong'
 
     if (json) {
-      json.error = errorMessage
+      json.error = err && err?.response?.data ? err.response.data : err
       setState([...json?.steps], json.path)
     } else {
       json = {
-        error: errorMessage,
+        error: err && err?.response?.data ? err.response.data : err,
         path: undefined,
         steps: [],
       }
