@@ -44,7 +44,8 @@ export default function (
   preferredCurrency: PaymentToken,
   preferredCurrencyTotalPrice: bigint,
   chainId?: number,
-  nativeOnly?: boolean
+  nativeOnly?: boolean,
+  crossChainDisabled?: boolean
 ) {
   const client = useReservoirClient()
   const chain =
@@ -58,6 +59,12 @@ export default function (
     if (nativeOnly) {
       paymentTokens = paymentTokens?.filter(
         (token) => token.address === zeroAddress
+      )
+    }
+
+    if (crossChainDisabled) {
+      paymentTokens = paymentTokens?.filter(
+        (token) => token.chainId === chain?.id
       )
     }
 
@@ -185,6 +192,12 @@ export default function (
           currencyTotalFormatted,
         }
       })
+      .filter((currency) =>
+        currency.chainId !== chain?.id &&
+        (currency.currencyTotalRaw || 0) > 50000000000000000n
+          ? false
+          : true
+      )
       .sort((a, b) => {
         // If user has a balance for the listed currency, return first. Otherwise sort currencies by total usdPrice
         if (
@@ -199,6 +212,20 @@ export default function (
           Number(b.balance) > 0
         )
           return 1
+        if (Number(b.usdPrice) === Number(a.usdPrice)) {
+          if (
+            a.chainId === preferredCurrency.chainId &&
+            b.chainId !== preferredCurrency.chainId
+          ) {
+            return -1
+          }
+          if (
+            a.chainId !== preferredCurrency.chainId &&
+            b.chainId === preferredCurrency.chainId
+          ) {
+            return 1
+          }
+        }
         return Number(b.usdPrice ?? 0) - Number(a.usdPrice ?? 0)
       }) as EnhancedCurrency[]
   }, [

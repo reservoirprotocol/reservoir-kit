@@ -14,6 +14,7 @@ export const getClient = () => {
           baseApiUrl: 'https://api-goerli.reservoir.tools',
           id: allChains.goerli.id,
           active: true,
+          name: 'Goerli'
         },
       ],
       source: 'reservoirkit.demo',

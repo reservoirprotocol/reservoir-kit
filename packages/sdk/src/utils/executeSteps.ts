@@ -124,6 +124,12 @@ export async function executeSteps(
     reservoirChain = client.chains.find((chain) => chain.id == chainId) || null
   }
 
+  const pollingInterval = reservoirChain?.checkPollingInterval ?? 5000
+
+  const maximumAttempts =
+    client.maxPollingAttemptsBeforeTimeout ??
+    (2.5 * 60 * 1000) / pollingInterval // default to 2 minutes and 30 seconds worth of attempts
+
   let viemChain: allChains.Chain
   const customChain = Object.values(customChains).find(
     (chain) => chain.id == (reservoirChain?.id || 1)
@@ -237,7 +243,7 @@ export async function executeSteps(
 
       if (error) {
         json.steps[0].error = error.message
-        json.steps[0].errorData = json.path
+        json.steps[0].errorData = error
         setState([...json?.steps], path)
         throw error
       }
@@ -494,7 +500,10 @@ export async function executeSteps(
                             )
                           }
                           return false
-                        }
+                        },
+                        maximumAttempts,
+                        0,
+                        pollingInterval
                       )
                     }
 
@@ -588,7 +597,10 @@ export async function executeSteps(
                       : false
                   }
                   return false
-                }
+                },
+                maximumAttempts,
+                0,
+                pollingInterval
               )
 
               const taker = await wallet.address()
@@ -615,6 +627,7 @@ export async function executeSteps(
             if (error && json?.steps) {
               json.steps[incompleteStepIndex].error = errorMessage
               stepItem.error = errorMessage
+              stepItem.errorData = (e as any)?.response?.data || e
               setState([...json?.steps], path)
             }
             reject(error)
@@ -640,12 +653,16 @@ export async function executeSteps(
       ['Execute Steps: An error occurred', err, 'Block Number:', blockNumber],
       LogLevel.Error
     )
-    const error = err as Error
-    const errorMessage = error ? error.message : 'Error: something went wrong'
 
     if (json) {
-      json.error = errorMessage
+      json.error = err && err?.response?.data ? err.response.data : err
       setState([...json?.steps], json.path)
+    } else {
+      json = {
+        error: err && err?.response?.data ? err.response.data : err,
+        path: undefined,
+        steps: [],
+      }
     }
 
     client._sendEvent(generateEvent(request, json), reservoirChain?.id || 1)

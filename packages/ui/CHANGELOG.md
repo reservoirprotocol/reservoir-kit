@@ -1,4 +1,59 @@
 
+## [v1.18.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4ad23190b1c0ae1c0f6390ffc34ca0071ac30adf) (2023-11-14)
+
+* ListModal: fix marketplace fee breakdown [addfc729](https://github.com/reservoirprotocol/reservoir-kit/commit/addfc72973159f7aab872bc6817493c9787bcc46)
+## [v1.18.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c46d6307568b472423c70c1d5dcd2e3e5db9e419) (2023-11-14)
+
+* useTrendingCollections hook [fa0db2f5](https://github.com/reservoirprotocol/reservoir-kit/commit/fa0db2f5a324584814f51318a6189816a44ac8fa)
+* useTrendingMints hook [9759359b](https://github.com/reservoirprotocol/reservoir-kit/commit/9759359ba90f57b7801b8887afc6c83eeeedae44)
+* Add preferDisplayFiatTotal configuration [701aba3c](https://github.com/reservoirprotocol/reservoir-kit/commit/701aba3c46662a45bca46aec6220eada3ccd274a)
+
+## [v1.18.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a9048b549e6e92da33681c5f5fe1d830b47d6131) (2023-11-13)
+
+* Update SDK
+
+## [v1.18.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/9b76a9e5b59783d02d1cdaec5f3b8b5670a84f52) (2023-11-13)
+
+* Misc Bug Fixes
+
+## [v1.18.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/71bef10a2ffef6cf525afc7f4e46dbde57b8d9c0) (2023-11-10)
+
+* Fix select currency icon aspect ratio [b95aca22](https://github.com/reservoirprotocol/reservoir-kit/commit/b95aca22cdb55b181d0190155ddc6becac75f091)
+* Fix token media refresh to use contract instead of collectionId [a35dcc24](https://github.com/reservoirprotocol/reservoir-kit/commit/a35dcc24b229dfc501520ac3a33ee50fa0ec46b1)
+* feat: Use new fee params [6c4332a7](https://github.com/reservoirprotocol/reservoir-kit/commit/6c4332a7a42ae707689b65e39ccc9fac6eae2062)
+
+## [v1.18.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c78ccc64bf55958ab8f5ca8bd97b4df6a2fcf6cd) (2023-11-09)
+
+* Fix payment tokens loading bug [e059354b](https://github.com/reservoirprotocol/reservoir-kit/commit/e059354bb3e557ca58ce55c43f0fd95c1abc9bf3)
+* Fix two ui states showing simultaneously in CollectModal [4dd57c82](https://github.com/reservoirprotocol/reservoir-kit/commit/4dd57c82ebb82addb694a96822278c8ada16196d)
+* Update cross-chain purchase error and ErrorWell primitive [1e42a456](https://github.com/reservoirprotocol/reservoir-kit/commit/1e42a456ca42287dfd988f16a0836ea49fca8598)
+
+## [v1.18.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/d026e3c8d7bbad5e9e54178ba6c79f56e348158a) (2023-11-08)
+
+## [v1.18.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/70fc0c1bf13663745f086fe37145b2233de8b271) (2023-11-08)
+
+* BuyModal: Disable cross-chain payment tokens [3d872206](https://github.com/reservoirprotocol/reservoir-kit/commit/3d8722068da9f3326adf57757e68faf5088c8185)
+
+## [v1.18.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e046f1bd94b3d7f719ed6bd56872e0eb17a62496) (2023-11-08)
+
+* BuyModal: Add gasCost logic [27c5c0dd](https://github.com/reservoirprotocol/reservoir-kit/commit/27c5c0dd408d3b8cb53392f720bed82baedbeb2e)
+* CollectModal: Sync api and add gasCost [575285ec](https://github.com/reservoirprotocol/reservoir-kit/commit/575285ecdafd9ac4e49c5df2c00f8fd6aefab585)
+
+## [v1.17.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/21df44f0fd17ba8ff45952cf58e6b0c089515d7a) (2023-11-07)
+
+* Fix default quantity sometimes being set to 0 initially [66abe09d](https://github.com/reservoirprotocol/reservoir-kit/commit/66abe09deb0fef30d4fa438f395ba21d3ea6fe69)
+
+## [v1.17.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/599c765e34df0ecce1fad708c95cb76b32db60af) (2023-11-07)
+
+* Improve tokenmedia fallback logic [03410e3f](https://github.com/reservoirprotocol/reservoir-kit/commit/03410e3f01a36c32ce8927fff899bdb559a732fa)
+* BuyModal: Fix incorrect defaultcurrency [6d33fa22](https://github.com/reservoirprotocol/reservoir-kit/commit/6d33fa22bf829044e27be48d89694f2a5623b1fd)
+* Improve crosschain transaction failure error handling [ba2c9736](https://github.com/reservoirprotocol/reservoir-kit/commit/ba2c9736661add665b8e89eaadd60ef644aca4f7)
+* CollectModal: Fix incorrect default quantity [f90d1853](https://github.com/reservoirprotocol/reservoir-kit/commit/f90d1853563a9a493fad8baeecde7377babdc250)
+
+## [v1.17.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/fd8dcca3c1a97547c2a562266d252bb73fc05759) (2023-11-06)
+
+* Fix: update swr key for nativeBalances [edb87d23](https://github.com/reservoirprotocol/reservoir-kit/commit/edb87d23eda4ed9b3d589f95765959f833b9b1ca)
+
 ## [v1.17.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f150275dad1aa5cd59890f4ce6f897f04094c0f0) (2023-11-06)
 
 * Fix: Add currency conversions to paymentTokens dependencies array [34b4b88b](https://github.com/reservoirprotocol/reservoir-kit/commit/34b4b88b51a0b7c17b54d3e75fe2e847600f5fc5)

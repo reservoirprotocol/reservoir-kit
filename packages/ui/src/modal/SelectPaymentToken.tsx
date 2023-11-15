@@ -68,10 +68,10 @@ export const SelectPaymentToken: FC<Props> = ({
                 >
                   <CryptoCurrencyIcon
                     address={paymentToken?.address as string}
-                    css={{ width: 24, height: 24 }}
+                    css={{ width: 24, height: 24, 'object-fit': 'cover' }}
                   />
                   <Flex direction="column" align="start">
-                    <Text style="subtitle2">{paymentToken?.symbol}</Text>
+                    <Text style="subtitle2">{paymentToken?.name}</Text>
                     <Text style="body2" color="subtle">
                       Balance: {formatNumber(Number(formattedBalance), 6)}
                     </Text>

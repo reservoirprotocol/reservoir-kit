@@ -1,7 +1,7 @@
 import { Address, PublicClient, Transaction, serializeTransaction } from 'viem'
 import { LogLevel, getClient } from '..'
 import { Execute, ReservoirWallet, TransactionStepItem, paths } from '../types'
-import { TransactionTimeoutError } from '../errors'
+import { CrossChainTransactionError, TransactionTimeoutError } from '../errors'
 import axios, {
   AxiosRequestConfig,
   AxiosRequestHeaders,
@@ -27,6 +27,8 @@ export async function sendTransactionSafely(
   isCrossChainIntent?: boolean
 ) {
   const client = getClient()
+  const reservoirChain =
+    client.chains.find((chain) => chain.id == chainId) || null
   let txHash = await wallet.handleSendTransactionStep(chainId, item, step)
   submitTransactionToSolver({
     chainId,
@@ -37,7 +39,10 @@ export async function sendTransactionSafely(
     txHash,
     isCrossChainIntent,
   })
-  const maximumAttempts = client.maxPollingAttemptsBeforeTimeout ?? 30
+  const pollingInterval = reservoirChain?.checkPollingInterval ?? 5000
+  const maximumAttempts =
+    client.maxPollingAttemptsBeforeTimeout ??
+    (2.5 * 60 * 1000) / pollingInterval // default to 2 minutes and 30 seconds worth of attempts
   let attemptCount = 0
   let waitingForConfirmation = true
   let transactionCancelled = false
@@ -140,21 +145,25 @@ export async function sendTransactionSafely(
         attemptCount++
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 5000)) // wait for 5 seconds
+      await new Promise((resolve) => setTimeout(resolve, pollingInterval))
     }
   }
 
   if (attemptCount >= maximumAttempts) {
-    const wagmiChain: allChains.Chain | undefined = Object.values({
-      ...allChains,
-      ...customChains,
-    }).find(({ id }) => id === chainId)
+    if (isCrossChainIntent) {
+      throw new CrossChainTransactionError()
+    } else {
+      const wagmiChain: allChains.Chain | undefined = Object.values({
+        ...allChains,
+        ...customChains,
+      }).find(({ id }) => id === chainId)
 
-    throw new TransactionTimeoutError(
-      txHash,
-      attemptCount,
-      wagmiChain?.blockExplorers?.default.url
-    )
+      throw new TransactionTimeoutError(
+        txHash,
+        attemptCount,
+        wagmiChain?.blockExplorers?.default.url
+      )
+    }
   }
 
   if (transactionCancelled) {
@@ -201,7 +210,7 @@ const submitTransactionToSolver = async ({
           data: tx.input,
         },
         {
-          v: tx.v,
+          v: tx.v < 27n ? tx.v + 27n : tx.v,
           r: tx.r,
           s: tx.s,
         }

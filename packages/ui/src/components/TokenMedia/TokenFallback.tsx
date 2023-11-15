@@ -29,6 +29,10 @@ const TokenFallback: FC<TokenFallbackProps> = ({
     ? client?.chains.find((chain) => chain.id === chainId)
     : client?.currentChain()
 
+  const contract = token?.collection?.id
+    ? token?.collection.id?.split(':')[0]
+    : undefined
+
   return (
     <Flex
       justify="center"
@@ -37,7 +41,7 @@ const TokenFallback: FC<TokenFallbackProps> = ({
       css={{ gap: '$2', aspectRatio: '1/1', p: '$2', ...style }}
       className={className}
     >
-      {mode === 'simple' ? (
+      {mode === 'simple' || !token?.collection?.id ? (
         <FontAwesomeIcon icon={faImage} style={{ height: '50%' }} />
       ) : (
         <>
@@ -66,7 +70,7 @@ const TokenFallback: FC<TokenFallbackProps> = ({
               const url = `${reservoirChain?.baseApiUrl}/tokens/refresh/v1`
               const body: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
                 {
-                  token: `${token?.collection?.id}:${token?.tokenId}`,
+                  token: `${contract}:${token?.tokenId}`,
                 }
               const headers = {
                 ...defaultHeaders(client?.apiKey, client?.version),

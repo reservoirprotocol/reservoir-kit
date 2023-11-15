@@ -6062,7 +6062,7 @@ __metadata:
     "@ethersproject/hash": ^5.7.0
     "@ethersproject/providers": ^5.7.2
     "@openzeppelin/defender-relay-client": ^1.47.1
-    "@reservoir0x/ethers-wallet-adapter": ^0.5.0
+    "@reservoir0x/ethers-wallet-adapter": ^0.6.6
     axios: ^0.27.2
   peerDependencies:
     "@reservoir0x/reservoir-sdk": "workspace:*"
@@ -6071,7 +6071,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@reservoir0x/ethers-wallet-adapter@^0.5.0, @reservoir0x/ethers-wallet-adapter@workspace:*, @reservoir0x/ethers-wallet-adapter@workspace:packages/ethers-wallet-adapter":
+"@reservoir0x/ethers-wallet-adapter@^0.6.6, @reservoir0x/ethers-wallet-adapter@workspace:*, @reservoir0x/ethers-wallet-adapter@workspace:packages/ethers-wallet-adapter":
   version: 0.0.0-use.local
   resolution: "@reservoir0x/ethers-wallet-adapter@workspace:packages/ethers-wallet-adapter"
   dependencies:
@@ -20201,7 +20201,7 @@ __metadata:
     react-dom: ^18.2.0
     react-scripts: 5.0.1
     typescript: ^5.0.4
-    viem: ~1.6.4
+    viem: ~1.16.3
     wagmi: ^0.12.0
     web-vitals: ^2.1.4
   languageName: unknown
@@ -22151,7 +22151,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^1.0.0, viem@npm:~1.6.4":
+"viem@npm:^1.0.0":
   version: 1.6.4
   resolution: "viem@npm:1.6.4"
   dependencies:
