@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
 import { useCart, useReservoirClient } from '../../hooks'
 import {
   Button,
@@ -20,7 +20,6 @@ import QuantitySelector from '../../modal/QuantitySelector'
 import * as allChains from 'viem/chains'
 import { Chain } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
-import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type Props = {
   item: Cart['items'][0]
@@ -49,7 +48,6 @@ const CloseButton = styled(Button, {
 })
 
 const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
-  const providerOptionsContext = useContext(ProviderOptionsContext)
   const { token, collection, order } = item
   const contract = collection.id.split(':')[0]
   const client = useReservoirClient()
