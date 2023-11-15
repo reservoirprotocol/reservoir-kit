@@ -32,7 +32,7 @@ type Props = {
   items: Cart['items']
   totalPrice: number
   usdPrice: number
-  currency: NonNullable<Cart['currency']>
+  currency?: NonNullable<Cart['currency']>
   cartChain: Cart['chain']
   blockExplorerBaseUrl: string
   transaction?: Cart['transaction']

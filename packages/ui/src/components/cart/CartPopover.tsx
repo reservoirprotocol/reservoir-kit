@@ -461,23 +461,48 @@ export function CartPopover({
                                 '> div': { ml: 'auto' },
                               }}
                             >
-                              <FormatCryptoCurrency
-                                textStyle="h6"
-                                amount={totalPriceRaw}
-                                address={currency?.address}
-                                decimals={currency?.decimals}
-                                symbol={currency?.symbol}
-                                logoWidth={18}
-                                chainId={cartChain?.id}
-                              />
-                              {usdPrice ? (
-                                <FormatCurrency
-                                  amount={currency?.usdTotalPriceRaw}
-                                  style="subtitle3"
-                                  color="subtle"
-                                  css={{ textAlign: 'end' }}
-                                />
-                              ) : null}
+                              {providerOptionsContext.preferDisplayFiatTotal ? (
+                                <>
+                                  {currency?.usdTotalPriceRaw ? (
+                                    <FormatCurrency
+                                      amount={currency?.usdTotalPriceRaw}
+                                      style="h6"
+                                      color="base"
+                                      css={{ textAlign: 'end' }}
+                                    />
+                                  ) : null}
+                                  <FormatCryptoCurrency
+                                    textStyle="subtitle3"
+                                    textColor="subtle"
+                                    amount={totalPriceRaw}
+                                    address={currency?.address}
+                                    decimals={currency?.decimals}
+                                    symbol={currency?.symbol}
+                                    logoWidth={12}
+                                    chainId={cartChain?.id}
+                                  />
+                                </>
+                              ) : (
+                                <>
+                                  <FormatCryptoCurrency
+                                    textStyle="h6"
+                                    amount={totalPriceRaw}
+                                    address={currency?.address}
+                                    decimals={currency?.decimals}
+                                    symbol={currency?.symbol}
+                                    logoWidth={18}
+                                    chainId={cartChain?.id}
+                                  />
+                                  {currency?.usdTotalPriceRaw && (
+                                    <FormatCurrency
+                                      amount={currency?.usdTotalPriceRaw}
+                                      style="subtitle3"
+                                      color="subtle"
+                                      css={{ textAlign: 'end' }}
+                                    />
+                                  )}
+                                </>
+                              )}
                             </Flex>
                           </Flex>
                         </>
