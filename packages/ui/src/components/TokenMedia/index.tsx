@@ -149,8 +149,6 @@ const TokenMedia: FC<Props> = ({
   const [onChainImageBroken, setOnChainImageBroken] = useState(false)
   const [isUpdatingOnChainImage, setIsUpdatingOnChainImage] = useState(false)
 
-  console.log('Token Media: ', contract, token, chainId)
-
   const is1155 = token?.kind === 'erc1155'
 
   const {
@@ -175,7 +173,6 @@ const TokenMedia: FC<Props> = ({
       setIsUpdatingOnChainImage(true)
       ;(async () => {
         const updatedOnChainImage = await convertTokenUriToImage(tokenURI)
-        console.log('updatedOnChainImage: '), updatedOnChainImage
         setOnChainImage(updatedOnChainImage)
       })().then(() => {
         setIsUpdatingOnChainImage(false)
@@ -210,8 +207,6 @@ const TokenMedia: FC<Props> = ({
               style={{ ...computedStyle }}
               alt="Token Image"
               onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                console.log(e)
-                console.log('setting onchain image to broken')
                 setOnChainImageBroken(true)
               }}
             />

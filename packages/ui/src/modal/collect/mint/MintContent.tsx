@@ -24,7 +24,7 @@ import {
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import QuantitySelector from '../../QuantitySelector'
-import { CollectModalCopy } from '../CollectModal'
+import { CollectCallbackData, CollectModalCopy } from '../CollectModal'
 import { MintImages } from './MintImages'
 import { CollectCheckout } from '../CollectCheckout'
 import SigninStep from '../../SigninStep'
@@ -43,6 +43,7 @@ export const MintContent: FC<
     copy: typeof CollectModalCopy
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    onGoToToken?: (data: CollectCallbackData) => any
   }
 > = ({
   collection,
@@ -63,6 +64,7 @@ export const MintContent: FC<
   feeUsd,
   currentChain,
   contract,
+  address,
   hasEnoughCurrency,
   addFundsLink,
   disableJumperLink,
@@ -70,11 +72,13 @@ export const MintContent: FC<
   transactionError,
   stepData,
   collectStep,
+  contentMode,
   setCollectStep,
   isConnected,
   collectTokens,
   copy,
   setOpen,
+  onGoToToken,
 }) => {
   const providerOptions = useContext(ProviderOptionsContext)
   const pathMap = stepData?.path
@@ -647,9 +651,39 @@ export const MintContent: FC<
             </Flex>
           </Flex>
           <Flex css={{ width: '100%', px: '$4' }}>
-            <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
-              {copy.mintCtaClose}
-            </Button>
+            {!!onGoToToken ? (
+              <>
+                <Button
+                  onClick={() => {
+                    setOpen(false)
+                  }}
+                  css={{ flex: 1 }}
+                  color="ghost"
+                >
+                  {copy.mintCtaClose}
+                </Button>
+                <Button
+                  style={{ flex: 1 }}
+                  color="primary"
+                  onClick={() => {
+                    onGoToToken({
+                      collectionId: collection?.id,
+                      maker: address,
+                      stepData,
+                      contentMode,
+                    })
+                  }}
+                >
+                  {copy.mintCtaGoToToken.length > 0
+                    ? copy.mintCtaGoToToken
+                    : `View ${successfulMints > 1 ? 'Tokens' : 'Token'}`}
+                </Button>
+              </>
+            ) : (
+              <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
+                {copy.mintCtaClose}
+              </Button>
+            )}
           </Flex>
         </Flex>
       )}

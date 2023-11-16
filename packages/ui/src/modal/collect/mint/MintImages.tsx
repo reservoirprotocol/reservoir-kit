@@ -22,8 +22,6 @@ export const MintImages: FC<Props> = ({ stepData, tokenKind }) => {
     )
   }, [stepData?.currentStep?.items])
 
-  console.log('tokenKind: ', tokenKind)
-
   return (
     <Flex css={{ width: '100%', overflow: 'hidden', position: 'relative' }}>
       <Box
