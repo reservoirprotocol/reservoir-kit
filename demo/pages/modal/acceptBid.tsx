@@ -6,6 +6,7 @@ import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import { PrivyConnectButton } from 'components/PrivyConnectButton'
 import ChainSwitcher from 'components/ChainSwitcher'
+import { formatUnits } from 'viem'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -28,6 +29,7 @@ const AcceptBidPage: NextPage = () => {
   >([])
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
+  const [feesOnTopBps, setFeesOnTopBps] = useState<string[] | undefined>(undefined)
 
   useEffect(() => {
     const prefilledBidId = router.query.bidId
@@ -97,6 +99,25 @@ const AcceptBidPage: NextPage = () => {
           onChange={(e) => setChainId(e.target.value)}
         />
       </div>
+      <div>
+        <label>Fees on top (BPS): </label>
+        <textarea
+          onChange={() => {}}
+          onBlur={(e) => {
+            if (e.target.value && e.target.value.length > 0) {
+              try {
+                setFeesOnTopBps(JSON.parse(e.target.value))
+              } catch (err) {
+                e.target.value = ''
+                setFeesOnTopBps([])
+              }
+            } else {
+              e.target.value = ''
+              setFeesOnTopBps([])
+            }
+          }}
+        />
+      </div>
       <button
         disabled={!tokenId.length || !collectionId.length}
         onClick={() => {
@@ -152,6 +173,7 @@ const AcceptBidPage: NextPage = () => {
         tokens={tokens}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         normalizeRoyalties={normalizeRoyalties}
+        feesOnTopBps={feesOnTopBps}
         onBidAccepted={(data) => {
           console.log('Bid Accepted', data)
         }}
