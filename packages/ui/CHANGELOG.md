@@ -1,4 +1,12 @@
 
+## [v1.18.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/32e1cc9aee6c48913589c2e6502acc9c704798f6) (2023-11-16)
+
+* Merge pull request #477 from reservoirprotocol/ted/grwth-3516-check-solver-capacity [37141f14](https://github.com/reservoirprotocol/reservoir-kit/commit/37141f14f60cda53b613268926ef450588021fee)
+* AcceptBidModal: Add feesOnTop and feesOnTopCustom [37e1d874](https://github.com/reservoirprotocol/reservoir-kit/commit/37e1d874e1bb312fc70af5d165118edd6a873958)
+* Sync api [59c4cf45](https://github.com/reservoirprotocol/reservoir-kit/commit/59c4cf459580a1e9628425e28e1d8c802293f681)
+* wip [801149a2](https://github.com/reservoirprotocol/reservoir-kit/commit/801149a2bbc54043251e55948db2123a404f584b)
+* wip [d23bec04](https://github.com/reservoirprotocol/reservoir-kit/commit/d23bec0417ed3aca8bc112832f21fcd0c66c74b4)
+
 ## [v1.18.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4ad23190b1c0ae1c0f6390ffc34ca0071ac30adf) (2023-11-14)
 
 * ListModal: fix marketplace fee breakdown [addfc729](https://github.com/reservoirprotocol/reservoir-kit/commit/addfc72973159f7aab872bc6817493c9787bcc46)
