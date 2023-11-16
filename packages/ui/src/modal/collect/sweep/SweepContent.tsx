@@ -93,6 +93,10 @@ export const SweepContent: FC<
       ? mostExpensiveToken?.buyInQuote
       : mostExpensiveToken?.totalPrice
 
+  const maxQuantity = paymentCurrency?.maxItems
+    ? paymentCurrency?.maxItems
+    : maxItemAmount
+
   const pathMap = stepData?.path
     ? (stepData.path as Path[]).reduce(
         (paths: Record<string, Path>, path: Path) => {
@@ -185,15 +189,15 @@ export const SweepContent: FC<
                     ellipsify
                     css={{ width: '100%' }}
                   >
-                    {formatNumber(maxItemAmount)}{' '}
-                    {maxItemAmount === 1 ? 'item' : 'items'} available
+                    {formatNumber(maxQuantity)}{' '}
+                    {maxQuantity === 1 ? 'item' : 'items'} available
                   </Text>
                 </Flex>
                 <QuantitySelector
                   quantity={itemAmount}
                   setQuantity={setItemAmount}
                   min={1}
-                  max={maxItemAmount}
+                  max={maxQuantity}
                   css={{
                     width: '100%',
                     justifyContent: 'space-between',
@@ -440,6 +444,7 @@ export const SweepContent: FC<
             currency={paymentCurrency}
             setCurrency={setPaymentCurrency}
             goBack={() => setCollectStep(CollectStep.Idle)}
+            itemAmount={itemAmount}
           />
         </Flex>
       )}

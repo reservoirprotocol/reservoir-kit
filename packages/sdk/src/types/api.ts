@@ -5871,6 +5871,7 @@ export interface definitions {
     errors?: definitions["Model477"];
     path?: definitions["Model481"];
     maxQuantities?: definitions["maxQuantities"];
+    gasEstimate?: number;
   };
   Model483: string[];
   Model484: {
@@ -6177,12 +6178,13 @@ export interface definitions {
     fromChainId?: number;
   };
   Model510: definitions["Model509"][];
-  postExecuteBuyV1Response: {
+  postExecuteMintV1Response: {
     requestId?: string;
     steps?: definitions["Model475"];
     errors?: definitions["Model477"];
     path?: definitions["Model510"];
     maxQuantities?: definitions["maxQuantities"];
+    gasEstimate?: number;
   };
   Model511: {
     /** @description Id of the permit */
@@ -6295,13 +6297,19 @@ export interface definitions {
   };
   /** @description List of items to sell. */
   Model519: definitions["Model518"][];
-  Model520: {
+  /**
+   * @description List of fees (formatted as `feeRecipient:feeAmount`) to be taken when filling.
+   * The currency used for any fees on top is always the wrapped native currency of the chain.
+   * Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00:1000000000000000`
+   */
+  Model520: string[];
+  Model521: {
     items: definitions["Model519"];
     /** @description Address of wallet filling. */
     taker: string;
     /** @description Filling source used for attribution. */
     source?: string;
-    feesOnTop?: definitions["Model515"];
+    feesOnTop?: definitions["Model520"];
     /**
      * @description If true, only the filling path will be returned.
      * @default false
@@ -6343,7 +6351,7 @@ export interface definitions {
     /** @description Optional Blur auth used for filling */
     blurAuth?: string;
   };
-  Model521: {
+  Model522: {
     /**
      * @description Returns `complete` or `incomplete`.
      * @enum {string}
@@ -6355,8 +6363,8 @@ export interface definitions {
     /** @description Approximation of gas used (only applies to `transaction` items) */
     gasEstimate?: number;
   };
-  Model522: definitions["Model521"][];
-  Model523: {
+  Model523: definitions["Model522"][];
+  Model524: {
     /** @description Returns `auth` or `nft-approval` */
     id: string;
     action: string;
@@ -6366,10 +6374,10 @@ export interface definitions {
      * @enum {string}
      */
     kind: "signature" | "transaction";
-    items: definitions["Model522"];
+    items: definitions["Model523"];
   };
-  Model524: definitions["Model523"][];
-  Model525: {
+  Model525: definitions["Model524"][];
+  Model526: {
     orderId?: string;
     contract?: string;
     tokenId?: string;
@@ -6385,14 +6393,14 @@ export interface definitions {
     builtInFees?: definitions["builtInFees"];
     feesOnTop?: definitions["Model479"];
   };
-  Model526: definitions["Model525"][];
+  Model527: definitions["Model526"][];
   getExecuteSellV7Response: {
     requestId?: string;
-    steps?: definitions["Model524"];
+    steps?: definitions["Model525"];
     errors?: definitions["Model477"];
-    path?: definitions["Model526"];
+    path?: definitions["Model527"];
   };
-  Model527: {
+  Model528: {
     /** @enum {string} */
     kind: "seaport-intent";
     order: string;
@@ -6406,7 +6414,7 @@ export interface definitions {
   postExecuteSolveV1Response: {
     status?: definitions["status"];
   };
-  Model528: {
+  Model529: {
     /**
      * @description Execution kind
      * @enum {string}
@@ -6429,18 +6437,18 @@ export interface definitions {
     txHashes?: definitions["txHashes"];
     time?: number;
   };
-  Model529: {
+  Model530: {
     token: string;
     /** @default 1 */
     quantity?: number;
   };
-  Model530: definitions["Model529"][];
-  Model531: {
+  Model531: definitions["Model530"][];
+  Model532: {
     from: string;
     to: string;
-    items?: definitions["Model530"];
+    items?: definitions["Model531"];
   };
-  Model532: {
+  Model533: {
     /**
      * @description Returns `complete` or `incomplete`.
      * @enum {string}
@@ -6448,8 +6456,8 @@ export interface definitions {
     status: "complete" | "incomplete";
     data?: definitions["metadata"];
   };
-  Model533: definitions["Model532"][];
-  Model534: {
+  Model534: definitions["Model533"][];
+  Model535: {
     /** @description Returns `nft-approval` or `transfer` */
     id: string;
     /**
@@ -6459,23 +6467,23 @@ export interface definitions {
     kind: "transaction";
     action: string;
     description: string;
-    items: definitions["Model533"];
+    items: definitions["Model534"];
   };
-  Model535: definitions["Model534"][];
+  Model536: definitions["Model535"][];
   postExecuteTransferV1Response: {
-    steps?: definitions["Model535"];
+    steps?: definitions["Model536"];
   };
   /** @description Array of tokens to disable or reenable metadata for. Max limit is 50. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
-  Model536: string[];
-  Model537: {
-    tokens: definitions["Model536"];
+  Model537: string[];
+  Model538: {
+    tokens: definitions["Model537"];
     /**
      * @description Whether to disable or reenable the metadata. Defaults to true (disable)
      * @default true
      */
     disable?: boolean;
   };
-  Model538: {
+  Model539: {
     /** @description The token to update the flag status for. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -6484,7 +6492,7 @@ export interface definitions {
      */
     flag: 0 | 1;
   };
-  Model539: {
+  Model540: {
     /** @description Refresh the given token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -6498,7 +6506,7 @@ export interface definitions {
      */
     overrideCoolDown?: boolean;
   };
-  Model540: {
+  Model541: {
     token?: string;
     /**
      * @default v6
@@ -6506,35 +6514,35 @@ export interface definitions {
      */
     router?: "v5" | "v6";
   };
-  Model541: {
+  Model542: {
     token?: string;
   };
   /** @description Array of tokens. Max limit is 50. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
-  Model542: string[];
-  Model543: {
-    tokens: definitions["Model542"];
+  Model543: string[];
+  Model544: {
+    tokens: definitions["Model543"];
     /**
      * @description API to update the spam status of a token
      * @default true
      */
     spam?: boolean;
   };
-  Model544: {
+  Model545: {
     bps?: number;
     recipient?: string;
   };
-  Model545: definitions["Model544"][];
+  Model546: definitions["Model545"][];
   /** @description Params that can be passed in order to override existing ones, to disable override pass null */
-  Model546: {
+  Model547: {
     name?: string;
     description?: string;
     imageUrl?: string;
     twitterUrl?: string;
     discordUrl?: string;
     externalUrl?: string;
-    royalties?: definitions["Model545"];
+    royalties?: definitions["Model546"];
   };
-  Model547: {
+  Model548: {
     /** @enum {string} */
     kind: "seaport-intent";
   };
@@ -6542,7 +6550,7 @@ export interface definitions {
     maxPricePerItem: string;
     maxItems: number;
   };
-  Model548: {
+  Model549: {
     id: string;
     /** @default false */
     skipRevalidation?: boolean;
@@ -12364,7 +12372,7 @@ export interface operations {
     responses: {
       /** Successful */
       200: {
-        schema: definitions["postExecuteBuyV1Response"];
+        schema: definitions["postExecuteMintV1Response"];
       };
     };
   };
@@ -12432,7 +12440,7 @@ export interface operations {
   postExecuteSellV7: {
     parameters: {
       body: {
-        body?: definitions["Model520"];
+        body?: definitions["Model521"];
       };
     };
     responses: {
@@ -12449,7 +12457,7 @@ export interface operations {
         signature?: string;
       };
       body: {
-        body?: definitions["Model527"];
+        body?: definitions["Model528"];
       };
     };
     responses: {
@@ -12462,7 +12470,7 @@ export interface operations {
   postExecuteStatusV1: {
     parameters: {
       body: {
-        body?: definitions["Model528"];
+        body?: definitions["Model529"];
       };
     };
     responses: {
@@ -12475,7 +12483,7 @@ export interface operations {
   postExecuteTransferV1: {
     parameters: {
       body: {
-        body?: definitions["Model531"];
+        body?: definitions["Model532"];
       };
     };
     responses: {
@@ -12492,7 +12500,7 @@ export interface operations {
         "x-api-key": string;
       };
       body: {
-        body?: definitions["Model537"];
+        body?: definitions["Model538"];
       };
     };
     responses: {
@@ -12505,7 +12513,7 @@ export interface operations {
   postTokensFlagV1: {
     parameters: {
       body: {
-        body?: definitions["Model538"];
+        body?: definitions["Model539"];
       };
     };
     responses: {
@@ -12523,7 +12531,7 @@ export interface operations {
   postTokensRefreshV1: {
     parameters: {
       body: {
-        body?: definitions["Model539"];
+        body?: definitions["Model540"];
       };
     };
     responses: {
@@ -12536,7 +12544,7 @@ export interface operations {
   postTokensSimulatefloorV1: {
     parameters: {
       body: {
-        body?: definitions["Model540"];
+        body?: definitions["Model541"];
       };
     };
     responses: {
@@ -12549,7 +12557,7 @@ export interface operations {
   postTokensSimulatetopbidV1: {
     parameters: {
       body: {
-        body?: definitions["Model541"];
+        body?: definitions["Model542"];
       };
     };
     responses: {
@@ -12566,7 +12574,7 @@ export interface operations {
         "x-api-key": string;
       };
       body: {
-        body?: definitions["Model543"];
+        body?: definitions["Model544"];
       };
     };
     responses: {
@@ -12587,7 +12595,7 @@ export interface operations {
         collection: string;
       };
       body: {
-        body?: definitions["Model546"];
+        body?: definitions["Model547"];
       };
     };
     responses: {
@@ -12600,7 +12608,7 @@ export interface operations {
   postExecuteSolveCapacityV1: {
     parameters: {
       body: {
-        body?: definitions["Model547"];
+        body?: definitions["Model548"];
       };
     };
     responses: {
@@ -12613,7 +12621,7 @@ export interface operations {
   postManagementOrdersSimulateV1: {
     parameters: {
       body: {
-        body?: definitions["Model548"];
+        body?: definitions["Model549"];
       };
     };
     responses: {

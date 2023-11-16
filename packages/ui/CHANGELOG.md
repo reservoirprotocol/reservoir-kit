@@ -1,7 +1,17 @@
 
+## [v1.18.10-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/339a9c0ccf21e04e75ed2e5d379cfa17b7e4ff4a) (2023-11-16)
+
+* Fix SelectPaymentToken icon aspect ratio [6124eadb](https://github.com/reservoirprotocol/reservoir-kit/commit/6124eadbbaddbe6d0fc279f2a6aa4195fb6dc0d5)
+
+## [v1.18.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/32e1cc9aee6c48913589c2e6502acc9c704798f6) (2023-11-16)
+
+* Add Solver Capacity check for crosschain purchases [37141f14](https://github.com/reservoirprotocol/reservoir-kit/commit/37141f14f60cda53b613268926ef450588021fee)
+* AcceptBidModal: Add feesOnTop and feesOnTopCustom [37e1d874](https://github.com/reservoirprotocol/reservoir-kit/commit/37e1d874e1bb312fc70af5d165118edd6a873958)
+
 ## [v1.18.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4ad23190b1c0ae1c0f6390ffc34ca0071ac30adf) (2023-11-14)
 
 * ListModal: fix marketplace fee breakdown [addfc729](https://github.com/reservoirprotocol/reservoir-kit/commit/addfc72973159f7aab872bc6817493c9787bcc46)
+
 ## [v1.18.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/c46d6307568b472423c70c1d5dcd2e3e5db9e419) (2023-11-14)
 
 * useTrendingCollections hook [fa0db2f5](https://github.com/reservoirprotocol/reservoir-kit/commit/fa0db2f5a324584814f51318a6189816a44ac8fa)

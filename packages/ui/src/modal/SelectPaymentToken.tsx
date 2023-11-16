@@ -13,6 +13,7 @@ type Props = {
   goBack: () => void
   currency?: EnhancedCurrency
   css?: CSS
+  itemAmount: number
 }
 
 export const SelectPaymentToken: FC<Props> = ({
@@ -21,6 +22,7 @@ export const SelectPaymentToken: FC<Props> = ({
   goBack,
   currency,
   css,
+  itemAmount,
 }) => {
   return (
     <Flex
@@ -40,7 +42,28 @@ export const SelectPaymentToken: FC<Props> = ({
             BigInt(paymentToken?.balance || 0),
             paymentToken?.decimals || 18
           )
-          if (paymentToken?.currencyTotalRaw != undefined)
+
+          const hasMaxItemAmount = paymentToken?.maxItems != undefined
+          const hasMaxPricePerItem = paymentToken?.maxPricePerItem != undefined
+          const hasCurrencyTotalRaw =
+            paymentToken?.currencyTotalRaw != undefined
+
+          const maxPurchasablePrice =
+            BigInt(itemAmount) * BigInt(paymentToken?.maxPricePerItem ?? 0)
+          const maxItemAmount = paymentToken?.maxItems
+            ? BigInt(paymentToken?.maxItems)
+            : undefined
+
+          const isEnabledPaymentToken =
+            isSelectedCurrency ||
+            (!hasMaxPricePerItem && !hasMaxItemAmount && hasCurrencyTotalRaw) ||
+            (maxPurchasablePrice &&
+              paymentToken?.currencyTotalRaw &&
+              maxPurchasablePrice >= paymentToken?.currencyTotalRaw &&
+              maxItemAmount &&
+              maxItemAmount >= itemAmount)
+
+          if (isEnabledPaymentToken)
             return (
               <Button
                 key={idx}
@@ -73,7 +96,7 @@ export const SelectPaymentToken: FC<Props> = ({
                   <CryptoCurrencyIcon
                     address={paymentToken?.address as string}
                     chainId={paymentToken.chainId}
-                    css={{ width: 24, height: 24, 'object-fit': 'cover' }}
+                    css={{ width: 24, height: 24, 'object-fit': 'contain' }}
                   />
                   <Flex direction="column" align="start">
                     <Text style="subtitle2">{paymentToken?.name}</Text>

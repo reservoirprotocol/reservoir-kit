@@ -782,7 +782,7 @@ function cartStore({
             address: firstValidItemCurrency?.contract?.toLowerCase() as Address,
             decimals: firstValidItemCurrency?.decimals || 18,
             symbol: firstValidItemCurrency?.symbol || '',
-            chainId: cartChain?.id,
+            chainId: cartChain?.id || 1,
           }
         } else {
           return (
