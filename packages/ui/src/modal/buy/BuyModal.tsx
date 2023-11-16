@@ -305,6 +305,7 @@ export function BuyModal({
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}
                   goBack={() => setBuyStep(BuyStep.Checkout)}
+                  itemAmount={quantity}
                 />
               </Flex>
             )}
