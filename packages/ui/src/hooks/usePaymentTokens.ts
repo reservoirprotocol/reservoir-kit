@@ -113,13 +113,29 @@ export default function (
     return allPaymentTokens?.filter(
       (currency) => currency.address !== zeroAddress
     )
-  }, [allPaymentTokens])
+  }, [
+    allPaymentTokens,
+    chain?.paymentTokens,
+    preferredCurrency.address,
+    crossChainDisabled,
+    nativeOnly,
+    listingCurrency,
+    includeListingCurrency,
+  ])
 
   const nativeCurrencies = useMemo(() => {
     return allPaymentTokens?.filter(
       (currency) => currency.address === zeroAddress
     )
-  }, [allPaymentTokens])
+  }, [
+    allPaymentTokens,
+    chain?.paymentTokens,
+    preferredCurrency.address,
+    crossChainDisabled,
+    nativeOnly,
+    listingCurrency,
+    includeListingCurrency,
+  ])
 
   const { data: nonNativeBalances } = useContractReads({
     contracts: open
