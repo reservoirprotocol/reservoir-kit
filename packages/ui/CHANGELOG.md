@@ -1,4 +1,8 @@
 
+## [v1.18.10-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/339a9c0ccf21e04e75ed2e5d379cfa17b7e4ff4a) (2023-11-16)
+
+* Fix SelectPaymentToken icon aspect ratio [6124eadb](https://github.com/reservoirprotocol/reservoir-kit/commit/6124eadbbaddbe6d0fc279f2a6aa4195fb6dc0d5)
+
 ## [v1.18.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/32e1cc9aee6c48913589c2e6502acc9c704798f6) (2023-11-16)
 
 * Add Solver Capacity check for crosschain purchases [37141f14](https://github.com/reservoirprotocol/reservoir-kit/commit/37141f14f60cda53b613268926ef450588021fee)
