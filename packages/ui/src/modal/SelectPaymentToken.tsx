@@ -13,6 +13,7 @@ type Props = {
   >
   goBack: () => void
   currency?: EnhancedCurrency
+  itemAmount: number
 }
 
 export const SelectPaymentToken: FC<Props> = ({
@@ -20,6 +21,7 @@ export const SelectPaymentToken: FC<Props> = ({
   setCurrency,
   goBack,
   currency,
+  itemAmount,
 }) => {
   return (
     <Flex direction="column" css={{ width: '100%', gap: '$1', px: '$3' }}>
@@ -36,7 +38,28 @@ export const SelectPaymentToken: FC<Props> = ({
             BigInt(paymentToken?.balance || 0),
             paymentToken?.decimals || 18
           )
-          if (paymentToken?.currencyTotalRaw != undefined)
+
+          const hasMaxItemAmount = paymentToken?.maxItems != undefined
+          const hasMaxPricePerItem = paymentToken?.maxPricePerItem != undefined
+          const hasCurrencyTotalRaw =
+            paymentToken?.currencyTotalRaw != undefined
+
+          const maxPurchasablePrice =
+            BigInt(itemAmount) * BigInt(paymentToken?.maxPricePerItem ?? 0)
+          const maxItemAmount = paymentToken?.maxItems
+            ? BigInt(paymentToken?.maxItems)
+            : undefined
+
+          const isEnabledPaymentToken =
+            isSelectedCurrency ||
+            (!hasMaxPricePerItem && !hasMaxItemAmount && hasCurrencyTotalRaw) ||
+            (maxPurchasablePrice &&
+              paymentToken?.currencyTotalRaw &&
+              maxPurchasablePrice >= paymentToken?.currencyTotalRaw &&
+              maxItemAmount &&
+              maxItemAmount >= itemAmount)
+
+          if (isEnabledPaymentToken)
             return (
               <Button
                 key={idx}

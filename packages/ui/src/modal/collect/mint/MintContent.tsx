@@ -90,6 +90,10 @@ export const MintContent: FC<
       )
     : {}
 
+  const maxQuantity = paymentCurrency?.maxItems
+    ? paymentCurrency?.maxItems
+    : maxItemAmount
+
   const totalMints =
     stepData?.currentStep?.items?.reduce((total, item) => {
       item.transfersData?.forEach((transferData) => {
@@ -172,15 +176,15 @@ export const MintContent: FC<
                       ellipsify
                       css={{ width: '100%' }}
                     >
-                      {formatNumber(maxItemAmount)}{' '}
-                      {maxItemAmount > 1 ? 'items' : 'item'} available
+                      {formatNumber(maxQuantity)}{' '}
+                      {maxQuantity > 1 ? 'items' : 'item'} available
                     </Text>
                   </Flex>
                   <QuantitySelector
                     quantity={itemAmount}
                     setQuantity={setItemAmount}
                     min={1}
-                    max={maxItemAmount}
+                    max={maxQuantity}
                     css={{
                       width: '100%',
                       justifyContent: 'space-between',
@@ -375,6 +379,7 @@ export const MintContent: FC<
             currency={paymentCurrency}
             setCurrency={setPaymentCurrency}
             goBack={() => setCollectStep(CollectStep.Idle)}
+            itemAmount={itemAmount}
           />
         </Flex>
       )}

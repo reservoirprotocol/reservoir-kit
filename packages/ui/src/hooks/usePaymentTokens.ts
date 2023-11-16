@@ -1,8 +1,12 @@
 import { erc20ABI, useContractReads } from 'wagmi'
 import { fetchBalance } from 'wagmi/actions'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
-import { useReservoirClient, useCurrencyConversions } from '.'
 import { useContext, useMemo } from 'react'
+import {
+  useReservoirClient,
+  useCurrencyConversions,
+  useSolverCapacities,
+} from '.'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
 import useSWR from 'swr'
@@ -17,6 +21,8 @@ export type EnhancedCurrency =
       balance?: string | number | bigint
       currencyTotalRaw?: bigint
       currencyTotalFormatted?: string
+      maxItems?: number
+      maxPricePerItem?: bigint
     }
 
 const fetchNativeBalances = async (
@@ -137,6 +143,23 @@ export default function (
     }
   )
 
+  const crosschainChainIds = useMemo(() => {
+    if (crossChainDisabled) {
+      return []
+    } else {
+      return (
+        allPaymentTokens
+          ?.filter((token) => token?.chainId !== chain?.id)
+          ?.map((token) => token?.chainId) ?? []
+      )
+    }
+  }, [allPaymentTokens, crossChainDisabled])
+
+  const { data: solverCapacityChainIdMap } = useSolverCapacities(
+    open ? crosschainChainIds : [],
+    chain
+  )
+
   const preferredCurrencyConversions = useCurrencyConversions(
     preferredCurrency?.address,
     chain,
@@ -205,6 +228,25 @@ export default function (
           ? formatUnits(usdTotalPriceRaw, 6)
           : undefined
 
+        let maxItems: EnhancedCurrency['maxItems'] = undefined
+        let maxPricePerItem: EnhancedCurrency['maxPricePerItem'] = undefined
+
+        if (
+          !crossChainDisabled &&
+          crosschainChainIds?.length > 0 &&
+          solverCapacityChainIdMap &&
+          currency.chainId !== chain?.id
+        ) {
+          const solverCapacity = solverCapacityChainIdMap.get(currency.chainId)
+
+          if (solverCapacity) {
+            maxItems = solverCapacity.maxItems
+            if (typeof solverCapacity.maxPricePerItem === 'string') {
+              maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
+            }
+          }
+        }
+
         return {
           ...currency,
           address: currency.address.toLowerCase(),
@@ -215,14 +257,10 @@ export default function (
           balance,
           currencyTotalRaw,
           currencyTotalFormatted,
+          maxItems,
+          maxPricePerItem,
         }
       })
-      .filter((currency) =>
-        currency.chainId !== chain?.id &&
-        (currency.currencyTotalRaw || 0) > 50000000000000000n
-          ? false
-          : true
-      )
       .sort((a, b) => {
         // If user has enough balance in the listing currency, return first. Otherwise sort currencies by balance and chainId
 
