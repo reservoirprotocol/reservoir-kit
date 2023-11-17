@@ -686,11 +686,13 @@ export function BidModal({
                         }
                       }}
                     >
-                      {expirationOptions.map((option) => (
-                        <Select.Item key={option.text} value={option.value}>
-                          <Select.ItemText>{option.text}</Select.ItemText>
-                        </Select.Item>
-                      ))}
+                      {expirationOptions
+                        .filter(({ value }) => value !== 'custom')
+                        .map((option) => (
+                          <Select.Item key={option.text} value={option.value}>
+                            <Select.ItemText>{option.text}</Select.ItemText>
+                          </Select.Item>
+                        ))}
                     </Select>
                     <DateInput
                       ref={datetimeElement}
