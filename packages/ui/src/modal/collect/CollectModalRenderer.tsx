@@ -272,10 +272,12 @@ export const CollectModalRenderer: FC<Props> = ({
         chainId: rendererChain?.id,
         items: [
           {
-            collection: token?.token?.tokenId ? undefined : collectionId,
-            token: token?.token?.tokenId
-              ? `${collectionId}:${token?.token?.tokenId}`
-              : undefined,
+            collection:
+              tokenId ?? token?.token?.tokenId ? undefined : collectionId,
+            token:
+              tokenId ?? token?.token?.tokenId
+                ? `${collectionId}:${tokenId ?? token?.token?.tokenId}`
+                : undefined,
             fillType: mode === 'preferMint' ? undefined : mode,
           },
         ],
@@ -347,6 +349,7 @@ export const CollectModalRenderer: FC<Props> = ({
     tokenId,
     mode,
     token?.token?.tokenId,
+    tokenId,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
     is1155,
@@ -373,6 +376,7 @@ export const CollectModalRenderer: FC<Props> = ({
     open,
     fetchBuyPathIfIdle,
     token?.token?.tokenId,
+    tokenId,
     is1155,
     paymentCurrency?.address,
   ])
