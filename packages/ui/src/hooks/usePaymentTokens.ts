@@ -131,7 +131,7 @@ export default function (
   }, [allPaymentTokens, crossChainDisabled])
 
   const { data: solverCapacityChainIdMap } = useSolverCapacities(
-    open ? crosschainChainIds : [],
+    enabled ? crosschainChainIds : [],
     chain
   )
 
