@@ -7,7 +7,7 @@ import {
   TransactionStepItem,
 } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
-import { createPublicClient, fallback, formatUnits, http } from 'viem'
+import { Address, createPublicClient, fallback, formatUnits, http } from 'viem'
 import { axios } from '../utils'
 import { customChains } from '../utils/customChains'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
@@ -374,6 +374,8 @@ export async function executeSteps(
                     stepItem?.data?.chainId &&
                     stepItem?.data?.chainId != reservoirChain?.id
 
+                  const crossChainIntentChainId = reservoirChain?.id
+
                   await sendTransactionSafely(
                     transactionChainId,
                     viemClient,
@@ -393,26 +395,33 @@ export async function executeSteps(
                         setState([...json.steps], path)
                       }
                     },
+                    (internalTxHashes) => {
+                      stepItem.internalTxHashes = internalTxHashes
+                      if (json) {
+                        setState([...json.steps], path)
+                      }
+                    },
                     request,
                     headers,
-                    isCrossChainIntent
+                    isCrossChainIntent,
+                    crossChainIntentChainId
                   )
 
-                  stepItem?.txHashes?.forEach((txHash) => {
+                  stepItem?.txHashes?.forEach((hash) => {
                     executeResults({
                       request,
                       stepId: step.id,
                       requestId: json?.requestId,
-                      txHash,
+                      txHash: hash.txHash,
                     })
                   })
                 } catch (e) {
-                  stepItem?.txHashes?.forEach((txHash) => {
+                  stepItem?.txHashes?.forEach((hash) => {
                     executeResults({
                       request,
                       stepId: step.id,
                       requestId: json?.requestId,
-                      txHash,
+                      txHash: hash.txHash,
                     })
                   })
 
@@ -492,7 +501,17 @@ export async function executeSteps(
                             res?.data?.status === 'success' &&
                             res?.data?.txHashes
                           ) {
-                            stepItem.txHashes = res?.data?.txHashes
+                            const chainTxHashes: NonNullable<
+                              Execute['steps'][0]['items']
+                            >[0]['txHashes'] = res.data?.txHashes?.map(
+                              (hash: Address) => {
+                                return {
+                                  txHash: hash,
+                                  chainId: reservoirChain?.id,
+                                }
+                              }
+                            )
+                            stepItem.txHashes = chainTxHashes
                             return true
                           } else if (res?.data?.status === 'failure') {
                             throw Error(
@@ -560,9 +579,10 @@ export async function executeSteps(
               const indexerConfirmationUrl = new URL(
                 `${request.baseURL}/transfers/bulk/v2`
               )
+
               const queryParams: paths['/transfers/bulk/v2']['get']['parameters']['query'] =
                 {
-                  txHash: stepItem.txHashes,
+                  txHash: stepItem.txHashes?.map((hash) => hash.txHash),
                 }
               setParams(indexerConfirmationUrl, queryParams)
               let transfersData: paths['/transfers/bulk/v2']['get']['responses']['200']['schema'] =
@@ -590,8 +610,8 @@ export async function executeSteps(
 
                     return transfersData.transfers &&
                       transfersData.transfers.length > 0 &&
-                      stepItem.txHashes?.every((txHash) =>
-                        transferTxHashes?.includes(txHash)
+                      stepItem.txHashes?.every((hash) =>
+                        transferTxHashes?.includes(hash.txHash)
                       )
                       ? true
                       : false

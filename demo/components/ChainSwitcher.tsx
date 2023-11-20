@@ -28,7 +28,7 @@ export default ({ style }: { style?: CSSProperties }) => {
       value={chain || 1}
     >
       {chains.map((chain) => (
-        <option value={chain.id} key={chain.id}>{chain.name}</option>
+        <option key={chain.id} value={chain.id}>{chain.name}</option>
       ))}
     </select>
   )
