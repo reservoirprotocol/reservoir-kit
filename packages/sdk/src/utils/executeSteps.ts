@@ -75,7 +75,7 @@ function checkExpectedPrice(
       if (quote.raw - expectedPrice.raw > rawQuoteThreshold) {
         error = {
           ...baseError,
-          message: `Attention: the price of this token is now ${formatUnits(
+          message: `Attention: the total price is now ${formatUnits(
             quote.raw,
             quote.currencyDecimals || 18
           )}`,
@@ -85,7 +85,7 @@ function checkExpectedPrice(
       if (Number((quote.amount - expectedPrice.amount).toFixed(6)) > 0.00001) {
         error = {
           ...baseError,
-          message: `Attention: the price of this token is now ${quote}`,
+          message: `Attention: the total price is now ${quote}`,
         }
       }
     }

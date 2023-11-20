@@ -293,22 +293,30 @@ export const CollectModalRenderer: FC<Props> = ({
           let pathData = data['path']
           setOrders(pathData ?? [])
 
-          // handle setting max quantity
+          const pathOrderQuantity =
+            pathData?.reduce(
+              (quantity, order) => quantity + (order?.quantity || 1),
+              0
+            ) || 0
+          let totalMaxQuantity = pathOrderQuantity
           if ('maxQuantities' in data && data.maxQuantities?.[0]) {
             if (is1155) {
-              let totalMaxQuantity = data.maxQuantities.reduce(
+              totalMaxQuantity = data.maxQuantities.reduce(
                 (total, currentQuantity) =>
                   total + Number(currentQuantity.maxQuantity ?? 1),
                 0
               )
-              setMaxItemAmount(totalMaxQuantity)
             } else {
               let maxQuantity = data.maxQuantities?.[0].maxQuantity
-              setMaxItemAmount(maxQuantity ? Number(maxQuantity) : 1) // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+              // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+              totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
             }
-          } else {
-            setMaxItemAmount(0)
           }
+          setMaxItemAmount(
+            pathOrderQuantity > totalMaxQuantity
+              ? totalMaxQuantity
+              : pathOrderQuantity
+          )
 
           if (mode === 'preferMint') {
             // check if the path data includes any mints
