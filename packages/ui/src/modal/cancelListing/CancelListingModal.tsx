@@ -21,6 +21,7 @@ import { faGasPump } from '@fortawesome/free-solid-svg-icons'
 import { truncateAddress } from '../../lib/truncate'
 import { WalletClient } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 
 const ModalCopy = {
   title: 'Cancel Listing',
@@ -86,7 +87,6 @@ export function CancelListingModal({
         stepData,
         totalUsd,
         blockExplorerName,
-        blockExplorerBaseUrl,
         cancelOrder,
       }) => {
         const expires = useTimeSince(listing?.expiration)
@@ -211,7 +211,6 @@ export function CancelListingModal({
                           : 'Confirm cancelation in your wallet'
                       }
                       txHashes={stepData?.currentStepItem?.txHashes}
-                      blockExplorerBaseUrl={blockExplorerBaseUrl}
                     />
                   </>
                 )}
@@ -253,23 +252,24 @@ export function CancelListingModal({
                     </>
                   </Text>
                   <Flex direction="column" align="center" css={{ gap: '$2' }}>
-                    {stepData?.currentStepItem?.txHashes?.map(
-                      (txHash, index) => {
-                        const truncatedTxHash = truncateAddress(txHash)
-                        return (
-                          <Anchor
-                            key={index}
-                            href={`${blockExplorerBaseUrl}/tx/${txHash}`}
-                            color="primary"
-                            weight="medium"
-                            target="_blank"
-                            css={{ fontSize: 12 }}
-                          >
-                            View transaction: {truncatedTxHash}
-                          </Anchor>
-                        )
-                      }
-                    )}
+                    {stepData?.currentStepItem?.txHashes?.map((hash, index) => {
+                      const truncatedTxHash = truncateAddress(hash.txHash)
+                      const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                        hash.chainId
+                      )
+                      return (
+                        <Anchor
+                          key={index}
+                          href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
+                          color="primary"
+                          weight="medium"
+                          target="_blank"
+                          css={{ fontSize: 12 }}
+                        >
+                          View transaction: {truncatedTxHash}
+                        </Anchor>
+                      )
+                    })}
                   </Flex>
                 </Flex>
                 <Button
