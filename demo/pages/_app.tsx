@@ -6,6 +6,7 @@ import React, {
   Dispatch,
   SetStateAction,
   FC,
+  useEffect,
 } from 'react'
 import { darkTheme } from 'stitches.config'
 import { ThemeProvider } from 'next-themes'
@@ -78,15 +79,24 @@ const ThemeSwitcher: FC<any> = ({ children }) => {
 }
 
 export const ChainSwitcherContext = React.createContext<{
-  chain: number
-  setChain: Dispatch<SetStateAction<number>> | null
+  chain: number | null
+  setChain: Dispatch<SetStateAction<number | null>> | null
 }>({
   chain: CHAIN_ID,
   setChain: null,
 })
 
 const ChainSwitcher: FC<any> = ({ children }) => {
-  const [chain, setChain] = useState<number>(CHAIN_ID)
+  const router = useRouter()
+  const [chain, setChain] = useState<number | null>(null)
+
+  useEffect(() => {
+    if(!chain && router.query.chainId) {
+      const routerChainId = Number(router.query.chainId)
+      setChain(routerChainId)
+    }
+  }, [router.query.chainId])
+  
   return (
     <ChainSwitcherContext.Provider value={{ chain, setChain }}>
       {children}
