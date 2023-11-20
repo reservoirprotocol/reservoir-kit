@@ -1,6 +1,6 @@
 import { ReservoirWallet } from '../types'
 import { LogLevel, customChains, getClient } from '../'
-import { Account, WalletClient, custom, hexToBigInt, toBytes } from 'viem'
+import { Account, Hex, WalletClient, custom, hexToBigInt } from 'viem'
 import * as allChains from 'viem/chains'
 
 export function isViemWalletClient(
@@ -30,7 +30,9 @@ export const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {
             // If the message represents a hash, we need to convert it to raw bytes first
             signature = await wallet.signMessage({
               account: wallet.account as Account,
-              message: toBytes(signData.message).toString(),
+              message: {
+                raw: signData.message as Hex,
+              },
             })
           } else {
             signature = await wallet.signMessage({
