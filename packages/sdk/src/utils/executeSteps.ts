@@ -609,8 +609,12 @@ export async function executeSteps(
                 .map((order) => order.contract?.toLowerCase())
               stepItem.transfersData = transfersData.transfers?.filter(
                 (transfer) =>
-                  transfer.to?.toLowerCase() === taker.toLowerCase() &&
-                  contracts?.includes(transfer?.token?.contract?.toLowerCase())
+                  isSell
+                    ? transfer.from?.toLowerCase() === taker.toLowerCase()
+                    : transfer.to?.toLowerCase() === taker.toLowerCase() &&
+                      contracts?.includes(
+                        transfer?.token?.contract?.toLowerCase()
+                      )
               )
               setState([...json?.steps], path)
             }
