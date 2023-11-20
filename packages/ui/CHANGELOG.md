@@ -1,4 +1,18 @@
 
+## [v1.19.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/cb380a06e5d6b04db133cb19663214b78271e88a) (2023-11-20)
+
+* Merge pull request #479 from reservoirprotocol/ted/grwth-3568-improve-post-mint-image-experience [d7a9a935](https://github.com/reservoirprotocol/reservoir-kit/commit/d7a9a93562b320437fac197679dafe3b4040f545)
+* Merge pull request #472 from reservoirprotocol/ted/grwth-3573-fix-alwaysincludelistingcurrency-in-payment-tokens [78d8fe03](https://github.com/reservoirprotocol/reservoir-kit/commit/78d8fe030b084174edc154e68fa45d187e4099e0)
+* Merge pull request #481 from reservoirprotocol/pedro/grwth-3347-use-seaport-v15-for-oracle-orders [280b1b27](https://github.com/reservoirprotocol/reservoir-kit/commit/280b1b27db2c483082b5583d598327e853c66510)
+* Merge pull request #480 from reservoirprotocol/pedro/grwth-3587-expected-price-sweep-bugs [08822d0a](https://github.com/reservoirprotocol/reservoir-kit/commit/08822d0a8d5e63cfe991fe220aedd9c54cc325cc)
+* Add txHashes to collect modal ui [00236146](https://github.com/reservoirprotocol/reservoir-kit/commit/00236146e8a740834b7bb8f39e5f3e87413539f4)
+* feat: filter custom on dropdown [3d610e37](https://github.com/reservoirprotocol/reservoir-kit/commit/3d610e37ae1e50027ebd6c8f299904870eabc37c)
+* Respect maxQuantity in case the path quantity is higher than the max [1012217f](https://github.com/reservoirprotocol/reservoir-kit/commit/1012217f5128364e8acee8ec0359b6d9406cfaee)
+* Fix: QA feedback [93d213f8](https://github.com/reservoirprotocol/reservoir-kit/commit/93d213f89f0f9c359248222c857ad2f25adc4e50)
+* Update oracle orders from seaport v1.4 to v1.5 [e316890b](https://github.com/reservoirprotocol/reservoir-kit/commit/e316890b12b4d22b4a9c5234892f3b77e58e89a8)
+* CollectModal: fix maxQuantity calculation [8c322b92](https://github.com/reservoirprotocol/reservoir-kit/commit/8c322b92ad48a04ab4b321bed027695018b2c205)
+* Resolve conflicts [9b3efeb9](https://github.com/reservoirprotocol/reservoir-kit/commit/9b3efeb9e23e1418e70c3470ef72bd85eb36215a)
+
 ## [v1.18.10-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/339a9c0ccf21e04e75ed2e5d379cfa17b7e4ff4a) (2023-11-16)
 
 * Fix SelectPaymentToken icon aspect ratio [6124eadb](https://github.com/reservoirprotocol/reservoir-kit/commit/6124eadbbaddbe6d0fc279f2a6aa4195fb6dc0d5)

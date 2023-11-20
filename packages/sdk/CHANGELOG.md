@@ -1,4 +1,14 @@
 
+## [v1.9.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/7d571b6878377943a7d03b40de37ae33dc0259b6) (2023-11-20)
+
+* Merge pull request #483 from reservoirprotocol/pedro/grwth-3604-incorrect-signature-being-passed-for-x2y2-order [6bedd07e](https://github.com/reservoirprotocol/reservoir-kit/commit/6bedd07eb8bf5e00242fe0fc10bf6d615f92587d)
+* Merge pull request #480 from reservoirprotocol/pedro/grwth-3587-expected-price-sweep-bugs [08822d0a](https://github.com/reservoirprotocol/reservoir-kit/commit/08822d0a8d5e63cfe991fe220aedd9c54cc325cc)
+* Fix transfersData confirmation for sell transactions [ee32fd5a](https://github.com/reservoirprotocol/reservoir-kit/commit/ee32fd5a092f482682a2aa3913789909b58dae04)
+* Fix viem eip191 signature when signing a raw message [7d76ca7d](https://github.com/reservoirprotocol/reservoir-kit/commit/7d76ca7ddf25800ec5b362e9d467bac2870d6c5c)
+* CollectModal: fix maxQuantity calculation [8c322b92](https://github.com/reservoirprotocol/reservoir-kit/commit/8c322b92ad48a04ab4b321bed027695018b2c205)
+* Sync api [59c4cf45](https://github.com/reservoirprotocol/reservoir-kit/commit/59c4cf459580a1e9628425e28e1d8c802293f681)
+* Sync api [74af5a33](https://github.com/reservoirprotocol/reservoir-kit/commit/74af5a3307eafaa0a03d961bf4d486e01f892920)
+
 ## [v1.8.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/9312dc4a3045ad0cb0a15a3d279f602ebefdd639) (2023-11-13)
 
 * Sync Api
