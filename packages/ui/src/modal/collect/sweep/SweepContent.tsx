@@ -35,6 +35,7 @@ import { SelectPaymentToken } from '../../SelectPaymentToken'
 import { formatNumber } from '../../../lib/numbers'
 import { truncateAddress } from '../../../lib/truncate'
 import getChainBlockExplorerUrl from '../../../lib/getChainBlockExplorerUrl'
+import { CurrentStepTxHashes } from '../../CurrentStepTxHashes'
 
 export const SweepContent: FC<
   ChildrenProps & {
@@ -485,6 +486,7 @@ export const SweepContent: FC<
                     style={{ height: 32 }}
                   />
                 </Flex>
+                <CurrentStepTxHashes currentStep={stepData?.currentStep} />
                 <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                   <Loader />
                   {copy.sweepCtaAwaitingApproval}
@@ -543,6 +545,7 @@ export const SweepContent: FC<
                         }}
                       />
                     </Box>
+                    <CurrentStepTxHashes currentStep={stepData?.currentStep} />
                     <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                       <Loader />
                       {copy.sweepCtaAwaitingApproval}
@@ -599,6 +602,7 @@ export const SweepContent: FC<
               />
             </Box>
           </Flex>
+          <CurrentStepTxHashes currentStep={stepData?.currentStep} />
           <Button disabled={true} css={{ m: '$4' }}>
             <Loader />
             {copy.sweepCtaAwaitingValidation}
