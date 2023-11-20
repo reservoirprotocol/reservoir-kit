@@ -64,8 +64,8 @@ export default [
     paymentTokens: [...reservoirChains.optimism.paymentTokens, {
       chainId: 1,
       address: zeroAddress,
-      symbol: 'Mainnet ETH',
-      name: 'Mainnet ETH',
+      symbol: 'ETH',
+      name: 'ETH',
       decimals: 18,
     },
     {
@@ -81,8 +81,8 @@ export default [
     paymentTokens: [...reservoirChains.arbitrum.paymentTokens, {
       chainId: 1,
       address: zeroAddress,
-      symbol: 'Mainnet ETH',
-      name: 'Mainnet ETH',
+      symbol: 'ETH',
+      name: 'ETH',
       decimals: 18,
     },
     {
@@ -98,8 +98,8 @@ export default [
     paymentTokens: [...reservoirChains.zora.paymentTokens, {
       chainId: 1,
       address: zeroAddress,
-      symbol: 'Mainnet ETH',
-      name: 'Mainnet ETH',
+      symbol: 'ETH',
+      name: 'ETH',
       decimals: 18,
     },
     {
@@ -115,8 +115,22 @@ export default [
     paymentTokens: [...reservoirChains.base.paymentTokens, {
       chainId: 1,
       address: zeroAddress,
-      symbol: 'Mainnet ETH',
-      name: 'Mainnet ETH',
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 10,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Optimism ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 7777777,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Zora ETH',
       decimals: 18,
     }]
   },
