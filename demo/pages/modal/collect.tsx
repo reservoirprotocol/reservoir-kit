@@ -193,6 +193,7 @@ const CollectPage: NextPage = () => {
         onClose={(data, currentStep) => {
           console.log('CollectModal Closed')
         }}
+        onGoToToken={(data) => console.log('Go to Token', data)}
       />
       <ChainSwitcher/>
       <ThemeSwitcher />
