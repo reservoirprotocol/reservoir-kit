@@ -43,7 +43,7 @@ import SigninStep from '../SigninStep'
 import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
 import { truncateAddress } from '../../lib/truncate'
 import { WalletClient } from 'viem'
-import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { ReservoirWallet, SellPath } from '@reservoir0x/reservoir-sdk'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 
 type BidData = {
@@ -68,6 +68,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   walletClient?: ReservoirWallet | WalletClient
+  feesOnTopBps?: string[] | null
+  feesOnTopCustom?: (data: SellPath) => string[] | null
   onBidAccepted?: (data: BidData) => void
   onClose?: (
     data: BidData,
@@ -86,6 +88,8 @@ export function AcceptBidModal({
   normalizeRoyalties,
   copyOverrides,
   walletClient,
+  feesOnTopBps,
+  feesOnTopCustom,
   onBidAccepted,
   onClose,
   onBidAcceptError,
@@ -114,6 +118,8 @@ export function AcceptBidModal({
       tokens={tokens}
       normalizeRoyalties={normalizeRoyalties}
       walletClient={walletClient}
+      feesOnTopBps={feesOnTopBps}
+      feesOnTopCustom={feesOnTopCustom}
     >
       {({
         loading,
@@ -325,7 +331,7 @@ export function AcceptBidModal({
                               style="tiny"
                               amount={
                                 usdPrices[price.currency.symbol].price *
-                                price.amount
+                                price.netAmount
                               }
                               css={{ textAlign: 'end' }}
                             />
@@ -392,6 +398,28 @@ export function AcceptBidModal({
                           <FormatCryptoCurrency
                             chainId={modalChain?.id}
                             amount={price.marketplaceFee}
+                            decimals={price.currency?.decimals}
+                            address={price.currency?.contract}
+                            symbol={price.currency?.symbol}
+                            textStyle="subtitle3"
+                          />
+                        </Flex>
+                      ) : null}
+                      {price.feesOnTop > 0 ? (
+                        <Flex justify="between">
+                          <Text style="subtitle3" color="subtle">
+                            Referral Fee
+                          </Text>
+                          <Text
+                            css={{ ml: 'auto' }}
+                            style="subtitle3"
+                            color="subtle"
+                          >
+                            -
+                          </Text>
+                          <FormatCryptoCurrency
+                            chainId={modalChain?.id}
+                            amount={price.feesOnTop}
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
                             symbol={price.currency?.symbol}

@@ -305,6 +305,7 @@ export function BuyModal({
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}
                   goBack={() => setBuyStep(BuyStep.Checkout)}
+                  itemAmount={quantity}
                 />
               </Flex>
             )}
@@ -420,20 +421,43 @@ export function BuyModal({
                   >
                     <Text style="h6">You Pay</Text>
                     <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                      <FormatCryptoCurrency
-                        chainId={chainId}
-                        textStyle="h6"
-                        amount={paymentCurrency?.currencyTotalRaw}
-                        address={paymentCurrency?.address}
-                        decimals={paymentCurrency?.decimals}
-                        symbol={paymentCurrency?.name}
-                        logoWidth={18}
-                      />
-                      <FormatCurrency
-                        amount={paymentCurrency?.usdTotalPriceRaw}
-                        style="tiny"
-                        color="subtle"
-                      />
+                      {providerOptions.preferDisplayFiatTotal ? (
+                        <>
+                          <FormatCurrency
+                            amount={paymentCurrency?.usdTotalPriceRaw}
+                            style="h6"
+                            color="base"
+                          />
+                          <FormatCryptoCurrency
+                            chainId={chainId}
+                            textStyle="tiny"
+                            textColor="subtle"
+                            amount={paymentCurrency?.currencyTotalRaw}
+                            address={paymentCurrency?.address}
+                            decimals={paymentCurrency?.decimals}
+                            symbol={paymentCurrency?.symbol}
+                            logoWidth={12}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <FormatCryptoCurrency
+                            chainId={chainId}
+                            textStyle="h6"
+                            textColor="base"
+                            amount={paymentCurrency?.currencyTotalRaw}
+                            address={paymentCurrency?.address}
+                            decimals={paymentCurrency?.decimals}
+                            symbol={paymentCurrency?.symbol}
+                            logoWidth={18}
+                          />
+                          <FormatCurrency
+                            amount={paymentCurrency?.usdTotalPriceRaw}
+                            style="tiny"
+                            color="subtle"
+                          />
+                        </>
+                      )}
                     </Flex>
                   </Flex>
                 </Flex>

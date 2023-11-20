@@ -139,8 +139,12 @@ const TokenPrimitive: FC<Props> = ({
               </Flex>
             ) : null}
             {name && (
-              <Flex align="center">
-                <Text style="body3" color="subtle">
+              <Flex
+                css={{
+                  maxWidth: '370px',
+                }}
+              >
+                <Text ellipsify style="body3" color="subtle">
                   {collection}
                 </Text>
                 <Divider direction="vertical" />

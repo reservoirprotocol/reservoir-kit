@@ -213,6 +213,10 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
 
+  const [listingCurrency, setListingCurrency] = useState<
+    EnhancedCurrency | undefined
+  >(undefined)
+
   const [_paymentCurrency, setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
@@ -223,7 +227,9 @@ export const CollectModalRenderer: FC<Props> = ({
     _paymentCurrency ?? chainCurrency,
     totalIncludingFees,
     rendererChain?.id,
-    contentMode === 'mint'
+    contentMode === 'mint',
+    false,
+    listingCurrency
   )
 
   const paymentCurrency = paymentTokens?.find(
@@ -266,10 +272,12 @@ export const CollectModalRenderer: FC<Props> = ({
         chainId: rendererChain?.id,
         items: [
           {
-            collection: token?.token?.tokenId ? undefined : collectionId,
-            token: token?.token?.tokenId
-              ? `${collectionId}:${token?.token?.tokenId}`
-              : undefined,
+            collection:
+              tokenId ?? token?.token?.tokenId ? undefined : collectionId,
+            token:
+              tokenId ?? token?.token?.tokenId
+                ? `${collectionId}:${tokenId ?? token?.token?.tokenId}`
+                : undefined,
             fillType: mode === 'preferMint' ? undefined : mode,
           },
         ],
@@ -293,22 +301,30 @@ export const CollectModalRenderer: FC<Props> = ({
           let pathData = data['path']
           setOrders(pathData ?? [])
 
-          // handle setting max quantity
+          const pathOrderQuantity =
+            pathData?.reduce(
+              (quantity, order) => quantity + (order?.quantity || 1),
+              0
+            ) || 0
+          let totalMaxQuantity = pathOrderQuantity
           if ('maxQuantities' in data && data.maxQuantities?.[0]) {
             if (is1155) {
-              let totalMaxQuantity = data.maxQuantities.reduce(
+              totalMaxQuantity = data.maxQuantities.reduce(
                 (total, currentQuantity) =>
                   total + Number(currentQuantity.maxQuantity ?? 1),
                 0
               )
-              setMaxItemAmount(totalMaxQuantity)
             } else {
               let maxQuantity = data.maxQuantities?.[0].maxQuantity
-              setMaxItemAmount(maxQuantity ? Number(maxQuantity) : 1) // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+              // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+              totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
             }
-          } else {
-            setMaxItemAmount(0)
           }
+          setMaxItemAmount(
+            pathOrderQuantity > totalMaxQuantity
+              ? totalMaxQuantity
+              : pathOrderQuantity
+          )
 
           if (mode === 'preferMint') {
             // check if the path data includes any mints
@@ -341,6 +357,7 @@ export const CollectModalRenderer: FC<Props> = ({
     tokenId,
     mode,
     token?.token?.tokenId,
+    tokenId,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
     is1155,
@@ -367,6 +384,7 @@ export const CollectModalRenderer: FC<Props> = ({
     open,
     fetchBuyPathIfIdle,
     token?.token?.tokenId,
+    tokenId,
     is1155,
     paymentCurrency?.address,
   ])
@@ -484,37 +502,35 @@ export const CollectModalRenderer: FC<Props> = ({
     orders,
   ])
 
+  // Set paymentCurrency to first paymentToken
   useEffect(() => {
-    if (!paymentTokens[0] || paymentCurrency) {
+    if (paymentTokens[0] && listingCurrency && !paymentCurrency) {
+      setPaymentCurrency(paymentTokens[0])
+    }
+  }, [paymentTokens, listingCurrency, paymentCurrency])
+
+  // Set listing currency
+  useEffect(() => {
+    if (listingCurrency || !open || !fetchedInitialOrders) {
       return
     }
-
     if (contentMode === 'mint') {
-      setPaymentCurrency(chainCurrency)
-    } else if (selectedTokens.length > 0) {
-      let firstListingCurrency
-      if (providerOptions.alwaysIncludeListingCurrency !== false) {
-        firstListingCurrency = {
-          address: selectedTokens?.[0].currency as Address,
-          decimals: selectedTokens?.[0].currencyDecimals || 18,
-          symbol: selectedTokens?.[0].currencySymbol || '',
-          chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
-        }
-      } else {
-        firstListingCurrency =
-          paymentTokens.find(
-            (token) =>
-              token.address === selectedTokens[0].currency?.toLowerCase()
-          ) || paymentTokens[0]
-      }
-
-      setPaymentCurrency(firstListingCurrency)
+      setListingCurrency(chainCurrency)
+    } else if (selectedTokens[0]) {
+      setListingCurrency({
+        address: selectedTokens?.[0].currency as Address,
+        decimals: selectedTokens?.[0].currencyDecimals || 18,
+        symbol: selectedTokens?.[0].currencySymbol || '',
+        name: selectedTokens?.[0].currencySymbol || '',
+        chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
+      })
     }
   }, [
-    paymentTokens,
-    chainCurrency,
+    listingCurrency,
+    open,
+    fetchedInitialOrders,
+    contentMode,
     selectedTokens,
-    providerOptions.alwaysIncludeListingCurrency,
     rendererChain,
   ])
 
@@ -568,6 +584,7 @@ export const CollectModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setFetchedInitialOrders(false)
       setPaymentCurrency(undefined)
+      setListingCurrency(undefined)
     } else {
       setItemAmount(defaultQuantity || 1)
     }

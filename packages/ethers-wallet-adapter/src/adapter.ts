@@ -6,7 +6,7 @@ import {
 import { Signer } from 'ethers/lib/ethers'
 import { arrayify } from 'ethers/lib/utils'
 import { TypedDataSigner } from '@ethersproject/abstract-signer/lib/index'
-import { CustomTransport, HttpTransport } from 'viem'
+import { CustomTransport, HttpTransport, hexToBigInt } from 'viem'
 
 export const adaptEthersSigner = (
   signer: Signer,
@@ -41,13 +41,25 @@ export const adaptEthersSigner = (
       return signature
     },
     handleSendTransactionStep: async (chainId, stepItem) => {
-      const { gas, ...stepData } = stepItem.data
+      const stepData = stepItem.data
       const transaction = await signer.sendTransaction({
-        ...stepData,
-        ...(gas && {
-          gasLimit: gas,
+        data: stepData.data,
+        to: stepData.to,
+        from: stepData.from,
+        value: hexToBigInt((stepData.value as any) || 0),
+        ...(stepData.maxFeePerGas && {
+          maxFeePerGas: hexToBigInt(stepData.maxFeePerGas as any),
+        }),
+        ...(stepData.maxPriorityFeePerGas && {
+          maxPriorityFeePerGas: hexToBigInt(
+            stepData.maxPriorityFeePerGas as any
+          ),
+        }),
+        ...(stepData.gas && {
+          gasLimit: hexToBigInt(stepData.gas as any),
         }),
       })
+
       return transaction.hash as `0x${string}`
     },
   }

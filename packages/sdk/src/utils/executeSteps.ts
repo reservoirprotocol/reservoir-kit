@@ -75,7 +75,7 @@ function checkExpectedPrice(
       if (quote.raw - expectedPrice.raw > rawQuoteThreshold) {
         error = {
           ...baseError,
-          message: `Attention: the price of this token is now ${formatUnits(
+          message: `Attention: the total price is now ${formatUnits(
             quote.raw,
             quote.currencyDecimals || 18
           )}`,
@@ -85,7 +85,7 @@ function checkExpectedPrice(
       if (Number((quote.amount - expectedPrice.amount).toFixed(6)) > 0.00001) {
         error = {
           ...baseError,
-          message: `Attention: the price of this token is now ${quote}`,
+          message: `Attention: the total price is now ${quote}`,
         }
       }
     }
@@ -243,7 +243,7 @@ export async function executeSteps(
 
       if (error) {
         json.steps[0].error = error.message
-        json.steps[0].errorData = json.path
+        json.steps[0].errorData = error
         setState([...json?.steps], path)
         throw error
       }
@@ -629,8 +629,11 @@ export async function executeSteps(
                 .map((order) => order.contract?.toLowerCase())
               stepItem.transfersData = transfersData.transfers?.filter(
                 (transfer) =>
-                  transfer.to?.toLowerCase() === taker.toLowerCase() &&
-                  contracts?.includes(transfer?.token?.contract?.toLowerCase())
+                  contracts?.includes(
+                    transfer?.token?.contract?.toLowerCase()
+                  ) && isSell
+                    ? transfer.from?.toLowerCase() === taker.toLowerCase()
+                    : transfer.to?.toLowerCase() === taker.toLowerCase()
               )
               setState([...json?.steps], path)
             }
@@ -647,6 +650,7 @@ export async function executeSteps(
             if (error && json?.steps) {
               json.steps[incompleteStepIndex].error = errorMessage
               stepItem.error = errorMessage
+              stepItem.errorData = (e as any)?.response?.data || e
               setState([...json?.steps], path)
             }
             reject(error)
@@ -672,15 +676,13 @@ export async function executeSteps(
       ['Execute Steps: An error occurred', err, 'Block Number:', blockNumber],
       LogLevel.Error
     )
-    const error = err as Error
-    const errorMessage = error ? error.message : 'Error: something went wrong'
 
     if (json) {
-      json.error = errorMessage
+      json.error = err && err?.response?.data ? err.response.data : err
       setState([...json?.steps], json.path)
     } else {
       json = {
-        error: errorMessage,
+        error: err && err?.response?.data ? err.response.data : err,
         path: undefined,
         steps: [],
       }

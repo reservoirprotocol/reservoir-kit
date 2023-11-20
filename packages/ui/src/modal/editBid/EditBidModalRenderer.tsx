@@ -366,7 +366,7 @@ export const EditBidModalRenderer: FC<Props> = ({
         wrappedBalance?.decimals || 18
       ).toString(),
       orderbook: 'reservoir',
-      orderKind: 'seaport-v1.4',
+      orderKind: 'seaport-v1.5',
       attributeKey: trait?.key,
       attributeValue: trait?.value,
     }
@@ -387,7 +387,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     }
 
     bid.options = {
-      'seaport-v1.4': {
+      'seaport-v1.5': {
         useOffChainCancellation: true,
         replaceOrderId: bidId,
       },

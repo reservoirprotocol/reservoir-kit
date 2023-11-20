@@ -220,7 +220,6 @@ const submitTransactionToSolver = async ({
           gas: tx.gas,
           nonce: tx.nonce,
           to: tx.to || undefined,
-          from: tx.from || undefined,
           value: tx.value,
           maxFeePerGas: tx.maxFeePerGas,
           maxPriorityFeePerGas: tx.maxPriorityFeePerGas,
@@ -228,7 +227,7 @@ const submitTransactionToSolver = async ({
           data: tx.input,
         },
         {
-          v: tx.v,
+          v: tx.v < 27n ? tx.v + 27n : tx.v,
           r: tx.r,
           s: tx.s,
         }

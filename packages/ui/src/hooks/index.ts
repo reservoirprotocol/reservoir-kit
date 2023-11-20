@@ -16,6 +16,8 @@ export { default as useUserTopBids } from './useUserTopBids'
 export { default as useUserCollections } from './useUserCollections'
 export { default as useCart } from './useCart'
 export { default as useDynamicTokens } from './useDynamicTokens'
+export { default as useTrendingCollections} from './useTrendingCollections';
+export { default as useTrendingMints } from './useTrendingMints'
 
 //Internal
 export { default as useMediaQuery } from './useMediaQuery'
@@ -30,3 +32,4 @@ export { default as usePaymentTokens } from './usePaymentTokens'
 export { default as useCurrencyConversion } from './useCurrencyConversion'
 export { default as useCurrencyConversions } from './useCurrencyConversions'
 export { default as useCoinIds } from './useCoinIds'
+export { default as useSolverCapacities } from './useSolverCapacities'

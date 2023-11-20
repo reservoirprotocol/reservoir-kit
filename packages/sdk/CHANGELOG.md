@@ -1,7 +1,15 @@
 
-## [v1.8.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/fadbf9e9d3e369d4a1ca75f9e3686f63c78ec55b) (2023-11-10)
+## [v1.8.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/9312dc4a3045ad0cb0a15a3d279f602ebefdd639) (2023-11-13)
 
-* feat: Use new fee params [6c4332a7](https://github.com/reservoirprotocol/reservoir-kit/commit/6c4332a7a42ae707689b65e39ccc9fac6eae2062)
+* Sync Api
+
+## [v1.8.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/bc99616b5ff1b518e75f44b4f7b8de4aa54b2734) (2023-11-13)
+
+* Marketplace fee configuration per chain [2526b707](https://github.com/reservoirprotocol/reservoir-kit/commit/2526b7075fa5c0c5f938185d49cca46426717025)
+* Bubble up full error data when executing actions [57622109](https://github.com/reservoirprotocol/reservoir-kit/commit/57622109a537d08456191dbfe6556a5f590edc53)
+* Fix serialize transaction signature [34583c8b](https://github.com/reservoirprotocol/reservoir-kit/commit/34583c8b844e03b7ff408b920e57d24c151072ea)
+
+## [v1.8.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/fadbf9e9d3e369d4a1ca75f9e3686f63c78ec55b) (2023-11-10)
 
 ## [v1.8.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/25cb72c9d788393e926b7ea52330e5643b262dc0) (2023-11-09)
 
@@ -12,8 +20,9 @@
 * Fix serialization of tx for solver api [7ef4512a](https://github.com/reservoirprotocol/reservoir-kit/commit/7ef4512ae3fdd2c6d1f173c5610b88c15dbb356a)
 ## [v1.8.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e49108009f7f2c62594c58c2ac90fe285e8ec06a) (2023-11-08)
 
-* Merge pull request #450 from reservoirprotocol/ted/update-payment-token-names [1633bab5](https://github.com/reservoirprotocol/reservoir-kit/commit/1633bab5da045956b3fa5d0c33226aea95691623)
+* Update payment token names [1633bab5](https://github.com/reservoirprotocol/reservoir-kit/commit/1633bab5da045956b3fa5d0c33226aea95691623)
 * Remove cross chain payment tokens from defaults [239ebf93](https://github.com/reservoirprotocol/reservoir-kit/commit/239ebf9345997972ecd7d9b09ec0d79d3706401c)
+
 ## [v1.8.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/9ca1db7463ba59be32452832dfb2a07fb9b5fa3d) (2023-11-08)
 
 * Fix transaction polling interval when signature step [37cbbd04](https://github.com/reservoirprotocol/reservoir-kit/commit/37cbbd0444437fe1e492b312645e43af33ae2809)
@@ -21,7 +30,7 @@
 
 ## [v1.7.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4809c45d8ee9489886b8b0a8c8af0f4de334432d) (2023-11-07)
 
-*Fix error message for crosschain transactions [551b721f](https://github.com/reservoirprotocol/reservoir-kit/commit/551b721f59dad975da3cd03906c8ec5f44f2fc6a)
+* Fix error message for crosschain transactions [551b721f](https://github.com/reservoirprotocol/reservoir-kit/commit/551b721f59dad975da3cd03906c8ec5f44f2fc6a)
 * Configurable polling interval for transaction [fb7fe63b](https://github.com/reservoirprotocol/reservoir-kit/commit/fb7fe63b2fdaffb608ce145d9373934002e82fe6)
 * Improve crosschain transaction failure error handling [ba2c9736](https://github.com/reservoirprotocol/reservoir-kit/commit/ba2c9736661add665b8e89eaadd60ef644aca4f7)
 * Sync Api

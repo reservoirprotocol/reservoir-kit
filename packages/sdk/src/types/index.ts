@@ -53,7 +53,7 @@ export type Execute = {
   requestId?: string
   errors?: { message?: string; orderId?: string }[]
   path: BuyPath | SellPath
-  error?: string // Manually added client error
+  error?: any // Manually added client error
   steps: {
     error?: string
     errorData?: any
@@ -77,6 +77,7 @@ export type Execute = {
         txHash: Address
         chainId: number
       }[]
+      errorData?: any
       orderData?: {
         crossPostingOrderId?: string
         orderId: string
