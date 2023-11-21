@@ -71,7 +71,7 @@ export default function (
     if (includeListingCurrency) {
       const listingCurrencyAlreadyExists = paymentTokens?.some(
         (token) =>
-          token.address.toLowerCase() ===
+          token?.address?.toLowerCase() ===
             listingCurrency?.address?.toLowerCase() &&
           token.chainId === listingCurrency?.chainId
       )
@@ -94,8 +94,8 @@ export default function (
 
     if (
       !paymentTokens
-        ?.map((currency) => currency.address.toLowerCase())
-        .includes(preferredCurrency.address.toLowerCase())
+        ?.map((currency) => currency?.address?.toLowerCase())
+        .includes(preferredCurrency?.address?.toLowerCase())
     ) {
       paymentTokens?.push(preferredCurrency)
     }
@@ -204,8 +204,8 @@ export default function (
             nonNativeCurrencies?.findIndex(
               (nonNativeCurrency) =>
                 nonNativeCurrency.symbol === currency.symbol &&
-                nonNativeCurrency.address.toLowerCase() ===
-                  currency.address.toLowerCase()
+                nonNativeCurrency?.address?.toLowerCase() ===
+                  currency?.address?.toLowerCase()
             ) || 0
           balance =
             nonNativeBalances &&
@@ -265,7 +265,7 @@ export default function (
 
         return {
           ...currency,
-          address: currency.address.toLowerCase(),
+          address: currency?.address?.toLowerCase(),
           usdPrice,
           usdPriceRaw,
           usdTotalPriceRaw,
