@@ -322,13 +322,14 @@ export function CartCheckoutModal({
                                 item?.txHashes.length > 0
                               ) {
                                 return item.txHashes.map(
-                                  (txHash, txHashIndex) => {
-                                    const truncatedTxHash =
-                                      truncateAddress(txHash)
+                                  (hash, txHashIndex) => {
+                                    const truncatedTxHash = truncateAddress(
+                                      hash.txHash
+                                    )
                                     return (
                                       <Anchor
                                         key={`${itemIndex}-${txHashIndex}`}
-                                        href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                                        href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                                         color="primary"
                                         weight="medium"
                                         target="_blank"
