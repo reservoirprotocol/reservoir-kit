@@ -21,6 +21,7 @@ import { ApprovePurchasingCollapsible } from '../../modal/ApprovePurchasingColla
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import { Logo } from '../../modal/Modal'
 import { truncateAddress } from '../../lib/truncate'
+import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 
 const Title = styled(DialogPrimitive.Title, {
   margin: 0,
@@ -326,6 +327,8 @@ export function CartCheckoutModal({
                                     const truncatedTxHash = truncateAddress(
                                       hash.txHash
                                     )
+                                    const blockExplorerBaseUrl =
+                                      getChainBlockExplorerUrl(hash.chainId)
                                     return (
                                       <Anchor
                                         key={`${itemIndex}-${txHashIndex}`}
