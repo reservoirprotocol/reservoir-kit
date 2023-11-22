@@ -16,8 +16,9 @@ export { default as useUserTopBids } from './useUserTopBids'
 export { default as useUserCollections } from './useUserCollections'
 export { default as useCart } from './useCart'
 export { default as useDynamicTokens } from './useDynamicTokens'
-export { default as useTrendingCollections} from './useTrendingCollections';
+export { default as useTrendingCollections } from './useTrendingCollections'
 export { default as useTrendingMints } from './useTrendingMints'
+export { default as useMarketplaceConfigs } from './useMarketplaceConfigs'
 
 //Internal
 export { default as useMediaQuery } from './useMediaQuery'

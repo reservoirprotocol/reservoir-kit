@@ -5,7 +5,7 @@ import useReservoirClient from './useReservoirClient'
 import useSWR from 'swr'
 
 export type Marketplace = NonNullable<
-  paths['/collections/{collection}/supported-marketplaces/v1']['get']['responses']['200']['schema']['marketplaces']
+  paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses']['200']['schema']['marketplaces']
 >[0] & {
   price: number | string
   truePrice: number | string
@@ -29,11 +29,11 @@ export default function (
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
   const path = new URL(
-    `${chain?.baseApiUrl}/collections/${collectionId}/supported-marketplaces/v1`
+    `${chain?.baseApiUrl}/collections/${collectionId}/marketplace-configurations/v1`
   )
 
   const { data } = useSWR<
-    paths['/collections/{collection}/supported-marketplaces/v1']['get']['responses'][200]['schema']
+    paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses'][200]['schema']
   >(
     collectionId && enabled
       ? [path.href, client?.apiKey, client?.version]
@@ -48,7 +48,9 @@ export default function (
       if (listingEnabledOnly) {
         updatedMarketplaces = updatedMarketplaces.filter(
           (marketplace) =>
-            marketplace.listingEnabled && marketplace.orderbook !== 'x2y2'
+            Object.values(marketplace.exchanges || {}).some(
+              (exchange) => exchange.enabled
+            ) && marketplace.orderbook !== 'x2y2'
         )
       }
       updatedMarketplaces.forEach((marketplace) => {

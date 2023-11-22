@@ -41,6 +41,8 @@ export type Listing = Parameters<
   ReservoirClientActions['listToken']
 >['0']['listings'][0]
 
+type Exchange = NonNullable<Marketplace['exchanges']>['string']
+
 export type ListingData = {
   listing: Listing
   marketplace: Marketplace
@@ -141,11 +143,13 @@ export const ListModalRenderer: FC<Props> = ({
     open
   )
 
-  const marketplace = useMemo(() => {
-    return allMarketplaces.find(
-      (marketplace) => marketplace.orderbook === 'reservoir'
-    )
-  }, [allMarketplaces])
+  const marketplace = useMemo(
+    () =>
+      allMarketplaces.find(
+        (marketplace) => marketplace.orderbook === 'reservoir'
+      ),
+    [allMarketplaces]
+  )
 
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<ListModalStepData | null>(null)
@@ -249,10 +253,14 @@ export const ListModalRenderer: FC<Props> = ({
   }, [open])
 
   useEffect(() => {
-    if (marketplace && !marketplace.listingEnabled) {
+    const exchanges: Record<string, Exchange> = marketplace?.exchanges || {}
+    const exchange = orderKind
+      ? exchanges[orderKind]
+      : Object.values(exchanges)[0]
+    if (marketplace && (!exchange || !exchange.enabled)) {
       setListStep(ListStep.Unavailable)
     }
-  }, [marketplace])
+  }, [marketplace, orderKind])
 
   useEffect(() => {
     if (currencies && currencies.length > 5) {
@@ -292,6 +300,14 @@ export const ListModalRenderer: FC<Props> = ({
       const error = new Error('No marketplace found')
       throw error
     }
+
+    type Exchange = NonNullable<
+      NonNullable<typeof marketplace>['exchanges']
+    >['string']
+    const exchanges: Record<string, Exchange> = marketplace?.exchanges || {}
+    const exchange = orderKind
+      ? exchanges[orderKind]
+      : Object.values(exchanges)[0]
 
     setTransactionError(null)
 
