@@ -104,7 +104,7 @@ const TokenPrimitive: FC<Props> = ({
                 {name ? name : collection}
               </Text>
               {expires && quantity && quantity > 1 && !name ? (
-                <Flex>
+                <Flex align="center">
                   <ChainIcon chainId={chain?.id} height={12} css={{ mr: 5 }} />
                   <Text style="tiny" color="subtle">
                     {chain?.name}
@@ -139,8 +139,12 @@ const TokenPrimitive: FC<Props> = ({
               </Flex>
             ) : null}
             {name && (
-              <Flex>
-                <Text style="body3" color="subtle">
+              <Flex
+                css={{
+                  maxWidth: '370px',
+                }}
+              >
+                <Text ellipsify style="body3" color="subtle">
                   {collection}
                 </Text>
                 <Divider direction="vertical" />

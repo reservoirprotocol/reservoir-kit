@@ -1,17 +1,31 @@
 import { Anchor, Box, Flex, Text } from '../primitives'
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCube, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { truncateAddress } from '../lib/truncate'
+import { Execute } from '@reservoir0x/reservoir-sdk'
+import getChainBlockExplorerUrl from '../lib/getChainBlockExplorerUrl'
 
 type Props = {
   title: string
-  txHashes?: string[]
-  blockExplorerBaseUrl?: string
+  txHashes?: NonNullable<Execute['steps'][0]['items']>[0]['txHashes']
 }
 
-const Progress: FC<Props> = ({ title, txHashes, blockExplorerBaseUrl }) => {
+const Progress: FC<Props> = ({ title, txHashes }) => {
   const hasTxHashes = txHashes && txHashes.length > 0
+
+  const enhancedTxHashes = useMemo(() => {
+    return txHashes?.map((hash) => {
+      const truncatedTxHash = truncateAddress(hash.txHash)
+      const blockExplorerUrl = getChainBlockExplorerUrl(hash.chainId)
+      return {
+        txHash: hash.txHash,
+        chainId: hash.chainId,
+        truncatedTxHash: truncatedTxHash,
+        blockExplorerUrl: blockExplorerUrl,
+      }
+    })
+  }, [txHashes])
 
   return (
     <Flex
@@ -36,21 +50,18 @@ const Progress: FC<Props> = ({ title, txHashes, blockExplorerBaseUrl }) => {
       </Box>
       {hasTxHashes ? (
         <Flex direction="column" align="center" css={{ gap: '$2' }}>
-          {txHashes?.map((txHash, index) => {
-            const truncatedTxHash = truncateAddress(txHash)
-            return (
-              <Anchor
-                key={index}
-                href={`${blockExplorerBaseUrl}/tx/${txHash}`}
-                color="primary"
-                weight="medium"
-                target="_blank"
-                css={{ fontSize: 12 }}
-              >
-                View transaction: {truncatedTxHash}
-              </Anchor>
-            )
-          })}
+          {enhancedTxHashes?.map((enhancedTxHash, index) => (
+            <Anchor
+              key={index}
+              href={`${enhancedTxHash.blockExplorerUrl}/tx/${enhancedTxHash.txHash}`}
+              color="primary"
+              weight="medium"
+              target="_blank"
+              css={{ fontSize: 12 }}
+            >
+              View transaction: {enhancedTxHash.truncatedTxHash}
+            </Anchor>
+          ))}
         </Flex>
       ) : null}
     </Flex>

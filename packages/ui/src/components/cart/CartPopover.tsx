@@ -42,6 +42,7 @@ import { useAccount } from 'wagmi'
 import { CartCheckoutModal } from './CartCheckoutModal'
 import { Logo } from '../../modal/Modal'
 import { truncateAddress } from '../../lib/truncate'
+import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 
 const scaleUp = keyframes({
   '0%': { opacity: 0, transform: 'scale(0.9) translateY(-10px)' },
@@ -279,14 +280,17 @@ export function CartPopover({
                 />
               )}
               {purchaseComplete
-                ? transaction?.txHashes?.map((txHash) => {
-                    const truncatedTxHash = truncateAddress(txHash)
+                ? transaction?.txHashes?.map((hash) => {
+                    const truncatedTxHash = truncateAddress(hash.txHash)
+                    const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                      hash.chainId
+                    )
                     return (
                       <CartToast
                         message={`Transaction Complete`}
                         link={
                           <Anchor
-                            href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                            href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                             target="_blank"
                             css={{ ml: 'auto', fontSize: 12, mt: 2 }}
                             weight="medium"
@@ -373,22 +377,46 @@ export function CartPopover({
                       justify="center"
                       css={{ ml: 'auto', gap: '$1', '> div': { ml: 'auto' } }}
                     >
-                      <FormatCryptoCurrency
-                        textStyle="h6"
-                        amount={totalPrice}
-                        address={currency?.contract}
-                        decimals={currency?.decimals}
-                        symbol={currency?.symbol}
-                        logoWidth={18}
-                        chainId={cartChain?.id}
-                      />
-                      {usdPrice && (
-                        <FormatCurrency
-                          amount={usdPrice * totalPrice}
-                          style="subtitle3"
-                          color="subtle"
-                          css={{ textAlign: 'end' }}
-                        />
+                      {providerOptionsContext.preferDisplayFiatTotal &&
+                      usdPrice ? (
+                        <>
+                          <FormatCurrency
+                            amount={usdPrice * totalPrice}
+                            style="h6"
+                            color="base"
+                            css={{ textAlign: 'end' }}
+                          />
+                          <FormatCryptoCurrency
+                            textStyle="subtitle3"
+                            textColor="subtle"
+                            amount={totalPrice}
+                            address={currency?.contract}
+                            decimals={currency?.decimals}
+                            symbol={currency?.symbol}
+                            logoWidth={12}
+                            chainId={cartChain?.id}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <FormatCryptoCurrency
+                            textStyle="h6"
+                            amount={totalPrice}
+                            address={currency?.contract}
+                            decimals={currency?.decimals}
+                            symbol={currency?.symbol}
+                            logoWidth={18}
+                            chainId={cartChain?.id}
+                          />
+                          {usdPrice && (
+                            <FormatCurrency
+                              amount={usdPrice * totalPrice}
+                              style="subtitle3"
+                              color="subtle"
+                              css={{ textAlign: 'end' }}
+                            />
+                          )}
+                        </>
                       )}
                     </Flex>
                   </Flex>

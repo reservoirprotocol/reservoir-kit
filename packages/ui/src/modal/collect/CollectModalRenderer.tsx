@@ -76,6 +76,7 @@ export type ChildrenProps = {
   paymentTokens: EnhancedCurrency[]
   total: bigint
   totalIncludingFees: bigint
+  gasCost: bigint
   feeOnTop: bigint
   feeUsd: string
   usdPrice: number
@@ -106,6 +107,7 @@ type Props = {
   tokenId?: string
   onConnectWallet: () => void
   chainId?: number
+  defaultQuantity?: number
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
@@ -122,6 +124,7 @@ export const CollectModalRenderer: FC<Props> = ({
   tokenId,
   feesOnTopBps,
   feesOnTopUsd,
+  defaultQuantity,
   onConnectWallet,
   normalizeRoyalties,
   children,
@@ -140,6 +143,7 @@ export const CollectModalRenderer: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [total, setTotal] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
+  const [gasCost, setGasCost] = useState(0n)
 
   const [contentMode, setContentMode] = useState<
     CollectModalContentMode | undefined
@@ -210,6 +214,10 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const token = tokens && tokens[0] ? tokens[0] : undefined
 
+  const [listingCurrency, setListingCurrency] = useState<
+    EnhancedCurrency | undefined
+  >(undefined)
+
   const [_paymentCurrency, setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
@@ -220,7 +228,9 @@ export const CollectModalRenderer: FC<Props> = ({
     _paymentCurrency ?? chainCurrency,
     totalIncludingFees,
     rendererChain?.id,
-    contentMode === 'mint'
+    contentMode === 'mint',
+    false,
+    listingCurrency
   )
 
   const paymentCurrency = paymentTokens?.find(
@@ -263,10 +273,12 @@ export const CollectModalRenderer: FC<Props> = ({
         chainId: rendererChain?.id,
         items: [
           {
-            collection: token?.token?.tokenId ? undefined : collectionId,
-            token: token?.token?.tokenId
-              ? `${collectionId}:${token?.token?.tokenId}`
-              : undefined,
+            collection:
+              tokenId ?? token?.token?.tokenId ? undefined : collectionId,
+            token:
+              tokenId ?? token?.token?.tokenId
+                ? `${collectionId}:${tokenId ?? token?.token?.tokenId}`
+                : undefined,
             fillType: mode === 'preferMint' ? undefined : mode,
           },
         ],
@@ -290,22 +302,30 @@ export const CollectModalRenderer: FC<Props> = ({
           let pathData = data['path']
           setOrders(pathData ?? [])
 
-          // handle setting max quantity
+          const pathOrderQuantity =
+            pathData?.reduce(
+              (quantity, order) => quantity + (order?.quantity || 1),
+              0
+            ) || 0
+          let totalMaxQuantity = pathOrderQuantity
           if ('maxQuantities' in data && data.maxQuantities?.[0]) {
             if (is1155) {
-              let totalMaxQuantity = data.maxQuantities.reduce(
+              totalMaxQuantity = data.maxQuantities.reduce(
                 (total, currentQuantity) =>
                   total + Number(currentQuantity.maxQuantity ?? 1),
                 0
               )
-              setMaxItemAmount(totalMaxQuantity)
             } else {
               let maxQuantity = data.maxQuantities?.[0].maxQuantity
-              setMaxItemAmount(maxQuantity ? Number(maxQuantity) : 1) // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+              // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+              totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
             }
-          } else {
-            setMaxItemAmount(0)
           }
+          setMaxItemAmount(
+            pathOrderQuantity > totalMaxQuantity
+              ? totalMaxQuantity
+              : pathOrderQuantity
+          )
 
           if (mode === 'preferMint') {
             // check if the path data includes any mints
@@ -338,6 +358,7 @@ export const CollectModalRenderer: FC<Props> = ({
     tokenId,
     mode,
     token?.token?.tokenId,
+    tokenId,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
     is1155,
@@ -364,6 +385,7 @@ export const CollectModalRenderer: FC<Props> = ({
     open,
     fetchBuyPathIfIdle,
     token?.token?.tokenId,
+    tokenId,
     is1155,
     paymentCurrency?.address,
   ])
@@ -395,6 +417,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     let updatedTotal = 0n
+    let gasCost = 0n
 
     // Mint erc1155
     if (contentMode === 'mint' && is1155) {
@@ -417,6 +440,7 @@ export const CollectModalRenderer: FC<Props> = ({
             updatedTotal += fractionalPrice
             remainingQuantity = 0
           }
+          gasCost += BigInt(order.gasCost || 0n)
         }
       }
     }
@@ -424,6 +448,7 @@ export const CollectModalRenderer: FC<Props> = ({
     // Mint erc721
     else if (contentMode === 'mint') {
       updatedTotal = mintPrice * BigInt(Math.max(0, itemAmount) || 0)
+      gasCost += orders[0] && orders[0].gasCost ? BigInt(orders[0].gasCost) : 0n
     }
 
     // Sweep erc1155
@@ -449,25 +474,25 @@ export const CollectModalRenderer: FC<Props> = ({
           updatedTotal += fractionalPrice
           remainingQuantity = 0
         }
+        gasCost += BigInt(order.gasCost || 0n)
       }
     }
     // Sweep erc721
     else {
-      updatedTotal = selectedTokens?.reduce((total, token) => {
-        return (
-          total +
-          BigInt(
-            token?.currency?.toLowerCase() != paymentCurrency?.address
-              ? token?.buyInRawQuote || 0
-              : token?.totalRawPrice || 0
-          )
+      selectedTokens?.forEach((token) => {
+        updatedTotal += BigInt(
+          token?.currency?.toLowerCase() != paymentCurrency?.address
+            ? token?.buyInRawQuote || 0
+            : token?.totalRawPrice || 0
         )
+        gasCost += BigInt(token.gasCost || 0n)
       }, 0n)
     }
     const fees = calculateFees(updatedTotal)
     setFeeOnTop(fees)
     setTotal(updatedTotal)
     setTotalIncludingFees(updatedTotal + fees)
+    setGasCost(gasCost)
   }, [
     selectedTokens,
     paymentCurrency,
@@ -478,36 +503,36 @@ export const CollectModalRenderer: FC<Props> = ({
     orders,
   ])
 
+  // Set paymentCurrency to first paymentToken
   useEffect(() => {
-    if (!paymentTokens[0] || paymentCurrency) {
+    if (paymentTokens[0] && listingCurrency && !paymentCurrency) {
+      setPaymentCurrency(paymentTokens[0])
+    }
+  }, [paymentTokens, listingCurrency, paymentCurrency])
+
+  // Set listing currency
+  useEffect(() => {
+    if (listingCurrency || !open || !fetchedInitialOrders) {
       return
     }
     if (contentMode === 'mint') {
-      setPaymentCurrency(chainCurrency)
-    } else if (selectedTokens.length > 0) {
-      let firstListingCurrency
-      if (providerOptions.alwaysIncludeListingCurrency !== false) {
-        firstListingCurrency = {
-          address: selectedTokens?.[0].currency as Address,
-          decimals: selectedTokens?.[0].currencyDecimals || 18,
-          symbol: selectedTokens?.[0].currencySymbol || '',
-          chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
-        }
-      } else {
-        firstListingCurrency =
-          paymentTokens.find(
-            (token) =>
-              token.address === selectedTokens[0].currency?.toLowerCase()
-          ) || paymentTokens[0]
-      }
-
-      setPaymentCurrency(firstListingCurrency)
+      setListingCurrency(chainCurrency)
+    } else if (selectedTokens[0]) {
+      setListingCurrency({
+        address: selectedTokens?.[0].currency as Address,
+        decimals: selectedTokens?.[0].currencyDecimals || 18,
+        symbol: selectedTokens?.[0].currencySymbol || '',
+        name: selectedTokens?.[0].currencySymbol || '',
+        chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
+      })
     }
   }, [
-    paymentTokens,
-    chainCurrency,
+    listingCurrency,
+    open,
+    fetchedInitialOrders,
+    contentMode,
     selectedTokens,
-    providerOptions.alwaysIncludeListingCurrency,
+    rendererChain,
   ])
 
   const addFundsLink = paymentCurrency?.address
@@ -519,13 +544,14 @@ export const CollectModalRenderer: FC<Props> = ({
     if (
       paymentCurrency?.balance != undefined &&
       paymentCurrency?.currencyTotalRaw != undefined &&
-      BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
+      BigInt(paymentCurrency?.balance) <
+        paymentCurrency?.currencyTotalRaw + gasCost
     ) {
       setHasEnoughCurrency(false)
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [total, paymentCurrency])
+  }, [total, paymentCurrency, gasCost])
 
   useEffect(() => {
     if (contentMode === 'sweep') {
@@ -559,8 +585,17 @@ export const CollectModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setFetchedInitialOrders(false)
       setPaymentCurrency(undefined)
+      setListingCurrency(undefined)
+    } else {
+      setItemAmount(defaultQuantity || 1)
     }
   }, [open])
+
+  useEffect(() => {
+    if (maxItemAmount > 0 && itemAmount > maxItemAmount) {
+      setItemAmount(maxItemAmount)
+    }
+  }, [maxItemAmount, itemAmount])
 
   const collectTokens = useCallback(async () => {
     if (!wallet) {
@@ -748,7 +783,7 @@ export const CollectModalRenderer: FC<Props> = ({
         contentMode,
         collection,
         token,
-        loading: !fetchedInitialOrders,
+        loading: !fetchedInitialOrders || !(paymentTokens.length > 0),
         address: address,
         selectedTokens,
         setSelectedTokens,
@@ -762,6 +797,7 @@ export const CollectModalRenderer: FC<Props> = ({
         paymentTokens,
         total,
         totalIncludingFees,
+        gasCost,
         feeOnTop,
         feeUsd,
         usdPrice,

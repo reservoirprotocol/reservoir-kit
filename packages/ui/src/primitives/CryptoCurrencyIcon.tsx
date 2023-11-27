@@ -46,7 +46,9 @@ const CryptoCurrencyIcon: FC<Props> = ({
   return (
     <StyledImg
       src={`${chain?.baseApiUrl}/redirect/currency/${address}/icon/v1`}
-      css={css}
+      css={{
+        borderRadius: '100%', ...css
+      }}
     />
   )
 }

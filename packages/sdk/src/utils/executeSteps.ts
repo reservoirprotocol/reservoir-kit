@@ -7,7 +7,7 @@ import {
   TransactionStepItem,
 } from '../types'
 import { pollUntilHasData, pollUntilOk } from './pollApi'
-import { createPublicClient, fallback, formatUnits, http } from 'viem'
+import { Address, createPublicClient, fallback, formatUnits, http } from 'viem'
 import { axios } from '../utils'
 import { customChains } from '../utils/customChains'
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
@@ -75,7 +75,7 @@ function checkExpectedPrice(
       if (quote.raw - expectedPrice.raw > rawQuoteThreshold) {
         error = {
           ...baseError,
-          message: `Attention: the price of this token is now ${formatUnits(
+          message: `Attention: the total price is now ${formatUnits(
             quote.raw,
             quote.currencyDecimals || 18
           )}`,
@@ -85,7 +85,7 @@ function checkExpectedPrice(
       if (Number((quote.amount - expectedPrice.amount).toFixed(6)) > 0.00001) {
         error = {
           ...baseError,
-          message: `Attention: the price of this token is now ${quote}`,
+          message: `Attention: the total price is now ${quote}`,
         }
       }
     }
@@ -123,6 +123,12 @@ export async function executeSteps(
   if (chainId) {
     reservoirChain = client.chains.find((chain) => chain.id == chainId) || null
   }
+
+  const pollingInterval = reservoirChain?.checkPollingInterval ?? 5000
+
+  const maximumAttempts =
+    client.maxPollingAttemptsBeforeTimeout ??
+    (2.5 * 60 * 1000) / pollingInterval // default to 2 minutes and 30 seconds worth of attempts
 
   let viemChain: allChains.Chain
   const customChain = Object.values(customChains).find(
@@ -237,7 +243,7 @@ export async function executeSteps(
 
       if (error) {
         json.steps[0].error = error.message
-        json.steps[0].errorData = json.path
+        json.steps[0].errorData = error
         setState([...json?.steps], path)
         throw error
       }
@@ -368,6 +374,8 @@ export async function executeSteps(
                     stepItem?.data?.chainId &&
                     stepItem?.data?.chainId != reservoirChain?.id
 
+                  const crossChainIntentChainId = reservoirChain?.id
+
                   await sendTransactionSafely(
                     transactionChainId,
                     viemClient,
@@ -387,26 +395,33 @@ export async function executeSteps(
                         setState([...json.steps], path)
                       }
                     },
+                    (internalTxHashes) => {
+                      stepItem.internalTxHashes = internalTxHashes
+                      if (json) {
+                        setState([...json.steps], path)
+                      }
+                    },
                     request,
                     headers,
-                    isCrossChainIntent
+                    isCrossChainIntent,
+                    crossChainIntentChainId
                   )
 
-                  stepItem?.txHashes?.forEach((txHash) => {
+                  stepItem?.txHashes?.forEach((hash) => {
                     executeResults({
                       request,
                       stepId: step.id,
                       requestId: json?.requestId,
-                      txHash,
+                      txHash: hash.txHash,
                     })
                   })
                 } catch (e) {
-                  stepItem?.txHashes?.forEach((txHash) => {
+                  stepItem?.txHashes?.forEach((hash) => {
                     executeResults({
                       request,
                       stepId: step.id,
                       requestId: json?.requestId,
-                      txHash,
+                      txHash: hash.txHash,
                     })
                   })
 
@@ -486,7 +501,17 @@ export async function executeSteps(
                             res?.data?.status === 'success' &&
                             res?.data?.txHashes
                           ) {
-                            stepItem.txHashes = res?.data?.txHashes
+                            const chainTxHashes: NonNullable<
+                              Execute['steps'][0]['items']
+                            >[0]['txHashes'] = res.data?.txHashes?.map(
+                              (hash: Address) => {
+                                return {
+                                  txHash: hash,
+                                  chainId: reservoirChain?.id,
+                                }
+                              }
+                            )
+                            stepItem.txHashes = chainTxHashes
                             return true
                           } else if (res?.data?.status === 'failure') {
                             throw Error(
@@ -494,7 +519,10 @@ export async function executeSteps(
                             )
                           }
                           return false
-                        }
+                        },
+                        maximumAttempts,
+                        0,
+                        pollingInterval
                       )
                     }
 
@@ -551,9 +579,10 @@ export async function executeSteps(
               const indexerConfirmationUrl = new URL(
                 `${request.baseURL}/transfers/bulk/v2`
               )
+
               const queryParams: paths['/transfers/bulk/v2']['get']['parameters']['query'] =
                 {
-                  txHash: stepItem.txHashes,
+                  txHash: stepItem.txHashes?.map((hash) => hash.txHash),
                 }
               setParams(indexerConfirmationUrl, queryParams)
               let transfersData: paths['/transfers/bulk/v2']['get']['responses']['200']['schema'] =
@@ -581,14 +610,17 @@ export async function executeSteps(
 
                     return transfersData.transfers &&
                       transfersData.transfers.length > 0 &&
-                      stepItem.txHashes?.every((txHash) =>
-                        transferTxHashes?.includes(txHash)
+                      stepItem.txHashes?.every((hash) =>
+                        transferTxHashes?.includes(hash.txHash)
                       )
                       ? true
                       : false
                   }
                   return false
-                }
+                },
+                maximumAttempts,
+                0,
+                pollingInterval
               )
 
               const taker = await wallet.address()
@@ -597,8 +629,11 @@ export async function executeSteps(
                 .map((order) => order.contract?.toLowerCase())
               stepItem.transfersData = transfersData.transfers?.filter(
                 (transfer) =>
-                  transfer.to?.toLowerCase() === taker.toLowerCase() &&
-                  contracts?.includes(transfer?.token?.contract?.toLowerCase())
+                  contracts?.includes(
+                    transfer?.token?.contract?.toLowerCase()
+                  ) && isSell
+                    ? transfer.from?.toLowerCase() === taker.toLowerCase()
+                    : transfer.to?.toLowerCase() === taker.toLowerCase()
               )
               setState([...json?.steps], path)
             }
@@ -615,6 +650,7 @@ export async function executeSteps(
             if (error && json?.steps) {
               json.steps[incompleteStepIndex].error = errorMessage
               stepItem.error = errorMessage
+              stepItem.errorData = (e as any)?.response?.data || e
               setState([...json?.steps], path)
             }
             reject(error)
@@ -640,12 +676,16 @@ export async function executeSteps(
       ['Execute Steps: An error occurred', err, 'Block Number:', blockNumber],
       LogLevel.Error
     )
-    const error = err as Error
-    const errorMessage = error ? error.message : 'Error: something went wrong'
 
     if (json) {
-      json.error = errorMessage
+      json.error = err && err?.response?.data ? err.response.data : err
       setState([...json?.steps], json.path)
+    } else {
+      json = {
+        error: err && err?.response?.data ? err.response.data : err,
+        path: undefined,
+        steps: [],
+      }
     }
 
     client._sendEvent(generateEvent(request, json), reservoirChain?.id || 1)

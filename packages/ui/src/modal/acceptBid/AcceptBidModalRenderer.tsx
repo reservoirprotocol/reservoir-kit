@@ -16,7 +16,7 @@ import {
   SellPath,
 } from '@reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
-import { WalletClient, parseUnits } from 'viem'
+import { WalletClient, formatUnits, parseUnits } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
@@ -47,6 +47,7 @@ export type AcceptBidPrice = {
   currency: Currency
   royalty: number
   marketplaceFee: number
+  feesOnTop: number
 }
 
 export type AcceptBidStepData = {
@@ -78,6 +79,8 @@ type Props = {
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
+  feesOnTopBps?: string[] | null
+  feesOnTopCustom?: (data: SellPath) => string[] | null
 }
 
 export const AcceptBidModalRenderer: FC<Props> = ({
@@ -87,6 +90,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   normalizeRoyalties,
   children,
   walletClient,
+  feesOnTopBps,
+  feesOnTopCustom,
 }) => {
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [prices, setPrices] = useState<AcceptBidPrice[]>([])
@@ -116,6 +121,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
   const [isFetchingBidPath, setIsFetchingBidPath] = useState(false)
   const [bidsPath, setBidsPath] = useState<SellPath | null>(null)
+  const [feesOnTop, setFeesOnTop] = useState<string[] | null>(null)
 
   const _tokenIds = tokens.map((token) => {
     const contract = (token?.collectionId || '').split(':')[0]
@@ -236,14 +242,50 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         return items
       }, [] as AcceptBidItems)
 
+      const acceptOfferParams = {
+        chainId: rendererChain?.id,
+        items: items,
+        wallet,
+        options,
+        precheck: true,
+        onProgress: () => {},
+      }
+
       client.actions
-        .acceptOffer({
-          chainId: rendererChain?.id,
-          items: items,
-          wallet,
-          options,
-          precheck: true,
-          onProgress: () => {},
+        .acceptOffer(acceptOfferParams)
+        .then((data) => {
+          if (feesOnTopBps || feesOnTopCustom) {
+            const bidsPath =
+              'path' in (data as any)
+                ? ((data as Execute)['path'] as SellPath)
+                : null
+            if (bidsPath) {
+              let feesOnTop: string[] = []
+              if (feesOnTopBps) {
+                const total = bidsPath.reduce((total, path) => {
+                  return (total += BigInt(path.totalRawPrice || 0n))
+                }, 0n)
+                feesOnTop = feesOnTopBps.map((feeOnTop) => {
+                  const [recipient, fee] = feeOnTop.split(':')
+                  return `${recipient}:${formatUnits(
+                    (BigInt(fee) * total) / 10000n,
+                    0
+                  )}`
+                })
+              } else if (feesOnTopCustom) {
+                feesOnTop = feesOnTopCustom(bidsPath) || []
+              }
+
+              if (feesOnTop) {
+                acceptOfferParams.options.feesOnTop = feesOnTop
+                setFeesOnTop(feesOnTop)
+              }
+
+              return client.actions.acceptOffer(acceptOfferParams)
+            }
+          } else {
+            return data
+          }
         })
         .then((data) => {
           setBidsPath(
@@ -256,7 +298,14 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           setIsFetchingBidPath(false)
         })
     },
-    [client, wallet, rendererChain, normalizeRoyalties]
+    [
+      client,
+      wallet,
+      rendererChain,
+      normalizeRoyalties,
+      feesOnTopBps,
+      feesOnTopCustom,
+    ]
   )
 
   useEffect(() => {
@@ -337,6 +386,10 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
     if (normalizeRoyalties !== undefined) {
       options.normalizeRoyalties = normalizeRoyalties
+    }
+
+    if (feesOnTop) {
+      options.feesOnTop = feesOnTop
     }
 
     setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
@@ -457,6 +510,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     client,
     wallet,
     prices,
+    feesOnTop,
     mutateTokens,
   ])
 
@@ -481,19 +535,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           let marketplaceFee = 0
 
           if (currency && currencySymbol) {
+            const referralFee =
+              feesOnTop?.reduce(
+                (total, fee) => total + (fee?.amount || 0),
+                0
+              ) || 0
             builtInFees?.forEach((fee) => {
-              switch (fee.kind) {
-                case 'marketplace': {
-                  marketplaceFee = fee.amount || 0
-                  break
-                }
-                case 'royalty': {
-                  royalty = fee.amount || 0
-                  break
-                }
-              }
-            })
-            feesOnTop?.forEach((fee) => {
               switch (fee.kind) {
                 case 'marketplace': {
                   marketplaceFee = fee.amount || 0
@@ -507,7 +554,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             })
             if (!map[currencySymbol]) {
               map[currencySymbol] = {
-                netAmount,
+                netAmount: netAmount - referralFee,
                 amount,
                 currency: {
                   contract: currency,
@@ -516,12 +563,14 @@ export const AcceptBidModalRenderer: FC<Props> = ({
                 },
                 royalty,
                 marketplaceFee,
+                feesOnTop: referralFee,
               }
             } else if (map[currencySymbol]) {
-              map[currencySymbol].netAmount += netAmount
+              map[currencySymbol].netAmount += netAmount - referralFee
               map[currencySymbol].amount += amount
               map[currencySymbol].royalty += royalty
               map[currencySymbol].marketplaceFee += marketplaceFee
+              map[currencySymbol].feesOnTop += referralFee
             }
           }
           return map

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { ChildrenProps, CollectStep } from '../CollectModalRenderer'
 import {
   Anchor,
@@ -34,6 +34,9 @@ import { TokenInfo } from '../TokenInfo'
 import { SelectPaymentToken } from '../../SelectPaymentToken'
 import { formatNumber } from '../../../lib/numbers'
 import { truncateAddress } from '../../../lib/truncate'
+import getChainBlockExplorerUrl from '../../../lib/getChainBlockExplorerUrl'
+import { CurrentStepTxHashes } from '../../CurrentStepTxHashes'
+import { ProviderOptionsContext } from '../../../ReservoirKitProvider'
 
 export const SweepContent: FC<
   ChildrenProps & {
@@ -56,6 +59,7 @@ export const SweepContent: FC<
   setPaymentCurrency,
   total,
   totalIncludingFees,
+  gasCost,
   feeOnTop,
   feeUsd,
   isConnected,
@@ -65,7 +69,6 @@ export const SweepContent: FC<
   paymentTokens,
   hasEnoughCurrency,
   addFundsLink,
-  blockExplorerBaseUrl,
   transactionError,
   stepData,
   collectStep,
@@ -76,6 +79,7 @@ export const SweepContent: FC<
 }) => {
   const [buttonClicked, setButtonClicked] = useState(false)
 
+  const providerOptions = useContext(ProviderOptionsContext)
   const hasTokens = orders && orders.length > 0
 
   const is1155 = collection?.contractKind === 'erc1155'
@@ -91,6 +95,10 @@ export const SweepContent: FC<
     mostExpensiveToken?.currency?.toLowerCase() != paymentCurrency?.address
       ? mostExpensiveToken?.buyInQuote
       : mostExpensiveToken?.totalPrice
+
+  const maxQuantity = paymentCurrency?.maxItems
+    ? paymentCurrency?.maxItems
+    : maxItemAmount
 
   const pathMap = stepData?.path
     ? (stepData.path as Path[]).reduce(
@@ -118,7 +126,8 @@ export const SweepContent: FC<
 
   return (
     <>
-      {!hasTokens || maxItemAmount === 0 ? (
+      {!hasTokens ||
+      (maxItemAmount === 0 && collectStep === CollectStep.Idle) ? (
         <Flex
           direction="column"
           align="center"
@@ -183,15 +192,15 @@ export const SweepContent: FC<
                     ellipsify
                     css={{ width: '100%' }}
                   >
-                    {formatNumber(maxItemAmount)}{' '}
-                    {maxItemAmount === 1 ? 'item' : 'items'} available
+                    {formatNumber(maxQuantity)}{' '}
+                    {maxQuantity === 1 ? 'item' : 'items'} available
                   </Text>
                 </Flex>
                 <QuantitySelector
                   quantity={itemAmount}
                   setQuantity={setItemAmount}
                   min={1}
-                  max={maxItemAmount}
+                  max={maxQuantity}
                   css={{
                     width: '100%',
                     justifyContent: 'space-between',
@@ -212,7 +221,7 @@ export const SweepContent: FC<
                           amount={cheapestTokenPrice}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                           maximumFractionDigits={2}
                         />
                         <Text style="subtitle3" color="subtle">
@@ -223,7 +232,7 @@ export const SweepContent: FC<
                           amount={mostExpensiveTokenPrice}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.symbol}
+                          symbol={paymentCurrency?.name}
                           maximumFractionDigits={2}
                         />
                       </Flex>
@@ -241,7 +250,7 @@ export const SweepContent: FC<
                       amount={total / BigInt(itemAmount)}
                       address={paymentCurrency?.address}
                       decimals={paymentCurrency?.decimals}
-                      symbol={paymentCurrency?.symbol}
+                      symbol={paymentCurrency?.name}
                       maximumFractionDigits={2}
                     />
                   </Flex>
@@ -278,7 +287,7 @@ export const SweepContent: FC<
                         address={paymentCurrency?.address as string}
                         css={{ width: 16, height: 16, mr: '$1' }}
                       />
-                      <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                      <Text style="subtitle2">{paymentCurrency?.name}</Text>
                     </Flex>
                     <Box css={{ color: '$neutralSolidHover' }}>
                       <FontAwesomeIcon icon={faChevronRight} width={10} />
@@ -300,7 +309,7 @@ export const SweepContent: FC<
                     amount={feeOnTop}
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
-                    symbol={paymentCurrency?.symbol}
+                    symbol={paymentCurrency?.name}
                   />
                   <FormatCurrency amount={feeUsd} color="subtle" style="tiny" />
                 </Flex>
@@ -313,20 +322,43 @@ export const SweepContent: FC<
             >
               <Text style="h6">You Pay</Text>
               <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                <FormatCryptoCurrency
-                  chainId={chainId}
-                  textStyle="h6"
-                  amount={paymentCurrency?.currencyTotalRaw}
-                  address={paymentCurrency?.address}
-                  decimals={paymentCurrency?.decimals}
-                  symbol={paymentCurrency?.symbol}
-                  logoWidth={18}
-                />
-                <FormatCurrency
-                  amount={paymentCurrency?.usdTotalPriceRaw}
-                  style="tiny"
-                  color="subtle"
-                />
+                {providerOptions.preferDisplayFiatTotal ? (
+                  <>
+                    <FormatCurrency
+                      amount={paymentCurrency?.usdTotalPriceRaw}
+                      style="h6"
+                      color="base"
+                    />
+                    <FormatCryptoCurrency
+                      chainId={chainId}
+                      textStyle="tiny"
+                      textColor="subtle"
+                      amount={paymentCurrency?.currencyTotalRaw}
+                      address={paymentCurrency?.address}
+                      decimals={paymentCurrency?.decimals}
+                      symbol={paymentCurrency?.symbol}
+                      logoWidth={12}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <FormatCryptoCurrency
+                      chainId={chainId}
+                      textStyle="h6"
+                      textColor="base"
+                      amount={paymentCurrency?.currencyTotalRaw}
+                      address={paymentCurrency?.address}
+                      decimals={paymentCurrency?.decimals}
+                      symbol={paymentCurrency?.symbol}
+                      logoWidth={18}
+                    />
+                    <FormatCurrency
+                      amount={paymentCurrency?.usdTotalPriceRaw}
+                      style="tiny"
+                      color="subtle"
+                    />
+                  </>
+                )}
               </Flex>
             </Flex>
           </Flex>
@@ -367,10 +399,25 @@ export const SweepContent: FC<
                   amount={paymentCurrency?.balance}
                   address={paymentCurrency?.address}
                   decimals={paymentCurrency?.decimals}
-                  symbol={paymentCurrency?.symbol}
+                  symbol={paymentCurrency?.name}
                   textStyle="body3"
                 />
               </Flex>
+              {gasCost > 0n && (
+                <Flex align="center" css={{ mt: '$1' }}>
+                  <Text css={{ mr: '$3' }} color="error" style="body3">
+                    Estimated Gas Cost
+                  </Text>
+                  <FormatCryptoCurrency
+                    chainId={chainId}
+                    amount={gasCost}
+                    address={paymentCurrency?.address}
+                    decimals={paymentCurrency?.decimals}
+                    symbol={paymentCurrency?.symbol}
+                    textStyle="body3"
+                  />
+                </Flex>
+              )}
               <Button
                 disabled={disableJumperLink}
                 onClick={() => {
@@ -405,6 +452,7 @@ export const SweepContent: FC<
             currency={paymentCurrency}
             setCurrency={setPaymentCurrency}
             goBack={() => setCollectStep(CollectStep.Idle)}
+            itemAmount={itemAmount}
           />
         </Flex>
       )}
@@ -477,6 +525,7 @@ export const SweepContent: FC<
                     style={{ height: 32 }}
                   />
                 </Flex>
+                <CurrentStepTxHashes currentStep={stepData?.currentStep} />
                 <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                   <Loader />
                   {copy.sweepCtaAwaitingApproval}
@@ -535,6 +584,7 @@ export const SweepContent: FC<
                         }}
                       />
                     </Box>
+                    <CurrentStepTxHashes currentStep={stepData?.currentStep} />
                     <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                       <Loader />
                       {copy.sweepCtaAwaitingApproval}
@@ -591,6 +641,7 @@ export const SweepContent: FC<
               />
             </Box>
           </Flex>
+          <CurrentStepTxHashes currentStep={stepData?.currentStep} />
           <Button disabled={true} css={{ m: '$4' }}>
             <Loader />
             {copy.sweepCtaAwaitingValidation}
@@ -634,12 +685,15 @@ export const SweepContent: FC<
                   Array.isArray(item?.txHashes) &&
                   item?.txHashes.length > 0
                 ) {
-                  return item.txHashes.map((txHash, txHashIndex) => {
-                    const truncatedTxHash = truncateAddress(txHash)
+                  return item.txHashes.map((hash, txHashIndex) => {
+                    const truncatedTxHash = truncateAddress(hash.txHash)
+                    const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                      hash.chainId
+                    )
                     return (
                       <Anchor
                         key={`${itemIndex}-${txHashIndex}`}
-                        href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                        href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                         color="primary"
                         weight="medium"
                         target="_blank"

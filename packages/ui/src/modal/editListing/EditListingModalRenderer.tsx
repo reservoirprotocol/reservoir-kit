@@ -279,7 +279,7 @@ export const EditListingModalRenderer: FC<Props> = ({
         BigInt(quantity)
       ).toString(),
       orderbook: 'reservoir',
-      orderKind: 'seaport-v1.4',
+      orderKind: 'seaport-v1.5',
     }
 
     if (quantity > 1) {
@@ -295,7 +295,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     }
 
     listing.options = {
-      'seaport-v1.4': {
+      'seaport-v1.5': {
         useOffChainCancellation: true,
         replaceOrderId: listingId,
       },

@@ -73,7 +73,8 @@ export async function transferTokens(data: Data) {
       }
 
       const res = await axios.request(request)
-      if (res.status !== 200) throw new APIError(res.data, res.status)
+      if (res.status !== 200)
+        throw new APIError(res?.data?.message, res.status, res.data)
       const data = res.data as Execute
       onProgress(data['steps'])
       return data['steps']

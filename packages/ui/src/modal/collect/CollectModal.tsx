@@ -14,7 +14,7 @@ import { Flex, Text } from '../../primitives'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient } from 'viem'
 
-type CollectCallbackData = {
+export type CollectCallbackData = {
   collectionId?: string
   maker?: string
   contentMode?: CollectModalContentMode
@@ -30,6 +30,7 @@ export const CollectModalCopy = {
   mintCtaInsufficientFunds: 'Add Funds to Purchase',
   mintCtaAwaitingApproval: 'Waiting for approval...',
   mintCtaAwaitingValidation: 'Waiting to be validated...',
+  mintCtaGoToToken: '',
   sweepTitle: 'Buy',
   sweepCtaClose: 'Close',
   sweepCtaBuy: 'Buy',
@@ -44,6 +45,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   collectionId?: string
   tokenId?: string
+  defaultQuantity?: number
   onConnectWallet: () => void
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
@@ -55,6 +57,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onCollectComplete?: (data: CollectCallbackData) => void
   onCollectError?: (error: Error, data: CollectCallbackData) => void
   onClose?: (data: CollectCallbackData, currentStep: CollectStep) => void
+  onGoToToken?: (data: CollectCallbackData) => any
 }
 
 export function CollectModal({
@@ -74,6 +77,8 @@ export function CollectModal({
   onCollectError,
   onClose,
   onConnectWallet,
+  onGoToToken,
+  defaultQuantity,
 }: Props): ReactElement {
   const copy: typeof CollectModalCopy = {
     ...CollectModalCopy,
@@ -96,6 +101,7 @@ export function CollectModal({
     <CollectModalRenderer
       onConnectWallet={onConnectWallet}
       chainId={modalChain?.id}
+      defaultQuantity={defaultQuantity}
       open={open}
       mode={mode}
       collectionId={collectionId}
@@ -191,6 +197,7 @@ export function CollectModal({
                 copy={copy}
                 open={open}
                 setOpen={setOpen}
+                onGoToToken={onGoToToken}
               />
             ) : null}
 

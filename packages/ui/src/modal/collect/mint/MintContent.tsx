@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { ChildrenProps, CollectStep } from '../CollectModalRenderer'
 import {
   Anchor,
@@ -24,7 +24,7 @@ import {
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import QuantitySelector from '../../QuantitySelector'
-import { CollectModalCopy } from '../CollectModal'
+import { CollectCallbackData, CollectModalCopy } from '../CollectModal'
 import { MintImages } from './MintImages'
 import { CollectCheckout } from '../CollectCheckout'
 import SigninStep from '../../SigninStep'
@@ -35,6 +35,9 @@ import { TokenInfo } from '../TokenInfo'
 import { formatNumber } from '../../../lib/numbers'
 import { truncateAddress } from '../../../lib/truncate'
 import { SelectPaymentToken } from '../../SelectPaymentToken'
+import getChainBlockExplorerUrl from '../../../lib/getChainBlockExplorerUrl'
+import { CurrentStepTxHashes } from '../../CurrentStepTxHashes'
+import { ProviderOptionsContext } from '../../../ReservoirKitProvider'
 
 export const MintContent: FC<
   ChildrenProps & {
@@ -42,6 +45,7 @@ export const MintContent: FC<
     copy: typeof CollectModalCopy
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    onGoToToken?: (data: CollectCallbackData) => any
   }
 > = ({
   collection,
@@ -49,6 +53,7 @@ export const MintContent: FC<
   orders,
   chainId,
   mintPrice,
+  gasCost,
   itemAmount,
   setItemAmount,
   maxItemAmount,
@@ -61,19 +66,22 @@ export const MintContent: FC<
   feeUsd,
   currentChain,
   contract,
+  address,
   hasEnoughCurrency,
   addFundsLink,
   disableJumperLink,
-  blockExplorerBaseUrl,
   transactionError,
   stepData,
   collectStep,
+  contentMode,
   setCollectStep,
   isConnected,
   collectTokens,
   copy,
   setOpen,
+  onGoToToken,
 }) => {
+  const providerOptions = useContext(ProviderOptionsContext)
   const pathMap = stepData?.path
     ? (stepData.path as Path[]).reduce(
         (paths: Record<string, Path>, path: Path) => {
@@ -86,6 +94,10 @@ export const MintContent: FC<
         {} as Record<string, Path>
       )
     : {}
+
+  const maxQuantity = paymentCurrency?.maxItems
+    ? paymentCurrency?.maxItems
+    : maxItemAmount
 
   const totalMints =
     stepData?.currentStep?.items?.reduce((total, item) => {
@@ -100,7 +112,8 @@ export const MintContent: FC<
 
   return (
     <>
-      {orders?.length === 0 || maxItemAmount === 0 ? (
+      {(orders?.length === 0 || maxItemAmount === 0) &&
+      collectStep === CollectStep.Idle ? (
         <Flex
           direction="column"
           align="center"
@@ -168,15 +181,15 @@ export const MintContent: FC<
                       ellipsify
                       css={{ width: '100%' }}
                     >
-                      {formatNumber(maxItemAmount)}{' '}
-                      {maxItemAmount > 1 ? 'items' : 'item'} available
+                      {formatNumber(maxQuantity)}{' '}
+                      {maxQuantity > 1 ? 'items' : 'item'} available
                     </Text>
                   </Flex>
                   <QuantitySelector
                     quantity={itemAmount}
                     setQuantity={setItemAmount}
                     min={1}
-                    max={maxItemAmount}
+                    max={maxQuantity}
                     css={{
                       width: '100%',
                       justifyContent: 'space-between',
@@ -215,7 +228,7 @@ export const MintContent: FC<
                           address={paymentCurrency?.address as string}
                           css={{ width: 16, height: 16, mr: '$1' }}
                         />
-                        <Text style="subtitle2">{paymentCurrency?.symbol}</Text>
+                        <Text style="subtitle2">{paymentCurrency?.name}</Text>
                       </Flex>
                       <Box css={{ color: '$neutralSolidHover' }}>
                         <FontAwesomeIcon icon={faChevronRight} width={10} />
@@ -237,7 +250,7 @@ export const MintContent: FC<
                       amount={feeOnTop}
                       address={paymentCurrency?.address}
                       decimals={paymentCurrency?.decimals}
-                      symbol={paymentCurrency?.symbol}
+                      symbol={paymentCurrency?.name}
                     />
                     <FormatCurrency
                       amount={feeUsd}
@@ -254,20 +267,43 @@ export const MintContent: FC<
               >
                 <Text style="h6">You Pay</Text>
                 <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                  <FormatCryptoCurrency
-                    chainId={chainId}
-                    textStyle="h6"
-                    amount={paymentCurrency?.currencyTotalRaw}
-                    address={paymentCurrency?.address}
-                    decimals={paymentCurrency?.decimals}
-                    symbol={paymentCurrency?.symbol}
-                    logoWidth={18}
-                  />
-                  <FormatCurrency
-                    amount={paymentCurrency?.usdTotalPriceRaw}
-                    style="tiny"
-                    color="subtle"
-                  />
+                  {providerOptions.preferDisplayFiatTotal ? (
+                    <>
+                      <FormatCurrency
+                        amount={paymentCurrency?.usdTotalPriceRaw}
+                        style="h6"
+                        color="base"
+                      />
+                      <FormatCryptoCurrency
+                        chainId={chainId}
+                        textStyle="tiny"
+                        textColor="subtle"
+                        amount={paymentCurrency?.currencyTotalRaw}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
+                        logoWidth={12}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <FormatCryptoCurrency
+                        chainId={chainId}
+                        textStyle="h6"
+                        textColor="base"
+                        amount={paymentCurrency?.currencyTotalRaw}
+                        address={paymentCurrency?.address}
+                        decimals={paymentCurrency?.decimals}
+                        symbol={paymentCurrency?.symbol}
+                        logoWidth={18}
+                      />
+                      <FormatCurrency
+                        amount={paymentCurrency?.usdTotalPriceRaw}
+                        style="tiny"
+                        color="subtle"
+                      />
+                    </>
+                  )}
                 </Flex>
               </Flex>
             </Flex>
@@ -295,10 +331,25 @@ export const MintContent: FC<
                     amount={paymentCurrency?.balance}
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
-                    symbol={paymentCurrency?.symbol}
+                    symbol={paymentCurrency?.name}
                     textStyle="body3"
                   />
                 </Flex>
+                {gasCost > 0n && (
+                  <Flex align="center" css={{ mt: '$1' }}>
+                    <Text css={{ mr: '$3' }} color="error" style="body3">
+                      Estimated Gas Cost
+                    </Text>
+                    <FormatCryptoCurrency
+                      chainId={chainId}
+                      amount={gasCost}
+                      address={paymentCurrency?.address}
+                      decimals={paymentCurrency?.decimals}
+                      symbol={paymentCurrency?.symbol}
+                      textStyle="body3"
+                    />
+                  </Flex>
+                )}
                 <Button
                   disabled={disableJumperLink}
                   onClick={() => {
@@ -333,6 +384,7 @@ export const MintContent: FC<
             currency={paymentCurrency}
             setCurrency={setPaymentCurrency}
             goBack={() => setCollectStep(CollectStep.Idle)}
+            itemAmount={itemAmount}
           />
         </Flex>
       )}
@@ -405,6 +457,7 @@ export const MintContent: FC<
                     style={{ height: 32 }}
                   />
                 </Flex>
+                <CurrentStepTxHashes currentStep={stepData?.currentStep} />
                 <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                   <Loader />
                   {copy.sweepCtaAwaitingApproval}
@@ -463,6 +516,7 @@ export const MintContent: FC<
                         }}
                       />
                     </Box>
+                    <CurrentStepTxHashes currentStep={stepData?.currentStep} />
                     <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                       <Loader />
                       {copy.sweepCtaAwaitingApproval}
@@ -519,6 +573,7 @@ export const MintContent: FC<
               />
             </Box>
           </Flex>
+          <CurrentStepTxHashes currentStep={stepData?.currentStep} />
           <Button disabled={true} css={{ m: '$4' }}>
             <Loader />
             {copy.mintCtaAwaitingValidation}
@@ -540,7 +595,10 @@ export const MintContent: FC<
             <Text style="h5" css={{ px: '$5' }}>
               Your mint is complete!
             </Text>
-            <MintImages stepData={stepData} contract={contract} />
+            <MintImages
+              stepData={stepData}
+              tokenKind={collection?.contractKind}
+            />
             <Flex align="center" css={{ gap: '$2', px: '$5' }}>
               <Box
                 css={{
@@ -580,12 +638,15 @@ export const MintContent: FC<
                   Array.isArray(item?.txHashes) &&
                   item?.txHashes.length > 0
                 ) {
-                  return item.txHashes.map((txHash, txHashIndex) => {
-                    const truncatedTxHash = truncateAddress(txHash)
+                  return item.txHashes.map((hash, txHashIndex) => {
+                    const truncatedTxHash = truncateAddress(hash.txHash)
+                    const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                      hash.chainId
+                    )
                     return (
                       <Anchor
                         key={`${itemIndex}-${txHashIndex}`}
-                        href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                        href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                         color="primary"
                         weight="medium"
                         target="_blank"
@@ -602,9 +663,39 @@ export const MintContent: FC<
             </Flex>
           </Flex>
           <Flex css={{ width: '100%', px: '$4' }}>
-            <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
-              {copy.mintCtaClose}
-            </Button>
+            {!!onGoToToken ? (
+              <>
+                <Button
+                  onClick={() => {
+                    setOpen(false)
+                  }}
+                  css={{ flex: 1 }}
+                  color="ghost"
+                >
+                  {copy.mintCtaClose}
+                </Button>
+                <Button
+                  style={{ flex: 1 }}
+                  color="primary"
+                  onClick={() => {
+                    onGoToToken({
+                      collectionId: collection?.id,
+                      maker: address,
+                      stepData,
+                      contentMode,
+                    })
+                  }}
+                >
+                  {copy.mintCtaGoToToken.length > 0
+                    ? copy.mintCtaGoToToken
+                    : `View ${successfulMints > 1 ? 'Tokens' : 'Token'}`}
+                </Button>
+              </>
+            ) : (
+              <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
+                {copy.mintCtaClose}
+              </Button>
+            )}
           </Flex>
         </Flex>
       )}

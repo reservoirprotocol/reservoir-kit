@@ -1,4 +1,4 @@
-import { CustomTransport, HttpTransport } from 'viem'
+import { Address, CustomTransport, HttpTransport } from 'viem'
 import { paths } from './api'
 export * from './api'
 
@@ -53,7 +53,7 @@ export type Execute = {
   requestId?: string
   errors?: { message?: string; orderId?: string }[]
   path: BuyPath | SellPath
-  error?: string // Manually added client error
+  error?: any // Manually added client error
   steps: {
     error?: string
     errorData?: any
@@ -69,7 +69,15 @@ export type Execute = {
       orderIds?: string[]
       // Manually added
       error?: string
-      txHashes?: string[]
+      txHashes?: {
+        txHash: Address
+        chainId: number
+      }[]
+      internalTxHashes?: {
+        txHash: Address
+        chainId: number
+      }[]
+      errorData?: any
       orderData?: {
         crossPostingOrderId?: string
         orderId: string
