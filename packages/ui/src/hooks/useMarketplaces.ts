@@ -32,7 +32,7 @@ export default function (
     `${chain?.baseApiUrl}/collections/${collectionId}/marketplace-configurations/v1`
   )
 
-  const { data } = useSWR<
+  const { data, isValidating } = useSWR<
     paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses'][200]['schema']
   >(
     collectionId && enabled
@@ -87,5 +87,5 @@ export default function (
     }
   }, [data, listingEnabledOnly, chain, chainId, fees])
 
-  return [marketplaces, setMarketplaces]
+  return [!isValidating ? marketplaces : [], setMarketplaces]
 }

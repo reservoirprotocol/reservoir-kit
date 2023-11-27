@@ -56,6 +56,7 @@ export type ListModalStepData = {
 }
 
 type ChildrenProps = {
+  loading: boolean
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   quantityAvailable: number
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
@@ -64,6 +65,7 @@ type ChildrenProps = {
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
   marketplace?: Marketplace
+  exchange?: Exchange
   isFetchingOnChainRoyalties: boolean
   listingData: ListingData[]
   transactionError?: Error | null
@@ -111,7 +113,7 @@ export const ListModalRenderer: FC<Props> = ({
   tokenId,
   collectionId,
   orderKind,
-  currencies,
+  currencies: preferredCurrencies,
   chainId,
   normalizeRoyalties,
   enableOnChainRoyalties = false,
@@ -159,8 +161,13 @@ export const ListModalRenderer: FC<Props> = ({
     contract: chainCurrency.address,
     symbol: chainCurrency.symbol,
   }
+  const [currencies, setCurrencies] = useState<Currency[] | undefined>(
+    preferredCurrencies
+  )
   const [currency, setCurrency] = useState<Currency>(
-    currencies && currencies[0] ? currencies[0] : defaultCurrency
+    preferredCurrencies && preferredCurrencies[0]
+      ? preferredCurrencies[0]
+      : defaultCurrency
   )
   const [quantity, setQuantity] = useState(1)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
@@ -248,19 +255,51 @@ export const ListModalRenderer: FC<Props> = ({
       setStepData(null)
       setExpirationOption(expirationOptions[5])
       setQuantity(1)
+      setCurrency(defaultCurrency)
     }
-    setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
   }, [open])
 
-  useEffect(() => {
+  const exchange = useMemo(() => {
     const exchanges: Record<string, Exchange> = marketplace?.exchanges || {}
-    const exchange = orderKind
+    return orderKind
       ? exchanges[orderKind]
-      : Object.values(exchanges)[0]
-    if (marketplace && (!exchange || !exchange.enabled)) {
+      : Object.values(exchanges).find((exchange) => exchange?.enabled)
+  }, [marketplace, orderKind])
+
+  useEffect(() => {
+    if (exchange?.paymentTokens) {
+      const restrictedCurrencies = exchange.paymentTokens
+        .filter((token) => token.address && token.symbol)
+        .map((token) => ({
+          contract: token.address as string,
+          decimals: token.decimals,
+          name: token.name,
+          symbol: token.symbol as string,
+        }))
+      setCurrencies(restrictedCurrencies)
+
+      if (
+        !restrictedCurrencies.find(
+          (c) => currency.contract.toLowerCase() == c.contract.toLowerCase()
+        )
+      ) {
+        setCurrency(restrictedCurrencies[0])
+      }
+    } else {
+      setCurrency(
+        preferredCurrencies && preferredCurrencies[0]
+          ? preferredCurrencies[0]
+          : defaultCurrency
+      )
+      setCurrencies(preferredCurrencies)
+    }
+  }, [exchange, open])
+
+  useEffect(() => {
+    if (marketplace && !exchange) {
       setListStep(ListStep.Unavailable)
     }
-  }, [marketplace, orderKind])
+  }, [marketplace, exchange])
 
   useEffect(() => {
     if (currencies && currencies.length > 5) {
@@ -297,17 +336,12 @@ export const ListModalRenderer: FC<Props> = ({
     }
 
     if (!marketplace) {
-      const error = new Error('No marketplace found')
-      throw error
+      throw new Error('No marketplace found')
     }
 
-    type Exchange = NonNullable<
-      NonNullable<typeof marketplace>['exchanges']
-    >['string']
-    const exchanges: Record<string, Exchange> = marketplace?.exchanges || {}
-    const exchange = orderKind
-      ? exchanges[orderKind]
-      : Object.values(exchanges)[0]
+    if (!exchange) {
+      throw new Error('No exchange found')
+    }
 
     setTransactionError(null)
 
@@ -332,7 +366,7 @@ export const ListModalRenderer: FC<Props> = ({
       // @ts-ignore
       orderbook: marketplace.orderbook,
       // @ts-ignore
-      orderKind: orderKind || marketplace.orderKind,
+      orderKind: exchange.orderKind,
     }
 
     if (
@@ -473,17 +507,24 @@ export const ListModalRenderer: FC<Props> = ({
     feesBps,
     price,
     marketplace,
+    exchange,
   ])
 
   return (
     <>
       {children({
+        loading:
+          !token ||
+          !collection ||
+          !marketplace ||
+          (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false),
         token,
         quantityAvailable,
         collection,
         listStep,
         usdPrice,
         marketplace,
+        exchange,
         expirationOption,
         expirationOptions,
         isFetchingOnChainRoyalties,
