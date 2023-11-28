@@ -178,6 +178,7 @@ export const routes = [
   "/admin/resync-nft-balances",
   "/admin/resync-sale-royalties",
   "/admin/resync-source",
+  "/admin/resync-user-balance",
   "/admin/retry-rabbit-queue",
   "/admin/revalidate-order",
   "/admin/routers",

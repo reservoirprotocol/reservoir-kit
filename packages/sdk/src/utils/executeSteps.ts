@@ -178,6 +178,7 @@ export async function executeSteps(
 
     const isBuy = request.url?.includes('/execute/buy') || false
     const isSell = request.url?.includes('/execute/sell') || false
+    const isMint = request.url?.includes('/execute/mint') || false
 
     // Handle price changes to protect users from paying more
     // than expected when buying and selling for less than expected
@@ -233,7 +234,7 @@ export async function executeSteps(
         error = checkExpectedPrice(
           quote,
           isSell,
-          isBuy,
+          isBuy || isMint,
           expectedPrice[currency]
         )
         if (error) {
@@ -555,7 +556,7 @@ export async function executeSteps(
             if (
               (step.id === 'sale' || step.id === 'order-signature') &&
               stepItem.txHashes &&
-              (isSell || isBuy)
+              (isSell || isBuy || isMint)
             ) {
               // @TODO: global headers declaration
               const headers: AxiosRequestHeaders = {
