@@ -33,7 +33,7 @@ import {
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient } from 'viem'
 import { formatBN } from '../../lib/numbers'
-import PriceInput from '../../modal/editListing/PriceInput'
+import PriceInput from '../../primitives/PriceInput'
 
 const ModalCopy = {
   title: 'Edit Offer',

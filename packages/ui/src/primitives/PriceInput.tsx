@@ -1,16 +1,9 @@
 import React from 'react'
 
-import {
-  Flex,
-  Box,
-  Input,
-  FormatCurrency,
-  Text,
-  FormatCryptoCurrency,
-} from '../../primitives'
+import { Flex, Box, Input, FormatCurrency, Text, FormatCryptoCurrency } from '.'
 
-import { CryptoCurrencyIcon } from '../../primitives'
-import { useCollections, useListings } from '../../hooks'
+import { CryptoCurrencyIcon } from '.'
+import { useCollections, useListings } from '../hooks'
 
 type MarketPlaceInputProps = {
   price: number | undefined
