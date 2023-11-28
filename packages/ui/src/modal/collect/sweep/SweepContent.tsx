@@ -34,6 +34,8 @@ import { TokenInfo } from '../TokenInfo'
 import { SelectPaymentToken } from '../../SelectPaymentToken'
 import { formatNumber } from '../../../lib/numbers'
 import { truncateAddress } from '../../../lib/truncate'
+import getChainBlockExplorerUrl from '../../../lib/getChainBlockExplorerUrl'
+import { CurrentStepTxHashes } from '../../CurrentStepTxHashes'
 import { ProviderOptionsContext } from '../../../ReservoirKitProvider'
 
 export const SweepContent: FC<
@@ -67,7 +69,6 @@ export const SweepContent: FC<
   paymentTokens,
   hasEnoughCurrency,
   addFundsLink,
-  blockExplorerBaseUrl,
   transactionError,
   stepData,
   collectStep,
@@ -517,6 +518,7 @@ export const SweepContent: FC<
                     style={{ height: 32 }}
                   />
                 </Flex>
+                <CurrentStepTxHashes currentStep={stepData?.currentStep} />
                 <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                   <Loader />
                   {copy.sweepCtaAwaitingApproval}
@@ -575,6 +577,7 @@ export const SweepContent: FC<
                         }}
                       />
                     </Box>
+                    <CurrentStepTxHashes currentStep={stepData?.currentStep} />
                     <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                       <Loader />
                       {copy.sweepCtaAwaitingApproval}
@@ -631,6 +634,7 @@ export const SweepContent: FC<
               />
             </Box>
           </Flex>
+          <CurrentStepTxHashes currentStep={stepData?.currentStep} />
           <Button disabled={true} css={{ m: '$4' }}>
             <Loader />
             {copy.sweepCtaAwaitingValidation}
@@ -674,12 +678,15 @@ export const SweepContent: FC<
                   Array.isArray(item?.txHashes) &&
                   item?.txHashes.length > 0
                 ) {
-                  return item.txHashes.map((txHash, txHashIndex) => {
-                    const truncatedTxHash = truncateAddress(txHash)
+                  return item.txHashes.map((hash, txHashIndex) => {
+                    const truncatedTxHash = truncateAddress(hash.txHash)
+                    const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                      hash.chainId
+                    )
                     return (
                       <Anchor
                         key={`${itemIndex}-${txHashIndex}`}
-                        href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                        href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                         color="primary"
                         weight="medium"
                         target="_blank"

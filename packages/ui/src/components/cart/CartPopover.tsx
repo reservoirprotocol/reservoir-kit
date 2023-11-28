@@ -46,6 +46,7 @@ import { CartCheckoutModal } from './CartCheckoutModal'
 import { Logo } from '../../modal/Modal'
 import { truncateAddress } from '../../lib/truncate'
 import { SelectPaymentToken } from '../../modal/SelectPaymentToken'
+import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 
 const scaleUp = keyframes({
   '0%': { opacity: 0, transform: 'scale(0.9) translateY(-10px)' },
@@ -303,14 +304,17 @@ export function CartPopover({
                       />
                     )}
                     {purchaseComplete
-                      ? transaction?.txHashes?.map((txHash) => {
-                          const truncatedTxHash = truncateAddress(txHash)
+                      ? transaction?.txHashes?.map((hash) => {
+                          const truncatedTxHash = truncateAddress(hash.txHash)
+                          const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                            hash.chainId
+                          )
                           return (
                             <CartToast
                               message={`Transaction Complete`}
                               link={
                                 <Anchor
-                                  href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                                  href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                                   target="_blank"
                                   css={{ ml: 'auto', fontSize: 12, mt: 2 }}
                                   weight="medium"
@@ -612,6 +616,7 @@ export function CartPopover({
                     <SelectPaymentToken
                       paymentTokens={paymentTokens}
                       currency={currency}
+                      itemAmount={items.length}
                       setCurrency={setCurrency}
                       goBack={() => setCartPopoverStep(CartPopoverStep.Idle)}
                       css={{

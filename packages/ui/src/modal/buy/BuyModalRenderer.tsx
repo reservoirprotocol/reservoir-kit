@@ -5,7 +5,6 @@ import React, {
   useCallback,
   ReactNode,
   useMemo,
-  useContext,
 } from 'react'
 import {
   useTokens,
@@ -29,7 +28,6 @@ import * as allChains from 'viem/chains'
 import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
-import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
@@ -125,7 +123,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
   const [gasCost, setGasCost] = useState(0n)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0n)
-  const [path, setPath] = useState<BuyPath>([])
+  const [path, setPath] = useState<BuyPath>(undefined)
   const [isFetchingPath, setIsFetchingPath] = useState(false)
   const [feeOnTop, setFeeOnTop] = useState(0n)
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
@@ -137,7 +135,6 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
-  const providerOptionsContext = useContext(ProviderOptionsContext)
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -168,6 +165,10 @@ export const BuyModalRenderer: FC<Props> = ({
     EnhancedCurrency | undefined
   >(undefined)
 
+  const [listingCurrency, setListingCurrency] = useState<
+    EnhancedCurrency | undefined
+  >(undefined)
+
   const paymentTokens = usePaymentTokens(
     open,
     address as Address,
@@ -175,7 +176,8 @@ export const BuyModalRenderer: FC<Props> = ({
     totalIncludingFees,
     rendererChain?.id,
     false,
-    true
+    true,
+    listingCurrency
   )
 
   const paymentCurrency = paymentTokens?.find(
@@ -368,10 +370,18 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   }, [orderId, is1155, listing, path, token, rendererChain])
 
+  // Set paymentCurrency to first paymentToken
+  useEffect(() => {
+    if (paymentTokens[0] && listingCurrency && !paymentCurrency) {
+      setPaymentCurrency(paymentTokens[0])
+    }
+  }, [paymentTokens, listingCurrency, paymentCurrency])
+
+  // Set listing currency
   useEffect(() => {
     if (
-      !paymentTokens[0] ||
-      paymentCurrency ||
+      listingCurrency ||
+      !open ||
       !token ||
       (orderId && !listing) ||
       (is1155 && !path)
@@ -380,40 +390,14 @@ export const BuyModalRenderer: FC<Props> = ({
     }
 
     const { currency, decimals, symbol, chainId } = getCurrencyDetails()
-
-    // Determine whether to include the listing currency unconditionally
-    const includeListingCurrency =
-      providerOptionsContext.alwaysIncludeListingCurrency !== false
-
-    let selectedCurrency
-    if (includeListingCurrency && currency) {
-      selectedCurrency = {
-        address: currency.toLowerCase() as Address,
-        decimals: decimals || 18,
-        symbol: symbol || '',
-        chainId: chainId,
-      }
-    } else {
-      selectedCurrency = paymentTokens.find(
-        (token) => token.address === currency?.toLowerCase()
-      )
-
-      if (!selectedCurrency) {
-        selectedCurrency = paymentTokens[0]
-      }
-    }
-
-    setPaymentCurrency(selectedCurrency)
-  }, [
-    paymentTokens,
-    paymentCurrency,
-    orderId,
-    is1155,
-    listing,
-    path,
-    token,
-    providerOptionsContext.alwaysIncludeListingCurrency,
-  ])
+    setListingCurrency({
+      address: currency?.toLowerCase() as Address,
+      decimals: decimals || 18,
+      symbol: symbol || '',
+      name: symbol || '',
+      chainId: chainId,
+    })
+  }, [listingCurrency, open, orderId, is1155, listing, path, token])
 
   const buyToken = useCallback(async () => {
     if (!wallet) {
@@ -613,8 +597,8 @@ export const BuyModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (
       !token ||
-      (orderId && !listing && isValidatingListing) ||
-      (is1155 && !path && isFetchingPath) ||
+      (orderId && !listing && !isValidatingListing) ||
+      (is1155 && (!path || (path && path.length === 0)) && !isFetchingPath) ||
       (!is1155 && isOwner)
     ) {
       setBuyStep(BuyStep.Unavailable)
@@ -769,6 +753,7 @@ export const BuyModalRenderer: FC<Props> = ({
       setPath(undefined)
       setPaymentCurrency(undefined)
       setToken(undefined)
+      setListingCurrency(undefined)
     } else {
       setQuantity(defaultQuantity || 1)
     }

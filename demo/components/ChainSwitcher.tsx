@@ -1,9 +1,18 @@
-import { CSSProperties, useContext } from 'react'
+import { CSSProperties, useContext, useEffect } from 'react'
 import chains from 'utils/chains'
 import { ChainSwitcherContext } from '../pages/_app'
+import { useRouter } from 'next/router'
 
 export default ({ style }: { style?: CSSProperties }) => {
-  const { setChain } = useContext(ChainSwitcherContext)
+  const { chain, setChain } = useContext(ChainSwitcherContext)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (chain && router.query.chainId != chain?.toString()) {
+      router.query.chainId = chain?.toString()
+      router.push(router, undefined, { shallow: true })
+    }
+  }, [chain])
 
   return (
     <select
@@ -16,9 +25,10 @@ export default ({ style }: { style?: CSSProperties }) => {
         }
       }}
       style={{ position: 'fixed', top: 16, right: 125, ...style }}
+      value={chain || 1}
     >
       {chains.map((chain) => (
-        <option value={chain.id}>{chain.name}</option>
+        <option key={chain.id} value={chain.id}>{chain.name}</option>
       ))}
     </select>
   )

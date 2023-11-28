@@ -482,7 +482,7 @@ export const BidModalRenderer: FC<Props> = ({
 
     if (oracleEnabled) {
       bid.options = {
-        'seaport-v1.4': {
+        'seaport-v1.5': {
           useOffChainCancellation: true,
         },
       }

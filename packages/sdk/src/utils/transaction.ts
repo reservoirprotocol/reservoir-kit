@@ -1,4 +1,4 @@
-import { Address, PublicClient, Transaction, serializeTransaction } from 'viem'
+import { Address, PublicClient, serializeTransaction } from 'viem'
 import { LogLevel, getClient } from '..'
 import { Execute, ReservoirWallet, TransactionStepItem, paths } from '../types'
 import { CrossChainTransactionError, TransactionTimeoutError } from '../errors'
@@ -21,10 +21,16 @@ export async function sendTransactionSafely(
   item: TransactionStepItem,
   step: Execute['steps'][0],
   wallet: ReservoirWallet,
-  setTxHashes: (tx: Transaction['hash'][]) => void,
+  setTxHashes: (
+    tx: NonNullable<Execute['steps'][0]['items']>[0]['txHashes']
+  ) => void,
+  setInternalTxHashes: (
+    tx: NonNullable<Execute['steps'][0]['items']>[0]['internalTxHashes']
+  ) => void,
   request: AxiosRequestConfig,
   headers: AxiosRequestHeaders,
-  isCrossChainIntent?: boolean
+  isCrossChainIntent?: boolean,
+  crossChainIntentChainId?: number
 ) {
   const client = getClient()
   const reservoirChain =
@@ -50,7 +56,7 @@ export async function sendTransactionSafely(
   if (!txHash) {
     throw Error('Transaction hash not returned from sendTransaction method')
   }
-  setTxHashes([txHash])
+  setTxHashes([{ txHash: txHash, chainId: chainId }])
 
   // Handle transaction replacements and cancellations
   viemClient
@@ -62,7 +68,9 @@ export async function sendTransactionSafely(
           throw Error('Transaction cancelled')
         }
 
-        setTxHashes([replacement.transaction.hash])
+        setTxHashes([
+          { txHash: replacement.transaction.hash, chainId: chainId },
+        ])
         txHash = replacement.transaction.hash
         attemptCount = 0 // reset attempt count
         getClient()?.log(
@@ -97,7 +105,16 @@ export async function sendTransactionSafely(
         throw Error('Transaction failed')
       }
       if (res.status === 200 && res.data && res.data.status === 'success') {
-        setTxHashes(res.data.txHashes)
+        if (txHash) {
+          setInternalTxHashes([{ txHash: txHash, chainId: chainId }])
+        }
+
+        const chainTxHashes: NonNullable<
+          Execute['steps'][0]['items']
+        >[0]['txHashes'] = res.data?.txHashes?.map((hash: Address) => {
+          return { txHash: hash, chainId: crossChainIntentChainId }
+        })
+        setTxHashes(chainTxHashes)
         return true
       }
       return false

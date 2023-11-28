@@ -101,7 +101,10 @@ export type Cart = {
   pendingTransactionId?: string
   transaction: {
     id?: string
-    txHashes?: string[]
+    txHashes?: {
+      txHash: `0x${string}`
+      chainId: number
+    }[]
     chain: ReservoirChain
     items: CartItem[]
     error?: Error

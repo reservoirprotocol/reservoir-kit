@@ -37,6 +37,7 @@ import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { truncateAddress } from '../../lib/truncate'
 import { SelectPaymentToken } from '../SelectPaymentToken'
 import { WalletClient } from 'viem'
+import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 
 type PurchaseData = {
   tokenId?: string
@@ -177,7 +178,6 @@ export function BuyModal({
         usdPrice,
         balance,
         address,
-        blockExplorerBaseUrl,
         blockExplorerBaseName,
         isConnected,
         isOwner,
@@ -551,7 +551,6 @@ export function BuyModal({
                   <Progress
                     title={stepData?.currentStep.action || ''}
                     txHashes={stepData?.currentStepItem.txHashes}
-                    blockExplorerBaseUrl={blockExplorerBaseUrl}
                   />
                 )}
                 <Button disabled={true} css={{ m: '$4' }}>
@@ -628,12 +627,14 @@ export function BuyModal({
                           Array.isArray(item?.txHashes) &&
                           item?.txHashes.length > 0
                         ) {
-                          return item.txHashes.map((txHash, txHashIndex) => {
-                            const truncatedTxHash = truncateAddress(txHash)
+                          return item.txHashes.map((hash, txHashIndex) => {
+                            const truncatedTxHash = truncateAddress(hash.txHash)
+                            const blockExplorerBaseUrl =
+                              getChainBlockExplorerUrl(hash.chainId)
                             return (
                               <Anchor
                                 key={`${itemIndex}-${txHashIndex}`}
-                                href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                                href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                                 color="primary"
                                 weight="medium"
                                 target="_blank"
@@ -693,12 +694,15 @@ export function BuyModal({
                         align="center"
                         css={{ gap: '$2' }}
                       >
-                        {finalTxHashes?.map((txHash, index) => {
-                          const truncatedTxHash = truncateAddress(txHash)
+                        {finalTxHashes?.map((hash, index) => {
+                          const truncatedTxHash = truncateAddress(hash.txHash)
+                          const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                            hash.chainId
+                          )
                           return (
                             <Anchor
                               key={index}
-                              href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+                              href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
                               color="primary"
                               weight="medium"
                               target="_blank"

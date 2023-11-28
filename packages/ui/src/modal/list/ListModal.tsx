@@ -469,11 +469,13 @@ export function ListModal({
                         }}
                         css={{ borderRadius: 8, maxWidth: 160, height: 44 }}
                       >
-                        {expirationOptions.map((option) => (
-                          <Select.Item key={option.text} value={option.value}>
-                            <Select.ItemText>{option.text}</Select.ItemText>
-                          </Select.Item>
-                        ))}
+                        {expirationOptions
+                          .filter(({ value }) => value !== 'custom')
+                          .map((option) => (
+                            <Select.Item key={option.text} value={option.value}>
+                              <Select.ItemText>{option.text}</Select.ItemText>
+                            </Select.Item>
+                          ))}
                       </Select>
                       <DateInput
                         ref={datetimeElement}
