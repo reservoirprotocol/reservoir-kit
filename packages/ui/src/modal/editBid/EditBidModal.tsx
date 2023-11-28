@@ -61,6 +61,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 }
 
 const MINIMUM_AMOUNT = 0.000001
+const MAXIMUM_AMOUNT = Infinity
 
 export function EditBidModal({
   openState,
@@ -209,7 +210,14 @@ export function EditBidModal({
                 currency?.decimals || 18
               )
             )
-          : null
+          : MAXIMUM_AMOUNT
+
+        const withinPricingBounds =
+          bidAmount !== '' &&
+          Number(bidAmount) <= maximumAmount &&
+          Number(bidAmount) >= minimumAmount
+
+        const canPurchase = bidAmount !== '' && withinPricingBounds
         const bidAmountNumerical = Number(bidAmount.length > 0 ? bidAmount : 0)
 
         return (
@@ -320,26 +328,14 @@ export function EditBidModal({
                         }
                       }}
                     />
-                    {bidAmount !== undefined &&
-                      bidAmountNumerical !== null &&
-                      bidAmountNumerical !== 0 &&
-                      bidAmountNumerical < minimumAmount && (
-                        <Box css={{ mx: '$1' }}>
+                    {bidAmount !== '0' &&
+                      bidAmount !== '' &&
+                      !withinPricingBounds && (
+                        <Box>
                           <Text style="body3" color="error">
-                            Amount must be higher than or equal to{' '}
-                            {minimumAmount}
-                          </Text>
-                        </Box>
-                      )}
-                    {bidAmountNumerical !== undefined &&
-                      bidAmountNumerical !== null &&
-                      bidAmountNumerical !== 0 &&
-                      maximumAmount &&
-                      bidAmountNumerical > maximumAmount && (
-                        <Box css={{ my: '$1' }}>
-                          <Text style="body3" color="error">
-                            Amount must be lower than or equal to{' '}
-                            {maximumAmount}
+                            {maximumAmount !== Infinity
+                              ? `Amount must be between ${minimumAmount} - ${maximumAmount}`
+                              : `Amount must be higher than ${minimumAmount}`}
                           </Text>
                         </Box>
                       )}
@@ -489,7 +485,7 @@ export function EditBidModal({
                       py: '$3',
                     }}
                   >
-                    {hasEnoughWrappedCurrency ? (
+                    {hasEnoughWrappedCurrency || !canPurchase ? (
                       <>
                         <Button
                           onClick={() => {
@@ -501,7 +497,7 @@ export function EditBidModal({
                           {copy.ctaClose}
                         </Button>
                         <Button
-                          disabled={bidAmount === '' || bidAmount === '0'}
+                          disabled={!canPurchase}
                           onClick={editBid}
                           css={{ flex: 1 }}
                         >

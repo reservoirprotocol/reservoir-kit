@@ -84,6 +84,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 const Image = styled('img', {})
 
 const MINIMUM_AMOUNT = 0.000001
+const MAXIMUM_AMOUNT = Infinity
 
 export function ListModal({
   openState,
@@ -231,7 +232,15 @@ export function ListModal({
                 currency?.decimals || 18
               )
             )
-          : null
+          : MAXIMUM_AMOUNT
+
+        const withinPricingBounds =
+          price &&
+          Number(price) !== 0 &&
+          Number(price) <= maximumAmount &&
+          Number(price) >= minimumAmount
+
+        const canPurchase = price !== '' && withinPricingBounds
 
         const handleSetFloor = () => {
           // If currency matches floor ask currency, use decimal floor price
@@ -437,22 +446,15 @@ export function ListModal({
                         setCurrency={setCurrency}
                       />
                     </Flex>
-                    {Number(price) !== 0 && Number(price) < minimumAmount && (
+                    {Number(price) !== 0 && !withinPricingBounds && (
                       <Box>
                         <Text style="body2" color="error">
-                          Amount must be higher than or equal to {minimumAmount}
+                          {maximumAmount !== Infinity
+                            ? `Amount must be between ${minimumAmount} - ${maximumAmount}`
+                            : `Amount must be higher than ${minimumAmount}`}
                         </Text>
                       </Box>
                     )}
-                    {maximumAmount &&
-                      Number(price) !== 0 &&
-                      Number(price) > maximumAmount && (
-                        <Box>
-                          <Text style="body2" color="error">
-                            Amount must be less than or equal to {maximumAmount}
-                          </Text>
-                        </Box>
-                      )}
                     {collection &&
                       collection?.floorAsk?.price?.amount?.native !==
                         undefined &&
@@ -559,9 +561,7 @@ export function ListModal({
                 </Flex>
                 <Box css={{ p: '$4', width: '100%' }}>
                   <Button
-                    disabled={
-                      Number(price) == 0 || Number(price) < minimumAmount
-                    }
+                    disabled={canPurchase ? false : true}
                     onClick={listToken}
                     css={{ width: '100%' }}
                   >

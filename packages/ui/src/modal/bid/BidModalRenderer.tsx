@@ -493,6 +493,12 @@ export const BidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (!exchange) {
+      const error = new Error('Missing Exchange')
+      setTransactionError(error)
+      throw error
+    }
+
     setBidStep(BidStep.Offering)
     setTransactionError(null)
     setBidData(null)
@@ -542,7 +548,7 @@ export const BidModalRenderer: FC<Props> = ({
 
     if (oracleEnabled) {
       bid.options = {
-        'seaport-v1.5': {
+        [exchange.orderKind as string]: {
           useOffChainCancellation: true,
         },
       }

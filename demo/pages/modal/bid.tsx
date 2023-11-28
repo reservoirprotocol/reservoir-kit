@@ -230,6 +230,7 @@ const BidPage: NextPage = () => {
         oracleEnabled={oracleEnabled}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         feesBps={feesBps}
+        orderKind={orderKind as any}
         onBidComplete={(data) => {
           console.log('Bid Complete', data)
         }}

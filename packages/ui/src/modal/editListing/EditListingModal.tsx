@@ -50,6 +50,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 }
 
 const MINIMUM_AMOUNT = 0.000001
+const MAXIMUM_AMOUNT = Infinity
 
 export function EditListingModal({
   openState,
@@ -172,7 +173,13 @@ export function EditListingModal({
                 currency?.decimals || 18
               )
             )
-          : null
+          : MAXIMUM_AMOUNT
+        const withinPricingBounds =
+          price !== 0 &&
+          Number(price) <= maximumAmount &&
+          Number(price) >= minimumAmount
+
+        const canPurchase = price && price !== 0 && withinPricingBounds
 
         return (
           <Modal
@@ -304,37 +311,20 @@ export function EditListingModal({
                         }
                       }}
                     />
-                    {price !== undefined &&
-                      price !== null &&
-                      price !== 0 &&
-                      price < minimumAmount && (
-                        <Box>
-                          <Text style="body3" color="error">
-                            Amount must be higher than or equal to{' '}
-                            {minimumAmount}
-                          </Text>
-                        </Box>
-                      )}
-                    {price !== undefined &&
-                      price !== null &&
-                      price !== 0 &&
-                      maximumAmount &&
-                      price > maximumAmount && (
-                        <Box>
-                          <Text style="body3" color="error">
-                            Amount must be lower than or equal to{' '}
-                            {maximumAmount}
-                          </Text>
-                        </Box>
-                      )}
+                    {price && price !== 0 && !withinPricingBounds && (
+                      <Box>
+                        <Text style="body3" color="error">
+                          {maximumAmount !== Infinity
+                            ? `Amount must be between ${minimumAmount} - ${maximumAmount}`
+                            : `Amount must be higher than ${minimumAmount}`}
+                        </Text>
+                      </Box>
+                    )}
+
                     {collection &&
                       collection?.floorAsk?.price?.amount?.native !==
                         undefined &&
-                      price !== undefined &&
-                      price !== null &&
-                      price !== 0 &&
-                      price >= minimumAmount &&
-                      (!maximumAmount || price <= maximumAmount) &&
+                      canPurchase &&
                       currency?.contract === zeroAddress &&
                       price < collection?.floorAsk?.price.amount.native && (
                         <Box>
@@ -399,11 +389,7 @@ export function EditListingModal({
                       {copy.ctaClose}
                     </Button>
                     <Button
-                      disabled={
-                        price === undefined ||
-                        price === 0 ||
-                        price < MINIMUM_AMOUNT
-                      }
+                      disabled={!canPurchase}
                       onClick={editListing}
                       css={{ flex: 1 }}
                     >

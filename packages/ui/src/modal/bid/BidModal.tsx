@@ -143,6 +143,7 @@ const MainContainer = styled(Flex, {
 
 const MINIMUM_DATE = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
 const MINIMUM_AMOUNT = 0.000001
+const MAXIMUM_AMOUNT = Infinity
 
 export function BidModal({
   openState,
@@ -374,7 +375,13 @@ export function BidModal({
                 currency?.decimals || 18
               )
             )
-          : null
+          : MAXIMUM_AMOUNT
+        const withinPricingBounds =
+          totalBidAmount !== 0 &&
+          totalBidAmount <= maximumAmount &&
+          totalBidAmount >= minimumAmount
+
+        const canPurchase = bidAmountPerUnit !== '' && withinPricingBounds
 
         return (
           <Modal
@@ -573,22 +580,15 @@ export function BidModal({
                       amount={totalBidAmountUsd}
                     />
                   )}
-                  {totalBidAmount !== 0 && totalBidAmount < minimumAmount && (
+                  {totalBidAmount !== 0 && !withinPricingBounds && (
                     <Box>
                       <Text style="body2" color="error">
-                        Amount must be higher than or equal to {minimumAmount}
+                        {maximumAmount !== Infinity
+                          ? `Amount must be between ${minimumAmount} - ${maximumAmount}`
+                          : `Amount must be higher than ${minimumAmount}`}
                       </Text>
                     </Box>
                   )}
-                  {maximumAmount &&
-                    totalBidAmount !== 0 &&
-                    totalBidAmount > maximumAmount && (
-                      <Box>
-                        <Text style="body2" color="error">
-                          Amount must be less than or equal to {maximumAmount}
-                        </Text>
-                      </Box>
-                    )}
                   {attributes &&
                     attributes.length > 0 &&
                     (attributesSelectable || trait) &&
@@ -794,12 +794,12 @@ export function BidModal({
                         {localMarketplace?.title}.
                       </Text>
                     )}
-                    {bidAmountPerUnit === '' && (
+                    {!canPurchase && (
                       <Button disabled={true} css={{ width: '100%' }}>
                         {copy.ctaBidDisabled}
                       </Button>
                     )}
-                    {bidAmountPerUnit !== '' && hasEnoughWrappedCurrency && (
+                    {canPurchase && hasEnoughWrappedCurrency && (
                       <Button
                         onClick={() => placeBid()}
                         css={{ width: '100%' }}
@@ -807,7 +807,7 @@ export function BidModal({
                         {ctaButtonText}
                       </Button>
                     )}
-                    {bidAmountPerUnit !== '' && !hasEnoughWrappedCurrency && (
+                    {canPurchase && !hasEnoughWrappedCurrency && (
                       <>
                         {!hasEnoughNativeCurrency && (
                           <Flex css={{ gap: '$2', mt: 10 }} justify="center">
