@@ -41,6 +41,7 @@ import { CurrencySelector } from '../CurrencySelector'
 import PriceBreakdown from './PriceBreakdown'
 import FloorDropdown from './FloorDropdown'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { formatBN } from '../../lib/numbers'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -134,12 +135,14 @@ export function ListModal({
       walletClient={walletClient}
     >
       {({
+        loading,
         token,
         quantityAvailable,
         collection,
         usdPrice,
         listStep,
         marketplace,
+        exchange,
         expirationOption,
         expirationOptions,
         isFetchingOnChainRoyalties,
@@ -197,12 +200,6 @@ export function ListModal({
           }
         }, [transactionError])
 
-        let loading =
-          !token ||
-          !collection ||
-          !marketplace ||
-          (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false)
-
         const floorAskPrice = collection?.floorAsk?.price
         const decimalFloorPrice = collection?.floorAsk?.price?.amount?.decimal
         const nativeFloorPrice = collection?.floorAsk?.price?.amount?.native
@@ -217,6 +214,24 @@ export function ListModal({
           (currency.symbol === 'USDC' && usdFloorPrice) ||
           (nativeFloorPrice && currency.contract === zeroAddress) ||
           (nativeFloorPrice && defaultCurrency)
+        const minimumAmount = exchange?.minPriceRaw
+          ? Number(
+              formatBN(
+                BigInt(exchange.minPriceRaw),
+                6,
+                currency?.decimals || 18
+              )
+            )
+          : MINIMUM_AMOUNT
+        const maximumAmount = exchange?.maxPriceRaw
+          ? Number(
+              formatBN(
+                BigInt(exchange.maxPriceRaw),
+                6,
+                currency?.decimals || 18
+              )
+            )
+          : null
 
         const handleSetFloor = () => {
           // If currency matches floor ask currency, use decimal floor price
@@ -422,18 +437,27 @@ export function ListModal({
                         setCurrency={setCurrency}
                       />
                     </Flex>
-                    {Number(price) !== 0 && Number(price) < MINIMUM_AMOUNT && (
+                    {Number(price) !== 0 && Number(price) < minimumAmount && (
                       <Box>
                         <Text style="body2" color="error">
-                          Amount must be higher than {MINIMUM_AMOUNT}
+                          Amount must be higher than or equal to {minimumAmount}
                         </Text>
                       </Box>
                     )}
+                    {maximumAmount &&
+                      Number(price) !== 0 &&
+                      Number(price) > maximumAmount && (
+                        <Box>
+                          <Text style="body2" color="error">
+                            Amount must be less than or equal to {maximumAmount}
+                          </Text>
+                        </Box>
+                      )}
                     {collection &&
                       collection?.floorAsk?.price?.amount?.native !==
                         undefined &&
                       Number(price) !== 0 &&
-                      Number(price) >= MINIMUM_AMOUNT &&
+                      Number(price) >= minimumAmount &&
                       currency.contract === zeroAddress &&
                       Number(price) <
                         collection?.floorAsk?.price.amount.native && (
@@ -536,7 +560,7 @@ export function ListModal({
                 <Box css={{ p: '$4', width: '100%' }}>
                   <Button
                     disabled={
-                      Number(price) == 0 || Number(price) < MINIMUM_AMOUNT
+                      Number(price) == 0 || Number(price) < minimumAmount
                     }
                     onClick={listToken}
                     css={{ width: '100%' }}

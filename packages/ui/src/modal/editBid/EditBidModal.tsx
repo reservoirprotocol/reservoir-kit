@@ -13,9 +13,6 @@ import {
   Button,
   Loader,
   Select,
-  CryptoCurrencyIcon,
-  Input,
-  FormatCurrency,
   FormatWrappedCurrency,
   Popover,
   FormatCryptoCurrency,
@@ -35,6 +32,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient } from 'viem'
+import { formatBN } from '../../lib/numbers'
+import PriceInput from '../../primitives/PriceInput'
+
 const ModalCopy = {
   title: 'Edit Offer',
   ctaClose: 'Close',
@@ -59,6 +59,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onEditBidComplete?: (data: any) => void
   onEditBidError?: (error: Error, data: any) => void
 }
+
+const MINIMUM_AMOUNT = 0.000001
 
 export function EditBidModal({
   openState,
@@ -125,6 +127,8 @@ export function EditBidModal({
         expirationOption,
         usdPrice,
         stepData,
+        exchange,
+        currency,
         setTrait,
         setBidAmount,
         setExpirationOption,
@@ -187,6 +191,26 @@ export function EditBidModal({
 
         const isBidEditable =
           bid && bid.status === 'active' && !loading && isOracleOrder
+
+        const minimumAmount = exchange?.minPriceRaw
+          ? Number(
+              formatBN(
+                BigInt(exchange.minPriceRaw),
+                6,
+                currency?.decimals || 18
+              )
+            )
+          : MINIMUM_AMOUNT
+        const maximumAmount = exchange?.maxPriceRaw
+          ? Number(
+              formatBN(
+                BigInt(exchange.maxPriceRaw),
+                6,
+                currency?.decimals || 18
+              )
+            )
+          : null
+        const bidAmountNumerical = Number(bidAmount.length > 0 ? bidAmount : 0)
 
         return (
           <Modal
@@ -274,52 +298,57 @@ export function EditBidModal({
                       </Text>
                     ) : null}
                   </Flex>
-                  <Flex css={{ gap: '$2' }}>
-                    <Text
-                      as={Flex}
-                      css={{ gap: '$2', flexShrink: 0 }}
-                      align="center"
-                      style="body1"
-                      color="subtle"
-                    >
-                      <CryptoCurrencyIcon
-                        chainId={modalChain?.id}
-                        css={{ height: 20 }}
-                        address={wrappedContractAddress}
-                      />
-                      {wrappedContractName}
-                    </Text>
-                    <Input
-                      type="number"
-                      value={bidAmount}
+                  <Flex direction="column" css={{ gap: '$2' }}>
+                    <PriceInput
+                      chainId={modalChain?.id}
+                      price={bidAmount ? bidAmountNumerical : undefined}
+                      collection={collection}
+                      currency={currency}
+                      usdPrice={usdPrice}
+                      quantity={1}
+                      placeholder={'Enter an offer price'}
                       onChange={(e) => {
-                        setBidAmount(e.target.value)
+                        if (e.target.value === '') {
+                          setBidAmount('')
+                        } else {
+                          setBidAmount(e.target.value)
+                        }
                       }}
-                      placeholder="Enter price here"
-                      containerCss={{
-                        width: '100%',
-                      }}
-                      css={{
-                        color: '$neutralText',
-                        textAlign: 'left',
+                      onBlur={() => {
+                        if (bidAmountNumerical === undefined) {
+                          setBidAmount('')
+                        }
                       }}
                     />
+                    {bidAmount !== undefined &&
+                      bidAmountNumerical !== null &&
+                      bidAmountNumerical !== 0 &&
+                      bidAmountNumerical < minimumAmount && (
+                        <Box css={{ mx: '$1' }}>
+                          <Text style="body3" color="error">
+                            Amount must be higher than or equal to{' '}
+                            {minimumAmount}
+                          </Text>
+                        </Box>
+                      )}
+                    {bidAmountNumerical !== undefined &&
+                      bidAmountNumerical !== null &&
+                      bidAmountNumerical !== 0 &&
+                      maximumAmount &&
+                      bidAmountNumerical > maximumAmount && (
+                        <Box css={{ my: '$1' }}>
+                          <Text style="body3" color="error">
+                            Amount must be lower than or equal to{' '}
+                            {maximumAmount}
+                          </Text>
+                        </Box>
+                      )}
                   </Flex>
-                  <FormatCurrency
-                    css={{
-                      marginLeft: 'auto',
-                      mt: '$2',
-                      display: 'inline-block',
-                      minHeight: 15,
-                    }}
-                    style="tiny"
-                    amount={bidAmountUsd}
-                  />
                   {attributes &&
                     attributes.length > 0 &&
                     (attributesSelectable || trait) &&
                     !isTokenBid && (
-                      <Flex direction="column" css={{ mb: '$3' }}>
+                      <Flex direction="column" css={{ mb: '$3', mt: '$4' }}>
                         <Text
                           as="div"
                           css={{ mb: '$2' }}
@@ -424,7 +453,7 @@ export function EditBidModal({
                         </Popover.Root>
                       </Flex>
                     )}
-                  <Box css={{ mb: '$3' }}>
+                  <Box css={{ mb: '$3', mt: '$4' }}>
                     <Text
                       as="div"
                       css={{ mb: '$2' }}

@@ -18,10 +18,11 @@ import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
-import PriceInput from './PriceInput'
+import PriceInput from '../../primitives/PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { WalletClient, zeroAddress } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { formatBN } from '../../lib/numbers'
 
 const ModalCopy = {
   title: 'Edit Listing',
@@ -107,6 +108,7 @@ export function EditListingModal({
         totalUsd,
         royaltyBps,
         stepData,
+        exchange,
         setPrice,
         setQuantity,
         setExpirationOption,
@@ -152,6 +154,25 @@ export function EditListingModal({
 
         const isListingEditable =
           listing && listing.status === 'active' && !loading && isOracleOrder
+
+        const minimumAmount = exchange?.minPriceRaw
+          ? Number(
+              formatBN(
+                BigInt(exchange.minPriceRaw),
+                6,
+                currency?.decimals || 18
+              )
+            )
+          : MINIMUM_AMOUNT
+        const maximumAmount = exchange?.maxPriceRaw
+          ? Number(
+              formatBN(
+                BigInt(exchange.maxPriceRaw),
+                6,
+                currency?.decimals || 18
+              )
+            )
+          : null
 
         return (
           <Modal
@@ -269,6 +290,7 @@ export function EditListingModal({
                       currency={currency}
                       usdPrice={usdPrice}
                       quantity={quantity}
+                      placeholder={'Enter a listing price'}
                       onChange={(e) => {
                         if (e.target.value === '') {
                           setPrice(undefined)
@@ -285,10 +307,23 @@ export function EditListingModal({
                     {price !== undefined &&
                       price !== null &&
                       price !== 0 &&
-                      price < MINIMUM_AMOUNT && (
+                      price < minimumAmount && (
                         <Box>
                           <Text style="body3" color="error">
-                            Amount must be higher than {MINIMUM_AMOUNT}
+                            Amount must be higher than or equal to{' '}
+                            {minimumAmount}
+                          </Text>
+                        </Box>
+                      )}
+                    {price !== undefined &&
+                      price !== null &&
+                      price !== 0 &&
+                      maximumAmount &&
+                      price > maximumAmount && (
+                        <Box>
+                          <Text style="body3" color="error">
+                            Amount must be lower than or equal to{' '}
+                            {maximumAmount}
                           </Text>
                         </Box>
                       )}
@@ -298,7 +333,8 @@ export function EditListingModal({
                       price !== undefined &&
                       price !== null &&
                       price !== 0 &&
-                      price >= MINIMUM_AMOUNT &&
+                      price >= minimumAmount &&
+                      (!maximumAmount || price <= maximumAmount) &&
                       currency?.contract === zeroAddress &&
                       price < collection?.floorAsk?.price.amount.native && (
                         <Box>

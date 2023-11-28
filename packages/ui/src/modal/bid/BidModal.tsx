@@ -58,6 +58,7 @@ import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient } from 'viem'
+import { formatBN } from '../../lib/numbers'
 
 type BidCallbackData = {
   tokenId?: string
@@ -140,7 +141,9 @@ const MainContainer = styled(Flex, {
   },
 })
 
-const minimumDate = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
+const MINIMUM_DATE = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
+const MINIMUM_AMOUNT = 0.000001
+
 export function BidModal({
   openState,
   trigger,
@@ -232,6 +235,7 @@ export function BidModal({
         bidData,
         currencies,
         currency,
+        exchange,
         setCurrency,
         setBidAmountPerUnit,
         setExpirationOption,
@@ -353,6 +357,25 @@ export function BidModal({
             ? 'Make an Attribute Offer'
             : 'Make a Collection Offer'
 
+        const minimumAmount = exchange?.minPriceRaw
+          ? Number(
+              formatBN(
+                BigInt(exchange.minPriceRaw),
+                6,
+                currency?.decimals || 18
+              )
+            )
+          : MINIMUM_AMOUNT
+        const maximumAmount = exchange?.maxPriceRaw
+          ? Number(
+              formatBN(
+                BigInt(exchange.maxPriceRaw),
+                6,
+                currency?.decimals || 18
+              )
+            )
+          : null
+
         return (
           <Modal
             size={
@@ -440,7 +463,7 @@ export function BidModal({
                           currency={currency}
                           currencies={currencies}
                           setCurrency={setCurrency}
-                          triggerCss={{ width: 95 }}
+                          triggerCss={{ minWidth: 95 }}
                         />
                       ) : (
                         <>
@@ -550,6 +573,22 @@ export function BidModal({
                       amount={totalBidAmountUsd}
                     />
                   )}
+                  {totalBidAmount !== 0 && totalBidAmount < minimumAmount && (
+                    <Box>
+                      <Text style="body2" color="error">
+                        Amount must be higher than or equal to {minimumAmount}
+                      </Text>
+                    </Box>
+                  )}
+                  {maximumAmount &&
+                    totalBidAmount !== 0 &&
+                    totalBidAmount > maximumAmount && (
+                      <Box>
+                        <Text style="body2" color="error">
+                          Amount must be less than or equal to {maximumAmount}
+                        </Text>
+                      </Box>
+                    )}
                   {attributes &&
                     attributes.length > 0 &&
                     (attributesSelectable || trait) &&
@@ -706,7 +745,7 @@ export function BidModal({
                       value={expirationDate}
                       options={{
                         chainId: modalChain?.id,
-                        minDate: minimumDate,
+                        minDate: MINIMUM_DATE,
                         enableTime: true,
                         minuteIncrement: 1,
                       }}

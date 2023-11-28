@@ -37,6 +37,7 @@ const BidPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
+  const [orderKind, setOrderKind] = useState<string | undefined>(undefined)
   const [chainId, setChainId] = useState('')
   const [attributeKey, setAttributeKey] = useState('')
   const [attributeValue, setAttributeValue] = useState('')
@@ -104,6 +105,14 @@ const BidPage: NextPage = () => {
           type="text"
           value={tokenId}
           onChange={(e) => setTokenId(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Order Kind: </label>
+        <input
+          type="text"
+          value={orderKind}
+          onChange={(e) => setOrderKind(e.target.value)}
         />
       </div>
       <div>
