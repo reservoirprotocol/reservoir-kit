@@ -14,6 +14,7 @@ type MarketPlaceInputProps = {
   >['currency']
   usdPrice?: number | null
   quantity?: number
+  placeholder?: string
   onChange: (e: any) => void
   onBlur: (e: any) => void
 }
@@ -25,6 +26,7 @@ const PriceInput = ({
   currency,
   usdPrice,
   quantity = 1,
+  placeholder,
   onChange,
   onBlur,
   ...props
@@ -59,7 +61,7 @@ const PriceInput = ({
           value={price}
           onChange={onChange}
           onBlur={onBlur}
-          placeholder="Enter a listing price"
+          placeholder={placeholder}
         />
       </Box>
       <Flex direction="column" align="end" css={{ ml: '$3' }}>

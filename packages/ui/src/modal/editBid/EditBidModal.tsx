@@ -306,6 +306,7 @@ export function EditBidModal({
                       currency={currency}
                       usdPrice={usdPrice}
                       quantity={1}
+                      placeholder={'Enter an offer price'}
                       onChange={(e) => {
                         if (e.target.value === '') {
                           setBidAmount('')

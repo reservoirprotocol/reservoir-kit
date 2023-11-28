@@ -290,6 +290,7 @@ export function EditListingModal({
                       currency={currency}
                       usdPrice={usdPrice}
                       quantity={quantity}
+                      placeholder={'Enter a listing price'}
                       onChange={(e) => {
                         if (e.target.value === '') {
                           setPrice(undefined)
