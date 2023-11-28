@@ -31,7 +31,7 @@ import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
-import { WalletClient, parseUnits } from 'viem'
+import { WalletClient, parseUnits, zeroAddress } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
@@ -277,9 +277,10 @@ export const BidModalRenderer: FC<Props> = ({
   const exchange = useMemo(() => {
     const exchanges: Record<string, Exchange> =
       reservoirMarketplace?.exchanges || {}
-    return orderKind
+    const exchange = orderKind
       ? exchanges[orderKind]
       : Object.values(exchanges).find((exchange) => exchange?.enabled)
+    return exchange?.enabled ? exchange : undefined
   }, [reservoirMarketplace, orderKind])
 
   const traitBidSupported = Boolean(exchange?.traitBidSupported)
@@ -303,14 +304,19 @@ export const BidModalRenderer: FC<Props> = ({
   })
 
   const { data: wrappedBalance } = useBalance({
-    token: wrappedContractAddress as any,
+    token:
+      wrappedContractAddress !== zeroAddress
+        ? (wrappedContractAddress as any)
+        : undefined,
     address: address,
     watch: open,
     chainId: rendererChain?.id,
   })
 
   const canAutomaticallyConvert =
-    !currency || currency.contract === nativeWrappedContractAddress
+    !currency ||
+    currency.contract.toLowerCase() ===
+      nativeWrappedContractAddress.toLowerCase()
   let convertLink: string = ''
 
   if (canAutomaticallyConvert) {
@@ -403,9 +409,18 @@ export const BidModalRenderer: FC<Props> = ({
   }, [open])
 
   useEffect(() => {
+    const supportedCurrencies =
+      exchange?.supportedBidCurrencies?.map((currency) =>
+        currency.toLowerCase()
+      ) || []
     if (exchange?.paymentTokens) {
       const restrictedCurrencies = exchange.paymentTokens
-        .filter((token) => token.address && token.symbol)
+        .filter(
+          (token) =>
+            token.address &&
+            token.symbol &&
+            supportedCurrencies.includes(token.address.toLowerCase())
+        )
         .map((token) => ({
           contract: token.address as string,
           decimals: token.decimals,
@@ -422,11 +437,10 @@ export const BidModalRenderer: FC<Props> = ({
         setCurrency(restrictedCurrencies[0])
       }
     } else {
-      setCurrency(
-        preferredCurrencies && preferredCurrencies[0]
-          ? preferredCurrencies[0]
-          : defaultCurrency
+      const currencies = preferredCurrencies?.filter((currency) =>
+        currency.contract.toLowerCase()
       )
+      setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
       setCurrencies(preferredCurrencies)
     }
   }, [exchange, open])

@@ -48,7 +48,7 @@ export default [
   },
   {
     ...reservoirChains.sepolia,
-    baseApiUrl: 'https://api-sepolia.dev.reservoir.tools',
+    baseApiUrl: 'https://api-sepolia.reservoir.tools',
     paymentTokens: [...reservoirChains.sepolia.paymentTokens, {
       chainId: 5,
       address: zeroAddress,

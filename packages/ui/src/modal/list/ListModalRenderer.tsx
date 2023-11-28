@@ -261,9 +261,10 @@ export const ListModalRenderer: FC<Props> = ({
 
   const exchange = useMemo(() => {
     const exchanges: Record<string, Exchange> = marketplace?.exchanges || {}
-    return orderKind
+    const exchange = orderKind
       ? exchanges[orderKind]
       : Object.values(exchanges).find((exchange) => exchange?.enabled)
+    return exchange?.enabled ? exchange : undefined
   }, [marketplace, orderKind])
 
   useEffect(() => {
