@@ -34,7 +34,7 @@ import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'
-import { WalletClient, zeroAddress } from 'viem'
+import { WalletClient, formatUnits, zeroAddress } from 'viem'
 import ListCheckout from './ListCheckout'
 import QuantitySelector from '../QuantitySelector'
 import dayjs from 'dayjs'
@@ -42,6 +42,7 @@ import { CurrencySelector } from '../CurrencySelector'
 import PriceBreakdown from './PriceBreakdown'
 import FloorDropdown from './FloorDropdown'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { formatNumber } from '../../lib/numbers'
 import { Dialog } from '../../primitives/Dialog'
 
 type ListingCallbackData = {
@@ -88,6 +89,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
 const Image = styled('img', {})
 
 const MINIMUM_AMOUNT = 0.000001
+const MAXIMUM_AMOUNT = Infinity
 
 export function ListModal({
   openState,
@@ -140,12 +142,14 @@ export function ListModal({
       walletClient={walletClient}
     >
       {({
+        loading,
         token,
         quantityAvailable,
         collection,
         usdPrice,
         listStep,
         marketplace,
+        exchange,
         expirationOption,
         expirationOptions,
         isFetchingOnChainRoyalties,
@@ -203,12 +207,6 @@ export function ListModal({
           }
         }, [transactionError])
 
-        let loading =
-          !token ||
-          !collection ||
-          !marketplace ||
-          (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false)
-
         const floorAskPrice = collection?.floorAsk?.price
         const decimalFloorPrice = collection?.floorAsk?.price?.amount?.decimal
         const nativeFloorPrice = collection?.floorAsk?.price?.amount?.native
@@ -223,6 +221,30 @@ export function ListModal({
           (currency.symbol === 'USDC' && usdFloorPrice) ||
           (nativeFloorPrice && currency.contract === zeroAddress) ||
           (nativeFloorPrice && defaultCurrency)
+        const minimumAmount = exchange?.minPriceRaw
+          ? Number(
+              formatUnits(
+                BigInt(exchange.minPriceRaw),
+                currency?.decimals || 18
+              )
+            )
+          : MINIMUM_AMOUNT
+        const maximumAmount = exchange?.maxPriceRaw
+          ? Number(
+              formatUnits(
+                BigInt(exchange.maxPriceRaw),
+                currency?.decimals || 18
+              )
+            )
+          : MAXIMUM_AMOUNT
+
+        const withinPricingBounds =
+          price &&
+          Number(price) !== 0 &&
+          Number(price) <= maximumAmount &&
+          Number(price) >= minimumAmount
+
+        const canPurchase = price !== '' && withinPricingBounds
 
         const handleSetFloor = () => {
           // If currency matches floor ask currency, use decimal floor price
@@ -431,10 +453,16 @@ export function ListModal({
                         setCurrency={setCurrency}
                       />
                     </Flex>
-                    {Number(price) !== 0 && Number(price) < MINIMUM_AMOUNT && (
+                    {Number(price) !== 0 && !withinPricingBounds && (
                       <Box>
                         <Text style="body2" color="error">
-                          Amount must be higher than {MINIMUM_AMOUNT}
+                          {maximumAmount !== Infinity
+                            ? `Amount must be between ${formatNumber(
+                                minimumAmount
+                              )} - ${formatNumber(maximumAmount)}`
+                            : `Amount must be higher than ${formatNumber(
+                                minimumAmount
+                              )}`}
                         </Text>
                       </Box>
                     )}
@@ -442,7 +470,7 @@ export function ListModal({
                       collection?.floorAsk?.price?.amount?.native !==
                         undefined &&
                       Number(price) !== 0 &&
-                      Number(price) >= MINIMUM_AMOUNT &&
+                      Number(price) >= minimumAmount &&
                       currency.contract === zeroAddress &&
                       Number(price) <
                         collection?.floorAsk?.price.amount.native && (
@@ -544,9 +572,7 @@ export function ListModal({
                 </Flex>
                 <Box css={{ p: '$4', width: '100%' }}>
                   <Button
-                    disabled={
-                      Number(price) == 0 || Number(price) < MINIMUM_AMOUNT
-                    }
+                    disabled={canPurchase ? false : true}
                     onClick={listToken}
                     css={{ width: '100%' }}
                   >

@@ -1,13 +1,20 @@
-import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
+import React, {
+  FC,
+  useEffect,
+  useState,
+  useCallback,
+  ReactNode,
+  useMemo,
+} from 'react'
 import {
   useCoinConversion,
   useReservoirClient,
-  useListings,
   useTokens,
   useCollections,
   useChainCurrency,
   useBids,
   useAttributes,
+  useMarketplaces,
 } from '../../hooks'
 import { useWalletClient, useAccount, useBalance } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
@@ -29,6 +36,9 @@ import { WalletClient, parseUnits } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
+import { Marketplace } from '../../hooks/useMarketplaces'
+
+type Exchange = NonNullable<Marketplace['exchanges']>['string']
 
 export enum EditBidStep {
   Edit,
@@ -56,7 +66,7 @@ type ChildrenProps = {
   bidAmountUsd: number
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   currency: NonNullable<
-    NonNullable<ReturnType<typeof useListings>['data']>[0]['price']
+    NonNullable<ReturnType<typeof useBids>['data']>[0]['price']
   >['currency']
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   editBidStep: EditBidStep
@@ -76,6 +86,7 @@ type ChildrenProps = {
   usdPrice: number
   steps: Execute['steps'] | null
   stepData: EditBidStepData | null
+  exchange?: Exchange
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
   setBidAmount: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
@@ -161,6 +172,29 @@ export const EditBidModalRenderer: FC<Props> = ({
 
   const bid = bids && bids[0] ? bids[0] : undefined
 
+  const [allMarketplaces] = useMarketplaces(
+    collectionId,
+    undefined,
+    undefined,
+    rendererChain?.id,
+    open
+  )
+
+  const reservoirMarketplace = useMemo(
+    () =>
+      allMarketplaces.find(
+        (marketplace) => marketplace.orderbook === 'reservoir'
+      ),
+    [allMarketplaces]
+  )
+
+  const exchange = useMemo(() => {
+    const exchanges: Record<string, Exchange> =
+      reservoirMarketplace?.exchanges || {}
+    const exchange = exchanges[bid?.kind as string]
+    return exchange?.enabled ? exchange : undefined
+  }, [reservoirMarketplace, bid])
+
   const contract = bid?.tokenSetId?.split(':')[1]
   const currency = bid?.price?.currency
 
@@ -235,11 +269,13 @@ export const EditBidModalRenderer: FC<Props> = ({
   let royaltyBps = collection?.royalties?.bps
 
   const { data: tokens } = useTokens(
-    open && {
-      tokens: [`${contract}:${tokenId}`],
-      includeAttributes: true,
-      normalizeRoyalties,
-    },
+    open && contract && tokenId
+      ? {
+          tokens: [`${contract}:${tokenId}`],
+          includeAttributes: true,
+          normalizeRoyalties,
+        }
+      : false,
     {
       revalidateFirstPage: true,
     },
@@ -349,6 +385,12 @@ export const EditBidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (!exchange) {
+      const error = new Error('Missing Exchange')
+      setTransactionError(error)
+      throw error
+    }
+
     setTransactionError(null)
 
     let expirationTime: string | null = null
@@ -366,7 +408,7 @@ export const EditBidModalRenderer: FC<Props> = ({
         wrappedBalance?.decimals || 18
       ).toString(),
       orderbook: 'reservoir',
-      orderKind: 'seaport-v1.5',
+      orderKind: exchange.orderKind as any,
       attributeKey: trait?.key,
       attributeValue: trait?.value,
     }
@@ -387,7 +429,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     }
 
     bid.options = {
-      'seaport-v1.5': {
+      [exchange.orderKind as string]: {
         useOffChainCancellation: true,
         replaceOrderId: bidId,
       },
@@ -465,6 +507,7 @@ export const EditBidModalRenderer: FC<Props> = ({
     wrappedBalance,
     wrappedContractAddress,
     nativeWrappedContractAddress,
+    exchange,
   ])
 
   return (
@@ -500,6 +543,7 @@ export const EditBidModalRenderer: FC<Props> = ({
         usdPrice,
         steps,
         stepData,
+        exchange,
         setTrait,
         setBidAmount,
         setExpirationOption,
