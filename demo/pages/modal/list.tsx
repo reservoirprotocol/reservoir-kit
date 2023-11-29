@@ -205,6 +205,9 @@ const Index: NextPage = () => {
         onClose={() => {
           console.log('ListModal Closed')
         }}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ThemeSwitcher />
       <ChainSwitcher />

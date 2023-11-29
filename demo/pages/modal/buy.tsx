@@ -165,6 +165,9 @@ const BuyPage: NextPage = () => {
         onClose={() => {
           console.log('BuyModal Closed')
         }}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ThemeSwitcher />
       <ChainSwitcher />

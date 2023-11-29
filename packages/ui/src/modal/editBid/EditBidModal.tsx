@@ -5,6 +5,7 @@ import React, {
   SetStateAction,
   useEffect,
   useState,
+  ComponentPropsWithoutRef,
 } from 'react'
 import {
   Flex,
@@ -35,6 +36,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient } from 'viem'
+import { Dialog } from '../../primitives/Dialog'
 const ModalCopy = {
   title: 'Edit Offer',
   ctaClose: 'Close',
@@ -58,6 +60,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onClose?: (data: any, currentStep: EditBidStep) => void
   onEditBidComplete?: (data: any) => void
   onEditBidError?: (error: Error, data: any) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 export function EditBidModal({
@@ -73,6 +78,7 @@ export function EditBidModal({
   onClose,
   onEditBidComplete,
   onEditBidError,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -204,6 +210,11 @@ export function EditBidModal({
               setOpen(open)
             }}
             loading={loading}
+            onPointerDownOutside={(e) => {
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
+              }
+            }}
           >
             {!isBidAvailable && !loading && (
               <Flex

@@ -118,6 +118,9 @@ const EditBidPage: NextPage = () => {
         onClose={() => {
           console.log('EditBidModal Closed')
         }}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ChainSwitcher />
       <ThemeSwitcher />
