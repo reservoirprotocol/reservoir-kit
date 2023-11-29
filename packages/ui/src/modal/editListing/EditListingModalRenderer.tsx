@@ -15,6 +15,7 @@ import {
   useCollections,
   useOnChainRoyalties,
   useChainCurrency,
+  useMarketplaces,
 } from '../../hooks'
 import { useWalletClient, useAccount } from 'wagmi'
 import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
@@ -24,6 +25,9 @@ import dayjs from 'dayjs'
 import { Listing } from '../list/ListModalRenderer'
 import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { Marketplace } from '../../hooks/useMarketplaces'
+
+type Exchange = NonNullable<Marketplace['exchanges']>['string']
 
 export enum EditListingStep {
   Edit,
@@ -61,6 +65,7 @@ type ChildrenProps = {
   usdPrice: number
   steps: Execute['steps'] | null
   stepData: EditListingStepData | null
+  exchange?: Exchange
   setPrice: React.Dispatch<React.SetStateAction<number | undefined>>
   setQuantity: React.Dispatch<React.SetStateAction<number>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
@@ -130,6 +135,29 @@ export const EditListingModalRenderer: FC<Props> = ({
   const contract = listing?.tokenSetId?.split(':')[1]
   const currency = listing?.price?.currency
 
+  const [allMarketplaces] = useMarketplaces(
+    collectionId,
+    undefined,
+    undefined,
+    rendererChain?.id,
+    open
+  )
+
+  const reservoirMarketplace = useMemo(
+    () =>
+      allMarketplaces.find(
+        (marketplace) => marketplace.orderbook === 'reservoir'
+      ),
+    [allMarketplaces]
+  )
+
+  const exchange = useMemo(() => {
+    const exchanges: Record<string, Exchange> =
+      reservoirMarketplace?.exchanges || {}
+    const exchange = exchanges[listing?.kind as string]
+    return exchange?.enabled ? exchange : undefined
+  }, [reservoirMarketplace, listing])
+
   const isOracleOrder = listing?.isNativeOffChainCancellable as boolean
 
   useEffect(() => {
@@ -171,11 +199,13 @@ export const EditListingModalRenderer: FC<Props> = ({
   }, [open])
 
   const { data: tokens } = useTokens(
-    open && {
-      tokens: [`${contract}:${tokenId}`],
-      includeAttributes: true,
-      normalizeRoyalties,
-    },
+    open && contract && tokenId
+      ? {
+          tokens: [`${contract}:${tokenId}`],
+          includeAttributes: true,
+          normalizeRoyalties,
+        }
+      : false,
     {
       revalidateFirstPage: true,
     },
@@ -261,6 +291,12 @@ export const EditListingModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (!exchange) {
+      const error = new Error('Missing Exchange')
+      setTransactionError(error)
+      throw error
+    }
+
     setTransactionError(null)
 
     let expirationTime: string | null = null
@@ -279,7 +315,7 @@ export const EditListingModalRenderer: FC<Props> = ({
         BigInt(quantity)
       ).toString(),
       orderbook: 'reservoir',
-      orderKind: 'seaport-v1.5',
+      orderKind: exchange.orderKind as any,
     }
 
     if (quantity > 1) {
@@ -295,7 +331,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     }
 
     listing.options = {
-      'seaport-v1.5': {
+      [exchange.orderKind as string]: {
         useOffChainCancellation: true,
         replaceOrderId: listingId,
       },
@@ -372,6 +408,7 @@ export const EditListingModalRenderer: FC<Props> = ({
     currency,
     quantity,
     contract,
+    exchange,
   ])
 
   useEffect(() => {
@@ -386,7 +423,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
-        loading: !listing || !token || !collection,
+        loading: !listing || !token || !collection || !exchange,
         listing,
         tokenId,
         contract,
@@ -406,6 +443,7 @@ export const EditListingModalRenderer: FC<Props> = ({
         royaltyBps,
         steps,
         stepData,
+        exchange,
         setPrice,
         setQuantity,
         setExpirationOption,
