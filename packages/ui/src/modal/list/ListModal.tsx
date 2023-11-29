@@ -1,5 +1,6 @@
 import { styled } from '../../../stitches.config'
 import React, {
+  ComponentPropsWithoutRef,
   Dispatch,
   ReactElement,
   SetStateAction,
@@ -41,6 +42,7 @@ import { CurrencySelector } from '../CurrencySelector'
 import PriceBreakdown from './PriceBreakdown'
 import FloorDropdown from './FloorDropdown'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { Dialog } from '../../primitives/Dialog'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -78,6 +80,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
     stepData: ListModalStepData | null,
     currentStep: ListStep
   ) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 const Image = styled('img', {})
@@ -102,6 +107,7 @@ export function ListModal({
   onListingComplete,
   onListingError,
   onClose,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -272,6 +278,9 @@ export function ListModal({
                 )
               ) {
                 e.preventDefault()
+              }
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
               }
             }}
             onFocusCapture={(e) => {

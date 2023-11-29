@@ -1,4 +1,10 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import React, {
+  ComponentPropsWithoutRef,
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+} from 'react'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Modal } from '../Modal'
 import {
@@ -13,6 +19,7 @@ import { SweepContent } from './sweep/SweepContent'
 import { Flex, Text } from '../../primitives'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient } from 'viem'
+import { Dialog } from '../../primitives/Dialog'
 
 export type CollectCallbackData = {
   collectionId?: string
@@ -58,6 +65,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onCollectError?: (error: Error, data: CollectCallbackData) => void
   onClose?: (data: CollectCallbackData, currentStep: CollectStep) => void
   onGoToToken?: (data: CollectCallbackData) => any
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 export function CollectModal({
@@ -73,12 +83,13 @@ export function CollectModal({
   copyOverrides,
   walletClient,
   usePermit,
+  defaultQuantity,
   onCollectComplete,
   onCollectError,
   onClose,
   onConnectWallet,
   onGoToToken,
-  defaultQuantity,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof CollectModalCopy = {
     ...CollectModalCopy,
@@ -163,6 +174,9 @@ export function CollectModal({
 
               if (!clickedDismissableLayer && dismissableLayers.length > 0) {
                 e.preventDefault()
+              }
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
               }
             }}
             onOpenChange={(open) => {

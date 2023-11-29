@@ -195,6 +195,9 @@ const CollectPage: NextPage = () => {
           console.log('CollectModal Closed')
         }}
         onGoToToken={(data) => console.log('Go to Token', data)}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ChainSwitcher/>
       <ThemeSwitcher />
