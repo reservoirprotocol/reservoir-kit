@@ -1,11 +1,16 @@
 
 ## [v1.20.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/5f88005cfdc068f39ced6fdc7eb8eac3f7017d2a) (2023-11-29)
 
+* EditBidModal & EditListingModal: respect 721c pricing constraints [e0f45670](https://github.com/reservoirprotocol/reservoir-kit/commit/e0f45670b7a81e65564c7a2e8d1840f1fe6825c4)
+* ListModal & BidModal: use marketplace configs and add price restrictions [7f8b9e2a](https://github.com/reservoirprotocol/reservoir-kit/commit/7f8b9e2a2d97e71c0c09eafa24f96b6d5e823e65)
+
+### Breaking Changes
+* If you previously relied on the supported-marketplaces api this is not longer the api that powers the bid/list modal. Instead there's a new api, the marketplace configurations api, which returns available exchanges per marketplace. This gives develops the flexibility to choose the right exchange while also giving them more in depth exchange rules.
+
 ## [v1.19.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/2e76121039d3782f7dcd72f6f4dae2a9b7472eb8) (2023-11-29)
 
 * Add onPointerDownOutside override to all modals [69b97a48](https://github.com/reservoirprotocol/reservoir-kit/commit/69b97a484fbbf5a6d4d9e642d3dcafe79e618db2)
-* EditBidModal & EditListingModal: respect 721c pricing constraints [e0f45670](https://github.com/reservoirprotocol/reservoir-kit/commit/e0f45670b7a81e65564c7a2e8d1840f1fe6825c4)
-* ListModal & BidModal: use marketplace configs and add price restrictions [7f8b9e2a](https://github.com/reservoirprotocol/reservoir-kit/commit/7f8b9e2a2d97e71c0c09eafa24f96b6d5e823e65)
+
 ## [v1.19.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/cf4e26066857979ba32c318ba2d6fbe0e465ecf3) (2023-11-22)
 
 * BuyModal: fix 1155 default path state [eb81f012](https://github.com/reservoirprotocol/reservoir-kit/commit/eb81f012abc3919473a5b4e9f0a75b4158508aad)

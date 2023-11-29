@@ -1,9 +1,10 @@
 
 ## [v1.9.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/c4d7d0a0ea018e41c7401f076d8faa14dd959471) (2023-11-29)
 
+* Sync api
+
 ## [v1.9.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/29c202b46325b032d72cfbe8c51135fab0ae151d) (2023-11-29)
 
-* Merge pull request #489 from reservoirprotocol/ted/grwth-3623-use-native-usdc-address-as-the-default-paymenttoken-on [d49e8a0c](https://github.com/reservoirprotocol/reservoir-kit/commit/d49e8a0c80fe3ed147f60ae6939d12ba5627b770)
 * Add mint action to sdk [2f2819d9](https://github.com/reservoirprotocol/reservoir-kit/commit/2f2819d9adb781c021705abd00366f4a648a7a37)
 * Sync api [1f61127a](https://github.com/reservoirprotocol/reservoir-kit/commit/1f61127a0575a2c650be4623ecd8549144b8c1f3)
 * Update usdc contract for polygon payment token [f7a4c2b9](https://github.com/reservoirprotocol/reservoir-kit/commit/f7a4c2b917d9ed28b6ea21a4a36ca00445d088d8)
