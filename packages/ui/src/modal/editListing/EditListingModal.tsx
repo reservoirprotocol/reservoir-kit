@@ -20,9 +20,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import PriceInput from '../../primitives/PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
-import { WalletClient, zeroAddress } from 'viem'
+import { WalletClient, formatUnits, zeroAddress } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { formatBN } from '../../lib/numbers'
+import { formatNumber } from '../../lib/numbers'
 
 const ModalCopy = {
   title: 'Edit Listing',
@@ -158,18 +158,16 @@ export function EditListingModal({
 
         const minimumAmount = exchange?.minPriceRaw
           ? Number(
-              formatBN(
+              formatUnits(
                 BigInt(exchange.minPriceRaw),
-                6,
                 currency?.decimals || 18
               )
             )
           : MINIMUM_AMOUNT
         const maximumAmount = exchange?.maxPriceRaw
           ? Number(
-              formatBN(
+              formatUnits(
                 BigInt(exchange.maxPriceRaw),
-                6,
                 currency?.decimals || 18
               )
             )
@@ -315,8 +313,12 @@ export function EditListingModal({
                       <Box>
                         <Text style="body3" color="error">
                           {maximumAmount !== Infinity
-                            ? `Amount must be between ${minimumAmount} - ${maximumAmount}`
-                            : `Amount must be higher than ${minimumAmount}`}
+                            ? `Amount must be between ${formatNumber(
+                                minimumAmount
+                              )} - ${formatNumber(maximumAmount)}`
+                            : `Amount must be higher than ${formatNumber(
+                                minimumAmount
+                              )}`}
                         </Text>
                       </Box>
                     )}

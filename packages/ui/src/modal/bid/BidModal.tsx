@@ -57,8 +57,8 @@ import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { WalletClient } from 'viem'
-import { formatBN } from '../../lib/numbers'
+import { WalletClient, formatUnits } from 'viem'
+import { formatNumber } from '../../lib/numbers'
 
 type BidCallbackData = {
   tokenId?: string
@@ -360,18 +360,16 @@ export function BidModal({
 
         const minimumAmount = exchange?.minPriceRaw
           ? Number(
-              formatBN(
+              formatUnits(
                 BigInt(exchange.minPriceRaw),
-                6,
                 currency?.decimals || 18
               )
             )
           : MINIMUM_AMOUNT
         const maximumAmount = exchange?.maxPriceRaw
           ? Number(
-              formatBN(
+              formatUnits(
                 BigInt(exchange.maxPriceRaw),
-                6,
                 currency?.decimals || 18
               )
             )
@@ -584,8 +582,12 @@ export function BidModal({
                     <Box>
                       <Text style="body2" color="error">
                         {maximumAmount !== Infinity
-                          ? `Amount must be between ${minimumAmount} - ${maximumAmount}`
-                          : `Amount must be higher than ${minimumAmount}`}
+                          ? `Amount must be between ${formatNumber(
+                              minimumAmount
+                            )} - ${formatNumber(maximumAmount)}`
+                          : `Amount must be higher than ${formatNumber(
+                              minimumAmount
+                            )}`}
                       </Text>
                     </Box>
                   )}
