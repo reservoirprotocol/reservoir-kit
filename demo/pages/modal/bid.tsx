@@ -233,6 +233,9 @@ const BidPage: NextPage = () => {
         onViewOffers={() => {
           console.log('On View offers clicked')
         }}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ChainSwitcher />
       <ThemeSwitcher />

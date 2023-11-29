@@ -186,6 +186,9 @@ const AcceptBidPage: NextPage = () => {
         onClose={() => {
           console.log('AcceptBidModal Closed')
         }}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ChainSwitcher /> 
       <ThemeSwitcher />
