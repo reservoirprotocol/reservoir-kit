@@ -5,7 +5,6 @@ import React, {
   useCallback,
   ReactNode,
   useMemo,
-  useContext,
 } from 'react'
 import {
   useTokens,
@@ -124,7 +123,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
   const [gasCost, setGasCost] = useState(0n)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0n)
-  const [path, setPath] = useState<BuyPath>([])
+  const [path, setPath] = useState<BuyPath>(undefined)
   const [isFetchingPath, setIsFetchingPath] = useState(false)
   const [feeOnTop, setFeeOnTop] = useState(0n)
   const [buyStep, setBuyStep] = useState<BuyStep>(BuyStep.Checkout)
@@ -598,8 +597,8 @@ export const BuyModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (
       !token ||
-      (orderId && !listing && isValidatingListing) ||
-      (is1155 && !path && isFetchingPath) ||
+      (orderId && !listing && !isValidatingListing) ||
+      (is1155 && (!path || (path && path.length === 0)) && !isFetchingPath) ||
       (!is1155 && isOwner)
     ) {
       setBuyStep(BuyStep.Unavailable)

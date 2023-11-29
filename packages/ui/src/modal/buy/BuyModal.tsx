@@ -1,4 +1,5 @@
 import React, {
+  ComponentPropsWithoutRef,
   Dispatch,
   ReactElement,
   SetStateAction,
@@ -38,6 +39,7 @@ import { truncateAddress } from '../../lib/truncate'
 import { SelectPaymentToken } from '../SelectPaymentToken'
 import { WalletClient } from 'viem'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
+import { Dialog } from '../../primitives/Dialog'
 
 type PurchaseData = {
   tokenId?: string
@@ -83,6 +85,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
     stepData: BuyModalStepData | null,
     currentStep: BuyStep
   ) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 function titleForStep(
@@ -122,6 +127,7 @@ export function BuyModal({
   onPurchaseError,
   onClose,
   onGoToToken,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -248,6 +254,9 @@ export function BuyModal({
 
               if (!clickedDismissableLayer && dismissableLayers.length > 0) {
                 e.preventDefault()
+              }
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
               }
             }}
             onOpenChange={(open) => {

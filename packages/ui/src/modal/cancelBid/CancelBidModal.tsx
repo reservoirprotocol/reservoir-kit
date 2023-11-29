@@ -1,5 +1,11 @@
 import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
-import React, { ReactElement, Dispatch, SetStateAction, useEffect } from 'react'
+import React, {
+  ReactElement,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  ComponentPropsWithoutRef,
+} from 'react'
 import {
   Flex,
   Text,
@@ -19,6 +25,7 @@ import { truncateAddress } from '../../lib/truncate'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient } from 'viem'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
+import { Dialog } from '../../primitives/Dialog'
 
 const ModalCopy = {
   title: 'Cancel Offer',
@@ -38,6 +45,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onClose?: (data: any, currentStep: CancelStep) => void
   onCancelComplete?: (data: any) => void
   onCancelError?: (error: Error, data: any) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 export function CancelBidModal({
@@ -51,6 +61,7 @@ export function CancelBidModal({
   onClose,
   onCancelComplete,
   onCancelError,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -135,6 +146,11 @@ export function CancelBidModal({
               setOpen(open)
             }}
             loading={loading}
+            onPointerDownOutside={(e) => {
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
+              }
+            }}
           >
             {!isBidAvailable && !loading && (
               <Flex

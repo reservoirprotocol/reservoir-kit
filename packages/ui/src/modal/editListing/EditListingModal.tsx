@@ -1,5 +1,11 @@
 import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
-import React, { ReactElement, Dispatch, SetStateAction, useEffect } from 'react'
+import React, {
+  ReactElement,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  ComponentPropsWithoutRef,
+} from 'react'
 import {
   Flex,
   Text,
@@ -23,6 +29,7 @@ import InfoTooltip from '../../primitives/InfoTooltip'
 import { WalletClient, formatUnits, zeroAddress } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { formatNumber } from '../../lib/numbers'
+import { Dialog } from '../../primitives/Dialog'
 
 const ModalCopy = {
   title: 'Edit Listing',
@@ -47,6 +54,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onClose?: (data: any, currentStep: EditListingStep) => void
   onEditListingComplete?: (data: any) => void
   onEditListingError?: (error: Error, data: any) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 const MINIMUM_AMOUNT = 0.000001
@@ -66,6 +76,7 @@ export function EditListingModal({
   onClose,
   onEditListingComplete,
   onEditListingError,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -195,6 +206,11 @@ export function EditListingModal({
               setOpen(open)
             }}
             loading={loading}
+            onPointerDownOutside={(e) => {
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
+              }
+            }}
           >
             {!isListingAvailable && !loading && (
               <Flex

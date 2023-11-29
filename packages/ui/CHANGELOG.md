@@ -1,4 +1,12 @@
 
+## [v1.19.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/9df6c416b4ac46b50881ce29174ae81ff83540eb) (2023-11-21)
+
+* Fix: txHash refactor build error in Cart component [0e8fc880](https://github.com/reservoirprotocol/reservoir-kit/commit/0e8fc8807f79614d4dbca0d65667e7827a7b553b)
+
+## [v1.19.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/7172fcf07793496cb934048d5bd22836782e1371) (2023-11-21)
+
+* Fix: improve BuyModal error handling for 1155s and fix client-side exception [3c7565ff](https://github.com/reservoirprotocol/reservoir-kit/commit/3c7565ff1b989de1cac121347cf3d6c02df449bc)
+
 ## [v1.19.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/cb380a06e5d6b04db133cb19663214b78271e88a) (2023-11-20)
 
 * CollectModal: improve post mint image experience [d7a9a935](https://github.com/reservoirprotocol/reservoir-kit/commit/d7a9a93562b320437fac197679dafe3b4040f545)

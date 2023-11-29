@@ -6,6 +6,7 @@ import React, {
   Dispatch,
   SetStateAction,
   useContext,
+  ComponentPropsWithoutRef,
 } from 'react'
 import { styled } from '../../../stitches.config'
 import {
@@ -59,6 +60,7 @@ import QuantitySelector from '../QuantitySelector'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient, formatUnits } from 'viem'
 import { formatNumber } from '../../lib/numbers'
+import { Dialog } from '../../primitives/Dialog'
 
 type BidCallbackData = {
   tokenId?: string
@@ -103,6 +105,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   ) => void
   onBidComplete?: (data: any) => void
   onBidError?: (error: Error, data: any) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 function titleForStep(step: BidStep, copy: typeof ModalCopy) {
@@ -164,6 +169,7 @@ export function BidModal({
   onClose,
   onBidComplete,
   onBidError,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -413,6 +419,9 @@ export function BidModal({
                 )
               ) {
                 e.preventDefault()
+              }
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
               }
             }}
             onFocusCapture={(e) => {
