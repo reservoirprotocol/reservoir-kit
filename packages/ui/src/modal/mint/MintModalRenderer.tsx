@@ -421,6 +421,7 @@ export const MintModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setFetchedInitialOrders(false)
       setPaymentCurrency(undefined)
+      setStepData(null)
     } else {
       setItemAmount(defaultQuantity || 1)
     }

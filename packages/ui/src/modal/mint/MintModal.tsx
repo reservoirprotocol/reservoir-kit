@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  ReactElement,
-  SetStateAction,
-  useContext,
-  useEffect,
-} from 'react'
+import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
 import { WalletClient } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { useFallbackState, useReservoirClient } from '../../hooks'
@@ -37,7 +31,6 @@ import {
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import { formatNumber } from '../../lib/numbers'
-import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { Path } from '../../components/cart/CartCheckoutModal'
 import QuantitySelector from '../QuantitySelector'
 import { SelectPaymentToken } from '../SelectPaymentToken'
