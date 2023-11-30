@@ -26,7 +26,7 @@ export const TokenInfo: FC<Props> = ({ token, collection, chain }) => {
           <Text style="h6">
             {token?.token?.name || `#${token?.token?.tokenId}`}
           </Text>
-          <Flex css={{ gap: '$1' }}>
+          <Flex align="center" css={{ gap: '$1' }}>
             <Text style="subtitle2" color="subtle">
               {collection?.name}
             </Text>
