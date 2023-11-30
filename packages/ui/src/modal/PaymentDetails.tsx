@@ -54,7 +54,7 @@ export const PaymentDetails: FC<Props> = ({
               />
               <FormatCryptoCurrency
                 chainId={chainId}
-                textStyle="tiny"
+                textStyle="body2"
                 textColor="subtle"
                 amount={paymentCurrency?.currencyTotalRaw}
                 address={paymentCurrency?.address}
