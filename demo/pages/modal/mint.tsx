@@ -15,8 +15,9 @@ const MintPage: NextPage = () => {
   const router = useRouter()
   const { openConnectModal } = useConnectModal()
 
-  const [contract, setContract] = useState(DEFAULT_COLLECTION_ID)
-  const [tokenId, setTokenId] = useState<string | undefined>(undefined)
+  const [contract, setContract] = useState<string | undefined>(undefined)
+  const [collectionId, setCollectionId] = useState<string | undefined>(DEFAULT_COLLECTION_ID)
+  const [token, setToken] = useState<string | undefined>(undefined)
   const [chainId, setChainId] = useState<string | undefined>(undefined)
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
@@ -43,21 +44,44 @@ const MintPage: NextPage = () => {
         <input
           type="text"
           value={contract}
-          onChange={(e) => setContract(e.target.value)}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setContract(undefined)
+            }
+            else {
+              setContract(e.target.value)
+            } 
+          }}
         />
       </div>
 
       <div>
-        <label>Token Id: </label>
+        <label>CollectionId: </label>
         <input
           type="text"
-          value={tokenId}
+          value={collectionId}
           onChange={(e) => { 
             if(e.target.value === '') {
-              setTokenId(undefined)
+              setCollectionId(undefined)
             }
             else {
-              setTokenId(e.target.value)
+              setCollectionId(e.target.value)
+            } 
+          }}
+        />
+      </div>
+
+      <div>
+        <label>Token: </label>
+        <input
+          type="text"
+          value={token}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setToken(undefined)
+            }
+            else {
+              setToken(e.target.value)
             } 
           }}
         />
@@ -136,7 +160,8 @@ const MintPage: NextPage = () => {
           </button>
         }
         contract={contract}
-        tokenId={tokenId}
+        collectionId={collectionId}
+        token={token}
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
