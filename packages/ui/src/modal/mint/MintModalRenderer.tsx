@@ -148,7 +148,11 @@ export const MintModalRenderer: FC<Props> = ({
   const providerOptions = useContext(ProviderOptionsContext)
   const disableJumperLink = providerOptions?.disableJumperLink
 
-  const { data: collections, mutate: mutateCollection } = useCollections(
+  const {
+    data: collections,
+    mutate: mutateCollection,
+    isFetchingPage: isFetchingCollections,
+  } = useCollections(
     open && {
       contract: contract,
     },
@@ -605,9 +609,10 @@ export const MintModalRenderer: FC<Props> = ({
     <>
       {children({
         loading:
-          !collection ||
-          !fetchedInitialOrders ||
-          ((tokenId !== undefined || isSingleToken1155) && !token),
+          isFetchingCollections ||
+          (!isFetchingCollections && collection && !fetchedInitialOrders) ||
+          ((tokenId !== undefined || isSingleToken1155) && !token) ||
+          !(paymentTokens.length > 0),
         collection,
         token,
         orders,

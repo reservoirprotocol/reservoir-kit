@@ -52,7 +52,14 @@ const MintPage: NextPage = () => {
         <input
           type="text"
           value={tokenId}
-          onChange={(e) => setTokenId(e.target.value)}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setTokenId(undefined)
+            }
+            else {
+              setTokenId(e.target.value)
+            } 
+          }}
         />
       </div>
 
