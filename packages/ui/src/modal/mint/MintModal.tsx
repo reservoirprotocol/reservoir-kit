@@ -273,7 +273,8 @@ export function MintModal({
                 </Button>
               </Flex>
             ) : null}
-            {orders.length > 0 &&
+            {!loading &&
+              orders.length > 0 &&
               maxItemAmount !== 0 &&
               mintStep === MintStep.Idle && (
                 <Flex direction="column">
@@ -477,7 +478,7 @@ export function MintModal({
               </Flex>
             )}
 
-            {mintStep === MintStep.Approving && (
+            {!loading && mintStep === MintStep.Approving && (
               <Flex direction="column">
                 <Box
                   css={{
@@ -631,7 +632,7 @@ export function MintModal({
               </Flex>
             )}
 
-            {mintStep === MintStep.Finalizing && (
+            {!loading && mintStep === MintStep.Finalizing && (
               <Flex direction="column">
                 <Box
                   css={{
@@ -683,7 +684,7 @@ export function MintModal({
               </Flex>
             )}
 
-            {mintStep === MintStep.Complete && (
+            {!loading && mintStep === MintStep.Complete && (
               <Flex
                 direction="column"
                 align="center"
