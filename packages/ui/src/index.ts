@@ -71,3 +71,5 @@ export type {
   CheckoutStatus,
   CheckoutTransactionError,
 } from './context/CartProvider'
+
+export { CollectButton } from './components/collectButton'

@@ -1,0 +1,67 @@
+import { NextPage } from 'next'
+import {
+  CollectButton,
+  useReservoirClient,
+} from '@reservoir0x/reservoir-kit-ui'
+import { useState } from 'react'
+import ThemeSwitcher from 'components/ThemeSwitcher'
+import ChainSwitcher from 'components/ChainSwitcher'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+
+const DEFAULT_COLLECTION_ID =
+  process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
+  '0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e'
+
+const CollectButtonPage: NextPage = () => {
+  const [collectionId, setCollectionId] = useState<string | undefined>(DEFAULT_COLLECTION_ID)
+  const [contract, setContract] = useState<string | undefined>()
+  const [token, setToken] = useState<string | undefined>()
+  const client = useReservoirClient()
+  const chain = client?.currentChain()
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        height: 50,
+        width: '100%',
+        gap: 12,
+        padding: 24,
+        flexDirection: 'column',
+        alignItems: 'center',
+        paddingTop: 150,
+      }}
+    >
+      <div>
+        <label>Collection Id: </label>
+        <input
+          type="text"
+          value={collectionId}
+          onChange={(e) => setCollectionId(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Contract: </label>
+        <input
+          type="text"
+          value={contract}
+          onChange={(e) => setContract(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Token: </label>
+        <input
+          type="text"
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
+        />
+      </div>
+      <CollectButton collectionId={collectionId} contract={contract} token={token} chainId={chain.id} />
+      <ConnectButton />
+      <ChainSwitcher /> 
+      <ThemeSwitcher />
+    </div>
+  )
+}
+
+export default CollectButtonPage

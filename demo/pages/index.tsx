@@ -101,6 +101,9 @@ const Index: NextPage = () => {
         <Link href="/ui/cart">
           <a>Cart</a>
         </Link>
+        <Link href="/ui/collectButton">
+          <a>CollectButton</a>
+        </Link>
       </nav>
     </div>
   )
