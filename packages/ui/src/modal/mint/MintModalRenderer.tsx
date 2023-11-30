@@ -172,6 +172,7 @@ export const MintModalRenderer: FC<Props> = ({
           tokens: isSingleToken1155
             ? undefined
             : `${collection?.id}:${tokenId}`,
+          includeMintStages: true,
         }
       : undefined,
     {},
@@ -477,7 +478,7 @@ export const MintModalRenderer: FC<Props> = ({
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
-        const totalFeeTruncated = total - feeOnTop
+        const totalFeeTruncated = totalIncludingFees - feeOnTop
 
         const fee = Math.floor(
           Number(totalFeeTruncated * BigInt(feeBps)) / 10000
@@ -591,6 +592,7 @@ export const MintModalRenderer: FC<Props> = ({
     wallet,
     address,
     total,
+    totalIncludingFees,
     wagmiChain,
     rendererChain,
     contract,
