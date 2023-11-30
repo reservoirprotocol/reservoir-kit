@@ -91,7 +91,8 @@ type ChildrenProps = {
 type Props = {
   open: boolean
   contract?: string
-  tokenId?: string
+  collectionId?: string
+  token?: string
   onConnectWallet: () => void
   chainId?: number
   defaultQuantity?: number
@@ -104,7 +105,8 @@ type Props = {
 export const MintModalRenderer: FC<Props> = ({
   open,
   contract,
-  tokenId,
+  collectionId,
+  token,
   onConnectWallet,
   chainId,
   defaultQuantity,
@@ -148,13 +150,18 @@ export const MintModalRenderer: FC<Props> = ({
   const providerOptions = useContext(ProviderOptionsContext)
   const disableJumperLink = providerOptions?.disableJumperLink
 
+  const collectionContract =
+    contract ?? collectionId?.split(':')?.[0] ?? token?.split(':')?.[0]
+  const tokenId = token?.split(':')?.[1]
+
   const {
     data: collections,
     mutate: mutateCollection,
     isFetchingPage: isFetchingCollections,
   } = useCollections(
     open && {
-      contract: contract,
+      contract: collectionId ? undefined : collectionContract,
+      id: collectionId ? collectionId : undefined,
     },
     {},
     rendererChain?.id
@@ -171,7 +178,7 @@ export const MintModalRenderer: FC<Props> = ({
           collection: isSingleToken1155 ? collection?.id : undefined,
           tokens: isSingleToken1155
             ? undefined
-            : `${collection?.id}:${tokenId}`,
+            : `${collectionContract}:${tokenId}`,
           includeMintStages: true,
         }
       : undefined,
@@ -179,7 +186,7 @@ export const MintModalRenderer: FC<Props> = ({
     rendererChain?.id
   )
 
-  const token = tokens && tokens[0] ? tokens[0] : undefined
+  const tokenData = tokens && tokens[0] ? tokens[0] : undefined
 
   const [_paymentCurrency, setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
@@ -233,10 +240,12 @@ export const MintModalRenderer: FC<Props> = ({
         items: [
           {
             collection:
-              tokenId ?? token?.token?.tokenId ? undefined : collection?.id,
+              token ?? tokenData?.token?.tokenId ? undefined : collection?.id,
             token:
-              tokenId ?? token?.token?.tokenId
-                ? `${collection?.id}:${tokenId ?? token?.token?.tokenId}`
+              token ?? tokenData?.token?.tokenId
+                ? `${collectionContract}:${
+                    tokenId ?? tokenData?.token?.tokenId
+                  }`
                 : undefined,
           },
         ],
@@ -298,7 +307,7 @@ export const MintModalRenderer: FC<Props> = ({
     contract,
     tokenId,
     collection,
-    token?.token?.tokenId,
+    tokenData?.token?.tokenId,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
     is1155,
@@ -509,9 +518,9 @@ export const MintModalRenderer: FC<Props> = ({
         chainId: rendererChain?.id,
         items: [
           {
-            collection: token?.token?.tokenId ? undefined : collection?.id,
-            token: token?.token?.tokenId
-              ? `${collection?.id}:${token?.token?.tokenId}`
+            collection: tokenData?.token?.tokenId ? undefined : collection?.id,
+            token: tokenData?.token?.tokenId
+              ? `${collectionContract}:${tokenData?.token?.tokenId}`
               : undefined,
             quantity: itemAmount,
           },
@@ -596,15 +605,16 @@ export const MintModalRenderer: FC<Props> = ({
     wagmiChain,
     rendererChain,
     contract,
-    tokenId,
+    token,
     feesOnTopBps,
     onConnectWallet,
     feesOnTopUsd,
     itemAmount,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
-    token?.token?.tokenId,
+    tokenData?.token?.tokenId,
     collection?.id,
+    collectionContract,
   ])
 
   return (
@@ -613,10 +623,10 @@ export const MintModalRenderer: FC<Props> = ({
         loading:
           isFetchingCollections ||
           (!isFetchingCollections && collection && !fetchedInitialOrders) ||
-          ((tokenId !== undefined || isSingleToken1155) && !token) ||
+          ((token !== undefined || isSingleToken1155) && !tokenData) ||
           !(paymentTokens.length > 0),
         collection,
-        token,
+        token: tokenData,
         orders,
         total,
         totalIncludingFees,

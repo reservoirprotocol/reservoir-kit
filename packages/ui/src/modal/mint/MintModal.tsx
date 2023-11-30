@@ -66,7 +66,8 @@ export const MintModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   contract?: string
-  tokenId?: string
+  collectionId?: string
+  token?: string
   defaultQuantity?: number
   onConnectWallet: () => void
   feesOnTopBps?: string[] | null
@@ -84,7 +85,8 @@ export function MintModal({
   openState,
   trigger,
   contract,
-  tokenId,
+  collectionId,
+  token,
   chainId,
   feesOnTopBps,
   feesOnTopUsd,
@@ -121,7 +123,8 @@ export function MintModal({
       defaultQuantity={defaultQuantity}
       open={open}
       contract={contract}
-      tokenId={tokenId}
+      collectionId={collectionId}
+      token={token}
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
       walletClient={walletClient}
