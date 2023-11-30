@@ -162,7 +162,7 @@ export const MintModalRenderer: FC<Props> = ({
   const isSingleToken1155 = is1155 && collection?.tokenCount === '1'
 
   const { data: tokens } = useTokens(
-    open && (tokenId || isSingleToken1155)
+    open && collection && (tokenId || isSingleToken1155)
       ? {
           collection: isSingleToken1155 ? collection?.id : undefined,
           tokens: isSingleToken1155
@@ -190,9 +190,6 @@ export const MintModalRenderer: FC<Props> = ({
     false,
     chainCurrency
   )
-
-  console.log('paymentTokens: ', paymentTokens)
-  console.log('chainCurrency: ', chainCurrency)
 
   const paymentCurrency = paymentTokens?.find(
     (paymentToken) =>
@@ -414,14 +411,6 @@ export const MintModalRenderer: FC<Props> = ({
     }
   }, [paymentTokens, paymentCurrency])
 
-  // useEffect(() => {
-  //   console.log('chainCurrency: ', chainCurrency)
-  //   console.log('paymentCurrency: ', paymentCurrency)
-  //   if (!paymentCurrency) {
-  //     setPaymentCurrency(chainCurrency)
-  //   }
-  // }, [chainCurrency])
-
   // Reset state on close
   useEffect(() => {
     if (!open) {
@@ -607,12 +596,17 @@ export const MintModalRenderer: FC<Props> = ({
     itemAmount,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
+    token?.token?.tokenId,
+    collection?.id,
   ])
 
   return (
     <>
       {children({
-        loading: !collection || !fetchedInitialOrders,
+        loading:
+          !collection ||
+          !fetchedInitialOrders ||
+          ((tokenId !== undefined || isSingleToken1155) && !token),
         collection,
         token,
         orders,
