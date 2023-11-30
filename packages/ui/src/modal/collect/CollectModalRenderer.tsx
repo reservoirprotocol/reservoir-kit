@@ -637,7 +637,7 @@ export const CollectModalRenderer: FC<Props> = ({
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
-        const totalFeeTruncated = total - feeOnTop
+        const totalFeeTruncated = totalIncludingFees - feeOnTop
 
         const fee = Math.floor(
           Number(totalFeeTruncated * BigInt(feeBps)) / 10000
@@ -761,6 +761,7 @@ export const CollectModalRenderer: FC<Props> = ({
     wallet,
     address,
     total,
+    totalIncludingFees,
     normalizeRoyalties,
     wagmiChain,
     rendererChain,

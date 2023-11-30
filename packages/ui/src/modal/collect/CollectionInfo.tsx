@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react'
-import { ChainIcon, Flex, Img, Text } from '../../primitives'
-import { useCollections } from '../../hooks'
+import { ChainIcon, Divider, Flex, Img, Text } from '../../primitives'
+import { useCollections, useTimeSince } from '../../hooks'
 import optimizeImage from '../../lib/optimizeImage'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
@@ -13,6 +13,12 @@ export const CollectionInfo: FC<Props> = ({ collection, chain }) => {
   const sampleImages = useMemo(() => {
     return collection?.sampleImages?.map((image) => optimizeImage(image, 250))
   }, [collection?.sampleImages])
+
+  const mintData = collection?.mintStages?.find(
+    (stage) => stage.kind === 'public'
+  )
+
+  const mintEndTime = mintData ? useTimeSince(mintData?.endTime) : undefined
 
   return (
     <Flex
@@ -34,14 +40,24 @@ export const CollectionInfo: FC<Props> = ({ collection, chain }) => {
           <Text style="h6" ellipsify>
             {collection?.name}
           </Text>
-          {chain ? (
-            <Flex align="center" css={{ gap: '$1' }}>
-              <ChainIcon chainId={chain.id} height={12} />
-              <Text style="subtitle2" color="subtle" ellipsify>
-                {chain.name}
+          <Flex align="center" css={{ gap: '$1' }}>
+            {mintEndTime ? (
+              <Text style="subtitle2" color="subtle">
+                Ends {mintEndTime}
               </Text>
-            </Flex>
-          ) : null}
+            ) : null}
+            {chain ? (
+              <>
+                {mintEndTime ? (
+                  <Divider direction="vertical" css={{ maxHeight: 12 }} />
+                ) : null}
+                <ChainIcon chainId={chain.id} height={12} />
+                <Text style="subtitle2" color="subtle" ellipsify>
+                  {chain.name}
+                </Text>
+              </>
+            ) : null}
+          </Flex>
         </Flex>
       </Flex>
       <Flex css={{ flexShrink: 0 }}>
