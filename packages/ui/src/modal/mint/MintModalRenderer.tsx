@@ -162,6 +162,7 @@ export const MintModalRenderer: FC<Props> = ({
     open && {
       contract: collectionId ? undefined : collectionContract,
       id: collectionId ? collectionId : undefined,
+      includeMintStages: true,
     },
     {},
     rendererChain?.id
@@ -179,7 +180,6 @@ export const MintModalRenderer: FC<Props> = ({
           tokens: isSingleToken1155
             ? undefined
             : `${collectionContract}:${tokenId}`,
-          includeMintStages: true,
         }
       : undefined,
     {},
