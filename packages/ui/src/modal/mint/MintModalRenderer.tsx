@@ -243,7 +243,9 @@ export const MintModalRenderer: FC<Props> = ({
               token ?? tokenData?.token?.tokenId ? undefined : collection?.id,
             token:
               token ?? tokenData?.token?.tokenId
-                ? `${collection?.id}:${tokenId ?? tokenData?.token?.tokenId}`
+                ? `${collectionContract}:${
+                    tokenId ?? tokenData?.token?.tokenId
+                  }`
                 : undefined,
           },
         ],
