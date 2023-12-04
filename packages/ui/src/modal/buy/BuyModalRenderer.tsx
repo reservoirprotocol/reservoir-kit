@@ -11,7 +11,7 @@ import {
   useReservoirClient,
   useCollections,
   useListings,
-  useChainCurrency,
+  useCurrencyConversion,
 } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
@@ -22,12 +22,18 @@ import {
   ReservoirClientActions,
   ReservoirWallet,
 } from '@reservoir0x/reservoir-sdk'
-import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
+import {
+  Address,
+  WalletClient,
+  formatUnits,
+  parseUnits,
+  zeroAddress,
+} from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
-import usePaymentTokens, {
+import usePaymentTokensv2, {
   EnhancedCurrency,
-} from '../../hooks/usePaymentTokens'
+} from '../../hooks/usePaymentTokensv2'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
@@ -53,21 +59,19 @@ type BuyTokenOptions = NonNullable<
 
 type ChildrenProps = {
   loading: boolean
-  token?: Token
+  tokenData?: Token
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listing?: NonNullable<ReturnType<typeof useListings>['data']>[0]
   quantityAvailable: number
   averageUnitPrice: bigint
   paymentCurrency?: EnhancedCurrency
   paymentTokens: EnhancedCurrency[]
-  totalPrice: bigint
   totalIncludingFees: bigint
   feeOnTop: bigint
   buyStep: BuyStep
   transactionError?: Error | null
   hasEnoughCurrency: boolean
   addFundsLink: string
-  gasCost: bigint
   feeUsd: string
   totalUsd: bigint
   usdPrice: number
@@ -90,11 +94,10 @@ type ChildrenProps = {
 
 type Props = {
   open: boolean
-  tokenId?: string
+  token?: string
+  orderId?: string
   chainId?: number
   defaultQuantity?: number
-  collectionId?: string
-  orderId?: string
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
@@ -106,10 +109,9 @@ type Props = {
 
 export const BuyModalRenderer: FC<Props> = ({
   open,
-  tokenId,
-  chainId,
-  collectionId,
+  token,
   orderId,
+  chainId,
   feesOnTopBps,
   defaultQuantity,
   feesOnTopUsd,
@@ -119,9 +121,7 @@ export const BuyModalRenderer: FC<Props> = ({
   walletClient,
   usePermit,
 }) => {
-  const [totalPrice, setTotalPrice] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
-  const [gasCost, setGasCost] = useState(0n)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0n)
   const [path, setPath] = useState<BuyPath>(undefined)
   const [isFetchingPath, setIsFetchingPath] = useState(false)
@@ -151,13 +151,10 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const wallet = walletClient || wagmiWalletClient
 
-  const chainCurrency = useChainCurrency(rendererChain?.id)
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
   const blockExplorerBaseName =
     wagmiChain?.blockExplorers?.default?.name || 'Etherscan'
-
-  const contract = collectionId ? collectionId?.split(':')[0] : undefined
 
   const { address } = useAccount()
 
@@ -165,103 +162,75 @@ export const BuyModalRenderer: FC<Props> = ({
     EnhancedCurrency | undefined
   >(undefined)
 
-  const [listingCurrency, setListingCurrency] = useState<
-    EnhancedCurrency | undefined
-  >(undefined)
-
-  const paymentTokens = usePaymentTokens(
+  const paymentTokens = usePaymentTokensv2({
     open,
-    address as Address,
-    _paymentCurrency ?? chainCurrency,
-    totalIncludingFees,
-    rendererChain?.id,
-    false,
-    true,
-    listingCurrency
-  )
+    address: address as Address,
+    quantityToken: {
+      [`${token}`]: quantity,
+    },
+    path,
+    nativeOnly: false,
+    chainId: rendererChain?.id,
+    crossChainDisabled: false,
+  })
 
   const paymentCurrency = paymentTokens?.find(
-    (paymentToken) =>
+    (paymentToken: any) =>
       paymentToken?.address === _paymentCurrency?.address &&
       paymentToken?.chainId === _paymentCurrency?.chainId
   )
 
   const { data: tokens, mutate: mutateTokens } = useTokens(
-    open && {
-      tokens: [`${contract}:${tokenId}`],
-      includeLastSale: true,
-      includeQuantity: true,
-      normalizeRoyalties,
-      displayCurrency: paymentCurrency?.address,
-    },
+    open && token
+      ? {
+          tokens: [token],
+          includeLastSale: true,
+          includeQuantity: true,
+          normalizeRoyalties,
+          displayCurrency: paymentCurrency?.address,
+        }
+      : false,
     {
       revalidateFirstPage: true,
     },
     rendererChain?.id
   )
 
+  const tokenData = tokens && tokens[0] ? tokens[0] : undefined
+
+  const collectionId = tokenData?.token?.collection?.id
+
+  const is1155 = tokenData?.token?.kind === 'erc1155'
+  const isOwner =
+    tokenData?.token?.owner?.toLowerCase() === address?.toLowerCase()
+
   const { data: collections, mutate: mutateCollection } = useCollections(
-    open && {
-      id: collectionId,
-      normalizeRoyalties,
-    },
+    open && collectionId
+      ? {
+          id: collectionId,
+          normalizeRoyalties,
+        }
+      : false,
     {},
     rendererChain?.id
   )
 
-  const [token, setToken] = useState<Token | undefined>(undefined)
-
-  useEffect(() => {
-    // Only update the token if there's new data from the tokens hook
-    if (tokens && tokens.length > 0) {
-      setToken(tokens[0])
-    }
-  }, [tokens])
+  const { data: paymentCurrencyConversion } = useCurrencyConversion(
+    paymentCurrency?.chainId,
+    paymentCurrency?.address,
+    'usd'
+  )
 
   const collection = collections && collections[0] ? collections[0] : undefined
-  const is1155 = token?.token?.kind === 'erc1155'
-  const isOwner = token?.token?.owner?.toLowerCase() === address?.toLowerCase()
-
-  const {
-    data: listingsData,
-    mutate: mutateListings,
-    isValidating: isValidatingListing,
-  } = useListings(
-    {
-      token: `${contract}:${tokenId}`,
-      ids: orderId,
-      normalizeRoyalties,
-      status: 'active',
-      limit: 1,
-      sortBy: 'price',
-      displayCurrency: paymentCurrency?.address,
-    },
-    {
-      revalidateFirstPage: true,
-    },
-    open && orderId && orderId.length > 0 ? true : false,
-    rendererChain?.id
-  )
-
-  const listing = useMemo(
-    () => listingsData.find((listing) => listing.maker !== address),
-    [listingsData]
-  )
 
   const quantityRemaining = useMemo(() => {
-    if (orderId) {
-      return listing?.quantityRemaining || 0
-    } else if (is1155) {
-      return path
-        ? path.reduce((total, pathItem) => total + (pathItem.quantity || 0), 0)
-        : 0
-    } else {
-      return token?.market?.floorAsk?.quantityRemaining || 0
-    }
-  }, [listing, token, path, is1155, orderId])
+    return path
+      ? path.reduce((total, pathItem) => total + (pathItem.quantity || 0), 0)
+      : 0
+  }, [path, orderId])
 
   const usdPrice = paymentCurrency?.usdPrice || 0
-  const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
+  const usdPriceRaw = parseUnits(`${paymentCurrencyConversion?.usd || 0}`, 6)
   const feeUsd = formatUnits(
     feeOnTop * usdPriceRaw,
     (paymentCurrency?.decimals || 18) + 6
@@ -273,7 +242,7 @@ export const BuyModalRenderer: FC<Props> = ({
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
 
   const fetchPath = useCallback(() => {
-    if (!open || !client || !tokenId || !contract || !is1155 || orderId) {
+    if (!open || !client || (!token && !orderId)) {
       setPath(undefined)
       return
     }
@@ -291,13 +260,33 @@ export const BuyModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
+    if (
+      rendererChain?.paymentTokens &&
+      rendererChain.paymentTokens.length > 0
+    ) {
+      options.alternativeCurrencies = rendererChain?.paymentTokens?.map(
+        (token) => `${token.address}:${token.chainId}`
+      )
+    }
+
+    let items: Parameters<ReservoirClientActions['buyToken']>['0']['items'][0] =
+      {
+        fillType: 'trade',
+      }
+
+    if (orderId) {
+      items.orderId = orderId
+    } else {
+      items.token = token
+    }
+
     client.actions
       .buyToken({
         options,
         chainId: rendererChain?.id,
         items: [
           {
-            token: `${contract}:${tokenId}`,
+            token,
             quantity: 1000,
             fillType: 'trade',
           },
@@ -328,76 +317,24 @@ export const BuyModalRenderer: FC<Props> = ({
     open,
     client,
     address,
-    tokenId,
-    contract,
-    is1155,
+    token,
     orderId,
     normalizeRoyalties,
     rendererChain,
-    paymentCurrency?.address,
-    paymentCurrency?.chainId,
+    rendererChain?.paymentTokens,
   ])
 
   useEffect(() => {
-    // ensure the tokens api has been fetched first
-    if (token) {
+    if (token || orderId) {
       fetchPath()
     }
-  }, [fetchPath, token])
+  }, [fetchPath, token, orderId])
 
-  const getCurrencyDetails = useCallback(() => {
-    if (orderId) {
-      return {
-        currency: listing?.price?.currency?.contract,
-        decimals: listing?.price?.currency?.decimals,
-        symbol: listing?.price?.currency?.symbol,
-        chainId: rendererChain?.id || 1,
-      }
-    } else if (is1155) {
-      return {
-        currency: path?.[0]?.currency,
-        decimals: path?.[0]?.currencyDecimals,
-        symbol: path?.[0]?.currencySymbol,
-        chainId: rendererChain?.id || 1,
-      }
-    } else {
-      return {
-        currency: token?.market?.floorAsk?.price?.currency?.contract,
-        decimals: token?.market?.floorAsk?.price?.currency?.decimals,
-        symbol: token?.market?.floorAsk?.price?.currency?.symbol,
-        chainId: rendererChain?.id || 1,
-      }
-    }
-  }, [orderId, is1155, listing, path, token, rendererChain])
-
-  // Set paymentCurrency to first paymentToken
   useEffect(() => {
-    if (paymentTokens[0] && listingCurrency && !paymentCurrency) {
+    if (paymentTokens[0] && !paymentCurrency) {
       setPaymentCurrency(paymentTokens[0])
     }
-  }, [paymentTokens, listingCurrency, paymentCurrency])
-
-  // Set listing currency
-  useEffect(() => {
-    if (
-      listingCurrency ||
-      !open ||
-      !token ||
-      (orderId && !listing) ||
-      (is1155 && !path)
-    ) {
-      return
-    }
-
-    const { currency, decimals, symbol, chainId } = getCurrencyDetails()
-    setListingCurrency({
-      address: currency?.toLowerCase() as Address,
-      decimals: decimals || 18,
-      symbol: symbol || '',
-      name: symbol || '',
-      chainId: chainId,
-    })
-  }, [listingCurrency, open, orderId, is1155, listing, path, token])
+  }, [paymentTokens, paymentCurrency])
 
   const buyToken = useCallback(async () => {
     if (!wallet) {
@@ -425,8 +362,8 @@ export const BuyModalRenderer: FC<Props> = ({
       throw error
     }
 
-    if (!tokenId || !collectionId) {
-      const error = new Error('Missing tokenId or collectionId')
+    if (!token && !orderId) {
+      const error = new Error('Missing token or order')
       setTransactionError(error)
       throw error
     }
@@ -436,8 +373,6 @@ export const BuyModalRenderer: FC<Props> = ({
       setTransactionError(error)
       throw error
     }
-
-    const contract = collectionId?.split(':')[0]
 
     let options: BuyTokenOptions = {
       currency: paymentCurrency?.address,
@@ -490,7 +425,7 @@ export const BuyModalRenderer: FC<Props> = ({
     if (orderId) {
       item.orderId = orderId
     } else {
-      item.token = `${contract}:${tokenId}`
+      item.token = token
     }
     items.push(item)
 
@@ -500,7 +435,7 @@ export const BuyModalRenderer: FC<Props> = ({
         items: items,
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            raw: totalPrice,
+            raw: paymentCurrency?.currencyTotalRaw,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },
@@ -559,9 +494,6 @@ export const BuyModalRenderer: FC<Props> = ({
           setHasEnoughCurrency(false)
         } else {
           setTransactionError(error)
-          if (orderId) {
-            mutateListings()
-          }
           mutateCollection()
           mutateTokens()
           fetchPath()
@@ -571,8 +503,7 @@ export const BuyModalRenderer: FC<Props> = ({
         setSteps(null)
       })
   }, [
-    tokenId,
-    collectionId,
+    token,
     orderId,
     feesOnTopBps,
     feesOnTopUsd,
@@ -580,111 +511,39 @@ export const BuyModalRenderer: FC<Props> = ({
     normalizeRoyalties,
     is1155,
     client,
-    totalPrice,
     rendererChain,
     rendererChain,
     totalIncludingFees,
     wallet,
-    paymentCurrency?.address,
-    paymentCurrency?.chainId,
+    paymentCurrency,
     usePermit,
-    mutateListings,
     mutateTokens,
     mutateCollection,
     onConnectWallet,
   ])
 
   useEffect(() => {
-    if (
-      !token ||
-      (orderId && !listing && !isValidatingListing) ||
-      (is1155 && (!path || (path && path.length === 0)) && !isFetchingPath) ||
-      (!is1155 && isOwner)
-    ) {
-      setBuyStep(BuyStep.Unavailable)
-    } else if (!orderId && !is1155 && !token?.market?.floorAsk?.price) {
+    if ((!path || (path && path.length === 0)) && !isFetchingPath) {
       setBuyStep(BuyStep.Unavailable)
     } else {
       setBuyStep(BuyStep.Checkout)
     }
-  }, [
-    listing,
-    path,
-    isValidatingListing,
-    isFetchingPath,
-    is1155,
-    orderId,
-    token,
-  ])
+  }, [path, isFetchingPath])
 
   useEffect(() => {
-    if (quantity === -1) return
-    if (
-      !token ||
-      (orderId && !listing && isValidatingListing) ||
-      (is1155 && !path && isFetchingPath) ||
-      (!is1155 && isOwner)
-    ) {
-      setBuyStep(BuyStep.Unavailable)
-      setTotalPrice(0n)
-      setTotalIncludingFees(0n)
-      setAverageUnitPrice(0n)
-      return
-    }
-
-    let total = 0n
-    let gasCost = 0n
-
-    if (orderId) {
-      total = BigInt(listing?.price?.amount?.raw || 0) * BigInt(quantity)
-    } else if (is1155) {
-      let orders: Record<string, number> = {}
-      let orderCurrencyTotal = 0n
-      let totalQuantity = 0
-      if (path && path.length > 0) {
-        for (let i = 0; i < path.length; i++) {
-          const pathItem = path[i]
-          const pathQuantity = pathItem.quantity || 0
-          const pathPrice = BigInt(
-            (pathItem?.currency?.toLowerCase() !== paymentCurrency?.address
-              ? pathItem?.buyInRawQuote
-              : pathItem?.totalRawPrice) || 0
-          )
-
-          const listingId = pathItem.orderId
-          if (!pathItem?.currency || !listingId) {
-            continue
-          }
-          const quantityLeft = quantity - totalQuantity
-
-          let quantityToTake = 0
-          if (quantityLeft >= pathQuantity) {
-            quantityToTake = pathQuantity
-          } else {
-            quantityToTake = quantityLeft
-          }
-
-          orderCurrencyTotal += pathPrice * BigInt(quantityToTake)
-          gasCost += BigInt(pathItem.gasCost || 0n)
-          orders[listingId] = quantityToTake
-          totalQuantity += quantityToTake
-
-          if (totalQuantity === quantity) {
-            break
-          }
-        }
-        total = orderCurrencyTotal
-      }
-    } else if (token?.market?.floorAsk?.price) {
-      total = BigInt(token.market.floorAsk.price?.amount?.raw || 0)
-    }
     let totalFees = 0n
 
-    if (total > 0) {
+    if (
+      paymentCurrency?.currencyTotalRaw &&
+      paymentCurrency.currencyTotalRaw > 0n
+    ) {
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (BigInt(fee) * total) / 10000n
+          return (
+            totalFees +
+            (BigInt(fee) * paymentCurrency.currencyTotalRaw!) / 10000n
+          )
         }, 0n)
         totalFees += fees
         setFeeOnTop(fees)
@@ -703,30 +562,18 @@ export const BuyModalRenderer: FC<Props> = ({
         setFeeOnTop(0n)
       }
 
-      setTotalPrice(total)
-      setTotalIncludingFees(total + totalFees)
-      setGasCost(gasCost)
-      setAverageUnitPrice(total / BigInt(quantity))
+      setTotalIncludingFees(paymentCurrency.currencyTotalRaw + totalFees)
+      setAverageUnitPrice(paymentCurrency.currencyTotalRaw / BigInt(quantity))
     } else {
       setTotalIncludingFees(0n)
-      setTotalPrice(0n)
       setAverageUnitPrice(0n)
     }
   }, [
-    listing,
-    path,
-    isValidatingListing,
-    isFetchingPath,
-    is1155,
-    orderId,
     feesOnTopBps,
     feesOnTopUsd,
     usdPrice,
     feeOnTop,
     quantity,
-    token,
-    chainCurrency.address,
-    isOwner,
     paymentCurrency,
   ])
 
@@ -735,13 +582,13 @@ export const BuyModalRenderer: FC<Props> = ({
       paymentCurrency?.balance != undefined &&
       paymentCurrency?.currencyTotalRaw != undefined &&
       BigInt(paymentCurrency?.balance) <
-        paymentCurrency?.currencyTotalRaw + gasCost
+        paymentCurrency?.currencyTotalRaw + (paymentCurrency?.networkFees || 0n)
     ) {
       setHasEnoughCurrency(false)
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [totalIncludingFees, paymentCurrency, gasCost])
+  }, [totalIncludingFees, paymentCurrency])
 
   useEffect(() => {
     if (!open) {
@@ -752,8 +599,6 @@ export const BuyModalRenderer: FC<Props> = ({
       setQuantity(1)
       setPath(undefined)
       setPaymentCurrency(undefined)
-      setToken(undefined)
-      setListingCurrency(undefined)
     } else {
       setQuantity(defaultQuantity || 1)
     }
@@ -769,21 +614,14 @@ export const BuyModalRenderer: FC<Props> = ({
     <>
       {children({
         loading:
-          (!listing && isValidatingListing) ||
-          !token ||
-          isFetchingPath ||
-          (is1155 && !path && !orderId) ||
-          !(paymentTokens.length > 0),
-        token,
+          !token || isFetchingPath || !path || !(paymentTokens.length > 0),
+        tokenData,
         collection,
-        listing,
         quantityAvailable: quantityRemaining || 1,
         paymentCurrency,
         paymentTokens,
-        totalPrice,
         totalIncludingFees,
         averageUnitPrice,
-        gasCost,
         feeOnTop,
         buyStep,
         transactionError,
