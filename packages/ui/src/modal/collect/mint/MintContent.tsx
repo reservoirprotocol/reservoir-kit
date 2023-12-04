@@ -157,7 +157,7 @@ export const MintContent: FC<
                 {token ? (
                   <TokenInfo token={token} collection={collection} />
                 ) : (
-                  <CollectionInfo collection={collection} mode="mint" />
+                  <CollectionInfo collection={collection} />
                 )}
                 <Flex
                   align="center"
