@@ -599,7 +599,7 @@ export const MintContent: FC<
               stepData={stepData}
               tokenKind={collection?.contractKind}
             />
-            <Flex align="center" css={{ gap: '$2', px: '$5' }}>
+            <Flex align="baseline" css={{ gap: '$2', px: '$5' }}>
               <Box
                 css={{
                   color: failedMints ? '$errorAccent' : '$successAccent',
