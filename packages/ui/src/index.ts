@@ -62,6 +62,9 @@ export { CollectStep } from './modal/collect/CollectModalRenderer'
 export { MintModal } from './modal/mint/MintModal'
 export { MintStep } from './modal/mint/MintModalRenderer'
 
+export { SweepModal } from './modal/sweep/SweepModal'
+export { SweepStep } from './modal/sweep/SweepModalRenderer'
+
 export {
   default as TokenMedia,
   extractMediaType,
