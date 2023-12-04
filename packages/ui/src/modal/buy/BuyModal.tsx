@@ -70,6 +70,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   chainId?: number
   defaultQuantity?: number
   orderId?: string
+  useSeaportExecutionMethod?: boolean
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
@@ -128,6 +129,7 @@ export function BuyModal({
   onClose,
   onGoToToken,
   onPointerDownOutside,
+  useSeaportExecutionMethod,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -149,6 +151,7 @@ export function BuyModal({
     <BuyModalRenderer
       chainId={modalChain?.id}
       open={open}
+      useSeaportExecutionMethod={useSeaportExecutionMethod}
       defaultQuantity={defaultQuantity}
       tokenId={tokenId}
       collectionId={collectionId}

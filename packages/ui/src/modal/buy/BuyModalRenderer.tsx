@@ -93,6 +93,7 @@ type Props = {
   tokenId?: string
   chainId?: number
   defaultQuantity?: number
+  useSeaportExecutionMethod?: boolean
   collectionId?: string
   orderId?: string
   feesOnTopBps?: string[] | null
@@ -115,6 +116,7 @@ export const BuyModalRenderer: FC<Props> = ({
   feesOnTopUsd,
   normalizeRoyalties,
   onConnectWallet,
+  useSeaportExecutionMethod,
   children,
   walletClient,
   usePermit,
@@ -289,6 +291,10 @@ export const BuyModalRenderer: FC<Props> = ({
 
     if (normalizeRoyalties !== undefined) {
       options.normalizeRoyalties = normalizeRoyalties
+    }
+
+    if (useSeaportExecutionMethod) {
+      options.executionMethod = 'seaport-intent'
     }
 
     client.actions
@@ -470,6 +476,10 @@ export const BuyModalRenderer: FC<Props> = ({
 
     if (normalizeRoyalties !== undefined) {
       options.normalizeRoyalties = normalizeRoyalties
+    }
+
+    if (useSeaportExecutionMethod) {
+      options.executionMethod = 'seaport-intent'
     }
 
     if (usePermit) {

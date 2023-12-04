@@ -20,6 +20,7 @@ const BuyPage: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [orderId, setOrderId] = useState('')
+  const [useSeaportExecutionMethod, setUseSeaportExecutionMethod] = useState<boolean>(false);
   const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
@@ -125,7 +126,12 @@ const BuyPage: NextPage = () => {
           }}
         />
       </div>
-
+      <div>
+        <label>Use Seaport Execution Method</label>
+        <input type="checkbox"
+         defaultChecked={useSeaportExecutionMethod}
+         onChange={(e) => setUseSeaportExecutionMethod(e.target.checked)}/>
+      </div>
       <BuyModal
         chainId={Number(chainId)}
         trigger={
@@ -148,6 +154,7 @@ const BuyPage: NextPage = () => {
         collectionId={collectionId}
         tokenId={tokenId}
         orderId={orderId}
+        useSeaportExecutionMethod={useSeaportExecutionMethod}
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
         normalizeRoyalties={normalizeRoyalties}
