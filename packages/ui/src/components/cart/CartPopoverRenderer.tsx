@@ -1,21 +1,25 @@
-import { useCoinConversion, useCart, useReservoirClient } from '../../hooks'
+import { useCart, useChainCurrency, usePaymentTokens } from '../../hooks'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
-import { useAccount, useBalance, useNetwork } from 'wagmi'
-import { zeroAddress, parseUnits } from 'viem'
-import { UseBalanceToken } from '../../types/wagmi'
-import { toFixed } from '../../lib/numbers'
+import { useAccount, useNetwork } from 'wagmi'
+import { Address } from 'viem'
 import {
   Cart,
   CheckoutStatus,
   CheckoutTransactionError,
 } from '../../context/CartProvider'
 
+export enum CartPopoverStep {
+  Idle,
+  SelectPayment,
+}
+
 type ChildrenProps = {
   loading: boolean
-  currency?: NonNullable<Cart['items'][0]['price']>['currency']
-  cartCurrencyConverted?: Boolean
+  currency?: NonNullable<Cart['currency']>
   totalPrice: number
+  totalPriceRaw: bigint
   feeOnTop?: number
+  feeOnTopRaw?: bigint
   usdPrice: number | null
   balance?: bigint
   hasEnoughCurrency: boolean
@@ -25,11 +29,15 @@ type ChildrenProps = {
   transaction?: Cart['transaction']
   blockExplorerBaseUrl: string
   cartChain: Cart['chain']
+  paymentTokens?: NonNullable<Cart['currency']>[]
   checkout: ReturnType<typeof useCart>['checkout']
   clear: ReturnType<typeof useCart>['clear']
   remove: ReturnType<typeof useCart>['remove']
   add: ReturnType<typeof useCart>['add']
   validate: ReturnType<typeof useCart>['validate']
+  cartPopoverStep: CartPopoverStep
+  setCartPopoverStep: React.Dispatch<React.SetStateAction<CartPopoverStep>>
+  setCurrency: ReturnType<typeof useCart>['setCurrency']
 }
 
 type Props = {
@@ -38,37 +46,44 @@ type Props = {
 }
 
 export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
-  const client = useReservoirClient()
+  const [cartPopoverStep, setCartPopoverStep] = useState<CartPopoverStep>(
+    CartPopoverStep.Idle
+  )
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
-  const { data, clear, clearTransaction, validate, remove, add, checkout } =
-    useCart((cart) => cart)
+  const {
+    data,
+    clear,
+    clearTransaction,
+    validate,
+    remove,
+    add,
+    checkout,
+    setCurrency,
+  } = useCart((cart) => cart)
   const {
     isValidating,
     totalPrice,
+    totalPriceRaw,
     items,
     currency,
     transaction,
     feeOnTop,
+    feeOnTopRaw,
     chain: cartChain,
   } = data
-  const usdConversion = useCoinConversion(
-    open ? 'USD' : undefined,
-    currency?.symbol || currency?.name
-  )
-  const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
+
+  const usdPrice = currency?.usdPrice ?? 0
 
   const { chains } = useNetwork()
   const chain = chains.find((chain) => chain.id === transaction?.chain.id)
+  const chainCurrency = useChainCurrency(cartChain?.id)
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
-  const cartCurrencyConverted = items.some(
-    (item) =>
-      item.price && item.price?.currency?.contract !== currency?.contract
-  )
 
   useEffect(() => {
     if (open) {
       validate()
+      setCartPopoverStep(CartPopoverStep.Idle)
     } else if (
       transaction?.status === CheckoutStatus.Complete ||
       transaction?.error
@@ -87,37 +102,41 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         ({ previousPrice, price }) =>
           previousPrice &&
           price?.amount?.decimal !== undefined &&
-          previousPrice.amount?.decimal !== price?.amount?.decimal
+          previousPrice.amount?.decimal !== price?.amount?.decimal &&
+          previousPrice.currency?.contract === price?.currency?.contract
       ),
     [items]
   )
   const { address } = useAccount()
-  const { data: balance } = useBalance({
-    chainId: cartChain?.id || client?.currentChain()?.id,
-    address: address,
-    token:
-      currency?.contract !== zeroAddress
-        ? (currency?.contract as UseBalanceToken)
-        : undefined,
-    watch: open,
-    formatUnits: currency?.decimals,
-  })
+  const paymentTokens = usePaymentTokens(
+    address !== undefined,
+    address as Address,
+    currency
+      ? {
+          symbol: currency.symbol as string,
+          address: currency?.address as Address,
+          name: currency?.name,
+          decimals: currency.decimals as number,
+          chainId: currency.chainId,
+        }
+      : chainCurrency,
+    totalPriceRaw - (feeOnTopRaw ?? 0n),
+    cartChain?.id,
+    false,
+    true
+  )
 
   useEffect(() => {
-    if (balance) {
-      const totalPriceTruncated = toFixed(totalPrice, currency?.decimals || 18)
-      if (!balance.value) {
+    if (currency?.balance !== undefined) {
+      if (!currency?.balance) {
         setHasEnoughCurrency(false)
-      } else if (
-        balance.value <
-        parseUnits(`${totalPriceTruncated as number}`, currency?.decimals || 18)
-      ) {
+      } else if (BigInt(currency.balance) < totalPriceRaw) {
         setHasEnoughCurrency(false)
       } else {
         setHasEnoughCurrency(true)
       }
     }
-  }, [totalPrice, balance, currency])
+  }, [totalPriceRaw, currency])
 
   useEffect(() => {
     if (
@@ -136,20 +155,28 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         unavailableItems,
         priceChangeItems,
         currency,
-        cartCurrencyConverted,
         totalPrice,
+        totalPriceRaw,
         feeOnTop,
+        feeOnTopRaw,
         usdPrice,
         hasEnoughCurrency,
-        balance: balance?.value,
+        balance: currency?.balance ? BigInt(currency?.balance) : undefined,
         transaction,
         blockExplorerBaseUrl,
         cartChain,
+        paymentTokens,
         checkout,
-        clear,
+        clear: () => {
+          clear()
+          setCartPopoverStep(CartPopoverStep.Idle)
+        },
         remove,
         add,
         validate,
+        cartPopoverStep,
+        setCartPopoverStep,
+        setCurrency,
       })}
     </>
   )

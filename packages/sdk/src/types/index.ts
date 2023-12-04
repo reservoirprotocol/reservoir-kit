@@ -6,9 +6,14 @@ export type BuyPath =
   paths['/execute/buy/v7']['post']['responses']['200']['schema']['path']
 export type SellPath =
   paths['/execute/sell/v7']['post']['responses']['200']['schema']['path']
+export type MintPath =
+  paths['/execute/mint/v1']['post']['responses']['200']['schema']['path']
 
 export type BuyResponses =
   paths['/execute/buy/v7']['post']['responses']['200']['schema']
+
+export type MintResponses =
+  paths['/execute/mint/v1']['post']['responses']['200']['schema']
 
 export type SignatureStepItem = Pick<
   NonNullable<Execute['steps'][0]['items']>[0],

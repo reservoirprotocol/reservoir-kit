@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
+import { MintModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
@@ -10,24 +10,19 @@ import ChainSwitcher from 'components/ChainSwitcher'
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
   '0xe14fa5fba1b55946f2fa78ea3bd20b952fa5f34e'
-const DEFAULT_TOKEN_ID = process.env.NEXT_PUBLIC_DEFAULT_TOKEN_ID || '39'
-const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
-  ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
-  : false
 
-const BuyPage: NextPage = () => {
+const MintPage: NextPage = () => {
   const router = useRouter()
-  const [token, setToken] = useState(`${DEFAULT_COLLECTION_ID}:${DEFAULT_TOKEN_ID}`)
-  const [orderId, setOrderId] = useState('')
-  const [useSeaportExecutionMethod, setUseSeaportExecutionMethod] = useState<boolean>(false);
-  const [chainId, setChainId] = useState<string | number>('')
+  const { openConnectModal } = useConnectModal()
+
+  const [contract, setContract] = useState<string | undefined>(undefined)
+  const [collectionId, setCollectionId] = useState<string | undefined>(DEFAULT_COLLECTION_ID)
+  const [token, setToken] = useState<string | undefined>(undefined)
+  const [chainId, setChainId] = useState<string | undefined>(undefined)
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
-  const [normalizeRoyalties, setNormalizeRoyalties] =
-    useState(NORMALIZE_ROYALTIES)
-  const { openConnectModal } = useConnectModal()
 
   return (
     <div
@@ -45,21 +40,53 @@ const BuyPage: NextPage = () => {
       <ConnectButton />
 
       <div>
+        <label>Contract: </label>
+        <input
+          type="text"
+          value={contract}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setContract(undefined)
+            }
+            else {
+              setContract(e.target.value)
+            } 
+          }}
+        />
+      </div>
+
+      <div>
+        <label>CollectionId: </label>
+        <input
+          type="text"
+          value={collectionId}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setCollectionId(undefined)
+            }
+            else {
+              setCollectionId(e.target.value)
+            } 
+          }}
+        />
+      </div>
+
+      <div>
         <label>Token: </label>
         <input
           type="text"
           value={token}
-          onChange={(e) => setToken(e.target.value)}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setToken(undefined)
+            }
+            else {
+              setToken(e.target.value)
+            } 
+          }}
         />
       </div>
-      <div>
-        <label>Order Id: </label>
-        <input
-          type="text"
-          value={orderId}
-          onChange={(e) => setOrderId(e.target.value)}
-        />
-      </div>
+
       <div>
         <label>Chain Override: </label>
         <input
@@ -68,6 +95,8 @@ const BuyPage: NextPage = () => {
           onChange={(e) => setChainId(e.target.value)}
         />
       </div>
+
+
       <div>
         <label>Fees on top (BPS): </label>
         <textarea
@@ -107,24 +136,12 @@ const BuyPage: NextPage = () => {
         />
       </div>
       <DeeplinkCheckbox />
-      <div>
-        <label>Normalize Royalties: </label>
-        <input
-          type="checkbox"
-          checked={normalizeRoyalties}
-          onChange={(e) => {
-            setNormalizeRoyalties(e.target.checked)
-          }}
-        />
-      </div>
-      <div>
-        <label>Use Seaport Execution Method</label>
-        <input type="checkbox"
-         defaultChecked={useSeaportExecutionMethod}
-         onChange={(e) => setUseSeaportExecutionMethod(e.target.checked)}/>
-      </div>
-      <BuyModal
+
+      <MintModal
         chainId={Number(chainId)}
+        onConnectWallet={() => {
+          openConnectModal?.()        
+        }}
         trigger={
           <button
             style={{
@@ -139,37 +156,30 @@ const BuyPage: NextPage = () => {
               cursor: 'pointer',
             }}
           >
-            Buy Now
+            Mint
           </button>
         }
+        contract={contract}
+        collectionId={collectionId}
         token={token}
-        orderId={orderId}
-        useSeaportExecutionMethod={useSeaportExecutionMethod}
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
-        normalizeRoyalties={normalizeRoyalties}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
-        onConnectWallet={() => {
-          openConnectModal?.()
+        onMintComplete={(data) => {
+          console.log('Mint Complete', data)
         }}
-        onGoToToken={() => console.log('Go to token')}
-        onPurchaseComplete={(data) => {
-          console.log('Purchase Complete', data)
+        onMintError={(error, data) => {
+          console.log('Mint Error', error, data)
         }}
-        onPurchaseError={(error, data) => {
-          console.log('Transaction Error', error, data)
+        onClose={(data, currentStep) => {
+          console.log('MintModal Closed')
         }}
-        onClose={() => {
-          console.log('BuyModal Closed')
-        }}
-        onPointerDownOutside={(e) => {
-          console.log('onPointerDownOutside')
-        }}
+        onGoToToken={(data) => console.log('Go to Token', data)}
       />
+      <ChainSwitcher/>
       <ThemeSwitcher />
-      <ChainSwitcher />
     </div>
   )
 }
 
-export default BuyPage
+export default MintPage

@@ -157,7 +157,7 @@ export const MintContent: FC<
                 {token ? (
                   <TokenInfo token={token} collection={collection} />
                 ) : (
-                  <CollectionInfo collection={collection} mode="mint" />
+                  <CollectionInfo collection={collection} />
                 )}
                 <Flex
                   align="center"
@@ -227,6 +227,7 @@ export const MintContent: FC<
                         <CryptoCurrencyIcon
                           address={paymentCurrency?.address as string}
                           css={{ width: 16, height: 16, mr: '$1' }}
+                          chainId={paymentCurrency?.chainId}
                         />
                         <Text style="subtitle2">{paymentCurrency?.name}</Text>
                       </Flex>

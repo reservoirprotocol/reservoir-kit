@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
 import { useCart, useReservoirClient } from '../../hooks'
 import {
   Button,
@@ -15,12 +15,11 @@ import {
   faClose,
 } from '@fortawesome/free-solid-svg-icons'
 import { Cart } from '../../context/CartProvider'
-import { formatNumber } from '../../lib/numbers'
+import { formatBN, formatNumber } from '../../lib/numbers'
 import QuantitySelector from '../../modal/QuantitySelector'
 import * as allChains from 'viem/chains'
 import { Chain } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
-import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type Props = {
   item: Cart['items'][0]
@@ -49,7 +48,6 @@ const CloseButton = styled(Button, {
 })
 
 const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
-  const providerOptionsContext = useContext(ProviderOptionsContext)
   const { token, collection, order } = item
   const contract = collection.id.split(':')[0]
   const client = useReservoirClient()
@@ -59,32 +57,26 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
     setQuantity,
   } = useCart((cart) => cart.currency)
   const { data: cartChain } = useCart((cart) => cart.chain)
-
-  const currencyConverted =
-    item.price && item.price?.currency?.contract !== cartCurrency?.contract
-  let price = currencyConverted
-    ? item.price?.amount?.native
-    : item.price?.amount?.decimal
+  let price = BigInt(item.price?.amount?.raw ?? 0n)
   let previousPrice =
-    item.previousPrice?.currency?.contract !== cartCurrency?.contract
-      ? item.previousPrice?.amount?.native
-      : item.previousPrice?.amount?.decimal
-  let priceDiff = 0
+    item.previousPrice?.currency?.contract === cartCurrency?.address
+      ? BigInt(item.previousPrice?.amount?.raw ?? 0n)
+      : undefined
+  let priceDiff = 0n
   let priceIncrease = false
   let priceDecrease = false
   if (price !== undefined && previousPrice !== undefined) {
-    priceDiff = Math.abs(((price - previousPrice) / price) * 100)
+    priceDiff = ((price - previousPrice) / price) * 100n
+    priceDiff = priceDiff < 0n ? -priceDiff : priceDiff
     priceIncrease = price > previousPrice
     priceDecrease = price < previousPrice
   }
-  let usdPrice = (usdConversion || 0) * (price || 0)
   const reservoirChain = client?.chains.find(
     (chain) => cartChain?.id === chain.id
   )
 
   if (price && order?.quantity) {
-    price = price * order.quantity
-    usdPrice = usdPrice * order.quantity
+    price = price * BigInt(order.quantity ?? 1n)
   }
 
   return (
@@ -133,8 +125,8 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
         }}
         css={{
           width: '100%',
-          px: 24,
-          py: 8,
+          px: '$4',
+          py: '$2',
           cursor: 'pointer',
         }}
       >
@@ -192,16 +184,6 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               Listing no longer available
             </Text>
           )}
-          {!priceIncrease && !priceDecrease && currencyConverted && (
-            <Flex
-              css={{ gap: '$1', color: '$accentSolidHover' }}
-              align="center"
-            >
-              <Text style="body3" color="accent">
-                Currency converted
-              </Text>
-            </Flex>
-          )}
           {priceIncrease && (
             <Flex
               css={{ gap: '$1', color: '$accentSolidHover' }}
@@ -209,7 +191,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             >
               <FontAwesomeIcon width="11" icon={faArrowUp} />
               <Text style="body2" color="accent">
-                Price has gone up {formatNumber(priceDiff)}%
+                Price has gone up {formatBN(priceDiff, 2)}%
               </Text>
             </Flex>
           )}
@@ -220,7 +202,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
             >
               <FontAwesomeIcon width="11" icon={faArrowDown} />
               <Text style="body3" color="accent">
-                Price went down {formatNumber(priceDiff)}%
+                Price went down {formatBN(priceDiff, 2)}%
               </Text>
             </Flex>
           )}
@@ -236,48 +218,24 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               '> div': { ml: 'auto' },
             }}
           >
-            {providerOptionsContext.preferDisplayFiatTotal &&
-            usdPrice &&
-            usdPrice > 0 ? (
-              <>
-                <FormatCurrency
-                  amount={usdPrice}
-                  style="subtitle3"
-                  color="base"
-                  css={{ textAlign: 'end' }}
-                />
-                <FormatCryptoCurrency
-                  textStyle="tiny"
-                  textColor="subtle"
-                  amount={price}
-                  address={cartCurrency?.contract}
-                  decimals={cartCurrency?.decimals}
-                  symbol={cartCurrency?.symbol}
-                  logoWidth={10}
-                  chainId={cartChain?.id}
-                />
-              </>
-            ) : (
-              <>
-                <FormatCryptoCurrency
-                  textStyle="subtitle3"
-                  amount={price}
-                  address={cartCurrency?.contract}
-                  decimals={cartCurrency?.decimals}
-                  symbol={cartCurrency?.symbol}
-                  logoWidth={12}
-                  chainId={cartChain?.id}
-                />
-                {usdPrice && usdPrice > 0 ? (
-                  <FormatCurrency
-                    amount={usdPrice}
-                    style="tiny"
-                    color="subtle"
-                    css={{ textAlign: 'end' }}
-                  />
-                ) : null}
-              </>
-            )}
+            <FormatCryptoCurrency
+              textStyle="subtitle3"
+              amount={price}
+              address={cartCurrency?.address}
+              decimals={cartCurrency?.decimals}
+              symbol={cartCurrency?.symbol}
+              logoWidth={12}
+              chainId={cartChain?.id}
+            />
+            {cartCurrency?.usdTotalPriceRaw &&
+            cartCurrency.usdTotalPriceRaw > 0n ? (
+              <FormatCurrency
+                amount={cartCurrency.usdTotalPriceRaw}
+                style="tiny"
+                color="subtle"
+                css={{ textAlign: 'end' }}
+              />
+            ) : null}
           </Flex>
         ) : null}
       </Flex>
