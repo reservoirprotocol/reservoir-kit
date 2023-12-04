@@ -40,9 +40,9 @@ import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
 import { MintImages } from './MintImages'
 import { truncateAddress } from '../../lib/truncate'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
-import { TokenInfo } from '../collect/TokenInfo'
-import { CollectionInfo } from '../collect/CollectionInfo'
-import { PurchaseCheckout } from '../collect/PurchaseCheckout'
+import { TokenInfo } from '../TokenInfo'
+import { CollectionInfo } from '../CollectionInfo'
+import { PurchaseCheckout } from '../PurchaseCheckout'
 import { PaymentDetails } from '../PaymentDetails'
 
 export type MintCallbackData = {

@@ -56,9 +56,6 @@ export { EditBidStep } from './modal/editBid/EditBidModalRenderer'
 export { EditListingModal } from './modal/editListing/EditListingModal'
 export { EditListingStep } from './modal/editListing/EditListingModalRenderer'
 
-export { CollectModal } from './modal/collect/CollectModal'
-export { CollectStep } from './modal/collect/CollectModalRenderer'
-
 export { MintModal } from './modal/mint/MintModal'
 export { MintStep } from './modal/mint/MintModalRenderer'
 
