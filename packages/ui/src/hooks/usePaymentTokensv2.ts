@@ -20,8 +20,7 @@ export type EnhancedCurrency =
       currencyTotalFormatted?: string
       maxItems?: number
       maxPricePerItem?: bigint
-      networkFees?: bigint
-      gasCost?: bigint
+      networkFees?: bigint //todo: get from paths
     }
 
 const fetchNativeBalances = async (
@@ -201,7 +200,7 @@ export default function (options: {
           usdTotal: 0,
           currency: {
             ...token,
-            contract: token.address,
+            contract: token.address.toLowerCase(),
           },
           chainId: token.chainId,
         }
@@ -227,10 +226,30 @@ export default function (options: {
 
     path.forEach((pathItem, i) => {
       const tokenKey = `${pathItem.contract}:${pathItem.tokenId}`
+      const tokenKeyInsensitive = `${pathItem.contract?.toLowerCase()}:${
+        pathItem.tokenId
+      }`
+      const contractKey = `${pathItem.contract}` //todo: test with sweeping
+      const contractKeyInsensitive = `${pathItem.contract?.toLowerCase()}`
+      let assetKey = tokenKey
+      let totalQuantity = 0
+      let requiredQuantity = 0
+      //Determine correct key to use
+      if (quantityToken[tokenKey] !== undefined) {
+        assetKey = tokenKey
+      } else if (quantityToken[tokenKeyInsensitive] !== undefined) {
+        assetKey = tokenKeyInsensitive
+      } else if (quantityToken[contractKey] !== undefined) {
+        assetKey = contractKey
+      } else if (quantityToken[contractKeyInsensitive] !== undefined) {
+        assetKey = contractKeyInsensitive
+      }
+
+      totalQuantity = totalQuantities[assetKey] || 0
+      requiredQuantity = quantityToken[assetKey]
+
       //quantity check
-      const totalQuantity = totalQuantities[tokenKey] || 0
       const pathQuantity = pathItem.quantity || 0
-      const requiredQuantity = quantityToken[tokenKey] || 0
       const quantityLeft = requiredQuantity - totalQuantity
       if (totalQuantity === requiredQuantity) {
         return
@@ -244,11 +263,11 @@ export default function (options: {
       }
 
       orders[pathItem.orderId as string] = quantityToTake
-      totalQuantities[tokenKey] = totalQuantity + quantityToTake
+      totalQuantities[assetKey] = totalQuantity + quantityToTake
 
       //sum totals per currency
       pathItem.buyIn?.forEach((buyIn) => {
-        const currencyKey = `${buyIn.currency?.contract}:${
+        const currencyKey = `${buyIn.currency?.contract?.toLowerCase()}:${
           buyIn.currency?.chainId || chainId
         }`
         if (paymentTokens[currencyKey]) {
@@ -256,7 +275,7 @@ export default function (options: {
             BigInt(buyIn.amount?.raw || 0) * BigInt(quantityToTake)
           paymentTokens[currencyKey].usdTotal +=
             (buyIn.amount?.usd || 0) * quantityToTake
-          //todo: calculate gas estimates
+          //todo: calculate network fee estimates
         }
       })
     })
@@ -332,7 +351,7 @@ export default function (options: {
           maxItems,
           maxPricePerItem,
           chainId: token.chainId,
-          networkFees: 0n,
+          networkFees: 0n, //todo: calculate network fees
         }
       })
       .sort((a, b) => {
