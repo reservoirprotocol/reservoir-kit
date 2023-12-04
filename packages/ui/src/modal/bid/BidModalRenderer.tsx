@@ -31,10 +31,11 @@ import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
-import { WalletClient, parseUnits } from 'viem'
+import { WalletClient, parseUnits, zeroAddress } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
+import { Marketplace } from '../../hooks/useMarketplaces'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -72,6 +73,8 @@ export type Trait =
     }
   | undefined
 
+type Exchange = NonNullable<Marketplace['exchanges']>['string']
+
 type ChildrenProps = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
@@ -103,6 +106,7 @@ type ChildrenProps = {
   stepData: BidModalStepData | null
   currencies: Currency[]
   currency: Currency
+  exchange?: Exchange
   feeBps?: number
   setCurrency: (currency: Currency) => void
   setBidStep: React.Dispatch<React.SetStateAction<BidStep>>
@@ -147,7 +151,7 @@ export const BidModalRenderer: FC<Props> = ({
   orderKind,
   attribute,
   normalizeRoyalties,
-  currencies,
+  currencies: preferredCurrencies,
   oracleEnabled = false,
   feesBps,
   children,
@@ -201,7 +205,12 @@ export const BidModalRenderer: FC<Props> = ({
     symbol: nativeWrappedContractName,
   }
   const [currency, setCurrency] = useState<Currency>(
-    currencies && currencies[0] ? currencies[0] : defaultCurrency
+    preferredCurrencies && preferredCurrencies[0]
+      ? preferredCurrencies[0]
+      : defaultCurrency
+  )
+  const [currencies, setCurrencies] = useState<Currency[] | undefined>(
+    preferredCurrencies
   )
 
   const wrappedContractAddress = currency
@@ -257,15 +266,26 @@ export const BidModalRenderer: FC<Props> = ({
     open
   )
 
-  const reservoirMarketplace = allMarketplaces.filter(
-    (marketplace) => marketplace.orderbook === 'reservoir'
-  )[0]
-
-  const traitBidSupported = Boolean(reservoirMarketplace?.traitBidSupported)
-  const collectionBidSupported = Boolean(
-    reservoirMarketplace?.collectionBidSupported
+  const reservoirMarketplace = useMemo(
+    () =>
+      allMarketplaces.find(
+        (marketplace) => marketplace.orderbook === 'reservoir'
+      ),
+    [allMarketplaces]
   )
-  const partialBidSupported = Boolean(reservoirMarketplace?.partialBidSupported)
+
+  const exchange = useMemo(() => {
+    const exchanges: Record<string, Exchange> =
+      reservoirMarketplace?.exchanges || {}
+    const exchange = orderKind
+      ? exchanges[orderKind]
+      : Object.values(exchanges).find((exchange) => exchange?.enabled)
+    return exchange?.enabled ? exchange : undefined
+  }, [reservoirMarketplace, orderKind])
+
+  const traitBidSupported = Boolean(exchange?.traitBidSupported)
+  const collectionBidSupported = Boolean(exchange?.collectionBidSupported)
+  const partialBidSupported = Boolean(exchange?.partialOrderSupported)
 
   // Set bid step to unavailable if collection bid is not supported
   useEffect(() => {
@@ -284,14 +304,19 @@ export const BidModalRenderer: FC<Props> = ({
   })
 
   const { data: wrappedBalance } = useBalance({
-    token: wrappedContractAddress as any,
+    token:
+      wrappedContractAddress !== zeroAddress
+        ? (wrappedContractAddress as any)
+        : undefined,
     address: address,
     watch: open,
     chainId: rendererChain?.id,
   })
 
   const canAutomaticallyConvert =
-    !currency || currency.contract === nativeWrappedContractAddress
+    !currency ||
+    currency.contract.toLowerCase() ===
+      nativeWrappedContractAddress.toLowerCase()
   let convertLink: string = ''
 
   if (canAutomaticallyConvert) {
@@ -384,6 +409,43 @@ export const BidModalRenderer: FC<Props> = ({
   }, [open])
 
   useEffect(() => {
+    const supportedCurrencies =
+      exchange?.supportedBidCurrencies?.map((currency) =>
+        currency.toLowerCase()
+      ) || []
+    if (exchange?.paymentTokens) {
+      const restrictedCurrencies = exchange.paymentTokens
+        .filter(
+          (token) =>
+            token.address &&
+            token.symbol &&
+            supportedCurrencies.includes(token.address.toLowerCase())
+        )
+        .map((token) => ({
+          contract: token.address as string,
+          decimals: token.decimals,
+          name: token.name,
+          symbol: token.symbol as string,
+        }))
+      setCurrencies(restrictedCurrencies)
+
+      if (
+        !restrictedCurrencies.find(
+          (c) => currency.contract.toLowerCase() == c.contract.toLowerCase()
+        )
+      ) {
+        setCurrency(restrictedCurrencies[0])
+      }
+    } else {
+      const currencies = preferredCurrencies?.filter((currency) =>
+        currency.contract.toLowerCase()
+      )
+      setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
+      setCurrencies(preferredCurrencies)
+    }
+  }, [exchange, open])
+
+  useEffect(() => {
     if (currencies && currencies.length > 5) {
       console.warn(
         'The BidModal UI was designed to have a maximum of 5 currencies, going above 5 may degrade the user experience.'
@@ -431,6 +493,12 @@ export const BidModalRenderer: FC<Props> = ({
       throw error
     }
 
+    if (!exchange) {
+      const error = new Error('Missing Exchange')
+      setTransactionError(error)
+      throw error
+    }
+
     setBidStep(BidStep.Offering)
     setTransactionError(null)
     setBidData(null)
@@ -444,9 +512,7 @@ export const BidModalRenderer: FC<Props> = ({
       weiPrice: atomicBidAmount,
       orderbook: 'reservoir',
       orderKind:
-        orderKind ||
-        (reservoirMarketplace?.orderKind as BidData['orderKind']) ||
-        'seaport',
+        orderKind || (exchange?.orderKind as BidData['orderKind']) || 'seaport',
       attributeKey: traitBidSupported ? trait?.key : undefined,
       attributeValue: traitBidSupported ? trait?.value : undefined,
     }
@@ -482,7 +548,7 @@ export const BidModalRenderer: FC<Props> = ({
 
     if (oracleEnabled) {
       bid.options = {
-        'seaport-v1.5': {
+        [exchange.orderKind as string]: {
           useOffChainCancellation: true,
         },
       }
@@ -552,7 +618,7 @@ export const BidModalRenderer: FC<Props> = ({
     trait,
     quantity,
     feesBps,
-    reservoirMarketplace,
+    exchange,
     usePermit,
   ])
 
@@ -589,6 +655,7 @@ export const BidModalRenderer: FC<Props> = ({
         stepData,
         currencies: currencies || [defaultCurrency],
         currency,
+        exchange,
         feeBps,
         setCurrency,
         setBidStep,

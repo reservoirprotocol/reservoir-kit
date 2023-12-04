@@ -192,6 +192,9 @@ const SweepPage: NextPage = () => {
           console.log('SweepModal Closed')
         }}
         onGoToToken={(data) => console.log('Go to Token', data)}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ChainSwitcher/>
       <ThemeSwitcher />

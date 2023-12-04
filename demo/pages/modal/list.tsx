@@ -34,6 +34,7 @@ const Index: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
+  const [orderKind, setOrderKind] = useState<string | undefined>(undefined)
   const [chainId, setChainId] = useState('')
   const [currencies, setCurrencies] = useState<
     { contract: string; symbol: string; decimals?: number }[] | undefined
@@ -50,7 +51,6 @@ const Index: NextPage = () => {
   ])
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
-  const [nativeOnly, setNativeOnly] = useState(false)
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
   const [enableOnChainRoyalties, setEnableOnChainRoyalties] = useState(false)
@@ -86,6 +86,14 @@ const Index: NextPage = () => {
           type="text"
           value={tokenId}
           onChange={(e) => setTokenId(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Order Kind: </label>
+        <input
+          type="text"
+          value={orderKind}
+          onChange={(e) => setOrderKind(e.target.value)}
         />
       </div>
       <div>
@@ -187,6 +195,8 @@ const Index: NextPage = () => {
             List Item
           </button>
         }
+        //@ts-ignore
+        orderKind={orderKind}
         collectionId={collectionId}
         tokenId={tokenId}
         currencies={currencies}
@@ -204,6 +214,9 @@ const Index: NextPage = () => {
         }}
         onClose={() => {
           console.log('ListModal Closed')
+        }}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
         }}
       />
       <ThemeSwitcher />

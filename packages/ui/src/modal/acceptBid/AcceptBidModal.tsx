@@ -1,4 +1,5 @@
 import React, {
+  ComponentPropsWithoutRef,
   Dispatch,
   ReactElement,
   SetStateAction,
@@ -45,6 +46,7 @@ import { truncateAddress } from '../../lib/truncate'
 import { WalletClient } from 'viem'
 import { ReservoirWallet, SellPath } from '@reservoir0x/reservoir-sdk'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
+import { Dialog } from '../../primitives/Dialog'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -78,6 +80,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   ) => void
   onBidAcceptError?: (error: Error, data: BidData) => void
   onCurrentStepUpdate?: (data: AcceptBidStepData) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 export function AcceptBidModal({
@@ -94,6 +99,7 @@ export function AcceptBidModal({
   onClose,
   onBidAcceptError,
   onCurrentStepUpdate,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
@@ -201,6 +207,11 @@ export function AcceptBidModal({
               setOpen(open)
             }}
             loading={loading}
+            onPointerDownOutside={(e) => {
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
+              }
+            }}
           >
             {acceptBidStep === AcceptBidStep.Unavailable && !loading && (
               <Flex

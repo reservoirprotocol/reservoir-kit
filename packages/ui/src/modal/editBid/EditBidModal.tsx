@@ -5,6 +5,7 @@ import React, {
   SetStateAction,
   useEffect,
   useState,
+  ComponentPropsWithoutRef,
 } from 'react'
 import {
   Flex,
@@ -13,9 +14,6 @@ import {
   Button,
   Loader,
   Select,
-  CryptoCurrencyIcon,
-  Input,
-  FormatCurrency,
   FormatWrappedCurrency,
   Popover,
   FormatCryptoCurrency,
@@ -34,7 +32,11 @@ import {
   faClose,
 } from '@fortawesome/free-solid-svg-icons'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { WalletClient } from 'viem'
+import { WalletClient, formatUnits } from 'viem'
+import { formatNumber } from '../../lib/numbers'
+import PriceInput from '../../primitives/PriceInput'
+import { Dialog } from '../../primitives/Dialog'
+
 const ModalCopy = {
   title: 'Edit Offer',
   ctaClose: 'Close',
@@ -58,7 +60,13 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onClose?: (data: any, currentStep: EditBidStep) => void
   onEditBidComplete?: (data: any) => void
   onEditBidError?: (error: Error, data: any) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
+
+const MINIMUM_AMOUNT = 0.000001
+const MAXIMUM_AMOUNT = Infinity
 
 export function EditBidModal({
   openState,
@@ -73,6 +81,7 @@ export function EditBidModal({
   onClose,
   onEditBidComplete,
   onEditBidError,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -125,6 +134,8 @@ export function EditBidModal({
         expirationOption,
         usdPrice,
         stepData,
+        exchange,
+        currency,
         setTrait,
         setBidAmount,
         setExpirationOption,
@@ -188,6 +199,31 @@ export function EditBidModal({
         const isBidEditable =
           bid && bid.status === 'active' && !loading && isOracleOrder
 
+        const minimumAmount = exchange?.minPriceRaw
+          ? Number(
+              formatUnits(
+                BigInt(exchange.minPriceRaw),
+                currency?.decimals || 18
+              )
+            )
+          : MINIMUM_AMOUNT
+        const maximumAmount = exchange?.maxPriceRaw
+          ? Number(
+              formatUnits(
+                BigInt(exchange.maxPriceRaw),
+                currency?.decimals || 18
+              )
+            )
+          : MAXIMUM_AMOUNT
+
+        const withinPricingBounds =
+          bidAmount !== '' &&
+          Number(bidAmount) <= maximumAmount &&
+          Number(bidAmount) >= minimumAmount
+
+        const canPurchase = bidAmount !== '' && withinPricingBounds
+        const bidAmountNumerical = Number(bidAmount.length > 0 ? bidAmount : 0)
+
         return (
           <Modal
             trigger={trigger}
@@ -204,6 +240,11 @@ export function EditBidModal({
               setOpen(open)
             }}
             loading={loading}
+            onPointerDownOutside={(e) => {
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
+              }
+            }}
           >
             {!isBidAvailable && !loading && (
               <Flex
@@ -274,52 +315,49 @@ export function EditBidModal({
                       </Text>
                     ) : null}
                   </Flex>
-                  <Flex css={{ gap: '$2' }}>
-                    <Text
-                      as={Flex}
-                      css={{ gap: '$2', flexShrink: 0 }}
-                      align="center"
-                      style="body1"
-                      color="subtle"
-                    >
-                      <CryptoCurrencyIcon
-                        chainId={modalChain?.id}
-                        css={{ height: 20 }}
-                        address={wrappedContractAddress}
-                      />
-                      {wrappedContractName}
-                    </Text>
-                    <Input
-                      type="number"
-                      value={bidAmount}
+                  <Flex direction="column" css={{ gap: '$2' }}>
+                    <PriceInput
+                      chainId={modalChain?.id}
+                      price={bidAmount ? bidAmountNumerical : undefined}
+                      collection={collection}
+                      currency={currency}
+                      usdPrice={usdPrice}
+                      quantity={1}
+                      placeholder={'Enter an offer price'}
                       onChange={(e) => {
-                        setBidAmount(e.target.value)
+                        if (e.target.value === '') {
+                          setBidAmount('')
+                        } else {
+                          setBidAmount(e.target.value)
+                        }
                       }}
-                      placeholder="Enter price here"
-                      containerCss={{
-                        width: '100%',
-                      }}
-                      css={{
-                        color: '$neutralText',
-                        textAlign: 'left',
+                      onBlur={() => {
+                        if (bidAmountNumerical === undefined) {
+                          setBidAmount('')
+                        }
                       }}
                     />
+                    {bidAmount !== '0' &&
+                      bidAmount !== '' &&
+                      !withinPricingBounds && (
+                        <Box>
+                          <Text style="body3" color="error">
+                            {maximumAmount !== Infinity
+                              ? `Amount must be between ${formatNumber(
+                                  minimumAmount
+                                )} - ${formatNumber(maximumAmount)}`
+                              : `Amount must be higher than ${formatNumber(
+                                  minimumAmount
+                                )}`}
+                          </Text>
+                        </Box>
+                      )}
                   </Flex>
-                  <FormatCurrency
-                    css={{
-                      marginLeft: 'auto',
-                      mt: '$2',
-                      display: 'inline-block',
-                      minHeight: 15,
-                    }}
-                    style="tiny"
-                    amount={bidAmountUsd}
-                  />
                   {attributes &&
                     attributes.length > 0 &&
                     (attributesSelectable || trait) &&
                     !isTokenBid && (
-                      <Flex direction="column" css={{ mb: '$3' }}>
+                      <Flex direction="column" css={{ mb: '$3', mt: '$4' }}>
                         <Text
                           as="div"
                           css={{ mb: '$2' }}
@@ -424,7 +462,7 @@ export function EditBidModal({
                         </Popover.Root>
                       </Flex>
                     )}
-                  <Box css={{ mb: '$3' }}>
+                  <Box css={{ mb: '$3', mt: '$4' }}>
                     <Text
                       as="div"
                       css={{ mb: '$2' }}
@@ -460,7 +498,7 @@ export function EditBidModal({
                       py: '$3',
                     }}
                   >
-                    {hasEnoughWrappedCurrency ? (
+                    {hasEnoughWrappedCurrency || !canPurchase ? (
                       <>
                         <Button
                           onClick={() => {
@@ -472,7 +510,7 @@ export function EditBidModal({
                           {copy.ctaClose}
                         </Button>
                         <Button
-                          disabled={bidAmount === '' || bidAmount === '0'}
+                          disabled={!canPurchase}
                           onClick={editBid}
                           css={{ flex: 1 }}
                         >

@@ -1,4 +1,10 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import React, {
+  ComponentPropsWithoutRef,
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+} from 'react'
 import { WalletClient } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { useFallbackState, useReservoirClient } from '../../hooks'
@@ -43,6 +49,7 @@ import { TokenInfo } from '../TokenInfo'
 import { CollectionInfo } from '../CollectionInfo'
 import { PurchaseCheckout } from '../PurchaseCheckout'
 import { PaymentDetails } from '../PaymentDetails'
+import { Dialog } from '../../primitives/Dialog'
 
 export type SweepCallbackData = {
   collectionId?: string
@@ -80,6 +87,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onSweepError?: (error: Error, data: SweepCallbackData) => void
   onClose?: (data: SweepCallbackData, currentStep: SweepStep) => void
   onGoToToken?: (data: SweepCallbackData) => any
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 export function SweepModal({
@@ -100,6 +110,7 @@ export function SweepModal({
   onClose,
   onConnectWallet,
   onGoToToken,
+  onPointerDownOutside,
   defaultQuantity,
 }: Props): ReactElement {
   const copy: typeof SweepModalCopy = {
@@ -253,6 +264,10 @@ export function SweepModal({
 
               if (!clickedDismissableLayer && dismissableLayers.length > 0) {
                 e.preventDefault()
+              }
+
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
               }
             }}
             onOpenChange={(open) => {
