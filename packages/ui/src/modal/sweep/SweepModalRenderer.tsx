@@ -4,15 +4,18 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import {
   useChainCurrency,
   useCollections,
+  useCurrencyConversion,
   usePaymentTokens,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
+import usePaymentTokensv2 from '../../hooks/usePaymentTokensv2'
 import { useAccount, useWalletClient } from 'wagmi'
 import {
   BuyPath,
@@ -21,7 +24,13 @@ import {
   ReservoirChain,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
-import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
+import {
+  Address,
+  WalletClient,
+  formatUnits,
+  parseUnits,
+  zeroAddress,
+} from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
@@ -76,7 +85,6 @@ export type ChildrenProps = {
   feeUsd: string
   usdPrice: number
   usdPriceRaw: bigint
-  mintPrice: bigint
   currentChain: ReservoirChain | null | undefined
   address?: string
   balance?: bigint
@@ -201,39 +209,46 @@ export const SweepModalRenderer: FC<Props> = ({
 
   const tokenData = tokens && tokens[0] ? tokens[0] : undefined
 
-  const [listingCurrency, setListingCurrency] = useState<
-    EnhancedCurrency | undefined
-  >(undefined)
-
   const [_paymentCurrency, setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
 
-  const paymentTokens = usePaymentTokens(
+  const paymentKey = useMemo(() => {
+    if (token) {
+      return token
+    } else if (tokenData?.token?.tokenId && collectionContract) {
+      return `${collectionContract}:${tokenData?.token?.tokenId}`
+    } else if (collectionId) {
+      return collectionId
+    } else return collectionContract
+  }, [token, collectionId, , collectionContract, tokenData?.token?.tokenId])
+
+  const paymentTokens = usePaymentTokensv2({
     open,
-    address as Address,
-    _paymentCurrency ?? chainCurrency,
-    totalIncludingFees,
-    rendererChain?.id,
-    false,
-    false,
-    listingCurrency
-  )
+    address: address as Address,
+    quantityToken: {
+      [`${paymentKey}`]: itemAmount,
+    },
+    path: orders,
+    nativeOnly: false,
+    chainId: rendererChain?.id,
+    crossChainDisabled: false,
+  })
 
   const paymentCurrency = paymentTokens?.find(
-    (paymentToken) =>
+    (paymentToken: any) =>
       paymentToken?.address === _paymentCurrency?.address &&
       paymentToken?.chainId === _paymentCurrency?.chainId
   )
 
-  const mintPrice = BigInt(
-    (orders?.[0]?.currency?.toLowerCase() !== paymentCurrency?.address
-      ? orders?.[0]?.buyInRawQuote
-      : orders?.[0]?.totalRawPrice) || 0
+  const { data: paymentCurrencyConversion } = useCurrencyConversion(
+    paymentCurrency?.chainId,
+    paymentCurrency?.address,
+    'usd'
   )
 
   const usdPrice = paymentCurrency?.usdPrice || 0
-  const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
+  const usdPriceRaw = parseUnits(`${paymentCurrencyConversion?.usd || 0}`, 6)
   const feeUsd = formatUnits(
     feeOnTop * usdPriceRaw,
     (paymentCurrency?.decimals || 18) + 6
@@ -255,6 +270,15 @@ export const SweepModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
+    if (
+      rendererChain?.paymentTokens &&
+      rendererChain.paymentTokens.length > 0
+    ) {
+      options.alternativeCurrencies = rendererChain?.paymentTokens?.map(
+        (token) => `${token.address}:${token.chainId}`
+      )
+    }
+
     client?.actions
       .buyToken({
         chainId: rendererChain?.id,
@@ -268,6 +292,7 @@ export const SweepModalRenderer: FC<Props> = ({
                     tokenId ?? tokenData?.token?.tokenId
                   }`
                 : undefined,
+            quantity: 1000,
             fillType: 'trade',
           },
         ],
@@ -334,6 +359,7 @@ export const SweepModalRenderer: FC<Props> = ({
     tokenId,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
+    rendererChain?.paymentTokens,
     is1155,
   ])
 
@@ -443,31 +469,10 @@ export const SweepModalRenderer: FC<Props> = ({
 
   // Set paymentCurrency to first paymentToken
   useEffect(() => {
-    if (paymentTokens[0] && listingCurrency && !paymentCurrency) {
+    if (paymentTokens[0] && !paymentCurrency) {
       setPaymentCurrency(paymentTokens[0])
     }
-  }, [paymentTokens, listingCurrency, paymentCurrency])
-
-  // Set listing currency
-  useEffect(() => {
-    if (listingCurrency || !open || !fetchedInitialOrders) {
-      return
-    } else if (selectedTokens[0]) {
-      setListingCurrency({
-        address: selectedTokens?.[0].currency as Address,
-        decimals: selectedTokens?.[0].currencyDecimals || 18,
-        symbol: selectedTokens?.[0].currencySymbol || '',
-        name: selectedTokens?.[0].currencySymbol || '',
-        chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
-      })
-    }
-  }, [
-    listingCurrency,
-    open,
-    fetchedInitialOrders,
-    selectedTokens,
-    rendererChain,
-  ])
+  }, [paymentTokens, paymentCurrency])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
@@ -516,7 +521,7 @@ export const SweepModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setFetchedInitialOrders(false)
       setPaymentCurrency(undefined)
-      setListingCurrency(undefined)
+      // setListingCurrency(undefined)
       setStepData(null)
     } else {
       setItemAmount(defaultQuantity || 1)
@@ -619,7 +624,7 @@ export const SweepModalRenderer: FC<Props> = ({
         ],
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            raw: total,
+            raw: paymentCurrency?.currencyTotalRaw,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },
@@ -709,6 +714,7 @@ export const SweepModalRenderer: FC<Props> = ({
     collectionContract,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
+    paymentCurrency?.currencyTotalRaw,
     usePermit,
   ])
 
@@ -743,7 +749,6 @@ export const SweepModalRenderer: FC<Props> = ({
         usdPriceRaw,
         isConnected: wallet !== undefined,
         currentChain,
-        mintPrice,
         orders,
         balance: paymentCurrency?.balance
           ? BigInt(paymentCurrency.balance)
