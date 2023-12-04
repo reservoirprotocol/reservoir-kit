@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
-import { ChainIcon, Divider, Flex, Img, Text } from '../../primitives'
-import { useCollections, useTimeSince } from '../../hooks'
+import { ChainIcon, Divider, Flex, Img, Text } from '../primitives'
+import { useCollections, useTimeSince } from '../hooks'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 
 type Props = {

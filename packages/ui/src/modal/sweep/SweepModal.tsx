@@ -39,9 +39,9 @@ import SigninStep from '../SigninStep'
 import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
 import { truncateAddress } from '../../lib/truncate'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
-import { TokenInfo } from '../collect/TokenInfo'
-import { CollectionInfo } from '../collect/CollectionInfo'
-import { CollectCheckout } from '../collect/CollectCheckout'
+import { TokenInfo } from '../TokenInfo'
+import { CollectionInfo } from '../CollectionInfo'
+import { PurchaseCheckout } from '../PurchaseCheckout'
 import { PaymentDetails } from '../PaymentDetails'
 
 export type SweepCallbackData = {
@@ -556,7 +556,7 @@ export function SweepModal({
                     borderBottom: '1px solid $neutralBorder',
                   }}
                 >
-                  <CollectCheckout
+                  <PurchaseCheckout
                     chainId={chainId}
                     collection={collection}
                     token={token}
@@ -710,7 +710,7 @@ export function SweepModal({
                     borderBottom: '1px solid $neutralBorder',
                   }}
                 >
-                  <CollectCheckout
+                  <PurchaseCheckout
                     chainId={chainId}
                     collection={collection}
                     token={token}

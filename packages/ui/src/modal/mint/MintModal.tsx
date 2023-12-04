@@ -37,12 +37,12 @@ import { SelectPaymentToken } from '../SelectPaymentToken'
 import { CurrentStepTxHashes } from '../CurrentStepTxHashes'
 import SigninStep from '../SigninStep'
 import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
-import { MintImages } from '../collect/mint/MintImages'
+import { MintImages } from './MintImages'
 import { truncateAddress } from '../../lib/truncate'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { TokenInfo } from '../collect/TokenInfo'
 import { CollectionInfo } from '../collect/CollectionInfo'
-import { CollectCheckout } from '../collect/CollectCheckout'
+import { PurchaseCheckout } from '../collect/PurchaseCheckout'
 import { PaymentDetails } from '../PaymentDetails'
 
 export type MintCallbackData = {
@@ -489,7 +489,7 @@ export function MintModal({
                     borderBottom: '1px solid $neutralBorder',
                   }}
                 >
-                  <CollectCheckout
+                  <PurchaseCheckout
                     chainId={chainId}
                     collection={collection}
                     token={token}
@@ -643,7 +643,7 @@ export function MintModal({
                     borderBottom: '1px solid $neutralBorder',
                   }}
                 >
-                  <CollectCheckout
+                  <PurchaseCheckout
                     chainId={chainId}
                     collection={collection}
                     token={token}
