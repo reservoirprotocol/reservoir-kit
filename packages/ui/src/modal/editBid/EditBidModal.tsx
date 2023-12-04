@@ -5,6 +5,7 @@ import React, {
   SetStateAction,
   useEffect,
   useState,
+  ComponentPropsWithoutRef,
 } from 'react'
 import {
   Flex,
@@ -31,9 +32,10 @@ import {
   faClose,
 } from '@fortawesome/free-solid-svg-icons'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { WalletClient } from 'viem'
-import { formatBN } from '../../lib/numbers'
+import { WalletClient, formatUnits } from 'viem'
+import { formatNumber } from '../../lib/numbers'
 import PriceInput from '../../primitives/PriceInput'
+import { Dialog } from '../../primitives/Dialog'
 
 const ModalCopy = {
   title: 'Edit Offer',
@@ -58,6 +60,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onClose?: (data: any, currentStep: EditBidStep) => void
   onEditBidComplete?: (data: any) => void
   onEditBidError?: (error: Error, data: any) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 const MINIMUM_AMOUNT = 0.000001
@@ -76,6 +81,7 @@ export function EditBidModal({
   onClose,
   onEditBidComplete,
   onEditBidError,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -195,18 +201,16 @@ export function EditBidModal({
 
         const minimumAmount = exchange?.minPriceRaw
           ? Number(
-              formatBN(
+              formatUnits(
                 BigInt(exchange.minPriceRaw),
-                6,
                 currency?.decimals || 18
               )
             )
           : MINIMUM_AMOUNT
         const maximumAmount = exchange?.maxPriceRaw
           ? Number(
-              formatBN(
+              formatUnits(
                 BigInt(exchange.maxPriceRaw),
-                6,
                 currency?.decimals || 18
               )
             )
@@ -236,6 +240,11 @@ export function EditBidModal({
               setOpen(open)
             }}
             loading={loading}
+            onPointerDownOutside={(e) => {
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
+              }
+            }}
           >
             {!isBidAvailable && !loading && (
               <Flex
@@ -334,8 +343,12 @@ export function EditBidModal({
                         <Box>
                           <Text style="body3" color="error">
                             {maximumAmount !== Infinity
-                              ? `Amount must be between ${minimumAmount} - ${maximumAmount}`
-                              : `Amount must be higher than ${minimumAmount}`}
+                              ? `Amount must be between ${formatNumber(
+                                  minimumAmount
+                                )} - ${formatNumber(maximumAmount)}`
+                              : `Amount must be higher than ${formatNumber(
+                                  minimumAmount
+                                )}`}
                           </Text>
                         </Box>
                       )}

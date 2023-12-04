@@ -59,6 +59,9 @@ export { EditListingStep } from './modal/editListing/EditListingModalRenderer'
 export { CollectModal } from './modal/collect/CollectModal'
 export { CollectStep } from './modal/collect/CollectModalRenderer'
 
+export { MintModal } from './modal/mint/MintModal'
+export { MintStep } from './modal/mint/MintModalRenderer'
+
 export {
   default as TokenMedia,
   extractMediaType,

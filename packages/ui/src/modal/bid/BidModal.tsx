@@ -6,6 +6,7 @@ import React, {
   Dispatch,
   SetStateAction,
   useContext,
+  ComponentPropsWithoutRef,
 } from 'react'
 import { styled } from '../../../stitches.config'
 import {
@@ -57,8 +58,9 @@ import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { WalletClient } from 'viem'
-import { formatBN } from '../../lib/numbers'
+import { WalletClient, formatUnits } from 'viem'
+import { formatNumber } from '../../lib/numbers'
+import { Dialog } from '../../primitives/Dialog'
 
 type BidCallbackData = {
   tokenId?: string
@@ -103,6 +105,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   ) => void
   onBidComplete?: (data: any) => void
   onBidError?: (error: Error, data: any) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 function titleForStep(step: BidStep, copy: typeof ModalCopy) {
@@ -164,6 +169,7 @@ export function BidModal({
   onClose,
   onBidComplete,
   onBidError,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -360,18 +366,16 @@ export function BidModal({
 
         const minimumAmount = exchange?.minPriceRaw
           ? Number(
-              formatBN(
+              formatUnits(
                 BigInt(exchange.minPriceRaw),
-                6,
                 currency?.decimals || 18
               )
             )
           : MINIMUM_AMOUNT
         const maximumAmount = exchange?.maxPriceRaw
           ? Number(
-              formatBN(
+              formatUnits(
                 BigInt(exchange.maxPriceRaw),
-                6,
                 currency?.decimals || 18
               )
             )
@@ -415,6 +419,9 @@ export function BidModal({
                 )
               ) {
                 e.preventDefault()
+              }
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
               }
             }}
             onFocusCapture={(e) => {
@@ -584,8 +591,12 @@ export function BidModal({
                     <Box>
                       <Text style="body2" color="error">
                         {maximumAmount !== Infinity
-                          ? `Amount must be between ${minimumAmount} - ${maximumAmount}`
-                          : `Amount must be higher than ${minimumAmount}`}
+                          ? `Amount must be between ${formatNumber(
+                              minimumAmount
+                            )} - ${formatNumber(maximumAmount)}`
+                          : `Amount must be higher than ${formatNumber(
+                              minimumAmount
+                            )}`}
                       </Text>
                     </Box>
                   )}

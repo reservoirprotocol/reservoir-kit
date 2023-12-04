@@ -166,7 +166,7 @@ export const SweepContent: FC<
               {token ? (
                 <TokenInfo token={token} collection={collection} />
               ) : (
-                <CollectionInfo collection={collection} mode="sweep" />
+                <CollectionInfo collection={collection} />
               )}
               <Flex
                 align="center"

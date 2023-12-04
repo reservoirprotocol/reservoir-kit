@@ -1,5 +1,6 @@
 import { styled } from '../../../stitches.config'
 import React, {
+  ComponentPropsWithoutRef,
   Dispatch,
   ReactElement,
   SetStateAction,
@@ -33,7 +34,7 @@ import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'
-import { WalletClient, zeroAddress } from 'viem'
+import { WalletClient, formatUnits, zeroAddress } from 'viem'
 import ListCheckout from './ListCheckout'
 import QuantitySelector from '../QuantitySelector'
 import dayjs from 'dayjs'
@@ -41,7 +42,8 @@ import { CurrencySelector } from '../CurrencySelector'
 import PriceBreakdown from './PriceBreakdown'
 import FloorDropdown from './FloorDropdown'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { formatBN } from '../../lib/numbers'
+import { formatNumber } from '../../lib/numbers'
+import { Dialog } from '../../primitives/Dialog'
 
 type ListingCallbackData = {
   listings?: ListingData[]
@@ -79,6 +81,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
     stepData: ListModalStepData | null,
     currentStep: ListStep
   ) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 const Image = styled('img', {})
@@ -104,6 +109,7 @@ export function ListModal({
   onListingComplete,
   onListingError,
   onClose,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -217,18 +223,16 @@ export function ListModal({
           (nativeFloorPrice && defaultCurrency)
         const minimumAmount = exchange?.minPriceRaw
           ? Number(
-              formatBN(
+              formatUnits(
                 BigInt(exchange.minPriceRaw),
-                6,
                 currency?.decimals || 18
               )
             )
           : MINIMUM_AMOUNT
         const maximumAmount = exchange?.maxPriceRaw
           ? Number(
-              formatBN(
+              formatUnits(
                 BigInt(exchange.maxPriceRaw),
-                6,
                 currency?.decimals || 18
               )
             )
@@ -296,6 +300,9 @@ export function ListModal({
                 )
               ) {
                 e.preventDefault()
+              }
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
               }
             }}
             onFocusCapture={(e) => {
@@ -450,8 +457,12 @@ export function ListModal({
                       <Box>
                         <Text style="body2" color="error">
                           {maximumAmount !== Infinity
-                            ? `Amount must be between ${minimumAmount} - ${maximumAmount}`
-                            : `Amount must be higher than ${minimumAmount}`}
+                            ? `Amount must be between ${formatNumber(
+                                minimumAmount
+                              )} - ${formatNumber(maximumAmount)}`
+                            : `Amount must be higher than ${formatNumber(
+                                minimumAmount
+                              )}`}
                         </Text>
                       </Box>
                     )}

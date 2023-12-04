@@ -60,7 +60,7 @@ export const SelectPaymentToken: FC<Props> = ({
                 !hasMaxItemAmount &&
                 hasCurrencyTotalRaw) ||
               (maxPurchasablePrice &&
-                paymentToken?.currencyTotalRaw &&
+                paymentToken?.currencyTotalRaw !== undefined &&
                 maxPurchasablePrice >= paymentToken?.currencyTotalRaw &&
                 maxItemAmount &&
                 maxItemAmount >= itemAmount)
