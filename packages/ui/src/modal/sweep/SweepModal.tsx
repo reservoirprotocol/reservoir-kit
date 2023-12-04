@@ -150,12 +150,10 @@ export function SweepModal({
         collection,
         token,
         orders,
-        total,
         totalIncludingFees,
         selectedTokens,
         feeOnTop,
         feeUsd,
-        gasCost,
         paymentTokens,
         paymentCurrency,
         setPaymentCurrency,
@@ -408,7 +406,7 @@ export function SweepModal({
                             </Text>
                             <FormatCryptoCurrency
                               chainId={chainId}
-                              amount={total / BigInt(itemAmount)}
+                              amount={totalIncludingFees / BigInt(itemAmount)}
                               address={paymentCurrency?.address}
                               decimals={paymentCurrency?.decimals}
                               symbol={paymentCurrency?.name}
@@ -509,21 +507,26 @@ export function SweepModal({
                           textStyle="body3"
                         />
                       </Flex>
-                      {gasCost > 0n && (
-                        <Flex align="center" css={{ mt: '$1' }}>
-                          <Text css={{ mr: '$3' }} color="error" style="body3">
-                            Estimated Gas Cost
-                          </Text>
-                          <FormatCryptoCurrency
-                            chainId={chainId}
-                            amount={gasCost}
-                            address={paymentCurrency?.address}
-                            decimals={paymentCurrency?.decimals}
-                            symbol={paymentCurrency?.symbol}
-                            textStyle="body3"
-                          />
-                        </Flex>
-                      )}
+                      {paymentCurrency?.gasCost &&
+                        paymentCurrency?.gasCost > 0n && (
+                          <Flex align="center" css={{ mt: '$1' }}>
+                            <Text
+                              css={{ mr: '$3' }}
+                              color="error"
+                              style="body3"
+                            >
+                              Estimated Gas Cost
+                            </Text>
+                            <FormatCryptoCurrency
+                              chainId={chainId}
+                              amount={paymentCurrency?.gasCost}
+                              address={paymentCurrency?.address}
+                              decimals={paymentCurrency?.decimals}
+                              symbol={paymentCurrency?.symbol}
+                              textStyle="body3"
+                            />
+                          </Flex>
+                        )}
                       <Button
                         disabled={disableJumperLink}
                         onClick={() => {

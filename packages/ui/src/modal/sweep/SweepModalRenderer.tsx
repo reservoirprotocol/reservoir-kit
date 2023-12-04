@@ -78,9 +78,7 @@ export type ChildrenProps = {
   >
   chainCurrency: ReturnType<typeof useChainCurrency>
   paymentTokens: EnhancedCurrency[]
-  total: bigint
   totalIncludingFees: bigint
-  gasCost: bigint
   feeOnTop: bigint
   feeUsd: string
   usdPrice: number
@@ -142,9 +140,7 @@ export const SweepModalRenderer: FC<Props> = ({
   const [sweepStep, setSweepStep] = useState<SweepStep>(SweepStep.Idle)
   const [stepData, setStepData] = useState<SweepModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [total, setTotal] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
-  const [gasCost, setGasCost] = useState(0n)
 
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
@@ -455,9 +451,7 @@ export const SweepModalRenderer: FC<Props> = ({
     }
     const fees = calculateFees(updatedTotal)
     setFeeOnTop(fees)
-    setTotal(updatedTotal)
     setTotalIncludingFees(updatedTotal + fees)
-    setGasCost(gasCost)
   }, [
     selectedTokens,
     paymentCurrency,
@@ -484,13 +478,13 @@ export const SweepModalRenderer: FC<Props> = ({
       paymentCurrency?.balance != undefined &&
       paymentCurrency?.currencyTotalRaw != undefined &&
       BigInt(paymentCurrency?.balance) <
-        paymentCurrency?.currencyTotalRaw + gasCost
+        paymentCurrency?.currencyTotalRaw + (paymentCurrency?.gasCost || 0n)
     ) {
       setHasEnoughCurrency(false)
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [total, paymentCurrency, gasCost])
+  }, [totalIncludingFees, paymentCurrency])
 
   useEffect(() => {
     let updatedTokens = []
@@ -521,7 +515,6 @@ export const SweepModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setFetchedInitialOrders(false)
       setPaymentCurrency(undefined)
-      // setListingCurrency(undefined)
       setStepData(null)
     } else {
       setItemAmount(defaultQuantity || 1)
@@ -698,7 +691,6 @@ export const SweepModalRenderer: FC<Props> = ({
     client,
     wallet,
     address,
-    total,
     totalIncludingFees,
     normalizeRoyalties,
     wagmiChain,
@@ -739,9 +731,7 @@ export const SweepModalRenderer: FC<Props> = ({
         setPaymentCurrency,
         chainCurrency,
         paymentTokens,
-        total,
         totalIncludingFees,
-        gasCost,
         feeOnTop,
         feeUsd,
         usdPrice,
