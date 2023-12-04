@@ -99,7 +99,6 @@ type Props = {
   chainId?: number
   defaultQuantity?: number
   useSeaportExecutionMethod?: boolean
-  collectionId?: string
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
