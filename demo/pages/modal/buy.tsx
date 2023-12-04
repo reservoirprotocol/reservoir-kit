@@ -17,8 +17,7 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 
 const BuyPage: NextPage = () => {
   const router = useRouter()
-  const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
-  const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
+  const [token, setToken] = useState(`${DEFAULT_COLLECTION_ID}:${DEFAULT_TOKEN_ID}`)
   const [orderId, setOrderId] = useState('')
   const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
@@ -45,19 +44,11 @@ const BuyPage: NextPage = () => {
       <ConnectButton />
 
       <div>
-        <label>Collection Id: </label>
+        <label>Token: </label>
         <input
           type="text"
-          value={collectionId}
-          onChange={(e) => setCollectionId(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Token Id: </label>
-        <input
-          type="text"
-          value={tokenId}
-          onChange={(e) => setTokenId(e.target.value)}
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
         />
       </div>
       <div>
@@ -145,8 +136,7 @@ const BuyPage: NextPage = () => {
             Buy Now
           </button>
         }
-        collectionId={collectionId}
-        tokenId={tokenId}
+        token={token}
         orderId={orderId}
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
