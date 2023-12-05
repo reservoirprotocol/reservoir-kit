@@ -66,6 +66,7 @@ export default function (
     providerOptions.alwaysIncludeListingCurrency !== false
 
   const allPaymentTokens = useMemo(() => {
+    debugger
     let paymentTokens = chain?.paymentTokens
 
     if (includeListingCurrency) {

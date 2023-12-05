@@ -171,7 +171,16 @@ function cartStore({
     cartData.current.totalPriceRaw - (cartData.current.feeOnTopRaw ?? 0n),
     cartChain?.id,
     false,
-    true
+    true,
+    cartData.current?.items?.[0]?.price?.currency
+      ? {
+          ...cartData.current?.items[0].price.currency,
+          address: cartData.current.items[0].price.currency.contract as Address,
+          decimals: cartData.current.items[0].price.currency.decimals || 18,
+          symbol: cartData.current.items[0].price.currency.symbol as string,
+          chainId: cartChain?.id || 1,
+        }
+      : undefined
   )
   const usdPrice = Number(usdFeeConversion?.usd || 0)
 
@@ -335,16 +344,16 @@ function cartStore({
           feeOnTopRaw += (BigInt(feeBps || 0n) / 10000n) * subtotalRaw
         }, 0)
       } else if (feesOnTopUsd && usdPrice && currency && currency?.decimals) {
-        feesOnTopUsd.forEach((feeOnTop) => {
-          const [_, fee] = feeOnTop.split(':')
+        feesOnTopUsd.forEach((feeOnTopItem) => {
+          const [_, fee] = feeOnTopItem.split(':')
           const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
           const atomicFee = BigInt(fee)
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** (currency?.decimals || 18))
           const currencyFee = convertedAtomicFee / atomicUsdPrice
           const parsedFee = formatUnits(currencyFee, currency.decimals || 18)
-          feeOnTop += feeOnTop + Number(parsedFee)
-          feeOnTopRaw = BigInt(feeOnTop) + currencyFee
+          feeOnTop += Number(parsedFee)
+          feeOnTopRaw += currencyFee
         }, 0)
       }
       return {
@@ -767,7 +776,7 @@ function cartStore({
   )
 
   const getCurrency = useCallback(
-    (items?: Cart['items']) => {
+    (items?: Cart['items'], chainId?: number) => {
       items = items ? items : cartData.current.items
 
       if (cartData.current.currency) {
@@ -785,7 +794,8 @@ function cartStore({
             address: firstValidItemCurrency?.contract?.toLowerCase() as Address,
             decimals: firstValidItemCurrency?.decimals || 18,
             symbol: firstValidItemCurrency?.symbol || '',
-            chainId: cartChain?.id || 1,
+            chainId: chainId || cartChain?.id || 1,
+            name: firstValidItemCurrency?.name,
           }
         } else {
           return (
@@ -871,7 +881,7 @@ function cartStore({
           }
         })
 
-        let currency = getCurrency(updatedItems)
+        let currency = getCurrency(updatedItems, chainId)
 
         const createItems = async () => {
           updatedItems = [...cartData.current.items]
@@ -972,7 +982,6 @@ function cartStore({
         }
 
         await createItems()
-
         if (!currency) {
           currency = getCurrency(updatedItems)
           //In the case any of the items are not in the correct currency, we need to refresh the items
