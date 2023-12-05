@@ -1,11 +1,12 @@
 import { NextPage } from 'next'
 import { MintModal } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import ChainSwitcher from 'components/ChainSwitcher'
+import { PrivyConnectButton } from 'components/PrivyConnectButton'
+import { usePrivy } from '@privy-io/react-auth'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -13,7 +14,7 @@ const DEFAULT_COLLECTION_ID =
 
 const MintPage: NextPage = () => {
   const router = useRouter()
-  const { openConnectModal } = useConnectModal()
+  const { login } = usePrivy();
 
   const [contract, setContract] = useState<string | undefined>(undefined)
   const [collectionId, setCollectionId] = useState<string | undefined>(DEFAULT_COLLECTION_ID)
@@ -37,7 +38,7 @@ const MintPage: NextPage = () => {
         paddingTop: 150,
       }}
     >
-      <ConnectButton />
+      <PrivyConnectButton />
 
       <div>
         <label>Contract: </label>
@@ -140,7 +141,7 @@ const MintPage: NextPage = () => {
       <MintModal
         chainId={Number(chainId)}
         onConnectWallet={() => {
-          openConnectModal?.()        
+          login?.()        
         }}
         trigger={
           <button
