@@ -1,4 +1,8 @@
 
+## [v1.10.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1946f746a78de48c8374370892358a3bb2cacbd6) (2023-12-04)
+
+* Merge pull request #494 from reservoirprotocol/ted/grwth-3644-mint-modal [c1cbf47c](https://github.com/reservoirprotocol/reservoir-kit/commit/c1cbf47c48066da8d2cbb50f5c40e5c3c192c8bf)
+
 ## [v1.9.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/c4d7d0a0ea018e41c7401f076d8faa14dd959471) (2023-11-29)
 
 * Sync api

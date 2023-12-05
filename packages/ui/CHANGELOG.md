@@ -1,4 +1,9 @@
 
+## [v1.21.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e5545f33e2a6a2866703ac3f54b8e5db05c85994) (2023-12-04)
+
+* Merge pull request #494 from reservoirprotocol/ted/grwth-3644-mint-modal [c1cbf47c](https://github.com/reservoirprotocol/reservoir-kit/commit/c1cbf47c48066da8d2cbb50f5c40e5c3c192c8bf)
+* Merge pull request #496 from reservoirprotocol/jaden/grwth-3632-wrong-explorer-link-for-zora-testnet [5ea5d4e7](https://github.com/reservoirprotocol/reservoir-kit/commit/5ea5d4e750baf090fab1dece078b784d63e50a08)
+
 ## [v1.20.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/5f88005cfdc068f39ced6fdc7eb8eac3f7017d2a) (2023-11-29)
 
 * EditBidModal & EditListingModal: respect 721c pricing constraints [e0f45670](https://github.com/reservoirprotocol/reservoir-kit/commit/e0f45670b7a81e65564c7a2e8d1840f1fe6825c4)
