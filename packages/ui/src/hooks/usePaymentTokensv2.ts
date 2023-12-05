@@ -195,7 +195,7 @@ export default function (options: {
 
     const paymentTokens = allPaymentTokens?.reduce(
       (tokens, token) => {
-        tokens[`${token.address}:${token.chainId}`] = {
+        tokens[`${token.address?.toLowerCase()}:${token.chainId}`] = {
           total: 0n,
           usdTotal: 0,
           currency: {
@@ -231,6 +231,7 @@ export default function (options: {
       }`
       const contractKey = `${pathItem.contract}` //todo: test with sweeping
       const contractKeyInsensitive = `${pathItem.contract?.toLowerCase()}`
+
       let assetKey = tokenKey
       let totalQuantity = 0
       let requiredQuantity = 0

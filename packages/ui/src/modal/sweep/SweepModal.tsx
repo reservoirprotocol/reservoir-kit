@@ -48,7 +48,7 @@ import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { TokenInfo } from '../TokenInfo'
 import { CollectionInfo } from '../CollectionInfo'
 import { PurchaseCheckout } from '../PurchaseCheckout'
-import { PaymentDetails } from '../PaymentDetails'
+import { PaymentDetails } from '../../common/PaymentDetails'
 import { Dialog } from '../../primitives/Dialog'
 
 export type SweepCallbackData = {
@@ -151,6 +151,7 @@ export function SweepModal({
         token,
         orders,
         totalIncludingFees,
+        averageUnitPrice,
         selectedTokens,
         feeOnTop,
         feeUsd,
@@ -202,21 +203,6 @@ export function SweepModal({
         }, [transactionError])
 
         const hasTokens = orders && orders.length > 0
-
-        const is1155 = collection?.contractKind === 'erc1155'
-
-        const cheapestToken = selectedTokens?.[0]
-        const cheapestTokenPrice =
-          cheapestToken?.currency?.toLowerCase() != paymentCurrency?.address
-            ? cheapestToken?.buyInQuote
-            : cheapestToken?.totalPrice
-
-        const mostExpensiveToken = selectedTokens?.[selectedTokens.length - 1]
-        const mostExpensiveTokenPrice =
-          mostExpensiveToken?.currency?.toLowerCase() !=
-          paymentCurrency?.address
-            ? mostExpensiveToken?.buyInQuote
-            : mostExpensiveToken?.totalPrice
 
         const maxQuantity = paymentCurrency?.maxItems
           ? paymentCurrency?.maxItems
@@ -367,46 +353,15 @@ export function SweepModal({
                           }}
                         />
                       </Flex>
-                      {itemAmount > 1 ? (
+                      {itemAmount > 1 && averageUnitPrice ? (
                         <Flex justify="end" css={{ gap: '$3' }}>
-                          {!is1155 ? (
-                            <>
-                              <Flex align="center" css={{ gap: '$2' }}>
-                                <Text style="subtitle3" color="subtle">
-                                  Price Range
-                                </Text>
-                                <FormatCryptoCurrency
-                                  chainId={chainId}
-                                  amount={cheapestTokenPrice}
-                                  address={paymentCurrency?.address}
-                                  decimals={paymentCurrency?.decimals}
-                                  symbol={paymentCurrency?.name}
-                                  maximumFractionDigits={2}
-                                />
-                                <Text style="subtitle3" color="subtle">
-                                  -
-                                </Text>
-                                <FormatCryptoCurrency
-                                  chainId={chainId}
-                                  amount={mostExpensiveTokenPrice}
-                                  address={paymentCurrency?.address}
-                                  decimals={paymentCurrency?.decimals}
-                                  symbol={paymentCurrency?.name}
-                                  maximumFractionDigits={2}
-                                />
-                              </Flex>
-                              <Text style="subtitle3" color="subtle">
-                                |
-                              </Text>
-                            </>
-                          ) : null}
                           <Flex align="center" css={{ gap: '$2' }}>
                             <Text style="subtitle3" color="subtle">
-                              Avg Price
+                              Avg Item Price
                             </Text>
                             <FormatCryptoCurrency
                               chainId={chainId}
-                              amount={totalIncludingFees / BigInt(itemAmount)}
+                              amount={averageUnitPrice}
                               address={paymentCurrency?.address}
                               decimals={paymentCurrency?.decimals}
                               symbol={paymentCurrency?.name}
@@ -507,26 +462,22 @@ export function SweepModal({
                           textStyle="body3"
                         />
                       </Flex>
-                      {paymentCurrency?.gasCost &&
-                        paymentCurrency?.gasCost > 0n && (
-                          <Flex align="center" css={{ mt: '$1' }}>
-                            <Text
-                              css={{ mr: '$3' }}
-                              color="error"
-                              style="body3"
-                            >
-                              Estimated Gas Cost
-                            </Text>
-                            <FormatCryptoCurrency
-                              chainId={chainId}
-                              amount={paymentCurrency?.gasCost}
-                              address={paymentCurrency?.address}
-                              decimals={paymentCurrency?.decimals}
-                              symbol={paymentCurrency?.symbol}
-                              textStyle="body3"
-                            />
-                          </Flex>
-                        )}
+                      {paymentCurrency?.networkFees &&
+                      paymentCurrency?.networkFees > 0n ? (
+                        <Flex align="center" css={{ mt: '$1' }}>
+                          <Text css={{ mr: '$3' }} color="error" style="body3">
+                            Estimated Gas Cost
+                          </Text>
+                          <FormatCryptoCurrency
+                            chainId={chainId}
+                            amount={paymentCurrency?.networkFees}
+                            address={paymentCurrency?.address}
+                            decimals={paymentCurrency?.decimals}
+                            symbol={paymentCurrency?.symbol}
+                            textStyle="body3"
+                          />
+                        </Flex>
+                      ) : null}
                       <Button
                         disabled={disableJumperLink}
                         onClick={() => {

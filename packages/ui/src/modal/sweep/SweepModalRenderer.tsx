@@ -11,7 +11,6 @@ import {
   useChainCurrency,
   useCollections,
   useCurrencyConversion,
-  usePaymentTokens,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
@@ -31,7 +30,7 @@ import {
   parseUnits,
   zeroAddress,
 } from 'viem'
-import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
+import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
 import {
@@ -76,6 +75,7 @@ export type ChildrenProps = {
   setPaymentCurrency: React.Dispatch<
     React.SetStateAction<EnhancedCurrency | undefined>
   >
+  averageUnitPrice: bigint
   chainCurrency: ReturnType<typeof useChainCurrency>
   paymentTokens: EnhancedCurrency[]
   totalIncludingFees: bigint
@@ -141,6 +141,7 @@ export const SweepModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<SweepModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
+  const [averageUnitPrice, setAverageUnitPrice] = useState(0n)
 
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
@@ -258,8 +259,6 @@ export const SweepModalRenderer: FC<Props> = ({
     let options: BuyTokenOptions = {
       partial: true,
       onlyPath: true,
-      currency: paymentCurrency?.address,
-      currencyChainId: paymentCurrency?.chainId,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -353,8 +352,6 @@ export const SweepModalRenderer: FC<Props> = ({
     collectionContract,
     collection?.id,
     tokenId,
-    paymentCurrency?.address,
-    paymentCurrency?.chainId,
     rendererChain?.paymentTokens,
     is1155,
   ])
@@ -380,90 +377,52 @@ export const SweepModalRenderer: FC<Props> = ({
     tokenId,
     is1155,
     collection,
-    paymentCurrency?.address,
+    paymentCurrency,
   ])
 
-  const calculateFees = useCallback(
-    (totalPrice: bigint) => {
-      let fees = 0n
+  useEffect(() => {
+    let totalFees = 0n
+
+    if (
+      paymentCurrency?.currencyTotalRaw &&
+      paymentCurrency.currencyTotalRaw > 0n
+    ) {
       if (feesOnTopBps && feesOnTopBps.length > 0) {
-        fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
+        const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (BigInt(fee) * totalPrice) / 10000n
+          return (
+            totalFees +
+            (BigInt(fee) * paymentCurrency.currencyTotalRaw!) / 10000n
+          )
         }, 0n)
+        totalFees += fees
+        setFeeOnTop(fees)
       } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
-        fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
+        const fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
           const atomicFee = BigInt(fee)
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
           const currencyFee = convertedAtomicFee / usdPriceRaw
-          const parsedFee = formatUnits(currencyFee, 0)
-          return totalFees + BigInt(parsedFee)
+          return totalFees + currencyFee
         }, 0n)
+        totalFees += fees
+        setFeeOnTop(fees)
+      } else {
+        setFeeOnTop(0n)
       }
 
-      return fees
-    },
-    [feesOnTopBps, feeOnTop, usdPriceRaw, feesOnTopUsd, paymentCurrency]
-  )
-
-  useEffect(() => {
-    let updatedTotal = 0n
-    let gasCost = 0n
-
-    // Sweep erc1155
-    if (is1155) {
-      let remainingQuantity = itemAmount
-
-      for (const order of orders) {
-        if (remainingQuantity <= 0) {
-          break
-        }
-        let orderQuantity = order?.quantity || 1
-        let orderPricePerItem = BigInt(
-          (order?.currency?.toLowerCase() !== paymentCurrency?.address
-            ? order?.buyInRawQuote
-            : order?.totalRawPrice) || 0
-        )
-
-        if (remainingQuantity >= orderQuantity) {
-          updatedTotal += orderPricePerItem * BigInt(orderQuantity)
-          remainingQuantity -= orderQuantity
-        } else {
-          let fractionalPrice = orderPricePerItem * BigInt(remainingQuantity)
-          updatedTotal += fractionalPrice
-          remainingQuantity = 0
-        }
-        gasCost += BigInt(order.gasCost || 0n)
-      }
+      setTotalIncludingFees(paymentCurrency.currencyTotalRaw + totalFees)
+      setAverageUnitPrice(paymentCurrency.currencyTotalRaw / BigInt(itemAmount))
+    } else {
+      setTotalIncludingFees(0n)
+      setAverageUnitPrice(0n)
     }
-    // Sweep erc721
-    else {
-      selectedTokens?.forEach((token) => {
-        updatedTotal += BigInt(
-          token?.currency?.toLowerCase() != paymentCurrency?.address
-            ? token?.buyInRawQuote || 0
-            : token?.totalRawPrice || 0
-        )
-        gasCost += BigInt(token.gasCost || 0n)
-      }, 0n)
-    }
-    const fees = calculateFees(updatedTotal)
-    setFeeOnTop(fees)
-    setTotalIncludingFees(updatedTotal + fees)
-  }, [
-    selectedTokens,
-    paymentCurrency,
-    feesOnTopBps,
-    feesOnTopUsd,
-    itemAmount,
-    orders,
-  ])
+  }, [paymentCurrency, feesOnTopBps, feesOnTopUsd, usdPriceRaw, itemAmount])
 
   // Set paymentCurrency to first paymentToken
   useEffect(() => {
-    if (paymentTokens[0] && !paymentCurrency) {
+    if (paymentTokens[0] && !paymentCurrency && fetchedInitialOrders) {
       setPaymentCurrency(paymentTokens[0])
     }
   }, [paymentTokens, paymentCurrency])
@@ -478,7 +437,7 @@ export const SweepModalRenderer: FC<Props> = ({
       paymentCurrency?.balance != undefined &&
       paymentCurrency?.currencyTotalRaw != undefined &&
       BigInt(paymentCurrency?.balance) <
-        paymentCurrency?.currencyTotalRaw + (paymentCurrency?.gasCost || 0n)
+        paymentCurrency?.currencyTotalRaw + (paymentCurrency?.networkFees || 0n)
     ) {
       setHasEnoughCurrency(false)
     } else {
@@ -732,6 +691,7 @@ export const SweepModalRenderer: FC<Props> = ({
         chainCurrency,
         paymentTokens,
         totalIncludingFees,
+        averageUnitPrice,
         feeOnTop,
         feeUsd,
         usdPrice,
