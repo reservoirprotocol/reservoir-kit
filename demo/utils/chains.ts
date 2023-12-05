@@ -109,6 +109,12 @@ export default [
       symbol: 'Base ETH',
       name: 'Base ETH',
       decimals: 18,
+    },{
+      chainId: 10,
+      address: zeroAddress,
+      symbol: 'Optimism ETH',
+      name: 'Optimism ETH',
+      decimals: 18,
     }]
   },
   {
