@@ -195,7 +195,7 @@ export default function (options: {
 
     const paymentTokens = allPaymentTokens?.reduce(
       (tokens, token) => {
-        tokens[`${token.address}:${token.chainId}`] = {
+        tokens[`${token.address.toLowerCase()}:${token.chainId}`] = {
           total: 0n,
           usdTotal: 0,
           currency: {

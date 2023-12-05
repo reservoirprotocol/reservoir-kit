@@ -175,7 +175,7 @@ export const BuyModalRenderer: FC<Props> = ({
   })
 
   const paymentCurrency = paymentTokens?.find(
-    (paymentToken: any) =>
+    (paymentToken) =>
       paymentToken?.address === _paymentCurrency?.address &&
       paymentToken?.chainId === _paymentCurrency?.chainId
   )
@@ -252,8 +252,6 @@ export const BuyModalRenderer: FC<Props> = ({
     const options: BuyTokenOptions = {
       onlyPath: true,
       partial: true,
-      currency: paymentCurrency?.address,
-      currencyChainId: paymentCurrency?.chainId,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -331,10 +329,10 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [fetchPath, token, orderId])
 
   useEffect(() => {
-    if (paymentTokens[0] && !paymentCurrency) {
+    if (paymentTokens[0] && !paymentCurrency && path) {
       setPaymentCurrency(paymentTokens[0])
     }
-  }, [paymentTokens, paymentCurrency])
+  }, [paymentTokens, paymentCurrency, path])
 
   const buyToken = useCallback(async () => {
     if (!wallet) {
@@ -571,7 +569,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [
     feesOnTopBps,
     feesOnTopUsd,
-    usdPrice,
+    usdPriceRaw,
     feeOnTop,
     quantity,
     paymentCurrency,
