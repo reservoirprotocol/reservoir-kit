@@ -12,9 +12,6 @@ const parseCommit = (commit) => {
     subject.includes('wip:') ||
     subject.includes("Merge branch 'main'")
 
-  if (subject.includes('Merge pull request')) {
-    console.log(subject)
-  }
   return {
     subject: subject,
     date: pieces[1],
