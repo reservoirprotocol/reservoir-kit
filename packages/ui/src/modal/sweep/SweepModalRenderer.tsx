@@ -233,7 +233,7 @@ export const SweepModalRenderer: FC<Props> = ({
   })
 
   const paymentCurrency = paymentTokens?.find(
-    (paymentToken: any) =>
+    (paymentToken: EnhancedCurrency) =>
       paymentToken?.address === _paymentCurrency?.address &&
       paymentToken?.chainId === _paymentCurrency?.chainId
   )
