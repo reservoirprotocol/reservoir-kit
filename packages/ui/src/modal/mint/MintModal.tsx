@@ -43,7 +43,7 @@ import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { TokenInfo } from '../TokenInfo'
 import { CollectionInfo } from '../CollectionInfo'
 import { PurchaseCheckout } from '../PurchaseCheckout'
-import { PaymentDetails } from '../PaymentDetails'
+import { PaymentDetails } from '../../common/PaymentDetails'
 
 export type MintCallbackData = {
   collectionId?: string
@@ -134,11 +134,9 @@ export function MintModal({
         collection,
         token,
         orders,
-        total,
         totalIncludingFees,
         feeOnTop,
         feeUsd,
-        gasCost,
         paymentTokens,
         paymentCurrency,
         setPaymentCurrency,
@@ -427,21 +425,22 @@ export function MintModal({
                           textStyle="body3"
                         />
                       </Flex>
-                      {gasCost > 0n && (
+                      {paymentCurrency?.networkFees &&
+                      paymentCurrency?.networkFees > 0n ? (
                         <Flex align="center" css={{ mt: '$1' }}>
                           <Text css={{ mr: '$3' }} color="error" style="body3">
                             Estimated Gas Cost
                           </Text>
                           <FormatCryptoCurrency
                             chainId={chainId}
-                            amount={gasCost}
+                            amount={paymentCurrency?.networkFees}
                             address={paymentCurrency?.address}
                             decimals={paymentCurrency?.decimals}
                             symbol={paymentCurrency?.symbol}
                             textStyle="body3"
                           />
                         </Flex>
-                      )}
+                      ) : null}
                       <Button
                         disabled={disableJumperLink}
                         onClick={() => {

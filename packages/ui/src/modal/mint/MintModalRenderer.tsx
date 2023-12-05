@@ -4,9 +4,16 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
-import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
+import {
+  Address,
+  WalletClient,
+  formatUnits,
+  parseUnits,
+  zeroAddress,
+} from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import {
@@ -22,14 +29,15 @@ import {
 import {
   useChainCurrency,
   useCollections,
+  useCurrencyConversion,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
 import * as allChains from 'viem/chains'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import usePaymentTokens, {
+import usePaymentTokensv2, {
   EnhancedCurrency,
-} from '../../hooks/usePaymentTokens'
+} from '../../hooks/usePaymentTokensv2'
 
 export enum MintStep {
   Idle,
@@ -65,9 +73,7 @@ type ChildrenProps = {
   >
   address?: string
   balance?: bigint
-  total: bigint
   totalIncludingFees: bigint
-  gasCost: bigint
   feeOnTop: bigint
   feeUsd: string
   usdPrice: number
@@ -124,9 +130,7 @@ export const MintModalRenderer: FC<Props> = ({
   const [itemAmount, setItemAmount] = useState<number>(1)
   const [maxItemAmount, setMaxItemAmount] = useState<number>(1)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [total, setTotal] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
-  const [gasCost, setGasCost] = useState(0n)
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
 
@@ -192,16 +196,27 @@ export const MintModalRenderer: FC<Props> = ({
     EnhancedCurrency | undefined
   >(undefined)
 
-  const paymentTokens = usePaymentTokens(
+  const paymentKey = useMemo(() => {
+    if (token) {
+      return token
+    } else if (tokenData?.token?.tokenId && collectionContract) {
+      return `${collectionContract}:${tokenData?.token?.tokenId}`
+    } else if (collectionId) {
+      return collectionId
+    } else return collectionContract
+  }, [token, collectionId, , collectionContract, tokenData?.token?.tokenId])
+
+  const paymentTokens = usePaymentTokensv2({
     open,
-    address as Address,
-    _paymentCurrency ?? chainCurrency,
-    totalIncludingFees,
-    rendererChain?.id,
-    true,
-    false,
-    chainCurrency
-  )
+    address: address as Address,
+    quantityToken: {
+      [`${paymentKey}`]: itemAmount,
+    },
+    path: orders,
+    nativeOnly: false,
+    chainId: rendererChain?.id,
+    crossChainDisabled: false,
+  })
 
   const paymentCurrency = paymentTokens?.find(
     (paymentToken) =>
@@ -215,8 +230,14 @@ export const MintModalRenderer: FC<Props> = ({
       : orders?.[0]?.totalRawPrice) || 0
   )
 
+  const { data: paymentCurrencyConversion } = useCurrencyConversion(
+    paymentCurrency?.chainId,
+    paymentCurrency?.address,
+    'usd'
+  )
+
   const usdPrice = paymentCurrency?.usdPrice || 0
-  const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
+  const usdPriceRaw = parseUnits(`${paymentCurrencyConversion?.usd || 0}`, 6)
   const feeUsd = formatUnits(
     feeOnTop * usdPriceRaw,
     (paymentCurrency?.decimals || 18) + 6
@@ -231,7 +252,15 @@ export const MintModalRenderer: FC<Props> = ({
     let options: MintTokenOptions = {
       partial: true,
       onlyPath: true,
-      currencyChainId: paymentCurrency?.chainId,
+    }
+
+    if (
+      rendererChain?.paymentTokens &&
+      rendererChain.paymentTokens.length > 0
+    ) {
+      options.alternativeCurrencies = rendererChain?.paymentTokens?.map(
+        (token) => `${token.address}:${token.chainId}`
+      )
     }
 
     client?.actions
@@ -247,6 +276,7 @@ export const MintModalRenderer: FC<Props> = ({
                     tokenId ?? tokenData?.token?.tokenId
                   }`
                 : undefined,
+            quantity: 1000,
           },
         ],
         expectedPrice: undefined,
@@ -308,8 +338,6 @@ export const MintModalRenderer: FC<Props> = ({
     tokenId,
     collection,
     tokenData?.token?.tokenId,
-    paymentCurrency?.address,
-    paymentCurrency?.chainId,
     is1155,
   ])
 
@@ -347,8 +375,7 @@ export const MintModalRenderer: FC<Props> = ({
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
           const currencyFee = convertedAtomicFee / usdPriceRaw
-          const parsedFee = formatUnits(currencyFee, 0)
-          return totalFees + BigInt(parsedFee)
+          return totalFees + currencyFee
         }, 0n)
       }
 
@@ -395,9 +422,7 @@ export const MintModalRenderer: FC<Props> = ({
 
     const fees = calculateFees(updatedTotal)
     setFeeOnTop(fees)
-    setTotal(updatedTotal)
     setTotalIncludingFees(updatedTotal + fees)
-    setGasCost(gasCost)
   }, [paymentCurrency, feesOnTopBps, feesOnTopUsd, itemAmount, orders])
 
   const addFundsLink = paymentCurrency?.address
@@ -410,20 +435,24 @@ export const MintModalRenderer: FC<Props> = ({
       paymentCurrency?.balance != undefined &&
       paymentCurrency?.currencyTotalRaw != undefined &&
       BigInt(paymentCurrency?.balance) <
-        paymentCurrency?.currencyTotalRaw + gasCost
+        paymentCurrency?.currencyTotalRaw + (paymentCurrency?.networkFees || 0n)
     ) {
       setHasEnoughCurrency(false)
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [total, paymentCurrency, gasCost])
+  }, [
+    paymentCurrency?.currencyTotalRaw,
+    paymentCurrency?.balance,
+    paymentCurrency?.networkFees,
+  ])
 
   // Set initial payment currency
   useEffect(() => {
-    if (paymentTokens[0] && !paymentCurrency) {
+    if (paymentTokens[0] && !paymentCurrency && fetchedInitialOrders) {
       setPaymentCurrency(paymentTokens[0])
     }
-  }, [paymentTokens, paymentCurrency])
+  }, [paymentTokens, paymentCurrency, fetchedInitialOrders])
 
   // Reset state on close
   useEffect(() => {
@@ -527,7 +556,7 @@ export const MintModalRenderer: FC<Props> = ({
         ],
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            raw: total,
+            raw: paymentCurrency?.currencyTotalRaw,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },
@@ -600,7 +629,6 @@ export const MintModalRenderer: FC<Props> = ({
     client,
     wallet,
     address,
-    total,
     totalIncludingFees,
     wagmiChain,
     rendererChain,
@@ -612,6 +640,7 @@ export const MintModalRenderer: FC<Props> = ({
     itemAmount,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
+    paymentCurrency?.currencyTotalRaw,
     tokenData?.token?.tokenId,
     collection?.id,
     collectionContract,
@@ -628,11 +657,9 @@ export const MintModalRenderer: FC<Props> = ({
         collection,
         token: tokenData,
         orders,
-        total,
         totalIncludingFees,
         feeOnTop,
         feeUsd,
-        gasCost,
         paymentTokens,
         paymentCurrency,
         setPaymentCurrency,

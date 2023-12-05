@@ -425,7 +425,7 @@ export const SweepModalRenderer: FC<Props> = ({
     if (paymentTokens[0] && !paymentCurrency && fetchedInitialOrders) {
       setPaymentCurrency(paymentTokens[0])
     }
-  }, [paymentTokens, paymentCurrency])
+  }, [paymentTokens, paymentCurrency, fetchedInitialOrders])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
@@ -443,7 +443,11 @@ export const SweepModalRenderer: FC<Props> = ({
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [totalIncludingFees, paymentCurrency])
+  }, [
+    paymentCurrency?.currencyTotalRaw,
+    paymentCurrency?.balance,
+    paymentCurrency?.networkFees,
+  ])
 
   useEffect(() => {
     let updatedTokens = []
