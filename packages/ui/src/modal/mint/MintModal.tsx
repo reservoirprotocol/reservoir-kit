@@ -269,7 +269,7 @@ export function MintModal({
                   </Box>
                   {!collection && !fetchMintPathError ? (
                     <Text style="h6" css={{ textAlign: 'center' }}>
-                      Oops. Collection not found.
+                      Collection not found.
                     </Text>
                   ) : null}
 
