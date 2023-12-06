@@ -11,6 +11,7 @@ const parseCommit = (commit) => {
     subject.includes('chore:') ||
     subject.includes('wip:') ||
     subject.includes("Merge branch 'main'")
+
   return {
     subject: subject,
     date: pieces[1],
@@ -63,11 +64,12 @@ fs.readFile(repo + '/CHANGELOG.md', 'utf8', async (err, data) => {
             ''
           )
           const versionSuffix = package === 'ui' ? 'UI' : 'SDK'
-          changelog += `\n## [${version}-${versionSuffix}](${commitLink}) (${
-            date.split(' ')[0]
-          })\n`
-        } else {
+          changelog += `\n## [${version}-${versionSuffix}](${commitLink}) (${date.split(' ')[0]
+            })\n`
+        } else if (subject.includes('Merge pull request')) {
           changelog += `\n* ${subject} [${abbrevHash}](${commitLink})`
+        } else {
+          return changelog
         }
 
         return `${changelog}`
