@@ -4,7 +4,7 @@ import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useContext, useMemo } from 'react'
 import { useReservoirClient, useSolverCapacities } from '.'
 import { BuyPath, ReservoirChain } from '@reservoir0x/reservoir-sdk'
-import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
+import { PaymentToken } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
 import { Currency } from 'packages/ui/dist'
@@ -280,8 +280,8 @@ export default function (options: {
         }
       })
     })
-
     return Object.values(paymentTokens)
+      .filter((token) => token.total > 0n)
       .map((token) => {
         const currency = token.currency
         const currencyTotalFormatted = token.total

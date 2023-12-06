@@ -1,6 +1,6 @@
 import { ReservoirChain, paths } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr/immutable'
-import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
+import { PaymentToken } from '@reservoir0x/reservoir-sdk'
 
 type CurrencyConversionResponse =
   paths['/currencies/conversion/v1']['get']['responses']['200']['schema']

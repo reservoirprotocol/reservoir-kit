@@ -175,7 +175,7 @@ export const BuyModalRenderer: FC<Props> = ({
   })
 
   const paymentCurrency = paymentTokens?.find(
-    (paymentToken: any) =>
+    (paymentToken) =>
       paymentToken?.address === _paymentCurrency?.address &&
       paymentToken?.chainId === _paymentCurrency?.chainId
   )
@@ -184,10 +184,7 @@ export const BuyModalRenderer: FC<Props> = ({
     open && token
       ? {
           tokens: [token],
-          includeLastSale: true,
-          includeQuantity: true,
           normalizeRoyalties,
-          displayCurrency: paymentCurrency?.address,
         }
       : false,
     {
@@ -242,7 +239,7 @@ export const BuyModalRenderer: FC<Props> = ({
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
 
   const fetchPath = useCallback(() => {
-    if (!open || !client || (!token && !orderId)) {
+    if (!open || !client || !tokenData || !token) {
       setPath(undefined)
       return
     }
@@ -252,8 +249,6 @@ export const BuyModalRenderer: FC<Props> = ({
     const options: BuyTokenOptions = {
       onlyPath: true,
       partial: true,
-      currency: paymentCurrency?.address,
-      currencyChainId: paymentCurrency?.chainId,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -278,19 +273,14 @@ export const BuyModalRenderer: FC<Props> = ({
       items.orderId = orderId
     } else {
       items.token = token
+      items.quantity = tokenData.token?.kind === 'erc1155' ? 500 : 1
     }
 
     client.actions
       .buyToken({
         options,
         chainId: rendererChain?.id,
-        items: [
-          {
-            token,
-            quantity: 1000,
-            fillType: 'trade',
-          },
-        ],
+        items: [items],
         wallet: {
           address: async () => {
             return address || zeroAddress
@@ -317,6 +307,7 @@ export const BuyModalRenderer: FC<Props> = ({
     open,
     client,
     address,
+    tokenData,
     token,
     orderId,
     normalizeRoyalties,
@@ -331,10 +322,10 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [fetchPath, token, orderId])
 
   useEffect(() => {
-    if (paymentTokens[0] && !paymentCurrency) {
+    if (paymentTokens[0] && !paymentCurrency && path) {
       setPaymentCurrency(paymentTokens[0])
     }
-  }, [paymentTokens, paymentCurrency])
+  }, [paymentTokens, paymentCurrency, path])
 
   const buyToken = useCallback(async () => {
     if (!wallet) {
@@ -571,7 +562,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [
     feesOnTopBps,
     feesOnTopUsd,
-    usdPrice,
+    usdPriceRaw,
     feeOnTop,
     quantity,
     paymentCurrency,
