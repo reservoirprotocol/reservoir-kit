@@ -7,8 +7,7 @@ import {
   useCurrencyConversions,
   useSolverCapacities,
 } from '.'
-import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
-import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
+import { ReservoirChain, PaymentToken } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
 

@@ -184,10 +184,7 @@ export const BuyModalRenderer: FC<Props> = ({
     open && token
       ? {
           tokens: [token],
-          includeLastSale: true,
-          includeQuantity: true,
           normalizeRoyalties,
-          displayCurrency: paymentCurrency?.address,
         }
       : false,
     {
