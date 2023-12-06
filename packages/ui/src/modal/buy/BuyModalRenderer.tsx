@@ -239,7 +239,7 @@ export const BuyModalRenderer: FC<Props> = ({
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
 
   const fetchPath = useCallback(() => {
-    if (!open || !client || (!token && !orderId)) {
+    if (!open || !client || !tokenData || !token) {
       setPath(undefined)
       return
     }
@@ -273,19 +273,14 @@ export const BuyModalRenderer: FC<Props> = ({
       items.orderId = orderId
     } else {
       items.token = token
+      items.quantity = tokenData.token?.kind === 'erc1155' ? 500 : 1
     }
 
     client.actions
       .buyToken({
         options,
         chainId: rendererChain?.id,
-        items: [
-          {
-            token,
-            quantity: 1000,
-            fillType: 'trade',
-          },
-        ],
+        items: [items],
         wallet: {
           address: async () => {
             return address || zeroAddress
@@ -312,6 +307,7 @@ export const BuyModalRenderer: FC<Props> = ({
     open,
     client,
     address,
+    tokenData,
     token,
     orderId,
     normalizeRoyalties,

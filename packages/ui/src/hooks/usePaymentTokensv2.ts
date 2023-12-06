@@ -279,8 +279,8 @@ export default function (options: {
         }
       })
     })
-
     return Object.values(paymentTokens)
+      .filter((token) => token.total > 0n)
       .map((token) => {
         const currency = token.currency
         const currencyTotalFormatted = token.total
