@@ -1,12 +1,12 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Flex, Box, FormatWrappedCurrency, Text } from '../../primitives'
-import TokenStatsHeader from './TokenStatsHeader'
 import { useTokens, useCollections } from '../../hooks'
 import { BidData } from './BidModalRenderer'
 import { useTimeSince } from '../../hooks'
 import SelectedAttribute from './SelectedAttribute'
 import { formatEther } from 'viem'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import TokenInfo from './TokenInfo'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
@@ -42,7 +42,7 @@ const TransactionBidDetails: FC<Props> = ({
         p: '$4',
       }}
     >
-      <TokenStatsHeader collection={collection} token={token} chain={chain} />
+      <TokenInfo collection={collection} token={token} chain={chain} />
 
       <Box
         css={{
