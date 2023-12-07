@@ -259,9 +259,13 @@ export const BuyModalRenderer: FC<Props> = ({
       rendererChain?.paymentTokens &&
       rendererChain.paymentTokens.length > 0
     ) {
-      options.alternativeCurrencies = rendererChain?.paymentTokens?.map(
-        (token) => `${token.address}:${token.chainId}`
-      )
+      options.alternativeCurrencies = rendererChain?.paymentTokens
+        .filter((token) =>
+          tokenData.token?.kind === 'erc1155'
+            ? token.chainId === rendererChain.id
+            : true
+        )
+        .map((token) => `${token.address}:${token.chainId}`)
     }
 
     let items: Parameters<ReservoirClientActions['buyToken']>['0']['items'][0] =
@@ -273,7 +277,7 @@ export const BuyModalRenderer: FC<Props> = ({
       items.orderId = orderId
     } else {
       items.token = token
-      items.quantity = tokenData.token?.kind === 'erc1155' ? 500 : 1
+      items.quantity = tokenData.token?.kind === 'erc1155' ? 1000 : 1
     }
 
     client.actions
@@ -605,7 +609,10 @@ export const BuyModalRenderer: FC<Props> = ({
     <>
       {children({
         loading:
-          !token || isFetchingPath || !path || !(paymentTokens.length > 0),
+          !token ||
+          isFetchingPath ||
+          !path ||
+          (!(paymentTokens.length > 0) && path.length > 0),
         tokenData,
         collection,
         quantityAvailable: quantityRemaining || 1,
