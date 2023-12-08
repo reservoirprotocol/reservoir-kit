@@ -26,11 +26,15 @@ type ExpectedQuote = {
   currencyDecimals: number
 }
 
+const DEFAULT_QUOTE_TOLERANCE = 0.00001
+const SOLVER_QUOTE_TOLERANCE = 0.001
+
 function checkExpectedPrice(
   quote: ExpectedQuote,
   isSell: boolean,
   isBuy: boolean,
-  expectedPrice?: ExpectedPrice
+  expectedPrice?: ExpectedPrice,
+  isSolverQuote?: boolean
 ) {
   const baseError = {
     type: 'price mismatch',
@@ -44,8 +48,14 @@ function checkExpectedPrice(
     }
     return
   }
-  const rawQuoteThreshold =
+  let rawQuoteThreshold =
     BigInt(10 ** (quote?.currencyDecimals || 18)) / BigInt(100000)
+  let quoteTolerance = DEFAULT_QUOTE_TOLERANCE
+  if (isSolverQuote) {
+    quoteTolerance = SOLVER_QUOTE_TOLERANCE
+    rawQuoteThreshold =
+      BigInt(10 ** (quote?.currencyDecimals || 18)) / BigInt(100)
+  }
 
   // Check if the user is selling
   if (isSell) {
@@ -60,7 +70,10 @@ function checkExpectedPrice(
         }
       }
     } else if (expectedPrice.amount) {
-      if (Number((quote.amount - expectedPrice.amount).toFixed(6)) < -0.00001) {
+      if (
+        Number((quote.amount - expectedPrice.amount).toFixed(6)) <
+        -1 * quoteTolerance
+      ) {
         error = {
           ...baseError,
           message: `Attention: the offer price of this token is now ${quote.amount}`,
@@ -82,7 +95,10 @@ function checkExpectedPrice(
         }
       }
     } else if (expectedPrice.amount) {
-      if (Number((quote.amount - expectedPrice.amount).toFixed(6)) > 0.00001) {
+      if (
+        Number((quote.amount - expectedPrice.amount).toFixed(6)) >
+        quoteTolerance
+      ) {
         error = {
           ...baseError,
           message: `Attention: the total price is now ${quote}`,
@@ -229,13 +245,25 @@ export async function executeSteps(
         {} as Record<string, ExpectedQuote>
       )
       const quoteEntries = Object.entries(quotes)
+
+      const isSolverQuote =
+        request.data.executionMethod === 'seaport-intent' ||
+        json.steps.find((step) =>
+          step.items?.find(
+            (stepItem) =>
+              stepItem?.data?.chainId &&
+              stepItem?.data?.chainId != reservoirChain?.id
+          )
+        ) !== undefined
+
       for (let i = 0; i < quoteEntries.length; i++) {
         const [currency, quote] = quoteEntries[i]
         error = checkExpectedPrice(
           quote,
           isSell,
           isBuy || isMint,
-          expectedPrice[currency]
+          expectedPrice[currency],
+          isSolverQuote
         )
         if (error) {
           break
