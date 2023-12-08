@@ -229,7 +229,7 @@ export const SweepModalRenderer: FC<Props> = ({
     path: orders,
     nativeOnly: false,
     chainId: rendererChain?.id,
-    crossChainDisabled: false,
+    crossChainDisabled: true,
   })
 
   const paymentCurrency = paymentTokens?.find(
@@ -269,9 +269,9 @@ export const SweepModalRenderer: FC<Props> = ({
       rendererChain?.paymentTokens &&
       rendererChain.paymentTokens.length > 0
     ) {
-      options.alternativeCurrencies = rendererChain?.paymentTokens?.map(
-        (token) => `${token.address}:${token.chainId}`
-      )
+      options.alternativeCurrencies = rendererChain?.paymentTokens
+        .filter((token) => token.chainId === rendererChain.id)
+        .map((token) => `${token.address}:${token.chainId}`)
     }
 
     client?.actions
@@ -369,16 +369,7 @@ export const SweepModalRenderer: FC<Props> = ({
       const intervalId = setInterval(fetchBuyPathIfIdle, 60000) // Poll buy api every 1 minute
       return () => clearInterval(intervalId)
     }
-  }, [
-    client,
-    wallet,
-    open,
-    fetchBuyPathIfIdle,
-    tokenId,
-    is1155,
-    collection,
-    paymentCurrency,
-  ])
+  }, [client, wallet, open, fetchBuyPathIfIdle, tokenId, is1155, collection])
 
   useEffect(() => {
     let totalFees = 0n
