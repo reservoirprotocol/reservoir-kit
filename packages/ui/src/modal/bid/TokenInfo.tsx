@@ -12,14 +12,16 @@ import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import { CSS } from '@stitches/react'
+import { Trait } from './BidModalRenderer'
 
 type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   chain?: ReservoirChain | null
-  price?: string
+  price?: number
   currency?: Currency
   quantity?: number
+  trait?: Trait
   expirationOption?: ExpirationOption
   containerCss?: CSS
 }
@@ -31,6 +33,7 @@ const TokenInfo: FC<Props> = ({
   price,
   currency,
   quantity,
+  trait,
   expirationOption,
   containerCss,
 }) => {
@@ -41,6 +44,10 @@ const TokenInfo: FC<Props> = ({
 
   const floorAsk = token?.market?.floorAsk ?? collection?.floorAsk
   const topBid = token?.market?.topBid ?? collection?.topBid
+
+  const tokenName = token?.token?.tokenId
+    ? `#${token?.token?.tokenId}`
+    : token?.token?.name
 
   return (
     <Flex
@@ -56,17 +63,15 @@ const TokenInfo: FC<Props> = ({
         />
         <Flex direction="column" css={{ gap: '$1', overflow: 'hidden' }}>
           <Text style="h6" ellipsify>
-            {token?.token?.tokenId
-              ? `#${token?.token?.tokenId}`
-              : token?.token?.name}
+            {token ? tokenName : collection?.name}
           </Text>
           <Flex align="center" css={{ gap: '$1' }}>
             <Text style="subtitle2" color="subtle" ellipsify>
-              {collection?.name}
+              {token ? collection?.name : null}
             </Text>
             {chain && !expirationOption ? (
               <>
-                <Divider direction="vertical" />
+                {token ? <Divider direction="vertical" /> : null}
                 <ChainIcon chainId={chain.id} height={12} />
                 <Text style="subtitle2" color="subtle" ellipsify>
                   {chain.name}
@@ -74,28 +79,45 @@ const TokenInfo: FC<Props> = ({
               </>
             ) : null}
           </Flex>
-          {quantity && quantity > 1 ? (
-            <Flex
-              css={{
-                width: 'max-content',
-                backgroundColor: '$neutralBg',
-                borderRadius: 4,
-                py: '$1',
-                px: '$2',
-              }}
-            >
-              <Text style="body3" color="subtle" ellipsify>
-                {quantity} items
-              </Text>
-            </Flex>
-          ) : null}
+          <Flex css={{ gap: '$1' }}>
+            {trait ? (
+              <Flex
+                css={{
+                  width: 'max-content',
+                  backgroundColor: '$neutralBg',
+                  borderRadius: 4,
+                  py: '$1',
+                  px: '$2',
+                }}
+              >
+                <Text style="body3" color="subtle" ellipsify>
+                  {trait?.key}: {trait?.value}
+                </Text>
+              </Flex>
+            ) : null}
+            {quantity && quantity > 1 ? (
+              <Flex
+                css={{
+                  width: 'max-content',
+                  backgroundColor: '$neutralBg',
+                  borderRadius: 4,
+                  py: '$1',
+                  px: '$2',
+                }}
+              >
+                <Text style="body3" color="subtle" ellipsify>
+                  {quantity} items
+                </Text>
+              </Flex>
+            ) : null}
+          </Flex>
         </Flex>
       </Flex>
 
       {!price ? (
         <Flex align="center" css={{ gap: '$2', flexShrink: 0 }}>
           {floorAsk?.price ? (
-            <Flex>
+            <Flex css={{ gap: '$1' }}>
               <Text style="subtitle2" color="subtle">
                 Floor Price
               </Text>
@@ -108,9 +130,11 @@ const TokenInfo: FC<Props> = ({
               />
             </Flex>
           ) : null}
-          {floorAsk?.price && topBid?.price ? <Divider /> : null}
+          {floorAsk?.price && topBid?.price ? (
+            <Divider direction="vertical" />
+          ) : null}
           {topBid?.price ? (
-            <Flex>
+            <Flex css={{ gap: '$1' }}>
               <Text style="subtitle2" color="subtle">
                 Best Offer
               </Text>

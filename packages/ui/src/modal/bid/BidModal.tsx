@@ -43,9 +43,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import Flatpickr from 'react-flatpickr'
 import TransactionProgress from '../TransactionProgress'
-import ProgressBar from '../ProgressBar'
 import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
-import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
@@ -55,7 +53,7 @@ import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import QuantitySelector from '../QuantitySelector'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { WalletClient, formatUnits } from 'viem'
+import { WalletClient, formatUnits, zeroAddress } from 'viem'
 import { formatNumber } from '../../lib/numbers'
 import { Dialog } from '../../primitives/Dialog'
 
@@ -351,6 +349,51 @@ export function BidModal({
 
         const canPurchase = bidAmountPerUnit !== '' && withinPricingBounds
 
+        const topBidPrice =
+          token?.market?.topBid?.price ?? collection?.topBid?.price
+        const decimalTopBidPrice = topBidPrice?.amount?.decimal
+        const nativeTopBidPrice = topBidPrice?.amount?.native
+        const usdTopBidPrice = topBidPrice?.amount?.usd
+        const defaultCurrency = currencies?.find(
+          (currency) => currency?.contract === zeroAddress
+        )
+
+        const topOfferButtonEnabled =
+          (currency?.contract?.toLowerCase() ===
+            topBidPrice?.currency?.contract?.toLowerCase() &&
+            decimalTopBidPrice) ||
+          (currency.symbol === 'USDC' && usdTopBidPrice) ||
+          (nativeTopBidPrice && currency.contract === zeroAddress) ||
+          (nativeTopBidPrice && defaultCurrency)
+
+        const handleSetBestOffer = () => {
+          // If currency matches top bid currency, use decimal floor price
+          if (
+            currency.contract?.toLowerCase() ===
+              topBidPrice?.currency?.contract?.toLowerCase() &&
+            decimalTopBidPrice
+          ) {
+            setBidAmountPerUnit(decimalTopBidPrice.toString())
+          }
+
+          // If currency is USDC, use usd floor price
+          else if (currency.symbol === 'USDC' && usdTopBidPrice) {
+            setBidAmountPerUnit(usdTopBidPrice?.toString())
+          } else if (nativeTopBidPrice) {
+            // If currency is native currency, use native floor price
+            if (currency.contract === zeroAddress) {
+              setBidAmountPerUnit(nativeTopBidPrice.toString())
+            }
+            // Fallback to default currency if it exists
+            else {
+              if (defaultCurrency) {
+                setCurrency(defaultCurrency)
+                setBidAmountPerUnit(nativeTopBidPrice.toString())
+              }
+            }
+          }
+        }
+
         return (
           <Modal
             trigger={trigger}
@@ -478,6 +521,22 @@ export function BidModal({
                           },
                         }}
                       />
+                      {topOfferButtonEnabled ? (
+                        <Button
+                          color="secondary"
+                          size="none"
+                          css={{
+                            height: 44,
+                            px: '$4',
+                            borderRadius: 8,
+                            fontWeight: 500,
+                            flexShrink: 0,
+                          }}
+                          onClick={handleSetBestOffer}
+                        >
+                          Best Offer
+                        </Button>
+                      ) : null}
                     </Flex>
 
                     {totalBidAmount !== 0 && !withinPricingBounds && (
@@ -500,14 +559,6 @@ export function BidModal({
                       !tokenId &&
                       traitBidSupported && (
                         <>
-                          <Text
-                            as={Box}
-                            css={{ mb: '$2' }}
-                            style="tiny"
-                            color="subtle"
-                          >
-                            Attributes
-                          </Text>
                           <Popover.Root
                             open={attributeSelectorOpen}
                             onOpenChange={
@@ -517,81 +568,82 @@ export function BidModal({
                             }
                           >
                             <Popover.Trigger asChild>
-                              <PseudoInput>
-                                <Flex
-                                  justify="between"
-                                  css={{
-                                    gap: '$2',
-                                    alignItems: 'center',
-                                    color: '$neutralText',
-                                  }}
-                                >
-                                  {trait ? (
-                                    <>
-                                      <Box
-                                        css={{
-                                          maxWidth: 385,
-                                          overflow: 'hidden',
-                                          textOverflow: 'ellipsis',
-                                          whiteSpace: 'nowrap',
-                                        }}
-                                      >
-                                        <Text color="accent" style="subtitle1">
-                                          {trait?.key}:{' '}
-                                        </Text>
-                                        <Text style="subtitle1">
-                                          {trait?.value}
-                                        </Text>
-                                      </Box>
-                                      <Flex
-                                        css={{
-                                          alignItems: 'center',
-                                          gap: '$2',
-                                        }}
-                                      >
-                                        {trait?.floorAskPrice && (
-                                          <Box css={{ flex: 'none' }}>
-                                            <FormatCryptoCurrency
-                                              amount={trait?.floorAskPrice}
-                                              maximumFractionDigits={2}
-                                              logoWidth={11}
-                                            />
-                                          </Box>
-                                        )}
-                                        <FontAwesomeIcon
-                                          style={{
-                                            cursor: 'pointer',
-                                          }}
-                                          onClick={(e) => {
-                                            e.preventDefault()
-                                            setTrait(undefined)
-                                          }}
-                                          icon={faClose}
-                                          width={16}
-                                          height={16}
-                                        />
-                                      </Flex>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Text
-                                        css={{
-                                          color: '$neutralText',
-                                        }}
-                                      >
-                                        All Attributes
+                              {trait ? (
+                                <PseudoInput css={{ py: '$3' }}>
+                                  <Flex
+                                    justify="between"
+                                    css={{
+                                      gap: '$2',
+                                      alignItems: 'center',
+                                      color: '$neutralText',
+                                    }}
+                                  >
+                                    <Box
+                                      css={{
+                                        maxWidth: 385,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      <Text color="accent" style="subtitle1">
+                                        {trait?.key}:{' '}
                                       </Text>
+                                      <Text style="subtitle1">
+                                        {trait?.value}
+                                      </Text>
+                                    </Box>
+                                    <Flex
+                                      css={{
+                                        alignItems: 'center',
+                                        gap: '$2',
+                                      }}
+                                    >
+                                      {trait?.floorAskPrice && (
+                                        <Box css={{ flex: 'none' }}>
+                                          <FormatCryptoCurrency
+                                            amount={trait?.floorAskPrice}
+                                            maximumFractionDigits={2}
+                                            logoWidth={11}
+                                            textStyle="body1"
+                                          />
+                                        </Box>
+                                      )}
                                       <FontAwesomeIcon
-                                        icon={faChevronDown}
+                                        style={{
+                                          cursor: 'pointer',
+                                        }}
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          setTrait(undefined)
+                                        }}
+                                        icon={faClose}
                                         width={16}
                                         height={16}
                                       />
-                                    </>
-                                  )}
-                                </Flex>
-                              </PseudoInput>
+                                    </Flex>
+                                  </Flex>
+                                </PseudoInput>
+                              ) : (
+                                <Button
+                                  color="ghost"
+                                  css={{
+                                    color: '$accentText',
+                                    fontWeight: 500,
+                                    fontSize: 14,
+                                    maxWidth: 'max-content',
+                                  }}
+                                  size="none"
+                                >
+                                  + Add Attribute
+                                </Button>
+                              )}
                             </Popover.Trigger>
-                            <Popover.Content sideOffset={-50}>
+                            <Popover.Content
+                              side="bottom"
+                              align="start"
+                              sideOffset={-20}
+                            >
                               <AttributeSelector
                                 attributes={attributes}
                                 tokenCount={tokenCount}
@@ -821,96 +873,108 @@ export function BidModal({
             )}
 
             {bidStep === BidStep.Offering && collection && (
-              <>
-                <TransactionBidDetails
+              <Flex direction="column">
+                <TokenInfo
                   chain={modalChain}
                   token={token ? token : undefined}
                   collection={collection}
-                  bidData={bidData}
+                  price={totalBidAmount}
+                  currency={currency}
+                  quantity={quantity}
+                  trait={trait}
+                  expirationOption={expirationOption}
+                  containerCss={{
+                    borderBottom: '1px solid',
+                    borderBottomColor: '$neutralLine',
+                    borderColor: '$neutralLine',
+                  }}
                 />
-                <ProgressBar
-                  value={stepData?.stepProgress || 0}
-                  max={stepData?.totalSteps || 0}
-                />
-                {transactionError && (
-                  <ErrorWell error={transactionError} css={{ mt: 24 }} />
-                )}
-                {stepData && (
-                  <>
-                    <Text
-                      css={{ textAlign: 'center', mt: 48, mb: 28 }}
-                      style="subtitle1"
-                    >
-                      {stepTitle}
-                    </Text>
-                    {stepData.currentStep.kind === 'signature' && (
-                      <TransactionProgress
-                        justify="center"
-                        fromImg={itemImage || ''}
-                        toImgs={[localMarketplace?.icon || '']}
-                      />
-                    )}
-                    {stepData.currentStep.kind !== 'signature' && (
-                      <Flex align="center" justify="center">
-                        <Flex
-                          css={{
-                            background: '$neutralLine',
-                            borderRadius: 8,
-                          }}
-                        >
-                          <CryptoCurrencyIcon
-                            chainId={modalChain?.id}
-                            css={{ height: 56, width: 56 }}
-                            address={wrappedContractAddress}
-                          />
+                <Flex
+                  justify="between"
+                  direction="column"
+                  align="center"
+                  css={{ width: '100%', p: '$4', gap: 24 }}
+                >
+                  {transactionError && (
+                    <ErrorWell
+                      error={transactionError}
+                      css={{ width: '100%' }}
+                    />
+                  )}
+                  {stepData && (
+                    <>
+                      <Text css={{ textAlign: 'center' }} style="subtitle1">
+                        {stepTitle}
+                      </Text>
+                      {stepData.currentStep.kind === 'signature' && (
+                        <TransactionProgress
+                          justify="center"
+                          fromImg={itemImage || ''}
+                          toImgs={[localMarketplace?.icon || '']}
+                        />
+                      )}
+                      {stepData.currentStep.kind !== 'signature' && (
+                        <Flex align="center" justify="center">
+                          <Flex
+                            css={{
+                              background: '$neutralLine',
+                              borderRadius: 8,
+                            }}
+                          >
+                            <CryptoCurrencyIcon
+                              chainId={modalChain?.id}
+                              css={{ height: 56, width: 56 }}
+                              address={wrappedContractAddress}
+                            />
+                          </Flex>
                         </Flex>
-                      </Flex>
-                    )}
-                    <Text
-                      css={{
-                        textAlign: 'center',
-                        mt: 24,
-                        maxWidth: 395,
-                        mx: 'auto',
-                        mb: '$4',
-                      }}
-                      style="body2"
-                      color="subtle"
+                      )}
+                      <Text
+                        css={{
+                          textAlign: 'center',
+                          mt: 24,
+                          maxWidth: 395,
+                          mx: 'auto',
+                          mb: '$4',
+                        }}
+                        style="body2"
+                        color="subtle"
+                      >
+                        {stepData?.currentStep.description}
+                      </Text>
+                    </>
+                  )}
+                  {!stepData && (
+                    <Flex
+                      css={{ height: '100%', py: '$5' }}
+                      justify="center"
+                      align="center"
                     >
-                      {stepData?.currentStep.description}
-                    </Text>
-                  </>
-                )}
-                {!stepData && (
-                  <Flex
-                    css={{ height: '100%' }}
-                    justify="center"
-                    align="center"
-                  >
-                    <Loader />
-                  </Flex>
-                )}
-                {!transactionError && (
-                  <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
-                    <Loader />
-                    {copy.ctaAwaitingApproval}
-                  </Button>
-                )}
-                {transactionError && (
-                  <Flex css={{ mt: 'auto', gap: 10 }}>
-                    <Button
-                      color="secondary"
-                      css={{ flex: 1 }}
-                      onClick={() => setBidStep(BidStep.SetPrice)}
-                    >
-                      {copy.ctaEditOffer}
+                      <Loader />
+                    </Flex>
+                  )}
+                  {!transactionError && (
+                    <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
+                      <Loader />
+                      {copy.ctaAwaitingApproval}
                     </Button>
-                    <Button css={{ flex: 1 }} onClick={() => placeBid()}>
-                      {copy.ctaRetry}
-                    </Button>
-                  </Flex>
-                )}
-              </>
+                  )}
+                  {transactionError && (
+                    <Flex css={{ mt: 'auto', gap: 10, width: '100%' }}>
+                      <Button
+                        color="secondary"
+                        css={{ flex: 1 }}
+                        onClick={() => setBidStep(BidStep.SetPrice)}
+                      >
+                        {copy.ctaEditOffer}
+                      </Button>
+                      <Button css={{ flex: 1 }} onClick={() => placeBid()}>
+                        {copy.ctaRetry}
+                      </Button>
+                    </Flex>
+                  )}
+                </Flex>
+              </Flex>
             )}
 
             {bidStep === BidStep.Complete && (
