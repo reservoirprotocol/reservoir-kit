@@ -1,6 +1,5 @@
 import { useTokens, useCollections, useTimeSince } from '../../hooks'
 import React, { FC } from 'react'
-import { styled } from '../../../stitches.config'
 import {
   ChainIcon,
   Divider,
@@ -9,7 +8,6 @@ import {
   Img,
   Text,
 } from '../../primitives'
-import optimizeImage from '../../lib/optimizeImage'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
 import { ExpirationOption } from '../../types/ExpirationOption'
@@ -41,8 +39,15 @@ const TokenInfo: FC<Props> = ({
       ? useTimeSince(expirationOption.relativeTime)
       : `in ${expirationOption?.text.toLowerCase()}`
 
+  const floorAsk = token?.market?.floorAsk ?? collection?.floorAsk
+  const topBid = token?.market?.topBid ?? collection?.topBid
+
   return (
-    <Flex align="center" justify="between" css={{ p: '$4', ...containerCss }}>
+    <Flex
+      align="center"
+      justify="between"
+      css={{ p: '$4', gap: '$4', ...containerCss }}
+    >
       <Flex align="center" css={{ gap: '$3', overflow: 'hidden' }}>
         <Img
           src={token?.token?.imageSmall || collection?.image}
@@ -87,72 +92,56 @@ const TokenInfo: FC<Props> = ({
         </Flex>
       </Flex>
 
-      <Flex direction="column" align="end" css={{ gap: '$1', flexShrink: 0 }}>
-        {price && currency ? (
-          <FormatCryptoCurrency
-            amount={Number(price)}
-            address={currency?.contract}
-            symbol={currency?.symbol}
-            textStyle="h6"
-          />
-        ) : null}
-        {expirationOption ? (
-          <Text style="body2" color="subtle">
-            Expires {expirationDisplay}
-          </Text>
-        ) : null}
-      </Flex>
+      {!price ? (
+        <Flex align="center" css={{ gap: '$2', flexShrink: 0 }}>
+          {floorAsk?.price ? (
+            <Flex>
+              <Text style="subtitle2" color="subtle">
+                Floor Price
+              </Text>
+              <FormatCryptoCurrency
+                amount={floorAsk?.price?.amount?.decimal}
+                address={floorAsk?.price?.currency?.contract}
+                symbol={floorAsk?.price?.currency?.symbol}
+                decimals={floorAsk?.price?.currency?.decimals}
+                textStyle="subtitle2"
+              />
+            </Flex>
+          ) : null}
+          {floorAsk?.price && topBid?.price ? <Divider /> : null}
+          {topBid?.price ? (
+            <Flex>
+              <Text style="subtitle2" color="subtle">
+                Best Offer
+              </Text>
+              <FormatCryptoCurrency
+                amount={topBid?.price?.amount?.decimal}
+                address={topBid?.price?.currency?.contract}
+                symbol={topBid?.price?.currency?.symbol}
+                decimals={topBid?.price?.currency?.decimals}
+                textStyle="subtitle2"
+              />
+            </Flex>
+          ) : null}
+        </Flex>
+      ) : (
+        <Flex direction="column" align="end" css={{ gap: '$1', flexShrink: 0 }}>
+          {price && currency ? (
+            <FormatCryptoCurrency
+              amount={Number(price)}
+              address={currency?.contract}
+              symbol={currency?.symbol}
+              textStyle="h6"
+            />
+          ) : null}
+          {expirationOption ? (
+            <Text style="body2" color="subtle">
+              Expires {expirationDisplay}
+            </Text>
+          ) : null}
+        </Flex>
+      )}
     </Flex>
-    // <Flex
-    //   css={{
-    //     gap: '$2',
-    //   }}
-    // >
-    //   <Img
-    //     src={img}
-    //     css={{
-    //       visibility: !img || img.length === 0 ? 'hidden' : 'visible',
-    //       objectFit: 'cover',
-    //     }}
-    //   />
-    //   <Flex direction="column">
-    //     <Text style="h6" css={{ flex: 1 }} as="h6" ellipsify>
-    //       {token?.token
-    //         ? token.token.name || `#${token.token.tokenId}`
-    //         : collection?.name}
-    //     </Text>
-    //     {token ? (
-    //       <Box css={{ mt: '$1' }}>
-    //         <Text style="subtitle3" color="subtle" as="p" ellipsify>
-    //           {token?.token?.collection?.name}
-    //         </Text>
-    //         {chain?.id && chain?.name ? (
-    //           <Flex align="center" css={{ mt: '$1' }}>
-    //             <ChainIcon
-    //               chainId={chain?.id}
-    //               css={{ marginRight: 5 }}
-    //               height={12}
-    //             />
-    //             <Text style="subtitle3" color="subtle" ellipsify>
-    //               {chain?.name}
-    //             </Text>
-    //           </Flex>
-    //         ) : null}
-    //       </Box>
-    //     ) : chain?.id && chain?.name ? (
-    //       <Flex align="center">
-    //         <ChainIcon
-    //           chainId={chain?.id}
-    //           css={{ marginRight: 5 }}
-    //           height={12}
-    //         />
-    //         <Text style="subtitle3" color="subtle" ellipsify>
-    //           {chain?.name}
-    //         </Text>
-    //       </Flex>
-    //     ) : null}
-    //   </Flex>
-    // </Flex>
   )
 }
 

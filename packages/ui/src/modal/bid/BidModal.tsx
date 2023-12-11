@@ -388,440 +388,436 @@ export function BidModal({
             }}
           >
             {bidStep === BidStep.SetPrice && !loading && collection && (
-              <>
+              <Flex direction="column">
                 <TokenInfo
                   chain={modalChain}
                   token={token ? token : undefined}
                   collection={collection}
+                  containerCss={{
+                    borderBottom: '1px solid',
+                    borderBottomColor: '$neutralLine',
+                    borderColor: '$neutralLine',
+                  }}
                 />
-                <Flex justify="between">
-                  <Text style="tiny" color="subtle">
-                    Offer Amount {quantityEnabled ? 'and Quantity' : null}
-                  </Text>
-                  <Text
-                    as={Flex}
-                    css={{ gap: '$1' }}
-                    align="center"
-                    style="tiny"
-                  >
-                    Balance:{' '}
-                    <FormatWrappedCurrency
-                      chainId={modalChain?.id}
-                      logoWidth={10}
-                      textStyle="tiny"
-                      amount={wrappedBalance?.value}
-                      address={wrappedContractAddress}
-                      decimals={wrappedBalance?.decimals}
-                      symbol={wrappedBalance?.symbol}
-                    />{' '}
-                  </Text>
-                </Flex>
-                <Flex css={{ mt: '$2', gap: quantityEnabled ? '$2' : 20 }}>
-                  <Text
-                    as={Flex}
-                    css={{ gap: '$2', '@bp1': { ml: '$3' }, flexShrink: 0 }}
-                    align="center"
-                    style="body1"
-                    color="subtle"
-                  >
-                    {currencies.length > 1 ? (
-                      <CurrencySelector
-                        chainId={modalChain?.id}
-                        currency={currency}
-                        currencies={currencies}
-                        setCurrency={setCurrency}
-                        triggerCss={{ minWidth: 95 }}
-                      />
-                    ) : (
-                      <>
-                        <CryptoCurrencyIcon
+                <Flex
+                  justify="between"
+                  direction="column"
+                  align="center"
+                  css={{ width: '100%', p: '$4', gap: 24 }}
+                >
+                  <Flex direction="column" css={{ gap: '$2', width: '100%' }}>
+                    <Flex justify="between" css={{ gap: '$3' }}>
+                      <Text style="subtitle2">Offer Price</Text>
+                      <Text
+                        as={Flex}
+                        css={{ gap: '$1' }}
+                        align="center"
+                        style="subtitle3"
+                      >
+                        Balance:{' '}
+                        <FormatWrappedCurrency
                           chainId={modalChain?.id}
-                          css={{ height: 20 }}
+                          logoWidth={10}
+                          textStyle="tiny"
+                          amount={wrappedBalance?.value}
                           address={wrappedContractAddress}
-                        />
-                        {wrappedContractName}
-                      </>
+                          decimals={wrappedBalance?.decimals}
+                          symbol={wrappedBalance?.symbol}
+                        />{' '}
+                      </Text>
+                    </Flex>
+
+                    <Flex css={{ mt: '$2', gap: quantityEnabled ? '$2' : 20 }}>
+                      <Text
+                        as={Flex}
+                        css={{ gap: '$2', flexShrink: 0 }}
+                        align="center"
+                        style="body1"
+                        color="subtle"
+                      >
+                        {currencies.length > 1 ? (
+                          <CurrencySelector
+                            chainId={modalChain?.id}
+                            currency={currency}
+                            currencies={currencies}
+                            setCurrency={setCurrency}
+                            triggerCss={{
+                              backgroundColor: '$neutralBgHover',
+                              borderRadius: 8,
+                              p: '$3',
+                              width: 120,
+                              flexShrink: 0,
+                              height: 44,
+                            }}
+                          />
+                        ) : (
+                          <>
+                            <CryptoCurrencyIcon
+                              chainId={modalChain?.id}
+                              css={{ height: 20 }}
+                              address={wrappedContractAddress}
+                            />
+                            {wrappedContractName}
+                          </>
+                        )}
+                      </Text>
+                      <Input
+                        type="number"
+                        value={bidAmountPerUnit}
+                        onChange={(e) => {
+                          setBidAmountPerUnit(e.target.value)
+                        }}
+                        placeholder="Enter price"
+                        containerCss={{
+                          width: '100%',
+                        }}
+                        css={{
+                          textAlign: 'center',
+                          '@bp1': {
+                            textAlign: 'left',
+                          },
+                        }}
+                      />
+                    </Flex>
+
+                    {totalBidAmount !== 0 && !withinPricingBounds && (
+                      <Box>
+                        <Text style="body2" color="error">
+                          {maximumAmount !== Infinity
+                            ? `Amount must be between ${formatNumber(
+                                minimumAmount
+                              )} - ${formatNumber(maximumAmount)}`
+                            : `Amount must be higher than ${formatNumber(
+                                minimumAmount
+                              )}`}
+                        </Text>
+                      </Box>
                     )}
-                  </Text>
-                  <Input
-                    type="number"
-                    value={bidAmountPerUnit}
-                    onChange={(e) => {
-                      setBidAmountPerUnit(e.target.value)
-                    }}
-                    placeholder="Enter price"
-                    containerCss={{
-                      width: '100%',
-                    }}
-                    css={{
-                      textAlign: 'center',
-                      '@bp1': {
-                        textAlign: 'left',
-                      },
-                    }}
-                  />
-                  {/* Quantity Selector on Desktop */}
+
+                    {attributes &&
+                      attributes.length > 0 &&
+                      (attributesSelectable || trait) &&
+                      !tokenId &&
+                      traitBidSupported && (
+                        <>
+                          <Text
+                            as={Box}
+                            css={{ mb: '$2' }}
+                            style="tiny"
+                            color="subtle"
+                          >
+                            Attributes
+                          </Text>
+                          <Popover.Root
+                            open={attributeSelectorOpen}
+                            onOpenChange={
+                              attributesSelectable
+                                ? setAttributeSelectorOpen
+                                : undefined
+                            }
+                          >
+                            <Popover.Trigger asChild>
+                              <PseudoInput>
+                                <Flex
+                                  justify="between"
+                                  css={{
+                                    gap: '$2',
+                                    alignItems: 'center',
+                                    color: '$neutralText',
+                                  }}
+                                >
+                                  {trait ? (
+                                    <>
+                                      <Box
+                                        css={{
+                                          maxWidth: 385,
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          whiteSpace: 'nowrap',
+                                        }}
+                                      >
+                                        <Text color="accent" style="subtitle1">
+                                          {trait?.key}:{' '}
+                                        </Text>
+                                        <Text style="subtitle1">
+                                          {trait?.value}
+                                        </Text>
+                                      </Box>
+                                      <Flex
+                                        css={{
+                                          alignItems: 'center',
+                                          gap: '$2',
+                                        }}
+                                      >
+                                        {trait?.floorAskPrice && (
+                                          <Box css={{ flex: 'none' }}>
+                                            <FormatCryptoCurrency
+                                              amount={trait?.floorAskPrice}
+                                              maximumFractionDigits={2}
+                                              logoWidth={11}
+                                            />
+                                          </Box>
+                                        )}
+                                        <FontAwesomeIcon
+                                          style={{
+                                            cursor: 'pointer',
+                                          }}
+                                          onClick={(e) => {
+                                            e.preventDefault()
+                                            setTrait(undefined)
+                                          }}
+                                          icon={faClose}
+                                          width={16}
+                                          height={16}
+                                        />
+                                      </Flex>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Text
+                                        css={{
+                                          color: '$neutralText',
+                                        }}
+                                      >
+                                        All Attributes
+                                      </Text>
+                                      <FontAwesomeIcon
+                                        icon={faChevronDown}
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </>
+                                  )}
+                                </Flex>
+                              </PseudoInput>
+                            </Popover.Trigger>
+                            <Popover.Content sideOffset={-50}>
+                              <AttributeSelector
+                                attributes={attributes}
+                                tokenCount={tokenCount}
+                                setTrait={setTrait}
+                                setOpen={setAttributeSelectorOpen}
+                              />
+                            </Popover.Content>
+                          </Popover.Root>
+                        </>
+                      )}
+                  </Flex>
+
                   {quantityEnabled ? (
                     <Flex
-                      css={{ display: 'none', '@bp1': { display: 'flex' } }}
+                      justify="between"
+                      align="center"
+                      css={{ gap: '$5', width: '100%' }}
                     >
+                      <Flex
+                        direction="column"
+                        align="start"
+                        css={{ gap: '$2', flexShrink: 0 }}
+                      >
+                        <Text style="subtitle2">Quantity</Text>
+                        <Text color="subtle" style="tiny">
+                          Offers can be accepted separately
+                        </Text>
+                      </Flex>
                       <QuantitySelector
                         quantity={quantity}
                         setQuantity={setQuantity}
                         min={1}
                         max={999999}
-                        css={{
-                          maxWidth: 180,
-                        }}
+                        css={{ justifyContent: 'space-between', width: '100%' }}
                       />
                     </Flex>
                   ) : null}
-                </Flex>
-                {/* Quantity Selector on Mobile Devices */}
-                {quantityEnabled ? (
-                  <Flex
-                    align="center"
-                    css={{
-                      width: '100%',
-                      display: 'flex',
-                      mt: '$2',
-                      gap: '$2',
-                      '@bp1': { display: 'none' },
-                    }}
-                  >
-                    <Text
-                      style="subtitle3"
-                      color="subtle"
-                      css={{ width: 90, flexShrink: 0 }}
-                    >
-                      Quantity
-                    </Text>
-                    <QuantitySelector
-                      quantity={quantity}
-                      setQuantity={setQuantity}
-                      min={1}
-                      max={999999}
-                      css={{ justifyContent: 'space-between', width: '100%' }}
-                    />
-                  </Flex>
-                ) : null}
-                {quantityEnabled ? (
-                  <Flex align="center" css={{ gap: '$2', mt: '$3', mb: '$4' }}>
-                    <Text style="subtitle3" color="subtle">
-                      Total Offer Price
-                    </Text>
-                    <FormatWrappedCurrency
-                      chainId={modalChain?.id}
-                      logoWidth={16}
-                      textStyle="subtitle3"
-                      amount={totalBidAmount}
-                      address={currency?.contract}
-                      decimals={currency?.decimals}
-                      symbol={currency?.symbol}
-                    />
-                    <FormatCurrency
-                      style="tiny"
-                      color="subtle"
-                      amount={totalBidAmountUsd}
-                    />
-                  </Flex>
-                ) : (
-                  <FormatCurrency
-                    css={{
-                      marginLeft: 'auto',
-                      mt: '$2',
-                      display: 'inline-block',
-                      minHeight: 15,
-                    }}
-                    style="tiny"
-                    amount={totalBidAmountUsd}
-                  />
-                )}
-                {totalBidAmount !== 0 && !withinPricingBounds && (
-                  <Box>
-                    <Text style="body2" color="error">
-                      {maximumAmount !== Infinity
-                        ? `Amount must be between ${formatNumber(
-                            minimumAmount
-                          )} - ${formatNumber(maximumAmount)}`
-                        : `Amount must be higher than ${formatNumber(
-                            minimumAmount
-                          )}`}
-                    </Text>
-                  </Box>
-                )}
-                {attributes &&
-                  attributes.length > 0 &&
-                  (attributesSelectable || trait) &&
-                  !tokenId &&
-                  traitBidSupported && (
-                    <>
-                      <Text
-                        as={Box}
-                        css={{ mb: '$2' }}
-                        style="tiny"
-                        color="subtle"
-                      >
-                        Attributes
-                      </Text>
-                      <Popover.Root
-                        open={attributeSelectorOpen}
-                        onOpenChange={
-                          attributesSelectable
-                            ? setAttributeSelectorOpen
-                            : undefined
-                        }
-                      >
-                        <Popover.Trigger asChild>
-                          <PseudoInput>
-                            <Flex
-                              justify="between"
-                              css={{
-                                gap: '$2',
-                                alignItems: 'center',
-                                color: '$neutralText',
-                              }}
-                            >
-                              {trait ? (
-                                <>
-                                  <Box
-                                    css={{
-                                      maxWidth: 385,
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
-                                    }}
-                                  >
-                                    <Text color="accent" style="subtitle1">
-                                      {trait?.key}:{' '}
-                                    </Text>
-                                    <Text style="subtitle1">
-                                      {trait?.value}
-                                    </Text>
-                                  </Box>
-                                  <Flex
-                                    css={{
-                                      alignItems: 'center',
-                                      gap: '$2',
-                                    }}
-                                  >
-                                    {trait?.floorAskPrice && (
-                                      <Box css={{ flex: 'none' }}>
-                                        <FormatCryptoCurrency
-                                          amount={trait?.floorAskPrice}
-                                          maximumFractionDigits={2}
-                                          logoWidth={11}
-                                        />
-                                      </Box>
-                                    )}
-                                    <FontAwesomeIcon
-                                      style={{
-                                        cursor: 'pointer',
-                                      }}
-                                      onClick={(e) => {
-                                        e.preventDefault()
-                                        setTrait(undefined)
-                                      }}
-                                      icon={faClose}
-                                      width={16}
-                                      height={16}
-                                    />
-                                  </Flex>
-                                </>
-                              ) : (
-                                <>
-                                  <Text
-                                    css={{
-                                      color: '$neutralText',
-                                    }}
-                                  >
-                                    All Attributes
-                                  </Text>
-                                  <FontAwesomeIcon
-                                    icon={faChevronDown}
-                                    width={16}
-                                    height={16}
-                                  />
-                                </>
-                              )}
-                            </Flex>
-                          </PseudoInput>
-                        </Popover.Trigger>
-                        <Popover.Content sideOffset={-50}>
-                          <AttributeSelector
-                            attributes={attributes}
-                            tokenCount={tokenCount}
-                            setTrait={setTrait}
-                            setOpen={setAttributeSelectorOpen}
-                          />
-                        </Popover.Content>
-                      </Popover.Root>
-                    </>
-                  )}
 
-                <Text
-                  as={Box}
-                  css={{ mt: '$4', mb: '$2' }}
-                  style="tiny"
-                  color="subtle"
-                >
-                  Expiration Date
-                </Text>
-                <Flex css={{ gap: '$2', mb: '$4' }}>
-                  <Select
-                    css={{
-                      flex: 1,
-                      '@bp1': {
-                        width: 160,
-                        flexDirection: 'row',
-                      },
-                    }}
-                    value={expirationOption?.text || ''}
-                    onValueChange={(value: string) => {
-                      const option = expirationOptions.find(
-                        (option) => option.value == value
-                      )
-                      if (option) {
-                        setExpirationOption(option)
-                      }
-                    }}
-                  >
-                    {expirationOptions
-                      .filter(({ value }) => value !== 'custom')
-                      .map((option) => (
-                        <Select.Item key={option.text} value={option.value}>
-                          <Select.ItemText>{option.text}</Select.ItemText>
-                        </Select.Item>
-                      ))}
-                  </Select>
-                  <DateInput
-                    ref={datetimeElement}
-                    icon={
-                      <FontAwesomeIcon
-                        icon={faCalendar}
-                        width={14}
-                        height={16}
-                      />
-                    }
-                    value={expirationDate}
-                    options={{
-                      chainId: modalChain?.id,
-                      minDate: MINIMUM_DATE,
-                      enableTime: true,
-                      minuteIncrement: 1,
-                    }}
-                    defaultValue={expirationDate}
-                    onChange={(e: any) => {
-                      if (Array.isArray(e)) {
-                        const customOption = expirationOptions.find(
-                          (option) => option.value === 'custom'
-                        )
-                        if (customOption) {
-                          setExpirationOption({
-                            ...customOption,
-                            relativeTime: e[0] / 1000,
-                          })
-                        }
-                      }
-                    }}
-                    containerCss={{
-                      width: 46,
-                      '@bp1': {
-                        flex: 1,
-                        width: '100%',
-                      },
-                    }}
-                    css={{
-                      padding: 0,
-                      '@bp1': {
-                        padding: '12px 16px 12px 48px',
-                      },
-                    }}
-                  />
-                </Flex>
-                <Box css={{ width: '100%', mt: 'auto' }}>
-                  {oracleEnabled && (
-                    <Text
-                      style="body2"
-                      color="subtle"
-                      css={{
-                        mb: 10,
-                        textAlign: 'center',
-                        width: '100%',
-                        display: 'block',
-                      }}
-                    >
-                      You can change or cancel your offer for free on{' '}
-                      {localMarketplace?.title}.
+                  <Flex direction="column" css={{ gap: '$2', width: '100%' }}>
+                    <Text as={Box} style="subtitle2">
+                      Expiration Date
                     </Text>
-                  )}
-                  {!canPurchase && (
-                    <Button disabled={true} css={{ width: '100%' }}>
-                      {copy.ctaBidDisabled}
-                    </Button>
-                  )}
-                  {canPurchase && hasEnoughWrappedCurrency && (
-                    <Button onClick={() => placeBid()} css={{ width: '100%' }}>
-                      {ctaButtonText}
-                    </Button>
-                  )}
-                  {canPurchase && !hasEnoughWrappedCurrency && (
-                    <>
-                      {!hasEnoughNativeCurrency && (
-                        <Flex css={{ gap: '$2', mt: 10 }} justify="center">
-                          <Text style="body3" color="error">
-                            {balance?.symbol || 'ETH'} Balance
-                          </Text>
-                          <FormatCryptoCurrency
-                            chainId={modalChain?.id}
-                            amount={balance?.value}
-                            symbol={balance?.symbol}
-                          />
-                        </Flex>
-                      )}
-                      <Flex
+                    <Flex css={{ gap: '$2' }}>
+                      <Select
                         css={{
-                          gap: '$2',
-                          mt: 10,
-                          overflow: 'hidden',
-                          flexDirection: 'column-reverse',
+                          flex: 1,
                           '@bp1': {
+                            width: 160,
                             flexDirection: 'row',
                           },
                         }}
+                        value={expirationOption?.text || ''}
+                        onValueChange={(value: string) => {
+                          const option = expirationOptions.find(
+                            (option) => option.value == value
+                          )
+                          if (option) {
+                            setExpirationOption(option)
+                          }
+                        }}
                       >
-                        <Button
-                          disabled={providerOptionsContext.disableJumperLink}
-                          css={{ flex: '1 0 auto' }}
-                          color="secondary"
-                          onClick={() => {
-                            window.open(convertLink, '_blank')
+                        {expirationOptions
+                          .filter(({ value }) => value !== 'custom')
+                          .map((option) => (
+                            <Select.Item key={option.text} value={option.value}>
+                              <Select.ItemText>{option.text}</Select.ItemText>
+                            </Select.Item>
+                          ))}
+                      </Select>
+                      <DateInput
+                        ref={datetimeElement}
+                        icon={
+                          <FontAwesomeIcon
+                            icon={faCalendar}
+                            width={14}
+                            height={16}
+                          />
+                        }
+                        value={expirationDate}
+                        options={{
+                          chainId: modalChain?.id,
+                          minDate: MINIMUM_DATE,
+                          enableTime: true,
+                          minuteIncrement: 1,
+                        }}
+                        defaultValue={expirationDate}
+                        onChange={(e: any) => {
+                          if (Array.isArray(e)) {
+                            const customOption = expirationOptions.find(
+                              (option) => option.value === 'custom'
+                            )
+                            if (customOption) {
+                              setExpirationOption({
+                                ...customOption,
+                                relativeTime: e[0] / 1000,
+                              })
+                            }
+                          }
+                        }}
+                        containerCss={{
+                          width: 46,
+                          '@bp1': {
+                            flex: 1,
+                            width: '100%',
+                          },
+                        }}
+                        css={{
+                          padding: 0,
+                          '@bp1': {
+                            padding: '12px 16px 12px 48px',
+                          },
+                        }}
+                      />
+                    </Flex>
+                  </Flex>
+
+                  <Flex
+                    justify="between"
+                    align="center"
+                    css={{ gap: '$4', width: '100%' }}
+                  >
+                    <Text style="h6">Total Offer Price</Text>
+                    <Flex direction="column" align="end">
+                      <FormatWrappedCurrency
+                        chainId={modalChain?.id}
+                        logoWidth={16}
+                        textStyle="h6"
+                        amount={totalBidAmount}
+                        address={currency?.contract}
+                        decimals={currency?.decimals}
+                        symbol={currency?.symbol}
+                      />
+                      <FormatCurrency
+                        style="subtitle3"
+                        color="subtle"
+                        amount={totalBidAmountUsd}
+                      />
+                    </Flex>
+                  </Flex>
+                  <Box css={{ width: '100%', mt: 'auto' }}>
+                    {oracleEnabled && (
+                      <Text
+                        style="body2"
+                        color="subtle"
+                        css={{
+                          mb: 10,
+                          textAlign: 'center',
+                          width: '100%',
+                          display: 'block',
+                        }}
+                      >
+                        You can change or cancel your offer for free on{' '}
+                        {localMarketplace?.title}.
+                      </Text>
+                    )}
+                    {!canPurchase && (
+                      <Button disabled={true} css={{ width: '100%' }}>
+                        {copy.ctaBidDisabled}
+                      </Button>
+                    )}
+                    {canPurchase && hasEnoughWrappedCurrency && (
+                      <Button
+                        onClick={() => placeBid()}
+                        css={{ width: '100%' }}
+                      >
+                        {ctaButtonText}
+                      </Button>
+                    )}
+                    {canPurchase && !hasEnoughWrappedCurrency && (
+                      <>
+                        {!hasEnoughNativeCurrency && (
+                          <Flex css={{ gap: '$2', mt: 10 }} justify="center">
+                            <Text style="body3" color="error">
+                              {balance?.symbol || 'ETH'} Balance
+                            </Text>
+                            <FormatCryptoCurrency
+                              chainId={modalChain?.id}
+                              amount={balance?.value}
+                              symbol={balance?.symbol}
+                            />
+                          </Flex>
+                        )}
+                        <Flex
+                          css={{
+                            gap: '$2',
+                            mt: 10,
+                            overflow: 'hidden',
+                            flexDirection: 'column-reverse',
+                            '@bp1': {
+                              flexDirection: 'row',
+                            },
                           }}
                         >
-                          {providerOptionsContext.disableJumperLink
-                            ? ctaButtonText
-                            : copy.ctaConvertManually}
-                        </Button>
-                        {canAutomaticallyConvert && (
                           <Button
-                            css={{ flex: 1, maxHeight: 44 }}
-                            disabled={!hasEnoughNativeCurrency}
-                            onClick={() => placeBid()}
+                            disabled={providerOptionsContext.disableJumperLink}
+                            css={{ flex: '1 0 auto' }}
+                            color="secondary"
+                            onClick={() => {
+                              window.open(convertLink, '_blank')
+                            }}
                           >
-                            <Text style="h6" color="button" ellipsify>
-                              {copy.ctaConvertAutomatically.length > 0
-                                ? copy.ctaConvertAutomatically
-                                : `Convert ${amountToWrap} ${
-                                    balance?.symbol || 'ETH'
-                                  } for me`}
-                            </Text>
+                            {providerOptionsContext.disableJumperLink
+                              ? ctaButtonText
+                              : copy.ctaConvertManually}
                           </Button>
-                        )}
-                      </Flex>
-                    </>
-                  )}
-                </Box>
-              </>
+                          {canAutomaticallyConvert && (
+                            <Button
+                              css={{ flex: 1, maxHeight: 44 }}
+                              disabled={!hasEnoughNativeCurrency}
+                              onClick={() => placeBid()}
+                            >
+                              <Text style="h6" color="button" ellipsify>
+                                {copy.ctaConvertAutomatically.length > 0
+                                  ? copy.ctaConvertAutomatically
+                                  : `Convert ${amountToWrap} ${
+                                      balance?.symbol || 'ETH'
+                                    } for me`}
+                              </Text>
+                            </Button>
+                          )}
+                        </Flex>
+                      </>
+                    )}
+                  </Box>
+                </Flex>
+              </Flex>
             )}
 
             {bidStep === BidStep.Offering && collection && (
