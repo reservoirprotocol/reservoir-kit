@@ -1,4 +1,10 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import React, {
+  ComponentPropsWithoutRef,
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+} from 'react'
 import { WalletClient } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { useFallbackState, useReservoirClient } from '../../hooks'
@@ -44,6 +50,7 @@ import { TokenInfo } from '../collect/TokenInfo'
 import { CollectionInfo } from '../collect/CollectionInfo'
 import { CollectCheckout } from '../collect/CollectCheckout'
 import { PaymentDetails } from '../PaymentDetails'
+import { Dialog } from '../../primitives/Dialog'
 
 export type MintCallbackData = {
   collectionId?: string
@@ -79,6 +86,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onMintError?: (error: Error, data: MintCallbackData) => void
   onClose?: (data: MintCallbackData, currentStep: MintStep) => void
   onGoToToken?: (data: MintCallbackData) => any
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 export function MintModal({
@@ -97,6 +107,7 @@ export function MintModal({
   onClose,
   onConnectWallet,
   onGoToToken,
+  onPointerDownOutside,
   defaultQuantity,
 }: Props): ReactElement {
   const copy: typeof MintModalCopy = {
@@ -230,6 +241,10 @@ export function MintModal({
 
               if (!clickedDismissableLayer && dismissableLayers.length > 0) {
                 e.preventDefault()
+              }
+
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
               }
             }}
             onOpenChange={(open) => {
