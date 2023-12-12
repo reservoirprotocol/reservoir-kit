@@ -19,14 +19,16 @@ const fetcher = async (urls: string[]) => {
 }
 
 export default function (
-  prefferedCurrencyAddress: string,
+  prefferedCurrencyAddress?: string,
   chain?: ReservoirChain | null | undefined,
   currencies?: PaymentToken[]
 ) {
-  const urls = currencies?.map(
-    (currency) =>
-      `${chain?.baseApiUrl}/currencies/conversion/v1?from=${currency.address}&to=${prefferedCurrencyAddress}`
-  )
+  const urls = prefferedCurrencyAddress
+    ? currencies?.map(
+        (currency) =>
+          `${chain?.baseApiUrl}/currencies/conversion/v1?from=${currency.address}&to=${prefferedCurrencyAddress}`
+      )
+    : undefined
 
   const { data, error } = useSWR<CurrencyConversionResponse[]>(urls, fetcher, {
     refreshInterval: 300000, //5m

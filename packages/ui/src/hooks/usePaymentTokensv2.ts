@@ -2,7 +2,11 @@ import { erc20ABI, useContractReads } from 'wagmi'
 import { fetchBalance } from 'wagmi/actions'
 import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useContext, useMemo } from 'react'
-import { useReservoirClient, useSolverCapacities } from '.'
+import {
+  useCurrencyConversions,
+  useReservoirClient,
+  useSolverCapacities,
+} from '.'
 import { BuyPath, ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr'
@@ -15,12 +19,12 @@ export type EnhancedCurrency =
       usdPriceRaw?: bigint
       usdTotalPriceRaw?: bigint
       usdTotalFormatted?: string
+      usdBalanceRaw?: bigint
       balance?: string | number | bigint
       currencyTotalRaw?: bigint
       currencyTotalFormatted?: string
       maxItems?: number
       maxPricePerItem?: bigint
-      networkFees?: bigint //todo: get from paths
     }
 
 const fetchNativeBalances = async (
@@ -188,14 +192,23 @@ export default function (options: {
     chain
   )
 
+  const preferredCurrencyConversions = useCurrencyConversions(
+    path && path[0]
+      ? path[0].currency ?? path[0].buyInCurrency ?? undefined
+      : undefined,
+    chain,
+    open ? allPaymentTokens : undefined
+  )
+
   return useMemo(() => {
     if (!open) {
       return []
     }
 
     const paymentTokens = allPaymentTokens?.reduce(
-      (tokens, token) => {
-        tokens[`${token.address?.toLowerCase()}:${token.chainId}`] = {
+      (tokens, token, i) => {
+        const conversionData = preferredCurrencyConversions?.data?.[i]
+        tokens[`${token.address.toLowerCase()}:${token.chainId}`] = {
           total: 0n,
           usdTotal: 0,
           currency: {
@@ -203,6 +216,7 @@ export default function (options: {
             contract: token.address.toLowerCase(),
           },
           chainId: token.chainId,
+          conversionData,
         }
         return tokens
       },
@@ -213,18 +227,19 @@ export default function (options: {
           usdTotal: number
           currency: Currency
           chainId: number
+          conversionData?: { conversion?: string; usd?: string }
         }
       >
     )
 
-    if (!paymentTokens || !path) {
+    if (!paymentTokens) {
       return []
     }
 
     let totalQuantities: Record<string, number> = {}
     let orders: Record<string, number> = {}
 
-    path.forEach((pathItem, i) => {
+    path?.forEach((pathItem, i) => {
       const tokenKey = `${pathItem.contract}:${pathItem.tokenId}`
       const tokenKeyInsensitive = `${pathItem.contract?.toLowerCase()}:${
         pathItem.tokenId
@@ -266,32 +281,29 @@ export default function (options: {
       orders[pathItem.orderId as string] = quantityToTake
       totalQuantities[assetKey] = totalQuantity + quantityToTake
 
-      //sum totals per currency
-      pathItem.buyIn?.forEach((buyIn) => {
-        const currencyKey = `${buyIn.currency?.contract?.toLowerCase()}:${
-          buyIn.currency?.chainId || chainId
-        }`
-        if (paymentTokens[currencyKey]) {
-          paymentTokens[currencyKey].total +=
-            BigInt(buyIn.amount?.raw || 0) * BigInt(quantityToTake)
-          paymentTokens[currencyKey].usdTotal +=
-            (buyIn.amount?.usd || 0) * quantityToTake
-          //todo: calculate network fee estimates
-        }
-      })
+      //Total for BuyIn or listing currency
+      const currency = pathItem.buyInCurrency
+        ? pathItem.buyInCurrency
+        : pathItem.currency
+      const totalRaw = BigInt(
+        pathItem.buyInRawQuote
+          ? pathItem.buyInRawQuote
+          : pathItem.totalRawPrice ?? 0
+      )
+      const currencyChainId = pathItem.fromChainId || chainId
+      const currencyKey = `${currency?.toLowerCase()}:${currencyChainId}`
+      if (paymentTokens[currencyKey]) {
+        paymentTokens[currencyKey].total += totalRaw * BigInt(quantityToTake)
+      }
     })
+
+    const preferredToken = Object.values(paymentTokens).find(
+      (token) => token.total > 0n
+    )
+
     return Object.values(paymentTokens)
-      .filter((token) => token.total > 0n)
       .map((token) => {
         const currency = token.currency
-        const currencyTotalFormatted = token.total
-          ? formatUnits(token.total, currency.decimals || 18)
-          : undefined
-
-        const usdTotalPriceRaw = parseUnits(token.usdTotal.toString(), 6)
-        const usdTotalFormatted = usdTotalPriceRaw
-          ? formatUnits(usdTotalPriceRaw, 6)
-          : undefined
 
         let maxItems: EnhancedCurrency['maxItems'] = undefined
         let maxPricePerItem: EnhancedCurrency['maxPricePerItem'] = undefined
@@ -339,71 +351,68 @@ export default function (options: {
               ? (nonNativeBalances[index] as string | number | bigint)
               : 0n
         }
+        const conversionData = token.conversionData
+        let currencyTotalRaw = token.total
+        if (
+          !currencyTotalRaw &&
+          (token.currency.contract !== preferredToken?.currency.contract ||
+            token.chainId !== preferredToken?.chainId)
+        ) {
+          currencyTotalRaw =
+            conversionData?.conversion &&
+            conversionData?.conversion !== '0' &&
+            preferredToken?.total
+              ? (preferredToken.total *
+                  parseUnits('1', preferredToken.currency.decimals ?? 18)) /
+                parseUnits(
+                  conversionData?.conversion?.toString(),
+                  preferredToken.currency.decimals ?? 18
+                )
+              : 0n
+        }
+
+        const currencyTotalFormatted =
+          currencyTotalRaw > 0n
+            ? formatUnits(
+                currencyTotalRaw,
+                preferredToken?.currency?.decimals || 18
+              )
+            : undefined
+
+        const usdPrice = Number(conversionData?.usd ?? 0)
+        const usdPriceRaw = parseUnits(usdPrice.toString(), 6)
+        const usdTotalPriceRaw = conversionData?.usd
+          ? ((preferredToken?.total || 0n) * usdPriceRaw) /
+            parseUnits('1', preferredToken?.currency?.decimals ?? 18)
+          : undefined
+
+        const usdTotalFormatted = usdTotalPriceRaw
+          ? formatUnits(usdTotalPriceRaw, 6)
+          : undefined
+        const usdBalanceRaw =
+          conversionData?.usd && typeof balance === 'bigint'
+            ? ((balance || 0n) * usdPriceRaw) /
+              parseUnits('1', preferredToken?.currency?.decimals ?? 18)
+            : undefined
 
         return {
           ...currency,
           address: token?.currency?.contract?.toLowerCase(),
           usdPrice: token.usdTotal,
+          usdPriceRaw,
           usdTotalPriceRaw,
-          usdTotalFormatted,
           balance,
-          currencyTotalRaw: token.total,
+          currencyTotalRaw,
           currencyTotalFormatted,
+          usdTotalFormatted: usdTotalFormatted,
+          usdBalanceRaw: usdBalanceRaw,
           maxItems,
           maxPricePerItem,
           chainId: token.chainId,
-          networkFees: 0n, //todo: calculate network fees
         }
       })
       .sort((a, b) => {
-        // If user has enough balance in the listing currency, return first. Otherwise sort currencies by balance and chainId
-        // User has enough balance in listing currency
-        if (
-          listingCurrency &&
-          a.address === listingCurrency.contract &&
-          a.chainId === listingCurrencyChainId &&
-          a.currencyTotalRaw &&
-          BigInt(a.balance) > a.currencyTotalRaw
-        ) {
-          return -1
-        }
-        if (
-          listingCurrency &&
-          b.address === listingCurrency.contract &&
-          b.chainId === listingCurrencyChainId &&
-          b.currencyTotalRaw &&
-          BigInt(b.balance) > b.currencyTotalRaw
-        ) {
-          return 1
-        }
-
-        // User has enough balance in non-listing currency
-        if (a.currencyTotalRaw && BigInt(a.balance) > a.currencyTotalRaw) {
-          return -1
-        }
-
-        if (b.currencyTotalRaw && BigInt(b.balance) > b.currencyTotalRaw) {
-          return 1
-        }
-
-        // Currency is the listing currency
-        if (
-          listingCurrency &&
-          a.address === listingCurrency.contract &&
-          a.chainId === listingCurrencyChainId
-        ) {
-          return -1
-        }
-
-        if (
-          listingCurrency &&
-          b.address === listingCurrency.contract &&
-          b.chainId === listingCurrencyChainId
-        ) {
-          return 1
-        }
-
-        return Number(b.usdPrice ?? 0) - Number(a.usdPrice ?? 0)
+        return Number(b.usdBalanceRaw) - Number(a.usdBalanceRaw)
       })
   }, [
     address,
@@ -415,5 +424,6 @@ export default function (options: {
     quantityToken,
     listingCurrency,
     listingCurrencyChainId,
+    preferredCurrencyConversions,
   ]) as EnhancedCurrency[]
 }

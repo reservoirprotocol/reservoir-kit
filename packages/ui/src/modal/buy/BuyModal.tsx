@@ -16,7 +16,6 @@ import {
   FormatCryptoCurrency,
   Loader,
   ErrorWell,
-  CryptoCurrencyIcon,
 } from '../../primitives'
 import Progress from '../Progress'
 import { Modal } from '../Modal'
@@ -34,7 +33,7 @@ import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { truncateAddress } from '../../lib/truncate'
-import { SelectPaymentToken } from '../SelectPaymentToken'
+import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
 import { WalletClient } from 'viem'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
@@ -262,8 +261,8 @@ export function BuyModal({
             )}
 
             {buyStep === BuyStep.SelectPayment && (
-              <Flex direction="column" css={{ py: 20 }}>
-                <Flex align="center" css={{ gap: '$2', px: '$4' }}>
+              <Flex direction="column" css={{ pb: 20 }}>
+                <Flex align="center" css={{ gap: '$2' }}>
                   <Button
                     onClick={() => setBuyStep(BuyStep.Checkout)}
                     color="ghost"
@@ -274,12 +273,13 @@ export function BuyModal({
                   </Button>
                   <Text style="subtitle2">Select A Token</Text>
                 </Flex>
-                <SelectPaymentToken
+                <SelectPaymentTokenv2
                   paymentTokens={paymentTokens}
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}
                   goBack={() => setBuyStep(BuyStep.Checkout)}
                   itemAmount={quantity}
+                  chainId={modalChain?.id || 1}
                 />
               </Flex>
             )}
@@ -314,18 +314,10 @@ export function BuyModal({
                 <Flex
                   direction="column"
                   css={{
-                    pt: '$4',
                     pb: '$2',
-                    gap: '$4',
                     borderTop: '1px solid $neutralBorder',
                   }}
                 >
-                  <PaymentDetails
-                    feeOnTop={feeOnTop}
-                    feeUsd={feeUsd}
-                    chainId={modalChain?.id}
-                    paymentCurrency={paymentCurrency}
-                  />
                   {paymentTokens.length > 1 ? (
                     <Flex
                       direction="column"
@@ -334,7 +326,7 @@ export function BuyModal({
                         py: '$3',
                         px: '$4',
                         borderRadius: '$3',
-                        borderTop: '1px solid $neutralBorder',
+                        borderBottom: '1px solid $neutralBorder',
                         '&:hover': {
                           backgroundColor: '$neutralBgHover',
                         },
@@ -354,10 +346,6 @@ export function BuyModal({
                           css={{ gap: '$2', cursor: 'pointer' }}
                         >
                           <Flex align="center">
-                            <CryptoCurrencyIcon
-                              address={paymentCurrency?.address as string}
-                              css={{ width: 16, height: 16, mr: '$1' }}
-                            />
                             <Text style="subtitle2">
                               {paymentCurrency?.name}
                             </Text>
@@ -369,6 +357,13 @@ export function BuyModal({
                       </Flex>
                     </Flex>
                   ) : null}
+                  <PaymentDetails
+                    feeOnTop={feeOnTop}
+                    feeUsd={feeUsd}
+                    chainId={modalChain?.id}
+                    paymentCurrency={paymentCurrency}
+                    css={{ pt: '$4' }}
+                  />
                 </Flex>
 
                 <Box css={{ p: '$4', width: '100%' }}>
@@ -401,7 +396,7 @@ export function BuyModal({
                         />
                       </Flex>
 
-                      {paymentCurrency?.networkFees &&
+                      {/* {paymentCurrency?.networkFees &&
                       paymentCurrency?.networkFees > 0n ? (
                         <Flex align="center">
                           <Text css={{ mr: '$3' }} color="error" style="body3">
@@ -416,7 +411,7 @@ export function BuyModal({
                             textStyle="body3"
                           />
                         </Flex>
-                      ) : null}
+                      ) : null} */}
 
                       <Button
                         disabled={providerOptions.disableJumperLink}
