@@ -12,7 +12,6 @@ import {
   useReservoirClient,
   useCollections,
   useListings,
-  useCurrencyConversion,
 } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
@@ -24,13 +23,7 @@ import {
   ReservoirClientActions,
   ReservoirWallet,
 } from '@reservoir0x/reservoir-sdk'
-import {
-  Address,
-  WalletClient,
-  formatUnits,
-  parseUnits,
-  zeroAddress,
-} from 'viem'
+import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import usePaymentTokensv2, {
@@ -216,12 +209,6 @@ export const BuyModalRenderer: FC<Props> = ({
     rendererChain?.id
   )
 
-  const { data: paymentCurrencyConversion } = useCurrencyConversion(
-    paymentCurrency?.chainId,
-    paymentCurrency?.address,
-    'usd'
-  )
-
   const collection = collections && collections[0] ? collections[0] : undefined
 
   const quantityRemaining = useMemo(() => {
@@ -231,7 +218,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [path, orderId])
 
   const usdPrice = paymentCurrency?.usdPrice || 0
-  const usdPriceRaw = parseUnits(`${paymentCurrencyConversion?.usd || 0}`, 6)
+  const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
   const feeUsd = formatUnits(
     feeOnTop * usdPriceRaw,
     (paymentCurrency?.decimals || 18) + 6
@@ -516,7 +503,7 @@ export const BuyModalRenderer: FC<Props> = ({
         items: items,
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            raw: paymentCurrency?.currencyTotalRaw,
+            raw: totalIncludingFees,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },
@@ -661,8 +648,8 @@ export const BuyModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (
       paymentCurrency?.balance != undefined &&
-      paymentCurrency?.currencyTotalRaw != undefined &&
-      BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
+      totalIncludingFees != undefined &&
+      BigInt(paymentCurrency?.balance) < totalIncludingFees
       //check network fees
     ) {
       setHasEnoughCurrency(false)
