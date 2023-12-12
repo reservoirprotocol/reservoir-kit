@@ -33,7 +33,7 @@ import {
   Trait,
   BidModalStepData,
 } from './BidModalRenderer'
-import TokenStats from './TokenStats'
+import TokenInfo from './TokenInfo'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -55,7 +55,6 @@ import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient, formatUnits } from 'viem'
@@ -121,15 +120,6 @@ function titleForStep(step: BidStep, copy: typeof ModalCopy) {
       return copy.titleComplete
   }
 }
-
-const ContentContainer = styled(Flex, {
-  width: '100%',
-  flexDirection: 'column',
-  '@bp1': {
-    flexDirection: 'row',
-  },
-  borderColor: '$borderColor',
-})
 
 const MainContainer = styled(Flex, {
   flex: 1,
@@ -346,15 +336,6 @@ export function BidModal({
           }
         }, [open, attributes])
 
-        const contentContainerCss: CSS = {
-          borderBottomWidth: providerOptionsContext.disablePoweredByReservoir
-            ? 0
-            : 1,
-          marginBottom: providerOptionsContext.disablePoweredByReservoir
-            ? 0
-            : 12,
-        }
-
         const ctaButtonText =
           copy.ctaBid.length > 0
             ? copy.ctaBid
@@ -386,7 +367,12 @@ export function BidModal({
           totalBidAmount >= minimumAmount
 
         const canPurchase = bidAmountPerUnit !== '' && withinPricingBounds
-
+        //   borderBottomWidth: providerOptionsContext.disablePoweredByReservoir
+        //   ? 0
+        //   : 1,
+        // marginBottom: providerOptionsContext.disablePoweredByReservoir
+        //   ? 0
+        //   : 12,
         return (
           <Modal
             size={
@@ -429,12 +415,8 @@ export function BidModal({
             }}
           >
             {bidStep === BidStep.SetPrice && !loading && collection && (
-              <ContentContainer
-                css={{
-                  ...contentContainerCss,
-                }}
-              >
-                <TokenStats
+              <>
+                <TokenInfo
                   chain={modalChain}
                   token={token ? token : undefined}
                   collection={collection}
@@ -875,15 +857,11 @@ export function BidModal({
                     )}
                   </Box>
                 </MainContainer>
-              </ContentContainer>
+              </>
             )}
 
             {bidStep === BidStep.Offering && collection && (
-              <ContentContainer
-                css={{
-                  ...contentContainerCss,
-                }}
-              >
+              <>
                 <TransactionBidDetails
                   chain={modalChain}
                   token={token ? token : undefined}
@@ -974,7 +952,7 @@ export function BidModal({
                     </Flex>
                   )}
                 </MainContainer>
-              </ContentContainer>
+              </>
             )}
 
             {bidStep === BidStep.Complete && (
