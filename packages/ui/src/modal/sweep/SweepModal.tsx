@@ -50,6 +50,7 @@ import { CollectionInfo } from '../CollectionInfo'
 import { PurchaseCheckout } from '../PurchaseCheckout'
 import { PaymentDetails } from '../../common/PaymentDetails'
 import { Dialog } from '../../primitives/Dialog'
+import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
 
 export type SweepCallbackData = {
   collectionId?: string
@@ -462,7 +463,7 @@ export function SweepModal({
                           textStyle="body3"
                         />
                       </Flex>
-                      {paymentCurrency?.networkFees &&
+                      {/* {paymentCurrency?.networkFees &&
                       paymentCurrency?.networkFees > 0n ? (
                         <Flex align="center" css={{ mt: '$1' }}>
                           <Text css={{ mr: '$3' }} color="error" style="body3">
@@ -477,7 +478,7 @@ export function SweepModal({
                             textStyle="body3"
                           />
                         </Flex>
-                      ) : null}
+                      ) : null} */}
                       <Button
                         disabled={disableJumperLink}
                         onClick={() => {
@@ -507,12 +508,13 @@ export function SweepModal({
                   </Button>
                   <Text style="subtitle2">Select Payment Method</Text>
                 </Flex>
-                <SelectPaymentToken
+                <SelectPaymentTokenv2
                   paymentTokens={paymentTokens}
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}
                   goBack={() => setSweepStep(SweepStep.Idle)}
                   itemAmount={itemAmount}
+                  chainId={modalChain?.id || 1}
                 />
               </Flex>
             )}

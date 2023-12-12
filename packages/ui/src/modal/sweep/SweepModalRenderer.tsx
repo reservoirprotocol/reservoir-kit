@@ -165,6 +165,8 @@ export const SweepModalRenderer: FC<Props> = ({
 
   const providerOptions = useContext(ProviderOptionsContext)
   const disableJumperLink = providerOptions?.disableJumperLink
+  const includeListingCurrency =
+    providerOptions.alwaysIncludeListingCurrency !== false
 
   const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id })
 
@@ -206,7 +208,7 @@ export const SweepModalRenderer: FC<Props> = ({
 
   const tokenData = tokens && tokens[0] ? tokens[0] : undefined
 
-  const [_paymentCurrency, setPaymentCurrency] = useState<
+  const [_paymentCurrency, _setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
 
@@ -251,114 +253,194 @@ export const SweepModalRenderer: FC<Props> = ({
     (paymentCurrency?.decimals || 18) + 6
   )
 
-  const fetchBuyPath = useCallback(() => {
-    if (!client) {
-      return
-    }
+  const fetchBuyPath = useCallback(
+    (
+      paymentCurrency: EnhancedCurrency | undefined,
+      paymentTokens: EnhancedCurrency[]
+    ) => {
+      if (!open || !client || paymentTokens.length === 0) {
+        return
+      }
 
-    let options: BuyTokenOptions = {
-      partial: true,
-      onlyPath: true,
-    }
+      let options: BuyTokenOptions = {
+        partial: true,
+        onlyPath: true,
+      }
 
-    if (normalizeRoyalties !== undefined) {
-      options.normalizeRoyalties = normalizeRoyalties
-    }
+      if (normalizeRoyalties !== undefined) {
+        options.normalizeRoyalties = normalizeRoyalties
+      }
 
-    if (
-      rendererChain?.paymentTokens &&
-      rendererChain.paymentTokens.length > 0
-    ) {
-      options.alternativeCurrencies = rendererChain?.paymentTokens
-        .filter((token) => token.chainId === rendererChain.id)
-        .map((token) => `${token.address}:${token.chainId}`)
-    }
+      if (paymentCurrency) {
+        options.currency = paymentCurrency.address
+        if (paymentCurrency.chainId) {
+          options.currencyChainId = paymentCurrency.chainId
+        }
+      } else if (!includeListingCurrency) {
+        options.currency = paymentTokens[0].address
+        if (paymentTokens[0].chainId) {
+          options.currencyChainId = paymentTokens[0].chainId
+        }
+        _setPaymentCurrency(paymentTokens[0])
+      }
 
-    client?.actions
-      .buyToken({
-        chainId: rendererChain?.id,
-        items: [
-          {
-            collection:
-              token ?? tokenData?.token?.tokenId ? undefined : collection?.id,
-            token:
-              token ?? tokenData?.token?.tokenId
-                ? `${collectionContract}:${
-                    tokenId ?? tokenData?.token?.tokenId
-                  }`
-                : undefined,
-            quantity: 500,
-            fillType: 'trade',
-          },
-        ],
-        expectedPrice: undefined,
-        options,
-        wallet: {
-          address: async () => {
-            return address || zeroAddress
-          },
-        } as any,
-        precheck: true,
-        onProgress: () => {},
-      })
-      .then((rawData) => {
-        let data = rawData as BuyResponses
+      return client?.actions
+        .buyToken({
+          chainId: rendererChain?.id,
+          items: [
+            {
+              collection:
+                token ?? tokenData?.token?.tokenId ? undefined : collection?.id,
+              token:
+                token ?? tokenData?.token?.tokenId
+                  ? `${collectionContract}:${
+                      tokenId ?? tokenData?.token?.tokenId
+                    }`
+                  : undefined,
+              quantity: 500,
+              fillType: 'trade',
+            },
+          ],
+          expectedPrice: undefined,
+          options,
+          wallet: {
+            address: async () => {
+              return address || zeroAddress
+            },
+          } as any,
+          precheck: true,
+          onProgress: () => {},
+        })
+        .then((rawData) => {
+          let data = rawData as BuyResponses
 
-        if ('path' in data) {
-          let pathData = data['path']
-          setOrders(pathData ?? [])
+          if ('path' in data) {
+            let pathData = data['path']
+            setOrders(pathData ?? [])
 
-          const pathOrderQuantity =
-            pathData?.reduce(
-              (quantity, order) => quantity + (order?.quantity || 1),
-              0
-            ) || 0
-          let totalMaxQuantity = pathOrderQuantity
-          if ('maxQuantities' in data && data.maxQuantities?.[0]) {
-            if (is1155) {
-              totalMaxQuantity = data.maxQuantities.reduce(
-                (total, currentQuantity) =>
-                  total + Number(currentQuantity.maxQuantity ?? 1),
+            const pathOrderQuantity =
+              pathData?.reduce(
+                (quantity, order) => quantity + (order?.quantity || 1),
                 0
-              )
-            } else {
-              let maxQuantity = data.maxQuantities?.[0].maxQuantity
-              // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
-              totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
+              ) || 0
+            let totalMaxQuantity = pathOrderQuantity
+            if ('maxQuantities' in data && data.maxQuantities?.[0]) {
+              if (is1155) {
+                totalMaxQuantity = data.maxQuantities.reduce(
+                  (total, currentQuantity) =>
+                    total + Number(currentQuantity.maxQuantity ?? 1),
+                  0
+                )
+              } else {
+                let maxQuantity = data.maxQuantities?.[0].maxQuantity
+                // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+                totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
+              }
+            }
+            setMaxItemAmount(
+              pathOrderQuantity > totalMaxQuantity
+                ? totalMaxQuantity
+                : pathOrderQuantity
+            )
+
+            if (!paymentCurrency && pathData?.[0]) {
+              const listingToken = {
+                address: (pathData[0].buyInCurrency ||
+                  pathData[0].currency) as Address,
+                decimals:
+                  pathData[0].buyInCurrencyDecimals ||
+                  pathData[0].currencyDecimals ||
+                  18,
+                symbol:
+                  pathData[0].buyInCurrencySymbol ||
+                  pathData[0].currencySymbol ||
+                  '',
+                name:
+                  pathData[0].buyInCurrencySymbol ||
+                  pathData[0].currencySymbol ||
+                  '',
+                chainId: rendererChain?.id || 1,
+              }
+              _setPaymentCurrency(listingToken)
             }
           }
-          setMaxItemAmount(
-            pathOrderQuantity > totalMaxQuantity
-              ? totalMaxQuantity
-              : pathOrderQuantity
-          )
+        })
+        .catch((err) => {
+          setOrders([])
+          throw err
+        })
+        .finally(() => {
+          setFetchedInitialOrders(true)
+        })
+    },
+    [
+      address,
+      client,
+      wallet,
+      rendererChain,
+      normalizeRoyalties,
+      collectionId,
+      tokenData?.token?.tokenId,
+      collectionContract,
+      collection?.id,
+      tokenId,
+      rendererChain?.paymentTokens,
+      is1155,
+      includeListingCurrency,
+      _setPaymentCurrency,
+    ]
+  )
+
+  const setPaymentCurrency: typeof _setPaymentCurrency = useCallback(
+    (
+      value:
+        | EnhancedCurrency
+        | ((
+            prevState: EnhancedCurrency | undefined
+          ) => EnhancedCurrency | undefined)
+        | undefined
+    ) => {
+      if (typeof value === 'function') {
+        _setPaymentCurrency((prevState) => {
+          const newValue = value(prevState)
+          if (
+            newValue?.address !== paymentCurrency?.address ||
+            newValue?.chainId !== paymentCurrency?.chainId
+          ) {
+            fetchBuyPath(newValue, paymentTokens)?.catch((err) => {
+              if (
+                err?.statusCode === 400 &&
+                err?.message?.includes('Price too high')
+              ) {
+                _setPaymentCurrency(prevState)
+              }
+            })
+          }
+          return newValue
+        })
+      } else {
+        if (
+          value?.address !== paymentCurrency?.address ||
+          value?.chainId !== paymentCurrency?.chainId
+        ) {
+          _setPaymentCurrency(value)
+          fetchBuyPath(value, paymentTokens)?.catch((err) => {
+            if (
+              err?.statusCode === 400 &&
+              err?.message?.includes('Price too high')
+            ) {
+              _setPaymentCurrency(paymentCurrency)
+            }
+          })
         }
-      })
-      .catch((err) => {
-        setOrders([])
-        throw err
-      })
-      .finally(() => {
-        setFetchedInitialOrders(true)
-      })
-  }, [
-    address,
-    client,
-    wallet,
-    rendererChain,
-    normalizeRoyalties,
-    collectionId,
-    tokenData?.token?.tokenId,
-    collectionContract,
-    collection?.id,
-    tokenId,
-    rendererChain?.paymentTokens,
-    is1155,
-  ])
+      }
+    },
+    [fetchBuyPath, _setPaymentCurrency, paymentCurrency]
+  )
 
   const fetchBuyPathIfIdle = useCallback(() => {
     if (collection && sweepStep === SweepStep.Idle) {
-      fetchBuyPath()
+      fetchBuyPath(paymentCurrency, paymentTokens)
     }
   }, [fetchBuyPath, sweepStep, collection])
 
@@ -411,13 +493,6 @@ export const SweepModalRenderer: FC<Props> = ({
     }
   }, [paymentCurrency, feesOnTopBps, feesOnTopUsd, usdPriceRaw, itemAmount])
 
-  // Set paymentCurrency to first paymentToken
-  useEffect(() => {
-    if (paymentTokens[0] && !paymentCurrency && fetchedInitialOrders) {
-      setPaymentCurrency(paymentTokens[0])
-    }
-  }, [paymentTokens, paymentCurrency, fetchedInitialOrders])
-
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
@@ -427,18 +502,13 @@ export const SweepModalRenderer: FC<Props> = ({
     if (
       paymentCurrency?.balance != undefined &&
       paymentCurrency?.currencyTotalRaw != undefined &&
-      BigInt(paymentCurrency?.balance) <
-        paymentCurrency?.currencyTotalRaw + (paymentCurrency?.networkFees || 0n)
+      BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
     ) {
       setHasEnoughCurrency(false)
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [
-    paymentCurrency?.currencyTotalRaw,
-    paymentCurrency?.balance,
-    paymentCurrency?.networkFees,
-  ])
+  }, [paymentCurrency?.currencyTotalRaw, paymentCurrency?.balance])
 
   useEffect(() => {
     let updatedTokens = []
@@ -468,7 +538,7 @@ export const SweepModalRenderer: FC<Props> = ({
       setSweepStep(SweepStep.Idle)
       setTransactionError(null)
       setFetchedInitialOrders(false)
-      setPaymentCurrency(undefined)
+      _setPaymentCurrency(undefined)
       setStepData(null)
     } else {
       setItemAmount(defaultQuantity || 1)
@@ -638,7 +708,7 @@ export const SweepModalRenderer: FC<Props> = ({
         setTransactionError(error)
         setSweepStep(SweepStep.Idle)
         mutateCollection()
-        fetchBuyPath()
+        fetchBuyPath(paymentCurrency, paymentTokens)
       })
   }, [
     selectedTokens,
@@ -661,6 +731,7 @@ export const SweepModalRenderer: FC<Props> = ({
     paymentCurrency?.address,
     paymentCurrency?.chainId,
     paymentCurrency?.currencyTotalRaw,
+    paymentTokens,
     usePermit,
   ])
 
