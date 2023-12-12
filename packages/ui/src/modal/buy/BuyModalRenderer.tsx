@@ -732,26 +732,3 @@ export const BuyModalRenderer: FC<Props> = ({
     </>
   )
 }
-
-// const hasMaxItemAmount = paymentToken?.maxItems != undefined
-// const hasMaxPricePerItem = paymentToken?.maxPricePerItem != undefined
-// const hasCurrencyTotalRaw =
-//   paymentToken?.currencyTotalRaw != undefined
-
-// const maxPurchasablePrice =
-//   BigInt(itemAmount) * BigInt(paymentToken?.maxPricePerItem ?? 0)
-// const maxItemAmount = paymentToken?.maxItems
-//   ? BigInt(paymentToken?.maxItems)
-//   : undefined
-
-// const isEnabledPaymentToken = Boolean(
-//   isSelectedCurrency ||
-//     (!hasMaxPricePerItem &&
-//       !hasMaxItemAmount &&
-//       hasCurrencyTotalRaw) ||
-//     (maxPurchasablePrice &&
-//       paymentToken?.currencyTotalRaw !== undefined &&
-//       maxPurchasablePrice >= paymentToken?.currencyTotalRaw &&
-//       maxItemAmount &&
-//       maxItemAmount >= itemAmount)
-// )

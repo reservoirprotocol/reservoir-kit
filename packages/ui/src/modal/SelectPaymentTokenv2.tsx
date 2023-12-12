@@ -25,13 +25,13 @@ type Props = {
 const PaymentTokenRow = ({
   setCurrency,
   paymentToken,
-  currency,
   goBack,
+  currency,
 }: {
   setCurrency: Props['setCurrency']
   paymentToken: EnhancedCurrency
-  currency?: EnhancedCurrency
   goBack: Props['goBack']
+  currency?: EnhancedCurrency
 }) => {
   const isSelectedCurrency =
     currency?.address.toLowerCase() === paymentToken?.address &&
@@ -121,10 +121,35 @@ export const SelectPaymentTokenv2: FC<Props> = ({
   itemAmount,
   chainId,
 }) => {
-  const nativeCurrencies = paymentTokens.filter(
+  const availablePaymentTokens = paymentTokens.filter((paymentToken) => {
+    const isSelectedCurrency =
+      currency?.address.toLowerCase() === paymentToken?.address &&
+      currency?.chainId === paymentToken?.chainId
+    const hasMaxItemAmount = paymentToken?.maxItems != undefined
+    const hasMaxPricePerItem = paymentToken?.maxPricePerItem != undefined
+    const hasCurrencyTotalRaw = paymentToken?.currencyTotalRaw != undefined
+
+    const maxPurchasablePrice =
+      BigInt(itemAmount) * BigInt(paymentToken?.maxPricePerItem ?? 0)
+    const maxItemAmount = paymentToken?.maxItems
+      ? BigInt(paymentToken?.maxItems)
+      : undefined
+    debugger
+    return Boolean(
+      isSelectedCurrency ||
+        (!hasMaxPricePerItem && !hasMaxItemAmount && hasCurrencyTotalRaw) ||
+        (maxPurchasablePrice &&
+          paymentToken?.currencyTotalRaw !== undefined &&
+          maxPurchasablePrice >= paymentToken?.currencyTotalRaw &&
+          maxItemAmount &&
+          maxItemAmount >= itemAmount)
+    )
+  })
+
+  const nativeCurrencies = availablePaymentTokens.filter(
     (token) => token.chainId === chainId
   )
-  const crossChainCurrencies = paymentTokens.filter(
+  const crossChainCurrencies = availablePaymentTokens.filter(
     (token) => token.chainId !== chainId
   )
 
