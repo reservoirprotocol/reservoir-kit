@@ -45,7 +45,7 @@ const fetchNativeBalances = async (
 }
 
 export default function (
-  open: boolean,
+  enabled: boolean,
   address: Address,
   preferredCurrency: PaymentToken,
   preferredCurrencyTotalPrice: bigint,
@@ -65,6 +65,7 @@ export default function (
     providerOptions.alwaysIncludeListingCurrency !== false
 
   const allPaymentTokens = useMemo(() => {
+    debugger
     let paymentTokens = chain?.paymentTokens
 
     if (includeListingCurrency) {
@@ -137,7 +138,7 @@ export default function (
   ])
 
   const { data: nonNativeBalances } = useContractReads({
-    contracts: open
+    contracts: enabled
       ? nonNativeCurrencies?.map((currency) => ({
           abi: erc20ABI,
           address: currency.address as `0x${string}`,
@@ -146,12 +147,12 @@ export default function (
           args: [address],
         }))
       : [],
-    enabled: open,
+    enabled,
     allowFailure: false,
   })
 
   const { data: nativeBalances } = useSWR(
-    open ? address : undefined,
+    enabled ? address : undefined,
     () => fetchNativeBalances(address, nativeCurrencies),
     {
       revalidateOnFocus: false,
@@ -171,18 +172,18 @@ export default function (
   }, [allPaymentTokens, crossChainDisabled])
 
   const { data: solverCapacityChainIdMap } = useSolverCapacities(
-    open ? crosschainChainIds : [],
+    enabled ? crosschainChainIds : [],
     chain
   )
 
   const preferredCurrencyConversions = useCurrencyConversions(
     preferredCurrency?.address,
     chain,
-    open ? allPaymentTokens : undefined
+    enabled ? allPaymentTokens : undefined
   )
 
   const paymentTokens = useMemo(() => {
-    if (!open) {
+    if (!enabled) {
       return []
     }
 

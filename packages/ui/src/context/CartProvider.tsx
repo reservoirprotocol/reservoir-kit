@@ -10,10 +10,11 @@ import {
 import {
   useCurrencyConversion,
   useListings,
+  usePaymentTokens,
   useReservoirClient,
   useTokens,
+  useChainCurrency,
 } from '../hooks'
-import { useChainCurrency } from '../hooks/index'
 import { defaultFetcher } from '../lib/swr'
 import React, {
   createContext,
@@ -23,11 +24,20 @@ import React, {
   useEffect,
   FC,
   useState,
+  useContext,
 } from 'react'
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { useAccount, useSwitchNetwork } from 'wagmi'
+import {
+  Address,
+  WalletClient,
+  formatUnits,
+  parseUnits,
+  zeroAddress,
+} from 'viem'
 import { version } from '../../package.json'
 import { getNetwork, getWalletClient } from 'wagmi/actions'
+import { EnhancedCurrency } from '../hooks/usePaymentTokens'
+import { ProviderOptionsContext } from '../ReservoirKitProvider'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
@@ -36,7 +46,6 @@ type Token = NonNullable<ReturnType<typeof useTokens>['data'][0]>
 type TokensSchema = paths['/tokens/v6']['get']['responses']['200']['schema']
 type FloorAsk = NonNullable<NonNullable<Token['market']>['floorAsk']>
 type CartItemPrice = FloorAsk['price']
-type Currency = NonNullable<NonNullable<CartItemPrice>['currency']>
 type BuyTokenOptions = Parameters<
   ReservoirClientActions['buyToken']
 >['0']['options']
@@ -53,6 +62,7 @@ export enum CheckoutTransactionError {
   PiceMismatch,
   InsufficientBalance,
   UserDenied,
+  TransactionTimeOut,
 }
 
 type CartItem = {
@@ -78,8 +88,10 @@ type CartItem = {
 
 export type Cart = {
   totalPrice: number
-  currency?: NonNullable<CartItemPrice>['currency']
+  totalPriceRaw: bigint
+  currency?: EnhancedCurrency
   feeOnTop?: number
+  feeOnTopRaw?: bigint
   feesOnTopBps?: string[]
   feesOnTopUsd?: string[]
   items: CartItem[]
@@ -119,13 +131,14 @@ function cartStore({
   persist = true,
   walletClient,
 }: CartStoreProps) {
+  const providerOptionsContext = useContext(ProviderOptionsContext)
   const { address } = useAccount()
-  const { chains } = useNetwork()
   const { switchNetworkAsync } = useSwitchNetwork()
   const [cartCurrency, setCartCurrency] = useState<Cart['currency']>()
   const [cartChain, setCartChain] = useState<Cart['chain']>()
   const cartData = useRef<Cart>({
     totalPrice: 0,
+    totalPriceRaw: 0n,
     feesOnTopBps: undefined,
     feesOnTopUsd: undefined,
     items: [],
@@ -138,8 +151,36 @@ function cartStore({
   const client = useReservoirClient()
   const { data: usdFeeConversion } = useCurrencyConversion(
     cartChain?.id,
-    cartCurrency?.contract,
+    cartCurrency?.address,
     'usd'
+  )
+  const chainCurrency = useChainCurrency(cartChain?.id)
+
+  const paymentTokens = usePaymentTokens(
+    address !== undefined,
+    address as Address,
+    cartCurrency
+      ? {
+          symbol: cartCurrency.symbol as string,
+          address: cartCurrency?.address as Address,
+          name: cartCurrency?.name,
+          decimals: cartCurrency.decimals as number,
+          chainId: cartCurrency.chainId,
+        }
+      : chainCurrency,
+    cartData.current.totalPriceRaw - (cartData.current.feeOnTopRaw ?? 0n),
+    cartChain?.id,
+    false,
+    true,
+    cartData.current?.items?.[0]?.price?.currency
+      ? {
+          ...cartData.current?.items[0].price.currency,
+          address: cartData.current.items[0].price.currency.contract as Address,
+          decimals: cartData.current.items[0].price.currency.decimals || 18,
+          symbol: cartData.current.items[0].price.currency.symbol as string,
+          chainId: cartChain?.id || 1,
+        }
+      : undefined
   )
   const usdPrice = Number(usdFeeConversion?.usd || 0)
 
@@ -153,27 +194,40 @@ function cartStore({
       const storedCart = window.localStorage.getItem(CartStorageKey)
       if (storedCart) {
         const rehydratedCart: Cart = JSON.parse(storedCart)
-        const currency = getCartCurrency(
-          rehydratedCart.items,
-          rehydratedCart.chain?.id || 1
-        )
+        const deserializedCurrency = rehydratedCart.currency
+          ? {
+              ...rehydratedCart.currency,
+              usdPriceRaw: BigInt(rehydratedCart.currency.usdPriceRaw ?? 0n),
+              currencyTotalRaw: BigInt(
+                rehydratedCart.currency.currencyTotalRaw ?? 0n
+              ),
+              usdTotalPriceRaw: BigInt(
+                rehydratedCart.currency.usdTotalPriceRaw ?? 0n
+              ),
+              balance: BigInt(rehydratedCart.currency.balance ?? 0n),
+            }
+          : undefined
         const pools = calculatePools(rehydratedCart.items)
-        const { totalPrice, feeOnTop } = calculatePricing(
-          rehydratedCart.items,
-          currency,
-          cartData.current.feesOnTopBps,
-          cartData.current.feesOnTopUsd,
-          usdPrice
-        )
+        const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+          calculatePricing(
+            rehydratedCart.items,
+            deserializedCurrency,
+            cartData.current.feesOnTopBps,
+            cartData.current.feesOnTopUsd,
+            usdPrice
+          )
+
         cartData.current = {
           ...cartData.current,
           chain:
             rehydratedCart.items.length > 0 ? rehydratedCart.chain : undefined,
           items: rehydratedCart.items,
+          currency: deserializedCurrency,
           pools,
           totalPrice,
+          totalPriceRaw,
           feeOnTop,
-          currency,
+          feeOnTopRaw,
         }
         subscribers.current.forEach((callback) => callback())
         validate()
@@ -182,29 +236,27 @@ function cartStore({
   }, [])
 
   useEffect(() => {
-    const currency = getCartCurrency(
-      cartData.current.items,
-      cartData.current.chain?.id || 1
-    )
     const pools = calculatePools(cartData.current.items)
-    const { totalPrice, feeOnTop } = calculatePricing(
-      cartData.current.items,
-      currency,
-      feesOnTopBps,
-      feesOnTopUsd,
-      usdPrice
-    )
+    const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+      calculatePricing(
+        cartData.current.items,
+        cartCurrency,
+        feesOnTopBps,
+        feesOnTopUsd,
+        usdPrice
+      )
     cartData.current = {
       ...cartData.current,
       pools,
       totalPrice,
+      totalPriceRaw,
       feesOnTopBps,
       feesOnTopUsd,
       feeOnTop,
-      currency,
+      feeOnTopRaw,
     }
     commit()
-  }, [feesOnTopBps, feesOnTopUsd, usdPrice])
+  }, [feesOnTopBps, feesOnTopUsd, usdPrice, cartCurrency])
 
   const get = useCallback(() => cartData.current, [])
   const set = useCallback((value: Partial<Cart>) => {
@@ -220,9 +272,25 @@ function cartStore({
   const commit = useCallback(() => {
     subscribers.current.forEach((callback) => callback())
     if (persist && typeof window !== 'undefined' && window.localStorage) {
+      const serializedCurrency = cartData.current.currency
+        ? {
+            ...cartData.current.currency,
+            usdPriceRaw: cartData.current.currency.usdPriceRaw?.toString(),
+            currencyTotalRaw:
+              cartData.current.currency.currencyTotalRaw?.toString(),
+            usdTotalPriceRaw:
+              cartData.current.currency.usdTotalPriceRaw?.toString(),
+            balance: cartData.current.currency.balance?.toString(),
+          }
+        : undefined
       window.localStorage.setItem(
         CartStorageKey,
-        JSON.stringify(cartData.current)
+        JSON.stringify({
+          ...cartData.current,
+          currency: serializedCurrency,
+          totalPriceRaw: undefined,
+          feeOnTopRaw: undefined,
+        })
       )
     }
   }, [persist])
@@ -254,74 +322,52 @@ function cartStore({
       feesOnTopUsd?: Cart['feesOnTopUsd'],
       usdPrice?: number
     ) => {
+      let subtotal = 0
+      let subtotalRaw = 0n
       let feeOnTop = 0
-      let subtotal = items.reduce((total, { price, order }) => {
+      let feeOnTopRaw = 0n
+      items.forEach(({ price, order }) => {
         let amount = price?.amount?.decimal
-        if (price?.currency?.contract !== currency?.contract) {
-          amount = price?.amount?.native
-        }
+        let amountRaw = BigInt(price?.amount?.raw || 0)
 
         if (amount && order?.quantity) {
-          amount = amount * order?.quantity
+          amount = amount * order.quantity
+          amountRaw = amountRaw * BigInt(order.quantity)
         }
-        return (total += amount || 0)
-      }, 0)
+        subtotal += amount || 0
+        subtotalRaw += amountRaw || 0n
+      })
       if (feesOnTopBps) {
-        feeOnTop = feesOnTopBps.reduce((total, feeOnTopBps) => {
+        feesOnTopBps.forEach((feeOnTopBps) => {
           const [_, feeBps] = feeOnTopBps.split(':')
-          total += (Number(feeBps || 0) / 10000) * subtotal
-          return total
+          feeOnTop += (Number(feeBps || 0) / 10000) * subtotal
+          feeOnTopRaw += (BigInt(feeBps || 0n) / 10000n) * subtotalRaw
         }, 0)
       } else if (feesOnTopUsd && usdPrice && currency && currency?.decimals) {
-        feeOnTop = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
-          const [_, fee] = feeOnTop.split(':')
+        feesOnTopUsd.forEach((feeOnTopItem) => {
+          const [_, fee] = feeOnTopItem.split(':')
           const atomicUsdPrice = parseUnits(`${usdPrice}`, 6)
           const atomicFee = BigInt(fee)
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** (currency?.decimals || 18))
           const currencyFee = convertedAtomicFee / atomicUsdPrice
           const parsedFee = formatUnits(currencyFee, currency.decimals || 18)
-          return totalFees + Number(parsedFee)
+          feeOnTop += Number(parsedFee)
+          feeOnTopRaw += currencyFee
         }, 0)
       }
-      subtotal = subtotal + feeOnTop
       return {
-        totalPrice: subtotal,
+        totalPrice: subtotal + feeOnTop,
+        totalPriceRaw: subtotalRaw + feeOnTopRaw,
         feeOnTop,
+        feeOnTopRaw,
       }
     },
     []
   )
 
-  const getCartCurrency = useCallback(
-    (items: CartItem[], chainId: number): Currency | undefined => {
-      let currencies = new Set<string>()
-      let currenciesData: Record<string, Currency> = {}
-      for (let i = 0; i < items.length; i++) {
-        const currency = items[i].price?.currency
-        if (currency?.contract) {
-          currencies.add(currency.contract)
-          currenciesData[currency.contract] = currency
-        }
-        if (currencies.size > 1) {
-          break
-        }
-      }
-      if (currencies.size > 1) {
-        const chainCurrency = useChainCurrency(chainId)
-        return {
-          ...chainCurrency,
-          contract: chainCurrency.address,
-        }
-      } else if (currencies.size > 0) {
-        return Object.values(currenciesData)[0]
-      }
-    },
-    [chains]
-  )
-
   const fetchTokens = useCallback(
-    async (tokenIds: string[], chainId: number) => {
+    async (tokenIds: string[], chainId: number, currencyAddress?: Address) => {
       if (!tokenIds || tokenIds.length === 0) {
         return { tokens: [] }
       }
@@ -335,6 +381,7 @@ function cartStore({
         tokens: tokenIds,
         limit: 100,
         includeDynamicPricing: true,
+        displayCurrency: currencyAddress,
       }
       if (client?.normalizeRoyalties !== undefined) {
         query.normalizeRoyalties = client?.normalizeRoyalties
@@ -356,7 +403,7 @@ function cartStore({
   )
 
   const fetchOrders = useCallback(
-    async (orderIds: string[], chainId: number) => {
+    async (orderIds: string[], chainId: number, currencyAddress?: Address) => {
       if (!orderIds || orderIds.length === 0) {
         return { orders: [] }
       }
@@ -371,6 +418,7 @@ function cartStore({
         ids: orderIds,
         limit: 1000,
         includeCriteriaMetadata: true,
+        displayCurrency: currencyAddress,
       }
       if (client?.normalizeRoyalties !== undefined) {
         query.normalizeRoyalties = client?.normalizeRoyalties
@@ -480,6 +528,7 @@ function cartStore({
       totalPrice: 0,
       feeOnTop: 0,
       chain: undefined,
+      currency: undefined,
     }
     commit()
   }, [commit])
@@ -515,292 +564,28 @@ function cartStore({
           items: updatedItems,
         }
       } else {
-        const currency = getCartCurrency(
-          updatedItems,
-          cartData.current.chain?.id || 1
-        )
-        const { totalPrice, feeOnTop } = calculatePricing(
-          updatedItems,
-          currency,
-          cartData.current.feesOnTopBps,
-          cartData.current.feesOnTopUsd,
-          usdPrice
-        )
+        const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+          calculatePricing(
+            updatedItems,
+            cartData.current.currency,
+            cartData.current.feesOnTopBps,
+            cartData.current.feesOnTopUsd,
+            usdPrice
+          )
 
         cartData.current = {
           ...cartData.current,
           items: updatedItems,
           totalPrice,
+          totalPriceRaw,
+          feeOnTopRaw,
           feeOnTop,
-          currency,
         }
       }
 
       commit()
     },
     [commit, usdPrice]
-  )
-
-  type AsyncAddToCartOrder = { orderId: string }
-  type AsyncAddToCartToken = { id: string }
-  type AddToCartToken = AsyncAddToCartToken | AsyncAddToCartOrder | Token
-
-  const add = useCallback(
-    async (items: AddToCartToken[], chainId: number) => {
-      try {
-        if (cartData.current.chain && chainId != cartData.current.chain?.id) {
-          throw `ChainId: ${chainId}, is different than the cart chainId (${cartData.current.chain?.id})`
-        }
-        if (cartData.current.isValidating) {
-          throw 'Currently validating, adding items temporarily disabled'
-        }
-
-        const updatedItems = [...cartData.current.items]
-        const currentIds = cartData.current.items.map(
-          (item) => `${item.collection.id}:${item.token.id}`
-        )
-        const currentOrderIds = cartData.current.items.map(
-          (item) => item.order?.id
-        )
-
-        const tokensToFetch: string[] = []
-        const tokens: Token[] = []
-        const ordersToFetch: string[] = []
-
-        const tokensByMaker = updatedItems.reduce((map, item) => {
-          if (item.order) {
-            const maker = item.order?.maker
-            if (!map[maker]) {
-              map[maker] = []
-            }
-            map[maker].push(`${item.collection.id}:${item.token.id}`)
-          }
-          return map
-        }, {} as Record<string, string[]>)
-
-        items.forEach((item) => {
-          const token = item as Token
-          const asyncToken = item as AsyncAddToCartToken
-          const asyncOrder = item as AsyncAddToCartOrder
-          if (token.token) {
-            if (
-              !currentIds.includes(
-                `${token.token?.collection?.id}:${token.token?.tokenId}`
-              )
-            ) {
-              tokens.push(token)
-            }
-          } else if (
-            asyncToken &&
-            asyncToken.id &&
-            !currentIds.includes(asyncToken.id)
-          ) {
-            tokensToFetch.push(asyncToken.id)
-          } else if (
-            asyncOrder &&
-            asyncOrder.orderId &&
-            !currentOrderIds.includes(asyncOrder.orderId)
-          ) {
-            ordersToFetch.push(asyncOrder.orderId)
-          }
-        })
-
-        const promises: Promise<void>[] = []
-
-        if (tokensToFetch.length > 0) {
-          promises.push(
-            new Promise(async (resolve) => {
-              const { tokens: fetchedTokens } = await fetchTokens(
-                tokensToFetch,
-                chainId
-              )
-              fetchedTokens?.forEach((tokenData) => {
-                const item = convertTokenToItem(tokenData)
-                const id = `${item?.collection.id}:${item?.token.id}`
-                const maker = tokenData.market?.floorAsk?.maker
-                const duplicateListingDetected =
-                  item &&
-                  maker &&
-                  tokensByMaker[maker] &&
-                  tokensByMaker[maker].includes(id)
-                if (duplicateListingDetected) {
-                  client?.log(
-                    [
-                      'Detected adding duplicate listing to cart, aborting',
-                      tokenData,
-                      updatedItems,
-                    ],
-                    LogLevel.Error
-                  )
-                } else if (item) {
-                  updatedItems.push(item)
-                }
-              })
-
-              resolve()
-            })
-          )
-        }
-
-        if (ordersToFetch.length > 0) {
-          promises.push(
-            new Promise(async (resolve) => {
-              const { orders: fetchedOrders } = await fetchOrders(
-                ordersToFetch,
-                chainId
-              )
-              fetchedOrders?.forEach((orderData) => {
-                const item = convertOrderToItem(orderData)
-                const id = `${item?.collection.id}:${item?.token.id}`
-                const duplicateListingDetected =
-                  item &&
-                  tokensByMaker[orderData.maker] &&
-                  tokensByMaker[orderData.maker].includes(id)
-                if (duplicateListingDetected) {
-                  client?.log(
-                    [
-                      'Detected adding duplicate listing to cart, aborting',
-                      orderData,
-                      updatedItems,
-                    ],
-                    LogLevel.Error
-                  )
-                } else if (item) {
-                  updatedItems.push(item)
-                }
-              })
-
-              resolve()
-            })
-          )
-        }
-
-        if (promises.length > 0) {
-          cartData.current.isValidating = true
-          subscribers.current.forEach((callback) => callback())
-
-          await Promise.allSettled(promises)
-        }
-
-        if (tokens.length > 0) {
-          tokens.forEach((token) => {
-            if (
-              token.market?.floorAsk?.maker?.toLowerCase() !==
-                address?.toLowerCase() &&
-              token.token?.owner?.toLowerCase() !== address?.toLowerCase()
-            ) {
-              const item = convertTokenToItem(token)
-              if (item) {
-                updatedItems.push(item)
-              }
-            }
-          })
-        }
-
-        const pools = calculatePools(updatedItems)
-        const currency = getCartCurrency(updatedItems, chainId)
-        const { totalPrice, feeOnTop } = calculatePricing(
-          updatedItems,
-          currency,
-          cartData.current.feesOnTopBps,
-          cartData.current.feesOnTopUsd,
-          usdPrice
-        )
-
-        cartData.current = {
-          ...cartData.current,
-          isValidating: false,
-          items: updatedItems,
-          totalPrice,
-          feeOnTop,
-          currency,
-          pools,
-        }
-
-        if (!cartData.current.chain) {
-          cartData.current.chain =
-            client?.chains.find((chain) => chain.id === chainId) ||
-            client?.currentChain() ||
-            undefined
-        }
-        commit()
-      } catch (e) {
-        if (cartData.current.isValidating) {
-          cartData.current.isValidating = false
-          commit()
-        }
-        throw e
-      }
-    },
-    [fetchTokens, commit, address, usdPrice]
-  )
-
-  /**
-   * @param ids An array of order ids or token keys. Tokens should be in the format `collection:token`
-   */
-
-  const remove = useCallback(
-    (ids: string[]) => {
-      if (cartData.current.isValidating) {
-        console.warn(
-          'Currently validating, removing items temporarily disabled'
-        )
-        return
-      }
-      const updatedItems: CartItem[] = []
-      const removedItems: CartItem[] = []
-      cartData.current.items.forEach((item) => {
-        const key = `${item.collection.id}:${item.token.id}`
-        const orderId = item.order?.id
-        if (orderId && ids.includes(orderId)) {
-          removedItems.push(item)
-        } else if (ids.includes(key)) {
-          removedItems.push(item)
-        } else {
-          updatedItems.push(item)
-        }
-      })
-      const pools = calculatePools(updatedItems)
-      const currency = getCartCurrency(
-        updatedItems,
-        cartData.current.chain?.id || 1
-      )
-      const { totalPrice, feeOnTop } = calculatePricing(
-        updatedItems,
-        currency,
-        cartData.current.feesOnTopBps,
-        cartData.current.feesOnTopUsd,
-        usdPrice
-      )
-
-      //Suppress pool price changes if the removed item was from the pool
-      const removedPoolIds = removedItems.reduce((poolIds, item) => {
-        if (item.poolId) {
-          poolIds.push(item.poolId)
-        }
-        return poolIds
-      }, [] as string[])
-
-      updatedItems.forEach((item) => {
-        if (item.poolId && removedPoolIds.includes(item.poolId)) {
-          item.previousPrice = item.price
-        }
-      })
-
-      cartData.current = {
-        ...cartData.current,
-        items: updatedItems,
-        pools,
-        totalPrice,
-        feeOnTop,
-        currency,
-      }
-      if (updatedItems.length === 0) {
-        cartData.current.chain = undefined
-      }
-      commit()
-    },
-    [usdPrice]
   )
 
   const validate = useCallback(async () => {
@@ -844,13 +629,23 @@ function cartStore({
 
       if (ordersToFetch.length > 0) {
         promises.push(
-          fetchOrders(ordersToFetch, cartData.current.chain?.id as number)
+          fetchOrders(
+            ordersToFetch,
+            cartData.current.chain?.id as number,
+            (cartData.current.currency?.address ??
+              chainCurrency.address) as Address
+          )
         )
       }
 
       if (tokensToFetch.length > 0) {
         promises.push(
-          fetchTokens(tokensToFetch, cartData.current.chain?.id as number)
+          fetchTokens(
+            tokensToFetch,
+            cartData.current.chain?.id as number,
+            (cartData.current.currency?.address ??
+              chainCurrency.address) as Address
+          )
         )
       }
 
@@ -932,22 +727,24 @@ function cartStore({
       }
 
       const pools = calculatePools(items)
-      const currency = getCartCurrency(items, cartData.current.chain?.id || 1)
-      const { totalPrice, feeOnTop } = calculatePricing(
-        items,
-        currency,
-        cartData.current.feesOnTopBps,
-        cartData.current.feesOnTopUsd,
-        usdPrice
-      )
+      const currency = getCurrency(items)
+      const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+        calculatePricing(
+          items,
+          currency,
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopUsd,
+          usdPrice
+        )
       cartData.current = {
         ...cartData.current,
         items,
         pools,
         isValidating: false,
         totalPrice,
+        totalPriceRaw,
         feeOnTop,
-        currency,
+        feeOnTopRaw,
       }
 
       commit()
@@ -960,6 +757,349 @@ function cartStore({
       throw e
     }
   }, [fetchTokens, fetchOrders, address, usdPrice])
+
+  const setCurrency = useCallback(
+    (currency: EnhancedCurrency | undefined) => {
+      const paymentToken = paymentTokens.find(
+        (token) => token.address === currency?.address
+      )
+      if (paymentToken) {
+        cartData.current = {
+          ...cartData.current,
+          currency: paymentToken,
+        }
+        validate()
+        commit()
+      }
+    },
+    [paymentTokens, commit, validate]
+  )
+
+  const getCurrency = useCallback(
+    (items?: Cart['items'], chainId?: number) => {
+      items = items ? items : cartData.current.items
+
+      if (cartData.current.currency) {
+        return cartData.current.currency
+      }
+
+      const includeListingCurrency =
+        providerOptionsContext.alwaysIncludeListingCurrency !== false
+
+      if (items.length > 0 && paymentTokens) {
+        const firstValidItem = items.find((item) => item.price?.currency)
+        if (includeListingCurrency) {
+          const firstValidItemCurrency = firstValidItem?.price?.currency
+          return {
+            address: firstValidItemCurrency?.contract?.toLowerCase() as Address,
+            decimals: firstValidItemCurrency?.decimals || 18,
+            symbol: firstValidItemCurrency?.symbol || '',
+            chainId: chainId || cartChain?.id || 1,
+            name: firstValidItemCurrency?.name,
+          }
+        } else {
+          return (
+            paymentTokens.find(
+              (token) =>
+                token.address ===
+                firstValidItem?.price?.currency?.contract?.toLowerCase()
+            ) || paymentTokens[0]
+          )
+        }
+      }
+
+      return undefined
+    },
+    [
+      paymentTokens,
+      providerOptionsContext.alwaysIncludeListingCurrency,
+      cartChain,
+    ]
+  )
+
+  type AsyncAddToCartOrder = { orderId: string }
+  type AsyncAddToCartToken = { id: string }
+  type AddToCartToken = AsyncAddToCartToken | AsyncAddToCartOrder | Token
+
+  const add = useCallback(
+    async (items: AddToCartToken[], chainId: number) => {
+      try {
+        if (cartData.current.chain && chainId != cartData.current.chain?.id) {
+          throw `ChainId: ${chainId}, is different than the cart chainId (${cartData.current.chain?.id})`
+        }
+        if (cartData.current.isValidating) {
+          throw 'Currently validating, adding items temporarily disabled'
+        }
+
+        let updatedItems = [...cartData.current.items]
+        const currentIds = cartData.current.items.map(
+          (item) => `${item.collection.id}:${item.token.id}`
+        )
+        const currentOrderIds = cartData.current.items.map(
+          (item) => item.order?.id
+        )
+
+        const tokensToFetch: string[] = []
+        const tokens: Token[] = []
+        const ordersToFetch: string[] = []
+
+        const tokensByMaker = updatedItems.reduce((map, item) => {
+          if (item.order) {
+            const maker = item.order?.maker
+            if (!map[maker]) {
+              map[maker] = []
+            }
+            map[maker].push(`${item.collection.id}:${item.token.id}`)
+          }
+          return map
+        }, {} as Record<string, string[]>)
+
+        items.forEach((item) => {
+          const token = item as Token
+          const asyncToken = item as AsyncAddToCartToken
+          const asyncOrder = item as AsyncAddToCartOrder
+          if (token.token) {
+            if (
+              !currentIds.includes(
+                `${token.token?.collection?.id}:${token.token?.tokenId}`
+              )
+            ) {
+              tokens.push(token)
+            }
+          } else if (
+            asyncToken &&
+            asyncToken.id &&
+            !currentIds.includes(asyncToken.id)
+          ) {
+            tokensToFetch.push(asyncToken.id)
+          } else if (
+            asyncOrder &&
+            asyncOrder.orderId &&
+            !currentOrderIds.includes(asyncOrder.orderId)
+          ) {
+            ordersToFetch.push(asyncOrder.orderId)
+          }
+        })
+
+        let currency = getCurrency(updatedItems, chainId)
+
+        const createItems = async () => {
+          updatedItems = [...cartData.current.items]
+          const promises: Promise<void>[] = []
+
+          if (tokensToFetch.length > 0) {
+            promises.push(
+              new Promise(async (resolve) => {
+                const { tokens: fetchedTokens } = await fetchTokens(
+                  tokensToFetch,
+                  chainId,
+                  currency?.address
+                )
+
+                fetchedTokens?.forEach((tokenData) => {
+                  const item = convertTokenToItem(tokenData)
+                  const id = `${item?.collection.id}:${item?.token.id}`
+                  const maker = tokenData.market?.floorAsk?.maker
+                  const duplicateListingDetected =
+                    item &&
+                    maker &&
+                    tokensByMaker[maker] &&
+                    tokensByMaker[maker].includes(id)
+                  if (duplicateListingDetected) {
+                    client?.log(
+                      [
+                        'Detected adding duplicate listing to cart, aborting',
+                        tokenData,
+                        updatedItems,
+                      ],
+                      LogLevel.Error
+                    )
+                  } else if (item) {
+                    updatedItems.push(item)
+                  }
+                })
+
+                resolve()
+              })
+            )
+          }
+
+          if (ordersToFetch.length > 0) {
+            promises.push(
+              new Promise(async (resolve) => {
+                const { orders: fetchedOrders } = await fetchOrders(
+                  ordersToFetch,
+                  chainId,
+                  currency?.address
+                )
+                fetchedOrders?.forEach((orderData) => {
+                  const item = convertOrderToItem(orderData)
+                  const id = `${item?.collection.id}:${item?.token.id}`
+                  const duplicateListingDetected =
+                    item &&
+                    tokensByMaker[orderData.maker] &&
+                    tokensByMaker[orderData.maker].includes(id)
+                  if (duplicateListingDetected) {
+                    client?.log(
+                      [
+                        'Detected adding duplicate listing to cart, aborting',
+                        orderData,
+                        updatedItems,
+                      ],
+                      LogLevel.Error
+                    )
+                  } else if (item) {
+                    updatedItems.push(item)
+                  }
+                })
+
+                resolve()
+              })
+            )
+          }
+
+          if (promises.length > 0) {
+            cartData.current.isValidating = true
+            subscribers.current.forEach((callback) => callback())
+          }
+
+          await Promise.allSettled(promises)
+
+          if (tokens.length > 0) {
+            tokens.forEach((token) => {
+              if (
+                token.market?.floorAsk?.maker?.toLowerCase() !==
+                  address?.toLowerCase() &&
+                token.token?.owner?.toLowerCase() !== address?.toLowerCase()
+              ) {
+                const item = convertTokenToItem(token)
+                if (item) {
+                  updatedItems.push(item)
+                }
+              }
+            })
+          }
+        }
+
+        await createItems()
+        if (!currency) {
+          currency = getCurrency(updatedItems)
+          //In the case any of the items are not in the correct currency, we need to refresh the items
+          if (
+            updatedItems.some(
+              (item) => item.price?.currency?.contract !== currency?.address
+            )
+          ) {
+            await createItems()
+          }
+        }
+
+        const pools = calculatePools(updatedItems)
+        const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+          calculatePricing(
+            updatedItems,
+            currency,
+            cartData.current.feesOnTopBps,
+            cartData.current.feesOnTopUsd,
+            usdPrice
+          )
+
+        cartData.current = {
+          ...cartData.current,
+          isValidating: false,
+          items: updatedItems,
+          totalPrice,
+          totalPriceRaw,
+          feeOnTop,
+          feeOnTopRaw,
+          pools,
+          currency,
+        }
+        if (!cartData.current.chain) {
+          cartData.current.chain =
+            client?.chains.find((chain) => chain.id === chainId) ||
+            client?.currentChain() ||
+            undefined
+        }
+        commit()
+      } catch (e) {
+        if (cartData.current.isValidating) {
+          cartData.current.isValidating = false
+          commit()
+        }
+        throw e
+      }
+    },
+    [fetchTokens, fetchOrders, commit, address, usdPrice]
+  )
+
+  /**
+   * @param ids An array of order ids or token keys. Tokens should be in the format `collection:token`
+   */
+
+  const remove = useCallback(
+    (ids: string[]) => {
+      if (cartData.current.isValidating) {
+        console.warn(
+          'Currently validating, removing items temporarily disabled'
+        )
+        return
+      }
+      const updatedItems: CartItem[] = []
+      const removedItems: CartItem[] = []
+      cartData.current.items.forEach((item) => {
+        const key = `${item.collection.id}:${item.token.id}`
+        const orderId = item.order?.id
+        if (orderId && ids.includes(orderId)) {
+          removedItems.push(item)
+        } else if (ids.includes(key)) {
+          removedItems.push(item)
+        } else {
+          updatedItems.push(item)
+        }
+      })
+      const pools = calculatePools(updatedItems)
+      const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+        calculatePricing(
+          updatedItems,
+          cartData.current.currency,
+          cartData.current.feesOnTopBps,
+          cartData.current.feesOnTopUsd,
+          usdPrice
+        )
+
+      //Suppress pool price changes if the removed item was from the pool
+      const removedPoolIds = removedItems.reduce((poolIds, item) => {
+        if (item.poolId) {
+          poolIds.push(item.poolId)
+        }
+        return poolIds
+      }, [] as string[])
+
+      updatedItems.forEach((item) => {
+        if (item.poolId && removedPoolIds.includes(item.poolId)) {
+          item.previousPrice = item.price
+        }
+      })
+
+      cartData.current = {
+        ...cartData.current,
+        items: updatedItems,
+        pools,
+        totalPrice,
+        totalPriceRaw,
+        feeOnTop,
+        feeOnTopRaw,
+        currency:
+          updatedItems.length > 0 ? cartData.current.currency : undefined,
+      }
+      if (updatedItems.length === 0) {
+        cartData.current.chain = undefined
+      }
+      commit()
+    },
+    [usdPrice]
+  )
 
   const checkout = useCallback(
     async (options: BuyTokenOptions = {}) => {
@@ -988,8 +1128,6 @@ function cartStore({
       if (!wallet) {
         throw 'Wallet/Signer not available'
       }
-
-      let isMixedCurrency = false
       const tokens = cartData.current.items.reduce(
         (items, { token, collection, price, order }) => {
           if (price) {
@@ -999,11 +1137,6 @@ function cartStore({
               orderId: order?.id,
               quantity: order?.quantity,
             })
-            if (
-              price.currency?.contract != cartData.current.currency?.contract
-            ) {
-              isMixedCurrency = true
-            }
           }
           return items
         },
@@ -1021,12 +1154,7 @@ function cartStore({
       const expectedPrice = cartData.current.totalPrice - feeOnTop
       let currencyDecimals = cartData.current.currency?.decimals || 18
 
-      if (isMixedCurrency) {
-        options.currency = zeroAddress
-        currencyDecimals = chainCurrency.decimals
-      } else {
-        options.currency = cartData.current.currency?.contract
-      }
+      options.currency = cartData.current.currency?.address
 
       if (feeOnTop) {
         if (cartData.current.feesOnTopBps) {
@@ -1075,6 +1203,7 @@ function cartStore({
 
       client.actions
         .buyToken({
+          chainId: cartData.current.chain?.id,
           expectedPrice: {
             [options.currency || zeroAddress]: {
               amount: expectedPrice,
@@ -1148,6 +1277,9 @@ function cartStore({
                 cartData.current.items = []
                 cartData.current.pools = {}
                 cartData.current.totalPrice = 0
+                cartData.current.totalPriceRaw = 0n
+                cartData.current.feeOnTop = 0
+                cartData.current.feeOnTopRaw = 0n
                 cartData.current.currency = undefined
                 cartData.current.chain = undefined
               }
@@ -1171,6 +1303,9 @@ function cartStore({
               cartData.current.items = []
               cartData.current.pools = {}
               cartData.current.totalPrice = 0
+              cartData.current.totalPriceRaw = 0n
+              cartData.current.feeOnTop = 0
+              cartData.current.feeOnTopRaw = 0n
               cartData.current.currency = undefined
               cartData.current.chain = undefined
             }
@@ -1198,16 +1333,22 @@ function cartStore({
 
           if (error?.message && error?.message.includes('ETH balance')) {
             errorType = CheckoutTransactionError.InsufficientBalance
-          } else if (error?.code && error?.code == 4001) {
+          } else if (
+            (error?.code && error?.code == 4001) ||
+            error?.message?.includes('rejected')
+          ) {
             errorType = CheckoutTransactionError.UserDenied
           } else {
             let message = 'Oops, something went wrong. Please try again.'
             if (errorStatus >= 400 && errorStatus < 500) {
               message = error.message
-            }
-            if (error?.type && error?.type === 'price mismatch') {
+            } else if (error?.type && error?.type === 'price mismatch') {
               errorType = CheckoutTransactionError.PiceMismatch
               message = error.message
+            } else if (error.name === 'TransactionTimeoutError') {
+              errorType = CheckoutTransactionError.TransactionTimeOut
+              message =
+                'Your transaction was sent, but is taking longer to process.'
             }
 
             //@ts-ignore: Should be fixed in an update to typescript
@@ -1225,22 +1366,23 @@ function cartStore({
             ) {
               const items = [...cartData.current.transaction.items]
               const pools = calculatePools(items)
-              const currency = getCartCurrency(
-                items,
-                cartData.current.transaction.chain.id
-              )
-              const { totalPrice, feeOnTop } = calculatePricing(
-                items,
-                currency,
-                cartData.current.feesOnTopBps,
-                cartData.current.feesOnTopUsd,
-                usdPrice
-              )
+              const currency = getCurrency(items)
+
+              const { totalPrice, feeOnTop, totalPriceRaw, feeOnTopRaw } =
+                calculatePricing(
+                  items,
+                  currency,
+                  cartData.current.feesOnTopBps,
+                  cartData.current.feesOnTopUsd,
+                  usdPrice
+                )
               cartData.current.items = items
               cartData.current.pools = pools
               cartData.current.currency = currency
               cartData.current.totalPrice = totalPrice
+              cartData.current.totalPriceRaw = totalPriceRaw
               cartData.current.feeOnTop = feeOnTop
+              cartData.current.feeOnTopRaw = feeOnTopRaw
               cartData.current.chain = cartData.current.transaction.chain
             }
             commit()
@@ -1256,6 +1398,7 @@ function cartStore({
     set,
     subscribe,
     setQuantity,
+    setCurrency,
     add,
     remove,
     clear,

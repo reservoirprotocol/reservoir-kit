@@ -19,7 +19,7 @@ type Props = {
   images: string[]
   totalPrice: number
   usdPrice: number
-  currency?: NonNullable<Cart['items'][0]['price']>['currency']
+  currency?: NonNullable<Cart['currency']>
   chain?: ReservoirChain | null
   size?: Size
 }
@@ -63,7 +63,7 @@ export const TokenCheckout: FC<Props> = ({
         <FormatCryptoCurrency
           textStyle={size == Size.SM ? 'subtitle3' : 'h6'}
           amount={totalPrice}
-          address={currency?.contract}
+          address={currency?.address}
           decimals={currency?.decimals}
           symbol={currency?.symbol}
           logoWidth={size == Size.SM ? 12 : 18}

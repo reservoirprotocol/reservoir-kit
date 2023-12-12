@@ -327,6 +327,7 @@ export function BuyModal({
                         px: '$4',
                         borderRadius: '$3',
                         borderBottom: '1px solid $neutralBorder',
+                        cursor: 'pointer',
                         '&:hover': {
                           backgroundColor: '$neutralBgHover',
                         },
