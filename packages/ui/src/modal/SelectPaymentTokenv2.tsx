@@ -134,7 +134,7 @@ export const SelectPaymentTokenv2: FC<Props> = ({
     const maxItemAmount = paymentToken?.maxItems
       ? BigInt(paymentToken?.maxItems)
       : undefined
-    debugger
+
     return Boolean(
       isSelectedCurrency ||
         (!hasMaxPricePerItem && !hasMaxItemAmount && hasCurrencyTotalRaw) ||

@@ -663,6 +663,7 @@ export const BuyModalRenderer: FC<Props> = ({
       paymentCurrency?.balance != undefined &&
       paymentCurrency?.currencyTotalRaw != undefined &&
       BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
+      //check network fees
     ) {
       setHasEnoughCurrency(false)
     } else {

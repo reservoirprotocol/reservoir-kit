@@ -314,18 +314,10 @@ export function BuyModal({
                 <Flex
                   direction="column"
                   css={{
-                    pt: '$4',
                     pb: '$2',
-                    gap: '$4',
                     borderTop: '1px solid $neutralBorder',
                   }}
                 >
-                  <PaymentDetails
-                    feeOnTop={feeOnTop}
-                    feeUsd={feeUsd}
-                    chainId={modalChain?.id}
-                    paymentCurrency={paymentCurrency}
-                  />
                   {paymentTokens.length > 1 ? (
                     <Flex
                       direction="column"
@@ -334,7 +326,7 @@ export function BuyModal({
                         py: '$3',
                         px: '$4',
                         borderRadius: '$3',
-                        borderTop: '1px solid $neutralBorder',
+                        borderBottom: '1px solid $neutralBorder',
                         '&:hover': {
                           backgroundColor: '$neutralBgHover',
                         },
@@ -365,6 +357,13 @@ export function BuyModal({
                       </Flex>
                     </Flex>
                   ) : null}
+                  <PaymentDetails
+                    feeOnTop={feeOnTop}
+                    feeUsd={feeUsd}
+                    chainId={modalChain?.id}
+                    paymentCurrency={paymentCurrency}
+                    css={{ pt: '$4' }}
+                  />
                 </Flex>
 
                 <Box css={{ p: '$4', width: '100%' }}>
@@ -396,6 +395,23 @@ export function BuyModal({
                           textStyle="body3"
                         />
                       </Flex>
+
+                      {/* {paymentCurrency?.networkFees &&
+                      paymentCurrency?.networkFees > 0n ? (
+                        <Flex align="center">
+                          <Text css={{ mr: '$3' }} color="error" style="body3">
+                            Estimated Gas Cost
+                          </Text>
+                          <FormatCryptoCurrency
+                            chainId={chainId}
+                            amount={paymentCurrency?.networkFees}
+                            address={paymentCurrency?.address}
+                            decimals={paymentCurrency?.decimals}
+                            symbol={paymentCurrency?.symbol}
+                            textStyle="body3"
+                          />
+                        </Flex>
+                      ) : null} */}
 
                       <Button
                         disabled={providerOptions.disableJumperLink}
