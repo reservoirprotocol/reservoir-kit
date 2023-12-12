@@ -5,6 +5,7 @@ import React, {
   useCallback,
   ReactNode,
   useMemo,
+  useContext,
 } from 'react'
 import {
   useTokens,
@@ -16,6 +17,7 @@ import {
 import { useAccount, useWalletClient } from 'wagmi'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import {
+  APIError,
   BuyPath,
   Execute,
   LogLevel,
@@ -34,6 +36,7 @@ import * as allChains from 'viem/chains'
 import usePaymentTokensv2, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokensv2'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
@@ -132,6 +135,9 @@ export const BuyModalRenderer: FC<Props> = ({
   const [stepData, setStepData] = useState<BuyModalStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
   const [quantity, setQuantity] = useState(1)
+  const providerOptions = useContext(ProviderOptionsContext)
+  const includeListingCurrency =
+    providerOptions.alwaysIncludeListingCurrency !== false
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -158,7 +164,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const { address } = useAccount()
 
-  const [_paymentCurrency, setPaymentCurrency] = useState<
+  const [_paymentCurrency, _setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
 
@@ -169,9 +175,7 @@ export const BuyModalRenderer: FC<Props> = ({
       [`${token}`]: quantity,
     },
     path,
-    nativeOnly: false,
     chainId: rendererChain?.id,
-    crossChainDisabled: false,
   })
 
   const paymentCurrency = paymentTokens?.find(
@@ -238,98 +242,180 @@ export const BuyModalRenderer: FC<Props> = ({
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
 
-  const fetchPath = useCallback(() => {
-    if (!open || !client || !tokenData || !token) {
-      setPath(undefined)
-      return
-    }
+  const fetchPath = useCallback(
+    (
+      paymentCurrency: EnhancedCurrency | undefined,
+      paymentTokens: EnhancedCurrency[]
+    ) => {
+      if (
+        !open ||
+        !client ||
+        !tokenData ||
+        !token ||
+        paymentTokens.length === 0
+      ) {
+        setPath(undefined)
+        return
+      }
 
-    setIsFetchingPath(true)
+      setTransactionError(null)
+      setIsFetchingPath(true)
 
-    const options: BuyTokenOptions = {
-      onlyPath: true,
-      partial: true,
-    }
+      const options: BuyTokenOptions = {
+        onlyPath: true,
+        partial: true,
+      }
 
-    if (normalizeRoyalties !== undefined) {
-      options.normalizeRoyalties = normalizeRoyalties
-    }
+      if (normalizeRoyalties !== undefined) {
+        options.normalizeRoyalties = normalizeRoyalties
+      }
 
-    if (
-      rendererChain?.paymentTokens &&
-      rendererChain.paymentTokens.length > 0
-    ) {
-      options.alternativeCurrencies = rendererChain?.paymentTokens
-        .filter((token) =>
-          tokenData.token?.kind === 'erc1155'
-            ? token.chainId === rendererChain.id
-            : true
-        )
-        .map((token) => `${token.address}:${token.chainId}`)
-    }
+      if (paymentCurrency) {
+        options.currency = paymentCurrency.address
+        if (paymentCurrency.chainId) {
+          options.currencyChainId = paymentCurrency.chainId
+        }
+      } else if (!includeListingCurrency) {
+        options.currency = paymentTokens[0].address
+        if (paymentTokens[0].chainId) {
+          options.currencyChainId = paymentTokens[0].chainId
+        }
+        _setPaymentCurrency(paymentTokens[0])
+      }
 
-    let items: Parameters<ReservoirClientActions['buyToken']>['0']['items'][0] =
-      {
+      let items: Parameters<
+        ReservoirClientActions['buyToken']
+      >['0']['items'][0] = {
         fillType: 'trade',
       }
 
-    if (orderId) {
-      items.orderId = orderId
-    } else {
-      items.token = token
-      items.quantity = tokenData.token?.kind === 'erc1155' ? 1000 : 1
-    }
+      if (orderId) {
+        items.orderId = orderId
+      } else {
+        items.token = token
+        items.quantity = tokenData.token?.kind === 'erc1155' ? 1000 : 1
+      }
 
-    client.actions
-      .buyToken({
-        options,
-        chainId: rendererChain?.id,
-        items: [items],
-        wallet: {
-          address: async () => {
-            return address || zeroAddress
-          },
-        } as any,
-        onProgress: () => {},
-        precheck: true,
-      })
-      .then((response) => {
-        if (response && (response as Execute).path) {
-          setPath((response as Execute).path)
-        } else {
-          setPath([])
+      return client.actions
+        .buyToken({
+          options,
+          chainId: rendererChain?.id,
+          items: [items],
+          wallet: {
+            address: async () => {
+              return address || zeroAddress
+            },
+          } as any,
+          onProgress: () => {},
+          precheck: true,
+        })
+        .then((response) => {
+          if (response && (response as Execute).path) {
+            const path: BuyPath = (response as any).path
+            if (!paymentCurrency && path?.[0]) {
+              const listingToken = {
+                address: (path[0].buyInCurrency || path[0].currency) as Address,
+                decimals:
+                  path[0].buyInCurrencyDecimals ||
+                  path[0].currencyDecimals ||
+                  18,
+                symbol:
+                  path[0].buyInCurrencySymbol || path[0].currencySymbol || '',
+                name:
+                  path[0].buyInCurrencySymbol || path[0].currencySymbol || '',
+                chainId: rendererChain?.id || 1,
+              }
+              _setPaymentCurrency(listingToken)
+            }
+            setPath((response as Execute).path)
+          } else {
+            setPath([])
+          }
+        })
+        .catch((err) => {
+          if (!err?.response?.data?.message?.includes('Price too high')) {
+            setPath([])
+          } else {
+            err = new APIError(
+              err?.response?.data?.message,
+              err?.response?.status,
+              err?.response?.data
+            )
+            setTransactionError(err)
+          }
+          throw err
+        })
+        .finally(() => {
+          setIsFetchingPath(false)
+        })
+    },
+    [
+      open,
+      client,
+      address,
+      tokenData,
+      token,
+      orderId,
+      normalizeRoyalties,
+      rendererChain,
+      rendererChain?.paymentTokens,
+      includeListingCurrency,
+      _setPaymentCurrency,
+    ]
+  )
+
+  const setPaymentCurrency: typeof _setPaymentCurrency = useCallback(
+    (
+      value:
+        | EnhancedCurrency
+        | ((
+            prevState: EnhancedCurrency | undefined
+          ) => EnhancedCurrency | undefined)
+        | undefined
+    ) => {
+      if (typeof value === 'function') {
+        _setPaymentCurrency((prevState) => {
+          const newValue = value(prevState)
+          if (
+            newValue?.address !== paymentCurrency?.address ||
+            newValue?.chainId !== paymentCurrency?.chainId
+          ) {
+            fetchPath(newValue, paymentTokens)?.catch((err) => {
+              if (
+                err?.statusCode === 400 &&
+                err?.message?.includes('Price too high')
+              ) {
+                _setPaymentCurrency(prevState)
+              }
+            })
+          }
+          return newValue
+        })
+      } else {
+        if (
+          value?.address !== paymentCurrency?.address ||
+          value?.chainId !== paymentCurrency?.chainId
+        ) {
+          _setPaymentCurrency(value)
+          fetchPath(value, paymentTokens)?.catch((err) => {
+            if (
+              err?.statusCode === 400 &&
+              err?.message?.includes('Price too high')
+            ) {
+              _setPaymentCurrency(paymentCurrency)
+            }
+          })
         }
-      })
-      .catch((err) => {
-        setPath([])
-        throw err
-      })
-      .finally(() => {
-        setIsFetchingPath(false)
-      })
-  }, [
-    open,
-    client,
-    address,
-    tokenData,
-    token,
-    orderId,
-    normalizeRoyalties,
-    rendererChain,
-    rendererChain?.paymentTokens,
-  ])
+      }
+    },
+    [fetchPath, _setPaymentCurrency, paymentCurrency]
+  )
 
   useEffect(() => {
     if (token || orderId) {
-      fetchPath()
+      fetchPath(paymentCurrency, paymentTokens)
     }
   }, [fetchPath, token, orderId])
-
-  useEffect(() => {
-    if (paymentTokens[0] && !paymentCurrency && path) {
-      setPaymentCurrency(paymentTokens[0])
-    }
-  }, [paymentTokens, paymentCurrency, path])
 
   const buyToken = useCallback(async () => {
     if (!wallet) {
@@ -491,7 +577,7 @@ export const BuyModalRenderer: FC<Props> = ({
           setTransactionError(error)
           mutateCollection()
           mutateTokens()
-          fetchPath()
+          fetchPath(paymentCurrency, paymentTokens)
         }
         setBuyStep(BuyStep.Checkout)
         setStepData(null)
@@ -576,8 +662,7 @@ export const BuyModalRenderer: FC<Props> = ({
     if (
       paymentCurrency?.balance != undefined &&
       paymentCurrency?.currencyTotalRaw != undefined &&
-      BigInt(paymentCurrency?.balance) <
-        paymentCurrency?.currencyTotalRaw + (paymentCurrency?.networkFees || 0n)
+      BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
     ) {
       setHasEnoughCurrency(false)
     } else {
@@ -593,7 +678,7 @@ export const BuyModalRenderer: FC<Props> = ({
       setSteps(null)
       setQuantity(1)
       setPath(undefined)
-      setPaymentCurrency(undefined)
+      _setPaymentCurrency(undefined)
     } else {
       setQuantity(defaultQuantity || 1)
     }
@@ -647,3 +732,26 @@ export const BuyModalRenderer: FC<Props> = ({
     </>
   )
 }
+
+// const hasMaxItemAmount = paymentToken?.maxItems != undefined
+// const hasMaxPricePerItem = paymentToken?.maxPricePerItem != undefined
+// const hasCurrencyTotalRaw =
+//   paymentToken?.currencyTotalRaw != undefined
+
+// const maxPurchasablePrice =
+//   BigInt(itemAmount) * BigInt(paymentToken?.maxPricePerItem ?? 0)
+// const maxItemAmount = paymentToken?.maxItems
+//   ? BigInt(paymentToken?.maxItems)
+//   : undefined
+
+// const isEnabledPaymentToken = Boolean(
+//   isSelectedCurrency ||
+//     (!hasMaxPricePerItem &&
+//       !hasMaxItemAmount &&
+//       hasCurrencyTotalRaw) ||
+//     (maxPurchasablePrice &&
+//       paymentToken?.currencyTotalRaw !== undefined &&
+//       maxPurchasablePrice >= paymentToken?.currencyTotalRaw &&
+//       maxItemAmount &&
+//       maxItemAmount >= itemAmount)
+// )

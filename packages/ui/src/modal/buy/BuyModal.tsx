@@ -16,7 +16,6 @@ import {
   FormatCryptoCurrency,
   Loader,
   ErrorWell,
-  CryptoCurrencyIcon,
 } from '../../primitives'
 import Progress from '../Progress'
 import { Modal } from '../Modal'
@@ -34,7 +33,7 @@ import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { truncateAddress } from '../../lib/truncate'
-import { SelectPaymentToken } from '../SelectPaymentToken'
+import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
 import { WalletClient } from 'viem'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
@@ -262,8 +261,8 @@ export function BuyModal({
             )}
 
             {buyStep === BuyStep.SelectPayment && (
-              <Flex direction="column" css={{ py: 20 }}>
-                <Flex align="center" css={{ gap: '$2', px: '$4' }}>
+              <Flex direction="column" css={{ pb: 20 }}>
+                <Flex align="center" css={{ gap: '$2' }}>
                   <Button
                     onClick={() => setBuyStep(BuyStep.Checkout)}
                     color="ghost"
@@ -274,12 +273,13 @@ export function BuyModal({
                   </Button>
                   <Text style="subtitle2">Select A Token</Text>
                 </Flex>
-                <SelectPaymentToken
+                <SelectPaymentTokenv2
                   paymentTokens={paymentTokens}
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}
                   goBack={() => setBuyStep(BuyStep.Checkout)}
                   itemAmount={quantity}
+                  chainId={modalChain?.id || 1}
                 />
               </Flex>
             )}
@@ -354,10 +354,6 @@ export function BuyModal({
                           css={{ gap: '$2', cursor: 'pointer' }}
                         >
                           <Flex align="center">
-                            <CryptoCurrencyIcon
-                              address={paymentCurrency?.address as string}
-                              css={{ width: 16, height: 16, mr: '$1' }}
-                            />
                             <Text style="subtitle2">
                               {paymentCurrency?.name}
                             </Text>
@@ -400,23 +396,6 @@ export function BuyModal({
                           textStyle="body3"
                         />
                       </Flex>
-
-                      {paymentCurrency?.networkFees &&
-                      paymentCurrency?.networkFees > 0n ? (
-                        <Flex align="center">
-                          <Text css={{ mr: '$3' }} color="error" style="body3">
-                            Estimated Gas Cost
-                          </Text>
-                          <FormatCryptoCurrency
-                            chainId={chainId}
-                            amount={paymentCurrency?.networkFees}
-                            address={paymentCurrency?.address}
-                            decimals={paymentCurrency?.decimals}
-                            symbol={paymentCurrency?.symbol}
-                            textStyle="body3"
-                          />
-                        </Flex>
-                      ) : null}
 
                       <Button
                         disabled={providerOptions.disableJumperLink}
