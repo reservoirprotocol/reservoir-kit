@@ -103,6 +103,7 @@ export default function (options: {
           decimals: listingCurrency.decimals || 18,
           address: listingCurrency.contract as Address,
           chainId: listingCurrencyChainId || 1,
+          name: listingCurrency.symbol,
         })
       }
     }
@@ -246,6 +247,7 @@ export default function (options: {
       }`
       const contractKey = `${pathItem.contract}` //todo: test with sweeping
       const contractKeyInsensitive = `${pathItem.contract?.toLowerCase()}`
+
       let assetKey = tokenKey
       let totalQuantity = 0
       let requiredQuantity = 0
@@ -362,7 +364,7 @@ export default function (options: {
             conversionData?.conversion !== '0' &&
             preferredToken?.total
               ? (preferredToken.total *
-                  parseUnits('1', preferredToken.currency.decimals ?? 18)) /
+                  parseUnits('1', currency.decimals ?? 18)) /
                 parseUnits(
                   conversionData?.conversion?.toString(),
                   preferredToken.currency.decimals ?? 18
@@ -372,10 +374,7 @@ export default function (options: {
 
         const currencyTotalFormatted =
           currencyTotalRaw > 0n
-            ? formatUnits(
-                currencyTotalRaw,
-                preferredToken?.currency?.decimals || 18
-              )
+            ? formatUnits(currencyTotalRaw, currency?.decimals || 18)
             : undefined
 
         const usdPrice = Number(conversionData?.usd ?? 0)

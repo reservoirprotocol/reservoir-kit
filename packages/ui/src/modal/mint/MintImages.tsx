@@ -1,13 +1,13 @@
 import React, { FC, useMemo } from 'react'
-import { Box, Flex, Text } from '../../../primitives'
-import { CollectModalStepData } from '../CollectModalRenderer'
-import TokenMedia from '../../../components/TokenMedia'
+import { Box, Flex, Text } from '../../primitives'
+import TokenMedia from '../../components/TokenMedia'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-solid-svg-icons'
-import { useTokens } from '../../../hooks'
+import { useTokens } from '../../hooks'
+import { MintModalStepData } from './MintModalRenderer'
 
 type Props = {
-  stepData: CollectModalStepData | null
+  stepData: MintModalStepData | null
   tokenKind: NonNullable<
     NonNullable<NonNullable<ReturnType<typeof useTokens>['data']>['0']>['token']
   >['kind']

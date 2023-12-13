@@ -53,6 +53,9 @@ const Index: NextPage = () => {
         <Link href="/modal/mint">
           <a>MintModal</a>
         </Link>
+        <Link href="/modal/sweep">
+          <a>SweepModal</a>
+        </Link>
       </nav>
       <h2>Hooks</h2>
       <nav style={{ display: 'flex', gap: 15 }}>
