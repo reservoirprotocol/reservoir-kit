@@ -103,6 +103,7 @@ export default function (options: {
           decimals: listingCurrency.decimals || 18,
           address: listingCurrency.contract as Address,
           chainId: listingCurrencyChainId || 1,
+          name: listingCurrency.symbol,
         })
       }
     }
@@ -246,6 +247,7 @@ export default function (options: {
       }`
       const contractKey = `${pathItem.contract}` //todo: test with sweeping
       const contractKeyInsensitive = `${pathItem.contract?.toLowerCase()}`
+
       let assetKey = tokenKey
       let totalQuantity = 0
       let requiredQuantity = 0

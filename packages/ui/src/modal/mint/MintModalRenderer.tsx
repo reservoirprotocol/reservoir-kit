@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
@@ -27,9 +28,9 @@ import {
 } from '../../hooks'
 import * as allChains from 'viem/chains'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import usePaymentTokens, {
+import usePaymentTokensv2, {
   EnhancedCurrency,
-} from '../../hooks/usePaymentTokens'
+} from '../../hooks/usePaymentTokensv2'
 
 export enum MintStep {
   Idle,
@@ -65,9 +66,7 @@ type ChildrenProps = {
   >
   address?: string
   balance?: bigint
-  total: bigint
   totalIncludingFees: bigint
-  gasCost: bigint
   feeOnTop: bigint
   feeUsd: string
   usdPrice: number
@@ -124,9 +123,7 @@ export const MintModalRenderer: FC<Props> = ({
   const [itemAmount, setItemAmount] = useState<number>(1)
   const [maxItemAmount, setMaxItemAmount] = useState<number>(1)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [total, setTotal] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
-  const [gasCost, setGasCost] = useState(0n)
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
 
@@ -188,20 +185,31 @@ export const MintModalRenderer: FC<Props> = ({
 
   const tokenData = tokens && tokens[0] ? tokens[0] : undefined
 
-  const [_paymentCurrency, setPaymentCurrency] = useState<
+  const [_paymentCurrency, _setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
 
-  const paymentTokens = usePaymentTokens(
+  const paymentKey = useMemo(() => {
+    if (token) {
+      return token
+    } else if (tokenData?.token?.tokenId && collectionContract) {
+      return `${collectionContract}:${tokenData?.token?.tokenId}`
+    } else if (collectionId) {
+      return collectionId
+    } else return collectionContract
+  }, [token, collectionId, , collectionContract, tokenData?.token?.tokenId])
+
+  const paymentTokens = usePaymentTokensv2({
     open,
-    address as Address,
-    _paymentCurrency ?? chainCurrency,
-    totalIncludingFees,
-    rendererChain?.id,
-    true,
-    false,
-    chainCurrency
-  )
+    address: address as Address,
+    quantityToken: {
+      [`${paymentKey}`]: itemAmount,
+    },
+    path: orders,
+    nativeOnly: false,
+    chainId: rendererChain?.id,
+    crossChainDisabled: false,
+  })
 
   const paymentCurrency = paymentTokens?.find(
     (paymentToken) =>
@@ -224,17 +232,16 @@ export const MintModalRenderer: FC<Props> = ({
 
   // Fetch mint path
   const fetchMintPath = useCallback(() => {
-    if (!client) {
+    if (!open || !client || paymentTokens.length === 0) {
       return
     }
 
     let options: MintTokenOptions = {
       partial: true,
       onlyPath: true,
-      currencyChainId: paymentCurrency?.chainId,
     }
 
-    client?.actions
+    return client?.actions
       .mintToken({
         chainId: rendererChain?.id,
         items: [
@@ -247,6 +254,7 @@ export const MintModalRenderer: FC<Props> = ({
                     tokenId ?? tokenData?.token?.tokenId
                   }`
                 : undefined,
+            quantity: 500,
           },
         ],
         expectedPrice: undefined,
@@ -308,8 +316,6 @@ export const MintModalRenderer: FC<Props> = ({
     tokenId,
     collection,
     tokenData?.token?.tokenId,
-    paymentCurrency?.address,
-    paymentCurrency?.chainId,
     is1155,
   ])
 
@@ -332,6 +338,53 @@ export const MintModalRenderer: FC<Props> = ({
     collection,
   ])
 
+  const setPaymentCurrency: typeof _setPaymentCurrency = useCallback(
+    (
+      value:
+        | EnhancedCurrency
+        | ((
+            prevState: EnhancedCurrency | undefined
+          ) => EnhancedCurrency | undefined)
+        | undefined
+    ) => {
+      if (typeof value === 'function') {
+        _setPaymentCurrency((prevState) => {
+          const newValue = value(prevState)
+          if (
+            newValue?.address !== paymentCurrency?.address ||
+            newValue?.chainId !== paymentCurrency?.chainId
+          ) {
+            fetchMintPath()?.catch((err) => {
+              if (
+                err?.statusCode === 400 &&
+                err?.message?.includes('Price too high')
+              ) {
+                _setPaymentCurrency(prevState)
+              }
+            })
+          }
+          return newValue
+        })
+      } else {
+        if (
+          value?.address !== paymentCurrency?.address ||
+          value?.chainId !== paymentCurrency?.chainId
+        ) {
+          _setPaymentCurrency(value)
+          fetchMintPath()?.catch((err) => {
+            if (
+              err?.statusCode === 400 &&
+              err?.message?.includes('Price too high')
+            ) {
+              _setPaymentCurrency(paymentCurrency)
+            }
+          })
+        }
+      }
+    },
+    [fetchMintPath, _setPaymentCurrency, paymentCurrency]
+  )
+
   const calculateFees = useCallback(
     (totalPrice: bigint) => {
       let fees = 0n
@@ -347,8 +400,7 @@ export const MintModalRenderer: FC<Props> = ({
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
           const currencyFee = convertedAtomicFee / usdPriceRaw
-          const parsedFee = formatUnits(currencyFee, 0)
-          return totalFees + BigInt(parsedFee)
+          return totalFees + currencyFee
         }, 0n)
       }
 
@@ -395,9 +447,7 @@ export const MintModalRenderer: FC<Props> = ({
 
     const fees = calculateFees(updatedTotal)
     setFeeOnTop(fees)
-    setTotal(updatedTotal)
     setTotalIncludingFees(updatedTotal + fees)
-    setGasCost(gasCost)
   }, [paymentCurrency, feesOnTopBps, feesOnTopUsd, itemAmount, orders])
 
   const addFundsLink = paymentCurrency?.address
@@ -408,22 +458,21 @@ export const MintModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (
       paymentCurrency?.balance != undefined &&
-      paymentCurrency?.currencyTotalRaw != undefined &&
-      BigInt(paymentCurrency?.balance) <
-        paymentCurrency?.currencyTotalRaw + gasCost
+      totalIncludingFees != undefined &&
+      BigInt(paymentCurrency?.balance) < totalIncludingFees
     ) {
       setHasEnoughCurrency(false)
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [total, paymentCurrency, gasCost])
+  }, [totalIncludingFees, paymentCurrency?.balance])
 
   // Set initial payment currency
   useEffect(() => {
-    if (paymentTokens[0] && !paymentCurrency) {
-      setPaymentCurrency(paymentTokens[0])
+    if (paymentTokens[0] && !paymentCurrency && fetchedInitialOrders) {
+      _setPaymentCurrency(paymentTokens[0])
     }
-  }, [paymentTokens, paymentCurrency])
+  }, [paymentTokens, paymentCurrency, fetchedInitialOrders])
 
   // Reset state on close
   useEffect(() => {
@@ -434,7 +483,7 @@ export const MintModalRenderer: FC<Props> = ({
       setMintStep(MintStep.Idle)
       setTransactionError(null)
       setFetchedInitialOrders(false)
-      setPaymentCurrency(undefined)
+      _setPaymentCurrency(undefined)
       setStepData(null)
     } else {
       setItemAmount(defaultQuantity || 1)
@@ -527,7 +576,7 @@ export const MintModalRenderer: FC<Props> = ({
         ],
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            raw: total,
+            raw: totalIncludingFees,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },
@@ -600,7 +649,6 @@ export const MintModalRenderer: FC<Props> = ({
     client,
     wallet,
     address,
-    total,
     totalIncludingFees,
     wagmiChain,
     rendererChain,
@@ -612,6 +660,8 @@ export const MintModalRenderer: FC<Props> = ({
     itemAmount,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
+    paymentCurrency?.currencyTotalRaw,
+    totalIncludingFees,
     tokenData?.token?.tokenId,
     collection?.id,
     collectionContract,
@@ -628,11 +678,9 @@ export const MintModalRenderer: FC<Props> = ({
         collection,
         token: tokenData,
         orders,
-        total,
         totalIncludingFees,
         feeOnTop,
         feeUsd,
-        gasCost,
         paymentTokens,
         paymentCurrency,
         setPaymentCurrency,
