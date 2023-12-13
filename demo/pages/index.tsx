@@ -105,6 +105,12 @@ const Index: NextPage = () => {
           <a>Cart</a>
         </Link>
       </nav>
+      <h2>SDK Actions</h2>
+      <nav style={{ display: 'flex', gap: 15 }}>
+        <Link href="/sdk/callAction">
+          <a>Call</a>
+        </Link>
+      </nav>
     </div>
   )
 }
