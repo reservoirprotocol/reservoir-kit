@@ -192,7 +192,7 @@ export const MintModalRenderer: FC<Props> = ({
 
   const tokenData = tokens && tokens[0] ? tokens[0] : undefined
 
-  const [_paymentCurrency, setPaymentCurrency] = useState<
+  const [_paymentCurrency, _setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
 
@@ -245,7 +245,7 @@ export const MintModalRenderer: FC<Props> = ({
 
   // Fetch mint path
   const fetchMintPath = useCallback(() => {
-    if (!client) {
+    if (!open || !client || paymentTokens.length === 0) {
       return
     }
 
@@ -254,16 +254,7 @@ export const MintModalRenderer: FC<Props> = ({
       onlyPath: true,
     }
 
-    if (
-      rendererChain?.paymentTokens &&
-      rendererChain.paymentTokens.length > 0
-    ) {
-      options.alternativeCurrencies = rendererChain?.paymentTokens?.map(
-        (token) => `${token.address}:${token.chainId}`
-      )
-    }
-
-    client?.actions
+    return client?.actions
       .mintToken({
         chainId: rendererChain?.id,
         items: [
@@ -360,6 +351,53 @@ export const MintModalRenderer: FC<Props> = ({
     collection,
   ])
 
+  const setPaymentCurrency: typeof _setPaymentCurrency = useCallback(
+    (
+      value:
+        | EnhancedCurrency
+        | ((
+            prevState: EnhancedCurrency | undefined
+          ) => EnhancedCurrency | undefined)
+        | undefined
+    ) => {
+      if (typeof value === 'function') {
+        _setPaymentCurrency((prevState) => {
+          const newValue = value(prevState)
+          if (
+            newValue?.address !== paymentCurrency?.address ||
+            newValue?.chainId !== paymentCurrency?.chainId
+          ) {
+            fetchMintPath()?.catch((err) => {
+              if (
+                err?.statusCode === 400 &&
+                err?.message?.includes('Price too high')
+              ) {
+                _setPaymentCurrency(prevState)
+              }
+            })
+          }
+          return newValue
+        })
+      } else {
+        if (
+          value?.address !== paymentCurrency?.address ||
+          value?.chainId !== paymentCurrency?.chainId
+        ) {
+          _setPaymentCurrency(value)
+          fetchMintPath()?.catch((err) => {
+            if (
+              err?.statusCode === 400 &&
+              err?.message?.includes('Price too high')
+            ) {
+              _setPaymentCurrency(paymentCurrency)
+            }
+          })
+        }
+      }
+    },
+    [fetchMintPath, _setPaymentCurrency, paymentCurrency]
+  )
+
   const calculateFees = useCallback(
     (totalPrice: bigint) => {
       let fees = 0n
@@ -434,23 +472,18 @@ export const MintModalRenderer: FC<Props> = ({
     if (
       paymentCurrency?.balance != undefined &&
       paymentCurrency?.currencyTotalRaw != undefined &&
-      BigInt(paymentCurrency?.balance) <
-        paymentCurrency?.currencyTotalRaw + (paymentCurrency?.networkFees || 0n)
+      BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
     ) {
       setHasEnoughCurrency(false)
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [
-    paymentCurrency?.currencyTotalRaw,
-    paymentCurrency?.balance,
-    paymentCurrency?.networkFees,
-  ])
+  }, [paymentCurrency?.currencyTotalRaw, paymentCurrency?.balance])
 
   // Set initial payment currency
   useEffect(() => {
     if (paymentTokens[0] && !paymentCurrency && fetchedInitialOrders) {
-      setPaymentCurrency(paymentTokens[0])
+      _setPaymentCurrency(paymentTokens[0])
     }
   }, [paymentTokens, paymentCurrency, fetchedInitialOrders])
 
@@ -463,7 +496,7 @@ export const MintModalRenderer: FC<Props> = ({
       setMintStep(MintStep.Idle)
       setTransactionError(null)
       setFetchedInitialOrders(false)
-      setPaymentCurrency(undefined)
+      _setPaymentCurrency(undefined)
       setStepData(null)
     } else {
       setItemAmount(defaultQuantity || 1)

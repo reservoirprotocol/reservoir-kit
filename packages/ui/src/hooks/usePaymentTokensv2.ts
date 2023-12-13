@@ -364,7 +364,7 @@ export default function (options: {
             conversionData?.conversion !== '0' &&
             preferredToken?.total
               ? (preferredToken.total *
-                  parseUnits('1', preferredToken.currency.decimals ?? 18)) /
+                  parseUnits('1', currency.decimals ?? 18)) /
                 parseUnits(
                   conversionData?.conversion?.toString(),
                   preferredToken.currency.decimals ?? 18
@@ -374,10 +374,7 @@ export default function (options: {
 
         const currencyTotalFormatted =
           currencyTotalRaw > 0n
-            ? formatUnits(
-                currencyTotalRaw,
-                preferredToken?.currency?.decimals || 18
-              )
+            ? formatUnits(currencyTotalRaw, currency?.decimals || 18)
             : undefined
 
         const usdPrice = Number(conversionData?.usd ?? 0)

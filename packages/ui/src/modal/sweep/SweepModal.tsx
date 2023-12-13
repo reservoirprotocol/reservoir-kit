@@ -461,22 +461,6 @@ export function SweepModal({
                           textStyle="body3"
                         />
                       </Flex>
-                      {/* {paymentCurrency?.networkFees &&
-                      paymentCurrency?.networkFees > 0n ? (
-                        <Flex align="center" css={{ mt: '$1' }}>
-                          <Text css={{ mr: '$3' }} color="error" style="body3">
-                            Estimated Gas Cost
-                          </Text>
-                          <FormatCryptoCurrency
-                            chainId={chainId}
-                            amount={paymentCurrency?.networkFees}
-                            address={paymentCurrency?.address}
-                            decimals={paymentCurrency?.decimals}
-                            symbol={paymentCurrency?.symbol}
-                            textStyle="body3"
-                          />
-                        </Flex>
-                      ) : null} */}
                       <Button
                         disabled={disableJumperLink}
                         onClick={() => {

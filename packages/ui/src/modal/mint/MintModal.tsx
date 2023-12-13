@@ -33,7 +33,6 @@ import {
 import { formatNumber } from '../../lib/numbers'
 import { Path } from '../../components/cart/CartCheckoutModal'
 import QuantitySelector from '../QuantitySelector'
-import { SelectPaymentToken } from '../SelectPaymentToken'
 import { CurrentStepTxHashes } from '../CurrentStepTxHashes'
 import SigninStep from '../SigninStep'
 import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
@@ -44,6 +43,7 @@ import { TokenInfo } from '../TokenInfo'
 import { CollectionInfo } from '../CollectionInfo'
 import { PurchaseCheckout } from '../PurchaseCheckout'
 import { PaymentDetails } from '../../common/PaymentDetails'
+import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
 
 export type MintCallbackData = {
   collectionId?: string
@@ -340,16 +340,7 @@ export function MintModal({
                       </Flex>
                     </Flex>
                   </Flex>
-                  <Flex
-                    direction="column"
-                    css={{ pt: '$4', pb: '$2', gap: '$4' }}
-                  >
-                    <PaymentDetails
-                      chainId={chainId}
-                      paymentCurrency={paymentCurrency}
-                      feeOnTop={feeOnTop}
-                      feeUsd={feeUsd}
-                    />
+                  <Flex direction="column" css={{ pb: '$2' }}>
                     {paymentTokens.length > 1 ? (
                       <Flex
                         direction="column"
@@ -358,7 +349,7 @@ export function MintModal({
                           py: '$3',
                           px: '$4',
                           borderRadius: '$3',
-                          borderTop: '1px solid $neutralBorder',
+                          borderBottom: '1px solid $neutralBorder',
                           '&:hover': {
                             backgroundColor: '$neutralBgHover',
                           },
@@ -396,6 +387,13 @@ export function MintModal({
                         </Flex>
                       </Flex>
                     ) : null}
+                    <PaymentDetails
+                      chainId={chainId}
+                      paymentCurrency={paymentCurrency}
+                      feeOnTop={feeOnTop}
+                      feeUsd={feeUsd}
+                      css={{ pt: '$4' }}
+                    />
                   </Flex>
                   {hasEnoughCurrency || !isConnected ? (
                     <Button
@@ -425,22 +423,6 @@ export function MintModal({
                           textStyle="body3"
                         />
                       </Flex>
-                      {paymentCurrency?.networkFees &&
-                      paymentCurrency?.networkFees > 0n ? (
-                        <Flex align="center" css={{ mt: '$1' }}>
-                          <Text css={{ mr: '$3' }} color="error" style="body3">
-                            Estimated Gas Cost
-                          </Text>
-                          <FormatCryptoCurrency
-                            chainId={chainId}
-                            amount={paymentCurrency?.networkFees}
-                            address={paymentCurrency?.address}
-                            decimals={paymentCurrency?.decimals}
-                            symbol={paymentCurrency?.symbol}
-                            textStyle="body3"
-                          />
-                        </Flex>
-                      ) : null}
                       <Button
                         disabled={disableJumperLink}
                         onClick={() => {
@@ -470,12 +452,13 @@ export function MintModal({
                   </Button>
                   <Text style="subtitle2">Select A Token</Text>
                 </Flex>
-                <SelectPaymentToken
+                <SelectPaymentTokenv2
                   paymentTokens={paymentTokens}
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}
                   goBack={() => setMintStep(MintStep.Idle)}
                   itemAmount={itemAmount}
+                  chainId={modalChain?.id || 1}
                 />
               </Flex>
             )}
