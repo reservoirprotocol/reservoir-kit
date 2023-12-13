@@ -12,7 +12,7 @@ type CallBody = NonNullable<
 type Data = {
   txs: CallBody['txs']
   wallet: ReservoirWallet | WalletClient
-  originChainId: number
+  toChainId: number
   options?: CallBody
   chainId?: number
   precheck?: boolean
@@ -31,7 +31,7 @@ type Data = {
  */
 export async function call(data: Data) {
   const {
-    originChainId,
+    toChainId,
     txs,
     wallet,
     chainId,
@@ -44,15 +44,15 @@ export async function call(data: Data) {
     ? adaptViemWallet(wallet)
     : wallet
   const caller = await reservoirWallet.address()
-  let baseApiUrl = client.currentChain()?.baseApiUrl
-
+  let chain = client.currentChain()
+  const toChain = client.chains.find((chain) => chain.id === toChainId)
+  const baseApiUrl = toChain?.baseApiUrl
+  debugger
   if (chainId) {
-    baseApiUrl =
-      client.chains.find((chain) => chain.id === chainId)?.baseApiUrl ||
-      baseApiUrl
+    chain = client.chains.find((chain) => chain.id === chainId) ?? null
   }
 
-  if (!baseApiUrl) {
+  if (!baseApiUrl || !chain || !toChain) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
   }
 
@@ -60,7 +60,8 @@ export async function call(data: Data) {
     const data: CallBody = {
       user: caller,
       txs,
-      originChainId,
+      originChainId: chain.id,
+
       ...options,
     }
 
