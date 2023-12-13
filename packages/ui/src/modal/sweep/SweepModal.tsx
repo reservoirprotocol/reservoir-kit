@@ -39,7 +39,6 @@ import {
 import { formatNumber } from '../../lib/numbers'
 import { Path } from '../../components/cart/CartCheckoutModal'
 import QuantitySelector from '../QuantitySelector'
-import { SelectPaymentToken } from '../SelectPaymentToken'
 import { CurrentStepTxHashes } from '../CurrentStepTxHashes'
 import SigninStep from '../SigninStep'
 import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
@@ -373,16 +372,7 @@ export function SweepModal({
                       ) : null}
                     </Flex>
                   </Flex>
-                  <Flex
-                    direction="column"
-                    css={{ pt: '$4', pb: '$2', gap: '$4' }}
-                  >
-                    <PaymentDetails
-                      chainId={chainId}
-                      paymentCurrency={paymentCurrency}
-                      feeOnTop={feeOnTop}
-                      feeUsd={feeUsd}
-                    />
+                  <Flex direction="column" css={{ pb: '$2' }}>
                     {paymentTokens.length > 1 ? (
                       <Flex
                         direction="column"
@@ -391,6 +381,7 @@ export function SweepModal({
                           py: '$3',
                           px: '$4',
                           borderRadius: '$3',
+                          borderBottom: '1px solid $neutralBorder',
                           '&:hover': {
                             backgroundColor: '$neutralBgHover',
                           },
@@ -428,6 +419,13 @@ export function SweepModal({
                         </Flex>
                       </Flex>
                     ) : null}
+                    <PaymentDetails
+                      chainId={chainId}
+                      paymentCurrency={paymentCurrency}
+                      feeOnTop={feeOnTop}
+                      feeUsd={feeUsd}
+                      css={{ pt: '$4' }}
+                    />
                   </Flex>
                   {hasEnoughCurrency || !isConnected ? (
                     <Button

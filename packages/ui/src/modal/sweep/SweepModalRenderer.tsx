@@ -10,7 +10,6 @@ import React, {
 import {
   useChainCurrency,
   useCollections,
-  useCurrencyConversion,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
@@ -23,13 +22,7 @@ import {
   ReservoirChain,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
-import {
-  Address,
-  WalletClient,
-  formatUnits,
-  parseUnits,
-  zeroAddress,
-} from 'viem'
+import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
@@ -240,14 +233,8 @@ export const SweepModalRenderer: FC<Props> = ({
       paymentToken?.chainId === _paymentCurrency?.chainId
   )
 
-  const { data: paymentCurrencyConversion } = useCurrencyConversion(
-    paymentCurrency?.chainId,
-    paymentCurrency?.address,
-    'usd'
-  )
-
   const usdPrice = paymentCurrency?.usdPrice || 0
-  const usdPriceRaw = parseUnits(`${paymentCurrencyConversion?.usd || 0}`, 6)
+  const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
   const feeUsd = formatUnits(
     feeOnTop * usdPriceRaw,
     (paymentCurrency?.decimals || 18) + 6
@@ -361,6 +348,7 @@ export const SweepModalRenderer: FC<Props> = ({
                   '',
                 chainId: rendererChain?.id || 1,
               }
+
               _setPaymentCurrency(listingToken)
             }
           }
@@ -501,14 +489,14 @@ export const SweepModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (
       paymentCurrency?.balance != undefined &&
-      paymentCurrency?.currencyTotalRaw != undefined &&
-      BigInt(paymentCurrency?.balance) < paymentCurrency?.currencyTotalRaw
+      totalIncludingFees != undefined &&
+      BigInt(paymentCurrency?.balance) < totalIncludingFees
     ) {
       setHasEnoughCurrency(false)
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [paymentCurrency?.currencyTotalRaw, paymentCurrency?.balance])
+  }, [totalIncludingFees, paymentCurrency?.balance])
 
   useEffect(() => {
     let updatedTokens = []
@@ -641,7 +629,7 @@ export const SweepModalRenderer: FC<Props> = ({
         ],
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            raw: paymentCurrency?.currencyTotalRaw,
+            raw: totalIncludingFees,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },

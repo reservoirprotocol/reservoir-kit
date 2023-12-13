@@ -103,6 +103,7 @@ export default function (options: {
           decimals: listingCurrency.decimals || 18,
           address: listingCurrency.contract as Address,
           chainId: listingCurrencyChainId || 1,
+          name: listingCurrency.symbol,
         })
       }
     }
