@@ -8,7 +8,7 @@ import { ReservoirClient } from '@reservoir0x/reservoir-sdk'
 import { useWalletClient } from 'wagmi'
 
 const CallActionPage: NextPage = () => {
-  const client: ReservoirClient | undefined = useReservoirClient()
+  const client: ReservoirClient | null = useReservoirClient()
   const [txs, setTxs] = useState<string[]>([])
   const [tx, setTx] = useState<string>("")
   const [toChainId, setToChainId] = useState<number>(1)
