@@ -1,6 +1,6 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useTrendingCollections } from '@reservoir0x/reservoir-kit-ui';
 import ChainSwitcher from 'components/ChainSwitcher';
+import { PrivyConnectButton } from 'components/PrivyConnectButton';
 import { NextPage } from 'next';
 
 const Collections: NextPage = () => {
@@ -24,7 +24,7 @@ const Collections: NextPage = () => {
         alignItems: 'flex-start',
       }}
     >
-      <ConnectButton />
+      <PrivyConnectButton />
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Trending Collections</h3>
       {collections?.map((collection, i) => (
         <div key={`${collection?.id}-${i}`}>

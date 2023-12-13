@@ -48,6 +48,7 @@ export default [
   },
   {
     ...reservoirChains.sepolia,
+    baseApiUrl: 'https://api-sepolia.reservoir.tools',
     paymentTokens: [...reservoirChains.sepolia.paymentTokens, {
       chainId: 5,
       address: zeroAddress,
@@ -107,6 +108,12 @@ export default [
       address: zeroAddress,
       symbol: 'Base ETH',
       name: 'Base ETH',
+      decimals: 18,
+    },{
+      chainId: 10,
+      address: zeroAddress,
+      symbol: 'Optimism ETH',
+      name: 'Optimism ETH',
       decimals: 18,
     }]
   },

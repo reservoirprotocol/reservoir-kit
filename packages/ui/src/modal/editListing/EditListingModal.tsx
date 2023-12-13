@@ -1,5 +1,11 @@
 import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
-import React, { ReactElement, Dispatch, SetStateAction, useEffect } from 'react'
+import React, {
+  ReactElement,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  ComponentPropsWithoutRef,
+} from 'react'
 import {
   Flex,
   Text,
@@ -18,10 +24,12 @@ import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
-import PriceInput from './PriceInput'
+import PriceInput from '../../primitives/PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
-import { WalletClient, zeroAddress } from 'viem'
+import { WalletClient, formatUnits, zeroAddress } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { formatNumber } from '../../lib/numbers'
+import { Dialog } from '../../primitives/Dialog'
 
 const ModalCopy = {
   title: 'Edit Listing',
@@ -46,9 +54,13 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onClose?: (data: any, currentStep: EditListingStep) => void
   onEditListingComplete?: (data: any) => void
   onEditListingError?: (error: Error, data: any) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 const MINIMUM_AMOUNT = 0.000001
+const MAXIMUM_AMOUNT = Infinity
 
 export function EditListingModal({
   openState,
@@ -64,6 +76,7 @@ export function EditListingModal({
   onClose,
   onEditListingComplete,
   onEditListingError,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -107,6 +120,7 @@ export function EditListingModal({
         totalUsd,
         royaltyBps,
         stepData,
+        exchange,
         setPrice,
         setQuantity,
         setExpirationOption,
@@ -153,6 +167,29 @@ export function EditListingModal({
         const isListingEditable =
           listing && listing.status === 'active' && !loading && isOracleOrder
 
+        const minimumAmount = exchange?.minPriceRaw
+          ? Number(
+              formatUnits(
+                BigInt(exchange.minPriceRaw),
+                currency?.decimals || 18
+              )
+            )
+          : MINIMUM_AMOUNT
+        const maximumAmount = exchange?.maxPriceRaw
+          ? Number(
+              formatUnits(
+                BigInt(exchange.maxPriceRaw),
+                currency?.decimals || 18
+              )
+            )
+          : MAXIMUM_AMOUNT
+        const withinPricingBounds =
+          price !== 0 &&
+          Number(price) <= maximumAmount &&
+          Number(price) >= minimumAmount
+
+        const canPurchase = price && price !== 0 && withinPricingBounds
+
         return (
           <Modal
             trigger={trigger}
@@ -169,6 +206,11 @@ export function EditListingModal({
               setOpen(open)
             }}
             loading={loading}
+            onPointerDownOutside={(e) => {
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
+              }
+            }}
           >
             {!isListingAvailable && !loading && (
               <Flex
@@ -269,6 +311,7 @@ export function EditListingModal({
                       currency={currency}
                       usdPrice={usdPrice}
                       quantity={quantity}
+                      placeholder={'Enter a listing price'}
                       onChange={(e) => {
                         if (e.target.value === '') {
                           setPrice(undefined)
@@ -282,23 +325,24 @@ export function EditListingModal({
                         }
                       }}
                     />
-                    {price !== undefined &&
-                      price !== null &&
-                      price !== 0 &&
-                      price < MINIMUM_AMOUNT && (
-                        <Box>
-                          <Text style="body3" color="error">
-                            Amount must be higher than {MINIMUM_AMOUNT}
-                          </Text>
-                        </Box>
-                      )}
+                    {price && price !== 0 && !withinPricingBounds && (
+                      <Box>
+                        <Text style="body3" color="error">
+                          {maximumAmount !== Infinity
+                            ? `Amount must be between ${formatNumber(
+                                minimumAmount
+                              )} - ${formatNumber(maximumAmount)}`
+                            : `Amount must be higher than ${formatNumber(
+                                minimumAmount
+                              )}`}
+                        </Text>
+                      </Box>
+                    )}
+
                     {collection &&
                       collection?.floorAsk?.price?.amount?.native !==
                         undefined &&
-                      price !== undefined &&
-                      price !== null &&
-                      price !== 0 &&
-                      price >= MINIMUM_AMOUNT &&
+                      canPurchase &&
                       currency?.contract === zeroAddress &&
                       price < collection?.floorAsk?.price.amount.native && (
                         <Box>
@@ -363,11 +407,7 @@ export function EditListingModal({
                       {copy.ctaClose}
                     </Button>
                     <Button
-                      disabled={
-                        price === undefined ||
-                        price === 0 ||
-                        price < MINIMUM_AMOUNT
-                      }
+                      disabled={!canPurchase}
                       onClick={editListing}
                       css={{ flex: 1 }}
                     >

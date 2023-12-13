@@ -102,6 +102,9 @@ const CancelBidPage: NextPage = () => {
         onClose={() => {
           console.log('CancelBidModal Closed')
         }}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ChainSwitcher />
       <ThemeSwitcher />

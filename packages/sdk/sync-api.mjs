@@ -8,7 +8,9 @@ const generateTypes = async () => {
   const openapiSchema = await response.json()
 
   // Extract routes
-  const routes = Object.keys(openapiSchema.paths)
+  const routes = Object.keys(openapiSchema.paths).filter(
+    (path) => !path.includes('admin')
+  )
 
   // Save routes as a runtime export
   fs.writeFileSync(

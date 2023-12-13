@@ -126,6 +126,9 @@ const EditListingPage: NextPage = () => {
         onClose={() => {
           console.log('EditListingModal Closed')
         }}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ChainSwitcher />
       <ThemeSwitcher />

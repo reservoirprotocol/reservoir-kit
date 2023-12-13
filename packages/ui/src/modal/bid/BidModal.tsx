@@ -6,6 +6,7 @@ import React, {
   Dispatch,
   SetStateAction,
   useContext,
+  ComponentPropsWithoutRef,
 } from 'react'
 import { styled } from '../../../stitches.config'
 import {
@@ -57,7 +58,9 @@ import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { WalletClient } from 'viem'
+import { WalletClient, formatUnits } from 'viem'
+import { formatNumber } from '../../lib/numbers'
+import { Dialog } from '../../primitives/Dialog'
 
 type BidCallbackData = {
   tokenId?: string
@@ -102,6 +105,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   ) => void
   onBidComplete?: (data: any) => void
   onBidError?: (error: Error, data: any) => void
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 function titleForStep(step: BidStep, copy: typeof ModalCopy) {
@@ -140,7 +146,10 @@ const MainContainer = styled(Flex, {
   },
 })
 
-const minimumDate = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
+const MINIMUM_DATE = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
+const MINIMUM_AMOUNT = 0.000001
+const MAXIMUM_AMOUNT = Infinity
+
 export function BidModal({
   openState,
   trigger,
@@ -160,6 +169,7 @@ export function BidModal({
   onClose,
   onBidComplete,
   onBidError,
+  onPointerDownOutside,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -232,6 +242,7 @@ export function BidModal({
         bidData,
         currencies,
         currency,
+        exchange,
         setCurrency,
         setBidAmountPerUnit,
         setExpirationOption,
@@ -353,6 +364,29 @@ export function BidModal({
             ? 'Make an Attribute Offer'
             : 'Make a Collection Offer'
 
+        const minimumAmount = exchange?.minPriceRaw
+          ? Number(
+              formatUnits(
+                BigInt(exchange.minPriceRaw),
+                currency?.decimals || 18
+              )
+            )
+          : MINIMUM_AMOUNT
+        const maximumAmount = exchange?.maxPriceRaw
+          ? Number(
+              formatUnits(
+                BigInt(exchange.maxPriceRaw),
+                currency?.decimals || 18
+              )
+            )
+          : MAXIMUM_AMOUNT
+        const withinPricingBounds =
+          totalBidAmount !== 0 &&
+          totalBidAmount <= maximumAmount &&
+          totalBidAmount >= minimumAmount
+
+        const canPurchase = bidAmountPerUnit !== '' && withinPricingBounds
+
         return (
           <Modal
             size={
@@ -385,6 +419,9 @@ export function BidModal({
                 )
               ) {
                 e.preventDefault()
+              }
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
               }
             }}
             onFocusCapture={(e) => {
@@ -440,7 +477,7 @@ export function BidModal({
                           currency={currency}
                           currencies={currencies}
                           setCurrency={setCurrency}
-                          triggerCss={{ width: 95 }}
+                          triggerCss={{ minWidth: 95 }}
                         />
                       ) : (
                         <>
@@ -549,6 +586,19 @@ export function BidModal({
                       style="tiny"
                       amount={totalBidAmountUsd}
                     />
+                  )}
+                  {totalBidAmount !== 0 && !withinPricingBounds && (
+                    <Box>
+                      <Text style="body2" color="error">
+                        {maximumAmount !== Infinity
+                          ? `Amount must be between ${formatNumber(
+                              minimumAmount
+                            )} - ${formatNumber(maximumAmount)}`
+                          : `Amount must be higher than ${formatNumber(
+                              minimumAmount
+                            )}`}
+                      </Text>
+                    </Box>
                   )}
                   {attributes &&
                     attributes.length > 0 &&
@@ -706,7 +756,7 @@ export function BidModal({
                       value={expirationDate}
                       options={{
                         chainId: modalChain?.id,
-                        minDate: minimumDate,
+                        minDate: MINIMUM_DATE,
                         enableTime: true,
                         minuteIncrement: 1,
                       }}
@@ -755,12 +805,12 @@ export function BidModal({
                         {localMarketplace?.title}.
                       </Text>
                     )}
-                    {bidAmountPerUnit === '' && (
+                    {!canPurchase && (
                       <Button disabled={true} css={{ width: '100%' }}>
                         {copy.ctaBidDisabled}
                       </Button>
                     )}
-                    {bidAmountPerUnit !== '' && hasEnoughWrappedCurrency && (
+                    {canPurchase && hasEnoughWrappedCurrency && (
                       <Button
                         onClick={() => placeBid()}
                         css={{ width: '100%' }}
@@ -768,7 +818,7 @@ export function BidModal({
                         {ctaButtonText}
                       </Button>
                     )}
-                    {bidAmountPerUnit !== '' && !hasEnoughWrappedCurrency && (
+                    {canPurchase && !hasEnoughWrappedCurrency && (
                       <>
                         {!hasEnoughNativeCurrency && (
                           <Flex css={{ gap: '$2', mt: 10 }} justify="center">

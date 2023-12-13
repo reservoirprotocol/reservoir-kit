@@ -7,6 +7,10 @@ const getChainBlockExplorerUrl = (chainId: number) => {
     ...customChains,
   }).find(({ id }) => id === chainId)
 
+  if (chainId === 999) {
+    return allChains.zoraTestnet.blockExplorers.default.url
+  }
+
   return wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 }
 

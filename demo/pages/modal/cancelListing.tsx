@@ -102,6 +102,9 @@ const CancelListingPage: NextPage = () => {
         onClose={() => {
           console.log('CancelListingModal Closed')
         }}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ChainSwitcher />
       <ThemeSwitcher />
