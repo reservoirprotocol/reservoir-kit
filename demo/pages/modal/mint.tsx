@@ -176,6 +176,9 @@ const MintPage: NextPage = () => {
           console.log('MintModal Closed')
         }}
         onGoToToken={(data) => console.log('Go to Token', data)}
+        onPointerDownOutside={(e) => {
+          console.log('onPointerDownOutside')
+        }}
       />
       <ChainSwitcher/>
       <ThemeSwitcher />
