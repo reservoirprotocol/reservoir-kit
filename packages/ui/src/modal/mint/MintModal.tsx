@@ -168,6 +168,7 @@ export function MintModal({
         balance,
         hasEnoughCurrency,
         transactionError,
+        fetchMintPathError,
         stepData,
         mintStep,
         setStepData,
@@ -281,10 +282,24 @@ export function MintModal({
                       }}
                     />
                   </Box>
-                  <Text style="h6" css={{ textAlign: 'center' }}>
-                    Oops. Looks like the mint has ended or the maximum minting
-                    limit has been reached.
-                  </Text>
+                  {!collection && !fetchMintPathError ? (
+                    <Text style="h6" css={{ textAlign: 'center' }}>
+                      Collection not found.
+                    </Text>
+                  ) : null}
+
+                  {collection && fetchMintPathError?.message ? (
+                    <Text style="h6" css={{ textAlign: 'center' }}>
+                      {fetchMintPathError?.message}
+                    </Text>
+                  ) : null}
+
+                  {collection && !fetchMintPathError?.message ? (
+                    <Text style="h6" css={{ textAlign: 'center' }}>
+                      Oops. Looks like the mint has ended or the maximum minting
+                      limit has been reached.
+                    </Text>
+                  ) : null}
                 </Flex>
                 <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
                   {copy.mintCtaClose}
