@@ -69,7 +69,7 @@ export const PaymentDetails: FC<Props> = ({
                     textStyle="body2"
                     textColor="subtle"
                     amount={
-                      paymentCurrency?.currencyTotalRaw
+                      paymentCurrency?.currencyTotalRaw !== undefined
                         ? paymentCurrency.currencyTotalRaw + feeOnTop
                         : undefined
                     }
@@ -86,7 +86,7 @@ export const PaymentDetails: FC<Props> = ({
                     textStyle="h6"
                     textColor="base"
                     amount={
-                      paymentCurrency?.currencyTotalRaw
+                      paymentCurrency?.currencyTotalRaw !== undefined
                         ? paymentCurrency.currencyTotalRaw + feeOnTop
                         : undefined
                     }
