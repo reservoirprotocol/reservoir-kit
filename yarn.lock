@@ -5833,9 +5833,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rainbow-me/rainbowkit@npm:^1.1.3":
-  version: 1.1.3
-  resolution: "@rainbow-me/rainbowkit@npm:1.1.3"
+"@rainbow-me/rainbowkit@npm:1.3.1":
+  version: 1.3.1
+  resolution: "@rainbow-me/rainbowkit@npm:1.3.1"
   dependencies:
     "@vanilla-extract/css": 1.9.1
     "@vanilla-extract/dynamic": 2.0.2
@@ -5844,12 +5844,13 @@ __metadata:
     i18n-js: ^4.3.2
     qrcode: 1.5.0
     react-remove-scroll: 2.5.4
+    ua-parser-js: ^1.0.35
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
     viem: ~0.3.19 || ^1.0.0
     wagmi: ~1.0.1 || ~1.1.0 || ~1.2.0 || ~1.3.0 || ~1.4.0
-  checksum: e7d913047fe66d88ed3eb4643c48d2fd15fc5d36e3e6d9d4eeaac876284bc0d74754b5091aef60179746fb965eaf2c12937f5d04b026eb187d444277cc6a06bb
+  checksum: ea32f1ceacc6f56f8b0c318e0b9990627de59141e1c0039413dc203b0c51b2061c6de71435c0da72f8b6c78d564e07312f7e8e95964940a0c258472fa7dba370
   languageName: node
   linkType: hard
 
@@ -19239,7 +19240,7 @@ __metadata:
   resolution: "reservoir-kit-demo@workspace:demo"
   dependencies:
     "@radix-ui/colors": ^0.1.8
-    "@rainbow-me/rainbowkit": ^1.1.3
+    "@rainbow-me/rainbowkit": 1.3.1
     "@reservoir0x/reservoir-kit-ui": "workspace:*"
     "@stitches/react": 1.3.1-1
     "@types/node": ^12.12.21
@@ -21114,6 +21115,13 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 21e88b0a0c0226f9cb9fd25b9626fb05b4c0f3fddac521844a13e1f30beb8f14e90bd409a9ac43c812c5946d714d6e0dee12d5d02dfc1c562c5aacfa1f49b606
+  languageName: node
+  linkType: hard
+
+"ua-parser-js@npm:^1.0.35":
+  version: 1.0.37
+  resolution: "ua-parser-js@npm:1.0.37"
+  checksum: 4d481c720d523366d7762dc8a46a1b58967d979aacf786f9ceceb1cd767de069f64a4bdffb63956294f1c0696eb465ddb950f28ba90571709e33521b4bd75e07
   languageName: node
   linkType: hard
 
