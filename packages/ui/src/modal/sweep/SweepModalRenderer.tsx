@@ -57,6 +57,7 @@ export type ChildrenProps = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   token?: NonNullable<ReturnType<typeof useTokens>['data']>[0]
   loading: boolean
+  isFetchingPath: boolean
   orders: NonNullable<BuyPath>
   selectedTokens: NonNullable<BuyPath>
   setSelectedTokens: React.Dispatch<React.SetStateAction<NonNullable<BuyPath>>>
@@ -126,6 +127,7 @@ export const SweepModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const { address } = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
+  const [isFetchingPath, setIsFetchingPath] = useState(false)
   const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
   const [orders, setOrders] = useState<NonNullable<BuyPath>>([])
   const [itemAmount, setItemAmount] = useState<number>(1)
@@ -249,6 +251,8 @@ export const SweepModalRenderer: FC<Props> = ({
         return
       }
 
+      setIsFetchingPath(true)
+
       let options: BuyTokenOptions = {
         partial: true,
         onlyPath: true,
@@ -359,6 +363,7 @@ export const SweepModalRenderer: FC<Props> = ({
         })
         .finally(() => {
           setFetchedInitialOrders(true)
+          setIsFetchingPath(false)
         })
     },
     [
@@ -526,6 +531,7 @@ export const SweepModalRenderer: FC<Props> = ({
       setSweepStep(SweepStep.Idle)
       setTransactionError(null)
       setFetchedInitialOrders(false)
+      setIsFetchingPath(false)
       _setPaymentCurrency(undefined)
       setStepData(null)
     } else {
@@ -733,6 +739,7 @@ export const SweepModalRenderer: FC<Props> = ({
           (!isFetchingCollections && collection && !fetchedInitialOrders) ||
           ((token !== undefined || isSingleToken1155) && !tokenData) ||
           !(paymentTokens.length > 0),
+        isFetchingPath,
         address: address,
         selectedTokens,
         setSelectedTokens,
