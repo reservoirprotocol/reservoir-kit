@@ -47,6 +47,6 @@
     "peerDependencies": {
         "@reservoir0x/reservoir-sdk": "workspace:*",
         "ethers": "^5.6.1",
-        "viem": "~1.16.3"
+        "viem": "~1.19.15"
     }
 }
