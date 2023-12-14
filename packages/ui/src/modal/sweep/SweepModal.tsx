@@ -147,6 +147,7 @@ export function SweepModal({
     >
       {({
         loading,
+        isFetchingPath,
         collection,
         token,
         orders,
@@ -424,6 +425,7 @@ export function SweepModal({
                       paymentCurrency={paymentCurrency}
                       feeOnTop={feeOnTop}
                       feeUsd={feeUsd}
+                      loading={isFetchingPath}
                       css={{ pt: '$4' }}
                     />
                   </Flex>
