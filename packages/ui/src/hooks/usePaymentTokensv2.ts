@@ -263,7 +263,7 @@ export default function (options: {
       }
 
       totalQuantity = totalQuantities[assetKey] || 0
-      requiredQuantity = quantityToken[assetKey]
+      requiredQuantity = quantityToken[assetKey] || 0
 
       //quantity check
       const pathQuantity = pathItem.quantity || 0
@@ -273,6 +273,7 @@ export default function (options: {
       }
 
       let quantityToTake = 0
+
       if (quantityLeft >= pathQuantity) {
         quantityToTake = pathQuantity
       } else {
@@ -291,6 +292,7 @@ export default function (options: {
           ? pathItem.buyInRawQuote
           : pathItem.totalRawPrice ?? 0
       )
+
       const currencyChainId = pathItem.fromChainId || chainId
       const currencyKey = `${currency?.toLowerCase()}:${currencyChainId}`
       if (paymentTokens[currencyKey]) {
