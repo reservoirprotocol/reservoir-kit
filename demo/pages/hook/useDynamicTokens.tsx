@@ -24,9 +24,7 @@ const Tokens: NextPage = () => {
   const { ref, inView } = useInView()
 
   useEffect(() => {
-    console.log(inView)
     if (inView) {
-      console.log("fetchNext page")
       fetchNextPage()
     }
   }, [inView])
@@ -57,7 +55,10 @@ const Tokens: NextPage = () => {
         <input
           type="text"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { 
+            resetCache()
+            setSearch(e.target.value)
+           }}
         />
       </div>
       <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tokens</h3>
