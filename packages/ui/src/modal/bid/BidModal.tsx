@@ -37,7 +37,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCalendar,
   faClose,
-  faChevronDown,
   faCheckCircle,
   faHand,
 } from '@fortawesome/free-solid-svg-icons'
@@ -446,7 +445,7 @@ export function BidModal({
                   justify="between"
                   direction="column"
                   align="center"
-                  css={{ width: '100%', p: '$4', gap: 24 }}
+                  css={{ width: '100%', p: '$4', gap: 24, overflow: 'hidden' }}
                 >
                   <Flex direction="column" css={{ gap: '$2', width: '100%' }}>
                     <Flex justify="between" css={{ gap: '$3' }}>
@@ -643,6 +642,7 @@ export function BidModal({
                               side="bottom"
                               align="start"
                               sideOffset={-20}
+                              style={{ maxWidth: '100vw' }}
                             >
                               <AttributeSelector
                                 attributes={attributes}
@@ -668,7 +668,16 @@ export function BidModal({
                         css={{ gap: '$2', flexShrink: 0 }}
                       >
                         <Text style="subtitle2">Quantity</Text>
-                        <Text color="subtle" style="body3">
+                        <Text
+                          color="subtle"
+                          style="body3"
+                          css={{
+                            display: 'none',
+                            '@bp1': {
+                              display: 'block',
+                            },
+                          }}
+                        >
                           Offers can be accepted separately
                         </Text>
                       </Flex>

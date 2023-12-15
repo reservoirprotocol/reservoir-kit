@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { FC, useEffect, useState } from 'react'
-import { Box, Flex, FormatCryptoCurrency, Input, Text } from '../../primitives'
+import { Flex, FormatCryptoCurrency, Input, Text } from '../../primitives'
 import ScrollArea from '../../primitives/ScrollArea'
 import { Trait } from './BidModalRenderer'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
@@ -47,10 +47,13 @@ const AttributeSelector: FC<Props> = ({
   if (!attributes) return null
 
   return (
-    <Box
+    <Flex
+      direction="column"
       css={{
+        width: '100%',
         maxWidth: 484,
-        maxHeight: 500,
+        maxHeight: 250,
+        '@bp1': { maxHeight: 500 },
         zIndex: 1000,
         padding: '$4',
         overflowY: 'auto',
@@ -72,7 +75,12 @@ const AttributeSelector: FC<Props> = ({
       <Flex
         justify="between"
         align="center"
-        css={{ borderBottom: '1px solid $borderColor', pb: '$2', mb: '$4' }}
+        css={{
+          borderBottom: '1px solid $borderColor',
+          pb: '$2',
+          mb: '$4',
+          width: '100%',
+        }}
       >
         <Text color="subtle" style="subtitle3">
           Trait
@@ -81,7 +89,9 @@ const AttributeSelector: FC<Props> = ({
           Floor
         </Text>
       </Flex>
-      <ScrollArea css={{ minWidth: '80vw', '@bp1': { minWidth: 468 } }}>
+      <ScrollArea
+        css={{ width: '100%', minWidth: '80vw', '@bp1': { minWidth: 468 } }}
+      >
         {results?.map(({ key, values }) => {
           if (values?.length === 0) return null
 
@@ -89,7 +99,7 @@ const AttributeSelector: FC<Props> = ({
             <Flex
               direction="column"
               key={key}
-              css={{ gap: '$2', marginBottom: '$3' }}
+              css={{ gap: '$2', marginBottom: '$3', width: '100%' }}
             >
               <Text style="subtitle2" color="accent" as="div">
                 {key}
@@ -152,7 +162,7 @@ const AttributeSelector: FC<Props> = ({
           )
         })}
       </ScrollArea>
-    </Box>
+    </Flex>
   )
 }
 
