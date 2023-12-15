@@ -115,7 +115,15 @@ const TokenInfo: FC<Props> = ({
       </Flex>
 
       {!price ? (
-        <Flex align="center" css={{ gap: '$2', flexShrink: 0 }}>
+        <Flex
+          align="center"
+          css={{
+            gap: '$2',
+            flexShrink: 0,
+            flexDirection: 'column',
+            '@bp1': { flexDirection: 'row' },
+          }}
+        >
           {floorAsk?.price ? (
             <Flex css={{ gap: '$1' }}>
               <Text style="subtitle2" color="subtle">
@@ -131,7 +139,10 @@ const TokenInfo: FC<Props> = ({
             </Flex>
           ) : null}
           {floorAsk?.price && topBid?.price ? (
-            <Divider direction="vertical" />
+            <Divider
+              direction="vertical"
+              css={{ display: 'none', '@bp1': { display: 'block' } }}
+            />
           ) : null}
           {topBid?.price ? (
             <Flex css={{ gap: '$1' }}>
