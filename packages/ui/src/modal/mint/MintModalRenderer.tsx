@@ -239,6 +239,7 @@ export const MintModalRenderer: FC<Props> = ({
     let options: MintTokenOptions = {
       partial: true,
       onlyPath: true,
+      currencyChainId: paymentCurrency?.chainId,
     }
 
     return client?.actions
@@ -254,7 +255,8 @@ export const MintModalRenderer: FC<Props> = ({
                     tokenId ?? tokenData?.token?.tokenId
                   }`
                 : undefined,
-            quantity: 500,
+            quantity:
+              paymentCurrency?.chainId !== collection?.chainId ? 1 : 500,
           },
         ],
         expectedPrice: undefined,
@@ -316,6 +318,7 @@ export const MintModalRenderer: FC<Props> = ({
     tokenId,
     collection,
     tokenData?.token?.tokenId,
+    paymentCurrency?.chainId,
     is1155,
   ])
 
