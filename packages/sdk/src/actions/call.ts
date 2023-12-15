@@ -47,7 +47,7 @@ export async function call(data: Data) {
   let chain = client.currentChain()
   const toChain = client.chains.find((chain) => chain.id === toChainId)
   const baseApiUrl = toChain?.baseApiUrl
-  debugger
+
   if (chainId) {
     chain = client.chains.find((chain) => chain.id === chainId) ?? null
   }
