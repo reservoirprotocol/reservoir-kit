@@ -24,13 +24,7 @@ import {
   ReservoirClientActions,
   ReservoirWallet,
 } from '@reservoir0x/reservoir-sdk'
-import {
-  Address,
-  WalletClient,
-  formatUnits,
-  parseUnits,
-  zeroAddress,
-} from 'viem'
+import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import usePaymentTokensv2, {
