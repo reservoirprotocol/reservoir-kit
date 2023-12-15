@@ -668,7 +668,7 @@ export function BidModal({
                         css={{ gap: '$2', flexShrink: 0 }}
                       >
                         <Text style="subtitle2">Quantity</Text>
-                        <Text color="subtle" style="tiny">
+                        <Text color="subtle" style="body3">
                           Offers can be accepted separately
                         </Text>
                       </Flex>
