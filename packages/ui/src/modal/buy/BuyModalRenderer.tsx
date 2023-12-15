@@ -18,12 +18,19 @@ import { getNetwork, switchNetwork } from 'wagmi/actions'
 import {
   APIError,
   BuyPath,
+  BuyResponses,
   Execute,
   LogLevel,
   ReservoirClientActions,
   ReservoirWallet,
 } from '@reservoir0x/reservoir-sdk'
-import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
+import {
+  Address,
+  WalletClient,
+  formatUnits,
+  parseUnits,
+  zeroAddress,
+} from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import usePaymentTokensv2, {
@@ -131,6 +138,10 @@ export const BuyModalRenderer: FC<Props> = ({
   const providerOptions = useContext(ProviderOptionsContext)
   const includeListingCurrency =
     providerOptions.alwaysIncludeListingCurrency !== false
+
+  const [buyResponseFees, setBuyResponseFees] = useState<
+    BuyResponses['fees'] | undefined
+  >(undefined)
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
@@ -296,9 +307,10 @@ export const BuyModalRenderer: FC<Props> = ({
           onProgress: () => {},
           precheck: true,
         })
-        .then((response) => {
-          if (response && (response as Execute).path) {
-            const path: BuyPath = (response as any).path
+        .then((data) => {
+          if (data && (data as BuyResponses).path) {
+            const response = data as BuyResponses
+            const path: BuyPath = response.path
             if (!paymentCurrency && path?.[0]) {
               const listingToken = {
                 address: (path[0].buyInCurrency || path[0].currency) as Address,
@@ -314,7 +326,10 @@ export const BuyModalRenderer: FC<Props> = ({
               }
               _setPaymentCurrency(listingToken)
             }
-            setPath((response as Execute).path)
+            setPath(path)
+            if (response.fees) {
+              setBuyResponseFees(response.fees)
+            }
           } else {
             setPath([])
           }
@@ -605,12 +620,27 @@ export const BuyModalRenderer: FC<Props> = ({
       paymentCurrency?.currencyTotalRaw &&
       paymentCurrency.currencyTotalRaw > 0n
     ) {
+      let currencyTotalRawMinusRelayerAndGasFees =
+        paymentCurrency?.currencyTotalRaw
+
+      // if cross-chain, subtract relayer and gas fees from currencyTotalRaw
+      if (
+        buyResponseFees &&
+        paymentCurrency?.chainId !== tokenData?.token?.chainId
+      ) {
+        const totalRelayerAndGasFees =
+          BigInt(buyResponseFees?.gas?.amount?.raw ?? 0) +
+          BigInt(buyResponseFees?.relayer?.amount?.raw ?? 0)
+
+        currencyTotalRawMinusRelayerAndGasFees -= totalRelayerAndGasFees
+      }
+
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
           return (
             totalFees +
-            (BigInt(fee) * paymentCurrency.currencyTotalRaw!) / 10000n
+            (BigInt(fee) * currencyTotalRawMinusRelayerAndGasFees) / 10000n
           )
         }, 0n)
         totalFees += fees
@@ -630,8 +660,8 @@ export const BuyModalRenderer: FC<Props> = ({
         setFeeOnTop(0n)
       }
 
-      setTotalIncludingFees(paymentCurrency.currencyTotalRaw + totalFees)
-      setAverageUnitPrice(paymentCurrency.currencyTotalRaw / BigInt(quantity))
+      setTotalIncludingFees(paymentCurrency?.currencyTotalRaw + totalFees)
+      setAverageUnitPrice(paymentCurrency?.currencyTotalRaw / BigInt(quantity))
     } else {
       setTotalIncludingFees(0n)
       setAverageUnitPrice(0n)
@@ -643,6 +673,7 @@ export const BuyModalRenderer: FC<Props> = ({
     feeOnTop,
     quantity,
     paymentCurrency,
+    buyResponseFees,
   ])
 
   useEffect(() => {
@@ -650,7 +681,6 @@ export const BuyModalRenderer: FC<Props> = ({
       paymentCurrency?.balance != undefined &&
       totalIncludingFees != undefined &&
       BigInt(paymentCurrency?.balance) < totalIncludingFees
-      //check network fees
     ) {
       setHasEnoughCurrency(false)
     } else {
@@ -667,6 +697,7 @@ export const BuyModalRenderer: FC<Props> = ({
       setQuantity(1)
       setPath(undefined)
       _setPaymentCurrency(undefined)
+      setBuyResponseFees(undefined)
     } else {
       setQuantity(defaultQuantity || 1)
     }
