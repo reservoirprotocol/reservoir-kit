@@ -219,7 +219,7 @@ export const MintModalRenderer: FC<Props> = ({
 
   const mintPrice = BigInt(
     (orders?.[0]?.currency?.toLowerCase() !== paymentCurrency?.address
-      ? orders?.[0]?.buyIn?.[0]?.amount?.raw
+      ? orders?.[0]?.buyInRawQuote
       : orders?.[0]?.totalRawPrice) || 0
   )
 
@@ -422,7 +422,7 @@ export const MintModalRenderer: FC<Props> = ({
           let orderQuantity = order?.quantity || 1
           let orderPricePerItem = BigInt(
             (order?.currency?.toLowerCase() !== paymentCurrency?.address
-              ? order?.buyIn?.[0]?.amount?.raw
+              ? order?.buyInRawQuote
               : order?.totalRawPrice) || 0
           )
 
