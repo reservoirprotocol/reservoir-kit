@@ -6760,7 +6760,7 @@ export interface definitions {
   };
   Model571: {
     /** @enum {string} */
-    kind: "seaport-intent";
+    kind: "seaport-intent" | "cross-chain-intent";
   };
   postExecuteSolveCapacityV1Response: {
     maxPricePerItem: string;
