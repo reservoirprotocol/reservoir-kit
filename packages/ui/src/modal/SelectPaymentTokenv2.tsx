@@ -10,6 +10,7 @@ import {
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits, zeroAddress } from 'viem'
 import EthIconCircleBlue from '../img/EthIconCircleBlue'
+import { formatNumber } from '../lib/numbers'
 
 type Props = {
   paymentTokens: EnhancedCurrency[]
@@ -102,11 +103,11 @@ const PaymentTokenRow = ({
             css={{ width: 34, height: 34, 'object-fit': 'contain' }}
           />
         )}
-        <Text style="subtitle2" css={{ mr: 'auto' }}>
+        <Text style="subtitle2" css={{ mr: 'auto' }} ellipsify>
           {paymentToken?.name}
         </Text>
         <Text style="subtitle2" color="subtle">
-          Balance: {formattedBalance}
+          Balance: {formatNumber(Number(formattedBalance), 6)}
         </Text>
       </Flex>
     </Button>
