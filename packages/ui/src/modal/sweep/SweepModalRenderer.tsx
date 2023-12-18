@@ -10,7 +10,6 @@ import React, {
 import {
   useChainCurrency,
   useCollections,
-  useCurrencyConversion,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
@@ -23,13 +22,7 @@ import {
   ReservoirChain,
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
-import {
-  Address,
-  WalletClient,
-  formatUnits,
-  parseUnits,
-  zeroAddress,
-} from 'viem'
+import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
