@@ -9,6 +9,7 @@ import {
 } from '../primitives'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
+import { formatUnits } from 'viem'
 
 type Props = {
   css?: CSS
@@ -60,7 +61,11 @@ export const PaymentDetails: FC<Props> = ({
               {providerOptions.preferDisplayFiatTotal ? (
                 <>
                   <FormatCurrency
-                    amount={paymentCurrency?.usdTotalPriceRaw}
+                    amount={formatUnits(
+                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+                        (paymentCurrency?.usdPriceRaw || 0n),
+                      (paymentCurrency?.decimals || 18) + 6
+                    )}
                     style="h6"
                     color="base"
                   />
@@ -96,7 +101,11 @@ export const PaymentDetails: FC<Props> = ({
                     logoWidth={18}
                   />
                   <FormatCurrency
-                    amount={paymentCurrency?.usdTotalPriceRaw}
+                    amount={formatUnits(
+                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+                        (paymentCurrency?.usdPriceRaw || 0n),
+                      (paymentCurrency?.decimals || 18) + 6
+                    )}
                     style="body2"
                     color="subtle"
                   />
