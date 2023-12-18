@@ -11,7 +11,7 @@ import { BuyPath, ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
-import { Currency } from 'packages/ui/dist'
+import { Currency } from '../types/Currency'
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
