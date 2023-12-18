@@ -188,10 +188,7 @@ export default function (options: {
     }
   }, [allPaymentTokens, crossChainDisabled])
 
-  const { data: solverCapacityChainIdMap } = useSolverCapacities(
-    open ? crosschainChainIds : [],
-    chain
-  )
+  const { data: solverCapacity } = useSolverCapacities(open ? chain : null)
 
   const preferredCurrencyConversions = useCurrencyConversions(
     path && path[0]
@@ -314,17 +311,11 @@ export default function (options: {
         if (
           !crossChainDisabled &&
           crosschainChainIds?.length > 0 &&
-          solverCapacityChainIdMap &&
+          solverCapacity &&
           token.chainId !== chain?.id
         ) {
-          const solverCapacity = solverCapacityChainIdMap.get(token.chainId)
-
-          if (solverCapacity) {
-            maxItems = solverCapacity.maxItems
-            if (typeof solverCapacity.maxPricePerItem === 'string') {
-              maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
-            }
-          }
+          maxItems = solverCapacity.maxItems
+          maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
         }
 
         let balance: string | number | bigint = 0n
