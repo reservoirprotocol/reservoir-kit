@@ -8,7 +8,6 @@ import React, {
   useContext,
   ComponentPropsWithoutRef,
 } from 'react'
-import { styled } from '../../../stitches.config'
 import {
   Flex,
   Text,
@@ -24,8 +23,7 @@ import {
   FormatCryptoCurrency,
   CryptoCurrencyIcon,
 } from '../../primitives'
-
-import { Modal, ModalSize } from '../Modal'
+import { Modal } from '../Modal'
 import {
   BidModalRenderer,
   BidStep,
@@ -33,21 +31,18 @@ import {
   Trait,
   BidModalStepData,
 } from './BidModalRenderer'
-import TokenStats from './TokenStats'
+import TokenInfo from './TokenInfo'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCalendar,
   faClose,
-  faChevronDown,
   faCheckCircle,
   faHand,
 } from '@fortawesome/free-solid-svg-icons'
 import Flatpickr from 'react-flatpickr'
 import TransactionProgress from '../TransactionProgress'
-import ProgressBar from '../ProgressBar'
 import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
-import TransactionBidDetails from './TransactionBidDetails'
 import AttributeSelector from './AttributeSelector'
 import Popover from '../../primitives/Popover'
 import PseudoInput from '../../primitives/PseudoInput'
@@ -55,10 +50,9 @@ import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import { CSS } from '@stitches/react'
 import QuantitySelector from '../QuantitySelector'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { WalletClient, formatUnits } from 'viem'
+import { WalletClient, formatUnits, zeroAddress } from 'viem'
 import { formatNumber } from '../../lib/numbers'
 import { Dialog } from '../../primitives/Dialog'
 
@@ -121,30 +115,6 @@ function titleForStep(step: BidStep, copy: typeof ModalCopy) {
       return copy.titleComplete
   }
 }
-
-const ContentContainer = styled(Flex, {
-  width: '100%',
-  flexDirection: 'column',
-  '@bp1': {
-    flexDirection: 'row',
-  },
-  borderColor: '$borderColor',
-})
-
-const MainContainer = styled(Flex, {
-  flex: 1,
-  borderColor: '$borderColor',
-  borderTopWidth: 1,
-  borderLeftWidth: 0,
-  '@bp1': {
-    borderTopWidth: 0,
-    borderLeftWidth: 1,
-  },
-
-  defaultVariants: {
-    direction: 'column',
-  },
-})
 
 const MINIMUM_DATE = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
 const MINIMUM_AMOUNT = 0.000001
@@ -346,15 +316,6 @@ export function BidModal({
           }
         }, [open, attributes])
 
-        const contentContainerCss: CSS = {
-          borderBottomWidth: providerOptionsContext.disablePoweredByReservoir
-            ? 0
-            : 1,
-          marginBottom: providerOptionsContext.disablePoweredByReservoir
-            ? 0
-            : 12,
-        }
-
         const ctaButtonText =
           copy.ctaBid.length > 0
             ? copy.ctaBid
@@ -387,13 +348,53 @@ export function BidModal({
 
         const canPurchase = bidAmountPerUnit !== '' && withinPricingBounds
 
+        const topBidPrice =
+          token?.market?.topBid?.price ?? collection?.topBid?.price
+        const decimalTopBidPrice = topBidPrice?.amount?.decimal
+        const nativeTopBidPrice = topBidPrice?.amount?.native
+        const usdTopBidPrice = topBidPrice?.amount?.usd
+        const defaultCurrency = currencies?.find(
+          (currency) => currency?.contract === zeroAddress
+        )
+
+        const topOfferButtonEnabled =
+          (currency?.contract?.toLowerCase() ===
+            topBidPrice?.currency?.contract?.toLowerCase() &&
+            decimalTopBidPrice) ||
+          (currency.symbol === 'USDC' && usdTopBidPrice) ||
+          (nativeTopBidPrice && currency.contract === zeroAddress) ||
+          (nativeTopBidPrice && defaultCurrency)
+
+        const handleSetBestOffer = () => {
+          // If currency matches top bid currency, use decimal floor price
+          if (
+            currency.contract?.toLowerCase() ===
+              topBidPrice?.currency?.contract?.toLowerCase() &&
+            decimalTopBidPrice
+          ) {
+            setBidAmountPerUnit(decimalTopBidPrice.toString())
+          }
+
+          // If currency is USDC, use usd floor price
+          else if (currency.symbol === 'USDC' && usdTopBidPrice) {
+            setBidAmountPerUnit(usdTopBidPrice?.toString())
+          } else if (nativeTopBidPrice) {
+            // If currency is native currency, use native floor price
+            if (currency.contract === zeroAddress) {
+              setBidAmountPerUnit(nativeTopBidPrice.toString())
+            }
+            // Fallback to default currency if it exists
+            else {
+              if (defaultCurrency) {
+                setCurrency(defaultCurrency)
+                setBidAmountPerUnit(nativeTopBidPrice.toString())
+              }
+            }
+          }
+        }
+
         return (
           <Modal
-            size={
-              bidStep !== BidStep.Complete && bidStep !== BidStep.Unavailable
-                ? ModalSize.LG
-                : ModalSize.MD
-            }
             trigger={trigger}
             title={titleForStep(bidStep, copy)}
             open={open}
@@ -429,211 +430,153 @@ export function BidModal({
             }}
           >
             {bidStep === BidStep.SetPrice && !loading && collection && (
-              <ContentContainer
-                css={{
-                  ...contentContainerCss,
-                }}
-              >
-                <TokenStats
+              <Flex direction="column">
+                <TokenInfo
                   chain={modalChain}
                   token={token ? token : undefined}
                   collection={collection}
-                  trait={trait}
+                  containerCss={{
+                    borderBottom: '1px solid',
+                    borderBottomColor: '$neutralLine',
+                    borderColor: '$neutralLine',
+                  }}
                 />
-                <MainContainer css={{ p: '$4' }}>
-                  <Flex justify="between">
-                    <Text style="tiny" color="subtle">
-                      Offer Amount {quantityEnabled ? 'and Quantity' : null}
-                    </Text>
-                    <Text
-                      as={Flex}
-                      css={{ gap: '$1' }}
-                      align="center"
-                      style="tiny"
-                    >
-                      Balance:{' '}
-                      <FormatWrappedCurrency
-                        chainId={modalChain?.id}
-                        logoWidth={10}
-                        textStyle="tiny"
-                        amount={wrappedBalance?.value}
-                        address={wrappedContractAddress}
-                        decimals={wrappedBalance?.decimals}
-                        symbol={wrappedBalance?.symbol}
-                      />{' '}
-                    </Text>
-                  </Flex>
-                  <Flex css={{ mt: '$2', gap: quantityEnabled ? '$2' : 20 }}>
-                    <Text
-                      as={Flex}
-                      css={{ gap: '$2', '@bp1': { ml: '$3' }, flexShrink: 0 }}
-                      align="center"
-                      style="body1"
-                      color="subtle"
-                    >
-                      {currencies.length > 1 ? (
-                        <CurrencySelector
-                          chainId={modalChain?.id}
-                          currency={currency}
-                          currencies={currencies}
-                          setCurrency={setCurrency}
-                          triggerCss={{ minWidth: 95 }}
-                        />
-                      ) : (
-                        <>
-                          <CryptoCurrencyIcon
-                            chainId={modalChain?.id}
-                            css={{ height: 20 }}
-                            address={wrappedContractAddress}
-                          />
-                          {wrappedContractName}
-                        </>
-                      )}
-                    </Text>
-                    <Input
-                      type="number"
-                      value={bidAmountPerUnit}
-                      onChange={(e) => {
-                        setBidAmountPerUnit(e.target.value)
-                      }}
-                      placeholder="Enter price"
-                      containerCss={{
-                        width: '100%',
-                      }}
-                      css={{
-                        textAlign: 'center',
-                        '@bp1': {
-                          textAlign: 'left',
-                        },
-                      }}
-                    />
-                    {/* Quantity Selector on Desktop */}
-                    {quantityEnabled ? (
-                      <Flex
-                        css={{ display: 'none', '@bp1': { display: 'flex' } }}
-                      >
-                        <QuantitySelector
-                          quantity={quantity}
-                          setQuantity={setQuantity}
-                          min={1}
-                          max={999999}
-                          css={{
-                            maxWidth: 180,
-                          }}
-                        />
-                      </Flex>
-                    ) : null}
-                  </Flex>
-                  {/* Quantity Selector on Mobile Devices */}
-                  {quantityEnabled ? (
-                    <Flex
-                      align="center"
-                      css={{
-                        width: '100%',
-                        display: 'flex',
-                        mt: '$2',
-                        gap: '$2',
-                        '@bp1': { display: 'none' },
-                      }}
-                    >
+                <Flex
+                  justify="between"
+                  direction="column"
+                  align="center"
+                  css={{ width: '100%', p: '$4', gap: 24, overflow: 'hidden' }}
+                >
+                  <Flex direction="column" css={{ gap: '$2', width: '100%' }}>
+                    <Flex justify="between" css={{ gap: '$3' }}>
+                      <Text style="subtitle2">Offer Price</Text>
                       <Text
+                        as={Flex}
+                        css={{ gap: '$1' }}
+                        align="center"
                         style="subtitle3"
-                        color="subtle"
-                        css={{ width: 90, flexShrink: 0 }}
                       >
-                        Quantity
+                        Balance:{' '}
+                        <FormatWrappedCurrency
+                          chainId={modalChain?.id}
+                          logoWidth={10}
+                          textStyle="tiny"
+                          amount={wrappedBalance?.value}
+                          address={wrappedContractAddress}
+                          decimals={wrappedBalance?.decimals}
+                          symbol={wrappedBalance?.symbol}
+                        />{' '}
                       </Text>
-                      <QuantitySelector
-                        quantity={quantity}
-                        setQuantity={setQuantity}
-                        min={1}
-                        max={999999}
-                        css={{ justifyContent: 'space-between', width: '100%' }}
-                      />
                     </Flex>
-                  ) : null}
-                  {quantityEnabled ? (
-                    <Flex
-                      align="center"
-                      css={{ gap: '$2', mt: '$3', mb: '$4' }}
-                    >
-                      <Text style="subtitle3" color="subtle">
-                        Total Offer Price
-                      </Text>
-                      <FormatWrappedCurrency
-                        chainId={modalChain?.id}
-                        logoWidth={16}
-                        textStyle="subtitle3"
-                        amount={totalBidAmount}
-                        address={currency?.contract}
-                        decimals={currency?.decimals}
-                        symbol={currency?.symbol}
-                      />
-                      <FormatCurrency
-                        style="tiny"
+
+                    <Flex css={{ mt: '$2', gap: quantityEnabled ? '$2' : 20 }}>
+                      <Text
+                        as={Flex}
+                        css={{ gap: '$2', flexShrink: 0 }}
+                        align="center"
+                        style="body1"
                         color="subtle"
-                        amount={totalBidAmountUsd}
-                      />
-                    </Flex>
-                  ) : (
-                    <FormatCurrency
-                      css={{
-                        marginLeft: 'auto',
-                        mt: '$2',
-                        display: 'inline-block',
-                        minHeight: 15,
-                      }}
-                      style="tiny"
-                      amount={totalBidAmountUsd}
-                    />
-                  )}
-                  {totalBidAmount !== 0 && !withinPricingBounds && (
-                    <Box>
-                      <Text style="body2" color="error">
-                        {maximumAmount !== Infinity
-                          ? `Amount must be between ${formatNumber(
-                              minimumAmount
-                            )} - ${formatNumber(maximumAmount)}`
-                          : `Amount must be higher than ${formatNumber(
-                              minimumAmount
-                            )}`}
+                      >
+                        {currencies.length > 1 ? (
+                          <CurrencySelector
+                            chainId={modalChain?.id}
+                            currency={currency}
+                            currencies={currencies}
+                            setCurrency={setCurrency}
+                            triggerCss={{
+                              backgroundColor: '$neutralBgHover',
+                              borderRadius: 8,
+                              p: '$3',
+                              width: 120,
+                              flexShrink: 0,
+                              height: 44,
+                            }}
+                          />
+                        ) : (
+                          <>
+                            <CryptoCurrencyIcon
+                              chainId={modalChain?.id}
+                              css={{ height: 20 }}
+                              address={wrappedContractAddress}
+                            />
+                            {wrappedContractName}
+                          </>
+                        )}
                       </Text>
-                    </Box>
-                  )}
-                  {attributes &&
-                    attributes.length > 0 &&
-                    (attributesSelectable || trait) &&
-                    !tokenId &&
-                    traitBidSupported && (
-                      <>
-                        <Text
-                          as={Box}
-                          css={{ mb: '$2' }}
-                          style="tiny"
-                          color="subtle"
+                      <Input
+                        type="number"
+                        value={bidAmountPerUnit}
+                        onChange={(e) => {
+                          setBidAmountPerUnit(e.target.value)
+                        }}
+                        placeholder="Enter price"
+                        containerCss={{
+                          width: '100%',
+                        }}
+                        css={{
+                          textAlign: 'center',
+                          '@bp1': {
+                            textAlign: 'left',
+                          },
+                        }}
+                      />
+                      {topOfferButtonEnabled ? (
+                        <Button
+                          color="secondary"
+                          size="none"
+                          css={{
+                            height: 44,
+                            px: '$4',
+                            borderRadius: 8,
+                            fontWeight: 500,
+                            flexShrink: 0,
+                          }}
+                          onClick={handleSetBestOffer}
                         >
-                          Attributes
+                          Best Offer
+                        </Button>
+                      ) : null}
+                    </Flex>
+
+                    {totalBidAmount !== 0 && !withinPricingBounds && (
+                      <Box>
+                        <Text style="body2" color="error">
+                          {maximumAmount !== Infinity
+                            ? `Amount must be between ${formatNumber(
+                                minimumAmount
+                              )} - ${formatNumber(maximumAmount)}`
+                            : `Amount must be higher than ${formatNumber(
+                                minimumAmount
+                              )}`}
                         </Text>
-                        <Popover.Root
-                          open={attributeSelectorOpen}
-                          onOpenChange={
-                            attributesSelectable
-                              ? setAttributeSelectorOpen
-                              : undefined
-                          }
-                        >
-                          <Popover.Trigger asChild>
-                            <PseudoInput>
-                              <Flex
-                                justify="between"
-                                css={{
-                                  gap: '$2',
-                                  alignItems: 'center',
-                                  color: '$neutralText',
-                                }}
-                              >
-                                {trait ? (
-                                  <>
+                      </Box>
+                    )}
+
+                    {attributes &&
+                      attributes.length > 0 &&
+                      (attributesSelectable || trait) &&
+                      !tokenId &&
+                      traitBidSupported && (
+                        <>
+                          <Popover.Root
+                            open={attributeSelectorOpen}
+                            onOpenChange={
+                              attributesSelectable
+                                ? setAttributeSelectorOpen
+                                : undefined
+                            }
+                          >
+                            <Popover.Trigger asChild>
+                              {trait ? (
+                                <PseudoInput css={{ py: '$3' }}>
+                                  <Flex
+                                    justify="between"
+                                    css={{
+                                      gap: '$2',
+                                      alignItems: 'center',
+                                      color: '$neutralText',
+                                    }}
+                                  >
                                     <Box
                                       css={{
                                         maxWidth: 385,
@@ -661,6 +604,7 @@ export function BidModal({
                                             amount={trait?.floorAskPrice}
                                             maximumFractionDigits={2}
                                             logoWidth={11}
+                                            textStyle="body1"
                                           />
                                         </Box>
                                       )}
@@ -677,117 +621,176 @@ export function BidModal({
                                         height={16}
                                       />
                                     </Flex>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Text
-                                      css={{
-                                        color: '$neutralText',
-                                      }}
-                                    >
-                                      All Attributes
-                                    </Text>
-                                    <FontAwesomeIcon
-                                      icon={faChevronDown}
-                                      width={16}
-                                      height={16}
-                                    />
-                                  </>
-                                )}
-                              </Flex>
-                            </PseudoInput>
-                          </Popover.Trigger>
-                          <Popover.Content sideOffset={-50}>
-                            <AttributeSelector
-                              attributes={attributes}
-                              tokenCount={tokenCount}
-                              setTrait={setTrait}
-                              setOpen={setAttributeSelectorOpen}
-                            />
-                          </Popover.Content>
-                        </Popover.Root>
-                      </>
-                    )}
+                                  </Flex>
+                                </PseudoInput>
+                              ) : (
+                                <Button
+                                  color="ghost"
+                                  css={{
+                                    color: '$accentText',
+                                    fontWeight: 500,
+                                    fontSize: 14,
+                                    maxWidth: 'max-content',
+                                  }}
+                                  size="none"
+                                >
+                                  + Add Attribute
+                                </Button>
+                              )}
+                            </Popover.Trigger>
+                            <Popover.Content
+                              side="bottom"
+                              align="start"
+                              sideOffset={-20}
+                              style={{ maxWidth: '100vw' }}
+                            >
+                              <AttributeSelector
+                                attributes={attributes}
+                                tokenCount={tokenCount}
+                                setTrait={setTrait}
+                                setOpen={setAttributeSelectorOpen}
+                              />
+                            </Popover.Content>
+                          </Popover.Root>
+                        </>
+                      )}
+                  </Flex>
 
-                  <Text
-                    as={Box}
-                    css={{ mt: '$4', mb: '$2' }}
-                    style="tiny"
-                    color="subtle"
-                  >
-                    Expiration Date
-                  </Text>
-                  <Flex css={{ gap: '$2', mb: '$4' }}>
-                    <Select
-                      css={{
-                        flex: 1,
-                        '@bp1': {
-                          width: 160,
-                          flexDirection: 'row',
-                        },
-                      }}
-                      value={expirationOption?.text || ''}
-                      onValueChange={(value: string) => {
-                        const option = expirationOptions.find(
-                          (option) => option.value == value
-                        )
-                        if (option) {
-                          setExpirationOption(option)
-                        }
-                      }}
+                  {quantityEnabled ? (
+                    <Flex
+                      justify="between"
+                      align="center"
+                      css={{ gap: '$5', width: '100%' }}
                     >
-                      {expirationOptions
-                        .filter(({ value }) => value !== 'custom')
-                        .map((option) => (
-                          <Select.Item key={option.text} value={option.value}>
-                            <Select.ItemText>{option.text}</Select.ItemText>
-                          </Select.Item>
-                        ))}
-                    </Select>
-                    <DateInput
-                      ref={datetimeElement}
-                      icon={
-                        <FontAwesomeIcon
-                          icon={faCalendar}
-                          width={14}
-                          height={16}
-                        />
-                      }
-                      value={expirationDate}
-                      options={{
-                        chainId: modalChain?.id,
-                        minDate: MINIMUM_DATE,
-                        enableTime: true,
-                        minuteIncrement: 1,
-                      }}
-                      defaultValue={expirationDate}
-                      onChange={(e: any) => {
-                        if (Array.isArray(e)) {
-                          const customOption = expirationOptions.find(
-                            (option) => option.value === 'custom'
-                          )
-                          if (customOption) {
-                            setExpirationOption({
-                              ...customOption,
-                              relativeTime: e[0] / 1000,
-                            })
-                          }
-                        }
-                      }}
-                      containerCss={{
-                        width: 46,
-                        '@bp1': {
+                      <Flex
+                        direction="column"
+                        align="start"
+                        css={{ gap: '$2', flexShrink: 0 }}
+                      >
+                        <Text style="subtitle2">Quantity</Text>
+                        <Text
+                          color="subtle"
+                          style="body3"
+                          css={{
+                            display: 'none',
+                            '@bp1': {
+                              display: 'block',
+                            },
+                          }}
+                        >
+                          Offers can be accepted separately
+                        </Text>
+                      </Flex>
+                      <QuantitySelector
+                        quantity={quantity}
+                        setQuantity={setQuantity}
+                        min={1}
+                        max={999999}
+                        css={{ justifyContent: 'space-between', width: '100%' }}
+                      />
+                    </Flex>
+                  ) : null}
+
+                  <Flex direction="column" css={{ gap: '$2', width: '100%' }}>
+                    <Text as={Box} style="subtitle2">
+                      Expiration Date
+                    </Text>
+                    <Flex css={{ gap: '$2' }}>
+                      <Select
+                        css={{
                           flex: 1,
-                          width: '100%',
-                        },
-                      }}
-                      css={{
-                        padding: 0,
-                        '@bp1': {
-                          padding: '12px 16px 12px 48px',
-                        },
-                      }}
-                    />
+                          '@bp1': {
+                            width: 160,
+                            flexDirection: 'row',
+                          },
+                        }}
+                        value={expirationOption?.text || ''}
+                        onValueChange={(value: string) => {
+                          const option = expirationOptions.find(
+                            (option) => option.value == value
+                          )
+                          if (option) {
+                            setExpirationOption(option)
+                          }
+                        }}
+                      >
+                        {expirationOptions
+                          .filter(({ value }) => value !== 'custom')
+                          .map((option) => (
+                            <Select.Item key={option.text} value={option.value}>
+                              <Select.ItemText>{option.text}</Select.ItemText>
+                            </Select.Item>
+                          ))}
+                      </Select>
+                      <DateInput
+                        ref={datetimeElement}
+                        icon={
+                          <FontAwesomeIcon
+                            icon={faCalendar}
+                            width={14}
+                            height={16}
+                          />
+                        }
+                        value={expirationDate}
+                        options={{
+                          chainId: modalChain?.id,
+                          minDate: MINIMUM_DATE,
+                          enableTime: true,
+                          minuteIncrement: 1,
+                        }}
+                        defaultValue={expirationDate}
+                        onChange={(e: any) => {
+                          if (Array.isArray(e)) {
+                            const customOption = expirationOptions.find(
+                              (option) => option.value === 'custom'
+                            )
+                            if (customOption) {
+                              setExpirationOption({
+                                ...customOption,
+                                relativeTime: e[0] / 1000,
+                              })
+                            }
+                          }
+                        }}
+                        containerCss={{
+                          width: 46,
+                          '@bp1': {
+                            flex: 1,
+                            width: '100%',
+                          },
+                        }}
+                        css={{
+                          padding: 0,
+                          '@bp1': {
+                            padding: '12px 16px 12px 48px',
+                          },
+                        }}
+                      />
+                    </Flex>
+                  </Flex>
+
+                  <Flex
+                    justify="between"
+                    align="center"
+                    css={{ gap: '$4', width: '100%' }}
+                  >
+                    <Text style="h6">Total Offer Price</Text>
+                    <Flex direction="column" align="end">
+                      <FormatWrappedCurrency
+                        chainId={modalChain?.id}
+                        logoWidth={16}
+                        textStyle="h6"
+                        amount={totalBidAmount}
+                        address={currency?.contract}
+                        decimals={currency?.decimals}
+                        symbol={currency?.symbol}
+                      />
+                      <FormatCurrency
+                        style="subtitle3"
+                        color="subtle"
+                        amount={totalBidAmountUsd}
+                      />
+                    </Flex>
                   </Flex>
                   <Box css={{ width: '100%', mt: 'auto' }}>
                     {oracleEnabled && (
@@ -874,36 +877,42 @@ export function BidModal({
                       </>
                     )}
                   </Box>
-                </MainContainer>
-              </ContentContainer>
+                </Flex>
+              </Flex>
             )}
 
             {bidStep === BidStep.Offering && collection && (
-              <ContentContainer
-                css={{
-                  ...contentContainerCss,
-                }}
-              >
-                <TransactionBidDetails
+              <Flex direction="column">
+                <TokenInfo
                   chain={modalChain}
                   token={token ? token : undefined}
                   collection={collection}
-                  bidData={bidData}
+                  price={totalBidAmount}
+                  currency={currency}
+                  quantity={quantity}
+                  trait={trait}
+                  expirationOption={expirationOption}
+                  containerCss={{
+                    borderBottom: '1px solid',
+                    borderBottomColor: '$neutralLine',
+                    borderColor: '$neutralLine',
+                  }}
                 />
-                <MainContainer css={{ p: '$4' }}>
-                  <ProgressBar
-                    value={stepData?.stepProgress || 0}
-                    max={stepData?.totalSteps || 0}
-                  />
+                <Flex
+                  justify="between"
+                  direction="column"
+                  align="center"
+                  css={{ width: '100%', p: '$4', gap: 24 }}
+                >
                   {transactionError && (
-                    <ErrorWell error={transactionError} css={{ mt: 24 }} />
+                    <ErrorWell
+                      error={transactionError}
+                      css={{ width: '100%' }}
+                    />
                   )}
                   {stepData && (
                     <>
-                      <Text
-                        css={{ textAlign: 'center', mt: 48, mb: 28 }}
-                        style="subtitle1"
-                      >
+                      <Text css={{ textAlign: 'center' }} style="subtitle1">
                         {stepTitle}
                       </Text>
                       {stepData.currentStep.kind === 'signature' && (
@@ -946,7 +955,7 @@ export function BidModal({
                   )}
                   {!stepData && (
                     <Flex
-                      css={{ height: '100%' }}
+                      css={{ height: '100%', py: '$5' }}
                       justify="center"
                       align="center"
                     >
@@ -960,7 +969,7 @@ export function BidModal({
                     </Button>
                   )}
                   {transactionError && (
-                    <Flex css={{ mt: 'auto', gap: 10 }}>
+                    <Flex css={{ mt: 'auto', gap: 10, width: '100%' }}>
                       <Button
                         color="secondary"
                         css={{ flex: 1 }}
@@ -973,8 +982,8 @@ export function BidModal({
                       </Button>
                     </Flex>
                   )}
-                </MainContainer>
-              </ContentContainer>
+                </Flex>
+              </Flex>
             )}
 
             {bidStep === BidStep.Complete && (
