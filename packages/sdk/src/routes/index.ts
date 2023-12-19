@@ -176,6 +176,7 @@ export const routes = [
   "/admin/refresh-collection",
   "/admin/refresh-token",
   "/admin/resume-rabbit-queue",
+  "/admin/resync-api-key",
   "/admin/resync-floor-events",
   "/admin/resync-nft-balances",
   "/admin/resync-sale-royalties",

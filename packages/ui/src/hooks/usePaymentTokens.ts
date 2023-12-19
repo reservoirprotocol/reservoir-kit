@@ -170,10 +170,7 @@ export default function (
     }
   }, [allPaymentTokens, crossChainDisabled])
 
-  const { data: solverCapacityChainIdMap } = useSolverCapacities(
-    enabled ? crosschainChainIds : [],
-    chain
-  )
+  const { data: solverCapacity } = useSolverCapacities(enabled ? chain : null)
 
   const preferredCurrencyConversions = useCurrencyConversions(
     preferredCurrency?.address,
@@ -249,17 +246,11 @@ export default function (
         if (
           !crossChainDisabled &&
           crosschainChainIds?.length > 0 &&
-          solverCapacityChainIdMap &&
+          solverCapacity &&
           currency.chainId !== chain?.id
         ) {
-          const solverCapacity = solverCapacityChainIdMap.get(currency.chainId)
-
-          if (solverCapacity) {
-            maxItems = solverCapacity.maxItems
-            if (typeof solverCapacity.maxPricePerItem === 'string') {
-              maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
-            }
-          }
+          maxItems = solverCapacity.maxItems
+          maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
         }
 
         return {
