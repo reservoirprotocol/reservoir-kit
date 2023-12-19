@@ -240,6 +240,43 @@ export const MintModalRenderer: FC<Props> = ({
         currencyChainId: paymentCurrency?.chainId,
       }
 
+      if (feesOnTopBps && feesOnTopBps?.length > 0) {
+        const fixedFees = feesOnTopBps.map((fullFee) => {
+          const [referrer, feeBps] = fullFee.split(':')
+
+          let totalFeeTruncated = totalIncludingFees - feeOnTop
+
+          if (
+            mintResponseFees &&
+            paymentCurrency?.chainId != collection?.chainId
+          ) {
+            totalFeeTruncated -= BigInt(
+              mintResponseFees?.relayer?.amount?.raw ?? 0
+            )
+          }
+
+          const fee = Math.floor(
+            Number(totalFeeTruncated * BigInt(feeBps)) / 10000
+          )
+          const atomicUnitsFee = formatUnits(BigInt(fee), 0)
+          return `${referrer}:${atomicUnitsFee}`
+        })
+        options.feesOnTop = fixedFees
+      } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
+        const feesOnTopFixed = feesOnTopUsd.map((feeOnTop) => {
+          const [recipient, fee] = feeOnTop.split(':')
+          const atomicFee = BigInt(fee)
+          const convertedAtomicFee =
+            atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
+          const currencyFee = convertedAtomicFee / usdPriceRaw
+          const parsedFee = formatUnits(currencyFee, 0)
+          return `${recipient}:${parsedFee}`
+        })
+        options.feesOnTop = feesOnTopFixed
+      } else if (!feesOnTopUsd && !feesOnTopBps) {
+        delete options.feesOnTop
+      }
+
       return client?.actions
         .mintToken({
           chainId: rendererChain?.id,
@@ -324,6 +361,11 @@ export const MintModalRenderer: FC<Props> = ({
       tokenData?.token?.tokenId,
       paymentCurrency?.chainId,
       is1155,
+      feesOnTopBps,
+      feesOnTopUsd,
+      totalIncludingFees,
+      mintResponseFees,
+      usdPriceRaw,
     ]
   )
 
@@ -386,19 +428,15 @@ export const MintModalRenderer: FC<Props> = ({
       paymentCurrency?.currencyTotalRaw &&
       paymentCurrency.currencyTotalRaw > 0n
     ) {
-      let currencyTotalRawMinusRelayerAndGasFees =
-        paymentCurrency?.currencyTotalRaw
+      let currencyTotalRawMinusRelayerFees = paymentCurrency?.currencyTotalRaw
 
-      // if cross-chain, subtract relayer and gas fees from currencyTotalRaw
+      // if cross-chain, subtract relayer fees from currencyTotalRaw
       if (
         mintResponseFees &&
         paymentCurrency?.chainId !== collection?.chainId
       ) {
-        const totalRelayerAndGasFees =
-          BigInt(mintResponseFees?.gas?.amount?.raw ?? 0) +
-          BigInt(mintResponseFees?.relayer?.amount?.raw ?? 0)
-
-        currencyTotalRawMinusRelayerAndGasFees -= totalRelayerAndGasFees
+        const relayerFees = BigInt(mintResponseFees?.relayer?.amount?.raw ?? 0)
+        currencyTotalRawMinusRelayerFees -= relayerFees
       }
 
       if (feesOnTopBps && feesOnTopBps.length > 0) {
@@ -406,7 +444,7 @@ export const MintModalRenderer: FC<Props> = ({
           const [_, fee] = feeOnTop.split(':')
           return (
             totalFees +
-            (BigInt(fee) * currencyTotalRawMinusRelayerAndGasFees) / 10000n
+            (BigInt(fee) * currencyTotalRawMinusRelayerFees) / 10000n
           )
         }, 0n)
 
@@ -527,15 +565,16 @@ export const MintModalRenderer: FC<Props> = ({
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
+
         let totalFeeTruncated = totalIncludingFees - feeOnTop
 
         if (
           mintResponseFees &&
           paymentCurrency?.chainId != collection?.chainId
         ) {
-          totalFeeTruncated -=
-            BigInt(mintResponseFees?.gas?.amount?.raw ?? 0) +
-            BigInt(mintResponseFees?.relayer?.amount?.raw ?? 0)
+          totalFeeTruncated -= BigInt(
+            mintResponseFees?.relayer?.amount?.raw ?? 0
+          )
         }
 
         const fee = Math.floor(
@@ -649,7 +688,6 @@ export const MintModalRenderer: FC<Props> = ({
     client,
     wallet,
     address,
-    totalIncludingFees,
     wagmiChain,
     rendererChain,
     contract,
@@ -666,6 +704,7 @@ export const MintModalRenderer: FC<Props> = ({
     collection?.id,
     collectionContract,
     mintResponseFees,
+    usdPriceRaw,
   ])
 
   return (
