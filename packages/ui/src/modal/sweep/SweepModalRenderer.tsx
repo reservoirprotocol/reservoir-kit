@@ -289,7 +289,6 @@ export const SweepModalRenderer: FC<Props> = ({
                       tokenId ?? tokenData?.token?.tokenId
                     }`
                   : undefined,
-              quantity: 500,
               fillType: 'trade',
             },
           ],
