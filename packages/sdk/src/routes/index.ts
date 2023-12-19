@@ -200,5 +200,6 @@ export const routes = [
   "/tokens/spam-status/v1",
   "/collections/{collection}/override/v1",
   "/execute/solve/capacity/v1",
+  "/management/mints/simulate/v1",
   "/management/orders/simulate/v1"
 ];

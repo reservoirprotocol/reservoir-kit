@@ -82,7 +82,10 @@ const CallActionPage: NextPage = () => {
         client?.actions.call({
           wallet,
           txs: txs as any,
-          toChainId
+          toChainId,
+          onProgress: (steps, fees) => {
+            console.log(steps, fees)
+          }
         })
       }}>
         Execute Transactions
