@@ -566,6 +566,7 @@ export const BidModalRenderer: FC<Props> = ({
 
     client.actions
       .placeBid({
+        context: 'bidModalRenderer',
         chainId: rendererChain?.id,
         wallet,
         bids: [bid],

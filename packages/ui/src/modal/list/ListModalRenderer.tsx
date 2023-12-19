@@ -420,6 +420,7 @@ export const ListModalRenderer: FC<Props> = ({
 
     client.actions
       .listToken({
+        context: 'listModalRenderer',
         chainId: rendererChain?.id,
         listings: [listing],
         wallet,

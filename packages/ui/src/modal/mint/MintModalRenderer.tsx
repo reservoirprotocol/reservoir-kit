@@ -238,6 +238,7 @@ export const MintModalRenderer: FC<Props> = ({
 
     client?.actions
       .mintToken({
+        context: 'mintModalRenderer',
         chainId: rendererChain?.id,
         items: [
           {
@@ -519,6 +520,7 @@ export const MintModalRenderer: FC<Props> = ({
 
     client.actions
       .mintToken({
+        context: 'mintModalRenderer',
         chainId: rendererChain?.id,
         items: [
           {

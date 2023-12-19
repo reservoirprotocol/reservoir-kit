@@ -341,6 +341,7 @@ export const EditListingModalRenderer: FC<Props> = ({
 
     client.actions
       .listToken({
+        context: 'editListingModalRenderer',
         chainId: rendererChain?.id,
         listings: [listing],
         wallet,

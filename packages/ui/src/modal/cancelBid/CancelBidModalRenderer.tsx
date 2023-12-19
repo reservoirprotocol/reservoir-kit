@@ -140,6 +140,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
 
     client.actions
       .cancelOrder({
+        context: 'cancelBidModalRenderer',
         chainId: rendererChain?.id,
         ids: [bidId],
         wallet,

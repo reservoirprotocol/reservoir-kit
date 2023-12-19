@@ -1075,6 +1075,7 @@ function cartStore({
 
       client.actions
         .buyToken({
+          context: 'cartProvider',
           expectedPrice: {
             [options.currency || zeroAddress]: {
               amount: expectedPrice,

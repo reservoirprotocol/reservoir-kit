@@ -269,6 +269,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
     client?.actions
       .buyToken({
+        context: 'collectModalRenderer',
         chainId: rendererChain?.id,
         items: [
           {
@@ -673,6 +674,7 @@ export const CollectModalRenderer: FC<Props> = ({
 
     client.actions
       .buyToken({
+        context: 'collectModalRenderer',
         chainId: rendererChain?.id,
         items: [
           {

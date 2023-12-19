@@ -249,6 +249,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         options,
         precheck: true,
         onProgress: () => {},
+        context: 'acceptBidModalRenderer',
       }
 
       client.actions
@@ -494,6 +495,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           }
         },
         options,
+        context: 'acceptBidModalRenderer',
       })
       .catch((e: Error) => {
         hasError = true
