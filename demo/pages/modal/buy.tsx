@@ -23,6 +23,7 @@ const BuyPage: NextPage = () => {
   const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
+  const [executionMethod, setExecutionMethod] = useState< "seaport-intent" | "intent" | undefined>(undefined)
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
@@ -125,8 +126,30 @@ const BuyPage: NextPage = () => {
           }}
         />
       </div>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '5px',
+      }}>
+        <label>Execution Method:</label>
+          <button onClick={() => 
+      setExecutionMethod(executionMethod === 'seaport-intent' ? undefined : 'seaport-intent')
+        } style={{
+            border: 'none',
+            borderRadius: '5px',
+            background: executionMethod === 'seaport-intent' ? 'blue' : '', 
+          }}>seaport-intent</button>
+        <button onClick={() => 
+          setExecutionMethod(executionMethod === 'intent' ? undefined : 'intent')
+          } style={{
+            border: 'none',
+            borderRadius: '5px',
+            background: executionMethod === 'intent' ? 'blue' : '', 
+          }}>intent</button>
+      </div>
 
       <BuyModal
+      executionMethod={executionMethod}
         chainId={Number(chainId)}
         trigger={
           <button

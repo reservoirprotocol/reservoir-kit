@@ -29,7 +29,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
-import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
+import {
+  BuyModalRenderer,
+  BuyStep,
+  BuyModalStepData,
+  BuyTokenOptions,
+} from './BuyModalRenderer'
 import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
@@ -88,6 +93,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onPointerDownOutside?: ComponentPropsWithoutRef<
     typeof Dialog
   >['onPointerDownOutside']
+  executionMethod?: BuyTokenOptions['executionMethod']
 }
 
 function titleForStep(
@@ -128,6 +134,7 @@ export function BuyModal({
   onClose,
   onGoToToken,
   onPointerDownOutside,
+  executionMethod,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -149,6 +156,7 @@ export function BuyModal({
     <BuyModalRenderer
       chainId={modalChain?.id}
       open={open}
+      executionMethod={executionMethod}
       defaultQuantity={defaultQuantity}
       tokenId={tokenId}
       collectionId={collectionId}

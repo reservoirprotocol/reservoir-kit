@@ -47,7 +47,7 @@ export type BuyModalStepData = {
 }
 
 type Token = NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
-type BuyTokenOptions = NonNullable<
+export type BuyTokenOptions = NonNullable<
   Parameters<ReservoirClientActions['buyToken']>['0']['options']
 >
 
@@ -102,6 +102,7 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
   usePermit?: boolean
+  executionMethod?: BuyTokenOptions['executionMethod']
 }
 
 export const BuyModalRenderer: FC<Props> = ({
@@ -118,6 +119,7 @@ export const BuyModalRenderer: FC<Props> = ({
   children,
   walletClient,
   usePermit,
+  executionMethod,
 }) => {
   const [totalPrice, setTotalPrice] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
@@ -285,6 +287,10 @@ export const BuyModalRenderer: FC<Props> = ({
       partial: true,
       currency: paymentCurrency?.address,
       currencyChainId: paymentCurrency?.chainId,
+    }
+
+    if (executionMethod !== undefined) {
+      options.executionMethod = executionMethod
     }
 
     if (normalizeRoyalties !== undefined) {
