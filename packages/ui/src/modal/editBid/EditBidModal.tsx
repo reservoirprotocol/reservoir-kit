@@ -19,6 +19,7 @@ import {
   FormatCryptoCurrency,
   ErrorWell,
   CryptoCurrencyIcon,
+  Input,
 } from '../../primitives'
 import PseudoInput from '../../primitives/PseudoInput'
 import AttributeSelector from '../bid/AttributeSelector'
@@ -137,6 +138,7 @@ export function EditBidModal({
         usdPrice,
         stepData,
         exchange,
+        traitBidSupported,
         currency,
         setTrait,
         setBidAmount,
@@ -310,7 +312,7 @@ export function EditBidModal({
                       </Text>
                     </Flex>
 
-                    <Flex css={{ mt: '$2', gap: quantityEnabled ? '$2' : 20 }}>
+                    <Flex css={{ mt: '$2', gap: 20 }}>
                       <Text
                         as={Flex}
                         css={{ gap: '$2', flexShrink: 0 }}
@@ -327,9 +329,9 @@ export function EditBidModal({
                       </Text>
                       <Input
                         type="number"
-                        value={bidAmountPerUnit}
+                        value={bidAmount}
                         onChange={(e) => {
-                          setBidAmountPerUnit(e.target.value)
+                          setBidAmount(e.target.value)
                         }}
                         placeholder="Enter price"
                         containerCss={{
@@ -342,25 +344,9 @@ export function EditBidModal({
                           },
                         }}
                       />
-                      {topOfferButtonEnabled ? (
-                        <Button
-                          color="secondary"
-                          size="none"
-                          css={{
-                            height: 44,
-                            px: '$4',
-                            borderRadius: 8,
-                            fontWeight: 500,
-                            flexShrink: 0,
-                          }}
-                          onClick={handleSetBestOffer}
-                        >
-                          Best Offer
-                        </Button>
-                      ) : null}
                     </Flex>
 
-                    {totalBidAmount !== 0 && !withinPricingBounds && (
+                    {bidAmount !== '' && !withinPricingBounds && (
                       <Box>
                         <Text style="body2" color="error">
                           {maximumAmount !== Infinity
@@ -477,41 +463,6 @@ export function EditBidModal({
                         </>
                       )}
                   </Flex>
-
-                  {quantityEnabled ? (
-                    <Flex
-                      justify="between"
-                      align="center"
-                      css={{ gap: '$5', width: '100%' }}
-                    >
-                      <Flex
-                        direction="column"
-                        align="start"
-                        css={{ gap: '$2', flexShrink: 0 }}
-                      >
-                        <Text style="subtitle2">Quantity</Text>
-                        <Text
-                          color="subtle"
-                          style="body3"
-                          css={{
-                            display: 'none',
-                            '@bp1': {
-                              display: 'block',
-                            },
-                          }}
-                        >
-                          Offers can be accepted separately
-                        </Text>
-                      </Flex>
-                      <QuantitySelector
-                        quantity={quantity}
-                        setQuantity={setQuantity}
-                        min={1}
-                        max={999999}
-                        css={{ justifyContent: 'space-between', width: '100%' }}
-                      />
-                    </Flex>
-                  ) : null}
 
                   <Flex direction="column" css={{ gap: '$2', width: '100%' }}>
                     <Text as={Box} style="subtitle2">

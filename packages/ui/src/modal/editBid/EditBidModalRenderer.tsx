@@ -87,6 +87,9 @@ type ChildrenProps = {
   steps: Execute['steps'] | null
   stepData: EditBidStepData | null
   exchange?: Exchange
+  traitBidSupported: boolean
+  collectionBidSupported: boolean
+  partialBidSupported: boolean
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
   setBidAmount: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
@@ -194,6 +197,10 @@ export const EditBidModalRenderer: FC<Props> = ({
     const exchange = exchanges[bid?.kind as string]
     return exchange?.enabled ? exchange : undefined
   }, [reservoirMarketplace, bid])
+
+  const traitBidSupported = Boolean(exchange?.traitBidSupported)
+  const collectionBidSupported = Boolean(exchange?.collectionBidSupported)
+  const partialBidSupported = Boolean(exchange?.partialOrderSupported)
 
   const contract = bid?.tokenSetId?.split(':')[1]
   const currency = bid?.price?.currency
@@ -544,6 +551,9 @@ export const EditBidModalRenderer: FC<Props> = ({
         steps,
         stepData,
         exchange,
+        traitBidSupported,
+        partialBidSupported,
+        collectionBidSupported,
         setTrait,
         setBidAmount,
         setExpirationOption,
