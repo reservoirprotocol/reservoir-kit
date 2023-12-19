@@ -439,7 +439,7 @@ export const EditBidModalRenderer: FC<Props> = ({
 
     client.actions
       .placeBid({
-        context: 'bidModalRendererContext',
+        context: 'editBidModalRenderer',
         chainId: rendererChain?.id,
         bids: [bid],
         wallet,
