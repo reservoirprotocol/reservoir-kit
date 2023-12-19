@@ -16,6 +16,7 @@ type Data = {
   chainId?: number
   precheck?: boolean
   onProgress?: (steps: Execute['steps']) => any
+  context?: string
 }
 
 /**
@@ -28,7 +29,15 @@ type Data = {
  * @param data.onProgress Callback to update UI state as execution progresses
  */
 export async function transferTokens(data: Data) {
-  const { to, items, wallet, chainId, onProgress = () => {}, precheck } = data
+  const {
+    to,
+    items,
+    wallet,
+    chainId,
+    onProgress = () => {},
+    precheck,
+    context,
+  } = data
   const client = getClient()
   const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
     ? adaptViemWallet(wallet)
@@ -72,6 +81,10 @@ export async function transferTokens(data: Data) {
         request.headers['x-rkui-version'] = client.uiVersion
       }
 
+      if (context && request.headers) {
+        request.headers['x-rkui-context'] = context
+      }
+
       const res = await axios.request(request)
       if (res.status !== 200)
         throw new APIError(res?.data?.message, res.status, res.data)
@@ -85,7 +98,9 @@ export async function transferTokens(data: Data) {
         onProgress,
         undefined,
         undefined,
-        chainId
+        chainId,
+        undefined,
+        context
       )
       return true
     }

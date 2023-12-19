@@ -17,6 +17,7 @@ type Data = {
   chainId?: number
   precheck?: boolean
   onProgress?: (steps: Execute['steps']) => any
+  context?: string
 }
 
 /**
@@ -31,7 +32,14 @@ type Data = {
 export async function listToken(
   data: Data
 ): Promise<Execute['steps'] | boolean> {
-  const { listings, wallet, chainId, onProgress = () => {}, precheck } = data
+  const {
+    listings,
+    wallet,
+    chainId,
+    onProgress = () => {},
+    precheck,
+    context,
+  } = data
   const client = getClient()
   const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
     ? adaptViemWallet(wallet)
@@ -65,7 +73,10 @@ export async function listToken(
       ) {
         if (chain?.marketplaceFees && chain?.marketplaceFees?.length > 0) {
           listing.marketplaceFees = chain.marketplaceFees
-        } else if (client.marketplaceFees && client?.marketplaceFees?.length > 0) {
+        } else if (
+          client.marketplaceFees &&
+          client?.marketplaceFees?.length > 0
+        ) {
           listing.marketplaceFees = client.marketplaceFees
         }
       }
@@ -98,6 +109,10 @@ export async function listToken(
         request.headers['x-rkui-version'] = client.uiVersion
       }
 
+      if (context && request.headers) {
+        request.headers['x-rkui-context'] = context
+      }
+
       const res = await axios.request(request)
       if (res.status !== 200) throw res.data
       const data = res.data as Execute
@@ -110,7 +125,8 @@ export async function listToken(
         onProgress,
         undefined,
         undefined,
-        chainId
+        chainId,
+        context
       )
     }
 

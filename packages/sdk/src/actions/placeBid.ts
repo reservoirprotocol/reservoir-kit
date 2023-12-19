@@ -13,6 +13,7 @@ type Data = {
   wallet: ReservoirWallet | WalletClient
   chainId?: number
   onProgress: (steps: Execute['steps']) => any
+  context?: string
 }
 
 /**
@@ -22,7 +23,13 @@ type Data = {
  * @param data.chainId Override the current active chain
  * @param data.onProgress Callback to update UI state as execution progresses
  */
-export async function placeBid({ bids, wallet, chainId, onProgress }: Data) {
+export async function placeBid({
+  bids,
+  wallet,
+  chainId,
+  onProgress,
+  context,
+}: Data) {
   const client = getClient()
   const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
     ? adaptViemWallet(wallet)
@@ -66,7 +73,10 @@ export async function placeBid({ bids, wallet, chainId, onProgress }: Data) {
       ) {
         if (chain?.marketplaceFees && chain?.marketplaceFees?.length > 0) {
           bid.marketplaceFees = chain.marketplaceFees
-        } else if (client.marketplaceFees && client?.marketplaceFees?.length > 0) {
+        } else if (
+          client.marketplaceFees &&
+          client?.marketplaceFees?.length > 0
+        ) {
           bid.marketplaceFees = client.marketplaceFees
         }
       }
@@ -84,7 +94,9 @@ export async function placeBid({ bids, wallet, chainId, onProgress }: Data) {
       onProgress,
       undefined,
       undefined,
-      chainId
+      chainId,
+      undefined,
+      context
     )
     return true
   } catch (err: any) {

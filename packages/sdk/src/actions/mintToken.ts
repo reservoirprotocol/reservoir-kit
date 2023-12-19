@@ -29,6 +29,7 @@ type Data = {
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
   precheck?: boolean
   gas?: string
+  context?: string
 }
 
 /**
@@ -43,8 +44,16 @@ type Data = {
  * @param data.gas String of the gas provided for the transaction execution. It will return unused gas
  */
 export async function mintToken(data: Data) {
-  const { items, expectedPrice, wallet, chainId, onProgress, precheck, gas } =
-    data
+  const {
+    items,
+    expectedPrice,
+    wallet,
+    chainId,
+    onProgress,
+    precheck,
+    gas,
+    context,
+  } = data
   const client = getClient()
   const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
     ? adaptViemWallet(wallet)
@@ -94,6 +103,10 @@ export async function mintToken(data: Data) {
         request.headers['x-rkui-version'] = client.uiVersion
       }
 
+      if (context && request.headers) {
+        request.headers['x-rkui-context'] = context
+      }
+
       const res = await apiRequest(request)
       if (res.status !== 200)
         throw new APIError(res?.data?.message, res.status, res.data)
@@ -108,7 +121,8 @@ export async function mintToken(data: Data) {
         undefined,
         expectedPrice,
         chainId,
-        gas
+        gas,
+        context
       )
       return true
     }

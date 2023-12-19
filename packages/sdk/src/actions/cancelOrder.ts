@@ -19,6 +19,7 @@ type Data = {
   chainId?: number
   onProgress: (steps: Execute['steps']) => any
   gas?: string
+  context?: string
 }
 
 /**
@@ -31,7 +32,7 @@ type Data = {
  * @param data.gas String of the gas provided for the transaction execution. It will return unused gas
  */
 export async function cancelOrder(data: Data) {
-  const { ids, wallet, chainId, onProgress, gas } = data
+  const { ids, wallet, chainId, onProgress, gas, context } = data
   const client = getClient()
   const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
     ? adaptViemWallet(wallet)
@@ -70,7 +71,8 @@ export async function cancelOrder(data: Data) {
       undefined,
       undefined,
       chainId,
-      gas
+      gas,
+      context
     )
     return true
   } catch (err: any) {

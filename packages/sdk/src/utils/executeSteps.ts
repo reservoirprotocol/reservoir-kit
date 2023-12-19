@@ -120,7 +120,8 @@ export async function executeSteps(
   newJson?: Execute,
   expectedPrice?: Record<string, ExpectedPrice>,
   chainId?: number,
-  gas?: string
+  gas?: string,
+  context?: string
 ) {
   const client = getClient()
   let reservoirChain = client?.currentChain()
@@ -167,6 +168,11 @@ export async function executeSteps(
     if (client?.uiVersion) {
       request.headers['x-rkui-version'] = client.uiVersion
     }
+
+    if (context) {
+      request.headers['x-rkui-context'] = context
+    }
+
     request.headers['x-rkc-version'] = version
 
     if (!json) {
@@ -370,6 +376,11 @@ export async function executeSteps(
                     request.headers['x-rkui-version'] = client.uiVersion
                   }
 
+                  if (request.headers && request.headers['x-rkui-context']) {
+                    headers['x-rkui-context'] =
+                      request.headers['x-rkui-context']
+                  }
+
                   // if chainId is present in the tx data field then you should relay the tx on that chain
                   // otherwise, it's assumed the chain id matched the network the api request was made on
                   const transactionChainId =
@@ -463,12 +474,22 @@ export async function executeSteps(
 
                   try {
                     const headers: AxiosRequestHeaders = {
-                      'Content-Type': 'application/json',
                       'x-rkc-version': version,
                     }
+
                     if (request.headers && request.headers['x-api-key']) {
                       headers['x-api-key'] = request.headers['x-api-key']
                     }
+
+                    if (request.headers && client?.uiVersion) {
+                      request.headers['x-rkui-version'] = client.uiVersion
+                    }
+
+                    if (request.headers && request.headers['x-rkui-context']) {
+                      headers['x-rkui-context'] =
+                        request.headers['x-rkui-context']
+                    }
+
                     const getData = async function () {
                       let response = await axios.post(
                         postOrderUrl.href,
@@ -573,6 +594,10 @@ export async function executeSteps(
 
               if (request.headers && client?.uiVersion) {
                 request.headers['x-rkui-version'] = client.uiVersion
+              }
+
+              if (request.headers && request.headers['x-rkui-context']) {
+                headers['x-rkui-context'] = request.headers['x-rkui-context']
               }
 
               client.log(

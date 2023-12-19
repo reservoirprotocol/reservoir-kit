@@ -17,6 +17,7 @@ type Data = {
   chainId?: number
   precheck?: boolean
   onProgress?: (steps: Execute['steps'], fees?: Execute['fees']) => any
+  context?: string
 }
 
 /**
@@ -38,6 +39,7 @@ export async function call(data: Data) {
     options,
     onProgress = () => {},
     precheck,
+    context,
   } = data
   const client = getClient()
   const reservoirWallet: ReservoirWallet = isViemWalletClient(wallet)
@@ -84,6 +86,10 @@ export async function call(data: Data) {
         request.headers['x-rkui-version'] = client.uiVersion
       }
 
+      if (context && request.headers) {
+        request.headers['x-rkui-context'] = context
+      }
+
       const res = await axios.request(request)
       if (res.status !== 200)
         throw new APIError(res?.data?.message, res.status, res.data)
@@ -99,7 +105,9 @@ export async function call(data: Data) {
         },
         undefined,
         undefined,
-        chainId
+        chainId,
+        undefined,
+        context
       )
       return true
     }
