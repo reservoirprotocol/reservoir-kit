@@ -9,7 +9,9 @@ export default function (chain?: ReservoirChain | null) {
     chain ? `${chain?.baseApiUrl}/execute/solve/capacity/v1` : undefined,
     async (url) => {
       try {
-        const response = await axios.post(url, { kind: 'cross-chain-intent' })
+        const response = await axios.post(url, {
+          kind: 'cross-chain-intent',
+        })
         return response.data
       } catch (error) {
         console.error('Error fetching solver capacity:', error)

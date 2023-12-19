@@ -126,6 +126,9 @@ export const MintModalRenderer: FC<Props> = ({
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
+  const [mintResponseFees, setMintResponseFees] = useState<
+    MintResponses['fees'] | undefined
+  >(undefined)
 
   const currentChain = client?.currentChain()
 
@@ -206,7 +209,7 @@ export const MintModalRenderer: FC<Props> = ({
       [`${paymentKey}`]: itemAmount,
     },
     path: orders,
-    nativeOnly: false,
+    nativeOnly: true,
     chainId: rendererChain?.id,
     crossChainDisabled: false,
   })
@@ -217,12 +220,6 @@ export const MintModalRenderer: FC<Props> = ({
       paymentToken?.chainId === _paymentCurrency?.chainId
   )
 
-  const mintPrice = BigInt(
-    (orders?.[0]?.currency?.toLowerCase() !== paymentCurrency?.address
-      ? orders?.[0]?.buyInRawQuote
-      : orders?.[0]?.totalRawPrice) || 0
-  )
-
   const usdPrice = paymentCurrency?.usdPrice || 0
   const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
   const feeUsd = formatUnits(
@@ -231,115 +228,110 @@ export const MintModalRenderer: FC<Props> = ({
   )
 
   // Fetch mint path
-  const fetchMintPath = useCallback(() => {
-    if (!open || !client || paymentTokens.length === 0) {
-      return
-    }
+  const fetchMintPath = useCallback(
+    (paymentCurrency: EnhancedCurrency | undefined) => {
+      if (!open || !client) {
+        return
+      }
 
-    let options: MintTokenOptions = {
-      partial: true,
-      onlyPath: true,
-      currencyChainId: paymentCurrency?.chainId,
-    }
+      let options: MintTokenOptions = {
+        partial: true,
+        onlyPath: true,
+        currencyChainId: paymentCurrency?.chainId,
+      }
 
-    return client?.actions
-      .mintToken({
-        chainId: rendererChain?.id,
-        items: [
-          {
-            collection:
-              token ?? tokenData?.token?.tokenId ? undefined : collection?.id,
-            token:
-              token ?? tokenData?.token?.tokenId
-                ? `${collectionContract}:${
-                    tokenId ?? tokenData?.token?.tokenId
-                  }`
-                : undefined,
-            quantity:
-              paymentCurrency?.chainId !== collection?.chainId ? 1 : 500,
-          },
-        ],
-        expectedPrice: undefined,
-        options,
-        wallet: {
-          address: async () => {
-            return address || zeroAddress
-          },
-        } as any,
-        precheck: true,
-        onProgress: () => {},
-      })
-      .then((rawData) => {
-        let data = rawData as MintResponses
+      return client?.actions
+        .mintToken({
+          chainId: rendererChain?.id,
+          items: [
+            {
+              collection:
+                token ?? tokenData?.token?.tokenId ? undefined : collection?.id,
+              token:
+                token ?? tokenData?.token?.tokenId
+                  ? `${collectionContract}:${
+                      tokenId ?? tokenData?.token?.tokenId
+                    }`
+                  : undefined,
+            },
+          ],
+          expectedPrice: undefined,
+          options,
+          wallet: {
+            address: async () => {
+              return address || zeroAddress
+            },
+          } as any,
+          precheck: true,
+          onProgress: () => {},
+        })
+        .then((rawData) => {
+          let data = rawData as MintResponses
 
-        if ('path' in data) {
-          let pathData = data['path']
-          setOrders(pathData ?? [])
+          if ('path' in data) {
+            let pathData = data['path']
+            setOrders(pathData ?? [])
 
-          const pathOrderQuantity =
-            pathData?.reduce(
-              (quantity, order) => quantity + (order?.quantity || 1),
-              0
-            ) || 0
-          let totalMaxQuantity = pathOrderQuantity
-          if ('maxQuantities' in data && data.maxQuantities?.[0]) {
-            if (is1155) {
-              totalMaxQuantity = data.maxQuantities.reduce(
-                (total, currentQuantity) =>
-                  total + Number(currentQuantity.maxQuantity ?? 1),
-                0
-              )
-            } else {
-              let maxQuantity = data.maxQuantities?.[0].maxQuantity
-              // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
-              totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
+            if (data.fees) {
+              setMintResponseFees(data.fees)
             }
-          }
-          setMaxItemAmount(
-            pathOrderQuantity > totalMaxQuantity
-              ? totalMaxQuantity
-              : pathOrderQuantity
-          )
-        }
-      })
-      .catch((err) => {
-        setOrders([])
-        throw err
-      })
-      .finally(() => {
-        setFetchedInitialOrders(true)
-      })
-  }, [
-    address,
-    client,
-    wallet,
-    rendererChain,
-    contract,
-    tokenId,
-    collection,
-    tokenData?.token?.tokenId,
-    paymentCurrency?.chainId,
-    is1155,
-  ])
 
-  const fetchBuyPathIfIdle = useCallback(() => {
-    if (collection && mintStep === MintStep.Idle) {
-      fetchMintPath()
-    }
-  }, [fetchMintPath, mintStep, collection])
+            const pathOrderQuantity =
+              pathData?.reduce(
+                (quantity, order) => quantity + (order?.quantity || 1),
+                0
+              ) || 0
+            let totalMaxQuantity = pathOrderQuantity
+            if ('maxQuantities' in data && data.maxQuantities?.[0]) {
+              if (is1155) {
+                totalMaxQuantity = data.maxQuantities.reduce(
+                  (total, currentQuantity) =>
+                    total + Number(currentQuantity.maxQuantity ?? 1),
+                  0
+                )
+              } else {
+                let maxQuantity = data.maxQuantities?.[0].maxQuantity
+                // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+                totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
+              }
+            }
+
+            setMaxItemAmount(
+              pathOrderQuantity > totalMaxQuantity
+                ? totalMaxQuantity
+                : pathOrderQuantity
+            )
+          }
+        })
+        .catch((err) => {
+          setOrders([])
+          throw err
+        })
+        .finally(() => {
+          setFetchedInitialOrders(true)
+        })
+    },
+    [
+      open,
+      address,
+      client,
+      wallet,
+      rendererChain,
+      contract,
+      tokenId,
+      collection,
+      token,
+      tokenData?.token?.tokenId,
+      paymentCurrency?.chainId,
+      is1155,
+    ]
+  )
 
   useEffect(() => {
-    if (open) {
-      fetchBuyPathIfIdle()
+    if (open && (collection || tokenData) && !paymentCurrency) {
+      fetchMintPath(paymentCurrency)
     }
-  }, [
-    client,
-    wallet,
-    open,
-    fetchBuyPathIfIdle,
-    paymentCurrency?.address,
-    collection,
-  ])
+  }, [fetchMintPath, open, collection, tokenData, paymentCurrency])
 
   const setPaymentCurrency: typeof _setPaymentCurrency = useCallback(
     (
@@ -357,7 +349,7 @@ export const MintModalRenderer: FC<Props> = ({
             newValue?.address !== paymentCurrency?.address ||
             newValue?.chainId !== paymentCurrency?.chainId
           ) {
-            fetchMintPath()?.catch((err) => {
+            fetchMintPath(newValue)?.catch((err) => {
               if (
                 err?.statusCode === 400 &&
                 err?.message?.includes('Price too high')
@@ -374,7 +366,7 @@ export const MintModalRenderer: FC<Props> = ({
           value?.chainId !== paymentCurrency?.chainId
         ) {
           _setPaymentCurrency(value)
-          fetchMintPath()?.catch((err) => {
+          fetchMintPath(value)?.catch((err) => {
             if (
               err?.statusCode === 400 &&
               err?.message?.includes('Price too high')
@@ -388,16 +380,40 @@ export const MintModalRenderer: FC<Props> = ({
     [fetchMintPath, _setPaymentCurrency, paymentCurrency]
   )
 
-  const calculateFees = useCallback(
-    (totalPrice: bigint) => {
-      let fees = 0n
+  useEffect(() => {
+    let totalFees = 0n
+    if (
+      paymentCurrency?.currencyTotalRaw &&
+      paymentCurrency.currencyTotalRaw > 0n
+    ) {
+      let currencyTotalRawMinusRelayerAndGasFees =
+        paymentCurrency?.currencyTotalRaw
+
+      // if cross-chain, subtract relayer and gas fees from currencyTotalRaw
+      if (
+        mintResponseFees &&
+        paymentCurrency?.chainId !== collection?.chainId
+      ) {
+        const totalRelayerAndGasFees =
+          BigInt(mintResponseFees?.gas?.amount?.raw ?? 0) +
+          BigInt(mintResponseFees?.relayer?.amount?.raw ?? 0)
+
+        currencyTotalRawMinusRelayerAndGasFees -= totalRelayerAndGasFees
+      }
+
       if (feesOnTopBps && feesOnTopBps.length > 0) {
-        fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
+        const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (BigInt(fee) * totalPrice) / 10000n
+          return (
+            totalFees +
+            (BigInt(fee) * currencyTotalRawMinusRelayerAndGasFees) / 10000n
+          )
         }, 0n)
+
+        totalFees += fees
+        setFeeOnTop(fees)
       } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
-        fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
+        const fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
           const atomicFee = BigInt(fee)
           const convertedAtomicFee =
@@ -405,53 +421,24 @@ export const MintModalRenderer: FC<Props> = ({
           const currencyFee = convertedAtomicFee / usdPriceRaw
           return totalFees + currencyFee
         }, 0n)
+        totalFees += fees
+        setFeeOnTop(fees)
+      } else {
+        setFeeOnTop(0n)
       }
-
-      return fees
-    },
-    [feesOnTopBps, feeOnTop, usdPriceRaw, feesOnTopUsd, paymentCurrency]
-  )
-
-  useEffect(() => {
-    let updatedTotal = 0n
-    let gasCost = 0n
-
-    // Mint erc1155
-    if (is1155) {
-      let remainingQuantity = itemAmount
-
-      for (const order of orders) {
-        if (remainingQuantity >= 0) {
-          let orderQuantity = order?.quantity || 1
-          let orderPricePerItem = BigInt(
-            (order?.currency?.toLowerCase() !== paymentCurrency?.address
-              ? order?.buyInRawQuote
-              : order?.totalRawPrice) || 0
-          )
-
-          if (remainingQuantity >= orderQuantity) {
-            updatedTotal += orderPricePerItem * BigInt(orderQuantity)
-            remainingQuantity -= orderQuantity
-          } else {
-            let fractionalPrice = orderPricePerItem * BigInt(remainingQuantity)
-            updatedTotal += fractionalPrice
-            remainingQuantity = 0
-          }
-          gasCost += BigInt(order.gasCost || 0n)
-        }
-      }
+      setTotalIncludingFees(paymentCurrency?.currencyTotalRaw + totalFees)
+    } else {
+      setTotalIncludingFees(0n)
     }
-
-    // Mint erc721
-    else {
-      updatedTotal = mintPrice * BigInt(Math.max(0, itemAmount) || 0)
-      gasCost += orders[0] && orders[0].gasCost ? BigInt(orders[0].gasCost) : 0n
-    }
-
-    const fees = calculateFees(updatedTotal)
-    setFeeOnTop(fees)
-    setTotalIncludingFees(updatedTotal + fees)
-  }, [paymentCurrency, feesOnTopBps, feesOnTopUsd, itemAmount, orders])
+  }, [
+    feesOnTopBps,
+    feesOnTopUsd,
+    usdPriceRaw,
+    feeOnTop,
+    itemAmount,
+    paymentCurrency,
+    mintResponseFees,
+  ])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
@@ -488,6 +475,7 @@ export const MintModalRenderer: FC<Props> = ({
       setFetchedInitialOrders(false)
       _setPaymentCurrency(undefined)
       setStepData(null)
+      setMintResponseFees(undefined)
     } else {
       setItemAmount(defaultQuantity || 1)
     }
@@ -539,7 +527,16 @@ export const MintModalRenderer: FC<Props> = ({
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
-        const totalFeeTruncated = totalIncludingFees - feeOnTop
+        let totalFeeTruncated = totalIncludingFees - feeOnTop
+
+        if (
+          mintResponseFees &&
+          paymentCurrency?.chainId != collection?.chainId
+        ) {
+          totalFeeTruncated -=
+            BigInt(mintResponseFees?.gas?.amount?.raw ?? 0) +
+            BigInt(mintResponseFees?.relayer?.amount?.raw ?? 0)
+        }
 
         const fee = Math.floor(
           Number(totalFeeTruncated * BigInt(feeBps)) / 10000
@@ -646,7 +643,7 @@ export const MintModalRenderer: FC<Props> = ({
         setTransactionError(error)
         setMintStep(MintStep.Idle)
         mutateCollection()
-        fetchMintPath()
+        fetchMintPath(paymentCurrency)
       })
   }, [
     client,
@@ -668,6 +665,7 @@ export const MintModalRenderer: FC<Props> = ({
     tokenData?.token?.tokenId,
     collection?.id,
     collectionContract,
+    mintResponseFees,
   ])
 
   return (

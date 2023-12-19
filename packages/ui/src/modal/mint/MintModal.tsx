@@ -450,7 +450,7 @@ export function MintModal({
                   >
                     <FontAwesomeIcon icon={faChevronLeft} width={10} />
                   </Button>
-                  <Text style="subtitle2">Select A Token</Text>
+                  <Text style="subtitle2">Select Payment Method</Text>
                 </Flex>
                 <SelectPaymentTokenv2
                   paymentTokens={paymentTokens}
