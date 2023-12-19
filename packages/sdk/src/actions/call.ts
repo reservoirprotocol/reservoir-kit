@@ -16,7 +16,7 @@ type Data = {
   options?: CallBody
   chainId?: number
   precheck?: boolean
-  onProgress?: (steps: Execute['steps']) => any
+  onProgress?: (steps: Execute['steps'], fees?: Execute['fees']) => any
 }
 
 /**
@@ -88,13 +88,15 @@ export async function call(data: Data) {
       if (res.status !== 200)
         throw new APIError(res?.data?.message, res.status, res.data)
       const data = res.data as Execute
-      onProgress(data['steps'])
-      return data['steps']
+      onProgress(data['steps'], data['fees'])
+      return data
     } else {
       await executeSteps(
         request,
         reservoirWallet,
-        onProgress,
+        (steps, path, fees) => {
+          onProgress(steps, fees)
+        },
         undefined,
         undefined,
         chainId
