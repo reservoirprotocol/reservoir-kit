@@ -27,8 +27,8 @@ type Data = {
   chainId?: number
   onProgress: (steps: Execute['steps'], path: Execute['path']) => any
   precheck?: boolean
-  context?: string
   gas?: string
+  context?: string
 }
 
 /**
@@ -41,7 +41,6 @@ type Data = {
  * @param data.onProgress Callback to update UI state as execution progresses
  * @param data.precheck Set to true to skip executing steps and just to get the initial steps/path
  * @param data.gas String of the gas provided for the transaction execution. It will return unused gas
- * @param data.context String of the context this method was called in
  */
 export async function acceptOffer(data: Data) {
   const {
