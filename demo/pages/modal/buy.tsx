@@ -151,7 +151,7 @@ const BuyPage: NextPage = () => {
   >
     intent
   </button>
-</div>;
+</div>
       <BuyModal
         chainId={Number(chainId)}
         trigger={
