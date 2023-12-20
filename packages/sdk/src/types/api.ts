@@ -6763,8 +6763,10 @@ export interface definitions {
     kind: "seaport-intent" | "cross-chain-intent";
   };
   postExecuteSolveCapacityV1Response: {
-    maxPricePerItem: string;
+    capacityPerRequest: string;
+    totalCapacity: string;
     maxItems: number;
+    maxPricePerItem: string;
   };
   Model572: {
     collection: string;

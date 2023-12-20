@@ -1,4 +1,10 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
+import React, {
+  ComponentPropsWithoutRef,
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+} from 'react'
 import { WalletClient, formatUnits } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { useFallbackState, useReservoirClient } from '../../hooks'
@@ -44,6 +50,7 @@ import { CollectionInfo } from '../CollectionInfo'
 import { PurchaseCheckout } from '../PurchaseCheckout'
 import { PaymentDetails } from '../../common/PaymentDetails'
 import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
+import { Dialog } from '../../primitives/Dialog'
 
 export type MintCallbackData = {
   collectionId?: string
@@ -79,6 +86,9 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onMintError?: (error: Error, data: MintCallbackData) => void
   onClose?: (data: MintCallbackData, currentStep: MintStep) => void
   onGoToToken?: (data: MintCallbackData) => any
+  onPointerDownOutside?: ComponentPropsWithoutRef<
+    typeof Dialog
+  >['onPointerDownOutside']
 }
 
 export function MintModal({
@@ -97,6 +107,7 @@ export function MintModal({
   onClose,
   onConnectWallet,
   onGoToToken,
+  onPointerDownOutside,
   defaultQuantity,
 }: Props): ReactElement {
   const copy: typeof MintModalCopy = {
@@ -156,6 +167,7 @@ export function MintModal({
         balance,
         hasEnoughCurrency,
         transactionError,
+        fetchMintPathError,
         stepData,
         mintStep,
         setStepData,
@@ -230,6 +242,10 @@ export function MintModal({
               if (!clickedDismissableLayer && dismissableLayers.length > 0) {
                 e.preventDefault()
               }
+
+              if (onPointerDownOutside) {
+                onPointerDownOutside(e)
+              }
             }}
             onOpenChange={(open) => {
               if (!open && onClose) {
@@ -265,10 +281,24 @@ export function MintModal({
                       }}
                     />
                   </Box>
-                  <Text style="h6" css={{ textAlign: 'center' }}>
-                    Oops. Looks like the mint has ended or the maximum minting
-                    limit has been reached.
-                  </Text>
+                  {!collection && !fetchMintPathError ? (
+                    <Text style="h6" css={{ textAlign: 'center' }}>
+                      Collection not found.
+                    </Text>
+                  ) : null}
+
+                  {collection && fetchMintPathError?.message ? (
+                    <Text style="h6" css={{ textAlign: 'center' }}>
+                      {fetchMintPathError?.message}
+                    </Text>
+                  ) : null}
+
+                  {collection && !fetchMintPathError?.message ? (
+                    <Text style="h6" css={{ textAlign: 'center' }}>
+                      Oops. Looks like the mint has ended or the maximum minting
+                      limit has been reached.
+                    </Text>
+                  ) : null}
                 </Flex>
                 <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
                   {copy.mintCtaClose}

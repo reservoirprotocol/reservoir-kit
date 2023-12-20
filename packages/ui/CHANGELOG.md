@@ -1,4 +1,23 @@
 
+## [v1.21.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f2a696a7d1065c2de6cf76a91311f05ac3f6c1c8) (2023-12-19)
+
+* SDK Bump
+
+## [v1.21.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e8bfe97538758663202cfd61b71d7451ea59276b) (2023-12-18)
+
+* BidModal: Update ui to make it more consistent [865bb649](https://github.com/reservoirprotocol/reservoir-kit/commit/865bb64954a0fce914e475e4a1fa469650e66389)
+## [v1.21.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/dc4e3d8b15719488cb6478a7f533eba3c8bf9b9c) (2023-12-15)
+
+* SDK Bump
+
+## [v1.21.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6ba603bd4f383bc450ce296cd16e98ae36d7184a) (2023-12-14)
+
+* SDK Bump
+
+## [v1.21.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/611ca258546842b0c8b89af0cac1d3d593e18dee) (2023-12-13)
+
+* MintModal: Improve Error Handling [b3f4552b](https://github.com/reservoirprotocol/reservoir-kit/commit/b3f4552b322dc4a3c1ffd27edc79151550e7e05f)
+
 ## [v1.21.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e5545f33e2a6a2866703ac3f54b8e5db05c85994) (2023-12-04)
 
 * MintModal: New mint modal that uses the new mint api [c1cbf47c](https://github.com/reservoirprotocol/reservoir-kit/commit/c1cbf47c48066da8d2cbb50f5c40e5c3c192c8bf)

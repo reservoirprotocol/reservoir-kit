@@ -24,16 +24,17 @@ export default function (
 
   setParams(url, query)
 
-  const { data, mutate, error, isValidating } = useSWR<TrendingMintsResponse>(
-    url && options ? [url.href, client?.apiKey, client?.version] : null,
-    null,
-    {
-      revalidateOnMount: true,
-      ...swrOptions,
-    }
-  )
+  const { data, mutate, error, isValidating, isLoading } =
+    useSWR<TrendingMintsResponse>(
+      url && options ? [url.href, client?.apiKey, client?.version] : null,
+      null,
+      {
+        revalidateOnMount: true,
+        ...swrOptions,
+      }
+    )
 
   const mints: TrendingMintsResponse['mints'] | null =
     data && data.mints ? data.mints : null
-  return { response: data, data: mints, mutate, error, isValidating }
+  return { response: data, data: mints, mutate, error, isValidating, isLoading }
 }

@@ -3,7 +3,7 @@ import useSWR, { SWRConfiguration } from 'swr'
 import { useReservoirClient } from './'
 
 type TrendingCollectionsResponse =
-paths['/collections/trending/v1']['get']['responses']['200']['schema']
+  paths['/collections/trending/v1']['get']['responses']['200']['schema']
 
 type TrendingCollectionsQuery =
   paths['/collections/trending/v1']['get']['parameters']['query']
@@ -24,7 +24,7 @@ export default function (
 
   setParams(url, query)
 
-  const { data, mutate, error, isValidating } =
+  const { data, mutate, error, isValidating, isLoading } =
     useSWR<TrendingCollectionsResponse>(
       url && options ? [url.href, client?.apiKey, client?.version] : null,
       null,
@@ -36,5 +36,12 @@ export default function (
 
   const collections: TrendingCollectionsResponse['collections'] | null =
     data && data.collections ? data.collections : null
-  return { response: data, data: collections, mutate, error, isValidating }
+  return {
+    response: data,
+    data: collections,
+    mutate,
+    error,
+    isValidating,
+    isLoading,
+  }
 }
