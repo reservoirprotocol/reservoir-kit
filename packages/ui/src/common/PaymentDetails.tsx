@@ -71,9 +71,7 @@ export const PaymentDetails: FC<Props> = ({
                     textStyle="body2"
                     textColor="subtle"
                     amount={
-                      paymentCurrency?.currencyTotalRaw
-                        ? paymentCurrency.currencyTotalRaw + feeOnTop
-                        : undefined
+                      (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop
                     }
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
@@ -88,9 +86,7 @@ export const PaymentDetails: FC<Props> = ({
                     textStyle="h6"
                     textColor="base"
                     amount={
-                      paymentCurrency?.currencyTotalRaw
-                        ? paymentCurrency.currencyTotalRaw + feeOnTop
-                        : undefined
+                      (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop
                     }
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
