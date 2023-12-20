@@ -1,6 +1,12 @@
 import React, { FC, useContext } from 'react'
 import { CSS } from '@stitches/react'
-import { Flex, FormatCryptoCurrency, FormatCurrency, Text } from '../primitives'
+import {
+  Flex,
+  FormatCryptoCurrency,
+  FormatCurrency,
+  Loader,
+  Text,
+} from '../primitives'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 
@@ -8,6 +14,7 @@ type Props = {
   css?: CSS
   chainId?: number
   paymentCurrency?: EnhancedCurrency
+  loading?: boolean
   feeOnTop: bigint
   feeUsd: string
 }
@@ -16,6 +23,7 @@ export const PaymentDetails: FC<Props> = ({
   css,
   chainId,
   paymentCurrency,
+  loading,
   feeOnTop,
   feeUsd,
 }) => {
@@ -45,49 +53,55 @@ export const PaymentDetails: FC<Props> = ({
       <Flex justify="between" align="start" css={{ px: '$4' }}>
         <Text style="h6">You Pay</Text>
         <Flex direction="column" align="end" css={{ gap: '$1' }}>
-          {providerOptions.preferDisplayFiatTotal ? (
-            <>
-              <FormatCurrency
-                amount={paymentCurrency?.usdTotalPriceRaw}
-                style="h6"
-                color="base"
-              />
-              <FormatCryptoCurrency
-                chainId={chainId}
-                textStyle="body2"
-                textColor="subtle"
-                amount={
-                  paymentCurrency?.currencyTotalRaw
-                    ? paymentCurrency.currencyTotalRaw + feeOnTop
-                    : undefined
-                }
-                address={paymentCurrency?.address}
-                decimals={paymentCurrency?.decimals}
-                symbol={paymentCurrency?.symbol}
-                logoWidth={12}
-              />
-            </>
+          {loading ? (
+            <Loader />
           ) : (
             <>
-              <FormatCryptoCurrency
-                chainId={chainId}
-                textStyle="h6"
-                textColor="base"
-                amount={
-                  paymentCurrency?.currencyTotalRaw
-                    ? paymentCurrency.currencyTotalRaw + feeOnTop
-                    : undefined
-                }
-                address={paymentCurrency?.address}
-                decimals={paymentCurrency?.decimals}
-                symbol={paymentCurrency?.symbol}
-                logoWidth={18}
-              />
-              <FormatCurrency
-                amount={paymentCurrency?.usdTotalPriceRaw}
-                style="body2"
-                color="subtle"
-              />
+              {providerOptions.preferDisplayFiatTotal ? (
+                <>
+                  <FormatCurrency
+                    amount={paymentCurrency?.usdTotalPriceRaw}
+                    style="h6"
+                    color="base"
+                  />
+                  <FormatCryptoCurrency
+                    chainId={chainId}
+                    textStyle="body2"
+                    textColor="subtle"
+                    amount={
+                      paymentCurrency?.currencyTotalRaw
+                        ? paymentCurrency.currencyTotalRaw + feeOnTop
+                        : undefined
+                    }
+                    address={paymentCurrency?.address}
+                    decimals={paymentCurrency?.decimals}
+                    symbol={paymentCurrency?.symbol}
+                    logoWidth={12}
+                  />
+                </>
+              ) : (
+                <>
+                  <FormatCryptoCurrency
+                    chainId={chainId}
+                    textStyle="h6"
+                    textColor="base"
+                    amount={
+                      paymentCurrency?.currencyTotalRaw
+                        ? paymentCurrency.currencyTotalRaw + feeOnTop
+                        : undefined
+                    }
+                    address={paymentCurrency?.address}
+                    decimals={paymentCurrency?.decimals}
+                    symbol={paymentCurrency?.symbol}
+                    logoWidth={18}
+                  />
+                  <FormatCurrency
+                    amount={paymentCurrency?.usdTotalPriceRaw}
+                    style="body2"
+                    color="subtle"
+                  />
+                </>
+              )}
             </>
           )}
         </Flex>

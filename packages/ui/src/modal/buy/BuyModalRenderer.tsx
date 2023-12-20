@@ -56,6 +56,7 @@ type BuyTokenOptions = NonNullable<
 
 type ChildrenProps = {
   loading: boolean
+  isFetchingPath: boolean
   tokenData?: Token
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   listing?: NonNullable<ReturnType<typeof useListings>['data']>[0]
@@ -476,7 +477,18 @@ export const BuyModalRenderer: FC<Props> = ({
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
-        const totalFeeTruncated = totalIncludingFees - feeOnTop
+        let totalFeeTruncated = totalIncludingFees - feeOnTop
+
+        // if cross-chain, subtract relayer fees from total
+        if (
+          buyResponseFees &&
+          paymentCurrency?.chainId != collection?.chainId
+        ) {
+          totalFeeTruncated -= BigInt(
+            buyResponseFees?.relayer?.amount?.raw ?? 0
+          )
+        }
+
         const fee = Math.floor(
           Number(totalFeeTruncated * BigInt(feeBps)) / 10000
         )
@@ -613,6 +625,7 @@ export const BuyModalRenderer: FC<Props> = ({
     wallet,
     paymentCurrency,
     usePermit,
+    buyResponseFees,
     mutateTokens,
     mutateCollection,
     onConnectWallet,
@@ -633,19 +646,16 @@ export const BuyModalRenderer: FC<Props> = ({
       paymentCurrency?.currencyTotalRaw &&
       paymentCurrency.currencyTotalRaw > 0n
     ) {
-      let currencyTotalRawMinusRelayerAndGasFees =
-        paymentCurrency?.currencyTotalRaw
+      let currencyTotalRawMinusRelayerFees = paymentCurrency?.currencyTotalRaw
 
-      // if cross-chain, subtract relayer and gas fees from currencyTotalRaw
+      // if cross-chain, subtract relayer fees from currencyTotalRaw
       if (
         buyResponseFees &&
         paymentCurrency?.chainId !== tokenData?.token?.chainId
       ) {
-        const totalRelayerAndGasFees =
-          BigInt(buyResponseFees?.gas?.amount?.raw ?? 0) +
-          BigInt(buyResponseFees?.relayer?.amount?.raw ?? 0)
+        const relayerFees = BigInt(buyResponseFees?.relayer?.amount?.raw ?? 0)
 
-        currencyTotalRawMinusRelayerAndGasFees -= totalRelayerAndGasFees
+        currencyTotalRawMinusRelayerFees -= relayerFees
       }
 
       if (feesOnTopBps && feesOnTopBps.length > 0) {
@@ -653,7 +663,7 @@ export const BuyModalRenderer: FC<Props> = ({
           const [_, fee] = feeOnTop.split(':')
           return (
             totalFees +
-            (BigInt(fee) * currencyTotalRawMinusRelayerAndGasFees) / 10000n
+            (BigInt(fee) * currencyTotalRawMinusRelayerFees) / 10000n
           )
         }, 0n)
         totalFees += fees
@@ -726,10 +736,8 @@ export const BuyModalRenderer: FC<Props> = ({
     <>
       {children({
         loading:
-          !token ||
-          isFetchingPath ||
-          !path ||
-          (!(paymentTokens.length > 0) && path.length > 0),
+          !token || !path || (!(paymentTokens.length > 0) && path.length > 0),
+        isFetchingPath,
         tokenData,
         collection,
         quantityAvailable: quantityRemaining || 1,
