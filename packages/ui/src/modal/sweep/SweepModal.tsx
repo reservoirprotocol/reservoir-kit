@@ -5,7 +5,7 @@ import React, {
   SetStateAction,
   useEffect,
 } from 'react'
-import { WalletClient } from 'viem'
+import { WalletClient, formatUnits } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Modal } from '../Modal'
@@ -516,9 +516,15 @@ export function SweepModal({
                     collection={collection}
                     token={token}
                     itemCount={itemAmount}
-                    totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
-                    usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
+                    totalPrice={
+                      (paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop
+                    }
                     currency={paymentCurrency}
+                    usdTotalFormatted={formatUnits(
+                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+                        (paymentCurrency?.usdPriceRaw || 0n),
+                      (paymentCurrency?.decimals || 18) + 6
+                    )}
                   />
                 </Box>
                 <Flex
@@ -670,9 +676,15 @@ export function SweepModal({
                     collection={collection}
                     token={token}
                     itemCount={itemAmount}
-                    totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
-                    usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
+                    totalPrice={
+                      (paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop
+                    }
                     currency={paymentCurrency}
+                    usdTotalFormatted={formatUnits(
+                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+                        (paymentCurrency?.usdPriceRaw || 0n),
+                      (paymentCurrency?.decimals || 18) + 6
+                    )}
                   />
                 </Box>
                 <Flex

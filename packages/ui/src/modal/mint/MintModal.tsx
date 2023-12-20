@@ -1,5 +1,5 @@
 import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
-import { WalletClient } from 'viem'
+import { WalletClient, formatUnits } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Modal } from '../Modal'
@@ -131,6 +131,7 @@ export function MintModal({
     >
       {({
         loading,
+        isFetchingPath,
         collection,
         token,
         orders,
@@ -392,6 +393,7 @@ export function MintModal({
                       paymentCurrency={paymentCurrency}
                       feeOnTop={feeOnTop}
                       feeUsd={feeUsd}
+                      loading={isFetchingPath}
                       css={{ pt: '$4' }}
                     />
                   </Flex>
@@ -476,9 +478,15 @@ export function MintModal({
                     collection={collection}
                     token={token}
                     itemCount={itemAmount}
-                    totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+                    totalPrice={
+                      (paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop
+                    }
                     currency={paymentCurrency}
-                    usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
+                    usdTotalFormatted={formatUnits(
+                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+                        (paymentCurrency?.usdPriceRaw || 0n),
+                      (paymentCurrency?.decimals || 18) + 6
+                    )}
                   />
                 </Box>
                 <Flex
@@ -630,9 +638,15 @@ export function MintModal({
                     collection={collection}
                     token={token}
                     itemCount={itemAmount}
-                    totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+                    totalPrice={
+                      (paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop
+                    }
                     currency={paymentCurrency}
-                    usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
+                    usdTotalFormatted={formatUnits(
+                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+                        (paymentCurrency?.usdPriceRaw || 0n),
+                      (paymentCurrency?.decimals || 18) + 6
+                    )}
                   />
                 </Box>
                 <Flex
