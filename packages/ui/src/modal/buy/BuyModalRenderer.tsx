@@ -479,11 +479,8 @@ export const BuyModalRenderer: FC<Props> = ({
         const [referrer, feeBps] = fullFee.split(':')
         let totalFeeTruncated = totalIncludingFees - feeOnTop
 
-        // if cross-chain, subtract relayer fees from total
-        if (
-          buyResponseFees &&
-          paymentCurrency?.chainId != collection?.chainId
-        ) {
+        // if relayer fees, subtract from total
+        if (buyResponseFees?.relayer?.amount?.raw) {
           totalFeeTruncated -= BigInt(
             buyResponseFees?.relayer?.amount?.raw ?? 0
           )
@@ -648,11 +645,8 @@ export const BuyModalRenderer: FC<Props> = ({
     ) {
       let currencyTotalRawMinusRelayerFees = paymentCurrency?.currencyTotalRaw
 
-      // if cross-chain, subtract relayer fees from currencyTotalRaw
-      if (
-        buyResponseFees &&
-        paymentCurrency?.chainId !== tokenData?.token?.chainId
-      ) {
+      // if relayer fees, subtract from currencyTotalRaw
+      if (buyResponseFees?.relayer?.amount?.raw) {
         const relayerFees = BigInt(buyResponseFees?.relayer?.amount?.raw ?? 0)
 
         currencyTotalRawMinusRelayerFees -= relayerFees
