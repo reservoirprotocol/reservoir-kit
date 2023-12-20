@@ -26,7 +26,12 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
+import {
+  BuyModalRenderer,
+  BuyStep,
+  BuyModalStepData,
+  BuyTokenOptions,
+} from './BuyModalRenderer'
 import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
@@ -64,7 +69,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   orderId?: string
   chainId?: number
   defaultQuantity?: number
-  useSeaportExecutionMethod?: boolean
+  executionMethod?: BuyTokenOptions['executionMethod']
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
@@ -104,7 +109,7 @@ export function BuyModal({
   onClose,
   onGoToToken,
   onPointerDownOutside,
-  useSeaportExecutionMethod,
+  executionMethod,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -126,7 +131,7 @@ export function BuyModal({
     <BuyModalRenderer
       chainId={modalChain?.id}
       open={open}
-      useSeaportExecutionMethod={useSeaportExecutionMethod}
+      executionMethod={executionMethod}
       defaultQuantity={defaultQuantity}
       token={token}
       orderId={orderId}
