@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import React, { Dispatch, ReactElement, SetStateAction, useEffect } from 'react'
-import { WalletClient, formatUnits } from 'viem'
-=======
 import React, {
   ComponentPropsWithoutRef,
   Dispatch,
@@ -9,8 +5,7 @@ import React, {
   SetStateAction,
   useEffect,
 } from 'react'
-import { WalletClient } from 'viem'
->>>>>>> f5eaee723b8620846a3edca6e252e094cf91b942
+import { WalletClient, formatUnits } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Modal } from '../Modal'
@@ -50,19 +45,12 @@ import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
 import { MintImages } from './MintImages'
 import { truncateAddress } from '../../lib/truncate'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
-<<<<<<< HEAD
 import { TokenInfo } from '../TokenInfo'
 import { CollectionInfo } from '../CollectionInfo'
 import { PurchaseCheckout } from '../PurchaseCheckout'
 import { PaymentDetails } from '../../common/PaymentDetails'
 import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
-=======
-import { TokenInfo } from '../collect/TokenInfo'
-import { CollectionInfo } from '../collect/CollectionInfo'
-import { CollectCheckout } from '../collect/CollectCheckout'
-import { PaymentDetails } from '../PaymentDetails'
 import { Dialog } from '../../primitives/Dialog'
->>>>>>> f5eaee723b8620846a3edca6e252e094cf91b942
 
 export type MintCallbackData = {
   collectionId?: string
