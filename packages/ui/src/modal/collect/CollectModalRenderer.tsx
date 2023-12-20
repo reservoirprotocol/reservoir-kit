@@ -20,6 +20,7 @@ import {
   LogLevel,
   ReservoirChain,
   ReservoirClientActions,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
@@ -585,7 +586,9 @@ export const CollectModalRenderer: FC<Props> = ({
       setFetchedInitialOrders(false)
       setPaymentCurrency(undefined)
       setListingCurrency(undefined)
+      axios.defaults.headers.common['x-rkui-context'] = ''
     } else {
+      axios.defaults.headers.common['x-rkui-context'] = 'collectModalRenderer'
       setItemAmount(defaultQuantity || 1)
     }
   }, [open])
