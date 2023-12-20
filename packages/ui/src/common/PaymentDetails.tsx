@@ -9,6 +9,7 @@ import {
 } from '../primitives'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
+import { formatUnits } from 'viem'
 
 type Props = {
   css?: CSS
@@ -28,6 +29,11 @@ export const PaymentDetails: FC<Props> = ({
   feeUsd,
 }) => {
   const providerOptions = useContext(ProviderOptionsContext)
+  const usdTotal = formatUnits(
+    ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+      (paymentCurrency?.usdPriceRaw || 0n),
+    (paymentCurrency?.decimals || 18) + 6
+  )
 
   return (
     <Flex direction="column" css={{ width: '100%', ...css }}>
@@ -59,19 +65,13 @@ export const PaymentDetails: FC<Props> = ({
             <>
               {providerOptions.preferDisplayFiatTotal ? (
                 <>
-                  <FormatCurrency
-                    amount={paymentCurrency?.usdTotalPriceRaw}
-                    style="h6"
-                    color="base"
-                  />
+                  <FormatCurrency amount={usdTotal} style="h6" color="base" />
                   <FormatCryptoCurrency
                     chainId={chainId}
                     textStyle="body2"
                     textColor="subtle"
                     amount={
-                      paymentCurrency?.currencyTotalRaw
-                        ? paymentCurrency.currencyTotalRaw + feeOnTop
-                        : undefined
+                      (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop
                     }
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
@@ -86,9 +86,7 @@ export const PaymentDetails: FC<Props> = ({
                     textStyle="h6"
                     textColor="base"
                     amount={
-                      paymentCurrency?.currencyTotalRaw
-                        ? paymentCurrency.currencyTotalRaw + feeOnTop
-                        : undefined
+                      (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop
                     }
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
@@ -96,7 +94,7 @@ export const PaymentDetails: FC<Props> = ({
                     logoWidth={18}
                   />
                   <FormatCurrency
-                    amount={paymentCurrency?.usdTotalPriceRaw}
+                    amount={usdTotal}
                     style="body2"
                     color="subtle"
                   />

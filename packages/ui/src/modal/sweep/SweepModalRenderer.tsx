@@ -4,15 +4,16 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import {
   useChainCurrency,
   useCollections,
-  usePaymentTokens,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
+import usePaymentTokensv2 from '../../hooks/usePaymentTokensv2'
 import { useAccount, useWalletClient } from 'wagmi'
 import {
   BuyPath,
@@ -22,7 +23,7 @@ import {
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
-import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
+import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
 import {
@@ -32,7 +33,7 @@ import {
 } from '@reservoir0x/reservoir-sdk'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
-export enum CollectStep {
+export enum SweepStep {
   Idle,
   SelectPayment,
   Approving,
@@ -40,7 +41,7 @@ export enum CollectStep {
   Complete,
 }
 
-export type CollectModalStepData = {
+export type SweepModalStepData = {
   totalSteps: number
   stepProgress: number
   currentStep: Execute['steps'][0]
@@ -52,15 +53,11 @@ type BuyTokenOptions = Parameters<
   ReservoirClientActions['buyToken']
 >['0']['options']
 
-export type CollectModalMode = 'preferMint' | 'mint' | 'trade'
-
-export type CollectModalContentMode = 'mint' | 'sweep'
-
 export type ChildrenProps = {
-  contentMode?: CollectModalContentMode
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   token?: NonNullable<ReturnType<typeof useTokens>['data']>[0]
   loading: boolean
+  isFetchingPath: boolean
   orders: NonNullable<BuyPath>
   selectedTokens: NonNullable<BuyPath>
   setSelectedTokens: React.Dispatch<React.SetStateAction<NonNullable<BuyPath>>>
@@ -72,38 +69,35 @@ export type ChildrenProps = {
   setPaymentCurrency: React.Dispatch<
     React.SetStateAction<EnhancedCurrency | undefined>
   >
+  averageUnitPrice: bigint
   chainCurrency: ReturnType<typeof useChainCurrency>
   paymentTokens: EnhancedCurrency[]
-  total: bigint
   totalIncludingFees: bigint
-  gasCost: bigint
   feeOnTop: bigint
   feeUsd: string
   usdPrice: number
   usdPriceRaw: bigint
-  mintPrice: bigint
   currentChain: ReservoirChain | null | undefined
   address?: string
   balance?: bigint
   isConnected: boolean
-  contract: Address
   disableJumperLink?: boolean
   hasEnoughCurrency: boolean
   addFundsLink: string
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
-  stepData: CollectModalStepData | null
-  setStepData: React.Dispatch<React.SetStateAction<CollectModalStepData | null>>
-  collectStep: CollectStep
-  setCollectStep: React.Dispatch<React.SetStateAction<CollectStep>>
-  collectTokens: () => void
+  stepData: SweepModalStepData | null
+  setStepData: React.Dispatch<React.SetStateAction<SweepModalStepData | null>>
+  sweepStep: SweepStep
+  setSweepStep: React.Dispatch<React.SetStateAction<SweepStep>>
+  sweepTokens: () => void
 }
 
 type Props = {
   open: boolean
-  mode?: CollectModalMode
+  contract?: string
   collectionId?: string
-  tokenId?: string
+  token?: string
   onConnectWallet: () => void
   chainId?: number
   defaultQuantity?: number
@@ -115,12 +109,12 @@ type Props = {
   usePermit?: boolean
 }
 
-export const CollectModalRenderer: FC<Props> = ({
+export const SweepModalRenderer: FC<Props> = ({
   open,
   chainId,
-  mode = 'preferMint',
+  contract,
   collectionId,
-  tokenId,
+  token,
   feesOnTopBps,
   feesOnTopUsd,
   defaultQuantity,
@@ -133,30 +127,16 @@ export const CollectModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const { address } = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
+  const [isFetchingPath, setIsFetchingPath] = useState(false)
   const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
   const [orders, setOrders] = useState<NonNullable<BuyPath>>([])
   const [itemAmount, setItemAmount] = useState<number>(1)
   const [maxItemAmount, setMaxItemAmount] = useState<number>(1)
-  const [collectStep, setCollectStep] = useState<CollectStep>(CollectStep.Idle)
-  const [stepData, setStepData] = useState<CollectModalStepData | null>(null)
+  const [sweepStep, setSweepStep] = useState<SweepStep>(SweepStep.Idle)
+  const [stepData, setStepData] = useState<SweepModalStepData | null>(null)
   const [transactionError, setTransactionError] = useState<Error | null>()
-  const [total, setTotal] = useState(0n)
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
-  const [gasCost, setGasCost] = useState(0n)
-
-  const [contentMode, setContentMode] = useState<
-    CollectModalContentMode | undefined
-  >(() => {
-    switch (mode) {
-      case 'mint':
-        return 'mint'
-      case 'trade':
-        return 'sweep'
-      case 'preferMint':
-      default:
-        return undefined
-    }
-  })
+  const [averageUnitPrice, setAverageUnitPrice] = useState(0n)
 
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
@@ -169,7 +149,9 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const chainCurrency = useChainCurrency(rendererChain?.id)
 
-  const contract = collectionId?.split(':')[0] as Address
+  const collectionContract =
+    contract ?? collectionId?.split(':')?.[0] ?? token?.split(':')?.[0]
+  const tokenId = token?.split(':')?.[1]
 
   const wagmiChain: allChains.Chain | undefined = Object.values({
     ...allChains,
@@ -178,6 +160,8 @@ export const CollectModalRenderer: FC<Props> = ({
 
   const providerOptions = useContext(ProviderOptionsContext)
   const disableJumperLink = providerOptions?.disableJumperLink
+  const includeListingCurrency =
+    providerOptions.alwaysIncludeListingCurrency !== false
 
   const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id })
 
@@ -186,10 +170,14 @@ export const CollectModalRenderer: FC<Props> = ({
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
-  const { data: collections, mutate: mutateCollection } = useCollections(
+  const {
+    data: collections,
+    mutate: mutateCollection,
+    isFetchingPage: isFetchingCollections,
+  } = useCollections(
     open && {
-      id: collectionId,
-      includeMintStages: true,
+      contract: collectionId ? undefined : collectionContract,
+      id: collectionId ? collectionId : undefined,
     },
     {},
     rendererChain?.id
@@ -203,336 +191,300 @@ export const CollectModalRenderer: FC<Props> = ({
   const { data: tokens } = useTokens(
     open && (tokenId || isSingleToken1155)
       ? {
-          collection: isSingleToken1155 ? collectionId : undefined,
-          tokens: isSingleToken1155 ? undefined : `${collectionId}:${tokenId}`,
+          collection: isSingleToken1155 ? collection?.id : undefined,
+          tokens: isSingleToken1155
+            ? undefined
+            : `${collectionContract}:${tokenId}`,
         }
       : undefined,
     {},
     rendererChain?.id
   )
 
-  const token = tokens && tokens[0] ? tokens[0] : undefined
+  const tokenData = tokens && tokens[0] ? tokens[0] : undefined
 
-  const [listingCurrency, setListingCurrency] = useState<
+  const [_paymentCurrency, _setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
   >(undefined)
 
-  const [_paymentCurrency, setPaymentCurrency] = useState<
-    EnhancedCurrency | undefined
-  >(undefined)
+  const paymentKey = useMemo(() => {
+    if (token) {
+      return token
+    } else if (tokenData?.token?.tokenId && collectionContract) {
+      return `${collectionContract}:${tokenData?.token?.tokenId}`
+    } else if (collectionId) {
+      return collectionId
+    } else return collectionContract
+  }, [token, collectionId, , collectionContract, tokenData?.token?.tokenId])
 
-  const paymentTokens = usePaymentTokens(
+  const paymentTokens = usePaymentTokensv2({
     open,
-    address as Address,
-    _paymentCurrency ?? chainCurrency,
-    totalIncludingFees,
-    rendererChain?.id,
-    contentMode === 'mint',
-    false,
-    listingCurrency
-  )
+    address: address as Address,
+    quantityToken: {
+      [`${paymentKey}`]: itemAmount,
+    },
+    path: orders,
+    nativeOnly: false,
+    chainId: rendererChain?.id,
+    crossChainDisabled: true,
+  })
 
   const paymentCurrency = paymentTokens?.find(
-    (paymentToken) =>
+    (paymentToken: EnhancedCurrency) =>
       paymentToken?.address === _paymentCurrency?.address &&
       paymentToken?.chainId === _paymentCurrency?.chainId
   )
 
-  const mintPrice = BigInt(
-    (orders?.[0]?.currency?.toLowerCase() !== paymentCurrency?.address
-      ? orders?.[0]?.buyInRawQuote
-      : orders?.[0]?.totalRawPrice) || 0
-  )
-
   const usdPrice = paymentCurrency?.usdPrice || 0
   const usdPriceRaw = paymentCurrency?.usdPriceRaw || 0n
+
   const feeUsd = formatUnits(
     feeOnTop * usdPriceRaw,
     (paymentCurrency?.decimals || 18) + 6
   )
 
-  const fetchBuyPath = useCallback(() => {
-    if (!client) {
-      return
-    }
+  const fetchBuyPath = useCallback(
+    (
+      paymentCurrency: EnhancedCurrency | undefined,
+      paymentTokens: EnhancedCurrency[]
+    ) => {
+      if (!open || !client || paymentTokens.length === 0) {
+        return
+      }
 
-    let options: BuyTokenOptions = {
-      partial: true,
-      onlyPath: true,
-      currency: paymentCurrency?.address,
-      currencyChainId: paymentCurrency?.chainId,
-    }
+      setIsFetchingPath(true)
 
-    if (normalizeRoyalties !== undefined) {
-      options.normalizeRoyalties = normalizeRoyalties
-    }
+      let options: BuyTokenOptions = {
+        partial: true,
+        onlyPath: true,
+      }
 
-    client?.actions
-      .buyToken({
-        chainId: rendererChain?.id,
-        items: [
-          {
-            collection:
-              tokenId ?? token?.token?.tokenId ? undefined : collectionId,
-            token:
-              tokenId ?? token?.token?.tokenId
-                ? `${collectionId}:${tokenId ?? token?.token?.tokenId}`
-                : undefined,
-            fillType: mode === 'preferMint' ? undefined : mode,
-          },
-        ],
-        expectedPrice: undefined,
-        options,
-        wallet: {
-          address: async () => {
-            return address || zeroAddress
-          },
-        } as any,
-        precheck: true,
-        onProgress: () => {},
-      })
-      .then((rawData) => {
-        let data = rawData as BuyResponses
+      if (normalizeRoyalties !== undefined) {
+        options.normalizeRoyalties = normalizeRoyalties
+      }
 
-        let intendedContentMode =
-          mode === 'mint' ? 'mint' : ('sweep' as CollectModalContentMode)
-
-        if ('path' in data) {
-          let pathData = data['path']
-          setOrders(pathData ?? [])
-
-          const pathOrderQuantity =
-            pathData?.reduce(
-              (quantity, order) => quantity + (order?.quantity || 1),
-              0
-            ) || 0
-          let totalMaxQuantity = pathOrderQuantity
-          if ('maxQuantities' in data && data.maxQuantities?.[0]) {
-            if (is1155) {
-              totalMaxQuantity = data.maxQuantities.reduce(
-                (total, currentQuantity) =>
-                  total + Number(currentQuantity.maxQuantity ?? 1),
-                0
-              )
-            } else {
-              let maxQuantity = data.maxQuantities?.[0].maxQuantity
-              // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
-              totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
-            }
-          }
-          setMaxItemAmount(
-            pathOrderQuantity > totalMaxQuantity
-              ? totalMaxQuantity
-              : pathOrderQuantity
-          )
-
-          if (mode === 'preferMint') {
-            // check if the path data includes any mints
-            if (
-              pathData?.find((order) => order.orderId?.includes('mint')) !=
-              undefined
-            ) {
-              intendedContentMode = 'mint'
-            }
-          }
+      if (paymentCurrency) {
+        options.currency = paymentCurrency.address
+        if (paymentCurrency.chainId) {
+          options.currencyChainId = paymentCurrency.chainId
         }
+      } else if (!includeListingCurrency) {
+        options.currency = paymentTokens[0].address
+        if (paymentTokens[0].chainId) {
+          options.currencyChainId = paymentTokens[0].chainId
+        }
+        _setPaymentCurrency(paymentTokens[0])
+      }
 
-        setContentMode(intendedContentMode)
-      })
-      .catch((err) => {
-        setContentMode(mode === 'mint' ? 'mint' : 'sweep')
-        setOrders([])
-        throw err
-      })
-      .finally(() => {
-        setFetchedInitialOrders(true)
-      })
-  }, [
-    address,
-    client,
-    wallet,
-    rendererChain,
-    normalizeRoyalties,
-    collectionId,
-    tokenId,
-    mode,
-    token?.token?.tokenId,
-    tokenId,
-    paymentCurrency?.address,
-    paymentCurrency?.chainId,
-    is1155,
-  ])
+      return client?.actions
+        .buyToken({
+          chainId: rendererChain?.id,
+          items: [
+            {
+              collection:
+                token ?? tokenData?.token?.tokenId ? undefined : collection?.id,
+              token:
+                token ?? tokenData?.token?.tokenId
+                  ? `${collectionContract}:${
+                      tokenId ?? tokenData?.token?.tokenId
+                    }`
+                  : undefined,
+              fillType: 'trade',
+            },
+          ],
+          expectedPrice: undefined,
+          options,
+          wallet: {
+            address: async () => {
+              return address || zeroAddress
+            },
+          } as any,
+          precheck: true,
+          onProgress: () => {},
+        })
+        .then((rawData) => {
+          let data = rawData as BuyResponses
+
+          if ('path' in data) {
+            let pathData = data['path']
+            setOrders(pathData ?? [])
+
+            const pathOrderQuantity =
+              pathData?.reduce(
+                (quantity, order) => quantity + (order?.quantity || 1),
+                0
+              ) || 0
+            let totalMaxQuantity = pathOrderQuantity
+            if ('maxQuantities' in data && data.maxQuantities?.[0]) {
+              if (is1155) {
+                totalMaxQuantity = data.maxQuantities.reduce(
+                  (total, currentQuantity) =>
+                    total + Number(currentQuantity.maxQuantity ?? 1),
+                  0
+                )
+              } else {
+                let maxQuantity = data.maxQuantities?.[0].maxQuantity
+                // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+                totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
+              }
+            }
+            setMaxItemAmount(
+              pathOrderQuantity > totalMaxQuantity
+                ? totalMaxQuantity
+                : pathOrderQuantity
+            )
+
+            if (!paymentCurrency && pathData?.[0]) {
+              const listingToken = {
+                address: (pathData[0].buyInCurrency ||
+                  pathData[0].currency) as Address,
+                decimals:
+                  pathData[0].buyInCurrencyDecimals ||
+                  pathData[0].currencyDecimals ||
+                  18,
+                symbol:
+                  pathData[0].buyInCurrencySymbol ||
+                  pathData[0].currencySymbol ||
+                  '',
+                name:
+                  pathData[0].buyInCurrencySymbol ||
+                  pathData[0].currencySymbol ||
+                  '',
+                chainId: rendererChain?.id || 1,
+              }
+
+              _setPaymentCurrency(listingToken)
+            }
+          }
+        })
+        .catch((err) => {
+          setOrders([])
+          throw err
+        })
+        .finally(() => {
+          setFetchedInitialOrders(true)
+          setIsFetchingPath(false)
+        })
+    },
+    [
+      address,
+      client,
+      wallet,
+      rendererChain,
+      normalizeRoyalties,
+      collectionId,
+      tokenData?.token?.tokenId,
+      collectionContract,
+      collection?.id,
+      tokenId,
+      rendererChain?.paymentTokens,
+      is1155,
+      includeListingCurrency,
+      _setPaymentCurrency,
+    ]
+  )
+
+  const setPaymentCurrency: typeof _setPaymentCurrency = useCallback(
+    (
+      value:
+        | EnhancedCurrency
+        | ((
+            prevState: EnhancedCurrency | undefined
+          ) => EnhancedCurrency | undefined)
+        | undefined
+    ) => {
+      if (typeof value === 'function') {
+        _setPaymentCurrency((prevState) => {
+          const newValue = value(prevState)
+          if (
+            newValue?.address !== paymentCurrency?.address ||
+            newValue?.chainId !== paymentCurrency?.chainId
+          ) {
+            fetchBuyPath(newValue, paymentTokens)?.catch((err) => {
+              if (
+                err?.statusCode === 400 &&
+                err?.message?.includes('Price too high')
+              ) {
+                _setPaymentCurrency(prevState)
+              }
+            })
+          }
+          return newValue
+        })
+      } else {
+        if (
+          value?.address !== paymentCurrency?.address ||
+          value?.chainId !== paymentCurrency?.chainId
+        ) {
+          _setPaymentCurrency(value)
+          fetchBuyPath(value, paymentTokens)?.catch((err) => {
+            if (
+              err?.statusCode === 400 &&
+              err?.message?.includes('Price too high')
+            ) {
+              _setPaymentCurrency(paymentCurrency)
+            }
+          })
+        }
+      }
+    },
+    [fetchBuyPath, _setPaymentCurrency, paymentCurrency]
+  )
 
   const fetchBuyPathIfIdle = useCallback(() => {
-    if (collectStep === CollectStep.Idle) {
-      fetchBuyPath()
+    if (collection && sweepStep === SweepStep.Idle) {
+      fetchBuyPath(paymentCurrency, paymentTokens)
     }
-  }, [fetchBuyPath, collectStep])
+  }, [fetchBuyPath, sweepStep, collection])
 
   useEffect(() => {
     if (open) {
       fetchBuyPathIfIdle()
 
-      if (contentMode === 'sweep') {
-        const intervalId = setInterval(fetchBuyPathIfIdle, 60000) // Poll buy api every 1 minute
-        return () => clearInterval(intervalId)
-      }
+      const intervalId = setInterval(fetchBuyPathIfIdle, 60000) // Poll buy api every 1 minute
+      return () => clearInterval(intervalId)
     }
-  }, [
-    client,
-    wallet,
-    open,
-    fetchBuyPathIfIdle,
-    token?.token?.tokenId,
-    tokenId,
-    is1155,
-    paymentCurrency?.address,
-  ])
+  }, [client, wallet, open, fetchBuyPathIfIdle, tokenId, is1155, collection])
 
-  const calculateFees = useCallback(
-    (totalPrice: bigint) => {
-      let fees = 0n
+  useEffect(() => {
+    let totalFees = 0n
+
+    if (
+      paymentCurrency?.currencyTotalRaw &&
+      paymentCurrency.currencyTotalRaw > 0n
+    ) {
       if (feesOnTopBps && feesOnTopBps.length > 0) {
-        fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
+        const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
-          return totalFees + (BigInt(fee) * totalPrice) / 10000n
+          return (
+            totalFees +
+            (BigInt(fee) * paymentCurrency.currencyTotalRaw!) / 10000n
+          )
         }, 0n)
+        totalFees += fees
+        setFeeOnTop(fees)
       } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
-        fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
+        const fees = feesOnTopUsd.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
           const atomicFee = BigInt(fee)
           const convertedAtomicFee =
             atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
           const currencyFee = convertedAtomicFee / usdPriceRaw
-          const parsedFee = formatUnits(currencyFee, 0)
-          return totalFees + BigInt(parsedFee)
+          return totalFees + currencyFee
         }, 0n)
+        totalFees += fees
+        setFeeOnTop(fees)
+      } else {
+        setFeeOnTop(0n)
       }
 
-      return fees
-    },
-    [feesOnTopBps, feeOnTop, usdPriceRaw, feesOnTopUsd, paymentCurrency]
-  )
-
-  useEffect(() => {
-    let updatedTotal = 0n
-    let gasCost = 0n
-
-    // Mint erc1155
-    if (contentMode === 'mint' && is1155) {
-      let remainingQuantity = itemAmount
-
-      for (const order of orders) {
-        if (remainingQuantity >= 0) {
-          let orderQuantity = order?.quantity || 1
-          let orderPricePerItem = BigInt(
-            (order?.currency?.toLowerCase() !== paymentCurrency?.address
-              ? order?.buyInRawQuote
-              : order?.totalRawPrice) || 0
-          )
-
-          if (remainingQuantity >= orderQuantity) {
-            updatedTotal += orderPricePerItem * BigInt(orderQuantity)
-            remainingQuantity -= orderQuantity
-          } else {
-            let fractionalPrice = orderPricePerItem * BigInt(remainingQuantity)
-            updatedTotal += fractionalPrice
-            remainingQuantity = 0
-          }
-          gasCost += BigInt(order.gasCost || 0n)
-        }
-      }
+      setTotalIncludingFees(paymentCurrency.currencyTotalRaw + totalFees)
+      setAverageUnitPrice(paymentCurrency.currencyTotalRaw / BigInt(itemAmount))
+    } else {
+      setTotalIncludingFees(0n)
+      setAverageUnitPrice(0n)
     }
-
-    // Mint erc721
-    else if (contentMode === 'mint') {
-      updatedTotal = mintPrice * BigInt(Math.max(0, itemAmount) || 0)
-      gasCost += orders[0] && orders[0].gasCost ? BigInt(orders[0].gasCost) : 0n
-    }
-
-    // Sweep erc1155
-    else if (is1155) {
-      let remainingQuantity = itemAmount
-
-      for (const order of orders) {
-        if (remainingQuantity <= 0) {
-          break
-        }
-        let orderQuantity = order?.quantity || 1
-        let orderPricePerItem = BigInt(
-          (order?.currency?.toLowerCase() !== paymentCurrency?.address
-            ? order?.buyInRawQuote
-            : order?.totalRawPrice) || 0
-        )
-
-        if (remainingQuantity >= orderQuantity) {
-          updatedTotal += orderPricePerItem * BigInt(orderQuantity)
-          remainingQuantity -= orderQuantity
-        } else {
-          let fractionalPrice = orderPricePerItem * BigInt(remainingQuantity)
-          updatedTotal += fractionalPrice
-          remainingQuantity = 0
-        }
-        gasCost += BigInt(order.gasCost || 0n)
-      }
-    }
-    // Sweep erc721
-    else {
-      selectedTokens?.forEach((token) => {
-        updatedTotal += BigInt(
-          token?.currency?.toLowerCase() != paymentCurrency?.address
-            ? token?.buyInRawQuote || 0
-            : token?.totalRawPrice || 0
-        )
-        gasCost += BigInt(token.gasCost || 0n)
-      }, 0n)
-    }
-    const fees = calculateFees(updatedTotal)
-    setFeeOnTop(fees)
-    setTotal(updatedTotal)
-    setTotalIncludingFees(updatedTotal + fees)
-    setGasCost(gasCost)
-  }, [
-    selectedTokens,
-    paymentCurrency,
-    feesOnTopBps,
-    feesOnTopUsd,
-    contentMode,
-    itemAmount,
-    orders,
-  ])
-
-  // Set paymentCurrency to first paymentToken
-  useEffect(() => {
-    if (paymentTokens[0] && listingCurrency && !paymentCurrency) {
-      setPaymentCurrency(paymentTokens[0])
-    }
-  }, [paymentTokens, listingCurrency, paymentCurrency])
-
-  // Set listing currency
-  useEffect(() => {
-    if (listingCurrency || !open || !fetchedInitialOrders) {
-      return
-    }
-    if (contentMode === 'mint') {
-      setListingCurrency(chainCurrency)
-    } else if (selectedTokens[0]) {
-      setListingCurrency({
-        address: selectedTokens?.[0].currency as Address,
-        decimals: selectedTokens?.[0].currencyDecimals || 18,
-        symbol: selectedTokens?.[0].currencySymbol || '',
-        name: selectedTokens?.[0].currencySymbol || '',
-        chainId: selectedTokens?.[0].fromChainId ?? rendererChain?.id ?? 1,
-      })
-    }
-  }, [
-    listingCurrency,
-    open,
-    fetchedInitialOrders,
-    contentMode,
-    selectedTokens,
-    rendererChain,
-  ])
+  }, [paymentCurrency, feesOnTopBps, feesOnTopUsd, usdPriceRaw, itemAmount])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
@@ -542,34 +494,31 @@ export const CollectModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (
       paymentCurrency?.balance != undefined &&
-      paymentCurrency?.currencyTotalRaw != undefined &&
-      BigInt(paymentCurrency?.balance) <
-        paymentCurrency?.currencyTotalRaw + gasCost
+      totalIncludingFees != undefined &&
+      BigInt(paymentCurrency?.balance) < totalIncludingFees
     ) {
       setHasEnoughCurrency(false)
     } else {
       setHasEnoughCurrency(true)
     }
-  }, [total, paymentCurrency, gasCost])
+  }, [totalIncludingFees, paymentCurrency?.balance])
 
   useEffect(() => {
-    if (contentMode === 'sweep') {
-      let updatedTokens = []
-      let quantity = 0
-      for (var i = 0; i < orders.length; i++) {
-        const order = orders[i]
-        if (order.quantity && order.quantity > 1) {
-          quantity += order.quantity
-        } else {
-          quantity++
-        }
-        updatedTokens.push(order)
-        if (quantity >= itemAmount) {
-          break
-        }
+    let updatedTokens = []
+    let quantity = 0
+    for (var i = 0; i < orders.length; i++) {
+      const order = orders[i]
+      if (order.quantity && order.quantity > 1) {
+        quantity += order.quantity
+      } else {
+        quantity++
       }
-      setSelectedTokens(updatedTokens)
+      updatedTokens.push(order)
+      if (quantity >= itemAmount) {
+        break
+      }
     }
+    setSelectedTokens(updatedTokens)
   }, [itemAmount, maxItemAmount, orders])
 
   // Reset state on close
@@ -579,12 +528,12 @@ export const CollectModalRenderer: FC<Props> = ({
       setOrders([])
       setItemAmount(1)
       setMaxItemAmount(1)
-      setCollectStep(CollectStep.Idle)
-      setContentMode(undefined)
+      setSweepStep(SweepStep.Idle)
       setTransactionError(null)
       setFetchedInitialOrders(false)
-      setPaymentCurrency(undefined)
-      setListingCurrency(undefined)
+      setIsFetchingPath(false)
+      _setPaymentCurrency(undefined)
+      setStepData(null)
     } else {
       setItemAmount(defaultQuantity || 1)
     }
@@ -596,7 +545,7 @@ export const CollectModalRenderer: FC<Props> = ({
     }
   }, [maxItemAmount, itemAmount])
 
-  const collectTokens = useCallback(async () => {
+  const sweepTokens = useCallback(async () => {
     if (!wallet) {
       onConnectWallet()
       if (document.body.style) {
@@ -669,24 +618,24 @@ export const CollectModalRenderer: FC<Props> = ({
       options.usePermit = true
     }
 
-    setCollectStep(CollectStep.Approving)
+    setSweepStep(SweepStep.Approving)
 
     client.actions
       .buyToken({
         chainId: rendererChain?.id,
         items: [
           {
-            collection: token?.token?.tokenId ? undefined : collectionId,
-            token: token?.token?.tokenId
-              ? `${collectionId}:${token?.token?.tokenId}`
+            collection: tokenData?.token?.tokenId ? undefined : collection?.id,
+            token: tokenData?.token?.tokenId
+              ? `${collectionContract}:${tokenData?.token?.tokenId}`
               : undefined,
             quantity: itemAmount,
-            fillType: contentMode === 'mint' ? 'mint' : 'trade',
+            fillType: 'trade',
           },
         ],
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            raw: total,
+            raw: totalIncludingFees,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },
@@ -734,7 +683,7 @@ export const CollectModalRenderer: FC<Props> = ({
             currentStepIndex + 1 === executableSteps.length &&
             currentStep?.items?.every((item) => item.txHashes)
           ) {
-            setCollectStep(CollectStep.Finalizing)
+            setSweepStep(SweepStep.Finalizing)
           }
 
           if (
@@ -745,45 +694,52 @@ export const CollectModalRenderer: FC<Props> = ({
                 step.items?.every((item) => item.status === 'complete')
             )
           ) {
-            setCollectStep(CollectStep.Complete)
+            setSweepStep(SweepStep.Complete)
           }
         },
       })
       .catch((error: Error) => {
         setTransactionError(error)
-        setCollectStep(CollectStep.Idle)
+        setSweepStep(SweepStep.Idle)
         mutateCollection()
-        fetchBuyPath()
+        fetchBuyPath(paymentCurrency, paymentTokens)
       })
   }, [
     selectedTokens,
     client,
     wallet,
     address,
-    total,
     totalIncludingFees,
     normalizeRoyalties,
     wagmiChain,
     rendererChain,
     collectionId,
+    collection?.id,
     tokenId,
     feesOnTopBps,
     onConnectWallet,
     feesOnTopUsd,
-    contentMode,
     itemAmount,
+    tokenData?.token?.tokenId,
+    collectionContract,
     paymentCurrency?.address,
     paymentCurrency?.chainId,
+    paymentCurrency?.currencyTotalRaw,
+    paymentTokens,
     usePermit,
   ])
 
   return (
     <>
       {children({
-        contentMode,
         collection,
-        token,
-        loading: !fetchedInitialOrders || !(paymentTokens.length > 0),
+        token: tokenData,
+        loading:
+          isFetchingCollections ||
+          (!isFetchingCollections && collection && !fetchedInitialOrders) ||
+          ((token !== undefined || isSingleToken1155) && !tokenData) ||
+          !(paymentTokens.length > 0),
+        isFetchingPath,
         address: address,
         selectedTokens,
         setSelectedTokens,
@@ -795,9 +751,8 @@ export const CollectModalRenderer: FC<Props> = ({
         setPaymentCurrency,
         chainCurrency,
         paymentTokens,
-        total,
         totalIncludingFees,
-        gasCost,
+        averageUnitPrice,
         feeOnTop,
         feeUsd,
         usdPrice,
@@ -805,21 +760,19 @@ export const CollectModalRenderer: FC<Props> = ({
         usdPriceRaw,
         isConnected: wallet !== undefined,
         currentChain,
-        mintPrice,
         orders,
         balance: paymentCurrency?.balance
           ? BigInt(paymentCurrency.balance)
           : undefined,
-        contract,
         hasEnoughCurrency,
         addFundsLink,
         blockExplorerBaseUrl,
         transactionError,
         stepData,
         setStepData,
-        collectStep,
-        setCollectStep,
-        collectTokens,
+        sweepStep,
+        setSweepStep,
+        sweepTokens,
       })}
     </>
   )

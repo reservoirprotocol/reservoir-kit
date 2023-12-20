@@ -5,13 +5,13 @@ import { useContext, useMemo } from 'react'
 import {
   useCurrencyConversions,
   useReservoirClient,
-  useSolverCapacities,
+  useSolverCapacity,
 } from '.'
 import { BuyPath, ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
-import { Currency } from 'packages/ui/dist'
+import { Currency } from '../types/Currency'
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
@@ -103,6 +103,7 @@ export default function (options: {
           decimals: listingCurrency.decimals || 18,
           address: listingCurrency.contract as Address,
           chainId: listingCurrencyChainId || 1,
+          name: listingCurrency.symbol,
         })
       }
     }
@@ -187,10 +188,7 @@ export default function (options: {
     }
   }, [allPaymentTokens, crossChainDisabled])
 
-  const { data: solverCapacityChainIdMap } = useSolverCapacities(
-    open ? crosschainChainIds : [],
-    chain
-  )
+  const { data: solverCapacity } = useSolverCapacity(open ? chain : null)
 
   const preferredCurrencyConversions = useCurrencyConversions(
     path && path[0]
@@ -246,6 +244,7 @@ export default function (options: {
       }`
       const contractKey = `${pathItem.contract}` //todo: test with sweeping
       const contractKeyInsensitive = `${pathItem.contract?.toLowerCase()}`
+
       let assetKey = tokenKey
       let totalQuantity = 0
       let requiredQuantity = 0
@@ -261,7 +260,7 @@ export default function (options: {
       }
 
       totalQuantity = totalQuantities[assetKey] || 0
-      requiredQuantity = quantityToken[assetKey]
+      requiredQuantity = quantityToken[assetKey] || 0
 
       //quantity check
       const pathQuantity = pathItem.quantity || 0
@@ -271,6 +270,7 @@ export default function (options: {
       }
 
       let quantityToTake = 0
+
       if (quantityLeft >= pathQuantity) {
         quantityToTake = pathQuantity
       } else {
@@ -289,6 +289,7 @@ export default function (options: {
           ? pathItem.buyInRawQuote
           : pathItem.totalRawPrice ?? 0
       )
+
       const currencyChainId = pathItem.fromChainId || chainId
       const currencyKey = `${currency?.toLowerCase()}:${currencyChainId}`
       if (paymentTokens[currencyKey]) {
@@ -310,17 +311,11 @@ export default function (options: {
         if (
           !crossChainDisabled &&
           crosschainChainIds?.length > 0 &&
-          solverCapacityChainIdMap &&
+          solverCapacity &&
           token.chainId !== chain?.id
         ) {
-          const solverCapacity = solverCapacityChainIdMap.get(token.chainId)
-
-          if (solverCapacity) {
-            maxItems = solverCapacity.maxItems
-            if (typeof solverCapacity.maxPricePerItem === 'string') {
-              maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
-            }
-          }
+          maxItems = solverCapacity.maxItems
+          maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
         }
 
         let balance: string | number | bigint = 0n

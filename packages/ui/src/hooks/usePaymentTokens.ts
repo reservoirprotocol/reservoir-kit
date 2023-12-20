@@ -5,7 +5,7 @@ import { useContext, useMemo } from 'react'
 import {
   useReservoirClient,
   useCurrencyConversions,
-  useSolverCapacities,
+  useSolverCapacity,
 } from '.'
 import { ReservoirChain, PaymentToken } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr'
@@ -170,10 +170,7 @@ export default function (
     }
   }, [allPaymentTokens, crossChainDisabled])
 
-  const { data: solverCapacityChainIdMap } = useSolverCapacities(
-    open ? crosschainChainIds : [],
-    chain
-  )
+  const { data: solverCapacity } = useSolverCapacity(open ? chain : null)
 
   const preferredCurrencyConversions = useCurrencyConversions(
     preferredCurrency?.address,
@@ -249,17 +246,11 @@ export default function (
         if (
           !crossChainDisabled &&
           crosschainChainIds?.length > 0 &&
-          solverCapacityChainIdMap &&
+          solverCapacity &&
           currency.chainId !== chain?.id
         ) {
-          const solverCapacity = solverCapacityChainIdMap.get(currency.chainId)
-
-          if (solverCapacity) {
-            maxItems = solverCapacity.maxItems
-            if (typeof solverCapacity.maxPricePerItem === 'string') {
-              maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
-            }
-          }
+          maxItems = solverCapacity.maxItems
+          maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
         }
 
         return {

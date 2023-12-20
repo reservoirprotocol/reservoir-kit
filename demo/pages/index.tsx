@@ -53,6 +53,9 @@ const Index: NextPage = () => {
         <Link href="/modal/mint">
           <a>MintModal</a>
         </Link>
+        <Link href="/modal/sweep">
+          <a>SweepModal</a>
+        </Link>
       </nav>
       <h2>Hooks</h2>
       <nav style={{ display: 'flex', gap: 15 }}>
@@ -76,6 +79,9 @@ const Index: NextPage = () => {
         </Link>
         <Link href="/hook/tokens">
           <a>useTokens</a>
+        </Link>
+        <Link href="/hook/useDynamicTokens">
+          <a>useDynamicTokens</a>
         </Link>
         <Link href="/hook/userActivity">
           <a>useUserActivity</a>
@@ -103,6 +109,12 @@ const Index: NextPage = () => {
         </Link>
         <Link href="/ui/cart">
           <a>Cart</a>
+        </Link>
+      </nav>
+      <h2>SDK Actions</h2>
+      <nav style={{ display: 'flex', gap: 15 }}>
+        <Link href="/sdk/callAction">
+          <a>Call</a>
         </Link>
       </nav>
     </div>

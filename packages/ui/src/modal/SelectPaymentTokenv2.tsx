@@ -10,6 +10,7 @@ import {
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits, zeroAddress } from 'viem'
 import EthIconCircleBlue from '../img/EthIconCircleBlue'
+import { formatNumber } from '../lib/numbers'
 
 type Props = {
   paymentTokens: EnhancedCurrency[]
@@ -102,11 +103,11 @@ const PaymentTokenRow = ({
             css={{ width: 34, height: 34, 'object-fit': 'contain' }}
           />
         )}
-        <Text style="subtitle2" css={{ mr: 'auto' }}>
+        <Text style="subtitle2" css={{ mr: 'auto' }} ellipsify>
           {paymentToken?.name}
         </Text>
         <Text style="subtitle2" color="subtle">
-          Balance: {formattedBalance}
+          Balance: {formatNumber(Number(formattedBalance), 6)}
         </Text>
       </Flex>
     </Button>
@@ -165,9 +166,14 @@ export const SelectPaymentTokenv2: FC<Props> = ({
         />
       ))}
       {crossChainCurrencies.length > 0 ? (
-        <Text style="subtitle2" color="subtle">
-          CrossChain ETH
-        </Text>
+        <Flex direction="column" align="start" css={{ gap: '$2' }}>
+          <Text style="subtitle2" color="subtle">
+            CrossChain ETH
+          </Text>
+          <Text color="accent" style="body3">
+            *CrossChain payment is currently limited to a single item.
+          </Text>
+        </Flex>
       ) : null}
       {crossChainCurrencies.map((paymentToken, idx) => (
         <PaymentTokenRow
