@@ -5,6 +5,7 @@ import { listToken } from './listToken'
 import { placeBid } from './placeBid'
 import { transferTokens } from './transferTokens'
 import { mintToken } from './mintToken'
+import { call } from './call'
 
 const actions = {
   acceptOffer,
@@ -14,6 +15,7 @@ const actions = {
   listToken,
   placeBid,
   transferTokens,
+  call,
 }
 
 export default actions

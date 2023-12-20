@@ -13,11 +13,9 @@ import {
   Text,
   Anchor,
   Button,
-  FormatCurrency,
   FormatCryptoCurrency,
   Loader,
   ErrorWell,
-  CryptoCurrencyIcon,
 } from '../../primitives'
 import Progress from '../Progress'
 import { Modal } from '../Modal'
@@ -28,7 +26,6 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
@@ -36,23 +33,21 @@ import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { truncateAddress } from '../../lib/truncate'
-import { SelectPaymentToken } from '../SelectPaymentToken'
+import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
 import { WalletClient } from 'viem'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
+import { TokenInfo, PaymentDetails } from '../../common'
 
 type PurchaseData = {
-  tokenId?: string
-  collectionId?: string
+  token?: string
   maker?: string
   steps?: Execute['steps']
 }
 
 const ModalCopy = {
   titleInsufficientFunds: 'Add Funds',
-  titleUnavilable: 'Selected item is no longer Available',
-  titleIsOwner: 'You already own this token',
-  titleDefault: 'Complete Checkout',
+  titleDefault: 'Buy',
   ctaClose: 'Close',
   ctaCheckout: 'Checkout',
   ctaConnect: 'Connect',
@@ -65,11 +60,10 @@ const ModalCopy = {
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
-  tokenId?: string
-  collectionId?: string
+  token?: string
+  orderId?: string
   chainId?: number
   defaultQuantity?: number
-  orderId?: string
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
@@ -90,31 +84,12 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   >['onPointerDownOutside']
 }
 
-function titleForStep(
-  step: BuyStep,
-  copy: typeof ModalCopy,
-  isLoading: boolean,
-  isOwner: boolean
-) {
-  if (isLoading) {
-    return copy.titleDefault
-  }
-
-  switch (step) {
-    case BuyStep.Unavailable:
-      return isOwner ? copy.titleIsOwner : copy.titleUnavilable
-    default:
-      return copy.titleDefault
-  }
-}
-
 export function BuyModal({
   openState,
   trigger,
-  tokenId,
-  chainId,
-  collectionId,
+  token,
   orderId,
+  chainId,
   feesOnTopBps,
   feesOnTopUsd,
   normalizeRoyalties,
@@ -150,8 +125,7 @@ export function BuyModal({
       chainId={modalChain?.id}
       open={open}
       defaultQuantity={defaultQuantity}
-      tokenId={tokenId}
-      collectionId={collectionId}
+      token={token}
       orderId={orderId}
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
@@ -162,12 +136,12 @@ export function BuyModal({
     >
       {({
         loading,
-        token,
+        isFetchingPath,
+        tokenData,
         collection,
         quantityAvailable,
         quantity,
         averageUnitPrice,
-        totalPrice,
         totalIncludingFees,
         feeOnTop,
         paymentCurrency,
@@ -179,7 +153,6 @@ export function BuyModal({
         steps,
         stepData,
         feeUsd,
-        gasCost,
         totalUsd,
         usdPrice,
         balance,
@@ -192,13 +165,10 @@ export function BuyModal({
         setBuyStep,
         buyToken,
       }) => {
-        const title = titleForStep(buyStep, copy, loading, isOwner)
-
         useEffect(() => {
           if (buyStep === BuyStep.Complete && onPurchaseComplete) {
             const data: PurchaseData = {
-              tokenId: tokenId,
-              collectionId: collectionId,
+              token,
               maker: address,
             }
             if (steps) {
@@ -211,8 +181,7 @@ export function BuyModal({
         useEffect(() => {
           if (transactionError && onPurchaseError) {
             const data: PurchaseData = {
-              tokenId: tokenId,
-              collectionId: collectionId,
+              token,
               maker: address,
             }
             onPurchaseError(transactionError, data)
@@ -236,13 +205,10 @@ export function BuyModal({
         const successfulPurchases = quantity - failedPurchases
         const finalTxHashes = lastStepItems[lastStepItems.length - 1]?.txHashes
 
-        const price =
-          totalPrice || BigInt(token?.token?.lastSale?.price?.amount?.raw || 0)
-
         return (
           <Modal
             trigger={trigger}
-            title={title}
+            title={copy.titleDefault}
             open={open}
             onPointerDownOutside={(e) => {
               const dismissableLayers = Array.from(
@@ -262,8 +228,7 @@ export function BuyModal({
             onOpenChange={(open) => {
               if (!open && onClose) {
                 const data: PurchaseData = {
-                  tokenId: tokenId,
-                  collectionId: collectionId,
+                  token,
                   maker: address,
                 }
                 onClose(data, stepData, buyStep)
@@ -274,17 +239,17 @@ export function BuyModal({
           >
             {buyStep === BuyStep.Unavailable && !loading && (
               <Flex direction="column">
-                <TokenLineItem
-                  chain={modalChain}
-                  tokenDetails={token}
-                  collection={collection}
-                  usdPrice={paymentCurrency?.usdTotalFormatted}
-                  isUnavailable={true}
-                  price={quantity > 1 ? averageUnitPrice : price}
-                  currency={paymentCurrency}
-                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
-                  showRoyalties={true}
-                />
+                <Flex
+                  direction="column"
+                  align="center"
+                  css={{ py: '$6', px: '$4', gap: '$3' }}
+                >
+                  <Text style="h6" css={{ textAlign: 'center' }}>
+                    {isOwner
+                      ? 'You already own this token.'
+                      : 'Item is no longer available.'}
+                  </Text>
+                </Flex>
                 <Button
                   onClick={() => {
                     setOpen(false)
@@ -297,8 +262,8 @@ export function BuyModal({
             )}
 
             {buyStep === BuyStep.SelectPayment && (
-              <Flex direction="column" css={{ py: 20 }}>
-                <Flex align="center" css={{ gap: '$2', px: '$4' }}>
+              <Flex direction="column" css={{ pb: 20 }}>
+                <Flex align="center" css={{ gap: '$2' }}>
                   <Button
                     onClick={() => setBuyStep(BuyStep.Checkout)}
                     color="ghost"
@@ -307,14 +272,15 @@ export function BuyModal({
                   >
                     <FontAwesomeIcon icon={faChevronLeft} width={10} />
                   </Button>
-                  <Text style="subtitle2">Select A Token</Text>
+                  <Text style="subtitle2">Select Payment Method</Text>
                 </Flex>
-                <SelectPaymentToken
+                <SelectPaymentTokenv2
                   paymentTokens={paymentTokens}
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}
                   goBack={() => setBuyStep(BuyStep.Checkout)}
                   itemAmount={quantity}
+                  chainId={modalChain?.id || 1}
                 />
               </Flex>
             )}
@@ -322,22 +288,14 @@ export function BuyModal({
             {buyStep === BuyStep.Checkout && !loading && (
               <Flex direction="column">
                 {transactionError && <ErrorWell error={transactionError} />}
-                <TokenLineItem
+                <TokenInfo
+                  token={tokenData}
                   chain={modalChain}
-                  tokenDetails={token}
                   collection={collection}
-                  usdPrice={paymentCurrency?.usdTotalFormatted}
-                  price={quantity > 1 ? averageUnitPrice : price}
-                  currency={paymentCurrency}
-                  css={{ border: 0 }}
-                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
-                  showRoyalties={true}
+                  css={{ p: '$4' }}
                 />
                 {quantityAvailable > 1 && (
-                  <Flex
-                    css={{ p: '$4', borderBottom: '1px solid $borderColor' }}
-                    justify="between"
-                  >
+                  <Flex css={{ p: '$4' }} justify="between">
                     <Flex direction="column" css={{ gap: '$1' }}>
                       <Text style="body3">Quantity</Text>
                       <Text style="body3" color="subtle">
@@ -356,7 +314,10 @@ export function BuyModal({
                 )}
                 <Flex
                   direction="column"
-                  css={{ pt: '$4', pb: '$2', gap: '$4' }}
+                  css={{
+                    pb: '$2',
+                    borderTop: '1px solid $neutralBorder',
+                  }}
                 >
                   {paymentTokens.length > 1 ? (
                     <Flex
@@ -366,6 +327,7 @@ export function BuyModal({
                         py: '$3',
                         px: '$4',
                         borderRadius: '$3',
+                        borderBottom: '1px solid $neutralBorder',
                         '&:hover': {
                           backgroundColor: '$neutralBgHover',
                         },
@@ -385,10 +347,6 @@ export function BuyModal({
                           css={{ gap: '$2', cursor: 'pointer' }}
                         >
                           <Flex align="center">
-                            <CryptoCurrencyIcon
-                              address={paymentCurrency?.address as string}
-                              css={{ width: 16, height: 16, mr: '$1' }}
-                            />
                             <Text style="subtitle2">
                               {paymentCurrency?.name}
                             </Text>
@@ -400,75 +358,14 @@ export function BuyModal({
                       </Flex>
                     </Flex>
                   ) : null}
-                  {feeOnTop > 0 && (
-                    <Flex
-                      justify="between"
-                      align="start"
-                      css={{ px: '$4', py: '$3', width: '100%' }}
-                    >
-                      <Text style="subtitle3">Referral Fee</Text>
-                      <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                        <FormatCryptoCurrency
-                          chainId={chainId}
-                          amount={feeOnTop}
-                          address={paymentCurrency?.address}
-                          decimals={paymentCurrency?.decimals}
-                          symbol={paymentCurrency?.name}
-                        />
-                        <FormatCurrency
-                          amount={feeUsd}
-                          color="subtle"
-                          style="tiny"
-                        />
-                      </Flex>
-                    </Flex>
-                  )}
-                  <Flex
-                    justify="between"
-                    align="start"
-                    css={{ height: 34, px: '$4' }}
-                  >
-                    <Text style="h6">You Pay</Text>
-                    <Flex direction="column" align="end" css={{ gap: '$1' }}>
-                      {providerOptions.preferDisplayFiatTotal ? (
-                        <>
-                          <FormatCurrency
-                            amount={paymentCurrency?.usdTotalPriceRaw}
-                            style="h6"
-                            color="base"
-                          />
-                          <FormatCryptoCurrency
-                            chainId={chainId}
-                            textStyle="tiny"
-                            textColor="subtle"
-                            amount={paymentCurrency?.currencyTotalRaw}
-                            address={paymentCurrency?.address}
-                            decimals={paymentCurrency?.decimals}
-                            symbol={paymentCurrency?.symbol}
-                            logoWidth={12}
-                          />
-                        </>
-                      ) : (
-                        <>
-                          <FormatCryptoCurrency
-                            chainId={chainId}
-                            textStyle="h6"
-                            textColor="base"
-                            amount={paymentCurrency?.currencyTotalRaw}
-                            address={paymentCurrency?.address}
-                            decimals={paymentCurrency?.decimals}
-                            symbol={paymentCurrency?.symbol}
-                            logoWidth={18}
-                          />
-                          <FormatCurrency
-                            amount={paymentCurrency?.usdTotalPriceRaw}
-                            style="tiny"
-                            color="subtle"
-                          />
-                        </>
-                      )}
-                    </Flex>
-                  </Flex>
+                  <PaymentDetails
+                    feeOnTop={feeOnTop}
+                    feeUsd={feeUsd}
+                    chainId={modalChain?.id}
+                    paymentCurrency={paymentCurrency}
+                    loading={isFetchingPath}
+                    css={{ pt: '$4' }}
+                  />
                 </Flex>
 
                 <Box css={{ p: '$4', width: '100%' }}>
@@ -501,21 +398,22 @@ export function BuyModal({
                         />
                       </Flex>
 
-                      {gasCost > 0n && (
+                      {/* {paymentCurrency?.networkFees &&
+                      paymentCurrency?.networkFees > 0n ? (
                         <Flex align="center">
                           <Text css={{ mr: '$3' }} color="error" style="body3">
                             Estimated Gas Cost
                           </Text>
                           <FormatCryptoCurrency
                             chainId={chainId}
-                            amount={gasCost}
+                            amount={paymentCurrency?.networkFees}
                             address={paymentCurrency?.address}
                             decimals={paymentCurrency?.decimals}
                             symbol={paymentCurrency?.symbol}
                             textStyle="body3"
                           />
                         </Flex>
-                      )}
+                      ) : null} */}
 
                       <Button
                         disabled={providerOptions.disableJumperLink}
@@ -536,15 +434,11 @@ export function BuyModal({
 
             {buyStep === BuyStep.Approving && token && (
               <Flex direction="column">
-                <TokenLineItem
+                <TokenInfo
+                  token={tokenData}
                   chain={modalChain}
-                  tokenDetails={token}
                   collection={collection}
-                  usdPrice={paymentCurrency?.usdTotalFormatted}
-                  price={quantity > 1 ? averageUnitPrice : price}
-                  currency={paymentCurrency}
-                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
-                  quantity={quantity}
+                  css={{ p: '$4', borderBottom: '1px solid $neutralBorder' }}
                 />
                 {stepData && stepData.totalSteps > 1 && (
                   <ProgressBar
@@ -623,7 +517,7 @@ export function BuyModal({
                   )}
                   {totalPurchases === 1 && (
                     <img
-                      src={token?.token?.imageSmall}
+                      src={tokenData?.token?.imageSmall}
                       style={{ width: 100, height: 100 }}
                     />
                   )}
@@ -665,10 +559,10 @@ export function BuyModal({
                         align="center"
                         justify="center"
                       >
-                        {!!token.token?.collection?.image && (
+                        {!!tokenData?.token?.collection?.image && (
                           <Box css={{ mr: '$1' }}>
                             <img
-                              src={token.token?.collection?.image}
+                              src={tokenData?.token?.collection?.image}
                               style={{
                                 width: 24,
                                 height: 24,
@@ -682,9 +576,9 @@ export function BuyModal({
                           css={{ maxWidth: '100%' }}
                           ellipsify
                         >
-                          {token?.token?.name
-                            ? token?.token?.name
-                            : `#${token?.token?.tokenId}`}
+                          {tokenData?.token?.name
+                            ? tokenData?.token?.name
+                            : `#${tokenData?.token?.tokenId}`}
                         </Text>
                       </Flex>
                       <Flex css={{ mb: '$2' }} align="center">
