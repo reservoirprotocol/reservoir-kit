@@ -411,11 +411,8 @@ export const MintModalRenderer: FC<Props> = ({
     ) {
       let currencyTotalRawMinusRelayerFees = paymentCurrency?.currencyTotalRaw
 
-      // if cross-chain, subtract relayer fees from currencyTotalRaw
-      if (
-        mintResponseFees &&
-        paymentCurrency?.chainId !== collection?.chainId
-      ) {
+      // if there is a relayer fee, subtract from currencyTotalRaw
+      if (mintResponseFees?.relayer?.amount?.raw) {
         const relayerFees = BigInt(mintResponseFees?.relayer?.amount?.raw ?? 0)
         currencyTotalRawMinusRelayerFees -= relayerFees
       }
@@ -549,10 +546,7 @@ export const MintModalRenderer: FC<Props> = ({
 
         let totalFeeTruncated = totalIncludingFees - feeOnTop
 
-        if (
-          mintResponseFees &&
-          paymentCurrency?.chainId != collection?.chainId
-        ) {
+        if (mintResponseFees?.relayer?.amount?.raw) {
           totalFeeTruncated -= BigInt(
             mintResponseFees?.relayer?.amount?.raw ?? 0
           )

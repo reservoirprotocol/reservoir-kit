@@ -5,7 +5,7 @@ import { useContext, useMemo } from 'react'
 import {
   useCurrencyConversions,
   useReservoirClient,
-  useSolverCapacities,
+  useSolverCapacity,
 } from '.'
 import { BuyPath, ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk'
@@ -188,7 +188,7 @@ export default function (options: {
     }
   }, [allPaymentTokens, crossChainDisabled])
 
-  const { data: solverCapacity } = useSolverCapacities(open ? chain : null)
+  const { data: solverCapacity } = useSolverCapacity(open ? chain : null)
 
   const preferredCurrencyConversions = useCurrencyConversions(
     path && path[0]
