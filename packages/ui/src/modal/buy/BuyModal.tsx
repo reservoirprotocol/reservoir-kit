@@ -139,6 +139,7 @@ export function BuyModal({
     >
       {({
         loading,
+        isFetchingPath,
         tokenData,
         collection,
         quantityAvailable,
@@ -366,6 +367,7 @@ export function BuyModal({
                     feeUsd={feeUsd}
                     chainId={modalChain?.id}
                     paymentCurrency={paymentCurrency}
+                    loading={isFetchingPath}
                     css={{ pt: '$4' }}
                   />
                 </Flex>
