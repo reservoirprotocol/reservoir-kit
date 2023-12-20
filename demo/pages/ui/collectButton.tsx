@@ -6,7 +6,7 @@ import {
 import { useState } from 'react'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import ChainSwitcher from 'components/ChainSwitcher'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -18,6 +18,7 @@ const CollectButtonPage: NextPage = () => {
   const [token, setToken] = useState<string | undefined>()
   const client = useReservoirClient()
   const chain = client?.currentChain()
+  const { openConnectModal } = useConnectModal()
 
   return (
     <div
@@ -32,6 +33,7 @@ const CollectButtonPage: NextPage = () => {
         paddingTop: 150,
       }}
     >
+            <ConnectButton />
       <div>
         <label>Collection Id: </label>
         <input
@@ -56,8 +58,14 @@ const CollectButtonPage: NextPage = () => {
           onChange={(e) => setToken(e.target.value)}
         />
       </div>
-      <CollectButton collectionId={collectionId} contract={contract} token={token} chainId={chain.id} />
-      <ConnectButton />
+      <CollectButton 
+        collectionId={collectionId} 
+        contract={contract} 
+        token={token} 
+        chainId={chain.id} 
+        onConnectWallet={() => {
+          openConnectModal?.()
+        }}/>
       <ChainSwitcher /> 
       <ThemeSwitcher />
     </div>

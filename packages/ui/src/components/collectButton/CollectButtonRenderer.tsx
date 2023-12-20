@@ -11,13 +11,16 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
 }
 
-type Collection = ReturnType<typeof useCollections>['data']['0']
-type MintStages = NonNullable<NonNullable<Collection>['mintStages']>
+export type Collection = ReturnType<typeof useCollections>['data']['0']
+export type Token = ReturnType<typeof useTokens>['data']['0']
+export type MintStages = NonNullable<NonNullable<Collection>['mintStages']>
 
 type ChildrenProps = {
   collection?: Collection
+  tokenData?: Token
   mintStages?: MintStages
-  mintData?: MintStages['0']
+  publicMintData?: MintStages['0']
+  loading: boolean
 }
 
 export function CollectButtonRenderer({
@@ -60,23 +63,24 @@ export function CollectButtonRenderer({
     }
     return query
   }, [_collectionId, contract])
-  const { data: collections } = useCollections(
-    collectionQuery,
-    swrOptions,
-    chain?.id
-  )
+  const { data: collections, isFetchingPage: isFetchingCollections } =
+    useCollections(collectionQuery, swrOptions, chain?.id)
+
+  const tokenData = tokens && tokens[0] ? tokens[0] : undefined
   const collection = collections && collections[0] ? collections[0] : undefined
   const mintStages = collection?.mintStages
-  const mintData = collection?.mintStages?.find(
+  const publicMintData = collection?.mintStages?.find(
     (stage) => stage.kind === 'public'
   )
 
   return (
     <>
       {children({
-        mintData,
+        publicMintData,
         mintStages,
         collection,
+        tokenData,
+        loading: isFetchingCollections || (token !== undefined && !tokenData),
       })}
     </>
   )
