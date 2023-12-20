@@ -29,6 +29,11 @@ export const PaymentDetails: FC<Props> = ({
   feeUsd,
 }) => {
   const providerOptions = useContext(ProviderOptionsContext)
+  const usdTotal = formatUnits(
+    ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+      (paymentCurrency?.usdPriceRaw || 0n),
+    (paymentCurrency?.decimals || 18) + 6
+  )
 
   return (
     <Flex direction="column" css={{ width: '100%', ...css }}>
@@ -60,15 +65,7 @@ export const PaymentDetails: FC<Props> = ({
             <>
               {providerOptions.preferDisplayFiatTotal ? (
                 <>
-                  <FormatCurrency
-                    amount={formatUnits(
-                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
-                        (paymentCurrency?.usdPriceRaw || 0n),
-                      (paymentCurrency?.decimals || 18) + 6
-                    )}
-                    style="h6"
-                    color="base"
-                  />
+                  <FormatCurrency amount={usdTotal} style="h6" color="base" />
                   <FormatCryptoCurrency
                     chainId={chainId}
                     textStyle="body2"
@@ -101,11 +98,7 @@ export const PaymentDetails: FC<Props> = ({
                     logoWidth={18}
                   />
                   <FormatCurrency
-                    amount={formatUnits(
-                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
-                        (paymentCurrency?.usdPriceRaw || 0n),
-                      (paymentCurrency?.decimals || 18) + 6
-                    )}
+                    amount={usdTotal}
                     style="body2"
                     color="subtle"
                   />

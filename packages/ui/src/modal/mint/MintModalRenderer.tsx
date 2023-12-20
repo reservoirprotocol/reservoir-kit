@@ -54,6 +54,7 @@ type MintTokenOptions = Parameters<
 
 type ChildrenProps = {
   loading: boolean
+  isFetchingPath: boolean
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   token?: NonNullable<ReturnType<typeof useTokens>['data']>[0]
   orders: NonNullable<MintPath>
@@ -119,6 +120,7 @@ export const MintModalRenderer: FC<Props> = ({
   const [mintStep, setMintStep] = useState<MintStep>(MintStep.Idle)
   const [stepData, setStepData] = useState<MintModalStepData | null>(null)
   const [orders, setOrders] = useState<NonNullable<MintPath>>([])
+  const [isFetchingPath, setIsFetchingPath] = useState(false)
   const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
   const [itemAmount, setItemAmount] = useState<number>(1)
   const [maxItemAmount, setMaxItemAmount] = useState<number>(1)
@@ -234,6 +236,8 @@ export const MintModalRenderer: FC<Props> = ({
         return
       }
 
+      setIsFetchingPath(true)
+
       let options: MintTokenOptions = {
         partial: true,
         onlyPath: true,
@@ -242,35 +246,14 @@ export const MintModalRenderer: FC<Props> = ({
 
       if (feesOnTopBps && feesOnTopBps?.length > 0) {
         const fixedFees = feesOnTopBps.map((fullFee) => {
-          const [referrer, feeBps] = fullFee.split(':')
-
-          let totalFeeTruncated = totalIncludingFees - feeOnTop
-
-          if (
-            mintResponseFees &&
-            paymentCurrency?.chainId != collection?.chainId
-          ) {
-            totalFeeTruncated -= BigInt(
-              mintResponseFees?.relayer?.amount?.raw ?? 0
-            )
-          }
-
-          const fee = Math.floor(
-            Number(totalFeeTruncated * BigInt(feeBps)) / 10000
-          )
-          const atomicUnitsFee = formatUnits(BigInt(fee), 0)
-          return `${referrer}:${atomicUnitsFee}`
+          const [referrer] = fullFee.split(':')
+          return `${referrer}:1`
         })
         options.feesOnTop = fixedFees
-      } else if (feesOnTopUsd && feesOnTopUsd.length > 0 && usdPriceRaw) {
+      } else if (feesOnTopUsd && feesOnTopUsd.length > 0) {
         const feesOnTopFixed = feesOnTopUsd.map((feeOnTop) => {
-          const [recipient, fee] = feeOnTop.split(':')
-          const atomicFee = BigInt(fee)
-          const convertedAtomicFee =
-            atomicFee * BigInt(10 ** paymentCurrency?.decimals!)
-          const currencyFee = convertedAtomicFee / usdPriceRaw
-          const parsedFee = formatUnits(currencyFee, 0)
-          return `${recipient}:${parsedFee}`
+          const [recipient] = feeOnTop.split(':')
+          return `${recipient}:1`
         })
         options.feesOnTop = feesOnTopFixed
       } else if (!feesOnTopUsd && !feesOnTopBps) {
@@ -346,6 +329,7 @@ export const MintModalRenderer: FC<Props> = ({
         })
         .finally(() => {
           setFetchedInitialOrders(true)
+          setIsFetchingPath(false)
         })
     },
     [
@@ -363,9 +347,6 @@ export const MintModalRenderer: FC<Props> = ({
       is1155,
       feesOnTopBps,
       feesOnTopUsd,
-      totalIncludingFees,
-      mintResponseFees,
-      usdPriceRaw,
     ]
   )
 
@@ -715,6 +696,7 @@ export const MintModalRenderer: FC<Props> = ({
           (!isFetchingCollections && collection && !fetchedInitialOrders) ||
           ((token !== undefined || isSingleToken1155) && !tokenData) ||
           !(paymentTokens.length > 0),
+        isFetchingPath,
         collection,
         token: tokenData,
         orders,
