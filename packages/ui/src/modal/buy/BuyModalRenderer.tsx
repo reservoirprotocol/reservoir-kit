@@ -258,6 +258,22 @@ export const BuyModalRenderer: FC<Props> = ({
         partial: true,
       }
 
+      if (feesOnTopBps && feesOnTopBps?.length > 0) {
+        const fixedFees = feesOnTopBps.map((fullFee) => {
+          const [referrer] = fullFee.split(':')
+          return `${referrer}:1`
+        })
+        options.feesOnTop = fixedFees
+      } else if (feesOnTopUsd && feesOnTopUsd.length > 0) {
+        const feesOnTopFixed = feesOnTopUsd.map((feeOnTop) => {
+          const [recipient] = feeOnTop.split(':')
+          return `${recipient}:1`
+        })
+        options.feesOnTop = feesOnTopFixed
+      } else if (!feesOnTopUsd && !feesOnTopBps) {
+        delete options.feesOnTop
+      }
+
       if (normalizeRoyalties !== undefined) {
         options.normalizeRoyalties = normalizeRoyalties
       }
@@ -285,7 +301,6 @@ export const BuyModalRenderer: FC<Props> = ({
         items.orderId = orderId
       } else {
         items.token = token
-        items.quantity = tokenData.token?.kind === 'erc1155' ? 1000 : 1
       }
 
       return client.actions
@@ -356,6 +371,8 @@ export const BuyModalRenderer: FC<Props> = ({
       rendererChain,
       rendererChain?.paymentTokens,
       includeListingCurrency,
+      feesOnTopBps,
+      feesOnTopUsd,
       _setPaymentCurrency,
     ]
   )
@@ -460,7 +477,9 @@ export const BuyModalRenderer: FC<Props> = ({
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
         const totalFeeTruncated = totalIncludingFees - feeOnTop
-        const fee = Number(totalFeeTruncated * BigInt(feeBps)) / 10000
+        const fee = Math.floor(
+          Number(totalFeeTruncated * BigInt(feeBps)) / 10000
+        )
         const atomicUnitsFee = formatUnits(BigInt(fee), 0)
         return `${referrer}:${atomicUnitsFee}`
       })
