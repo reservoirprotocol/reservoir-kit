@@ -746,7 +746,6 @@ export const BuyModalRenderer: FC<Props> = ({
   axios.defaults.headers.common['x-rkui-context'] = 'buyModalRenderer'
 
   useEffect(() => {
-    console.log(axios.defaults.headers.common)
     if (!open) {
       setBuyStep(BuyStep.Checkout)
       setTransactionError(null)
