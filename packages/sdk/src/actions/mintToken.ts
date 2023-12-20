@@ -7,9 +7,10 @@ import {
   isAPIError,
   refreshLiquidity,
 } from '../utils'
-import axios, { AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig } from 'axios'
 import { WalletClient } from 'viem'
 import { isViemWalletClient } from '../utils/viemWallet'
+import { request as apiRequest } from '../utils'
 
 type MintTokenBodyParameters = NonNullable<
   paths['/execute/mint/v1']['post']['parameters']['body']['body']
@@ -93,7 +94,7 @@ export async function mintToken(data: Data) {
         request.headers['x-rkui-version'] = client.uiVersion
       }
 
-      const res = await axios.request(request)
+      const res = await apiRequest(request)
       if (res.status !== 200)
         throw new APIError(res?.data?.message, res.status, res.data)
       const data = res.data as Execute

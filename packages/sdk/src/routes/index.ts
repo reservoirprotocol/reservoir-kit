@@ -1,7 +1,4 @@
 export const routes = [
-  "/admin/get-marketplaces",
-  "/admin/open-api",
-  "/admin/rate-limit-rules",
   "/assets/v1",
   "/attributes/v1",
   "/collection/v1",
@@ -38,8 +35,6 @@ export const routes = [
   "/transfers/v2",
   "/transfers/v3",
   "/transfers/v4",
-  "/admin/get-api-key/{key}",
-  "/admin/provider-metadata/{type}",
   "/api-keys/{key}/rate-limits",
   "/chain/stats/v1",
   "/collections/activity/v4",
@@ -164,6 +159,7 @@ export const routes = [
   "/redirect/sources/{source}/tokens/{token}/link/v2",
   "/collections/{collection}/community/v1",
   "/api-keys",
+<<<<<<< HEAD
   "/admin/calc-rarity",
   "/admin/create-rate-limit-rule",
   "/admin/delete-rate-limit-rule",
@@ -195,6 +191,8 @@ export const routes = [
   "/admin/update-image-version",
   "/admin/update-rate-limit-rule",
   "/admin/update-source",
+=======
+>>>>>>> f5eaee723b8620846a3edca6e252e094cf91b942
   "/collections-sets/v1",
   "/contracts-sets/v1",
   "/order/v2",
@@ -203,7 +201,6 @@ export const routes = [
   "/seaport/offers",
   "/token-sets/v1",
   "/token-sets/v2",
-  "/admin/api-keys/metrics",
   "/collections/disable-metadata/v1",
   "/collections/refresh/v1",
   "/collections/refresh/v2",

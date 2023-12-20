@@ -76,6 +76,7 @@ type ChildrenProps = {
   disableJumperLink?: boolean
   hasEnoughCurrency: boolean
   transactionError: Error | null | undefined
+  fetchMintPathError: Error | null | undefined
   stepData: MintModalStepData | null
   addFundsLink: string
   mintStep: MintStep
@@ -125,6 +126,7 @@ export const MintModalRenderer: FC<Props> = ({
   const [itemAmount, setItemAmount] = useState<number>(1)
   const [maxItemAmount, setMaxItemAmount] = useState<number>(1)
   const [transactionError, setTransactionError] = useState<Error | null>()
+  const [fetchMintPathError, setFetchMintPathError] = useState<Error | null>()
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
@@ -325,6 +327,7 @@ export const MintModalRenderer: FC<Props> = ({
         })
         .catch((err) => {
           setOrders([])
+          setFetchMintPathError(err)
           throw err
         })
         .finally(() => {
@@ -488,6 +491,7 @@ export const MintModalRenderer: FC<Props> = ({
       setMaxItemAmount(1)
       setMintStep(MintStep.Idle)
       setTransactionError(null)
+      setFetchMintPathError(null)
       setFetchedInitialOrders(false)
       _setPaymentCurrency(undefined)
       setStepData(null)
@@ -717,6 +721,7 @@ export const MintModalRenderer: FC<Props> = ({
           : undefined,
         hasEnoughCurrency,
         transactionError,
+        fetchMintPathError,
         stepData,
         mintStep,
         setStepData,

@@ -6,6 +6,9 @@ export type BuyPath =
   paths['/execute/buy/v7']['post']['responses']['200']['schema']['path']
 export type SellPath =
   paths['/execute/sell/v7']['post']['responses']['200']['schema']['path']
+export type ExecuteFees =
+  | paths['/execute/buy/v7']['post']['responses']['200']['schema']['fees']
+  | paths['/execute/call/v1']['post']['responses']['200']['schema']['fees']
 export type MintPath =
   paths['/execute/mint/v1']['post']['responses']['200']['schema']['path']
 
@@ -58,6 +61,7 @@ export type Execute = {
   requestId?: string
   errors?: { message?: string; orderId?: string }[]
   path: BuyPath | SellPath
+  fees?: ExecuteFees
   error?: any // Manually added client error
   steps: {
     error?: string
