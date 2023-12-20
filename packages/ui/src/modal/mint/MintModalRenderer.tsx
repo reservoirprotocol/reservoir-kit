@@ -17,6 +17,7 @@ import {
   ReservoirChain,
   ReservoirClientActions,
   ReservoirWallet,
+  axios,
   customChains,
 } from '@reservoir0x/reservoir-sdk'
 import {
@@ -440,7 +441,9 @@ export const MintModalRenderer: FC<Props> = ({
       setFetchedInitialOrders(false)
       setPaymentCurrency(undefined)
       setStepData(null)
+      axios.defaults.headers.common['x-rkui-context'] = ''
     } else {
+      axios.defaults.headers.common['x-rkui-context'] = 'mintModalRenderer'
       setItemAmount(defaultQuantity || 1)
     }
   }, [open])

@@ -21,6 +21,7 @@ import {
   LogLevel,
   ReservoirClientActions,
   ReservoirWallet,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
@@ -742,8 +743,10 @@ export const BuyModalRenderer: FC<Props> = ({
       setHasEnoughCurrency(true)
     }
   }, [totalIncludingFees, paymentCurrency, gasCost])
+  axios.defaults.headers.common['x-rkui-context'] = 'buyModalRenderer'
 
   useEffect(() => {
+    console.log(axios.defaults.headers.common)
     if (!open) {
       setBuyStep(BuyStep.Checkout)
       setTransactionError(null)
@@ -754,7 +757,10 @@ export const BuyModalRenderer: FC<Props> = ({
       setPaymentCurrency(undefined)
       setToken(undefined)
       setListingCurrency(undefined)
+
+      axios.defaults.headers.common['x-rkui-context'] = ''
     } else {
+      axios.defaults.headers.common['x-rkui-context'] = 'buyModalRenderer'
       setQuantity(defaultQuantity || 1)
     }
   }, [open])

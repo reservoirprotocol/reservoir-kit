@@ -7,7 +7,8 @@ import {
   isAPIError,
   refreshLiquidity,
 } from '../utils'
-import axios, { AxiosRequestConfig } from 'axios'
+import { axios } from '../utils'
+import { AxiosRequestConfig } from 'axios'
 import { WalletClient } from 'viem'
 import { isViemWalletClient } from '../utils/viemWallet'
 

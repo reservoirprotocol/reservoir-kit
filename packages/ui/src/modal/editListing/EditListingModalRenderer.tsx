@@ -18,7 +18,7 @@ import {
   useMarketplaces,
 } from '../../hooks'
 import { useWalletClient, useAccount } from 'wagmi'
-import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
@@ -417,6 +417,10 @@ export const EditListingModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setStepData(null)
       setSteps(null)
+      axios.defaults.headers.common['x-rkui-context'] = ''
+    } else {
+      axios.defaults.headers.common['x-rkui-context'] =
+        'editListingModalRenderer'
     }
   }, [open])
 
