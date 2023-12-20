@@ -19,7 +19,7 @@ const BuyPage: NextPage = () => {
   const router = useRouter()
   const [token, setToken] = useState(`${DEFAULT_COLLECTION_ID}:${DEFAULT_TOKEN_ID}`)
   const [orderId, setOrderId] = useState('')
-  const [useSeaportExecutionMethod, setUseSeaportExecutionMethod] = useState<boolean>(false);
+  const [executionMethod, setExecutionMethod] = useState< "seaport-intent" | "intent" | undefined>(undefined)
   const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
@@ -117,12 +117,41 @@ const BuyPage: NextPage = () => {
           }}
         />
       </div>
-      <div>
-        <label>Use Seaport Execution Method</label>
-        <input type="checkbox"
-         defaultChecked={useSeaportExecutionMethod}
-         onChange={(e) => setUseSeaportExecutionMethod(e.target.checked)}/>
-      </div>
+      <div
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    gap: "5px",
+  }}
+>
+  <label>Execution Method:</label>
+  <button
+    onClick={() =>
+      setExecutionMethod(
+        executionMethod === "seaport-intent" ? undefined : "seaport-intent"
+      )
+    }
+    style={{
+      border: "none",
+      borderRadius: "5px",
+      background: executionMethod === "seaport-intent" ? "blue" : "",
+    }}
+  >
+    seaport-intent
+  </button>
+  <button
+    onClick={() =>
+      setExecutionMethod(executionMethod === "intent" ? undefined : "intent")
+    }
+    style={{
+      border: "none",
+      borderRadius: "5px",
+      background: executionMethod === "intent" ? "blue" : "",
+    }}
+  >
+    intent
+  </button>
+</div>;
       <BuyModal
         chainId={Number(chainId)}
         trigger={
@@ -144,7 +173,7 @@ const BuyPage: NextPage = () => {
         }
         token={token}
         orderId={orderId}
-        useSeaportExecutionMethod={useSeaportExecutionMethod}
+        executionMethod={executionMethod}
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
         normalizeRoyalties={normalizeRoyalties}

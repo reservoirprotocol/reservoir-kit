@@ -50,7 +50,7 @@ export type BuyModalStepData = {
 }
 
 type Token = NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
-type BuyTokenOptions = NonNullable<
+export type BuyTokenOptions = NonNullable<
   Parameters<ReservoirClientActions['buyToken']>['0']['options']
 >
 
@@ -103,6 +103,7 @@ type Props = {
   onConnectWallet: () => void
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
+  executionMethod: BuyTokenOptions['executionMethod']
   usePermit?: boolean
 }
 
@@ -116,7 +117,7 @@ export const BuyModalRenderer: FC<Props> = ({
   feesOnTopUsd,
   normalizeRoyalties,
   onConnectWallet,
-  useSeaportExecutionMethod,
+  executionMethod,
   children,
   walletClient,
   usePermit,
@@ -294,8 +295,8 @@ export const BuyModalRenderer: FC<Props> = ({
         _setPaymentCurrency(paymentTokens[0])
       }
 
-      if (useSeaportExecutionMethod) {
-        options.executionMethod = 'seaport-intent'
+      if (executionMethod !== undefined) {
+        options.executionMethod = executionMethod
       }
 
       let items: Parameters<
@@ -518,8 +519,8 @@ export const BuyModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
-    if (useSeaportExecutionMethod) {
-      options.executionMethod = 'seaport-intent'
+    if (executionMethod !== undefined) {
+      options.executionMethod = options.executionMethod
     }
 
     if (usePermit) {
