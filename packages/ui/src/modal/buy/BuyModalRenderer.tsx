@@ -381,6 +381,7 @@ export const BuyModalRenderer: FC<Props> = ({
       feesOnTopBps,
       feesOnTopUsd,
       _setPaymentCurrency,
+      executionMethod,
     ]
   )
 
@@ -620,6 +621,7 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [
     token,
     orderId,
+    executionMethod,
     feesOnTopBps,
     feesOnTopUsd,
     quantity,
