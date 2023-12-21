@@ -7,17 +7,14 @@ import {
   prepareCallTransaction,
 } from '../utils'
 import axios, { AxiosRequestConfig } from 'axios'
-import { WalletClient } from 'viem'
+import { WalletClient, WriteContractParameters } from 'viem'
 import { isViemWalletClient } from '../utils/viemWallet'
-import { simulateContract } from 'viem/_types/actions/public/simulateContract'
 
 type CallBody = NonNullable<
   paths['/execute/call/v1']['post']['parameters']['body']['body']
 >
 
-type SimulateContractRequest = Awaited<
-  ReturnType<typeof simulateContract>
->['request']
+type SimulateContractRequest = WriteContractParameters<any>
 
 type Data = {
   txs: [CallBody['txs'][0] | SimulateContractRequest]
