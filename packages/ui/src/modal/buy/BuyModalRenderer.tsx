@@ -520,7 +520,7 @@ export const BuyModalRenderer: FC<Props> = ({
     }
 
     if (executionMethod !== undefined) {
-      options.executionMethod = options.executionMethod
+      options.executionMethod = executionMethod
     }
 
     if (usePermit) {
