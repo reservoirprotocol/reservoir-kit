@@ -107,11 +107,12 @@ export function CollectButton({
           } else if (sweepPriceRaw) {
             return (
               <Button css={{ ...triggerCss }}>
-                Sweep{' '}
+                Collect{' '}
                 <FormatCrypto
                   amount={sweepPriceRaw}
                   decimals={sweepPriceData?.currency?.decimals}
                   maximumFractionDigits={4}
+                  textStyle="h6"
                 />
                 {sweepSymbol}
               </Button>

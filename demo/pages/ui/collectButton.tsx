@@ -39,7 +39,14 @@ const CollectButtonPage: NextPage = () => {
         <input
           type="text"
           value={collectionId}
-          onChange={(e) => setCollectionId(e.target.value)}
+          onChange={(e) => {
+            if(e.target.value) { 
+              setCollectionId(e.target.value) 
+            }
+            else { 
+              setCollectionId(undefined)
+            }
+          }}
         />
       </div>
       <div>
@@ -47,7 +54,14 @@ const CollectButtonPage: NextPage = () => {
         <input
           type="text"
           value={contract}
-          onChange={(e) => setContract(e.target.value)}
+          onChange={(e) => {
+            if(e.target.value) { 
+              setContract(e.target.value) 
+            }
+            else { 
+              setContract(undefined)
+            }
+          }}
         />
       </div>
       <div>
@@ -55,7 +69,14 @@ const CollectButtonPage: NextPage = () => {
         <input
           type="text"
           value={token}
-          onChange={(e) => setToken(e.target.value)}
+          onChange={(e) => {
+            if(e.target.value) { 
+              setToken(e.target.value) 
+            }
+            else { 
+              setToken(undefined)
+            }
+          }}
         />
       </div>
       <CollectButton 

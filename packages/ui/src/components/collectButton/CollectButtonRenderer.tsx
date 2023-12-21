@@ -37,7 +37,7 @@ export function CollectButtonRenderer({
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const { data: tokens } = useTokens(
+  const { data: tokens, isFetchingPage: isFetchingTokens } = useTokens(
     token && !collectionId && !contract
       ? {
           tokens: [token],
@@ -80,7 +80,11 @@ export function CollectButtonRenderer({
         mintStages,
         collection,
         tokenData,
-        loading: isFetchingCollections || (token !== undefined && !tokenData),
+        loading:
+          ((contract !== undefined || collection !== undefined) &&
+            isFetchingCollections &&
+            !collection) ||
+          (token !== undefined && isFetchingTokens && !tokenData),
       })}
     </>
   )
