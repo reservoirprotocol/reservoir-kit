@@ -152,6 +152,8 @@ export const MintModalRenderer: FC<Props> = ({
   }).find(({ id }) => rendererChain?.id === id)
 
   const providerOptions = useContext(ProviderOptionsContext)
+  const includeListingCurrency =
+    providerOptions.alwaysIncludeListingCurrency !== false
   const disableJumperLink = providerOptions?.disableJumperLink
 
   const collectionContract =
@@ -479,7 +481,11 @@ export const MintModalRenderer: FC<Props> = ({
   // Set initial payment currency
   useEffect(() => {
     if (paymentTokens[0] && !paymentCurrency && fetchedInitialOrders) {
-      _setPaymentCurrency(paymentTokens[0])
+      if (!includeListingCurrency) {
+        _setPaymentCurrency(paymentTokens[0])
+      } else {
+        _setPaymentCurrency(chainCurrency)
+      }
     }
   }, [paymentTokens, paymentCurrency, fetchedInitialOrders])
 
