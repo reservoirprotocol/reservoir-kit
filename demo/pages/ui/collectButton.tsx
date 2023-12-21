@@ -62,7 +62,7 @@ const CollectButtonPage: NextPage = () => {
         collectionId={collectionId} 
         contract={contract} 
         token={token} 
-        chainId={chain.id} 
+        chainId={chain?.id} 
         onConnectWallet={() => {
           openConnectModal?.()
         }}/>
