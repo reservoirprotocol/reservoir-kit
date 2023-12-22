@@ -616,13 +616,9 @@ function cartStore({
               )
               fetchedTokens?.forEach((tokenData) => {
                 const item = convertTokenToItem(tokenData)
-                const id = `${item?.collection.id}:${item?.token.id}`
-                const maker = tokenData.market?.floorAsk?.maker
-                const duplicateListingDetected =
-                  item &&
-                  maker &&
-                  tokensByMaker[maker] &&
-                  tokensByMaker[maker].includes(id)
+                const duplicateListingDetected = updatedItems.some(
+                  (updatedItem) => updatedItem.order.id === item.order.id
+                )
                 if (duplicateListingDetected) {
                   client?.log(
                     [
@@ -651,11 +647,9 @@ function cartStore({
               )
               fetchedOrders?.forEach((orderData) => {
                 const item = convertOrderToItem(orderData)
-                const id = `${item?.collection.id}:${item?.token.id}`
-                const duplicateListingDetected =
-                  item &&
-                  tokensByMaker[orderData.maker] &&
-                  tokensByMaker[orderData.maker].includes(id)
+                const duplicateListingDetected = updatedItems.some(
+                  (updatedItem) => updatedItem.order.id === item.order.id
+                )
                 if (duplicateListingDetected) {
                   client?.log(
                     [
