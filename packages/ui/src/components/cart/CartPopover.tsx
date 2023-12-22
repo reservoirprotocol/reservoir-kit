@@ -310,7 +310,7 @@ export function CartPopover({
                 >
                   {items.map((item) => (
                     <CartItem
-                      key={`${item.collection.id}:${item.token.id}`}
+                      key={item.order.id}
                       item={item}
                       usdConversion={usdPrice}
                       tokenUrl={tokenUrl}
