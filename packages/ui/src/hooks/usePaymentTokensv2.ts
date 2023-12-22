@@ -24,7 +24,7 @@ export type EnhancedCurrency =
       currencyTotalRaw?: bigint
       currencyTotalFormatted?: string
       maxItems?: number
-      maxPricePerItem?: bigint
+      capacityPerRequest?: bigint
     }
 
 const fetchNativeBalances = async (
@@ -306,16 +306,26 @@ export default function (options: {
         const currency = token.currency
 
         let maxItems: EnhancedCurrency['maxItems'] = undefined
-        let maxPricePerItem: EnhancedCurrency['maxPricePerItem'] = undefined
+        let capacityPerRequest: EnhancedCurrency['capacityPerRequest'] =
+          undefined
 
         if (
           !crossChainDisabled &&
           crosschainChainIds?.length > 0 &&
           solverCapacity &&
-          token.chainId !== chain?.id
+          token.chainId !== chain?.id &&
+          path
         ) {
-          maxItems = solverCapacity.maxItems
-          maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
+          maxItems = 0
+          for (
+            let i = 0;
+            i < Math.min(path.length, solverCapacity.maxItems);
+            i++
+          ) {
+            maxItems += path[i].quantity || 0
+          }
+
+          capacityPerRequest = BigInt(solverCapacity.capacityPerRequest)
         }
 
         let balance: string | number | bigint = 0n
@@ -398,7 +408,7 @@ export default function (options: {
           usdTotalFormatted: usdTotalFormatted,
           usdBalanceRaw: usdBalanceRaw,
           maxItems,
-          maxPricePerItem,
+          capacityPerRequest,
           chainId: token.chainId,
         }
       })
