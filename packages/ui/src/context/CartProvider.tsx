@@ -567,17 +567,6 @@ function cartStore({
         const tokens: Token[] = []
         const ordersToFetch: string[] = []
 
-        const tokensByMaker = updatedItems.reduce((map, item) => {
-          if (item.order) {
-            const maker = item.order?.maker
-            if (!map[maker]) {
-              map[maker] = []
-            }
-            map[maker].push(`${item.collection.id}:${item.token.id}`)
-          }
-          return map
-        }, {} as Record<string, string[]>)
-
         items.forEach((item) => {
           const token = item as Token
           const asyncToken = item as AsyncAddToCartToken
