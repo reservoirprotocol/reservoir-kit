@@ -65,7 +65,7 @@ const ModalCopy = {
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
-  alternativeCheckoutButton?: React.ReactNode
+  alternativeCheckoutButton?: JSX.Element
   tokenId?: string
   collectionId?: string
   chainId?: number
