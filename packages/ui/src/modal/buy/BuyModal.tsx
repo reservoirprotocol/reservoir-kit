@@ -65,7 +65,7 @@ const ModalCopy = {
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
-  alternativeCheckoutButton?: JSX.Element
+  creditCardCheckoutButton?: JSX.Element
   tokenId?: string
   collectionId?: string
   chainId?: number
@@ -129,7 +129,7 @@ export function BuyModal({
   onClose,
   onGoToToken,
   onPointerDownOutside,
-  alternativeCheckoutButton,
+  creditCardCheckoutButton,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -484,7 +484,7 @@ export function BuyModal({
                       >
                         {!isConnected ? copy.ctaConnect : copy.ctaCheckout}
                       </Button>
-                      {alternativeCheckoutButton && alternativeCheckoutButton}
+                      {creditCardCheckoutButton && creditCardCheckoutButton}
                     </>
                   ) : (
                     <Flex direction="column" align="center">

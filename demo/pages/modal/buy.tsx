@@ -128,7 +128,7 @@ const BuyPage: NextPage = () => {
       </div>
 
       <BuyModal
-      alternativeCheckoutButton={
+      creditCardCheckoutButton={
 <CrossmintPayButton
 style={{
   width: '100%',
