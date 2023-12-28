@@ -1,11 +1,16 @@
-import { paths } from '@reservoir0x/reservoir-sdk'
+import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import getLocalMarketplaceData from '../lib/getLocalMarketplaceData'
 import { useEffect, useState } from 'react'
 import useReservoirClient from './useReservoirClient'
 import useSWR from 'swr'
 
+type MarketplaceConfigurationResponse =
+  paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses'][200]['schema']
+type MarketplaceConfigurationParams =
+  paths['/collections/{collection}/marketplace-configurations/v1']['get']['parameters']['query']
+
 export type Marketplace = NonNullable<
-  paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses']['200']['schema']['marketplaces']
+  MarketplaceConfigurationResponse['marketplaces']
 >[0] & {
   price: number | string
   truePrice: number | string
@@ -17,6 +22,7 @@ export type Marketplace = NonNullable<
 
 export default function (
   collectionId?: string,
+  tokenId?: string,
   listingEnabledOnly?: boolean,
   fees?: string[],
   chainId?: number,
@@ -32,10 +38,12 @@ export default function (
     `${chain?.baseApiUrl}/collections/${collectionId}/marketplace-configurations/v1`
   )
 
-  const { data, isValidating } = useSWR<
-    paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses'][200]['schema']
-  >(
-    collectionId && enabled
+  setParams(path, {
+    tokenId,
+  } as MarketplaceConfigurationParams)
+
+  const { data, isValidating } = useSWR<MarketplaceConfigurationResponse>(
+    collectionId && tokenId && enabled
       ? [path.href, client?.apiKey, client?.version]
       : null,
     null

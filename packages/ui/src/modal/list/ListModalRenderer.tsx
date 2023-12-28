@@ -139,6 +139,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [listingData, setListingData] = useState<ListingData[]>([])
   const [allMarketplaces] = useMarketplaces(
     collectionId,
+    tokenId,
     true,
     feesBps,
     rendererChain?.id,
