@@ -145,7 +145,7 @@ style={{
           paymentMethods: ["ETH", "fiat"],
         }}
         mintConfig={{
-          tokenId: ''
+          tokenId: '',
           type: "erc-721",
           quantity: "_NUMBER_OF_NFTS_",
           totalPrice: "_PRICE_IN_NATIVE_TOKEN_"
