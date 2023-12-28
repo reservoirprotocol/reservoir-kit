@@ -213,7 +213,7 @@ export const MintModalRenderer: FC<Props> = ({
 
   const mintPrice = BigInt(
     (orders?.[0]?.currency?.toLowerCase() !== paymentCurrency?.address
-      ? orders?.[0]?.buyIn?.[0]?.amount?.raw
+      ? orders?.[0]?.buyInRawQuote
       : orders?.[0]?.totalRawPrice) || 0
   )
 
