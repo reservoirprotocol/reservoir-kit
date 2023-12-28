@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/reservoir-sdk",
-    "version": "1.12.0",
+    "version": "1.12.3",
     "description": "An SDK that can be used in any javascript/typescript context to easily interact with Reservoir liquidity APIs",
     "author": "Reservoir Protocol",
     "license": "MIT",
