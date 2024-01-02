@@ -141,6 +141,10 @@ export const SweepModalRenderer: FC<Props> = ({
   const [hasEnoughCurrency, setHasEnoughCurrency] = useState(true)
   const [feeOnTop, setFeeOnTop] = useState(0n)
 
+  const [buyResponseFees, setBuyResponseFees] = useState<
+    BuyResponses['fees'] | undefined
+  >(undefined)
+
   const currentChain = client?.currentChain()
 
   const rendererChain = chainId
@@ -226,7 +230,7 @@ export const SweepModalRenderer: FC<Props> = ({
     path: orders,
     nativeOnly: false,
     chainId: rendererChain?.id,
-    crossChainDisabled: true,
+    crossChainDisabled: !is1155,
   })
 
   const paymentCurrency = paymentTokens?.find(
@@ -257,6 +261,24 @@ export const SweepModalRenderer: FC<Props> = ({
       let options: BuyTokenOptions = {
         partial: true,
         onlyPath: true,
+      }
+
+      if (is1155) {
+        if (feesOnTopBps && feesOnTopBps?.length > 0) {
+          const fixedFees = feesOnTopBps.map((fullFee) => {
+            const [referrer] = fullFee.split(':')
+            return `${referrer}:1`
+          })
+          options.feesOnTop = fixedFees
+        } else if (feesOnTopUsd && feesOnTopUsd.length > 0) {
+          const feesOnTopFixed = feesOnTopUsd.map((feeOnTop) => {
+            const [recipient] = feeOnTop.split(':')
+            return `${recipient}:1`
+          })
+          options.feesOnTop = feesOnTopFixed
+        } else if (!feesOnTopUsd && !feesOnTopBps) {
+          delete options.feesOnTop
+        }
       }
 
       if (normalizeRoyalties !== undefined) {
@@ -308,6 +330,10 @@ export const SweepModalRenderer: FC<Props> = ({
           if ('path' in data) {
             let pathData = data['path']
             setOrders(pathData ?? [])
+
+            if (data.fees) {
+              setBuyResponseFees(data.fees)
+            }
 
             const pathOrderQuantity =
               pathData?.reduce(
@@ -380,6 +406,8 @@ export const SweepModalRenderer: FC<Props> = ({
       rendererChain?.paymentTokens,
       is1155,
       includeListingCurrency,
+      feesOnTopBps,
+      feesOnTopUsd,
       _setPaymentCurrency,
     ]
   )
@@ -453,12 +481,21 @@ export const SweepModalRenderer: FC<Props> = ({
       paymentCurrency?.currencyTotalRaw &&
       paymentCurrency.currencyTotalRaw > 0n
     ) {
+      let currencyTotalRawMinusRelayerFees = paymentCurrency?.currencyTotalRaw
+
+      // if cross-chain, subtract relayer fees from currencyTotalRaw
+      if (buyResponseFees?.relayer?.amount?.raw) {
+        const relayerFees = BigInt(buyResponseFees?.relayer?.amount?.raw ?? 0)
+
+        currencyTotalRawMinusRelayerFees -= relayerFees
+      }
+
       if (feesOnTopBps && feesOnTopBps.length > 0) {
         const fees = feesOnTopBps.reduce((totalFees, feeOnTop) => {
           const [_, fee] = feeOnTop.split(':')
           return (
             totalFees +
-            (BigInt(fee) * paymentCurrency.currencyTotalRaw!) / 10000n
+            (BigInt(fee) * currencyTotalRawMinusRelayerFees) / 10000n
           )
         }, 0n)
         totalFees += fees
@@ -484,7 +521,14 @@ export const SweepModalRenderer: FC<Props> = ({
       setTotalIncludingFees(0n)
       setAverageUnitPrice(0n)
     }
-  }, [paymentCurrency, feesOnTopBps, feesOnTopUsd, usdPriceRaw, itemAmount])
+  }, [
+    paymentCurrency,
+    feesOnTopBps,
+    feesOnTopUsd,
+    usdPriceRaw,
+    itemAmount,
+    buyResponseFees,
+  ])
 
   const addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
@@ -533,6 +577,7 @@ export const SweepModalRenderer: FC<Props> = ({
       setFetchedInitialOrders(false)
       setIsFetchingPath(false)
       _setPaymentCurrency(undefined)
+      setBuyResponseFees(undefined)
       setStepData(null)
     } else {
       setItemAmount(defaultQuantity || 1)
@@ -586,7 +631,14 @@ export const SweepModalRenderer: FC<Props> = ({
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
-        const totalFeeTruncated = totalIncludingFees - feeOnTop
+        let totalFeeTruncated = totalIncludingFees - feeOnTop
+
+        // if cross-chain, subtract relayer fees from total
+        if (buyResponseFees?.relayer?.amount?.raw) {
+          totalFeeTruncated -= BigInt(
+            buyResponseFees?.relayer?.amount?.raw ?? 0
+          )
+        }
 
         const fee = Math.floor(
           Number(totalFeeTruncated * BigInt(feeBps)) / 10000
@@ -726,6 +778,7 @@ export const SweepModalRenderer: FC<Props> = ({
     paymentCurrency?.chainId,
     paymentCurrency?.currencyTotalRaw,
     paymentTokens,
+    buyResponseFees,
     usePermit,
   ])
 
