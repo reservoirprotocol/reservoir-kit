@@ -1,8 +1,12 @@
 
 ## [v1.23.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/362a7dc22bf610a55690706186e9e8abbb81e3cc) (2024-01-02)
 
-* Merge pull request #528 from reservoirprotocol/pedro/grwth-3757-max-royaltybps-option-listmodalbidmodal [44a6b289](https://github.com/reservoirprotocol/reservoir-kit/commit/44a6b28969be509b75db1a4c7e9e7ea4900379e3)
-* Merge pull request #529 from reservoirprotocol/pedro/grwth-3764-upgrade-usetokens-hook-to-tokensv7 [6f103048](https://github.com/reservoirprotocol/reservoir-kit/commit/6f103048666f2271cb3d0616a6f260a924157ce4)
+* ListModal & BidModal: Add max royaltybps option to placeBid & listToken methods [44a6b289](https://github.com/reservoirprotocol/reservoir-kit/commit/44a6b28969be509b75db1a4c7e9e7ea4900379e3)
+* useTokens hook: Upgrade from v6 - v7 [6f103048](https://github.com/reservoirprotocol/reservoir-kit/commit/6f103048666f2271cb3d0616a6f260a924157ce4)
+
+### Breaking Changes
+* The upgraded useTokens hook now returns the floorAsk price as a standard price object.
+
 ## [v1.22.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/fcf4892f1ace981161f02385c25086816916cd2e) (2023-12-21)
 
 ## [v1.21.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/237db5b57b0c4d634fdcf15825a233babcae7c25) (2023-12-21)
