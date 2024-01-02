@@ -1,4 +1,12 @@
 
+## [v1.12.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b6c67326a1bf3daa6cd3b23c0d81d920aac58a31) (2023-12-21)
+
+## [v1.12.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/cbac85c9d8bdba25ca9aeeb0c532cb0ba270b10f) (2023-12-21)
+
+## [v1.12.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e7678c150ce7fe600778da37fe434300b558a6b9) (2023-12-20)
+
+* Merge pull request #519 from reservoirprotocol/pedro/grwth-3690-prepare-custom-params-sdk-util-function [567b6238](https://github.com/reservoirprotocol/reservoir-kit/commit/567b623879f1e6176bdced0e70115eb7b0f473d4)
+
 ## [v1.12.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8c72817d3e019bb6f1d5646f2443cfdf579f60b2) (2023-12-19)
 
 ### Breaking Changes:
