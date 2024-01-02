@@ -65,6 +65,7 @@ const ModalCopy = {
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
+  creditCardCheckoutButton?: JSX.Element
   tokenId?: string
   collectionId?: string
   chainId?: number
@@ -128,6 +129,7 @@ export function BuyModal({
   onClose,
   onGoToToken,
   onPointerDownOutside,
+  creditCardCheckoutButton,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -473,14 +475,17 @@ export function BuyModal({
 
                 <Box css={{ p: '$4', width: '100%' }}>
                   {hasEnoughCurrency || !isConnected ? (
-                    <Button
-                      disabled={!hasEnoughCurrency && isConnected}
-                      onClick={buyToken}
-                      css={{ width: '100%' }}
-                      color="primary"
-                    >
-                      {!isConnected ? copy.ctaConnect : copy.ctaCheckout}
-                    </Button>
+                    <>
+                      <Button
+                        disabled={!hasEnoughCurrency && isConnected}
+                        onClick={buyToken}
+                        css={{ width: '100%' }}
+                        color="primary"
+                      >
+                        {!isConnected ? copy.ctaConnect : copy.ctaCheckout}
+                      </Button>
+                      {creditCardCheckoutButton && creditCardCheckoutButton}
+                    </>
                   ) : (
                     <Flex direction="column" align="center">
                       <Flex align="center" css={{ mb: '$3' }}>
