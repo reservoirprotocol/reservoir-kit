@@ -20,7 +20,6 @@ export default function (chain?: ReservoirChain | null) {
     },
     {
       revalidateOnFocus: false,
-      revalidateOnMount: false,
     }
   )
 
