@@ -63,9 +63,6 @@ const normalizeContentType = (contentType?: string) => {
   if (contentType?.includes('image/svg+xml')) {
     return 'svg'
   }
-  if (contentType?.includes('image/svg+xml')) {
-    return 'svg'
-  }
   if (contentType?.includes('image/')) {
     return contentType.replace('image/', '')
   }
