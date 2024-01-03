@@ -1,4 +1,4 @@
-import useSWR from 'swr/immutable'
+import useSWR from 'swr'
 import { ReservoirChain, axios, paths } from '@reservoir0x/reservoir-sdk'
 
 type SolverCapacityResponse =
@@ -6,7 +6,7 @@ type SolverCapacityResponse =
 
 export default function (chain?: ReservoirChain | null) {
   const { data, error } = useSWR<SolverCapacityResponse>(
-    chain ? `${chain?.baseApiUrl}/execute/solve/capacity/v1` : undefined,
+    chain ? `${chain?.baseApiUrl}/execute/solve/capacity/v1` : null,
     async (url) => {
       try {
         const response = await axios.post(url, {
@@ -19,7 +19,8 @@ export default function (chain?: ReservoirChain | null) {
       }
     },
     {
-      refreshInterval: 300000, //5m
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
     }
   )
 
