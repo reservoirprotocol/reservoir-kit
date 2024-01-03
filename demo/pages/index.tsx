@@ -107,6 +107,9 @@ const Index: NextPage = () => {
         <Link href="/ui/cart">
           <a>Cart</a>
         </Link>
+        <Link href="/ui/collectButton">
+          <a>CollectButton</a>
+        </Link>
       </nav>
       <h2>SDK Actions</h2>
       <nav style={{ display: 'flex', gap: 15 }}>
