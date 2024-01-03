@@ -7,7 +7,7 @@ import {
   Flex,
   Text,
 } from '../primitives'
-import { EnhancedCurrency } from '../hooks/usePaymentTokens'
+import { EnhancedCurrency } from '../hooks/usePaymentTokensv2'
 import { formatUnits, zeroAddress } from 'viem'
 import EthIconCircleBlue from '../img/EthIconCircleBlue'
 import { formatNumber } from '../lib/numbers'
@@ -130,8 +130,7 @@ export const SelectPaymentTokenv2: FC<Props> = ({
     const hasMaxPricePerItem = paymentToken?.maxPricePerItem != undefined
     const hasCurrencyTotalRaw = paymentToken?.currencyTotalRaw != undefined
 
-    const maxPurchasablePrice =
-      BigInt(itemAmount) * BigInt(paymentToken?.maxPricePerItem ?? 0)
+    const maxPurchasablePrice = paymentToken?.capacityPerRequest
     const maxItemAmount = paymentToken?.maxItems
       ? BigInt(paymentToken?.maxItems)
       : undefined
