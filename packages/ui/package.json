@@ -58,10 +58,16 @@
     "swr": "2.0.1"
   },
   "peerDependencies": {
+    "@paperxyz/react-client-sdk": "^1.1.5",
     "react": "^18.0",
     "react-dom": "^18.0",
     "viem": "~1.19.15",
     "wagmi": "~1.4.12"
+  },
+  "peerDependenciesMeta": {
+    "@paperxyz/react-client-sdk": {
+      "optional": true
+    }
   },
   "repository": {
     "type": "git",

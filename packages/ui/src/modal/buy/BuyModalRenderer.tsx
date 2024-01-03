@@ -33,6 +33,7 @@ type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
 export enum BuyStep {
   Checkout,
+  CreditCardCheckout,
   Approving,
   Complete,
   Unavailable,

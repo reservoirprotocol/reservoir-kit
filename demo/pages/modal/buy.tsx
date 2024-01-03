@@ -128,32 +128,7 @@ const BuyPage: NextPage = () => {
       </div>
 
       <BuyModal
-      creditCardCheckoutButton={
-<CrossmintPayButton
-style={{
-  width: '100%',
-}}
-        clientId=""
-        projectId=""
-        collectionId={collectionId}
-        environment='staging'
-        emailTo={"USER_EMAIL_"}  // OPTIONAL: provide if you want to specify the exact destination
-        mintTo={"OPTIONAL_DESTINATION_WALLET_"}  // OPTIONAL: provide if you want to specify the exact destination
-        checkoutProps={{
-          display: "same-tab",  // "same-tab" | "new-tab" | "popup"
-          delivery: 'custodial',
-          paymentMethods: ["ETH", "fiat"],
-        }}
-        mintConfig={{
-          tokenId: '',
-          type: "erc-721",
-          quantity: "_NUMBER_OF_NFTS_",
-          totalPrice: "_PRICE_IN_NATIVE_TOKEN_"
-          // your custom minting arguments...
-        }}
-        />
-
-      }
+      enableCreditCardCheckout
         chainId={Number(chainId)}
         trigger={
           <button

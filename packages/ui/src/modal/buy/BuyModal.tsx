@@ -1,4 +1,5 @@
 import React, {
+  ComponentProps,
   ComponentPropsWithoutRef,
   Dispatch,
   ReactElement,
@@ -34,12 +35,16 @@ import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
-import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import {
+  ProviderOptionsContext,
+  ThemeContext,
+} from '../../ReservoirKitProvider'
 import { truncateAddress } from '../../lib/truncate'
 import { SelectPaymentToken } from '../SelectPaymentToken'
 import { WalletClient } from 'viem'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
+import { CheckoutWithCard } from '@paperxyz/react-client-sdk'
 
 type PurchaseData = {
   tokenId?: string
@@ -55,6 +60,7 @@ const ModalCopy = {
   titleDefault: 'Complete Checkout',
   ctaClose: 'Close',
   ctaCheckout: 'Checkout',
+  ctaCheckoutWithCreditCard: 'Checkout with a Credit Card',
   ctaConnect: 'Connect',
   ctaInsufficientFunds: 'Add Funds',
   ctaGoToToken: '',
@@ -65,7 +71,7 @@ const ModalCopy = {
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
-  creditCardCheckoutButton?: JSX.Element
+  enableCreditCardCheckout?: boolean
   tokenId?: string
   collectionId?: string
   chainId?: number
@@ -129,13 +135,16 @@ export function BuyModal({
   onClose,
   onGoToToken,
   onPointerDownOutside,
-  creditCardCheckoutButton,
+  enableCreditCardCheckout,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
     openState
   )
+  const [stylingOptions, setStylingOptions] = React.useState<
+    ComponentProps<typeof CheckoutWithCard>['options'] | undefined
+  >()
 
   const client = useReservoirClient()
 
@@ -146,6 +155,7 @@ export function BuyModal({
     : currentChain
 
   const providerOptions = useContext(ProviderOptionsContext)
+  const theme = useContext(ThemeContext)
 
   return (
     <BuyModalRenderer
@@ -241,6 +251,38 @@ export function BuyModal({
         const price =
           totalPrice || BigInt(token?.token?.lastSale?.price?.amount?.raw || 0)
 
+        useEffect(() => {
+          if (open) {
+            /**
+             * Create a mock element
+             */
+            const mockElementOne = window.document.createElement('div')
+            const mockElementTwo = window.document.createElement('div')
+
+            mockElementOne.style.fontFamily = 'var(--rk-fonts-body)'
+            mockElementOne.style.color = 'var(--rk-colors-textColor)'
+            mockElementTwo.style.backgroundColor =
+              'var(--rk-colors-inputBackground)'
+            mockElementOne.style.borderRadius = 'var(--rk-radii-borderRadius)'
+
+            window.document.body.appendChild(mockElementOne)
+            window.document.body.appendChild(mockElementTwo)
+            console.log(window.getComputedStyle(mockElementOne).borderRadius)
+            setStylingOptions({
+              fontFamily: window.getComputedStyle(mockElementOne).fontFamily,
+              colorBackground:
+                window.getComputedStyle(mockElementOne).background,
+              colorPrimary: window.getComputedStyle(mockElementOne).color,
+              colorText: window.getComputedStyle(mockElementOne).color,
+              borderRadius: Number(
+                window.getComputedStyle(mockElementOne).borderRadius
+              ),
+              inputBackgroundColor:
+                window.getComputedStyle(mockElementTwo).backgroundColor,
+              inputBorderColor: 'transparent',
+            })
+          }
+        }, [open])
         return (
           <Modal
             trigger={trigger}
@@ -473,9 +515,12 @@ export function BuyModal({
                   </Flex>
                 </Flex>
 
-                <Box css={{ p: '$4', width: '100%' }}>
+                <Flex
+                  direction="column"
+                  css={{ p: '$4', width: '100%', gap: '$2' }}
+                >
                   {hasEnoughCurrency || !isConnected ? (
-                    <>
+                    <Flex direction="column" css={{}}>
                       <Button
                         disabled={!hasEnoughCurrency && isConnected}
                         onClick={buyToken}
@@ -484,8 +529,7 @@ export function BuyModal({
                       >
                         {!isConnected ? copy.ctaConnect : copy.ctaCheckout}
                       </Button>
-                      {creditCardCheckoutButton && creditCardCheckoutButton}
-                    </>
+                    </Flex>
                   ) : (
                     <Flex direction="column" align="center">
                       <Flex align="center" css={{ mb: '$3' }}>
@@ -535,7 +579,67 @@ export function BuyModal({
                       </Button>
                     </Flex>
                   )}
-                </Box>
+                  {enableCreditCardCheckout && (
+                    <Button
+                      onClick={() => setBuyStep(BuyStep.CreditCardCheckout)}
+                      css={{ width: '100%' }}
+                      color="primary"
+                    >
+                      {copy.ctaCheckoutWithCreditCard}
+                    </Button>
+                  )}
+                </Flex>
+              </Flex>
+            )}
+
+            {buyStep === BuyStep.CreditCardCheckout && !loading && (
+              <Flex direction="column">
+                <TokenLineItem
+                  chain={modalChain}
+                  tokenDetails={token}
+                  collection={collection}
+                  usdPrice={paymentCurrency?.usdTotalFormatted}
+                  price={quantity > 1 ? averageUnitPrice : price}
+                  currency={paymentCurrency}
+                  css={{ border: 0 }}
+                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
+                  showRoyalties={true}
+                />
+                <Flex
+                  align="center"
+                  justify="center"
+                  css={{
+                    padding: '$3',
+                    width: '100%',
+                    'div iframe': {
+                      border: 'none',
+                    },
+                  }}
+                >
+                  <CheckoutWithCard
+                    options={stylingOptions}
+                    configs={{
+                      contractId: '914d6c3b-1f67-45e5-9694-c4170b2c868b',
+                      walletAddress:
+                        '0xc8186a3044D311eec1C1b57342Aaa290F6d90Aa5',
+                      mintMethod: {
+                        name: 'claimTo',
+                        args: {
+                          _to: '$WALLET',
+                          _quantity: '$QUANTITY',
+                          _tokenId: 0,
+                        },
+                        payment: {
+                          currency: 'MATIC',
+                          value: '0.0001  * $QUANTITY',
+                        },
+                      },
+                    }}
+                    onPaymentSuccess={(result) => {
+                      console.log('Payment successful:', result)
+                    }}
+                  />
+                </Flex>
               </Flex>
             )}
 
