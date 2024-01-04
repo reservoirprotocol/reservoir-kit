@@ -140,6 +140,11 @@ const chainIcons = {
     dark: <ZoraIconLight />,
     color: <ZoraIconColor />,
   },
+  [reservoirChains.frameTestnet.id]: {
+    light: <MainnetIconDark />,
+    dark: <MainnetIconLight />,
+    color: null,
+  },
 }
 
 export default chainIcons
