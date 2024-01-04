@@ -28,6 +28,7 @@ const BuyPage: NextPage = () => {
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
   const { openConnectModal } = useConnectModal()
+  const collectionId = token?.split(':')[0]
 
   return (
     <div
