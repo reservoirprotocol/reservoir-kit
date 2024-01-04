@@ -6,6 +6,7 @@ import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import ChainSwitcher from 'components/ChainSwitcher'
+import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -118,6 +119,32 @@ const BuyPage: NextPage = () => {
       </div>
 
       <BuyModal
+      creditCardCheckoutButton={
+<CrossmintPayButton
+style={{
+  width: '100%',
+}}
+        clientId=""
+        projectId=""
+        collectionId={collectionId}
+        environment='staging'
+        emailTo={"USER_EMAIL_"}  // OPTIONAL: provide if you want to specify the exact destination
+        mintTo={"OPTIONAL_DESTINATION_WALLET_"}  // OPTIONAL: provide if you want to specify the exact destination
+        checkoutProps={{
+          display: "same-tab",  // "same-tab" | "new-tab" | "popup"
+          delivery: 'custodial',
+          paymentMethods: ["ETH", "fiat"],
+        }}
+        mintConfig={{
+          tokenId: '',
+          type: "erc-721",
+          quantity: "_NUMBER_OF_NFTS_",
+          totalPrice: "_PRICE_IN_NATIVE_TOKEN_"
+          // your custom minting arguments...
+        }}
+        />
+
+      }
         chainId={Number(chainId)}
         trigger={
           <button
