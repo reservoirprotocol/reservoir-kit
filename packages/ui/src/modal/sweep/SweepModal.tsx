@@ -10,10 +10,10 @@ import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Modal } from '../Modal'
 import {
-  MintModalRenderer,
-  MintModalStepData,
-  MintStep,
-} from './MintModalRenderer'
+  SweepModalRenderer,
+  SweepModalStepData,
+  SweepStep,
+} from './SweepModalRenderer'
 import {
   Anchor,
   Box,
@@ -32,7 +32,7 @@ import {
   faChevronRight,
   faCircleExclamation,
   faCube,
-  faEye,
+  faMagnifyingGlass,
   faPenNib,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
@@ -42,32 +42,31 @@ import QuantitySelector from '../QuantitySelector'
 import { CurrentStepTxHashes } from '../CurrentStepTxHashes'
 import SigninStep from '../SigninStep'
 import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
-import { MintImages } from './MintImages'
 import { truncateAddress } from '../../lib/truncate'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { TokenInfo } from '../TokenInfo'
 import { CollectionInfo } from '../CollectionInfo'
 import { PurchaseCheckout } from '../PurchaseCheckout'
 import { PaymentDetails } from '../../common/PaymentDetails'
-import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
 import { Dialog } from '../../primitives/Dialog'
+import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
 
-export type MintCallbackData = {
+export type SweepCallbackData = {
   collectionId?: string
   maker?: string
-  stepData: MintModalStepData | null
+  stepData: SweepModalStepData | null
 }
 
-export const MintModalCopy = {
+export const SweepModalCopy = {
   ctaConnect: 'Connect',
-  mintTitle: 'Mint',
-  mintCtaClose: 'Close',
-  mintCtaBuy: 'Mint',
-  mintCtaBuyDisabled: 'Mint',
-  mintCtaInsufficientFunds: 'Add Funds to Purchase',
-  mintCtaAwaitingApproval: 'Waiting for approval...',
-  mintCtaAwaitingValidation: 'Waiting to be validated...',
-  mintCtaGoToToken: '',
+  sweepTitle: 'Sweep',
+  sweepCtaClose: 'Close',
+  sweepCtaBuy: 'Sweep',
+  sweepCtaBuyDisabled: 'Sweep',
+  sweepCtaInsufficientFunds: 'Add Funds to Purchase',
+  sweepCtaAwaitingApproval: 'Waiting for approval...',
+  sweepCtaAwaitingValidation: 'Waiting to be validated...',
+  sweepCtaGoToToken: '',
 }
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
@@ -80,18 +79,20 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   chainId?: number
-  copyOverrides?: Partial<typeof MintModalCopy>
+  copyOverrides?: Partial<typeof SweepModalCopy>
   walletClient?: ReservoirWallet | WalletClient
-  onMintComplete?: (data: MintCallbackData) => void
-  onMintError?: (error: Error, data: MintCallbackData) => void
-  onClose?: (data: MintCallbackData, currentStep: MintStep) => void
-  onGoToToken?: (data: MintCallbackData) => any
+  normalizeRoyalties?: boolean
+  usePermit?: boolean
+  onSweepComplete?: (data: SweepCallbackData) => void
+  onSweepError?: (error: Error, data: SweepCallbackData) => void
+  onClose?: (data: SweepCallbackData, currentStep: SweepStep) => void
+  onGoToToken?: (data: SweepCallbackData) => any
   onPointerDownOutside?: ComponentPropsWithoutRef<
     typeof Dialog
   >['onPointerDownOutside']
 }
 
-export function MintModal({
+export function SweepModal({
   openState,
   trigger,
   contract,
@@ -102,16 +103,18 @@ export function MintModal({
   feesOnTopUsd,
   copyOverrides,
   walletClient,
-  onMintComplete,
-  onMintError,
+  normalizeRoyalties,
+  usePermit,
+  onSweepComplete,
+  onSweepError,
   onClose,
   onConnectWallet,
   onGoToToken,
   onPointerDownOutside,
   defaultQuantity,
 }: Props): ReactElement {
-  const copy: typeof MintModalCopy = {
-    ...MintModalCopy,
+  const copy: typeof SweepModalCopy = {
+    ...SweepModalCopy,
     ...copyOverrides,
   }
   const [open, setOpen] = useFallbackState(
@@ -128,7 +131,7 @@ export function MintModal({
     : currentChain
 
   return (
-    <MintModalRenderer
+    <SweepModalRenderer
       onConnectWallet={onConnectWallet}
       chainId={modalChain?.id}
       defaultQuantity={defaultQuantity}
@@ -139,6 +142,8 @@ export function MintModal({
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
       walletClient={walletClient}
+      normalizeRoyalties={normalizeRoyalties}
+      usePermit={usePermit}
     >
       {({
         loading,
@@ -147,6 +152,8 @@ export function MintModal({
         token,
         orders,
         totalIncludingFees,
+        averageUnitPrice,
+        selectedTokens,
         feeOnTop,
         feeUsd,
         paymentTokens,
@@ -167,35 +174,40 @@ export function MintModal({
         balance,
         hasEnoughCurrency,
         transactionError,
-        fetchMintPathError,
         stepData,
-        mintStep,
+        sweepStep,
         setStepData,
-        setMintStep,
-        mintTokens,
+        setSweepStep,
+        sweepTokens,
       }) => {
         useEffect(() => {
-          if (mintStep === MintStep.Complete && onMintComplete) {
-            const data: MintCallbackData = {
+          if (sweepStep === SweepStep.Complete && onSweepComplete) {
+            const data: SweepCallbackData = {
               collectionId: collection?.id,
               maker: address,
               stepData,
             }
 
-            onMintComplete(data)
+            onSweepComplete(data)
           }
-        }, [mintStep])
+        }, [sweepStep])
 
         useEffect(() => {
-          if (transactionError && onMintError) {
-            const data: MintCallbackData = {
+          if (transactionError && onSweepError) {
+            const data: SweepCallbackData = {
               collectionId: collection?.id,
               maker: address,
               stepData,
             }
-            onMintError(transactionError, data)
+            onSweepError(transactionError, data)
           }
         }, [transactionError])
+
+        const hasTokens = orders && orders.length > 0
+
+        const maxQuantity = paymentCurrency?.maxItems
+          ? paymentCurrency?.maxItems
+          : maxItemAmount
 
         const pathMap = stepData?.path
           ? (stepData.path as Path[]).reduce(
@@ -210,11 +222,7 @@ export function MintModal({
             )
           : {}
 
-        const maxQuantity = paymentCurrency?.maxItems
-          ? paymentCurrency?.maxItems
-          : maxItemAmount
-
-        const totalMints =
+        const totalSales =
           stepData?.currentStep?.items?.reduce((total, item) => {
             item.transfersData?.forEach((transferData) => {
               total += Number(transferData.amount || 1)
@@ -222,13 +230,13 @@ export function MintModal({
             return total
           }, 0) || 0
 
-        const failedMints = itemAmount - totalMints
-        const successfulMints = itemAmount - failedMints
+        const failedSales = itemAmount - totalSales
+        const successfulSales = itemAmount - failedSales
 
         return (
           <Modal
             trigger={trigger}
-            title={copy.mintTitle}
+            title={copy.sweepTitle}
             open={open}
             loading={loading}
             onPointerDownOutside={(e) => {
@@ -249,19 +257,18 @@ export function MintModal({
             }}
             onOpenChange={(open) => {
               if (!open && onClose) {
-                const data: MintCallbackData = {
+                const data: SweepCallbackData = {
                   collectionId: collection?.id,
                   maker: address,
                   stepData,
                 }
-                onClose(data, mintStep)
+                onClose(data, sweepStep)
               }
               setOpen(open)
             }}
           >
-            {!loading &&
-            (orders?.length === 0 || maxItemAmount === 0) &&
-            mintStep === MintStep.Idle ? (
+            {(!loading && !hasTokens) ||
+            (maxItemAmount === 0 && sweepStep === SweepStep.Idle) ? (
               <Flex
                 direction="column"
                 align="center"
@@ -274,41 +281,27 @@ export function MintModal({
                 >
                   <Box css={{ color: '$neutralSolid' }}>
                     <FontAwesomeIcon
-                      icon={faEye}
+                      icon={faMagnifyingGlass}
                       style={{
                         width: '36px',
                         height: '32px',
                       }}
                     />
                   </Box>
-                  {!collection && !fetchMintPathError ? (
-                    <Text style="h6" css={{ textAlign: 'center' }}>
-                      Collection not found.
-                    </Text>
-                  ) : null}
-
-                  {collection && fetchMintPathError?.message ? (
-                    <Text style="h6" css={{ textAlign: 'center' }}>
-                      {fetchMintPathError?.message}
-                    </Text>
-                  ) : null}
-
-                  {collection && !fetchMintPathError?.message ? (
-                    <Text style="h6" css={{ textAlign: 'center' }}>
-                      Oops. Looks like the mint has ended or the maximum minting
-                      limit has been reached.
-                    </Text>
-                  ) : null}
+                  <Text style="h6" css={{ textAlign: 'center' }}>
+                    No available items were found for this collection.
+                  </Text>
                 </Flex>
                 <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
-                  {copy.mintCtaClose}
+                  {copy.sweepCtaClose}
                 </Button>
               </Flex>
             ) : null}
+
             {!loading &&
-              orders.length > 0 &&
+              hasTokens &&
               maxItemAmount !== 0 &&
-              mintStep === MintStep.Idle && (
+              sweepStep === SweepStep.Idle && (
                 <Flex direction="column">
                   <Flex
                     direction="column"
@@ -317,24 +310,16 @@ export function MintModal({
                     {transactionError ? (
                       <ErrorWell error={transactionError} />
                     ) : null}
-                    <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
+                    <Flex direction="column" css={{ p: '$4', gap: 10 }}>
                       {token ? (
-                        <TokenInfo
-                          token={token}
-                          collection={collection}
-                          chain={currentChain}
-                        />
+                        <TokenInfo token={token} collection={collection} />
                       ) : (
-                        <CollectionInfo
-                          collection={collection}
-                          chain={currentChain}
-                        />
+                        <CollectionInfo collection={collection} />
                       )}
-
                       <Flex
                         align="center"
                         justify="between"
-                        css={{ gap: 24, '@bp1': { gap: '$6' } }}
+                        css={{ gap: 24, '@bp1': { gap: '$6' }, mt: '$1' }}
                       >
                         <Flex
                           direction="column"
@@ -354,7 +339,7 @@ export function MintModal({
                             css={{ width: '100%' }}
                           >
                             {formatNumber(maxQuantity)}{' '}
-                            {maxQuantity > 1 ? 'items' : 'item'} available
+                            {maxQuantity === 1 ? 'item' : 'items'} available
                           </Text>
                         </Flex>
                         <QuantitySelector
@@ -369,6 +354,23 @@ export function MintModal({
                           }}
                         />
                       </Flex>
+                      {itemAmount > 1 && averageUnitPrice ? (
+                        <Flex justify="end" css={{ gap: '$3' }}>
+                          <Flex align="center" css={{ gap: '$2' }}>
+                            <Text style="subtitle3" color="subtle">
+                              Avg Item Price
+                            </Text>
+                            <FormatCryptoCurrency
+                              chainId={chainId}
+                              amount={averageUnitPrice}
+                              address={paymentCurrency?.address}
+                              decimals={paymentCurrency?.decimals}
+                              symbol={paymentCurrency?.name}
+                              maximumFractionDigits={2}
+                            />
+                          </Flex>
+                        </Flex>
+                      ) : null}
                     </Flex>
                   </Flex>
                   <Flex direction="column" css={{ pb: '$2' }}>
@@ -385,7 +387,7 @@ export function MintModal({
                             backgroundColor: '$neutralBgHover',
                           },
                         }}
-                        onClick={() => setMintStep(MintStep.SelectPayment)}
+                        onClick={() => setSweepStep(SweepStep.SelectPayment)}
                       >
                         <Flex
                           justify="between"
@@ -430,20 +432,26 @@ export function MintModal({
                   {hasEnoughCurrency || !isConnected ? (
                     <Button
                       css={{ m: '$4' }}
-                      disabled={!hasEnoughCurrency && isConnected}
-                      onClick={mintTokens}
+                      disabled={
+                        !(selectedTokens.length > 0) ||
+                        (!hasEnoughCurrency && isConnected)
+                      }
+                      onClick={sweepTokens}
                     >
-                      {!isConnected ? copy.ctaConnect : copy.mintCtaBuy}
+                      {!isConnected
+                        ? copy.ctaConnect
+                        : selectedTokens.length > 0
+                        ? copy.sweepCtaBuy
+                        : copy.sweepCtaBuyDisabled}
                     </Button>
                   ) : (
-                    <Flex
-                      direction="column"
-                      align="center"
-                      css={{ px: '$3', gap: '$3' }}
-                    >
+                    <Flex direction="column" align="center" css={{ px: '$3' }}>
                       <Flex align="center">
                         <Text css={{ mr: '$3' }} color="error" style="body3">
                           Insufficient Balance
+                          {paymentTokens.length > 1
+                            ? ', select another token or add funds'
+                            : null}
                         </Text>
 
                         <FormatCryptoCurrency
@@ -460,22 +468,22 @@ export function MintModal({
                         onClick={() => {
                           window.open(addFundsLink, '_blank')
                         }}
-                        css={{ mb: '$3', width: '100%' }}
+                        css={{ width: '100%', my: '$4' }}
                       >
                         {disableJumperLink
-                          ? copy.mintCtaBuy
-                          : copy.mintCtaInsufficientFunds}
+                          ? copy.sweepCtaBuy
+                          : copy.sweepCtaInsufficientFunds}
                       </Button>
                     </Flex>
                   )}
                 </Flex>
               )}
 
-            {!loading && mintStep === MintStep.SelectPayment && (
+            {!loading && sweepStep === SweepStep.SelectPayment && (
               <Flex direction="column" css={{ py: 20 }}>
                 <Flex align="center" css={{ gap: '$2', px: '$4' }}>
                   <Button
-                    onClick={() => setMintStep(MintStep.Idle)}
+                    onClick={() => setSweepStep(SweepStep.Idle)}
                     color="ghost"
                     size="xs"
                     css={{ color: '$neutralSolidHover' }}
@@ -488,14 +496,14 @@ export function MintModal({
                   paymentTokens={paymentTokens}
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}
-                  goBack={() => setMintStep(MintStep.Idle)}
+                  goBack={() => setSweepStep(SweepStep.Idle)}
                   itemAmount={itemAmount}
                   chainId={modalChain?.id || 1}
                 />
               </Flex>
             )}
 
-            {!loading && mintStep === MintStep.Approving && (
+            {sweepStep === SweepStep.Approving && (
               <Flex direction="column">
                 <Box
                   css={{
@@ -574,7 +582,7 @@ export function MintModal({
                       />
                       <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                         <Loader />
-                        {copy.mintCtaAwaitingApproval}
+                        {copy.sweepCtaAwaitingApproval}
                       </Button>
                     </>
                   ) : null}
@@ -585,7 +593,7 @@ export function MintModal({
                       <SigninStep css={{ mt: 48, mb: '$4', gap: 20 }} />
                       <Button disabled={true} css={{ mt: '$4', width: '100%' }}>
                         <Loader />
-                        {copy.mintCtaAwaitingApproval}
+                        {copy.sweepCtaAwaitingApproval}
                       </Button>
                     </>
                   ) : null}
@@ -645,7 +653,7 @@ export function MintModal({
                             css={{ mt: '$4', width: '100%' }}
                           >
                             <Loader />
-                            {copy.mintCtaAwaitingApproval}
+                            {copy.sweepCtaAwaitingApproval}
                           </Button>
                         </Flex>
                       )}
@@ -655,7 +663,7 @@ export function MintModal({
               </Flex>
             )}
 
-            {!loading && mintStep === MintStep.Finalizing && (
+            {sweepStep === SweepStep.Finalizing && (
               <Flex direction="column">
                 <Box
                   css={{
@@ -708,66 +716,42 @@ export function MintModal({
                 <CurrentStepTxHashes currentStep={stepData?.currentStep} />
                 <Button disabled={true} css={{ m: '$4' }}>
                   <Loader />
-                  {copy.mintCtaAwaitingValidation}
+                  {copy.sweepCtaAwaitingValidation}
                 </Button>
               </Flex>
             )}
 
-            {!loading && mintStep === MintStep.Complete && (
+            {sweepStep === SweepStep.Complete && (
               <Flex
                 direction="column"
                 align="center"
-                css={{ width: '100%', py: '$4' }}
+                css={{ width: '100%', p: '$4' }}
               >
                 <Flex
                   direction="column"
                   align="center"
-                  css={{ py: '$5', gap: 24, maxWidth: '100%' }}
+                  css={{ px: '$4', py: '$5', gap: 24 }}
                 >
-                  <Text style="h5" css={{ px: '$5' }}>
-                    Your mint is complete!
-                  </Text>
-                  <MintImages
-                    stepData={stepData}
-                    tokenKind={collection?.contractKind}
-                  />
-                  <Flex align="center" css={{ gap: '$2', px: '$5' }}>
-                    <Box
-                      css={{
-                        color: failedMints ? '$errorAccent' : '$successAccent',
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={failedMints ? faCircleExclamation : faCheckCircle}
-                        fontSize={16}
-                      />
-                    </Box>
-                    <Text style="body1" css={{ textAlign: 'center' }}>
-                      {failedMints
-                        ? `${successfulMints} ${
-                            successfulMints > 1 ? 'items' : 'item'
-                          } minted, ${failedMints} ${
-                            failedMints > 1 ? 'items' : 'item'
-                          } failed`
-                        : `Successfully minted ${successfulMints} ${
-                            successfulMints > 1 ? 'items' : 'item'
-                          }`}
-                      {collection?.name ? (
-                        <>
-                          {' '}
-                          from
-                          <Text style="body1" color="accent">
-                            {' '}
-                            {collection?.name}
-                          </Text>
-                        </>
-                      ) : null}
-                    </Text>
-                  </Flex>
-                  <Flex
-                    direction="column"
-                    css={{ gap: '$2', mb: '$3', px: '$5' }}
+                  <Box
+                    css={{
+                      color: failedSales ? '$errorAccent' : '$successAccent',
+                    }}
                   >
+                    <FontAwesomeIcon
+                      icon={failedSales ? faCircleExclamation : faCheckCircle}
+                      fontSize={32}
+                    />
+                  </Box>
+                  <Text style="h5" css={{ textAlign: 'center' }}>
+                    {failedSales
+                      ? `${successfulSales} ${
+                          successfulSales > 1 ? 'items' : 'item'
+                        } purchased, ${failedSales} ${
+                          failedSales > 1 ? 'items' : 'item'
+                        } failed`
+                      : 'Congrats! Purchase was successful.'}
+                  </Text>
+                  <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
                     {stepData?.currentStep?.items?.map((item, itemIndex) => {
                       if (
                         Array.isArray(item?.txHashes) &&
@@ -797,7 +781,7 @@ export function MintModal({
                     })}
                   </Flex>
                 </Flex>
-                <Flex css={{ width: '100%', px: '$4' }}>
+                <Flex css={{ width: '100%' }}>
                   {!!onGoToToken ? (
                     <>
                       <Button
@@ -807,7 +791,7 @@ export function MintModal({
                         css={{ flex: 1 }}
                         color="ghost"
                       >
-                        {copy.mintCtaClose}
+                        {copy.sweepCtaClose}
                       </Button>
                       <Button
                         style={{ flex: 1 }}
@@ -820,9 +804,9 @@ export function MintModal({
                           })
                         }}
                       >
-                        {copy.mintCtaGoToToken.length > 0
-                          ? copy.mintCtaGoToToken
-                          : `View ${successfulMints > 1 ? 'Tokens' : 'Token'}`}
+                        {copy.sweepCtaGoToToken.length > 0
+                          ? copy.sweepCtaGoToToken
+                          : `View ${successfulSales > 1 ? 'Tokens' : 'Token'}`}
                       </Button>
                     </>
                   ) : (
@@ -830,7 +814,7 @@ export function MintModal({
                       css={{ width: '100%' }}
                       onClick={() => setOpen(false)}
                     >
-                      {copy.mintCtaClose}
+                      {copy.sweepCtaClose}
                     </Button>
                   )}
                 </Flex>
@@ -839,8 +823,8 @@ export function MintModal({
           </Modal>
         )
       }}
-    </MintModalRenderer>
+    </SweepModalRenderer>
   )
 }
 
-MintModal.Custom = MintModalRenderer
+SweepModal.Custom = SweepModalRenderer

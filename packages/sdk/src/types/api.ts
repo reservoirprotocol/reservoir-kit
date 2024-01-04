@@ -1790,6 +1790,8 @@ export interface definitions {
     metadataDisabled?: boolean;
     /** @default false */
     isSpam?: boolean;
+    /** @default false */
+    isMinting?: boolean;
     sampleImages?: definitions["sampleImages"];
     /** @description Total tokens within the collection. */
     tokenCount?: string;
@@ -2844,6 +2846,7 @@ export interface definitions {
     oneHourCount?: number;
     /** @enum {string} */
     mintType?: "free" | "paid";
+    mintStandard?: string;
     mintStatus?: string;
     mintStages?: definitions["Model136"];
     collectionVolume?: definitions["volume"];
@@ -5209,9 +5212,12 @@ export interface definitions {
     events?: definitions["sampleImages"];
   };
   Model423: {
-    syncDetails?: definitions["Model422"];
     fromBlock: number;
     toBlock: number;
+    syncDetails?: definitions["Model422"];
+    blocksPerBatch?: number;
+    /** @default true */
+    backfill?: boolean;
   };
   Model424: {
     path?: string;
@@ -5988,7 +5994,7 @@ export interface definitions {
     /** @description If true, all fills will be executed through the router (where possible) */
     forceRouter?: boolean;
     /** @description If passed, all fills will be executed through the trusted trusted forwarder (where possible) */
-    forceTrustedForwarder?: string;
+    forwarderChannel?: string;
     /** @description Currency to be used for purchases. */
     currency?: string;
     /** @description The chain id of the purchase currency */
@@ -6667,7 +6673,7 @@ export interface definitions {
      */
     forceRouter?: boolean;
     /** @description If passed, all fills will be executed through the trusted trusted forwarder (where possible) */
-    forceTrustedForwarder?: string;
+    forwarderChannel?: string;
     /** @description Optional custom gas settings. Includes base fee & priority fee in this limit. */
     maxFeePerGas?: string;
     /** @description Optional custom gas settings. */
@@ -9434,6 +9440,8 @@ export interface operations {
          */
         status?: string;
         sources?: string[] | string;
+        /** Filter to a particular order type. Must be one of `token`, `collection`, `attribute`, `custom`. Only valid when a maker is specified. */
+        orderType?: "token" | "collection" | "attribute" | "custom";
         /** If true, results will filter only Reservoir orders. */
         native?: boolean;
         /** If true, private orders are included in the response. */

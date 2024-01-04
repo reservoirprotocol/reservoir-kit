@@ -24,6 +24,7 @@ export default [
     paymentTokens: [
       ...reservoirChains.goerli.paymentTokens,
       {
+        chainId: 5,
         address: '0x68B7E050E6e2C7eFE11439045c9d49813C1724B8',
         symbol: 'phUSDC',
         name: 'phUSDC',
@@ -31,6 +32,7 @@ export default [
         coinGeckoId: 'usd-coin',
       },
       {
+        chainId: 5,
         address: '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844',
         symbol: 'DAI',
         name: 'Dai',

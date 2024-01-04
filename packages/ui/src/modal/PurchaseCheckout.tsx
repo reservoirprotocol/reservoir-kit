@@ -5,9 +5,9 @@ import {
   FormatCurrency,
   Img,
   Text,
-} from '../../primitives'
-import { useCollections, useTokens } from '../../hooks'
-import { PaymentToken } from '@reservoir0x/reservoir-sdk/src/utils/paymentTokens'
+} from '../primitives'
+import { useCollections, useTokens } from '../hooks'
+import { PaymentToken } from '@reservoir0x/reservoir-sdk'
 
 enum Size {
   SM,
@@ -25,7 +25,7 @@ type Props = {
   chainId?: number
 }
 
-export const CollectCheckout: FC<Props> = ({
+export const PurchaseCheckout: FC<Props> = ({
   collection,
   token,
   itemCount,
