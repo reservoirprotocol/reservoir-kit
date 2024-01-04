@@ -1,4 +1,11 @@
 
+## [v1.24.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/5663a9dcee1c7cf42ab6efaee04124f6061292ba) (2024-01-04)
+
+## [v1.23.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e12b0dd5b90b0a58c1d58f3dc743001a68cc390a) (2024-01-03)
+
+* Merge pull request #520 from reservoirprotocol/ted/finish-collect-button [6099e64e](https://github.com/reservoirprotocol/reservoir-kit/commit/6099e64eb45d29a2ef330b0bf393fee86edc7218)
+* Merge pull request #526 from reservoirprotocol/ted/update-cross-chain-max-item-logic [f629694a](https://github.com/reservoirprotocol/reservoir-kit/commit/f629694a20818a2c65009d23c7cc806c829e137f)
+
 ## [v1.23.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/362a7dc22bf610a55690706186e9e8abbb81e3cc) (2024-01-02)
 
 * ListModal & BidModal: Add max royaltybps option to placeBid & listToken methods [44a6b289](https://github.com/reservoirprotocol/reservoir-kit/commit/44a6b28969be509b75db1a4c7e9e7ea4900379e3)
