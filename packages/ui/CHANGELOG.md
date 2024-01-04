@@ -1,10 +1,14 @@
 
 ## [v1.24.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/5663a9dcee1c7cf42ab6efaee04124f6061292ba) (2024-01-04)
 
-## [v1.23.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e12b0dd5b90b0a58c1d58f3dc743001a68cc390a) (2024-01-03)
+* New SweepModal added
 
-* Merge pull request #520 from reservoirprotocol/ted/finish-collect-button [6099e64e](https://github.com/reservoirprotocol/reservoir-kit/commit/6099e64eb45d29a2ef330b0bf393fee86edc7218)
-* Merge pull request #526 from reservoirprotocol/ted/update-cross-chain-max-item-logic [f629694a](https://github.com/reservoirprotocol/reservoir-kit/commit/f629694a20818a2c65009d23c7cc806c829e137f)
+### Breaking Changes
+* CollectModal has now been removed in favor of the CollectButton 
+* BuyModal, MintModal: interfaces have been changed, please refer to the docs but in general we now require passing in the token as a complete token string (0xabc:1), where the first piece is a contract and the second is the token id delimited by a colon. The underlying logic has also changed to rely solely on path data rather than order data from the tokens api.
+
+## [v1.23.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e12b0dd5b90b0a58c1d58f3dc743001a68cc390a) (2024-01-03)
+* TokenMedia: improved media type detection
 
 ## [v1.23.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/362a7dc22bf610a55690706186e9e8abbb81e3cc) (2024-01-02)
 
