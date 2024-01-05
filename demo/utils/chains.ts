@@ -156,4 +156,7 @@ export default [
   {
     ...reservoirChains.scroll,
   },
+  {
+    ...reservoirChains.frameTestnet
+  }
 ]
