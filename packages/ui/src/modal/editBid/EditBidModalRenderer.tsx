@@ -62,8 +62,12 @@ type ChildrenProps = {
   contract?: string
   isOracleOrder: boolean
   isTokenBid: boolean
-  bidAmount: string
-  bidAmountUsd: number
+  quantity: number
+  setQuantity: React.Dispatch<React.SetStateAction<number>>
+  bidAmountPerUnit: string
+  totalBidAmount: number
+  totalBidAmountUsd: number
+  usdPrice: number | null
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   currency: NonNullable<
     NonNullable<ReturnType<typeof useBids>['data']>[0]['price']
@@ -83,7 +87,6 @@ type ChildrenProps = {
   royaltyBps?: number
   expirationOptions: ExpirationOption[]
   expirationOption: ExpirationOption
-  usdPrice: number
   steps: Execute['steps'] | null
   stepData: EditBidStepData | null
   exchange?: Exchange
@@ -91,7 +94,7 @@ type ChildrenProps = {
   collectionBidSupported: boolean
   partialBidSupported: boolean
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
-  setBidAmount: React.Dispatch<React.SetStateAction<string>>
+  setBidAmountPerUnit: React.Dispatch<React.SetStateAction<string>>
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setEditBidStep: React.Dispatch<React.SetStateAction<EditBidStep>>
   editBid: () => void
@@ -138,7 +141,10 @@ export const EditBidModalRenderer: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<EditBidStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
-  const [bidAmount, setBidAmount] = useState<string>('')
+
+  const [bidAmountPerUnit, setBidAmountPerUnit] = useState<string>('')
+  const [quantity, setQuantity] = useState(1)
+
   const [expirationOption, setExpirationOption] = useState<ExpirationOption>(
     expirationOptions[5]
   )
@@ -194,7 +200,12 @@ export const EditBidModalRenderer: FC<Props> = ({
   const exchange = useMemo(() => {
     const exchanges: Record<string, Exchange> =
       reservoirMarketplace?.exchanges || {}
-    const exchange = exchanges[bid?.kind as string]
+
+    const exchange = Object.values(exchanges).find(
+      (exchange) => exchange?.orderKind === bid?.kind
+    )
+    // const exchange = exchanges[bid?.kind as string]
+
     return exchange?.enabled ? exchange : undefined
   }, [reservoirMarketplace, bid])
 
@@ -216,17 +227,26 @@ export const EditBidModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (bid?.price?.amount?.decimal) {
-      setBidAmount(bid?.price?.amount?.decimal.toString())
+      setBidAmountPerUnit(bid?.price?.amount?.decimal.toString())
     }
-  }, [bid?.price])
+    if (bid?.quantityRemaining && bid?.quantityRemaining > 1) {
+      setQuantity(bid?.quantityRemaining)
+    }
+    //@ts-ignore
+    if (bid?.criteria?.kind == 'attribute' && bid?.criteria?.data.attribute) {
+      //@ts-ignore
+      setTrait(bid?.criteria?.data?.attribute)
+    }
+  }, [bid])
 
   const coinConversion = useCoinConversion(
     open && bid ? 'USD' : undefined,
     wrappedContractName
   )
-  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
+  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : null
 
-  const bidAmountUsd = +bidAmount * (usdPrice || 0)
+  const totalBidAmount = Number(bidAmountPerUnit) * Math.max(1, quantity)
+  const totalBidAmountUsd = totalBidAmount * (usdPrice || 0)
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -292,9 +312,9 @@ export const EditBidModalRenderer: FC<Props> = ({
   const token = tokens && tokens.length > 0 ? tokens[0] : undefined
 
   useEffect(() => {
-    if (bidAmount !== '') {
+    if (totalBidAmount !== 0) {
       const bid = parseUnits(
-        `${Number(bidAmount)}`,
+        `${totalBidAmount}`,
         wrappedBalance?.decimals || 18
       )
 
@@ -319,7 +339,7 @@ export const EditBidModalRenderer: FC<Props> = ({
       setHasEnoughWrappedCurrency(true)
       setAmountToWrap('')
     }
-  }, [bidAmount, balance, wrappedBalance])
+  }, [totalBidAmount, balance, wrappedBalance])
 
   useEffect(() => {
     const validAttributes = traits
@@ -331,21 +351,13 @@ export const EditBidModalRenderer: FC<Props> = ({
   }, [traits])
 
   useEffect(() => {
-    //@ts-ignore
-    if (bid?.criteria?.kind == 'attribute' && bid?.criteria?.data.attribute) {
-      //@ts-ignore
-      setTrait(bid?.criteria?.data?.attribute)
-    }
-  }, [bid])
-
-  useEffect(() => {
     if (!open) {
       setEditBidStep(EditBidStep.Edit)
       setExpirationOption(expirationOptions[3])
       setHasEnoughNativeCurrency(false)
       setHasEnoughWrappedCurrency(false)
       setAmountToWrap('')
-      setBidAmount('')
+      setBidAmountPerUnit('')
       setStepData(null)
       setTransactionError(null)
       setTrait(undefined)
@@ -409,11 +421,13 @@ export const EditBidModalRenderer: FC<Props> = ({
         .toString()
     }
 
+    const atomicBidAmount = parseUnits(
+      `${totalBidAmount}`,
+      currency?.decimals || 18
+    ).toString()
+
     const bid: BidData = {
-      weiPrice: parseUnits(
-        `${Number(bidAmount)}`,
-        wrappedBalance?.decimals || 18
-      ).toString(),
+      weiPrice: atomicBidAmount,
       orderbook: 'reservoir',
       orderKind: exchange.orderKind as any,
       attributeKey: trait?.key,
@@ -433,6 +447,10 @@ export const EditBidModalRenderer: FC<Props> = ({
 
     if (expirationTime) {
       bid.expirationTime = expirationTime
+    }
+
+    if (quantity > 1) {
+      bid.quantity = quantity
     }
 
     bid.options = {
@@ -510,7 +528,8 @@ export const EditBidModalRenderer: FC<Props> = ({
     rendererChain,
     expirationOption,
     trait,
-    bidAmount,
+    totalBidAmount,
+    quantity,
     wrappedBalance,
     wrappedContractAddress,
     nativeWrappedContractAddress,
@@ -528,8 +547,10 @@ export const EditBidModalRenderer: FC<Props> = ({
         contract,
         isOracleOrder,
         isTokenBid,
-        bidAmount,
-        bidAmountUsd,
+        quantity,
+        bidAmountPerUnit,
+        totalBidAmount,
+        totalBidAmountUsd,
         token,
         currency,
         collection,
@@ -554,8 +575,9 @@ export const EditBidModalRenderer: FC<Props> = ({
         traitBidSupported,
         partialBidSupported,
         collectionBidSupported,
+        setQuantity,
         setTrait,
-        setBidAmount,
+        setBidAmountPerUnit,
         setExpirationOption,
         setEditBidStep,
         editBid,
