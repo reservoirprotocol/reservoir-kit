@@ -25,6 +25,7 @@ export type EnhancedCurrency =
       currencyTotalFormatted?: string
       maxItems?: number
       capacityPerRequest?: bigint
+      maxPricePerItem?: number
     }
 
 const fetchNativeBalances = async (
