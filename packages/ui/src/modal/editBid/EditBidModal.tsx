@@ -579,7 +579,7 @@ export function EditBidModal({
                       </Button>
                     )}
                     {canPurchase && hasEnoughWrappedCurrency && (
-                      <Button onClick={() => editBid()} css={{ width: '100%' }}>
+                      <Button onClick={editBid} css={{ width: '100%' }}>
                         {copy.ctaConfirm}
                       </Button>
                     )}
@@ -624,7 +624,7 @@ export function EditBidModal({
                             <Button
                               css={{ flex: 1, maxHeight: 44 }}
                               disabled={!hasEnoughNativeCurrency}
-                              onClick={() => editBid()}
+                              onClick={editBid}
                             >
                               <Text style="h6" color="button" ellipsify>
                                 {copy.ctaConvertAutomatically.length > 0
@@ -738,7 +738,7 @@ export function EditBidModal({
                       >
                         {copy.ctaEditOffer}
                       </Button>
-                      <Button css={{ flex: 1 }} onClick={() => editBid()}>
+                      <Button css={{ flex: 1 }} onClick={editBid}>
                         {copy.ctaRetry}
                       </Button>
                     </Flex>

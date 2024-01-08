@@ -204,7 +204,6 @@ export const EditBidModalRenderer: FC<Props> = ({
     const exchange = Object.values(exchanges).find(
       (exchange) => exchange?.orderKind === bid?.kind
     )
-    // const exchange = exchanges[bid?.kind as string]
 
     return exchange?.enabled ? exchange : undefined
   }, [reservoirMarketplace, bid])
