@@ -43,6 +43,9 @@ import ZksyncIconColor from '../img/chains/ZksyncIconColor'
 import ZoraIconDark from '../img/chains/ZoraIconDark'
 import ZoraIconLight from '../img/chains/ZoraIconLight'
 import ZoraIconColor from '../img/chains/ZoraIconColor'
+import FrameIconDark from '../img/chains/FrameIconDark'
+import FrameIconLight from '../img/chains/FrameIconLight'
+import FrameIconColor from '../img/chains/FrameIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8Testnet.id]: {
@@ -141,9 +144,9 @@ const chainIcons = {
     color: <ZoraIconColor />,
   },
   [reservoirChains.frameTestnet.id]: {
-    light: <MainnetIconDark />,
-    dark: <MainnetIconLight />,
-    color: null,
+    light: <FrameIconDark />,
+    dark: <FrameIconLight />,
+    color: <FrameIconColor />,
   },
 }
 
