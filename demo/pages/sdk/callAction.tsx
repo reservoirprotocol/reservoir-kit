@@ -4,7 +4,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
 import ChainSwitcher from 'components/ChainSwitcher'
-import { ReservoirClient } from '@reservoir0x/reservoir-sdk'
+import { ReservoirClient, prepareCallTransaction } from '@reservoir0x/reservoir-sdk'
 import { useWalletClient } from 'wagmi'
 
 const CallActionPage: NextPage = () => {
@@ -82,7 +82,10 @@ const CallActionPage: NextPage = () => {
         client?.actions.call({
           wallet,
           txs: txs as any,
-          toChainId
+          toChainId,
+          onProgress: (steps, fees) => {
+            console.log(steps, fees)
+          }
         })
       }}>
         Execute Transactions

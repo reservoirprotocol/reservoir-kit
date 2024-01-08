@@ -23,7 +23,7 @@ switch (chainId) {
   case 1:
   case 5: {
     wrappedSymbol = 'WETH'
-    wrappedContract = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'
+    wrappedContract = '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6'
     break
   }
   case 137: {
@@ -36,7 +36,7 @@ switch (chainId) {
 const BidPage: NextPage = () => {
   const router = useRouter()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
-  const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
+  const [tokenId, setTokenId] = useState<string | undefined>(DEFAULT_TOKEN_ID)
   const [orderKind, setOrderKind] = useState<string | undefined>(undefined)
   const [chainId, setChainId] = useState('')
   const [attributeKey, setAttributeKey] = useState('')
@@ -104,7 +104,15 @@ const BidPage: NextPage = () => {
         <input
           type="text"
           value={tokenId}
-          onChange={(e) => setTokenId(e.target.value)}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setTokenId(undefined)
+            }
+            else {
+              setTokenId(e.target.value) 
+            }
+            
+          }}
         />
       </div>
       <div>

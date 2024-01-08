@@ -10,19 +10,38 @@ type Props = {
   chainId?: number
   height?: number
   css?: CSS
+  color?: boolean
 }
 
-const ChainIcon: FC<Props> = ({ chainId, css = {}, height = 14 }) => {
+const ChainIcon: FC<Props> = ({ chainId, css = {}, height = 14, color }) => {
   const themeContext = useContext(ThemeContext)
-  const iconTheme: ReservoirKitThemeContext['assets']['chainIcon']['value'] =
+
+  if (!chainId) {
+    return null
+  }
+
+  const chainIconConfig = chainIcons[chainId]
+  let iconTheme: ReservoirKitThemeContext['assets']['chainIcon']['value'] =
     themeContext && (themeContext as any)
       ? themeContext['assets']['chainIcon']['value']
       : 'dark'
 
-  const icon = chainId ? chainIcons[chainId][iconTheme] : null
+  let icon: JSX.Element | null = chainIconConfig[iconTheme]
+
+  if (color) {
+    icon = chainIconConfig.color
+  }
 
   return icon ? (
-    <Box css={{ display: 'flex', height: height, ...css }}>{icon}</Box>
+    <Box
+      css={{
+        display: 'flex',
+        height: height,
+        ...css,
+      }}
+    >
+      {icon}
+    </Box>
   ) : null
 }
 

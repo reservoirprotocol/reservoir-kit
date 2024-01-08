@@ -1,13 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { FC, useEffect, useState } from 'react'
-import {
-  Box,
-  Flex,
-  FormatCryptoCurrency,
-  Grid,
-  Input,
-  Text,
-} from '../../primitives'
+import { Flex, FormatCryptoCurrency, Input, Text } from '../../primitives'
 import ScrollArea from '../../primitives/ScrollArea'
 import { Trait } from './BidModalRenderer'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
@@ -54,14 +47,19 @@ const AttributeSelector: FC<Props> = ({
   if (!attributes) return null
 
   return (
-    <Box
+    <Flex
+      direction="column"
       css={{
-        maxWidth: 500,
+        width: '100%',
+        maxWidth: 484,
+        maxHeight: 250,
+        '@bp1': { maxHeight: 500 },
         zIndex: 1000,
         padding: '$4',
         overflowY: 'auto',
         borderRadius: '$space$2',
-        backgroundColor: '$popoverBackground',
+        backgroundColor: '$contentBackground',
+        border: '1px solid $borderColor',
       }}
     >
       <Input
@@ -74,43 +72,54 @@ const AttributeSelector: FC<Props> = ({
           <FontAwesomeIcon icon={faMagnifyingGlass} width={16} height={16} />
         }
       />
-      <ScrollArea css={{ minWidth: '80vw', '@bp1': { minWidth: 468 } }}>
+      <Flex
+        justify="between"
+        align="center"
+        css={{
+          borderBottom: '1px solid $borderColor',
+          pb: '$2',
+          mb: '$4',
+          width: '100%',
+        }}
+      >
+        <Text color="subtle" style="subtitle3">
+          Trait
+        </Text>
+        <Text color="subtle" style="subtitle3">
+          Floor
+        </Text>
+      </Flex>
+      <ScrollArea
+        css={{ width: '100%', minWidth: '80vw', '@bp1': { minWidth: 468 } }}
+      >
         {results?.map(({ key, values }) => {
           if (values?.length === 0) return null
 
           return (
-            <Box key={key} css={{ paddingRight: '$4', marginBottom: 24 }}>
-              <Text
-                style="subtitle1"
-                color="accent"
-                as="div"
-                css={{ marginBottom: '$4' }}
-              >
+            <Flex
+              direction="column"
+              key={key}
+              css={{ gap: '$2', marginBottom: '$3', width: '100%' }}
+            >
+              <Text style="subtitle2" color="accent" as="div">
                 {key}
               </Text>
-              <Grid
-                css={{
-                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                  gap: '$2',
-                  '@bp1': {
-                    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                  },
-                }}
-              >
+              <Flex direction="column" css={{ width: '100%' }}>
                 {values?.map(({ value, count, floorAskPrice }) => (
-                  <Box
+                  <Flex
                     key={value}
+                    justify="between"
+                    align="center"
                     css={{
-                      display: 'grid',
-                      alignContent: 'space-between',
                       cursor: 'pointer',
-                      backgroundColor: '$contentBackground',
                       borderRadius: '$space$2',
-                      $$shadowColor: '$colors$gray7',
-                      boxShadow: 'box-shadow: 0px 2px 16px $$shadowColor',
-                      border: '1px solid $borderColor',
                       width: '100%',
-                      padding: '12px 16px',
+                      py: '$3',
+                      backgroundColor: '$contentBackground',
+                      transition: 'background-color 0.25s ease-in-out',
+                      '&:hover': {
+                        backgroundColor: '$neutralBgHover',
+                      },
                     }}
                     as="button"
                     onClick={() => {
@@ -126,48 +135,34 @@ const AttributeSelector: FC<Props> = ({
                       justify="between"
                       css={{
                         gap: '$2',
-                        marginBottom: '$1',
                       }}
                     >
-                      <Text
-                        css={{
-                          maxWidth: 85,
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          textAlign: 'start',
-                        }}
-                        style="subtitle3"
-                      >
+                      <Text ellipsify style="subtitle2">
                         {value}
                       </Text>
-                      <Box css={{ flex: 'none' }}>
-                        <FormatCryptoCurrency
-                          chainId={chainId}
-                          amount={floorAskPrice?.amount?.decimal}
-                          logoWidth={10}
-                          maximumFractionDigits={1}
-                          textStyle="subtitle3"
-                        />
-                      </Box>
-                    </Flex>
-                    <Flex justify="between" css={{ gap: '$2' }}>
-                      <Text style="body3" color="subtle">
+                      <Text style="body2" color="subtle">
                         {count && tokenCount
                           ? `${Math.round((count / tokenCount) * 100)}%`
                           : '-'}
                       </Text>
-                      <Text style="body3" color="subtle">
-                        floor
-                      </Text>
                     </Flex>
-                  </Box>
+
+                    <FormatCryptoCurrency
+                      chainId={chainId}
+                      amount={floorAskPrice?.amount?.decimal}
+                      logoWidth={10}
+                      maximumFractionDigits={1}
+                      textStyle="subtitle2"
+                      css={{ pr: '$4' }}
+                    />
+                  </Flex>
                 ))}
-              </Grid>
-            </Box>
+              </Flex>
+            </Flex>
           )
         })}
       </ScrollArea>
-    </Box>
+    </Flex>
   )
 }
 

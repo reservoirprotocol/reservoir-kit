@@ -5,7 +5,7 @@ import React, {
   SetStateAction,
   useEffect,
 } from 'react'
-import { WalletClient } from 'viem'
+import { WalletClient, formatUnits } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Modal } from '../Modal'
@@ -39,17 +39,17 @@ import {
 import { formatNumber } from '../../lib/numbers'
 import { Path } from '../../components/cart/CartCheckoutModal'
 import QuantitySelector from '../QuantitySelector'
-import { SelectPaymentToken } from '../SelectPaymentToken'
 import { CurrentStepTxHashes } from '../CurrentStepTxHashes'
 import SigninStep from '../SigninStep'
 import { ApprovePurchasingCollapsible } from '../ApprovePurchasingCollapsible'
-import { MintImages } from '../collect/mint/MintImages'
+import { MintImages } from './MintImages'
 import { truncateAddress } from '../../lib/truncate'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
-import { TokenInfo } from '../collect/TokenInfo'
-import { CollectionInfo } from '../collect/CollectionInfo'
-import { CollectCheckout } from '../collect/CollectCheckout'
-import { PaymentDetails } from '../PaymentDetails'
+import { TokenInfo } from '../TokenInfo'
+import { CollectionInfo } from '../CollectionInfo'
+import { PurchaseCheckout } from '../PurchaseCheckout'
+import { PaymentDetails } from '../../common/PaymentDetails'
+import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
 import { Dialog } from '../../primitives/Dialog'
 
 export type MintCallbackData = {
@@ -142,14 +142,13 @@ export function MintModal({
     >
       {({
         loading,
+        isFetchingPath,
         collection,
         token,
         orders,
-        total,
         totalIncludingFees,
         feeOnTop,
         feeUsd,
-        gasCost,
         paymentTokens,
         paymentCurrency,
         setPaymentCurrency,
@@ -372,16 +371,7 @@ export function MintModal({
                       </Flex>
                     </Flex>
                   </Flex>
-                  <Flex
-                    direction="column"
-                    css={{ pt: '$4', pb: '$2', gap: '$4' }}
-                  >
-                    <PaymentDetails
-                      chainId={chainId}
-                      paymentCurrency={paymentCurrency}
-                      feeOnTop={feeOnTop}
-                      feeUsd={feeUsd}
-                    />
+                  <Flex direction="column" css={{ pb: '$2' }}>
                     {paymentTokens.length > 1 ? (
                       <Flex
                         direction="column"
@@ -390,7 +380,7 @@ export function MintModal({
                           py: '$3',
                           px: '$4',
                           borderRadius: '$3',
-                          borderTop: '1px solid $neutralBorder',
+                          borderBottom: '1px solid $neutralBorder',
                           '&:hover': {
                             backgroundColor: '$neutralBgHover',
                           },
@@ -428,6 +418,14 @@ export function MintModal({
                         </Flex>
                       </Flex>
                     ) : null}
+                    <PaymentDetails
+                      chainId={chainId}
+                      paymentCurrency={paymentCurrency}
+                      feeOnTop={feeOnTop}
+                      feeUsd={feeUsd}
+                      loading={isFetchingPath}
+                      css={{ pt: '$4' }}
+                    />
                   </Flex>
                   {hasEnoughCurrency || !isConnected ? (
                     <Button
@@ -457,21 +455,6 @@ export function MintModal({
                           textStyle="body3"
                         />
                       </Flex>
-                      {gasCost > 0n && (
-                        <Flex align="center" css={{ mt: '$1' }}>
-                          <Text css={{ mr: '$3' }} color="error" style="body3">
-                            Estimated Gas Cost
-                          </Text>
-                          <FormatCryptoCurrency
-                            chainId={chainId}
-                            amount={gasCost}
-                            address={paymentCurrency?.address}
-                            decimals={paymentCurrency?.decimals}
-                            symbol={paymentCurrency?.symbol}
-                            textStyle="body3"
-                          />
-                        </Flex>
-                      )}
                       <Button
                         disabled={disableJumperLink}
                         onClick={() => {
@@ -499,14 +482,15 @@ export function MintModal({
                   >
                     <FontAwesomeIcon icon={faChevronLeft} width={10} />
                   </Button>
-                  <Text style="subtitle2">Select A Token</Text>
+                  <Text style="subtitle2">Select Payment Method</Text>
                 </Flex>
-                <SelectPaymentToken
+                <SelectPaymentTokenv2
                   paymentTokens={paymentTokens}
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}
                   goBack={() => setMintStep(MintStep.Idle)}
                   itemAmount={itemAmount}
+                  chainId={modalChain?.id || 1}
                 />
               </Flex>
             )}
@@ -519,14 +503,20 @@ export function MintModal({
                     borderBottom: '1px solid $neutralBorder',
                   }}
                 >
-                  <CollectCheckout
+                  <PurchaseCheckout
                     chainId={chainId}
                     collection={collection}
                     token={token}
                     itemCount={itemAmount}
-                    totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+                    totalPrice={
+                      (paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop
+                    }
                     currency={paymentCurrency}
-                    usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
+                    usdTotalFormatted={formatUnits(
+                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+                        (paymentCurrency?.usdPriceRaw || 0n),
+                      (paymentCurrency?.decimals || 18) + 6
+                    )}
                   />
                 </Box>
                 <Flex
@@ -673,14 +663,20 @@ export function MintModal({
                     borderBottom: '1px solid $neutralBorder',
                   }}
                 >
-                  <CollectCheckout
+                  <PurchaseCheckout
                     chainId={chainId}
                     collection={collection}
                     token={token}
                     itemCount={itemAmount}
-                    totalPrice={paymentCurrency?.currencyTotalRaw || 0n}
+                    totalPrice={
+                      (paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop
+                    }
                     currency={paymentCurrency}
-                    usdTotalFormatted={paymentCurrency?.usdTotalFormatted}
+                    usdTotalFormatted={formatUnits(
+                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+                        (paymentCurrency?.usdPriceRaw || 0n),
+                      (paymentCurrency?.decimals || 18) + 6
+                    )}
                   />
                 </Box>
                 <Flex

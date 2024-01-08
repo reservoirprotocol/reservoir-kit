@@ -7,6 +7,7 @@ import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import { PrivyConnectButton } from 'components/PrivyConnectButton'
 import ChainSwitcher from 'components/ChainSwitcher'
+import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -18,8 +19,7 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 
 const BuyPage: NextPage = () => {
   const router = useRouter()
-  const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
-  const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
+  const [token, setToken] = useState(`${DEFAULT_COLLECTION_ID}:${DEFAULT_TOKEN_ID}`)
   const [orderId, setOrderId] = useState('')
   const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
@@ -29,6 +29,7 @@ const BuyPage: NextPage = () => {
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
   const { login } = usePrivy();
+  const collectionId = token?.split(':')[0]
 
   return (
     <div
@@ -46,19 +47,11 @@ const BuyPage: NextPage = () => {
       <PrivyConnectButton />
 
       <div>
-        <label>Collection Id: </label>
+        <label>Token: </label>
         <input
           type="text"
-          value={collectionId}
-          onChange={(e) => setCollectionId(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Token Id: </label>
-        <input
-          type="text"
-          value={tokenId}
-          onChange={(e) => setTokenId(e.target.value)}
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
         />
       </div>
       <div>
@@ -128,6 +121,32 @@ const BuyPage: NextPage = () => {
       </div>
 
       <BuyModal
+      creditCardCheckoutButton={
+<CrossmintPayButton
+style={{
+  width: '100%',
+}}
+        clientId=""
+        projectId=""
+        collectionId={collectionId}
+        environment='staging'
+        emailTo={"USER_EMAIL_"}  // OPTIONAL: provide if you want to specify the exact destination
+        mintTo={"OPTIONAL_DESTINATION_WALLET_"}  // OPTIONAL: provide if you want to specify the exact destination
+        checkoutProps={{
+          display: "same-tab",  // "same-tab" | "new-tab" | "popup"
+          delivery: 'custodial',
+          paymentMethods: ["ETH", "fiat"],
+        }}
+        mintConfig={{
+          tokenId: '',
+          type: "erc-721",
+          quantity: "_NUMBER_OF_NFTS_",
+          totalPrice: "_PRICE_IN_NATIVE_TOKEN_"
+          // your custom minting arguments...
+        }}
+        />
+
+      }
         chainId={Number(chainId)}
         trigger={
           <button
@@ -146,8 +165,7 @@ const BuyPage: NextPage = () => {
             Buy Now
           </button>
         }
-        collectionId={collectionId}
-        tokenId={tokenId}
+        token={token}
         orderId={orderId}
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}

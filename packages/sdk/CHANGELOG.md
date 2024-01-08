@@ -1,4 +1,29 @@
 
+## [v1.12.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0048f8b70f3f1c3b0055289093fc7c61047f8faa) (2024-01-04)
+
+## [v1.12.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/dec1a3840285b66639e78cb23fb604fa5eaee963) (2024-01-04)
+
+## [v1.12.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b6c67326a1bf3daa6cd3b23c0d81d920aac58a31) (2023-12-21)
+
+## [v1.12.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/cbac85c9d8bdba25ca9aeeb0c532cb0ba270b10f) (2023-12-21)
+
+## [v1.12.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e7678c150ce7fe600778da37fe434300b558a6b9) (2023-12-20)
+
+* Merge pull request #519 from reservoirprotocol/pedro/grwth-3690-prepare-custom-params-sdk-util-function [567b6238](https://github.com/reservoirprotocol/reservoir-kit/commit/567b623879f1e6176bdced0e70115eb7b0f473d4)
+
+## [v1.12.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8c72817d3e019bb6f1d5646f2443cfdf579f60b2) (2023-12-19)
+
+### Breaking Changes:
+* Call action onProgress now includes fees, using precheck will now return the full data object as returned from the api.
+
+## [v1.11.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1da0f5acba4f7dc84b2a6e5dde11f0dcc74cb1c6) (2023-12-15)
+
+## [v1.11.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0c46be425694f97c1f32f46844eb0ac18a1fc913) (2023-12-14)
+
+## [v1.11.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/c9474622b720c369249b9e224400facf0f9d2fda) (2023-12-13)
+
+* Mint Error Handling [b3f4552b](https://github.com/reservoirprotocol/reservoir-kit/commit/b3f4552b322dc4a3c1ffd27edc79151550e7e05f)
+
 ## [v1.10.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1946f746a78de48c8374370892358a3bb2cacbd6) (2023-12-04)
 
 * Sync Api [c1cbf47c](https://github.com/reservoirprotocol/reservoir-kit/commit/c1cbf47c48066da8d2cbb50f5c40e5c3c192c8bf)
