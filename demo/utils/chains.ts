@@ -142,6 +142,9 @@ export default [
     }]
   },
   {
+    ...reservoirChains.mumbai,
+  },
+  {
     ...reservoirChains.linea,
   },
   {

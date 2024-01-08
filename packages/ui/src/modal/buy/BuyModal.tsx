@@ -31,7 +31,12 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
-import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import {
+  Execute,
+  ReservoirWallet,
+  executePaperSteps,
+  handlePaperSteps,
+} from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
@@ -71,6 +76,7 @@ const ModalCopy = {
 
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
+  creditCardCheckoutComponent?: JSX.Element
   enableCreditCardCheckout?: boolean
   tokenId?: string
   collectionId?: string
@@ -135,7 +141,7 @@ export function BuyModal({
   onClose,
   onGoToToken,
   onPointerDownOutside,
-  enableCreditCardCheckout,
+  creditCardCheckoutComponent,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
   const [open, setOpen] = useFallbackState(
@@ -155,7 +161,6 @@ export function BuyModal({
     : currentChain
 
   const providerOptions = useContext(ProviderOptionsContext)
-  const theme = useContext(ThemeContext)
 
   return (
     <BuyModalRenderer
@@ -253,21 +258,16 @@ export function BuyModal({
 
         useEffect(() => {
           if (open) {
-            /**
-             * Create a mock element
-             */
             const mockElementOne = window.document.createElement('div')
-            const mockElementTwo = window.document.createElement('div')
 
             mockElementOne.style.fontFamily = 'var(--rk-fonts-body)'
             mockElementOne.style.color = 'var(--rk-colors-textColor)'
-            mockElementTwo.style.backgroundColor =
+            mockElementOne.style.backgroundColor =
               'var(--rk-colors-inputBackground)'
             mockElementOne.style.borderRadius = 'var(--rk-radii-borderRadius)'
 
             window.document.body.appendChild(mockElementOne)
-            window.document.body.appendChild(mockElementTwo)
-            console.log(window.getComputedStyle(mockElementOne).borderRadius)
+
             setStylingOptions({
               fontFamily: window.getComputedStyle(mockElementOne).fontFamily,
               colorBackground:
@@ -278,11 +278,66 @@ export function BuyModal({
                 window.getComputedStyle(mockElementOne).borderRadius
               ),
               inputBackgroundColor:
-                window.getComputedStyle(mockElementTwo).backgroundColor,
+                window.getComputedStyle(mockElementOne).backgroundColor,
               inputBorderColor: 'transparent',
             })
+
+            window.document.body.removeChild(mockElementOne)
           }
         }, [open])
+
+        const CreditCardCheckoutComponent = React.useMemo(() => {
+          if (!creditCardCheckoutComponent) return undefined
+
+          /**
+           * Check for a specific prop in the component to determine the provider
+           */
+          const isPaperCheckoutComponent =
+            creditCardCheckoutComponent?.props?.onPaymentSuccess
+
+          if (isPaperCheckoutComponent !== undefined) {
+            /**
+             * We clone the element so that we can modify wrap the props and then return a memoized version
+             * of it for performance reasons.
+             */
+            return React.cloneElement(creditCardCheckoutComponent, {
+              /**
+               * Set the styling by extending reservoir kits themeing
+               */
+              options: stylingOptions,
+              /**
+               * We wrap the callback in our own callback so that the developer can still get the events.
+               */
+              onPaymentSuccess: (event: {
+                id: string
+                transactionId: string
+              }) => {
+                executePaperSteps(
+                  event.transactionId,
+                  creditCardCheckoutComponent?.props?.configs?.contractId,
+                  (...args) =>
+                    handlePaperSteps(
+                      ...args,
+                      (tokens) => {
+                        /**
+                         * Map the tokens in here to reservoir standards so that we can best display the result
+                         */
+                      },
+                      setBuyStep
+                    )
+                )
+                /**
+                 * Here we invoke the original method in the passed in component.
+                 * This is so that the developer can still get the events and handle them elsewhere if needed.
+                 */
+                creditCardCheckoutComponent.props.onPaymentSuccess(event)
+              },
+            } as ComponentProps<typeof CheckoutWithCard>)
+          }
+
+          return undefined
+        }, [creditCardCheckoutComponent, stylingOptions])
+
         return (
           <Modal
             trigger={trigger}
@@ -579,7 +634,7 @@ export function BuyModal({
                       </Button>
                     </Flex>
                   )}
-                  {enableCreditCardCheckout && (
+                  {creditCardCheckoutComponent && (
                     <Button
                       onClick={() => setBuyStep(BuyStep.CreditCardCheckout)}
                       css={{ width: '100%' }}
@@ -592,56 +647,36 @@ export function BuyModal({
               </Flex>
             )}
 
-            {buyStep === BuyStep.CreditCardCheckout && !loading && (
-              <Flex direction="column">
-                <TokenLineItem
-                  chain={modalChain}
-                  tokenDetails={token}
-                  collection={collection}
-                  usdPrice={paymentCurrency?.usdTotalFormatted}
-                  price={quantity > 1 ? averageUnitPrice : price}
-                  currency={paymentCurrency}
-                  css={{ border: 0 }}
-                  priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
-                  showRoyalties={true}
-                />
-                <Flex
-                  align="center"
-                  justify="center"
-                  css={{
-                    padding: '$3',
-                    width: '100%',
-                    'div iframe': {
-                      border: 'none',
-                    },
-                  }}
-                >
-                  <CheckoutWithCard
-                    options={stylingOptions}
-                    configs={{
-                      contractId: '914d6c3b-1f67-45e5-9694-c4170b2c868b',
-                      walletAddress:
-                        '0xc8186a3044D311eec1C1b57342Aaa290F6d90Aa5',
-                      mintMethod: {
-                        name: 'claimTo',
-                        args: {
-                          _to: '$WALLET',
-                          _quantity: '$QUANTITY',
-                          _tokenId: 0,
-                        },
-                        payment: {
-                          currency: 'MATIC',
-                          value: '0.0001  * $QUANTITY',
-                        },
+            {CreditCardCheckoutComponent &&
+              buyStep === BuyStep.CreditCardCheckout &&
+              !loading && (
+                <Flex direction="column">
+                  <TokenLineItem
+                    chain={modalChain}
+                    tokenDetails={token}
+                    collection={collection}
+                    usdPrice={paymentCurrency?.usdTotalFormatted}
+                    price={quantity > 1 ? averageUnitPrice : price}
+                    currency={paymentCurrency}
+                    css={{ border: 0 }}
+                    priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
+                    showRoyalties={true}
+                  />
+                  <Flex
+                    align="center"
+                    justify="center"
+                    css={{
+                      padding: '$3',
+                      width: '100%',
+                      'div iframe': {
+                        border: 'none',
                       },
                     }}
-                    onPaymentSuccess={(result) => {
-                      console.log('Payment successful:', result)
-                    }}
-                  />
+                  >
+                    {CreditCardCheckoutComponent}
+                  </Flex>
                 </Flex>
-              </Flex>
-            )}
+              )}
 
             {buyStep === BuyStep.Approving && token && (
               <Flex direction="column">

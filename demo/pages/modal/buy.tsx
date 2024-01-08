@@ -7,6 +7,7 @@ import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import ChainSwitcher from 'components/ChainSwitcher'
 import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
+import { CheckoutWithCard } from '@paperxyz/react-client-sdk'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -30,6 +31,7 @@ const BuyPage: NextPage = () => {
     useState(NORMALIZE_ROYALTIES)
   const { openConnectModal } = useConnectModal()
 
+  
   return (
     <div
       style={{
@@ -128,7 +130,23 @@ const BuyPage: NextPage = () => {
       </div>
 
       <BuyModal
-      enableCreditCardCheckout
+      creditCardCheckoutComponent={
+      <CheckoutWithCard
+        configs={{
+          contractId: '33607f4c-7924-41b0-85da-a19dbb79f597',
+          walletAddress:
+            '0xc8186a3044D311eec1C1b57342Aaa290F6d90Aa5',
+            contractArgs: {  nfts: [ 
+              { token: `${collectionId}:${tokenId}`, normalizeRoyalties: NORMALIZE_ROYALTIES, marketplace: 'opensea' }
+            ]}
+        }}
+        onError={(error) => {
+          console.log(error);
+        }}
+        onPaymentSuccess={(result) => {
+          console.log('Payment successful:', result)
+        }}
+      />}
         chainId={Number(chainId)}
         trigger={
           <button

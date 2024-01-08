@@ -3,6 +3,8 @@ import { APIError } from './request'
 
 export const axios = _axios.create()
 
+export const isAxiosError = _axios.isAxiosError
+
 axios.interceptors.response.use(
   (_res: AxiosResponse) => {
     if (_res.headers['Deprecation'] === 'true') {
