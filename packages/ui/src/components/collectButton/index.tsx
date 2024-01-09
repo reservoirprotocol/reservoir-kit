@@ -113,6 +113,7 @@ export function CollectButton({
                   decimals={sweepPriceData?.currency?.decimals}
                   maximumFractionDigits={4}
                   textStyle="h6"
+                  css={{ color: '$buttonTextColor' }}
                 />
                 {sweepSymbol}
               </Button>

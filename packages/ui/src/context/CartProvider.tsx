@@ -43,7 +43,7 @@ type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
   paths['/orders/asks/v5']['get']['responses']['200']['schema']
 type Token = NonNullable<ReturnType<typeof useTokens>['data'][0]>
-type TokensSchema = paths['/tokens/v6']['get']['responses']['200']['schema']
+type TokensSchema = paths['/tokens/v7']['get']['responses']['200']['schema']
 type FloorAsk = NonNullable<NonNullable<Token['market']>['floorAsk']>
 type CartItemPrice = FloorAsk['price']
 type BuyTokenOptions = Parameters<
@@ -375,9 +375,9 @@ function cartStore({
       const reservoirChain = client?.chains.find(
         (chain) => chain.id === chainId
       )
-      const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v6`)
+      const url = new URL(`${reservoirChain?.baseApiUrl}/tokens/v7`)
 
-      const query: paths['/tokens/v6']['get']['parameters']['query'] = {
+      const query: paths['/tokens/v7']['get']['parameters']['query'] = {
         tokens: tokenIds,
         limit: 100,
         includeDynamicPricing: true,
