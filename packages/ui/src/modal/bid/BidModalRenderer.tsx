@@ -115,7 +115,7 @@ type ChildrenProps = {
   setExpirationOption: React.Dispatch<React.SetStateAction<ExpirationOption>>
   setTrait: React.Dispatch<React.SetStateAction<Trait>>
   trait: Trait
-  placeBid: (options?: { quantity?: number }) => void
+  placeBid: (options?: { royaltyBps?: number }) => void
 }
 
 type Props = {
@@ -456,174 +456,186 @@ export const BidModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
-  const placeBid = useCallback(async () => {
-    if (!wallet) {
-      const error = new Error('Missing a wallet/signer')
-      setTransactionError(error)
-      throw error
-    }
-
-    let activeWalletChain = getNetwork().chain
-    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
-      activeWalletChain = await switchNetwork({
-        chainId: rendererChain?.id as number,
-      })
-    }
-
-    if (rendererChain?.id !== activeWalletChain?.id) {
-      const error = new Error(`Mismatching chainIds`)
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!tokenId && !collectionId) {
-      const error = new Error('Missing tokenId and collectionId')
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!client) {
-      const error = new Error('ReservoirClient was not initialized')
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!tokenId && !collectionBidSupported) {
-      const error = new Error(
-        'Collection bids are not supported for this collection'
-      )
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!exchange) {
-      const error = new Error('Missing Exchange')
-      setTransactionError(error)
-      throw error
-    }
-
-    setBidStep(BidStep.Offering)
-    setTransactionError(null)
-    setBidData(null)
-
-    const atomicBidAmount = parseUnits(
-      `${totalBidAmount}`,
-      currency?.decimals || 18
-    ).toString()
-
-    const bid: BidData = {
-      weiPrice: atomicBidAmount,
-      orderbook: 'reservoir',
-      orderKind:
-        orderKind || (exchange?.orderKind as BidData['orderKind']) || 'seaport',
-      attributeKey: traitBidSupported ? trait?.key : undefined,
-      attributeValue: traitBidSupported ? trait?.value : undefined,
-    }
-
-    if (feesBps && feesBps?.length > 0) {
-      bid.marketplaceFees = feesBps
-    } else if (!feesBps) {
-      delete bid.fees
-      delete bid.marketplaceFees
-    }
-
-    if (currency) {
-      bid.currency = currency.contract
-    }
-
-    if (tokenId && collectionId) {
-      const contract = collectionId ? collectionId?.split(':')[0] : undefined
-      bid.token = `${contract}:${tokenId}`
-    } else if (collectionId) {
-      bid.collection = collectionId
-    }
-
-    if (expirationOption.relativeTime) {
-      if (expirationOption.relativeTimeUnit) {
-        bid.expirationTime = dayjs()
-          .add(expirationOption.relativeTime, expirationOption.relativeTimeUnit)
-          .unix()
-          .toString()
-      } else {
-        bid.expirationTime = `${expirationOption.relativeTime}`
+  const placeBid = useCallback(
+    async (options?: { royaltyBps?: number }) => {
+      if (!wallet) {
+        const error = new Error('Missing a wallet/signer')
+        setTransactionError(error)
+        throw error
       }
-    }
 
-    if (oracleEnabled) {
-      bid.options = {
-        [exchange.orderKind as string]: {
-          useOffChainCancellation: true,
-        },
+      let activeWalletChain = getNetwork().chain
+      if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+        activeWalletChain = await switchNetwork({
+          chainId: rendererChain?.id as number,
+        })
       }
-    }
 
-    if (usePermit) {
-      bid.usePermit = true
-    }
+      if (rendererChain?.id !== activeWalletChain?.id) {
+        const error = new Error(`Mismatching chainIds`)
+        setTransactionError(error)
+        throw error
+      }
 
-    if (quantity > 1) {
-      bid.quantity = quantity
-    }
+      if (!tokenId && !collectionId) {
+        const error = new Error('Missing tokenId and collectionId')
+        setTransactionError(error)
+        throw error
+      }
 
-    setBidData(bid)
+      if (!client) {
+        const error = new Error('ReservoirClient was not initialized')
+        setTransactionError(error)
+        throw error
+      }
 
-    client.actions
-      .placeBid({
-        chainId: rendererChain?.id,
-        wallet,
-        bids: [bid],
-        onProgress: (steps: Execute['steps']) => {
-          const executableSteps = steps.filter(
-            (step) => step.items && step.items.length > 0
-          )
+      if (!tokenId && !collectionBidSupported) {
+        const error = new Error(
+          'Collection bids are not supported for this collection'
+        )
+        setTransactionError(error)
+        throw error
+      }
 
-          let stepCount = executableSteps.length
-          let incompleteStepItemIndex: number | null = null
-          let incompleteStepIndex: number | null = null
+      if (!exchange) {
+        const error = new Error('Missing Exchange')
+        setTransactionError(error)
+        throw error
+      }
 
-          executableSteps.find((step, i) => {
-            if (!step.items) {
-              return false
-            }
+      setBidStep(BidStep.Offering)
+      setTransactionError(null)
+      setBidData(null)
 
-            incompleteStepItemIndex = step.items.findIndex(
-              (item) => item.status == 'incomplete'
+      const atomicBidAmount = parseUnits(
+        `${totalBidAmount}`,
+        currency?.decimals || 18
+      ).toString()
+
+      const bid: BidData = {
+        weiPrice: atomicBidAmount,
+        orderbook: 'reservoir',
+        orderKind:
+          orderKind ||
+          (exchange?.orderKind as BidData['orderKind']) ||
+          'seaport',
+        attributeKey: traitBidSupported ? trait?.key : undefined,
+        attributeValue: traitBidSupported ? trait?.value : undefined,
+      }
+
+      if (feesBps && feesBps?.length > 0) {
+        bid.marketplaceFees = feesBps
+      } else if (!feesBps) {
+        delete bid.fees
+        delete bid.marketplaceFees
+      }
+
+      if (currency) {
+        bid.currency = currency.contract
+      }
+
+      if (tokenId && collectionId) {
+        const contract = collectionId ? collectionId?.split(':')[0] : undefined
+        bid.token = `${contract}:${tokenId}`
+      } else if (collectionId) {
+        bid.collection = collectionId
+      }
+
+      if (expirationOption.relativeTime) {
+        if (expirationOption.relativeTimeUnit) {
+          bid.expirationTime = dayjs()
+            .add(
+              expirationOption.relativeTime,
+              expirationOption.relativeTimeUnit
             )
-            if (incompleteStepItemIndex !== -1) {
-              incompleteStepIndex = i
-              return true
-            }
-          })
+            .unix()
+            .toString()
+        } else {
+          bid.expirationTime = `${expirationOption.relativeTime}`
+        }
+      }
 
-          if (incompleteStepIndex !== null) {
-            setStepData({
-              totalSteps: stepCount,
-              stepProgress: incompleteStepIndex,
-              currentStep: executableSteps[incompleteStepIndex],
+      if (oracleEnabled) {
+        bid.options = {
+          [exchange.orderKind as string]: {
+            useOffChainCancellation: true,
+          },
+        }
+      }
+
+      if (usePermit) {
+        bid.usePermit = true
+      }
+
+      if (quantity > 1) {
+        bid.quantity = quantity
+      }
+
+      if (options?.royaltyBps) {
+        bid.royaltyBps = options.royaltyBps
+      }
+
+      setBidData(bid)
+
+      client.actions
+        .placeBid({
+          chainId: rendererChain?.id,
+          wallet,
+          bids: [bid],
+          onProgress: (steps: Execute['steps']) => {
+            const executableSteps = steps.filter(
+              (step) => step.items && step.items.length > 0
+            )
+
+            let stepCount = executableSteps.length
+            let incompleteStepItemIndex: number | null = null
+            let incompleteStepIndex: number | null = null
+
+            executableSteps.find((step, i) => {
+              if (!step.items) {
+                return false
+              }
+
+              incompleteStepItemIndex = step.items.findIndex(
+                (item) => item.status == 'incomplete'
+              )
+              if (incompleteStepItemIndex !== -1) {
+                incompleteStepIndex = i
+                return true
+              }
             })
-          } else {
-            setBidStep(BidStep.Complete)
-          }
-        },
-      })
-      .catch((e: Error) => {
-        setTransactionError(e)
-      })
-  }, [
-    tokenId,
-    rendererChain,
-    collectionId,
-    currency,
-    client,
-    wallet,
-    totalBidAmount,
-    expirationOption,
-    trait,
-    quantity,
-    feesBps,
-    exchange,
-    usePermit,
-  ])
+
+            if (incompleteStepIndex !== null) {
+              setStepData({
+                totalSteps: stepCount,
+                stepProgress: incompleteStepIndex,
+                currentStep: executableSteps[incompleteStepIndex],
+              })
+            } else {
+              setBidStep(BidStep.Complete)
+            }
+          },
+        })
+        .catch((e: Error) => {
+          setTransactionError(e)
+        })
+    },
+    [
+      tokenId,
+      rendererChain,
+      collectionId,
+      currency,
+      client,
+      wallet,
+      totalBidAmount,
+      expirationOption,
+      trait,
+      quantity,
+      feesBps,
+      exchange,
+      usePermit,
+    ]
+  )
 
   return (
     <>

@@ -1,4 +1,38 @@
 
+## [v1.24.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4168eb5811d40376b2884dff9a16146d47f64efb) (2024-01-04)
+
+* Add frame testnet placeholder icons
+
+## [v1.24.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6a7533c87eaa4ead72beab0f793a4bc858e8c787) (2024-01-04)
+* Add frame testnet
+* CollectButton: fix theme color [079c9716](https://github.com/reservoirprotocol/reservoir-kit/commit/079c971632e849ba18e2370be871727adfb12d6b)
+
+## [v1.24.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/5663a9dcee1c7cf42ab6efaee04124f6061292ba) (2024-01-04)
+
+* New SweepModal added
+
+### Breaking Changes
+* CollectModal has now been removed in favor of the CollectButton 
+* BuyModal, MintModal: interfaces have been changed, please refer to the docs but in general we now require passing in the token as a complete token string (0xabc:1), where the first piece is a contract and the second is the token id delimited by a colon. The underlying logic has also changed to rely solely on path data rather than order data from the tokens api.
+
+## [v1.23.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e12b0dd5b90b0a58c1d58f3dc743001a68cc390a) (2024-01-03)
+* TokenMedia: improved media type detection
+
+## [v1.23.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/362a7dc22bf610a55690706186e9e8abbb81e3cc) (2024-01-02)
+
+* ListModal & BidModal: Add max royaltybps option to placeBid & listToken methods [44a6b289](https://github.com/reservoirprotocol/reservoir-kit/commit/44a6b28969be509b75db1a4c7e9e7ea4900379e3)
+* useTokens hook: Upgrade from v6 - v7 [6f103048](https://github.com/reservoirprotocol/reservoir-kit/commit/6f103048666f2271cb3d0616a6f260a924157ce4)
+
+### Breaking Changes
+* The upgraded useTokens hook now returns the floorAsk price as a standard price object.
+
+## [v1.22.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/fcf4892f1ace981161f02385c25086816916cd2e) (2023-12-21)
+
+## [v1.21.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/237db5b57b0c4d634fdcf15825a233babcae7c25) (2023-12-21)
+
+## [v1.21.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a86fe54838c448d5d9aa72e4f34867312e63f4b4) (2023-12-20)
+
+
 ## [v1.21.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/f2a696a7d1065c2de6cf76a91311f05ac3f6c1c8) (2023-12-19)
 
 * SDK Bump

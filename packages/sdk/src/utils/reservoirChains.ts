@@ -172,4 +172,12 @@ const ancient8Testnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
-export const reservoirChains = { mainnet, goerli, polygon, mumbai, optimism, arbitrum, arbitrumNova, avalanche, sepolia, base, baseGoerli, bsc, scrollTestnet, scroll, linea, zora, zoraTestnet, zkSync, polygonZkEvm, ancient8Testnet }
+const frameTestnet = {
+  id: 68840142,
+  name: 'Frame Testnet',
+  baseApiUrl: 'https://api-frame-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[68840142],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+export const reservoirChains = { mainnet, goerli, polygon, mumbai, optimism, arbitrum, arbitrumNova, avalanche, sepolia, base, baseGoerli, bsc, scrollTestnet, scroll, linea, zora, zoraTestnet, zkSync, polygonZkEvm, ancient8Testnet, frameTestnet }

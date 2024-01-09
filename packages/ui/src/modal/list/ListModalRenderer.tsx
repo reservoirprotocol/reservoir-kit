@@ -81,7 +81,7 @@ type ChildrenProps = {
   setPrice: React.Dispatch<React.SetStateAction<string>>
   setCurrency: (currency: Currency) => void
   setQuantity: React.Dispatch<React.SetStateAction<number>>
-  listToken: () => void
+  listToken: (options: { royaltyBps: number }) => void
 }
 
 type Props = {
@@ -314,206 +314,216 @@ export const ListModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
-  const listToken = useCallback(async () => {
-    if (!wallet) {
-      const error = new Error('Missing a wallet/signer')
-      setTransactionError(error)
-      throw error
-    }
-
-    let activeWalletChain = getNetwork().chain
-    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
-      activeWalletChain = await switchNetwork({
-        chainId: rendererChain?.id as number,
-      })
-    }
-
-    if (rendererChain?.id !== activeWalletChain?.id) {
-      const error = new Error(`Mismatching chainIds`)
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!client) {
-      const error = new Error('ReservoirClient was not initialized')
-      setTransactionError(error)
-      throw error
-    }
-
-    if (!marketplace) {
-      throw new Error('No marketplace found')
-    }
-
-    if (!exchange) {
-      throw new Error('No exchange found')
-    }
-
-    setTransactionError(null)
-
-    let expirationTime: string | null = null
-
-    if (expirationOption.relativeTime) {
-      if (expirationOption.relativeTimeUnit) {
-        expirationTime = dayjs()
-          .add(expirationOption.relativeTime, expirationOption.relativeTimeUnit)
-          .unix()
-          .toString()
-      } else {
-        expirationTime = `${expirationOption.relativeTime}`
+  const listToken = useCallback(
+    async ({ royaltyBps }: { royaltyBps?: number }) => {
+      if (!wallet) {
+        const error = new Error('Missing a wallet/signer')
+        setTransactionError(error)
+        throw error
       }
-    }
 
-    const listing: Listing = {
-      token: `${contract}:${tokenId}`,
-      weiPrice: (
-        parseUnits(`${+price}`, currency.decimals || 18) * BigInt(quantity)
-      ).toString(),
-      // @ts-ignore
-      orderbook: marketplace.orderbook,
-      // @ts-ignore
-      orderKind: exchange.orderKind,
-    }
-
-    if (
-      enableOnChainRoyalties &&
-      onChainRoyalties &&
-      listing.orderKind?.includes('seaport')
-    ) {
-      const royalties = onChainRoyalties[0].map((recipient, i) => {
-        const bps = Math.floor(
-          (parseFloat(
-            formatUnits(onChainRoyalties[1][i], chainCurrency.decimals || 18)
-          ) /
-            1) *
-            10000
-        )
-
-        return `${recipient}:${bps}`
-      })
-      listing.automatedRoyalties = false
-      listing.customRoyalties = [...royalties]
-    }
-
-    const fees = feesBps || client.marketplaceFees
-    if (fees) {
-      listing.marketplaceFees = fees
-    }
-
-    if (quantity > 1) {
-      listing.quantity = quantity
-    }
-
-    if (expirationTime) {
-      listing.expirationTime = expirationTime
-    }
-
-    if (currency && currency.contract != zeroAddress) {
-      listing.currency = currency.contract
-    }
-
-    if (oracleEnabled) {
-      listing.options = {
-        [`${listing.orderKind}`]: {
-          useOffChainCancellation: true,
-        },
+      let activeWalletChain = getNetwork().chain
+      if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
+        activeWalletChain = await switchNetwork({
+          chainId: rendererChain?.id as number,
+        })
       }
-    }
 
-    setListingData([{ listing, marketplace }])
-    setListStep(ListStep.Listing)
+      if (rendererChain?.id !== activeWalletChain?.id) {
+        const error = new Error(`Mismatching chainIds`)
+        setTransactionError(error)
+        throw error
+      }
 
-    client.actions
-      .listToken({
-        chainId: rendererChain?.id,
-        listings: [listing],
-        wallet,
-        onProgress: (steps: Execute['steps']) => {
-          const executableSteps = steps.filter(
-            (step) => step.items && step.items.length > 0
+      if (!client) {
+        const error = new Error('ReservoirClient was not initialized')
+        setTransactionError(error)
+        throw error
+      }
+
+      if (!marketplace) {
+        throw new Error('No marketplace found')
+      }
+
+      if (!exchange) {
+        throw new Error('No exchange found')
+      }
+
+      setTransactionError(null)
+
+      let expirationTime: string | null = null
+
+      if (expirationOption.relativeTime) {
+        if (expirationOption.relativeTimeUnit) {
+          expirationTime = dayjs()
+            .add(
+              expirationOption.relativeTime,
+              expirationOption.relativeTimeUnit
+            )
+            .unix()
+            .toString()
+        } else {
+          expirationTime = `${expirationOption.relativeTime}`
+        }
+      }
+
+      const listing: Listing = {
+        token: `${contract}:${tokenId}`,
+        weiPrice: (
+          parseUnits(`${+price}`, currency.decimals || 18) * BigInt(quantity)
+        ).toString(),
+        // @ts-ignore
+        orderbook: marketplace.orderbook,
+        // @ts-ignore
+        orderKind: exchange.orderKind,
+      }
+
+      if (
+        enableOnChainRoyalties &&
+        onChainRoyalties &&
+        listing.orderKind?.includes('seaport')
+      ) {
+        const royalties = onChainRoyalties[0].map((recipient, i) => {
+          const bps = Math.floor(
+            (parseFloat(
+              formatUnits(onChainRoyalties[1][i], chainCurrency.decimals || 18)
+            ) /
+              1) *
+              10000
           )
 
-          let stepCount = executableSteps.length
-          let incompleteStepItemIndex: number | null = null
-          let incompleteStepIndex: number | null = null
+          return `${recipient}:${bps}`
+        })
+        listing.automatedRoyalties = false
+        listing.customRoyalties = [...royalties]
+      }
 
-          executableSteps.find((step, i) => {
-            if (!step.items) {
-              return false
-            }
+      const fees = feesBps || client.marketplaceFees
+      if (fees) {
+        listing.marketplaceFees = fees
+      }
 
-            incompleteStepItemIndex = step.items.findIndex(
-              (item) => item.status == 'incomplete'
+      if (quantity > 1) {
+        listing.quantity = quantity
+      }
+
+      if (expirationTime) {
+        listing.expirationTime = expirationTime
+      }
+
+      if (currency && currency.contract != zeroAddress) {
+        listing.currency = currency.contract
+      }
+
+      if (oracleEnabled) {
+        listing.options = {
+          [`${listing.orderKind}`]: {
+            useOffChainCancellation: true,
+          },
+        }
+      }
+
+      if (royaltyBps) {
+        listing.royaltyBps = royaltyBps
+      }
+
+      setListingData([{ listing, marketplace }])
+      setListStep(ListStep.Listing)
+
+      client.actions
+        .listToken({
+          chainId: rendererChain?.id,
+          listings: [listing],
+          wallet,
+          onProgress: (steps: Execute['steps']) => {
+            const executableSteps = steps.filter(
+              (step) => step.items && step.items.length > 0
             )
-            if (incompleteStepItemIndex !== -1) {
-              incompleteStepIndex = i
-              return true
-            }
-          })
 
-          if (
-            incompleteStepIndex === null ||
-            incompleteStepItemIndex === null
-          ) {
-            const currentStep = executableSteps[executableSteps.length - 1]
-            const currentStepItem = currentStep.items
-              ? currentStep.items[currentStep.items.length]
-              : null
-            setListStep(ListStep.Complete)
-            const listings =
-              currentStepItem && currentStepItem.orderIndexes !== undefined
-                ? listingData.filter((_, i) =>
-                    currentStepItem.orderIndexes?.includes(i)
-                  )
-                : [listingData[listingData.length - 1]]
-            setStepData({
-              totalSteps: stepCount,
-              stepProgress: stepCount,
-              currentStep,
-              listingData: listings,
-            })
-          } else {
-            const currentStep = executableSteps[incompleteStepIndex]
-            const listingIndexes: Set<number> = new Set()
-            currentStep.items?.forEach(({ orderIndexes, status }) => {
-              if (status === 'incomplete') {
-                orderIndexes?.forEach((orderIndex) => {
-                  listingIndexes.add(orderIndex)
-                })
+            let stepCount = executableSteps.length
+            let incompleteStepItemIndex: number | null = null
+            let incompleteStepIndex: number | null = null
+
+            executableSteps.find((step, i) => {
+              if (!step.items) {
+                return false
+              }
+
+              incompleteStepItemIndex = step.items.findIndex(
+                (item) => item.status == 'incomplete'
+              )
+              if (incompleteStepItemIndex !== -1) {
+                incompleteStepIndex = i
+                return true
               }
             })
-            const listings = Array.from(listingIndexes).map(
-              (index) => listingData[index]
-            )
 
-            setStepData({
-              totalSteps: stepCount,
-              stepProgress: incompleteStepIndex,
-              currentStep: executableSteps[incompleteStepIndex],
-              listingData: listings,
-            })
-          }
-        },
-      })
-      .catch((error: Error) => {
-        setListStep(ListStep.SetPrice)
-        setTransactionError(error)
-      })
-  }, [
-    client,
-    wallet,
-    collectionId,
-    chainId,
-    tokenId,
-    expirationOption,
-    currency,
-    quantity,
-    enableOnChainRoyalties,
-    onChainRoyalties,
-    feesBps,
-    price,
-    marketplace,
-    exchange,
-  ])
+            if (
+              incompleteStepIndex === null ||
+              incompleteStepItemIndex === null
+            ) {
+              const currentStep = executableSteps[executableSteps.length - 1]
+              const currentStepItem = currentStep.items
+                ? currentStep.items[currentStep.items.length]
+                : null
+              setListStep(ListStep.Complete)
+              const listings =
+                currentStepItem && currentStepItem.orderIndexes !== undefined
+                  ? listingData.filter((_, i) =>
+                      currentStepItem.orderIndexes?.includes(i)
+                    )
+                  : [listingData[listingData.length - 1]]
+              setStepData({
+                totalSteps: stepCount,
+                stepProgress: stepCount,
+                currentStep,
+                listingData: listings,
+              })
+            } else {
+              const currentStep = executableSteps[incompleteStepIndex]
+              const listingIndexes: Set<number> = new Set()
+              currentStep.items?.forEach(({ orderIndexes, status }) => {
+                if (status === 'incomplete') {
+                  orderIndexes?.forEach((orderIndex) => {
+                    listingIndexes.add(orderIndex)
+                  })
+                }
+              })
+              const listings = Array.from(listingIndexes).map(
+                (index) => listingData[index]
+              )
+
+              setStepData({
+                totalSteps: stepCount,
+                stepProgress: incompleteStepIndex,
+                currentStep: executableSteps[incompleteStepIndex],
+                listingData: listings,
+              })
+            }
+          },
+        })
+        .catch((error: Error) => {
+          setListStep(ListStep.SetPrice)
+          setTransactionError(error)
+        })
+    },
+    [
+      client,
+      wallet,
+      collectionId,
+      chainId,
+      tokenId,
+      expirationOption,
+      currency,
+      quantity,
+      enableOnChainRoyalties,
+      onChainRoyalties,
+      feesBps,
+      price,
+      marketplace,
+      exchange,
+    ]
+  )
 
   return (
     <>

@@ -458,4 +458,22 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  // Frame Testnet
+  68840142: [
+    {
+      chainId: 68840142,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Frame Testnet ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 68840142,
+      address: '0x822b4c4713433c6b88547845850a39343bf0957e',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>

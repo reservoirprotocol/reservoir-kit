@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { CollectModal, CollectModalMode } from '@reservoir0x/reservoir-kit-ui'
+import { SweepModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
@@ -15,14 +15,14 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
   ? process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES === 'true'
   : false
 
-const CollectPage: NextPage = () => {
+const SweepPage: NextPage = () => {
   const router = useRouter()
   const { openConnectModal } = useConnectModal()
 
-  const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
-  const [tokenId, setTokenId] = useState<string | undefined>(undefined)
+  const [contract, setContract] = useState<string | undefined>(undefined)
+  const [collectionId, setCollectionId] = useState<string | undefined>(DEFAULT_COLLECTION_ID)
+  const [token, setToken] = useState<string | undefined>(undefined)
   const [chainId, setChainId] = useState<string | undefined>(undefined)
-  const [mode, setMode] = useState('preferMint')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
   const deeplinkOpenState = useState(true)
@@ -46,20 +46,50 @@ const CollectPage: NextPage = () => {
       <ConnectButton />
 
       <div>
-        <label>Collection Id: </label>
+        <label>Contract: </label>
         <input
           type="text"
-          value={collectionId}
-          onChange={(e) => setCollectionId(e.target.value)}
+          value={contract}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setContract(undefined)
+            }
+            else {
+              setContract(e.target.value)
+            } 
+          }}
         />
       </div>
 
       <div>
-        <label>Token Id: </label>
+        <label>CollectionId: </label>
         <input
           type="text"
-          value={tokenId}
-          onChange={(e) => setTokenId(e.target.value)}
+          value={collectionId}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setCollectionId(undefined)
+            }
+            else {
+              setCollectionId(e.target.value)
+            } 
+          }}
+        />
+      </div>
+
+      <div>
+        <label>Token: </label>
+        <input
+          type="text"
+          value={token}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setToken(undefined)
+            }
+            else {
+              setToken(e.target.value)
+            } 
+          }}
         />
       </div>
 
@@ -72,38 +102,6 @@ const CollectPage: NextPage = () => {
         />
       </div>
 
-      <div style={{ display: 'flex', gap: 10 }}>
-        <label>Mode: </label>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <div>
-            <input
-              type="radio"
-              value="preferMint"
-              checked={mode === 'preferMint'}
-              onChange={() => setMode('preferMint')}
-            />
-            <label>preferMint</label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              value="mint"
-              checked={mode === 'mint'}
-              onChange={() => setMode('mint')}
-            />
-            <label>mint</label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              value="trade"
-              checked={mode === 'trade'}
-              onChange={() => setMode('trade')}
-            />
-            <label>trade</label>
-          </div>
-        </div>
-      </div>
 
       <div>
         <label>Fees on top (BPS): </label>
@@ -155,7 +153,7 @@ const CollectPage: NextPage = () => {
         />
       </div>
 
-      <CollectModal
+      <SweepModal
         chainId={Number(chainId)}
         onConnectWallet={() => {
           openConnectModal?.()        
@@ -174,24 +172,24 @@ const CollectPage: NextPage = () => {
               cursor: 'pointer',
             }}
           >
-            Collect
+            Sweep
           </button>
         }
+        contract={contract}
         collectionId={collectionId}
-        tokenId={tokenId}
-        mode={mode as CollectModalMode}
+        token={token}
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         normalizeRoyalties={normalizeRoyalties}
-        onCollectComplete={(data) => {
-          console.log('Collect Complete', data)
+        onSweepComplete={(data) => {
+          console.log('Sweep Complete', data)
         }}
-        onCollectError={(error, data) => {
-          console.log('Collect Error', error, data)
+        onSweepError={(error, data) => {
+          console.log('Sweep Error', error, data)
         }}
         onClose={(data, currentStep) => {
-          console.log('CollectModal Closed')
+          console.log('SweepModal Closed')
         }}
         onGoToToken={(data) => console.log('Go to Token', data)}
         onPointerDownOutside={(e) => {
@@ -204,4 +202,4 @@ const CollectPage: NextPage = () => {
   )
 }
 
-export default CollectPage
+export default SweepPage

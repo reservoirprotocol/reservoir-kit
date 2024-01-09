@@ -41,18 +41,35 @@ type MediaType =
   | 'other'
   | undefined
 
-export const extractMediaType = (
-  token?: RequiredTokenProps
-): MediaType | null => {
+export const extractMediaType = (tokenMedia?: string): MediaType | null => {
   let extension: string | null = null
-  if (token?.media) {
-    const pieces = token.media.split('/')
+  if (tokenMedia) {
+    const pieces = tokenMedia.split('/')
     const file =
       pieces && pieces[pieces.length - 1] ? pieces[pieces.length - 1] : null
     const matches = file ? file.match('(\\.[^.]+)$') : null
     extension = matches && matches[0] ? matches[0].replace('.', '') : null
   }
   return (extension as MediaType) ? (extension as MediaType) : null
+}
+
+const normalizeContentType = (contentType?: string) => {
+  if (contentType?.includes('video/')) {
+    return contentType.replace('video/', '')
+  }
+  if (contentType?.includes('audio/')) {
+    return contentType.replace('audio/', '')
+  }
+  if (contentType?.includes('image/svg+xml')) {
+    return 'svg'
+  }
+  if (contentType?.includes('image/')) {
+    return contentType.replace('image/', '')
+  }
+  if (contentType?.includes('text/')) {
+    return contentType.replace('text/', '')
+  }
+  return null
 }
 
 type Token = NonNullable<
@@ -105,6 +122,8 @@ const TokenMedia: FC<Props> = ({
   onError = () => {},
   onRefreshToken = () => {},
 }) => {
+  const [detectingMediaType, setDetectingMediaType] = useState(false)
+  const [mediaType, setMediaType] = useState<MediaType | null>(null)
   const mediaRef = useRef<HTMLAudioElement | HTMLVideoElement>(null)
   const themeContext = useContext(ThemeContext)
   let borderRadius: string = themeContext?.radii?.borderRadius?.value || '0'
@@ -121,7 +140,37 @@ const TokenMedia: FC<Props> = ({
         return token?.image
     }
   })()
-  const mediaType = extractMediaType(token)
+  useEffect(() => {
+    setDetectingMediaType(true)
+    let abort = false
+    let type = extractMediaType(token?.media)
+
+    if (!type && token?.media) {
+      async function getContentType(tokenMedia: string) {
+        const response = await fetch(tokenMedia)
+        return response.headers.get('content-type')
+      }
+      getContentType(token.media)
+        .then((contentType) => {
+          if (contentType && !abort) {
+            const normalizedContentType = normalizeContentType(contentType)
+            type = extractMediaType(`.${normalizedContentType}`)
+            setMediaType(type)
+          }
+        })
+        .finally(() => {
+          setDetectingMediaType(false)
+        })
+    } else {
+      setMediaType(type)
+      setDetectingMediaType(false)
+    }
+    return () => {
+      abort = true
+      setDetectingMediaType(false)
+    }
+  }, [token?.media])
+
   const defaultStyle: CSSProperties = {
     width: '150px',
     height: '150px',
@@ -189,6 +238,10 @@ const TokenMedia: FC<Props> = ({
   if (!token && !staticOnly) {
     console.warn('A token object or a media url are required!')
     return null
+  }
+
+  if (detectingMediaType) {
+    return <Loader style={{ ...computedStyle }} />
   }
 
   if (error || (!media && !tokenImage)) {
@@ -319,6 +372,7 @@ const TokenMedia: FC<Props> = ({
   // 3D
   if (mediaType === 'gltf' || mediaType === 'glb') {
     return (
+      //@ts-ignore
       <model-viewer
         src={media}
         ar
@@ -332,6 +386,7 @@ const TokenMedia: FC<Props> = ({
         style={computedStyle}
         className={className}
         onError={onErrorCb}
+        //@ts-ignore
       ></model-viewer>
     )
   }
