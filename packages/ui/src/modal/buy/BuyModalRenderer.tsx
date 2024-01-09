@@ -23,6 +23,7 @@ import {
   LogLevel,
   ReservoirClientActions,
   ReservoirWallet,
+  BuyTokenBodyParameters,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
@@ -103,6 +104,7 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
   usePermit?: boolean
+  executionMethod?: BuyTokenBodyParameters['executionMethod']
 }
 
 export const BuyModalRenderer: FC<Props> = ({
@@ -118,6 +120,7 @@ export const BuyModalRenderer: FC<Props> = ({
   children,
   walletClient,
   usePermit,
+  executionMethod,
 }) => {
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0n)
@@ -175,6 +178,7 @@ export const BuyModalRenderer: FC<Props> = ({
     },
     path,
     chainId: rendererChain?.id,
+    nativeOnly: executionMethod !== undefined,
   })
 
   const paymentCurrency = paymentTokens?.find(
@@ -279,6 +283,10 @@ export const BuyModalRenderer: FC<Props> = ({
         options.normalizeRoyalties = normalizeRoyalties
       }
 
+      if (executionMethod) {
+        options.executionMethod = executionMethod
+      }
+
       if (paymentCurrency) {
         options.currency = paymentCurrency.address
         if (paymentCurrency.chainId) {
@@ -374,6 +382,7 @@ export const BuyModalRenderer: FC<Props> = ({
       includeListingCurrency,
       feesOnTopBps,
       feesOnTopUsd,
+      executionMethod,
       _setPaymentCurrency,
     ]
   )
@@ -516,6 +525,10 @@ export const BuyModalRenderer: FC<Props> = ({
       options.usePermit = true
     }
 
+    if (executionMethod) {
+      options.executionMethod = executionMethod
+    }
+
     setBuyStep(BuyStep.Approving)
     const items: Item[] = []
     const item: Item = {
@@ -623,6 +636,7 @@ export const BuyModalRenderer: FC<Props> = ({
     paymentCurrency,
     usePermit,
     buyResponseFees,
+    executionMethod,
     mutateTokens,
     mutateCollection,
     onConnectWallet,

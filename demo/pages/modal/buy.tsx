@@ -7,6 +7,7 @@ import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import ChainSwitcher from 'components/ChainSwitcher'
 import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
+import { BuyTokenBodyParameters } from '@reservoir0x/reservoir-sdk'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -23,12 +24,14 @@ const BuyPage: NextPage = () => {
   const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
+  const [executionMethod, setExecutionMethod] = useState<BuyTokenBodyParameters['executionMethod']>()
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
   const { openConnectModal } = useConnectModal()
   const collectionId = token?.split(':')[0]
+
 
   return (
     <div
@@ -107,6 +110,21 @@ const BuyPage: NextPage = () => {
           }}
         />
       </div>
+      <div>
+        <label>Execution Method: </label>
+        <input
+          type="text"
+          value={executionMethod}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setExecutionMethod(undefined)
+            }
+            else {
+              setExecutionMethod(e.target.value as BuyTokenBodyParameters['executionMethod'])
+            }
+          }}
+        />
+      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -169,6 +187,7 @@ style={{
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
         normalizeRoyalties={normalizeRoyalties}
+        executionMethod={executionMethod}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onConnectWallet={() => {
           openConnectModal?.()
