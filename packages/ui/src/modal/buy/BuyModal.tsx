@@ -250,13 +250,12 @@ export function BuyModal({
         const CreditCardCheckoutComponent = useCreditCardProvider({
           creditCardCheckoutComponent,
           callback: (_, status, data) => {
-            console.log(status)
-            setBuyStep(status)
             /**
              * This is the "reservoir handler"
              * At this point the data/status we have are normalized and can be
              * handled in such a way that becomes agnostic to the provider
              */
+            setBuyStep(status)
           },
         })
 
