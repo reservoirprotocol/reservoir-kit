@@ -50,3 +50,5 @@ export const generateEvent = (
     data,
   }
 }
+
+export const generatePaperEvent = () => {}

@@ -1,5 +1,12 @@
+import {
+  faCheckCircle,
+  faChevronLeft,
+  faChevronRight,
+  faCircleExclamation,
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import React, {
-  ComponentProps,
   ComponentPropsWithoutRef,
   Dispatch,
   ReactElement,
@@ -7,49 +14,36 @@ import React, {
   useContext,
   useEffect,
 } from 'react'
-import { useFallbackState, useReservoirClient } from '../../hooks'
+import { WalletClient } from 'viem'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import {
-  Flex,
-  Box,
-  Text,
+  useCreditCardProvider,
+  useFallbackState,
+  useReservoirClient,
+} from '../../hooks'
+import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
+import { formatNumber } from '../../lib/numbers'
+import { truncateAddress } from '../../lib/truncate'
+import {
   Anchor,
+  Box,
   Button,
-  FormatCurrency,
-  FormatCryptoCurrency,
-  Loader,
-  ErrorWell,
   CryptoCurrencyIcon,
+  ErrorWell,
+  Flex,
+  FormatCryptoCurrency,
+  FormatCurrency,
+  Loader,
+  Text,
 } from '../../primitives'
-import Progress from '../Progress'
+import { Dialog } from '../../primitives/Dialog'
 import { Modal } from '../Modal'
-import {
-  faCircleExclamation,
-  faCheckCircle,
-  faChevronLeft,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import TokenLineItem from '../TokenLineItem'
-import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
-import {
-  Execute,
-  ReservoirWallet,
-  executePaperSteps,
-  handlePaperSteps,
-} from '@reservoir0x/reservoir-sdk'
+import Progress from '../Progress'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
-import { formatNumber } from '../../lib/numbers'
-import {
-  ProviderOptionsContext,
-  ThemeContext,
-} from '../../ReservoirKitProvider'
-import { truncateAddress } from '../../lib/truncate'
 import { SelectPaymentToken } from '../SelectPaymentToken'
-import { WalletClient } from 'viem'
-import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
-import { Dialog } from '../../primitives/Dialog'
-import { CheckoutWithCard } from '@paperxyz/react-client-sdk'
+import TokenLineItem from '../TokenLineItem'
+import { BuyModalRenderer, BuyModalStepData, BuyStep } from './BuyModalRenderer'
 
 type PurchaseData = {
   tokenId?: string
@@ -148,9 +142,6 @@ export function BuyModal({
     openState ? openState[0] : false,
     openState
   )
-  const [stylingOptions, setStylingOptions] = React.useState<
-    ComponentProps<typeof CheckoutWithCard>['options'] | undefined
-  >()
 
   const client = useReservoirClient()
 
@@ -256,87 +247,18 @@ export function BuyModal({
         const price =
           totalPrice || BigInt(token?.token?.lastSale?.price?.amount?.raw || 0)
 
-        useEffect(() => {
-          if (open) {
-            const mockElementOne = window.document.createElement('div')
-
-            mockElementOne.style.fontFamily = 'var(--rk-fonts-body)'
-            mockElementOne.style.color = 'var(--rk-colors-textColor)'
-            mockElementOne.style.backgroundColor =
-              'var(--rk-colors-inputBackground)'
-            mockElementOne.style.borderRadius = 'var(--rk-radii-borderRadius)'
-
-            window.document.body.appendChild(mockElementOne)
-
-            setStylingOptions({
-              fontFamily: window.getComputedStyle(mockElementOne).fontFamily,
-              colorBackground:
-                window.getComputedStyle(mockElementOne).background,
-              colorPrimary: window.getComputedStyle(mockElementOne).color,
-              colorText: window.getComputedStyle(mockElementOne).color,
-              borderRadius: Number(
-                window.getComputedStyle(mockElementOne).borderRadius
-              ),
-              inputBackgroundColor:
-                window.getComputedStyle(mockElementOne).backgroundColor,
-              inputBorderColor: 'transparent',
-            })
-
-            window.document.body.removeChild(mockElementOne)
-          }
-        }, [open])
-
-        const CreditCardCheckoutComponent = React.useMemo(() => {
-          if (!creditCardCheckoutComponent) return undefined
-
-          /**
-           * Check for a specific prop in the component to determine the provider
-           */
-          const isPaperCheckoutComponent =
-            creditCardCheckoutComponent?.props?.onPaymentSuccess
-
-          if (isPaperCheckoutComponent !== undefined) {
+        const CreditCardCheckoutComponent = useCreditCardProvider({
+          creditCardCheckoutComponent,
+          callback: (_, status, data) => {
+            console.log(status)
+            setBuyStep(status)
             /**
-             * We clone the element so that we can modify wrap the props and then return a memoized version
-             * of it for performance reasons.
+             * This is the "reservoir handler"
+             * At this point the data/status we have are normalized and can be
+             * handled in such a way that becomes agnostic to the provider
              */
-            return React.cloneElement(creditCardCheckoutComponent, {
-              /**
-               * Set the styling by extending reservoir kits themeing
-               */
-              options: stylingOptions,
-              /**
-               * We wrap the callback in our own callback so that the developer can still get the events.
-               */
-              onPaymentSuccess: (event: {
-                id: string
-                transactionId: string
-              }) => {
-                executePaperSteps(
-                  event.transactionId,
-                  creditCardCheckoutComponent?.props?.configs?.contractId,
-                  (...args) =>
-                    handlePaperSteps(
-                      ...args,
-                      (tokens) => {
-                        /**
-                         * Map the tokens in here to reservoir standards so that we can best display the result
-                         */
-                      },
-                      setBuyStep
-                    )
-                )
-                /**
-                 * Here we invoke the original method in the passed in component.
-                 * This is so that the developer can still get the events and handle them elsewhere if needed.
-                 */
-                creditCardCheckoutComponent.props.onPaymentSuccess(event)
-              },
-            } as ComponentProps<typeof CheckoutWithCard>)
-          }
-
-          return undefined
-        }, [creditCardCheckoutComponent, stylingOptions])
+          },
+        })
 
         return (
           <Modal
@@ -674,6 +596,251 @@ export function BuyModal({
                     }}
                   >
                     {CreditCardCheckoutComponent}
+                  </Flex>
+                </Flex>
+              )}
+
+            {CreditCardCheckoutComponent &&
+              buyStep === BuyStep.CreditCardCheckoutProgress &&
+              !loading && (
+                <Flex direction="column">
+                  <TokenLineItem
+                    chain={modalChain}
+                    tokenDetails={token}
+                    collection={collection}
+                    usdPrice={paymentCurrency?.usdTotalFormatted}
+                    price={quantity > 1 ? averageUnitPrice : price}
+                    currency={paymentCurrency}
+                    css={{ border: 0 }}
+                    priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
+                    showRoyalties={true}
+                  />
+                  <Flex
+                    align="center"
+                    justify="center"
+                    css={{
+                      padding: '$3',
+                      width: '100%',
+                      'div iframe': {
+                        border: 'none',
+                      },
+                    }}
+                  >
+                    <ProgressBar
+                      css={{ px: '$4', mt: '$3' }}
+                      value={1}
+                      max={3}
+                    />
+                    {!stepData && <Loader css={{ height: 206 }} />}
+                  </Flex>
+                </Flex>
+              )}
+
+            {CreditCardCheckoutComponent &&
+              buyStep === BuyStep.CreditCardCheckoutSuccess &&
+              token && (
+                <Flex direction="column">
+                  <Flex
+                    css={{
+                      p: '$4',
+                      py: '$5',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {totalPurchases === 1 ? (
+                      <>
+                        <Text
+                          style="h5"
+                          css={{ textAlign: 'center', mt: 24, mb: 24 }}
+                        >
+                          Congratulations!
+                        </Text>
+                      </>
+                    ) : (
+                      <>
+                        <Box
+                          css={{
+                            color: failedPurchases
+                              ? '$errorAccent'
+                              : '$successAccent',
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={
+                              failedPurchases
+                                ? faCircleExclamation
+                                : faCheckCircle
+                            }
+                            fontSize={32}
+                          />
+                        </Box>
+                        <Text
+                          style="h5"
+                          css={{ textAlign: 'center', mt: 24, mb: 24 }}
+                        >
+                          {failedPurchases
+                            ? `${successfulPurchases} ${
+                                successfulPurchases > 1 ? 'items' : 'item'
+                              } purchased, ${failedPurchases} ${
+                                failedPurchases > 1 ? 'items' : 'item'
+                              } failed`
+                            : 'Congrats! Purchase was successful.'}
+                        </Text>
+                      </>
+                    )}
+                    {totalPurchases === 1 && (
+                      <img
+                        src={token?.token?.imageSmall}
+                        style={{ width: 100, height: 100 }}
+                      />
+                    )}
+                    {totalPurchases > 1 && (
+                      <Flex direction="column" css={{ gap: '$2' }}>
+                        {stepData?.currentStep?.items?.map(
+                          (item, itemIndex) => {
+                            if (
+                              Array.isArray(item?.txHashes) &&
+                              item?.txHashes.length > 0
+                            ) {
+                              return item.txHashes.map((hash, txHashIndex) => {
+                                const truncatedTxHash = truncateAddress(
+                                  hash.txHash
+                                )
+                                const blockExplorerBaseUrl =
+                                  getChainBlockExplorerUrl(hash.chainId)
+                                return (
+                                  <Anchor
+                                    key={`${itemIndex}-${txHashIndex}`}
+                                    href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
+                                    color="primary"
+                                    weight="medium"
+                                    target="_blank"
+                                    css={{ fontSize: 12 }}
+                                  >
+                                    View transaction: {truncatedTxHash}
+                                  </Anchor>
+                                )
+                              })
+                            } else {
+                              return null
+                            }
+                          }
+                        )}
+                      </Flex>
+                    )}
+
+                    {totalPurchases === 1 && (
+                      <>
+                        <Flex
+                          css={{ mb: 24, mt: 24, maxWidth: '100%' }}
+                          align="center"
+                          justify="center"
+                        >
+                          {!!token.token?.collection?.image && (
+                            <Box css={{ mr: '$1' }}>
+                              <img
+                                src={token.token?.collection?.image}
+                                style={{
+                                  width: 24,
+                                  height: 24,
+                                  borderRadius: '50%',
+                                }}
+                              />
+                            </Box>
+                          )}
+                          <Text
+                            style="subtitle3"
+                            css={{ maxWidth: '100%' }}
+                            ellipsify
+                          >
+                            {token?.token?.name
+                              ? token?.token?.name
+                              : `#${token?.token?.tokenId}`}
+                          </Text>
+                        </Flex>
+                        <Flex css={{ mb: '$2' }} align="center">
+                          <Box css={{ color: '$successAccent', mr: '$2' }}>
+                            <FontAwesomeIcon icon={faCheckCircle} />
+                          </Box>
+                          <Text style="body1">
+                            Your transaction went through successfully
+                          </Text>
+                        </Flex>
+
+                        <Flex
+                          direction="column"
+                          align="center"
+                          css={{ gap: '$2' }}
+                        >
+                          {finalTxHashes?.map((hash, index) => {
+                            const truncatedTxHash = truncateAddress(hash.txHash)
+                            const blockExplorerBaseUrl =
+                              getChainBlockExplorerUrl(hash.chainId)
+                            return (
+                              <Anchor
+                                key={index}
+                                href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
+                                color="primary"
+                                weight="medium"
+                                target="_blank"
+                                css={{ fontSize: 12 }}
+                              >
+                                View transaction: {truncatedTxHash}
+                              </Anchor>
+                            )
+                          })}
+                        </Flex>
+                      </>
+                    )}
+                  </Flex>
+                  <Flex
+                    css={{
+                      p: '$4',
+                      flexDirection: 'column',
+                      gap: '$3',
+                      '@bp1': {
+                        flexDirection: 'row',
+                      },
+                    }}
+                  >
+                    {!!onGoToToken ? (
+                      <>
+                        <Button
+                          onClick={() => {
+                            setOpen(false)
+                          }}
+                          css={{ flex: 1 }}
+                          color="ghost"
+                        >
+                          {copy.ctaClose}
+                        </Button>
+                        <Button
+                          style={{ flex: 1 }}
+                          color="primary"
+                          onClick={() => {
+                            onGoToToken()
+                          }}
+                        >
+                          {copy.ctaGoToToken.length > 0
+                            ? copy.ctaGoToToken
+                            : `Go to ${
+                                successfulPurchases > 1 ? 'Tokens' : 'Token'
+                              }`}
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          setOpen(false)
+                        }}
+                        style={{ flex: 1 }}
+                        color="primary"
+                      >
+                        {copy.ctaClose}
+                      </Button>
+                    )}
                   </Flex>
                 </Flex>
               )}

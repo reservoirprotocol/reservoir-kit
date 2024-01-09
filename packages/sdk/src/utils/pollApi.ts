@@ -10,11 +10,13 @@ import { axios } from '../utils'
  * @param attemptCount The amount of attempts already done by the poll, should be left blank
  * @returns The updated JSON response
  */
+// TO DO: ADD NMEW PROPERTY FOR SLEEPTIME
 export async function pollUntilHasData(
   request: AxiosRequestConfig,
   dataParser: (json: any) => boolean,
   maximumAttempts: number = 15,
-  attemptCount: number = 0
+  attemptCount: number = 0,
+  delay: number = 5000
 ) {
   if (attemptCount >= maximumAttempts) {
     throw `Failed to get data after ${attemptCount} attempt(s), aborting`
@@ -34,7 +36,13 @@ export async function pollUntilHasData(
   // The response is still unchanged. Check again in five seconds
   await new Promise((resolve) => setTimeout(resolve, 5000))
   attemptCount++
-  await pollUntilHasData(request, dataParser, maximumAttempts, attemptCount)
+  await pollUntilHasData(
+    request,
+    dataParser,
+    maximumAttempts,
+    attemptCount,
+    delay
+  )
 }
 
 /**

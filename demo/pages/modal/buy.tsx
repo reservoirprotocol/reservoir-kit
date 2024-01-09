@@ -1,13 +1,12 @@
-import { NextPage } from 'next'
-import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
-import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
-import ThemeSwitcher from 'components/ThemeSwitcher'
-import { useState } from 'react'
-import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
-import { useRouter } from 'next/router'
-import ChainSwitcher from 'components/ChainSwitcher'
-import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
 import { CheckoutWithCard } from '@paperxyz/react-client-sdk'
+import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
+import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
+import ChainSwitcher from 'components/ChainSwitcher'
+import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
+import ThemeSwitcher from 'components/ThemeSwitcher'
+import { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -133,7 +132,7 @@ const BuyPage: NextPage = () => {
       creditCardCheckoutComponent={
       <CheckoutWithCard
         configs={{
-          contractId: '33607f4c-7924-41b0-85da-a19dbb79f597',
+          contractId: 'c3160302-7042-42e2-94e0-08c03ea83e06',
           walletAddress:
             '0xc8186a3044D311eec1C1b57342Aaa290F6d90Aa5',
             contractArgs: {  nfts: [ 
@@ -143,7 +142,7 @@ const BuyPage: NextPage = () => {
         onError={(error) => {
           console.log(error);
         }}
-        onPaymentSuccess={(result) => {
+        onPaymentSuccess={(result)=> {
           console.log('Payment successful:', result)
         }}
       />}
