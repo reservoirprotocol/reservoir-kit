@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { BuyModal, BuyTokenBodyParameters } from '@reservoir0x/reservoir-kit-ui'
+import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
 import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useState } from 'react'
@@ -7,6 +7,7 @@ import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import ChainSwitcher from 'components/ChainSwitcher'
 import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
+import { BuyTokenBodyParameters } from '@reservoir0x/reservoir-sdk'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
