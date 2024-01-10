@@ -3,7 +3,7 @@ import { isAxiosError } from './axios'
 import { LogLevel } from './logger'
 import { pollUntilHasData } from './pollApi'
 
-interface PaperTransactionResult {
+export interface PaperTransactionResult {
   result: {
     transactionId: string
     checkoutId: string
@@ -30,7 +30,7 @@ interface PaperTransactionResult {
   }
 }
 
-type PaperTransactionStatus = 'TRANSFER_SUCCEEDED' | 'PAYMENT_SUCCEEDED'
+export type PaperTransactionStatus = 'TRANSFER_SUCCEEDED' | 'PAYMENT_SUCCEEDED'
 
 export async function executePaperSteps(
   transactionId: string,
@@ -53,7 +53,6 @@ export async function executePaperSteps(
         },
       },
       (data: PaperTransactionResult): boolean => {
-        console.log(data)
         callback(data, data.result.status)
         return data.result.status === 'TRANSFER_SUCCEEDED'
       },

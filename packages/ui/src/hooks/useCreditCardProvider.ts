@@ -9,9 +9,6 @@ import {
 } from 'react'
 import { BuyStep } from '../modal/buy/BuyModalRenderer'
 
-/**
- * Paper Provider styling options
- */
 interface ICustomizationOptions {
   colorPrimary?: string
   colorBackground?: string

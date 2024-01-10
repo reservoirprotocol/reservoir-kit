@@ -250,11 +250,6 @@ export function BuyModal({
         const CreditCardCheckoutComponent = useCreditCardProvider({
           creditCardCheckoutComponent,
           callback: (_, status, data) => {
-            /**
-             * This is the "reservoir handler"
-             * At this point the data/status we have are normalized and can be
-             * handled in such a way that becomes agnostic to the provider
-             */
             setBuyStep(status)
           },
         })
@@ -571,31 +566,18 @@ export function BuyModal({
             {CreditCardCheckoutComponent &&
               buyStep === BuyStep.CreditCardCheckout &&
               !loading && (
-                <Flex direction="column">
-                  <TokenLineItem
-                    chain={modalChain}
-                    tokenDetails={token}
-                    collection={collection}
-                    usdPrice={paymentCurrency?.usdTotalFormatted}
-                    price={quantity > 1 ? averageUnitPrice : price}
-                    currency={paymentCurrency}
-                    css={{ border: 0 }}
-                    priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
-                    showRoyalties={true}
-                  />
-                  <Flex
-                    align="center"
-                    justify="center"
-                    css={{
-                      padding: '$3',
-                      width: '100%',
-                      'div iframe': {
-                        border: 'none',
-                      },
-                    }}
-                  >
-                    {CreditCardCheckoutComponent}
-                  </Flex>
+                <Flex
+                  align="center"
+                  justify="center"
+                  css={{
+                    padding: '$3',
+                    width: '100%',
+                    'div iframe': {
+                      border: 'none',
+                    },
+                  }}
+                >
+                  {CreditCardCheckoutComponent}
                 </Flex>
               )}
 
