@@ -1,4 +1,16 @@
 
+## [v1.24.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/579a5bd4edccf60b045e5cc1a9f76a7c8c71fd53) (2024-01-10)
+
+* Merge pull request #542 from reservoirprotocol/ted/update-useMarketplace-configs-hook [708ba2f9](https://github.com/reservoirprotocol/reservoir-kit/commit/708ba2f99936099f739edd53e36f1f12e1e81121)
+## [v1.24.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/bd0ede8e23abae3851543c1e0435180a97f71841) (2024-01-09)
+
+* Merge pull request #541 from reservoirprotocol/ted/grwth-3761-implement-intent-filling-for-blur-orders [1c810b0b](https://github.com/reservoirprotocol/reservoir-kit/commit/1c810b0b990c8e97e923911f183858751b9e40d3)
+* Merge pull request #536 from reservoirprotocol/ted/grwth-3770-better-handle-price-checks-for-intent-fills [a3981766](https://github.com/reservoirprotocol/reservoir-kit/commit/a39817667fa4df11c1807f908326011b16c354a8)
+## [v1.24.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/8450bf0da2461d8594f950c369061fc54134eee8) (2024-01-08)
+
+## [v1.24.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/ae57108ac981724968e8061fa426fe801b39fa2d) (2024-01-08)
+
+
 ## [v1.24.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4168eb5811d40376b2884dff9a16146d47f64efb) (2024-01-04)
 
 * Add frame testnet placeholder icons
