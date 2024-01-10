@@ -6,7 +6,13 @@ import { useState } from 'react';
 
 const MarketplaceConfigs: NextPage = () => {
   const [collectionId, setCollectionId] = useState<string | undefined>()
-  const { data: marketplaceConfigs } = useMarketplaceConfigs(collectionId as string, undefined, Boolean(collectionId))
+  const [tokenId, setTokenId] = useState<string | undefined>()
+  const { data: marketplaceConfigs } = useMarketplaceConfigs(
+    collectionId as string,
+    undefined, 
+    { tokenId: tokenId }, 
+    Boolean(collectionId)
+  )
 
   return (
     <div
@@ -33,6 +39,21 @@ const MarketplaceConfigs: NextPage = () => {
             }
             else {
               setCollectionId(e.target.value)
+            } 
+          }}
+        />
+      </div>
+      <div>
+        <label>TokenId: </label>
+        <input
+          type="text"
+          value={tokenId}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setTokenId(undefined)
+            }
+            else {
+              setTokenId(e.target.value)
             } 
           }}
         />
