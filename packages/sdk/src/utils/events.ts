@@ -62,7 +62,7 @@ export const generatePaperEvent = (
   data: PaperTransactionResult,
   status: PaperTransactionStatus
 ): ReservoirEvent => {
-  let name: ReservoirEventName
+  let name: ReservoirEventName | undefined
 
   if (status === 'PAYMENT_SUCCEEDED') {
     name = 'credit_card_purchase_complete'
@@ -71,6 +71,8 @@ export const generatePaperEvent = (
   if (status === 'TRANSFER_SUCCEEDED') {
     name = 'credit_card_purchase_pending'
   }
+
+  if (!name) throw new Error(`Unknown Status: ${status}`)
 
   return {
     name,
