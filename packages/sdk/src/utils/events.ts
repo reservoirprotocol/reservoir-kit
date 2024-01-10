@@ -1,9 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
 import { Execute } from '../types/index'
-import {
-  PaperTransactionResult,
-  PaperTransactionStatus,
-} from './executePaperSteps'
+import { PaperTransactionStatus } from './executePaperSteps'
 
 export type ReservoirEventName =
   | 'purchase_error'
@@ -18,13 +15,14 @@ export type ReservoirEventName =
   | 'cancel_complete'
   | 'unknown'
   | 'credit_card_purchase_complete'
-  | 'credit_card_purchase_pending'
   | 'credit_card_purchase_error'
 
 export type ReservoirEvent = {
   name: ReservoirEventName
   data: any
 }
+
+export type CreditCardStatus = PaperTransactionStatus | 'ERROR'
 
 export const generateEvent = (
   request: AxiosRequestConfig,
@@ -58,18 +56,18 @@ export const generateEvent = (
   }
 }
 
-export const generatePaperEvent = (
-  data: PaperTransactionResult,
-  status: PaperTransactionStatus
+export const generateCreditCardEvent = (
+  data: any,
+  status: CreditCardStatus
 ): ReservoirEvent => {
   let name: ReservoirEventName | undefined
 
-  if (status === 'PAYMENT_SUCCEEDED') {
-    name = 'credit_card_purchase_complete'
+  if (status === 'ERROR') {
+    name = 'credit_card_purchase_error'
   }
 
   if (status === 'TRANSFER_SUCCEEDED') {
-    name = 'credit_card_purchase_pending'
+    name = 'credit_card_purchase_complete'
   }
 
   if (!name) throw new Error(`Unknown Status: ${status}`)

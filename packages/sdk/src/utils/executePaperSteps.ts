@@ -1,5 +1,6 @@
 import { getClient } from '../actions'
 import { isAxiosError } from './axios'
+import { generateCreditCardEvent } from './events'
 import { LogLevel } from './logger'
 import { pollUntilHasData } from './pollApi'
 
@@ -41,6 +42,7 @@ export async function executePaperSteps(
   ) => void
 ) {
   const client = getClient()
+  let reservoirChain = client?.currentChain()
 
   try {
     await pollUntilHasData(
@@ -54,7 +56,15 @@ export async function executePaperSteps(
       },
       (data: PaperTransactionResult): boolean => {
         callback(data, data.result.status)
-        return data.result.status === 'TRANSFER_SUCCEEDED'
+
+        if (data.result.status === 'TRANSFER_SUCCEEDED') {
+          client.log(['Execute Steps: all steps complete'], LogLevel.Verbose)
+          client._sendEvent(
+            generateCreditCardEvent(data, data.result.status),
+            reservoirChain?.id || 1
+          )
+          return true
+        } else return false
       },
       20, // Max Attempts
       0, // Attempt Count
@@ -65,6 +75,10 @@ export async function executePaperSteps(
       client.log(
         ['Execute Paper Steps: Unexpected Paper API response', e.status],
         LogLevel.Error
+      )
+      client._sendEvent(
+        generateCreditCardEvent(e.response?.data || {}, 'ERROR'),
+        reservoirChain?.id || 1
       )
     } else {
       client.log(['Execute Paper Steps: Unknown Error', e], LogLevel.Error)

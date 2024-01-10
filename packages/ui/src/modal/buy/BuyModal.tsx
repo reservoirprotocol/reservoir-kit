@@ -596,24 +596,7 @@ export function BuyModal({
                     priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
                     showRoyalties={true}
                   />
-                  <Flex
-                    align="center"
-                    justify="center"
-                    css={{
-                      padding: '$3',
-                      width: '100%',
-                      'div iframe': {
-                        border: 'none',
-                      },
-                    }}
-                  >
-                    <ProgressBar
-                      css={{ px: '$4', mt: '$3' }}
-                      value={1}
-                      max={3}
-                    />
-                    {!stepData && <Loader css={{ height: 206 }} />}
-                  </Flex>
+                  Progress Step
                 </Flex>
               )}
 
