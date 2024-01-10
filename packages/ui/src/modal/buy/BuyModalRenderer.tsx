@@ -80,6 +80,7 @@ type ChildrenProps = {
   blockExplorerBaseName: string
   steps: Execute['steps'] | null
   stepData: BuyModalStepData | null
+  path: BuyPath
   quantity: number
   isConnected: boolean
   isOwner: boolean
@@ -769,6 +770,7 @@ export const BuyModalRenderer: FC<Props> = ({
         blockExplorerBaseName,
         steps,
         stepData,
+        path,
         quantity,
         isConnected: wallet !== undefined,
         isOwner,
