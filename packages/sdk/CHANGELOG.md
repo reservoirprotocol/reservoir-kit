@@ -1,4 +1,17 @@
 
+## [v1.12.8-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d6a45190c90b4fbd4917b6c63b8683496670762f) (2024-01-10)
+
+* Sync Api 
+
+## [v1.12.7-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/998a8cb6c4791bc6113f8da282b08c8c8b73b270) (2024-01-09)
+
+* Merge pull request #541 from reservoirprotocol/ted/grwth-3761-implement-intent-filling-for-blur-orders [1c810b0b](https://github.com/reservoirprotocol/reservoir-kit/commit/1c810b0b990c8e97e923911f183858751b9e40d3)
+* Merge pull request #536 from reservoirprotocol/ted/grwth-3770-better-handle-price-checks-for-intent-fills [a3981766](https://github.com/reservoirprotocol/reservoir-kit/commit/a39817667fa4df11c1807f908326011b16c354a8)
+
+## [v1.12.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/392c5f08196a223eeb0bc3e8391f01eea8fb24ba) (2024-01-08)
+
+* Merge pull request #537 from reservoirprotocol/ted/grwth-3792-debug-courtyard-http-transport [57b1079c](https://github.com/reservoirprotocol/reservoir-kit/commit/57b1079c20b5af1faf47719f209afd00f8809f0f)
+
 ## [v1.12.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0048f8b70f3f1c3b0055289093fc7c61047f8faa) (2024-01-04)
 
 ## [v1.12.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/dec1a3840285b66639e78cb23fb604fa5eaee963) (2024-01-04)
