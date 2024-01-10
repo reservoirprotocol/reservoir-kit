@@ -1,6 +1,3 @@
-
-
-
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useMarketplaceConfigs } from '@reservoir0x/reservoir-kit-ui';
 import ChainSwitcher from 'components/ChainSwitcher';
@@ -8,9 +5,7 @@ import { NextPage } from 'next';
 import { useState } from 'react';
 
 const MarketplaceConfigs: NextPage = () => {
-
   const [collectionId, setCollectionId] = useState<string | undefined>()
-
   const { data: marketplaceConfigs } = useMarketplaceConfigs(collectionId as string, undefined, Boolean(collectionId))
 
   return (
