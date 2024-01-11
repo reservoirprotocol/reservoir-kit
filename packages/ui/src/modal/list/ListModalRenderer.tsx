@@ -14,7 +14,6 @@ import {
   useCollections,
   useUserTokens,
   useChainCurrency,
-  useOnChainRoyalties,
 } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
 import {
@@ -27,7 +26,7 @@ import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { Currency } from '../../types/Currency'
-import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { WalletClient, parseUnits, zeroAddress } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 
 export enum ListStep {
@@ -66,7 +65,6 @@ type ChildrenProps = {
   expirationOption: ExpirationOption
   marketplace?: Marketplace
   exchange?: Exchange
-  isFetchingOnChainRoyalties: boolean
   listingData: ListingData[]
   transactionError?: Error | null
   stepData: ListModalStepData | null
@@ -80,7 +78,7 @@ type ChildrenProps = {
   setPrice: React.Dispatch<React.SetStateAction<string>>
   setCurrency: (currency: Currency) => void
   setQuantity: React.Dispatch<React.SetStateAction<number>>
-  listToken: (options: { royaltyBps: number }) => void
+  listToken: (options: { royaltyBps?: number }) => void
 }
 
 type Props = {
@@ -91,7 +89,6 @@ type Props = {
   orderKind?: ListingData['listing']['orderKind']
   currencies?: Currency[]
   normalizeRoyalties?: boolean
-  enableOnChainRoyalties: boolean
   oracleEnabled: boolean
   feesBps?: string[]
   children: (props: ChildrenProps) => ReactNode
@@ -116,7 +113,6 @@ export const ListModalRenderer: FC<Props> = ({
   currencies: preferredCurrencies,
   chainId,
   normalizeRoyalties,
-  enableOnChainRoyalties = false,
   oracleEnabled = false,
   feesBps,
   children,
@@ -139,6 +135,7 @@ export const ListModalRenderer: FC<Props> = ({
   const [listingData, setListingData] = useState<ListingData[]>([])
   const [allMarketplaces] = useMarketplaces(
     collectionId,
+    tokenId,
     true,
     feesBps,
     rendererChain?.id,
@@ -185,30 +182,11 @@ export const ListModalRenderer: FC<Props> = ({
     expirationOptions[5]
   )
 
-  const { data: onChainRoyalties, isFetching: isFetchingOnChainRoyalties } =
-    useOnChainRoyalties({
-      contract,
-      tokenId,
-      chainId: chainCurrency.chainId,
-      enabled: enableOnChainRoyalties && open,
-    })
-
-  let royaltyBps = collection?.royalties?.bps
-
-  const onChainRoyaltyBps = useMemo(() => {
-    const totalRoyalty = onChainRoyalties?.[1].reduce((total, royalty) => {
-      total += parseFloat(formatUnits(royalty, chainCurrency.decimals || 18))
-      return total
-    }, 0)
-    if (totalRoyalty) {
-      return (totalRoyalty / 1) * 10000
-    }
-    return 0
-  }, [onChainRoyalties, chainCurrency])
-
-  if (enableOnChainRoyalties && onChainRoyaltyBps) {
-    royaltyBps = onChainRoyaltyBps
-  }
+  const royaltyBps = collection?.royalties?.bps
+    ? collection?.royalties?.bps
+    : marketplace?.royalties?.maxBps
+    ? marketplace?.royalties?.maxBps
+    : 0
 
   const { data: tokens } = useTokens(
     open && {
@@ -374,26 +352,6 @@ export const ListModalRenderer: FC<Props> = ({
         orderKind: exchange.orderKind,
       }
 
-      if (
-        enableOnChainRoyalties &&
-        onChainRoyalties &&
-        listing.orderKind?.includes('seaport')
-      ) {
-        const royalties = onChainRoyalties[0].map((recipient, i) => {
-          const bps = Math.floor(
-            (parseFloat(
-              formatUnits(onChainRoyalties[1][i], chainCurrency.decimals || 18)
-            ) /
-              1) *
-              10000
-          )
-
-          return `${recipient}:${bps}`
-        })
-        listing.automatedRoyalties = false
-        listing.customRoyalties = [...royalties]
-      }
-
       const fees = feesBps || client.marketplaceFees
       if (fees) {
         listing.marketplaceFees = fees
@@ -512,8 +470,6 @@ export const ListModalRenderer: FC<Props> = ({
       expirationOption,
       currency,
       quantity,
-      enableOnChainRoyalties,
-      onChainRoyalties,
       feesBps,
       price,
       marketplace,
@@ -524,11 +480,8 @@ export const ListModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
-        loading:
-          !token ||
-          !collection ||
-          !marketplace ||
-          (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false),
+        loading: !token || !collection || !marketplace,
+        // (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false),
         token,
         quantityAvailable,
         collection,
@@ -538,7 +491,6 @@ export const ListModalRenderer: FC<Props> = ({
         exchange,
         expirationOption,
         expirationOptions,
-        isFetchingOnChainRoyalties,
         listingData,
         transactionError,
         stepData,

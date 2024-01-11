@@ -174,6 +174,7 @@ export const EditBidModalRenderer: FC<Props> = ({
 
   const [allMarketplaces] = useMarketplaces(
     collectionId,
+    tokenId,
     undefined,
     undefined,
     rendererChain?.id,

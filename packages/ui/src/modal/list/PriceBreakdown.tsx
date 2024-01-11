@@ -9,7 +9,6 @@ import {
   Text,
 } from '../../primitives'
 import { Currency } from '../../types/Currency'
-import { useCollections } from '../../hooks'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
@@ -20,7 +19,7 @@ type PriceBreakdownProps = {
   usdPrice: number
   currency: Currency
   quantity: number
-  collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
+  royaltyBps?: number
   marketplace?: Marketplace
 }
 
@@ -29,21 +28,16 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
   usdPrice,
   currency,
   quantity,
-  collection,
+  royaltyBps,
   marketplace,
 }) => {
   let profit =
-    (1 -
-      (marketplace?.fee?.percent || 0) / 100 -
-      (collection?.royalties?.bps || 0) * 0.0001) *
+    (1 - (marketplace?.fee?.percent || 0) / 100 - (royaltyBps || 0) * 0.0001) *
     Number(price) *
     quantity
   100
 
-  if (
-    Number(price) > 0 &&
-    (marketplace?.fee?.percent || collection?.royalties?.bps)
-  ) {
+  if (Number(price) > 0 && (marketplace?.fee?.percent || royaltyBps)) {
     return (
       <Collapsible
         style={{ width: '100%', borderRadius: 0, overflow: 'visible' }}
@@ -107,7 +101,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
               textColor="subtle"
             />
           </Flex>
-          {collection?.royalties?.bps ? (
+          {royaltyBps ? (
             <Flex justify="between" align="center">
               <Flex align="center" css={{ gap: '$2' }}>
                 <Text style="subtitle2" color="subtle">
@@ -127,12 +121,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
                   -
                 </Text>
                 <FormatCryptoCurrency
-                  amount={
-                    quantity *
-                    Number(price) *
-                    (collection?.royalties?.bps || 0) *
-                    0.0001
-                  }
+                  amount={quantity * Number(price) * (royaltyBps || 0) * 0.0001}
                   address={currency.contract}
                   symbol={currency.symbol}
                   textStyle="subtitle2"

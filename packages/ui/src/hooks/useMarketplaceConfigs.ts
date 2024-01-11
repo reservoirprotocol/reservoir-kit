@@ -5,7 +5,7 @@ import { useReservoirClient } from './'
 type MarketplaceConfigurationsResponse =
   paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses']['200']['schema']
 
-type MarketPlaceConfigurationsQuery =
+export type MarketPlaceConfigurationsQuery =
   paths['/collections/{collection}/marketplace-configurations/v1']['get']['parameters']['query']
 
 export default function (
@@ -20,7 +20,7 @@ export default function (
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
 
-  const { data, error } = useSWR<MarketplaceConfigurationsResponse[]>(() => {
+  const { data, error } = useSWR<MarketplaceConfigurationsResponse>(() => {
     if (!enabled || !collectionId) {
       return null
     }

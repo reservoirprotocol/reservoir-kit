@@ -260,6 +260,7 @@ export const BidModalRenderer: FC<Props> = ({
 
   const [allMarketplaces] = useMarketplaces(
     collectionId,
+    tokenId,
     undefined,
     undefined,
     rendererChain?.id,
