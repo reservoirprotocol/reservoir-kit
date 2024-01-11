@@ -481,7 +481,6 @@ export const ListModalRenderer: FC<Props> = ({
     <>
       {children({
         loading: !token || !collection || !marketplace,
-        // (enableOnChainRoyalties ? isFetchingOnChainRoyalties : false),
         token,
         quantityAvailable,
         collection,
