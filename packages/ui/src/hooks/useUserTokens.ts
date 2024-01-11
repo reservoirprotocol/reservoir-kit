@@ -3,10 +3,10 @@ import { useReservoirClient, useInfiniteApi } from './'
 import { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type UserTokenResponse =
-  paths['/users/{user}/tokens/v8']['get']['responses']['200']['schema']
+  paths['/users/{user}/tokens/v9']['get']['responses']['200']['schema']
 
 type UserTokenQuery =
-  paths['/users/{user}/tokens/v8']['get']['parameters']['query']
+  paths['/users/{user}/tokens/v9']['get']['parameters']['query']
 
 export default function (
   user?: string | undefined,
@@ -26,7 +26,7 @@ export default function (
         return null
       }
 
-      const url = new URL(`${chain?.baseApiUrl}/users/${user}/tokens/v8`)
+      const url = new URL(`${chain?.baseApiUrl}/users/${user}/tokens/v9`)
 
       let query: UserTokenQuery = { ...options }
 
