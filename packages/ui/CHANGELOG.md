@@ -1,4 +1,12 @@
 
+## [v1.24.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/4168eb5811d40376b2884dff9a16146d47f64efb) (2024-01-04)
+
+* Add frame testnet placeholder icons
+
+## [v1.24.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6a7533c87eaa4ead72beab0f793a4bc858e8c787) (2024-01-04)
+* Add frame testnet
+* CollectButton: fix theme color [079c9716](https://github.com/reservoirprotocol/reservoir-kit/commit/079c971632e849ba18e2370be871727adfb12d6b)
+
 ## [v1.24.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/5663a9dcee1c7cf42ab6efaee04124f6061292ba) (2024-01-04)
 
 * New SweepModal added

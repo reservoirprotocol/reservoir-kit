@@ -1,4 +1,6 @@
 
+## [v1.12.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0048f8b70f3f1c3b0055289093fc7c61047f8faa) (2024-01-04)
+
 ## [v1.12.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/dec1a3840285b66639e78cb23fb604fa5eaee963) (2024-01-04)
 
 ## [v1.12.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b6c67326a1bf3daa6cd3b23c0d81d920aac58a31) (2023-12-21)

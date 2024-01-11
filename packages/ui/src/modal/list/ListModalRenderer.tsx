@@ -21,6 +21,7 @@ import {
   Execute,
   ReservoirClientActions,
   ReservoirWallet,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
@@ -256,6 +257,9 @@ export const ListModalRenderer: FC<Props> = ({
       setExpirationOption(expirationOptions[5])
       setQuantity(1)
       setCurrency(defaultCurrency)
+      axios.defaults.headers.common['x-rkui-context'] = ''
+    } else {
+      axios.defaults.headers.common['x-rkui-context'] = 'listModalRenderer'
     }
   }, [open])
 

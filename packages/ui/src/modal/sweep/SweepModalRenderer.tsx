@@ -21,6 +21,7 @@ import {
   LogLevel,
   ReservoirChain,
   ReservoirClientActions,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
@@ -575,11 +576,13 @@ export const SweepModalRenderer: FC<Props> = ({
       setSweepStep(SweepStep.Idle)
       setTransactionError(null)
       setFetchedInitialOrders(false)
+      axios.defaults.headers.common['x-rkui-context'] = ''
       setIsFetchingPath(false)
       _setPaymentCurrency(undefined)
       setBuyResponseFees(undefined)
       setStepData(null)
     } else {
+      axios.defaults.headers.common['x-rkui-context'] = 'collectModalRenderer'
       setItemAmount(defaultQuantity || 1)
     }
   }, [open])
