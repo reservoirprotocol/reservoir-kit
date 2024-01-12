@@ -68,6 +68,7 @@ export default ({
       return cloneElement(creditCardCheckoutComponent, {
         options: stylingOptions,
         onPaymentSuccess: (event: { id: string; transactionId: string }) => {
+          callback('Paper', 'PAYMENT_SUCCEEDED')
           executePaperSteps(
             event.transactionId,
             creditCardCheckoutComponent?.props?.configs?.contractId,

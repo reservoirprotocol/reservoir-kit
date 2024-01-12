@@ -623,8 +623,8 @@ export function BuyModal({
                     <Text style="h6">Processing Transaction</Text>
                     <Text color="subtle" style="subtitle2">
                       {creditCardCheckoutProvider} has confirmed your payment.
-                      Your purchase is being processed and will be <br />{' '}
-                      confirmed on the blockchain shortly.
+                      Your purchase is being processed and will be confirmed on
+                      the blockchain shortly.
                     </Text>
                     <FontAwesomeIcon
                       color="#889096"
