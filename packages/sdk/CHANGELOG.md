@@ -1,4 +1,7 @@
 
+## [v1.12.9-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b6c51f8e8902f64cd630cce18ae47ec368429578) (2024-01-12)
+
+
 ## [v1.12.8-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d6a45190c90b4fbd4917b6c63b8683496670762f) (2024-01-10)
 
 * Sync Api 

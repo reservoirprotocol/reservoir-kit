@@ -1,4 +1,10 @@
 
+## [v1.25.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3150c8c2c67000e2171b87b362aef464a8b367e9) (2024-01-12)
+
+* Merge pull request #549 from reservoirprotocol/armando/grwth-3823-call-new-usertokens-v9-and-pass-includeattributes-false [a2cd5224](https://github.com/reservoirprotocol/reservoir-kit/commit/a2cd52247ba2248c8603ba1647611ba49ca20641)
+* Merge pull request #546 from reservoirprotocol/ted/grwth-3817-bidmodal-and-listmodal-royaltybps-parameter-should-handle-0 [a0d864c1](https://github.com/reservoirprotocol/reservoir-kit/commit/a0d864c1670dac4063ec83fd2510d75f759789ba)
+* Merge pull request #545 from reservoirprotocol/ted/fix-marketplace-configs-hook-response-type [ef646779](https://github.com/reservoirprotocol/reservoir-kit/commit/ef646779da13c1557c2f35ce85d59f819d0b9c2c)
+
 ## [v1.24.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/579a5bd4edccf60b045e5cc1a9f76a7c8c71fd53) (2024-01-10)
 
 * Update useMarketplaceConfigs hook [708ba2f9](https://github.com/reservoirprotocol/reservoir-kit/commit/708ba2f99936099f739edd53e36f1f12e1e81121)
