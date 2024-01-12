@@ -40,8 +40,6 @@ export enum BuyStep {
 
   CreditCardCheckout,
   CreditCardCheckoutProgress,
-  CreditCardCheckoutError,
-  CreditCardCheckoutSuccess,
 }
 
 export type BuyModalStepData = {

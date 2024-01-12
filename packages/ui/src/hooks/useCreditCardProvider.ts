@@ -7,9 +7,8 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { BuyStep } from '../modal/buy/BuyModalRenderer'
 
-interface ICustomizationOptions {
+export interface ICustomizationOptions {
   colorPrimary?: string
   colorBackground?: string
   colorText?: string
@@ -19,17 +18,17 @@ interface ICustomizationOptions {
   inputBorderColor?: string
 }
 
-type CreditCardProvdiers = 'paper'
+export type CreditCardProviders = 'PAPER'
 
-interface CreditCardProvider {
+interface CreditCardProviderProps {
   creditCardCheckoutComponent: JSX.Element | undefined
-  callback: (type: CreditCardProvdiers, status: BuyStep, data: any) => void
+  callback: (status: `${CreditCardProviders}-${string}`) => void
 }
 
 export default ({
   creditCardCheckoutComponent,
   callback,
-}: CreditCardProvider): JSX.Element | undefined => {
+}: CreditCardProviderProps): JSX.Element | undefined => {
   const [stylingOptions, setStylingOptions] =
     useState<ICustomizationOptions | null>(null)
 
@@ -72,18 +71,9 @@ export default ({
           executePaperSteps(
             event.transactionId,
             creditCardCheckoutComponent?.props?.configs?.contractId,
-            (result, status) => {
-              switch (status) {
-                case 'TRANSFER_SUCCEEDED':
-                  callback('paper', BuyStep.CreditCardCheckoutSuccess, result)
-                  break
-                case 'PAYMENT_SUCCEEDED':
-                  callback('paper', BuyStep.CreditCardCheckoutProgress, result)
-                  break
-              }
-            }
+            (_, status) => callback(`PAPER-${status}`)
           )
-          creditCardCheckoutComponent.props.onPaymentSuccess(event)
+          creditCardCheckoutComponent?.props?.onPaymentSuccess(event)
         },
       } as ComponentProps<typeof CheckoutWithCard>)
     }

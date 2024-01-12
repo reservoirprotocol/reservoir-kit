@@ -71,7 +71,6 @@ const ModalCopy = {
 type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   creditCardCheckoutComponent?: JSX.Element
-  enableCreditCardCheckout?: boolean
   tokenId?: string
   collectionId?: string
   chainId?: number
@@ -249,8 +248,15 @@ export function BuyModal({
 
         const CreditCardCheckoutComponent = useCreditCardProvider({
           creditCardCheckoutComponent,
-          callback: (_, status, data) => {
-            setBuyStep(status)
+          callback: (status) => {
+            switch (status) {
+              case 'PAPER-TRANSFER_SUCCEEDED':
+                setBuyStep(BuyStep.CreditCardCheckout)
+                break
+              case 'PAPER-PAYMENT_SUCCEEDED':
+                setBuyStep(BuyStep.Complete)
+                break
+            }
           },
         })
 
@@ -491,7 +497,7 @@ export function BuyModal({
                   css={{ p: '$4', width: '100%', gap: '$2' }}
                 >
                   {hasEnoughCurrency || !isConnected ? (
-                    <Flex direction="column" css={{}}>
+                    <Flex direction="column">
                       <Button
                         disabled={!hasEnoughCurrency && isConnected}
                         onClick={buyToken}
@@ -597,215 +603,6 @@ export function BuyModal({
                     showRoyalties={true}
                   />
                   Progress Step
-                </Flex>
-              )}
-
-            {CreditCardCheckoutComponent &&
-              buyStep === BuyStep.CreditCardCheckoutSuccess &&
-              token && (
-                <Flex direction="column">
-                  <Flex
-                    css={{
-                      p: '$4',
-                      py: '$5',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      textAlign: 'center',
-                    }}
-                  >
-                    {totalPurchases === 1 ? (
-                      <>
-                        <Text
-                          style="h5"
-                          css={{ textAlign: 'center', mt: 24, mb: 24 }}
-                        >
-                          Congratulations!
-                        </Text>
-                      </>
-                    ) : (
-                      <>
-                        <Box
-                          css={{
-                            color: failedPurchases
-                              ? '$errorAccent'
-                              : '$successAccent',
-                          }}
-                        >
-                          <FontAwesomeIcon
-                            icon={
-                              failedPurchases
-                                ? faCircleExclamation
-                                : faCheckCircle
-                            }
-                            fontSize={32}
-                          />
-                        </Box>
-                        <Text
-                          style="h5"
-                          css={{ textAlign: 'center', mt: 24, mb: 24 }}
-                        >
-                          {failedPurchases
-                            ? `${successfulPurchases} ${
-                                successfulPurchases > 1 ? 'items' : 'item'
-                              } purchased, ${failedPurchases} ${
-                                failedPurchases > 1 ? 'items' : 'item'
-                              } failed`
-                            : 'Congrats! Purchase was successful.'}
-                        </Text>
-                      </>
-                    )}
-                    {totalPurchases === 1 && (
-                      <img
-                        src={token?.token?.imageSmall}
-                        style={{ width: 100, height: 100 }}
-                      />
-                    )}
-                    {totalPurchases > 1 && (
-                      <Flex direction="column" css={{ gap: '$2' }}>
-                        {stepData?.currentStep?.items?.map(
-                          (item, itemIndex) => {
-                            if (
-                              Array.isArray(item?.txHashes) &&
-                              item?.txHashes.length > 0
-                            ) {
-                              return item.txHashes.map((hash, txHashIndex) => {
-                                const truncatedTxHash = truncateAddress(
-                                  hash.txHash
-                                )
-                                const blockExplorerBaseUrl =
-                                  getChainBlockExplorerUrl(hash.chainId)
-                                return (
-                                  <Anchor
-                                    key={`${itemIndex}-${txHashIndex}`}
-                                    href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
-                                    color="primary"
-                                    weight="medium"
-                                    target="_blank"
-                                    css={{ fontSize: 12 }}
-                                  >
-                                    View transaction: {truncatedTxHash}
-                                  </Anchor>
-                                )
-                              })
-                            } else {
-                              return null
-                            }
-                          }
-                        )}
-                      </Flex>
-                    )}
-
-                    {totalPurchases === 1 && (
-                      <>
-                        <Flex
-                          css={{ mb: 24, mt: 24, maxWidth: '100%' }}
-                          align="center"
-                          justify="center"
-                        >
-                          {!!token.token?.collection?.image && (
-                            <Box css={{ mr: '$1' }}>
-                              <img
-                                src={token.token?.collection?.image}
-                                style={{
-                                  width: 24,
-                                  height: 24,
-                                  borderRadius: '50%',
-                                }}
-                              />
-                            </Box>
-                          )}
-                          <Text
-                            style="subtitle3"
-                            css={{ maxWidth: '100%' }}
-                            ellipsify
-                          >
-                            {token?.token?.name
-                              ? token?.token?.name
-                              : `#${token?.token?.tokenId}`}
-                          </Text>
-                        </Flex>
-                        <Flex css={{ mb: '$2' }} align="center">
-                          <Box css={{ color: '$successAccent', mr: '$2' }}>
-                            <FontAwesomeIcon icon={faCheckCircle} />
-                          </Box>
-                          <Text style="body1">
-                            Your transaction went through successfully
-                          </Text>
-                        </Flex>
-
-                        <Flex
-                          direction="column"
-                          align="center"
-                          css={{ gap: '$2' }}
-                        >
-                          {finalTxHashes?.map((hash, index) => {
-                            const truncatedTxHash = truncateAddress(hash.txHash)
-                            const blockExplorerBaseUrl =
-                              getChainBlockExplorerUrl(hash.chainId)
-                            return (
-                              <Anchor
-                                key={index}
-                                href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
-                                color="primary"
-                                weight="medium"
-                                target="_blank"
-                                css={{ fontSize: 12 }}
-                              >
-                                View transaction: {truncatedTxHash}
-                              </Anchor>
-                            )
-                          })}
-                        </Flex>
-                      </>
-                    )}
-                  </Flex>
-                  <Flex
-                    css={{
-                      p: '$4',
-                      flexDirection: 'column',
-                      gap: '$3',
-                      '@bp1': {
-                        flexDirection: 'row',
-                      },
-                    }}
-                  >
-                    {!!onGoToToken ? (
-                      <>
-                        <Button
-                          onClick={() => {
-                            setOpen(false)
-                          }}
-                          css={{ flex: 1 }}
-                          color="ghost"
-                        >
-                          {copy.ctaClose}
-                        </Button>
-                        <Button
-                          style={{ flex: 1 }}
-                          color="primary"
-                          onClick={() => {
-                            onGoToToken()
-                          }}
-                        >
-                          {copy.ctaGoToToken.length > 0
-                            ? copy.ctaGoToToken
-                            : `Go to ${
-                                successfulPurchases > 1 ? 'Tokens' : 'Token'
-                              }`}
-                        </Button>
-                      </>
-                    ) : (
-                      <Button
-                        onClick={() => {
-                          setOpen(false)
-                        }}
-                        style={{ flex: 1 }}
-                        color="primary"
-                      >
-                        {copy.ctaClose}
-                      </Button>
-                    )}
-                  </Flex>
                 </Flex>
               )}
 
