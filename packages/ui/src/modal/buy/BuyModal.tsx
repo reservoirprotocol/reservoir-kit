@@ -26,13 +26,12 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import {
-  BuyModalRenderer,
-  BuyStep,
-  BuyModalStepData,
-  BuyTokenOptions,
-} from './BuyModalRenderer'
-import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+  BuyTokenBodyParameters,
+  Execute,
+  ReservoirWallet,
+} from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
@@ -70,13 +69,13 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   creditCardCheckoutButton?: JSX.Element
   chainId?: number
   defaultQuantity?: number
-  executionMethod?: BuyTokenOptions['executionMethod']
   feesOnTopBps?: string[] | null
   feesOnTopUsd?: string[] | null
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   walletClient?: ReservoirWallet | WalletClient
   usePermit?: boolean
+  executionMethod?: BuyTokenBodyParameters['executionMethod']
   onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -104,13 +103,13 @@ export function BuyModal({
   copyOverrides,
   walletClient,
   usePermit,
+  executionMethod,
   onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
   onClose,
   onGoToToken,
   onPointerDownOutside,
-  executionMethod,
   creditCardCheckoutButton,
 }: Props): ReactElement {
   const copy: typeof ModalCopy = { ...ModalCopy, ...copyOverrides }
