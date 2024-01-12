@@ -7,6 +7,7 @@ import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import ChainSwitcher from 'components/ChainSwitcher'
 import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
+import { BuyTokenBodyParameters } from '@reservoir0x/reservoir-sdk'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -20,6 +21,7 @@ const BuyPage: NextPage = () => {
   const router = useRouter()
   const [token, setToken] = useState(`${DEFAULT_COLLECTION_ID}:${DEFAULT_TOKEN_ID}`)
   const [orderId, setOrderId] = useState('')
+  const [executionMethod, setExecutionMethod] = useState< "seaport-intent" | "intent" | undefined>(undefined)
   const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
@@ -29,6 +31,7 @@ const BuyPage: NextPage = () => {
     useState(NORMALIZE_ROYALTIES)
   const { openConnectModal } = useConnectModal()
   const collectionId = token?.split(':')[0]
+
 
   return (
     <div
@@ -107,6 +110,7 @@ const BuyPage: NextPage = () => {
           }}
         />
       </div>
+
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -118,7 +122,41 @@ const BuyPage: NextPage = () => {
           }}
         />
       </div>
-
+      <div
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    gap: "5px",
+  }}
+>
+  <label>Execution Method:</label>
+  <button
+    onClick={() =>
+      setExecutionMethod(
+        executionMethod === "seaport-intent" ? undefined : "seaport-intent"
+      )
+    }
+    style={{
+      border: "none",
+      borderRadius: "5px",
+      background: executionMethod === "seaport-intent" ? "blue" : "",
+    }}
+  >
+    seaport-intent
+  </button>
+  <button
+    onClick={() =>
+      setExecutionMethod(executionMethod === "intent" ? undefined : "intent")
+    }
+    style={{
+      border: "none",
+      borderRadius: "5px",
+      background: executionMethod === "intent" ? "blue" : "",
+    }}
+  >
+    intent
+  </button>
+</div>
       <BuyModal
       creditCardCheckoutButton={
 <CrossmintPayButton
@@ -166,6 +204,7 @@ style={{
         }
         token={token}
         orderId={orderId}
+        executionMethod={executionMethod}
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
         normalizeRoyalties={normalizeRoyalties}
