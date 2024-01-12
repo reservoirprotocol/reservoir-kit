@@ -1,9 +1,12 @@
 
 ## [v1.25.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3150c8c2c67000e2171b87b362aef464a8b367e9) (2024-01-12)
 
-* Merge pull request #549 from reservoirprotocol/armando/grwth-3823-call-new-usertokens-v9-and-pass-includeattributes-false [a2cd5224](https://github.com/reservoirprotocol/reservoir-kit/commit/a2cd52247ba2248c8603ba1647611ba49ca20641)
-* Merge pull request #546 from reservoirprotocol/ted/grwth-3817-bidmodal-and-listmodal-royaltybps-parameter-should-handle-0 [a0d864c1](https://github.com/reservoirprotocol/reservoir-kit/commit/a0d864c1670dac4063ec83fd2510d75f759789ba)
-* Merge pull request #545 from reservoirprotocol/ted/fix-marketplace-configs-hook-response-type [ef646779](https://github.com/reservoirprotocol/reservoir-kit/commit/ef646779da13c1557c2f35ce85d59f819d0b9c2c)
+* useUserTokens: upgrade to v9 [a2cd5224](https://github.com/reservoirprotocol/reservoir-kit/commit/a2cd52247ba2248c8603ba1647611ba49ca20641)
+* BidModal & ListModal: handle 0 royaltyBps when calling underlying function [a0d864c1](https://github.com/reservoirprotocol/reservoir-kit/commit/a0d864c1670dac4063ec83fd2510d75f759789ba)
+
+### Breaking changes
+* useUserCollections: backend improvements which use a new underlying data table
+* useUserTokens: collection may be returned as null now as tokens are returned even if not assigned to a collection
 
 ## [v1.24.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/579a5bd4edccf60b045e5cc1a9f76a7c8c71fd53) (2024-01-10)
 
