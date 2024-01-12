@@ -9,7 +9,7 @@ const fetcher = async (urls: string[]) => {
   const fetches = urls.map(
     (url) =>
       axios(url)
-        .then((r) => JSON.parse(r.data()))
+        .then((r) => JSON.parse(r.data))
         .catch(() => undefined) // If a fetch fails, return undefined
   )
   const results = await Promise.allSettled(fetches)

@@ -41,7 +41,7 @@ export const defaultFetcher = (params: string[] | string) => {
         )
       }
 
-      return JSON.parse(res.data())
+      return JSON.parse(res.data)
     })
     .catch((e) => {
       throw e

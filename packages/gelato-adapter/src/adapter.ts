@@ -94,7 +94,7 @@ export const adaptGelatoRelayer = (
             },
             data: JSON.stringify({ signatureData: signatureDataFormatted }),
           })
-          relayResponse = JSON.parse(response.data())
+          relayResponse = JSON.parse(response.data)
         } else {
           throw new Error(
             'You must supply either an apiKey or a proxy API url.'
