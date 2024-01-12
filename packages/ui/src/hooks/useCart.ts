@@ -22,6 +22,7 @@ export default function useCart<SelectorOutput>(
     checkout,
     clearTransaction,
     setQuantity,
+    setCurrency,
   } = cart
 
   return {
@@ -29,6 +30,7 @@ export default function useCart<SelectorOutput>(
     clear,
     clearTransaction,
     setQuantity,
+    setCurrency,
     remove,
     add,
     validate,

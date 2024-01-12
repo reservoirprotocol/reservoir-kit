@@ -11,7 +11,7 @@ export type ReservoirChain = {
   baseApiUrl: string
   active: boolean
   paymentTokens?: PaymentToken[]
-  marketplaceFees?: string[],
+  marketplaceFees?: string[]
   websocketUrl?: string
   checkPollingInterval?: number
 }
@@ -99,12 +99,12 @@ export class ReservoirClient {
     this.uiVersion = options.uiVersion ? options.uiVersion : this.uiVersion
     this.chains = options.chains
       ? options.chains.map((chain) => ({
-        ...chain,
-        baseApiUrl: chain.baseApiUrl.replace(/\/$/, ''),
-        paymentTokens: chain?.paymentTokens
-          ? chain?.paymentTokens
-          : chainPaymentTokensMap[chain.id],
-      }))
+          ...chain,
+          baseApiUrl: chain.baseApiUrl.replace(/\/$/, ''),
+          paymentTokens: chain?.paymentTokens
+            ? chain?.paymentTokens
+            : chainPaymentTokensMap[chain.id],
+        }))
       : this.chains
     this.marketplaceFees = options.marketplaceFees
       ? options.marketplaceFees
@@ -197,3 +197,5 @@ export function createClient(options: ReservoirClientOptions) {
 
   return _client
 }
+
+export type { BuyTokenBodyParameters } from './buyToken'

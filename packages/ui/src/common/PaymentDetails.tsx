@@ -8,7 +8,7 @@ import {
   Text,
 } from '../primitives'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
-import { EnhancedCurrency } from '../hooks/usePaymentTokens'
+import { EnhancedCurrency } from '../hooks/usePaymentTokensv2'
 import { formatUnits } from 'viem'
 
 type Props = {
