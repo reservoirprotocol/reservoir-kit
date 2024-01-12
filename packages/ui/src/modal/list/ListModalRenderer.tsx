@@ -419,7 +419,7 @@ export const ListModalRenderer: FC<Props> = ({
         }
       }
 
-      if (royaltyBps) {
+      if (royaltyBps !== undefined) {
         listing.royaltyBps = royaltyBps
       }
 
