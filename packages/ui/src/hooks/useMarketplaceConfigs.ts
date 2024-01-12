@@ -20,7 +20,7 @@ export default function (
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
 
-  const { data, error } = useSWR<MarketplaceConfigurationsResponse[]>(() => {
+  const { data, error } = useSWR<MarketplaceConfigurationsResponse>(() => {
     if (!enabled || !collectionId) {
       return null
     }
