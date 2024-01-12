@@ -25,7 +25,6 @@ const BuyPage: NextPage = () => {
   const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
-  const [executionMethod, setExecutionMethod] = useState<BuyTokenBodyParameters['executionMethod']>()
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
@@ -223,7 +222,6 @@ style={{
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
         normalizeRoyalties={normalizeRoyalties}
-        executionMethod={executionMethod}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onConnectWallet={() => {
           openConnectModal?.()
