@@ -631,16 +631,16 @@ export const SweepModalRenderer: FC<Props> = ({
       currencyChainId: paymentCurrency?.chainId,
     }
 
+    const relayerFee = BigInt(buyResponseFees?.relayer?.amount?.raw ?? 0)
+
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
         let totalFeeTruncated = totalIncludingFees - feeOnTop
 
-        // if cross-chain, subtract relayer fees from total
-        if (buyResponseFees?.relayer?.amount?.raw) {
-          totalFeeTruncated -= BigInt(
-            buyResponseFees?.relayer?.amount?.raw ?? 0
-          )
+        // if relayer fee, subtract from total
+        if (relayerFee) {
+          totalFeeTruncated -= relayerFee
         }
 
         const fee = Math.floor(
@@ -690,7 +690,7 @@ export const SweepModalRenderer: FC<Props> = ({
         ],
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            raw: totalIncludingFees,
+            raw: totalIncludingFees - relayerFee,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },

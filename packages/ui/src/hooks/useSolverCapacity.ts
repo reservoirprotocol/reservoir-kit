@@ -1,12 +1,19 @@
 import useSWR from 'swr'
-import { ReservoirChain, axios, paths } from '@reservoir0x/reservoir-sdk'
+import { axios, paths } from '@reservoir0x/reservoir-sdk'
+import { useReservoirClient } from './'
 
 type SolverCapacityResponse =
   paths['/execute/solve/capacity/v1']['post']['responses']['200']['schema']
 
-export default function (chain?: ReservoirChain | null) {
+export default function (chainId?: number, enabled: boolean = true) {
+  const client = useReservoirClient()
+  const chain =
+    chainId !== undefined
+      ? client?.chains.find((chain) => chain.id === chainId)
+      : client?.currentChain()
+
   const { data, error } = useSWR<SolverCapacityResponse>(
-    chain ? `${chain?.baseApiUrl}/execute/solve/capacity/v1` : null,
+    chain && enabled ? `${chain?.baseApiUrl}/execute/solve/capacity/v1` : null,
     async (url) => {
       try {
         const response = await axios.post(url, {

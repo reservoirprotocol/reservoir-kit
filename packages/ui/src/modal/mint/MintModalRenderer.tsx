@@ -553,16 +553,16 @@ export const MintModalRenderer: FC<Props> = ({
       currencyChainId: paymentCurrency?.chainId,
     }
 
+    const relayerFee = BigInt(mintResponseFees?.relayer?.amount?.raw ?? 0)
+
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
 
         let totalFeeTruncated = totalIncludingFees - feeOnTop
 
-        if (mintResponseFees?.relayer?.amount?.raw) {
-          totalFeeTruncated -= BigInt(
-            mintResponseFees?.relayer?.amount?.raw ?? 0
-          )
+        if (relayerFee) {
+          totalFeeTruncated -= relayerFee
         }
 
         const fee = Math.floor(
@@ -603,7 +603,7 @@ export const MintModalRenderer: FC<Props> = ({
         ],
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            raw: totalIncludingFees,
+            raw: totalIncludingFees - relayerFee,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },
