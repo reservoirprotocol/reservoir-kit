@@ -38,7 +38,7 @@ export async function executePaperSteps(
   clientId: string,
   callback: (
     result: PaperTransactionResult | null,
-    status: PaperTransactionStatus | null
+    status: PaperTransactionStatus
   ) => void
 ) {
   const client = getClient()
@@ -83,5 +83,7 @@ export async function executePaperSteps(
     } else {
       client.log(['Execute Paper Steps: Unknown Error', e], LogLevel.Error)
     }
+
+    return false
   }
 }

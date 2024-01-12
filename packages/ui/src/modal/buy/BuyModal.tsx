@@ -3,6 +3,7 @@ import {
   faChevronLeft,
   faChevronRight,
   faCircleExclamation,
+  faImage,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
@@ -13,6 +14,7 @@ import React, {
   SetStateAction,
   useContext,
   useEffect,
+  useState,
 } from 'react'
 import { WalletClient } from 'viem'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
@@ -44,6 +46,7 @@ import QuantitySelector from '../QuantitySelector'
 import { SelectPaymentToken } from '../SelectPaymentToken'
 import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyModalStepData, BuyStep } from './BuyModalRenderer'
+import { CreditCardProviders } from '../../hooks/useCreditCardProvider'
 
 type PurchaseData = {
   tokenId?: string
@@ -141,6 +144,8 @@ export function BuyModal({
     openState ? openState[0] : false,
     openState
   )
+  const [creditCardCheckoutProvider, setCreditCardCheckoutProvider] =
+    useState<CreditCardProviders | null>(null)
 
   const client = useReservoirClient()
 
@@ -248,13 +253,14 @@ export function BuyModal({
 
         const CreditCardCheckoutComponent = useCreditCardProvider({
           creditCardCheckoutComponent,
-          callback: (status) => {
+          callback: (provider, status) => {
+            setCreditCardCheckoutProvider(provider)
             switch (status) {
-              case 'PAPER-TRANSFER_SUCCEEDED':
-                setBuyStep(BuyStep.CreditCardCheckout)
-                break
-              case 'PAPER-PAYMENT_SUCCEEDED':
+              case 'TRANSFER_SUCCEEDED':
                 setBuyStep(BuyStep.Complete)
+                break
+              case 'PAYMENT_SUCCEEDED':
+                setBuyStep(BuyStep.CreditCardCheckoutProgress)
                 break
             }
           },
@@ -602,7 +608,40 @@ export function BuyModal({
                     priceSubtitle={quantity > 1 ? 'Average Price' : undefined}
                     showRoyalties={true}
                   />
-                  Progress Step
+
+                  <Flex
+                    direction="column"
+                    css={{
+                      borderTop: '1px solid $borderColor',
+                      textAlign: 'center',
+                      gap: '$4',
+                      pt: '$5',
+                      pb: '24px',
+                      px: '$4',
+                    }}
+                  >
+                    <Text style="h6">Processing Transaction</Text>
+                    <Text color="subtle" style="subtitle2">
+                      {creditCardCheckoutProvider} has confirmed your payment.
+                      Your purchase is being processed and will be <br />{' '}
+                      confirmed on the blockchain shortly.
+                    </Text>
+                    <FontAwesomeIcon
+                      color="#889096"
+                      fontSize={32}
+                      icon={faImage}
+                    />
+                  </Flex>
+                  <Flex
+                    css={{
+                      p: '$4',
+                    }}
+                  >
+                    <Button disabled={true} css={{ m: '$4', w: '100%' }}>
+                      <Loader />
+                      Finalizing Transaction
+                    </Button>
+                  </Flex>
                 </Flex>
               )}
 

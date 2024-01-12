@@ -18,11 +18,11 @@ export interface ICustomizationOptions {
   inputBorderColor?: string
 }
 
-export type CreditCardProviders = 'PAPER'
+export type CreditCardProviders = 'Paper'
 
 interface CreditCardProviderProps {
   creditCardCheckoutComponent: JSX.Element | undefined
-  callback: (status: `${CreditCardProviders}-${string}`) => void
+  callback: (provider: CreditCardProviders, status: string) => void
 }
 
 export default ({
@@ -71,7 +71,7 @@ export default ({
           executePaperSteps(
             event.transactionId,
             creditCardCheckoutComponent?.props?.configs?.contractId,
-            (_, status) => callback(`PAPER-${status}`)
+            (_, status) => callback('Paper', status)
           )
           creditCardCheckoutComponent?.props?.onPaymentSuccess(event)
         },
