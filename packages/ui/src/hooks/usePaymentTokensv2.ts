@@ -189,7 +189,9 @@ export default function (options: {
     }
   }, [allPaymentTokens, crossChainDisabled])
 
-  const { data: solverCapacity } = useSolverCapacity(chain?.id, open)
+  const { data: solverCapacity } = useSolverCapacity(
+    open && chain ? chain : null
+  )
 
   const preferredCurrencyConversions = useCurrencyConversions(
     path && path[0]

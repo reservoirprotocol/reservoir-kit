@@ -24,7 +24,6 @@ import {
   ReservoirClientActions,
   ReservoirWallet,
   axios,
-  BuyTokenBodyParameters,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
@@ -52,7 +51,7 @@ export type BuyModalStepData = {
 }
 
 type Token = NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
-export type BuyTokenOptions = NonNullable<
+type BuyTokenOptions = NonNullable<
   Parameters<ReservoirClientActions['buyToken']>['0']['options']
 >
 
@@ -81,7 +80,6 @@ type ChildrenProps = {
   blockExplorerBaseName: string
   steps: Execute['steps'] | null
   stepData: BuyModalStepData | null
-  path: BuyPath
   quantity: number
   isConnected: boolean
   isOwner: boolean
@@ -106,7 +104,6 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
   usePermit?: boolean
-  executionMethod?: BuyTokenBodyParameters['executionMethod']
 }
 
 export const BuyModalRenderer: FC<Props> = ({
@@ -119,7 +116,6 @@ export const BuyModalRenderer: FC<Props> = ({
   feesOnTopUsd,
   normalizeRoyalties,
   onConnectWallet,
-  executionMethod,
   children,
   walletClient,
   usePermit,
@@ -180,7 +176,6 @@ export const BuyModalRenderer: FC<Props> = ({
     },
     path,
     chainId: rendererChain?.id,
-    nativeOnly: executionMethod !== undefined,
   })
 
   const paymentCurrency = paymentTokens?.find(
@@ -285,10 +280,6 @@ export const BuyModalRenderer: FC<Props> = ({
         options.normalizeRoyalties = normalizeRoyalties
       }
 
-      if (executionMethod) {
-        options.executionMethod = executionMethod
-      }
-
       if (paymentCurrency) {
         options.currency = paymentCurrency.address
         if (paymentCurrency.chainId) {
@@ -300,10 +291,6 @@ export const BuyModalRenderer: FC<Props> = ({
           options.currencyChainId = paymentTokens[0].chainId
         }
         _setPaymentCurrency(paymentTokens[0])
-      }
-
-      if (executionMethod !== undefined) {
-        options.executionMethod = executionMethod
       }
 
       let items: Parameters<
@@ -388,9 +375,7 @@ export const BuyModalRenderer: FC<Props> = ({
       includeListingCurrency,
       feesOnTopBps,
       feesOnTopUsd,
-      executionMethod,
       _setPaymentCurrency,
-      executionMethod,
     ]
   )
 
@@ -490,16 +475,16 @@ export const BuyModalRenderer: FC<Props> = ({
       currencyChainId: paymentCurrency?.chainId,
     }
 
-    const relayerFee = BigInt(buyResponseFees?.relayer?.amount?.raw ?? 0)
-
     if (feesOnTopBps && feesOnTopBps?.length > 0) {
       const fixedFees = feesOnTopBps.map((fullFee) => {
         const [referrer, feeBps] = fullFee.split(':')
         let totalFeeTruncated = totalIncludingFees - feeOnTop
 
-        // if relayer fee, subtract from total
-        if (relayerFee) {
-          totalFeeTruncated -= relayerFee
+        // if relayer fees, subtract from total
+        if (buyResponseFees?.relayer?.amount?.raw) {
+          totalFeeTruncated -= BigInt(
+            buyResponseFees?.relayer?.amount?.raw ?? 0
+          )
         }
 
         const fee = Math.floor(
@@ -528,16 +513,8 @@ export const BuyModalRenderer: FC<Props> = ({
       options.normalizeRoyalties = normalizeRoyalties
     }
 
-    if (executionMethod !== undefined) {
-      options.executionMethod = executionMethod
-    }
-
     if (usePermit) {
       options.usePermit = true
-    }
-
-    if (executionMethod) {
-      options.executionMethod = executionMethod
     }
 
     setBuyStep(BuyStep.Approving)
@@ -564,7 +541,7 @@ export const BuyModalRenderer: FC<Props> = ({
         items: items,
         expectedPrice: {
           [paymentCurrency?.address || zeroAddress]: {
-            raw: totalIncludingFees - relayerFee,
+            raw: totalIncludingFees,
             currencyAddress: paymentCurrency?.address,
             currencyDecimals: paymentCurrency?.decimals || 18,
           },
@@ -634,7 +611,6 @@ export const BuyModalRenderer: FC<Props> = ({
   }, [
     token,
     orderId,
-    executionMethod,
     feesOnTopBps,
     feesOnTopUsd,
     quantity,
@@ -648,7 +624,6 @@ export const BuyModalRenderer: FC<Props> = ({
     paymentCurrency,
     usePermit,
     buyResponseFees,
-    executionMethod,
     mutateTokens,
     mutateCollection,
     onConnectWallet,
@@ -784,7 +759,6 @@ export const BuyModalRenderer: FC<Props> = ({
         blockExplorerBaseName,
         steps,
         stepData,
-        path,
         quantity,
         isConnected: wallet !== undefined,
         isOwner,

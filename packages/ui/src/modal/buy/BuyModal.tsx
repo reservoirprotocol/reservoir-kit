@@ -27,11 +27,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
-import {
-  BuyTokenBodyParameters,
-  Execute,
-  ReservoirWallet,
-} from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
@@ -75,7 +71,6 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   copyOverrides?: Partial<typeof ModalCopy>
   walletClient?: ReservoirWallet | WalletClient
   usePermit?: boolean
-  executionMethod?: BuyTokenBodyParameters['executionMethod']
   onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -103,7 +98,6 @@ export function BuyModal({
   copyOverrides,
   walletClient,
   usePermit,
-  executionMethod,
   onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
@@ -132,7 +126,6 @@ export function BuyModal({
     <BuyModalRenderer
       chainId={modalChain?.id}
       open={open}
-      executionMethod={executionMethod}
       defaultQuantity={defaultQuantity}
       token={token}
       orderId={orderId}
@@ -337,7 +330,6 @@ export function BuyModal({
                         px: '$4',
                         borderRadius: '$3',
                         borderBottom: '1px solid $neutralBorder',
-                        cursor: 'pointer',
                         '&:hover': {
                           backgroundColor: '$neutralBgHover',
                         },

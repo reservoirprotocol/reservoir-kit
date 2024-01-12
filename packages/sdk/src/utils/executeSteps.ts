@@ -187,7 +187,6 @@ export async function executeSteps(
     // Handle price changes to protect users from paying more
     // than expected when buying and selling for less than expected
     const path = json.path as BuyPath
-    const relayerFee = json.fees?.relayer
 
     if (path && expectedPrice) {
       client.log(
@@ -235,11 +234,7 @@ export async function executeSteps(
       )
       const quoteEntries = Object.entries(quotes)
       for (let i = 0; i < quoteEntries.length; i++) {
-        let [currency, quote] = quoteEntries[i]
-        if (relayerFee && relayerFee?.currency?.contract === currency) {
-          quote.raw -= BigInt(relayerFee?.amount?.raw ?? 0)
-          quote.amount -= relayerFee?.amount?.decimal ?? 0
-        }
+        const [currency, quote] = quoteEntries[i]
         error = checkExpectedPrice(
           quote,
           isSell,

@@ -12,7 +12,7 @@ import { AxiosRequestConfig } from 'axios'
 import { WalletClient } from 'viem'
 import { isViemWalletClient } from '../utils/viemWallet'
 
-export type BuyTokenBodyParameters = NonNullable<
+type BuyTokenBodyParameters = NonNullable<
   paths['/execute/buy/v7']['post']['parameters']['body']['body']
 >
 

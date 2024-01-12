@@ -98,10 +98,6 @@ const Index: NextPage = () => {
         <Link href="/hook/useTrendingMints">
           <a>useTrendingMints</a>
         </Link>
-        <Link href="/hook/useMarketplaceConfigs">
-          <a>useMarketplaceConfigs</a>
-        </Link>
-
       </nav>
       <h2>UI Components</h2>
       <nav style={{ display: 'flex', gap: 15 }}>
