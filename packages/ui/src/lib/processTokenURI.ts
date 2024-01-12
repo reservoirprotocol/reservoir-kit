@@ -23,7 +23,7 @@ const fetchUri = async (uri: string) => {
     throw new Error('Failed to fetch URI')
   }
 
-  return JSON.parse(response.data)
+  return response.data
 }
 
 export const convertTokenUriToImage = async (uri: string): Promise<string> => {

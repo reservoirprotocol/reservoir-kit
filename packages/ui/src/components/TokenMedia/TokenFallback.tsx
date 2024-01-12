@@ -81,7 +81,7 @@ const TokenFallback: FC<TokenFallbackProps> = ({
                 method: 'POST',
                 data: JSON.stringify(body),
               })
-                .then((res) => JSON.parse(res.data))
+                .then((res) => res.data)
                 .catch((e) => {
                   throw e
                 })

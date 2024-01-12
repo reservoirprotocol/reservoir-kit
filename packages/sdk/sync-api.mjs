@@ -5,7 +5,7 @@ import axios from 'axios'
 const generateTypes = async () => {
   // Fetch the OpenAPI schema
   const response = await axios('https://api.reservoir.tools/swagger.json')
-  const openapiSchema = JSON.parse(response.data)
+  const openapiSchema = response.data
 
   // Extract routes
   const routes = Object.keys(openapiSchema.paths).filter(
