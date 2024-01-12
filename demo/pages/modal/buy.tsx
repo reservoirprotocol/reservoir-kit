@@ -110,21 +110,7 @@ const BuyPage: NextPage = () => {
           }}
         />
       </div>
-      <div>
-        <label>Execution Method: </label>
-        <input
-          type="text"
-          value={executionMethod}
-          onChange={(e) => { 
-            if(e.target.value === '') {
-              setExecutionMethod(undefined)
-            }
-            else {
-              setExecutionMethod(e.target.value as BuyTokenBodyParameters['executionMethod'])
-            }
-          }}
-        />
-      </div>
+
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
