@@ -582,7 +582,7 @@ export const SweepModalRenderer: FC<Props> = ({
       setBuyResponseFees(undefined)
       setStepData(null)
     } else {
-      axios.defaults.headers.common['x-rkui-context'] = 'collectModalRenderer'
+      axios.defaults.headers.common['x-rkui-context'] = 'sweepModalRenderer'
       setItemAmount(defaultQuantity || 1)
     }
   }, [open])
