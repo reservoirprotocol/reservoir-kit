@@ -31,7 +31,10 @@ export interface PaperTransactionResult {
   }
 }
 
-export type PaperTransactionStatus = 'TRANSFER_SUCCEEDED' | 'PAYMENT_SUCCEEDED'
+export type PaperTransactionStatus =
+  | 'TRANSFER_SUCCEEDED'
+  | 'PAYMENT_SUCCEEDED'
+  | 'PROCESSING_ERROR'
 
 export async function executePaperSteps(
   transactionId: string,
@@ -83,7 +86,7 @@ export async function executePaperSteps(
     } else {
       client.log(['Execute Paper Steps: Unknown Error', e], LogLevel.Error)
     }
-
+    callback(null, 'PROCESSING_ERROR')
     return false
   }
 }

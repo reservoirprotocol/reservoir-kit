@@ -47,6 +47,7 @@ import { SelectPaymentToken } from '../SelectPaymentToken'
 import TokenLineItem from '../TokenLineItem'
 import { BuyModalRenderer, BuyModalStepData, BuyStep } from './BuyModalRenderer'
 import { CreditCardProviders } from '../../hooks/useCreditCardProvider'
+import CreditCardErrorWell from '../../components/CreditCard/ErrorWell'
 
 type PurchaseData = {
   tokenId?: string
@@ -144,8 +145,12 @@ export function BuyModal({
     openState ? openState[0] : false,
     openState
   )
+
   const [creditCardCheckoutProvider, setCreditCardCheckoutProvider] =
     useState<CreditCardProviders | null>(null)
+  const [creditCardCheckoutStatus, setCreditCardCheckoutStatus] = useState<
+    string | null
+  >(null)
 
   const client = useReservoirClient()
 
@@ -236,16 +241,23 @@ export function BuyModal({
         const lastStepItems =
           executableSteps[executableSteps.length - 1]?.items || []
 
-        const totalPurchases =
-          stepData?.currentStep?.items?.reduce((total, item) => {
-            item.transfersData?.forEach((transferData) => {
-              total += Number(transferData.amount || 1)
-            })
-            return total
-          }, 0) || 0
+        const totalPurchases = creditCardCheckoutStatus
+          ? 1
+          : stepData?.currentStep?.items?.reduce((total, item) => {
+              item.transfersData?.forEach((transferData) => {
+                total += Number(transferData.amount || 1)
+              })
+              return total
+            }, 0) || 0
 
-        const failedPurchases = quantity - totalPurchases
-        const successfulPurchases = quantity - failedPurchases
+        const failedPurchases =
+          creditCardCheckoutStatus === 'PROCESSING_ERROR'
+            ? 1
+            : quantity - totalPurchases
+        const successfulPurchases =
+          creditCardCheckoutStatus === 'TRANSFER_SUCCEEDED'
+            ? 1
+            : quantity - failedPurchases
         const finalTxHashes = lastStepItems[lastStepItems.length - 1]?.txHashes
 
         const price =
@@ -255,12 +267,17 @@ export function BuyModal({
           creditCardCheckoutComponent,
           callback: (provider, status) => {
             setCreditCardCheckoutProvider(provider)
+            setCreditCardCheckoutStatus(status)
             switch (status) {
+              case 'PROCESSING_ERROR':
+                setBuyStep(BuyStep.Complete)
+                break
               case 'TRANSFER_SUCCEEDED':
                 setBuyStep(BuyStep.Complete)
                 break
               case 'PAYMENT_SUCCEEDED':
                 setBuyStep(BuyStep.CreditCardCheckoutProgress)
+              default:
                 break
             }
           },
@@ -718,18 +735,28 @@ export function BuyModal({
                           fontSize={32}
                         />
                       </Box>
-                      <Text
-                        style="h5"
-                        css={{ textAlign: 'center', mt: 24, mb: 24 }}
-                      >
-                        {failedPurchases
-                          ? `${successfulPurchases} ${
-                              successfulPurchases > 1 ? 'items' : 'item'
-                            } purchased, ${failedPurchases} ${
-                              failedPurchases > 1 ? 'items' : 'item'
-                            } failed`
-                          : 'Congrats! Purchase was successful.'}
-                      </Text>
+                      {creditCardCheckoutStatus === 'PROCESSING_ERROR' ? (
+                        <CreditCardErrorWell
+                          provider={
+                            creditCardCheckoutProvider as CreditCardProviders
+                          }
+                          txHash={''}
+                          token={token.token}
+                        />
+                      ) : (
+                        <Text
+                          style="h5"
+                          css={{ textAlign: 'center', mt: 24, mb: 24 }}
+                        >
+                          {failedPurchases
+                            ? `${successfulPurchases} ${
+                                successfulPurchases > 1 ? 'items' : 'item'
+                              } purchased, ${failedPurchases} ${
+                                failedPurchases > 1 ? 'items' : 'item'
+                              } failed`
+                            : 'Congrats! Purchase was successful.'}
+                        </Text>
+                      )}
                     </>
                   )}
                   {totalPurchases === 1 && (
@@ -768,7 +795,6 @@ export function BuyModal({
                       })}
                     </Flex>
                   )}
-
                   {totalPurchases === 1 && (
                     <>
                       <Flex

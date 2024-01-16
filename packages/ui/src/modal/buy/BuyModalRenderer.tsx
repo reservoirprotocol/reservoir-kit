@@ -49,7 +49,9 @@ export type BuyModalStepData = {
   currentStepItem: NonNullable<Execute['steps'][0]['items']>[0]
 }
 
-type Token = NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
+export type Token = NonNullable<
+  NonNullable<ReturnType<typeof useTokens>>['data']
+>[0]
 type BuyTokenOptions = NonNullable<
   Parameters<ReservoirClientActions['buyToken']>['0']['options']
 >
