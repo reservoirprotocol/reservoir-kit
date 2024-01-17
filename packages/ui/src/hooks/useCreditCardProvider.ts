@@ -22,7 +22,11 @@ export type CreditCardProviders = 'Paper'
 
 interface CreditCardProviderProps {
   creditCardCheckoutComponent: JSX.Element | undefined
-  callback: (provider: CreditCardProviders, status: string) => void
+  callback: (
+    provider: CreditCardProviders,
+    status: string,
+    txHash: string | null
+  ) => void
 }
 
 export default ({
@@ -68,11 +72,12 @@ export default ({
       return cloneElement(creditCardCheckoutComponent, {
         options: stylingOptions,
         onPaymentSuccess: (event: { id: string; transactionId: string }) => {
-          callback('Paper', 'PAYMENT_SUCCEEDED')
+          callback('Paper', 'PAYMENT_SUCCEEDED', null)
           executePaperSteps(
             event.transactionId,
             creditCardCheckoutComponent?.props?.configs?.contractId,
-            (_, status) => callback('Paper', status)
+            (_, status) =>
+              callback('Paper', status, _?.result.transactionHash || null)
           )
           creditCardCheckoutComponent?.props?.onPaymentSuccess(event)
         },

@@ -146,6 +146,9 @@ export function BuyModal({
     openState
   )
 
+  const [creditCardCheckoutTxHash, setCreditCardCheckoutTxHash] = useState<
+    string | null
+  >(null)
   const [creditCardCheckoutProvider, setCreditCardCheckoutProvider] =
     useState<CreditCardProviders | null>(null)
   const [creditCardCheckoutStatus, setCreditCardCheckoutStatus] = useState<
@@ -265,9 +268,11 @@ export function BuyModal({
 
         const CreditCardCheckoutComponent = useCreditCardProvider({
           creditCardCheckoutComponent,
-          callback: (provider, status) => {
+          callback: (provider, status, txHash) => {
             setCreditCardCheckoutProvider(provider)
             setCreditCardCheckoutStatus(status)
+            setCreditCardCheckoutTxHash(txHash)
+
             switch (status) {
               case 'PROCESSING_ERROR':
                 setBuyStep(BuyStep.Complete)
@@ -740,7 +745,7 @@ export function BuyModal({
                           provider={
                             creditCardCheckoutProvider as CreditCardProviders
                           }
-                          txHash={''}
+                          txHash={creditCardCheckoutTxHash}
                           token={token.token}
                         />
                       ) : (

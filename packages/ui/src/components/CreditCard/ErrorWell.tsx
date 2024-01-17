@@ -8,7 +8,7 @@ import { Anchor, Flex, Text } from '../../primitives'
 
 interface ErrorStateProps {
   provider: CreditCardProviders
-  txHash: string
+  txHash: string | null
   token: Token['token'] | null
 }
 
@@ -19,7 +19,6 @@ const ErrorState: React.FC<ErrorStateProps> = ({
 }) => {
   const chainId = getClient().currentChain()?.id || 1
 
-  const truncatedTxHash = truncateAddress(txHash)
   const blockExplorerBaseUrl = getChainBlockExplorerUrl(chainId)
 
   return (
@@ -38,15 +37,17 @@ const ErrorState: React.FC<ErrorStateProps> = ({
         Your purchase to buy {token?.name} has failed. Please contact {'  '}
         {provider} for support.
       </Text>
-      <Anchor
-        href={`${blockExplorerBaseUrl}/tx/${txHash}`}
-        color="primary"
-        weight="medium"
-        target="_blank"
-        css={{ fontSize: 12, mt: '24px' }}
-      >
-        View transaction {truncatedTxHash}
-      </Anchor>
+      {txHash && (
+        <Anchor
+          href={`${blockExplorerBaseUrl}/tx/${txHash}`}
+          color="primary"
+          weight="medium"
+          target="_blank"
+          css={{ fontSize: 12, mt: '24px' }}
+        >
+          View transaction {truncateAddress(txHash)}
+        </Anchor>
+      )}
     </Flex>
   )
 }
