@@ -1,12 +1,3 @@
-import {
-  faCheckCircle,
-  faChevronLeft,
-  faChevronRight,
-  faCircleExclamation,
-  faImage,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import React, {
   ComponentPropsWithoutRef,
   Dispatch,
@@ -16,37 +7,46 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { WalletClient } from 'viem'
-import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import {
   useCreditCardProvider,
   useFallbackState,
   useReservoirClient,
 } from '../../hooks'
-import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
-import { formatNumber } from '../../lib/numbers'
-import { truncateAddress } from '../../lib/truncate'
 import {
-  Anchor,
-  Box,
-  Button,
-  CryptoCurrencyIcon,
-  ErrorWell,
   Flex,
-  FormatCryptoCurrency,
-  FormatCurrency,
-  Loader,
+  Box,
   Text,
+  Anchor,
+  Button,
+  FormatCryptoCurrency,
+  Loader,
+  ErrorWell,
+  CryptoCurrencyIcon,
+  FormatCurrency,
 } from '../../primitives'
-import { Dialog } from '../../primitives/Dialog'
-import { Modal } from '../Modal'
 import Progress from '../Progress'
+import { Modal } from '../Modal'
+import {
+  faCircleExclamation,
+  faCheckCircle,
+  faChevronLeft,
+  faChevronRight,
+  faImage,
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
+import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
+import { formatNumber } from '../../lib/numbers'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import { truncateAddress } from '../../lib/truncate'
+import { WalletClient } from 'viem'
+import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
+import { Dialog } from '../../primitives/Dialog'
+import { CreditCardProviders } from '../../hooks/useCreditCardProvider'
 import { SelectPaymentToken } from '../SelectPaymentToken'
 import TokenLineItem from '../TokenLineItem'
-import { BuyModalRenderer, BuyModalStepData, BuyStep } from './BuyModalRenderer'
-import { CreditCardProviders } from '../../hooks/useCreditCardProvider'
 import CreditCardErrorWell from '../../components/CreditCard/ErrorWell'
 
 type PurchaseData = {
