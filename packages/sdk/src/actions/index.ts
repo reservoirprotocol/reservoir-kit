@@ -197,3 +197,5 @@ export function createClient(options: ReservoirClientOptions) {
 
   return _client
 }
+
+export type { BuyTokenBodyParameters } from './buyToken'

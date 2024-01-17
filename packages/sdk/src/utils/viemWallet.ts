@@ -6,7 +6,7 @@ import * as allChains from 'viem/chains'
 export function isViemWalletClient(
   wallet: WalletClient | ReservoirWallet
 ): wallet is WalletClient {
-  return (wallet as WalletClient).transport !== undefined
+  return (wallet as WalletClient).getChainId !== undefined
 }
 
 export const adaptViemWallet = (wallet: WalletClient): ReservoirWallet => {

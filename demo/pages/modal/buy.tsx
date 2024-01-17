@@ -7,6 +7,7 @@ import ThemeSwitcher from 'components/ThemeSwitcher'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import { BuyTokenBodyParameters } from '@reservoir0x/reservoir-sdk'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -18,17 +19,19 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 
 const BuyPage: NextPage = () => {
   const router = useRouter()
-  const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
-  const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
+  const [token, setToken] = useState(`${DEFAULT_COLLECTION_ID}:${DEFAULT_TOKEN_ID}`)
   const [orderId, setOrderId] = useState('')
   const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
+  const [executionMethod, setExecutionMethod] = useState<BuyTokenBodyParameters['executionMethod']>()
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
   const { openConnectModal } = useConnectModal()
+  const collectionId = token?.split(':')[0]
+
 
   
   return (
@@ -47,19 +50,11 @@ const BuyPage: NextPage = () => {
       <ConnectButton />
 
       <div>
-        <label>Collection Id: </label>
+        <label>Token: </label>
         <input
           type="text"
-          value={collectionId}
-          onChange={(e) => setCollectionId(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Token Id: </label>
-        <input
-          type="text"
-          value={tokenId}
-          onChange={(e) => setTokenId(e.target.value)}
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
         />
       </div>
       <div>
@@ -116,6 +111,21 @@ const BuyPage: NextPage = () => {
           }}
         />
       </div>
+      <div>
+        <label>Execution Method: </label>
+        <input
+          type="text"
+          value={executionMethod}
+          onChange={(e) => { 
+            if(e.target.value === '') {
+              setExecutionMethod(undefined)
+            }
+            else {
+              setExecutionMethod(e.target.value as BuyTokenBodyParameters['executionMethod'])
+            }
+          }}
+        />
+      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -136,7 +146,7 @@ const BuyPage: NextPage = () => {
           walletAddress:
             '0xc8186a3044D311eec1C1b57342Aaa290F6d90Aa5',
             contractArgs: {  nfts: [ 
-              { token: `${collectionId}:${tokenId}`, normalizeRoyalties: NORMALIZE_ROYALTIES, marketplace: 'opensea' }
+              { token, normalizeRoyalties: NORMALIZE_ROYALTIES, marketplace: 'opensea' }
             ]}
         }}
         onError={(error) => {
@@ -164,12 +174,12 @@ const BuyPage: NextPage = () => {
             Buy Now
           </button>
         }
-        collectionId={collectionId}
-        tokenId={tokenId}
+        token={token}
         orderId={orderId}
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
         normalizeRoyalties={normalizeRoyalties}
+        executionMethod={executionMethod}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onConnectWallet={() => {
           openConnectModal?.()

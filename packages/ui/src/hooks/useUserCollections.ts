@@ -3,9 +3,9 @@ import { useReservoirClient, useInfiniteApi } from './'
 import { SWRInfiniteConfiguration } from 'swr/infinite'
 
 type UserCollections =
-  paths['/users/{user}/collections/v3']['get']['responses']['200']['schema']
+  paths['/users/{user}/collections/v4']['get']['responses']['200']['schema']
 type UserCollectionsQuery =
-  paths['/users/{user}/collections/v3']['get']['parameters']['query']
+  paths['/users/{user}/collections/v4']['get']['parameters']['query']
 
 export default function (
   user?: string,
@@ -27,7 +27,7 @@ export default function (
         return null
       }
       const url = new URL(
-        `${chain?.baseApiUrl || ''}/users/${user}/collections/v3`
+        `${chain?.baseApiUrl || ''}/users/${user}/collections/v4`
       )
       let query: UserCollectionsQuery = {
         offset: pageIndex * (options?.limit || defaultLimit),
