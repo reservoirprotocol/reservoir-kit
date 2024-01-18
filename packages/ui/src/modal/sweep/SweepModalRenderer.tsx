@@ -73,6 +73,7 @@ export type ChildrenProps = {
   chainCurrency: ReturnType<typeof useChainCurrency>
   paymentTokens: EnhancedCurrency[]
   totalIncludingFees: bigint
+  buyResponseFees?: BuyResponses['fees']
   feeOnTop: bigint
   feeUsd: string
   usdPrice: number
@@ -805,6 +806,7 @@ export const SweepModalRenderer: FC<Props> = ({
         chainCurrency,
         paymentTokens,
         totalIncludingFees,
+        buyResponseFees,
         averageUnitPrice,
         feeOnTop,
         feeUsd,

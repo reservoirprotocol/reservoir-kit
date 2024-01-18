@@ -68,6 +68,7 @@ type ChildrenProps = {
   address?: string
   balance?: bigint
   totalIncludingFees: bigint
+  mintResponseFees?: MintResponses['fees']
   feeOnTop: bigint
   feeUsd: string
   usdPrice: number
@@ -705,6 +706,7 @@ export const MintModalRenderer: FC<Props> = ({
         token: tokenData,
         orders,
         totalIncludingFees,
+        mintResponseFees,
         feeOnTop,
         feeUsd,
         paymentTokens,
