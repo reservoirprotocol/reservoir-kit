@@ -566,11 +566,12 @@ export const SweepModalRenderer: FC<Props> = ({
     setSelectedTokens(updatedTokens)
   }, [itemAmount, maxItemAmount, orders])
 
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'sweepModalRenderer'
+    : ''
+
   // Reset state on close
   useEffect(() => {
-    axios.defaults.headers.common['x-rkui-context'] = open
-      ? 'sweepModalRenderer'
-      : ''
     if (!open) {
       setSelectedTokens([])
       setOrders([])

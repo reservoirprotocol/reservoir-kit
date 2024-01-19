@@ -720,12 +720,10 @@ export const BuyModalRenderer: FC<Props> = ({
       setHasEnoughCurrency(true)
     }
   }, [totalIncludingFees, paymentCurrency])
-
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'buyModalRenderer'
+    : ''
   useEffect(() => {
-    axios.defaults.headers.common['x-rkui-context'] = open
-      ? 'buyModalRenderer'
-      : ''
-
     if (!open) {
       setBuyStep(BuyStep.Checkout)
       setTransactionError(null)

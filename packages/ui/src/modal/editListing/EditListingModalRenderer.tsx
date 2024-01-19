@@ -411,10 +411,11 @@ export const EditListingModalRenderer: FC<Props> = ({
     exchange,
   ])
 
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'cancelListingModalRenderer'
+    : ''
+
   useEffect(() => {
-    axios.defaults.headers.common['x-rkui-context'] = open
-      ? 'editListingModalRenderer'
-      : ''
     if (!open) {
       setEditListingStep(EditListingStep.Edit)
       setTransactionError(null)

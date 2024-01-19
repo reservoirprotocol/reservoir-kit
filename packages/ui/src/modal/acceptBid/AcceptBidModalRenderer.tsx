@@ -590,11 +590,10 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   }, [client, bidsPath, isFetchingBidPath])
 
   const { address } = useAccount()
-
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'acceptBidModalRenderer'
+    : ''
   useEffect(() => {
-    axios.defaults.headers.common['x-rkui-context'] = open
-      ? 'acceptBidModalRenderer'
-      : ''
     if (!open) {
       setAcceptBidStep(AcceptBidStep.Checkout)
       setTxHash(null)

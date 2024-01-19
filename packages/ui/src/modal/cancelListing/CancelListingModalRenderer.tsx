@@ -198,10 +198,11 @@ export const CancelListingModalRenderer: FC<Props> = ({
       })
   }, [listingId, client, rendererChain, wallet])
 
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'cancelListingModalRenderer'
+    : ''
+
   useEffect(() => {
-    axios.defaults.headers.common['x-rkui-context'] = open
-      ? 'cancelListingModalRenderer'
-      : ''
     if (!open) {
       setCancelStep(CancelStep.Cancel)
       setTransactionError(null)

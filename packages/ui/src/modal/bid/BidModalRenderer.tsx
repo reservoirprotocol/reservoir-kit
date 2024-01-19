@@ -389,11 +389,10 @@ export const BidModalRenderer: FC<Props> = ({
       : undefined
     setAttributes(validAttributes)
   }, [traits])
-
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'bidModalRenderer'
+    : ''
   useEffect(() => {
-    axios.defaults.headers.common['x-rkui-context'] = open
-      ? 'bidModalRenderer'
-      : ''
     if (!open) {
       setBidStep(BidStep.SetPrice)
       setExpirationOption(expirationOptions[3])

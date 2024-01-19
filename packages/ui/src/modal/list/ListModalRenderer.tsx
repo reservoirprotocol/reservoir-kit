@@ -248,10 +248,11 @@ export const ListModalRenderer: FC<Props> = ({
   )
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
 
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'listModalRenderer'
+    : ''
+
   useEffect(() => {
-    axios.defaults.headers.common['x-rkui-context'] = open
-      ? 'listModalRenderer'
-      : ''
     if (!open) {
       setListStep(ListStep.SetPrice)
       setTransactionError(null)
