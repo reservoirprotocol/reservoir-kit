@@ -332,6 +332,9 @@ export const EditBidModalRenderer: FC<Props> = ({
   }, [bid])
 
   useEffect(() => {
+    axios.defaults.headers.common['x-rkui-context'] = open
+      ? 'editBidModalRenderer'
+      : ''
     if (!open) {
       setEditBidStep(EditBidStep.Edit)
       setExpirationOption(expirationOptions[3])
@@ -342,9 +345,7 @@ export const EditBidModalRenderer: FC<Props> = ({
       setStepData(null)
       setTransactionError(null)
       setTrait(undefined)
-      axios.defaults.headers.common['x-rkui-context'] = ''
     } else {
-      axios.defaults.headers.common['x-rkui-context'] = 'editBidModalRenderer'
       setTrait(attribute)
     }
   }, [open])

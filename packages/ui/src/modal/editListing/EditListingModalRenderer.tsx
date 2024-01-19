@@ -412,15 +412,14 @@ export const EditListingModalRenderer: FC<Props> = ({
   ])
 
   useEffect(() => {
+    axios.defaults.headers.common['x-rkui-context'] = open
+      ? 'editListingModalRenderer'
+      : ''
     if (!open) {
       setEditListingStep(EditListingStep.Edit)
       setTransactionError(null)
       setStepData(null)
       setSteps(null)
-      axios.defaults.headers.common['x-rkui-context'] = ''
-    } else {
-      axios.defaults.headers.common['x-rkui-context'] =
-        'editListingModalRenderer'
     }
   }, [open])
 

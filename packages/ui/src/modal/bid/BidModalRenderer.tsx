@@ -391,6 +391,9 @@ export const BidModalRenderer: FC<Props> = ({
   }, [traits])
 
   useEffect(() => {
+    axios.defaults.headers.common['x-rkui-context'] = open
+      ? 'bidModalRenderer'
+      : ''
     if (!open) {
       setBidStep(BidStep.SetPrice)
       setExpirationOption(expirationOptions[3])
@@ -403,9 +406,7 @@ export const BidModalRenderer: FC<Props> = ({
       setBidData(null)
       setTransactionError(null)
       setTrait(undefined)
-      axios.defaults.headers.common['x-rkui-context'] = ''
     } else {
-      axios.defaults.headers.common['x-rkui-context'] = 'bidModalRenderer'
       setTrait(attribute)
     }
     setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)

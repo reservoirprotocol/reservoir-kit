@@ -492,6 +492,9 @@ export const MintModalRenderer: FC<Props> = ({
 
   // Reset state on close
   useEffect(() => {
+    axios.defaults.headers.common['x-rkui-context'] = open
+      ? 'mintModalRenderer'
+      : ''
     if (!open) {
       setOrders([])
       setItemAmount(1)
@@ -502,10 +505,8 @@ export const MintModalRenderer: FC<Props> = ({
       setFetchedInitialOrders(false)
       _setPaymentCurrency(undefined)
       setStepData(null)
-      axios.defaults.headers.common['x-rkui-context'] = ''
       setMintResponseFees(undefined)
     } else {
-      axios.defaults.headers.common['x-rkui-context'] = 'mintModalRenderer'
       setItemAmount(defaultQuantity || 1)
     }
   }, [open])
