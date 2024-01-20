@@ -100,26 +100,29 @@ export async function sendTransactionSafely(
       ['Execute Steps: Polling for confirmation', res],
       LogLevel.Verbose
     )
-    if (isCrossChainIntent) {
-      if (res.status === 200 && res.data && res.data.status === 'failure') {
-        throw Error('Transaction failed')
-      }
-      if (res.status === 200 && res.data && res.data.status === 'success') {
-        if (txHash) {
-          setInternalTxHashes([{ txHash: txHash, chainId: chainId }])
-        }
-
-        const chainTxHashes: NonNullable<
-          Execute['steps'][0]['items']
-        >[0]['txHashes'] = res.data?.txHashes?.map((hash: Address) => {
-          return { txHash: hash, chainId: crossChainIntentChainId }
-        })
-        setTxHashes(chainTxHashes)
-        return true
-      }
+    if (res.status !== 200 || !res.data) {
       return false
     }
-    return res.status === 200 && res.data && res.data.synced
+
+    if (res.data.status === 'failure') {
+      throw Error('Transaction failed')
+    }
+
+    if (res.data.status === 'success') {
+      if (txHash) {
+        setInternalTxHashes([{ txHash: txHash, chainId: chainId }])
+      }
+
+      if (res.data.txHashes) {
+        const chainTxHashes = res.data.txHashes.map((hash: Address) => {
+          return { txHash: hash, chainId: crossChainIntentChainId || chainId }
+        })
+        setTxHashes(chainTxHashes)
+      }
+      return true
+    }
+
+    return res.data.synced || false
   }
 
   // Poll the confirmation url to confirm the transaction went through
@@ -130,10 +133,10 @@ export async function sendTransactionSafely(
   ) {
     let res
 
-    if (isCrossChainIntent && item?.check?.endpoint) {
+    if (item?.check?.endpoint) {
       res = await axios.request({
         url: `${request.baseURL}${item?.check?.endpoint}`,
-        method: 'POST',
+        method: item?.check?.method ?? 'POST',
         headers: headers,
         data: {
           // @ts-ignore
