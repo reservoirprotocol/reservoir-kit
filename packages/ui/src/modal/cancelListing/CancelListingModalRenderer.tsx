@@ -198,10 +198,6 @@ export const CancelListingModalRenderer: FC<Props> = ({
       })
   }, [listingId, client, rendererChain, wallet])
 
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'cancelListingModalRenderer'
-    : ''
-
   useEffect(() => {
     if (!open) {
       setCancelStep(CancelStep.Cancel)
@@ -210,6 +206,10 @@ export const CancelListingModalRenderer: FC<Props> = ({
       setSteps(null)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'cancelListingModalRenderer'
+    : ''
 
   const tokenId = listing?.tokenSetId?.split(':')[2]
   const contract = listing?.tokenSetId?.split(':')[1]

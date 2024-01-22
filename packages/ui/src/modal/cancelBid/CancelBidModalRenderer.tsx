@@ -197,9 +197,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
         setSteps(null)
       })
   }, [bidId, client, rendererChain, wallet])
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'cancelBidModalRenderer'
-    : ''
+
   useEffect(() => {
     if (!open) {
       setCancelStep(CancelStep.Cancel)
@@ -208,6 +206,10 @@ export const CancelBidModalRenderer: FC<Props> = ({
       setSteps(null)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'cancelBidModalRenderer'
+    : ''
 
   let tokenId
 

@@ -389,9 +389,7 @@ export const BidModalRenderer: FC<Props> = ({
       : undefined
     setAttributes(validAttributes)
   }, [traits])
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'bidModalRenderer'
-    : ''
+
   useEffect(() => {
     if (!open) {
       setBidStep(BidStep.SetPrice)
@@ -410,6 +408,10 @@ export const BidModalRenderer: FC<Props> = ({
     }
     setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'bidModalRenderer'
+    : ''
 
   useEffect(() => {
     const supportedCurrencies =

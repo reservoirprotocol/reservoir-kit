@@ -331,10 +331,6 @@ export const EditBidModalRenderer: FC<Props> = ({
     }
   }, [bid])
 
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'editBidModalRenderer'
-    : ''
-
   useEffect(() => {
     if (!open) {
       setEditBidStep(EditBidStep.Edit)
@@ -350,6 +346,10 @@ export const EditBidModalRenderer: FC<Props> = ({
       setTrait(attribute)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'editBidModalRenderer'
+    : ''
 
   const editBid = useCallback(async () => {
     if (!wallet) {

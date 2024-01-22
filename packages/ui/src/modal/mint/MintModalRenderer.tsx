@@ -490,10 +490,6 @@ export const MintModalRenderer: FC<Props> = ({
     }
   }, [paymentTokens, paymentCurrency, fetchedInitialOrders])
 
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'mintModalRenderer'
-    : ''
-
   // Reset state on close
   useEffect(() => {
     if (!open) {
@@ -511,6 +507,10 @@ export const MintModalRenderer: FC<Props> = ({
       setItemAmount(defaultQuantity || 1)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'mintModalRenderer'
+    : ''
 
   useEffect(() => {
     if (maxItemAmount > 0 && itemAmount > maxItemAmount) {

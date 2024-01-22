@@ -566,10 +566,6 @@ export const SweepModalRenderer: FC<Props> = ({
     setSelectedTokens(updatedTokens)
   }, [itemAmount, maxItemAmount, orders])
 
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'sweepModalRenderer'
-    : ''
-
   // Reset state on close
   useEffect(() => {
     if (!open) {
@@ -588,6 +584,10 @@ export const SweepModalRenderer: FC<Props> = ({
       setItemAmount(defaultQuantity || 1)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'sweepModalRenderer'
+    : ''
 
   useEffect(() => {
     if (maxItemAmount > 0 && itemAmount > maxItemAmount) {
