@@ -531,7 +531,7 @@ export function BuyModal({
                     chain={modalChain}
                     token={tokenData}
                     collection={collection}
-                    css={{ border: 0 }}
+                    css={{ p: '$4', borderBottom: '1px solid $neutralBorder' }}
                   />
 
                   <Flex
