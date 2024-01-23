@@ -573,7 +573,7 @@ export const BidModalRenderer: FC<Props> = ({
         bid.quantity = quantity
       }
 
-      if (options?.royaltyBps) {
+      if (options?.royaltyBps !== undefined) {
         bid.royaltyBps = options.royaltyBps
       }
 

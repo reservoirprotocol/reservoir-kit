@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/defender-relayer-adapter",
-    "version": "0.6.21",
+    "version": "0.6.23",
     "description": "An adapter that intergrates OpenZeppelins defender relayer wallet to a Reservoir Wallet for use in the @reservoir0x/reservoir-sdk",
     "exports": {
         ".": {
@@ -44,7 +44,7 @@
         "@ethersproject/hash": "^5.7.0",
         "@ethersproject/providers": "^5.7.2",
         "@openzeppelin/defender-relay-client": "^1.47.1",
-        "@reservoir0x/ethers-wallet-adapter": "^0.6.22",
+        "@reservoir0x/ethers-wallet-adapter": "^0.6.24",
         "axios": "^0.27.2"
     },
     "publishConfig": {

@@ -59,7 +59,6 @@ const MarketplaceConfigs: NextPage = () => {
         />
       </div>
       <div style={{ display: 'flex', flexDirection:'column', gap: 20 }}>  
-      {/* @ts-ignore: Return type is wrong */}
         {marketplaceConfigs?.marketplaces?.map((marketplace, idx) => (
           <div key={idx}>
             <div>Name: {marketplace?.name}</div>

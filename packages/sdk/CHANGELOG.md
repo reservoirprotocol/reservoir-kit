@@ -1,4 +1,12 @@
 
+## [v1.12.10-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/47d392d0e16a754047f5ffe41ccef98498b704f8) (2024-01-19)
+
+* Fix polling validation for intents in sdk transaction util
+
+## [v1.12.9-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b6c51f8e8902f64cd630cce18ae47ec368429578) (2024-01-12)
+
+* Sync Api
+
 ## [v1.12.8-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d6a45190c90b4fbd4917b6c63b8683496670762f) (2024-01-10)
 
 * Sync Api 

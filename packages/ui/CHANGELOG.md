@@ -1,4 +1,17 @@
 
+## [v1.25.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/aae5391d42de77cba932e89192baefbfcf2da2fd) (2024-01-19)
+
+* Update EditBidModal UI [1e4a1996](https://github.com/reservoirprotocol/reservoir-kit/commit/1e4a1996f63db9a6a914724ed8cfa074d497b805)
+
+## [v1.25.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3150c8c2c67000e2171b87b362aef464a8b367e9) (2024-01-12)
+
+* useUserTokens: upgrade to v9 [a2cd5224](https://github.com/reservoirprotocol/reservoir-kit/commit/a2cd52247ba2248c8603ba1647611ba49ca20641)
+* BidModal & ListModal: handle 0 royaltyBps when calling underlying function [a0d864c1](https://github.com/reservoirprotocol/reservoir-kit/commit/a0d864c1670dac4063ec83fd2510d75f759789ba)
+
+### Breaking changes
+* useUserCollections: backend improvements which use a new underlying data table
+* useUserTokens: collection may be returned as null now as tokens are returned even if not assigned to a collection
+
 ## [v1.24.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/579a5bd4edccf60b045e5cc1a9f76a7c8c71fd53) (2024-01-10)
 
 * Update useMarketplaceConfigs hook [708ba2f9](https://github.com/reservoirprotocol/reservoir-kit/commit/708ba2f99936099f739edd53e36f1f12e1e81121)
