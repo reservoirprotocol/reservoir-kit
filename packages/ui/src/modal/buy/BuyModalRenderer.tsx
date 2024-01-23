@@ -171,9 +171,6 @@ export const BuyModalRenderer: FC<Props> = ({
     EnhancedCurrency | undefined
   >(undefined)
 
-  // - Normalize the token to lowercase before using it anywhere
-  token = token?.toLowerCase()
-
   const paymentTokens = usePaymentTokensv2({
     open,
     address: address as Address,

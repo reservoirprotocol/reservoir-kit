@@ -67,6 +67,11 @@ export default function (options: {
     crossChainDisabled,
   } = options
 
+  Object.entries(quantityToken).forEach(([key, value]) => {
+    quantityToken[key.toLowerCase()] = value
+    delete quantityToken[key]
+  })
+
   const client = useReservoirClient()
   const providerOptions = useContext(ProviderOptionsContext)
   const chain =
