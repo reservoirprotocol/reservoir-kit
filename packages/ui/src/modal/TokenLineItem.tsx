@@ -3,7 +3,7 @@ import { Box } from '../primitives'
 import TokenPrimitive from './TokenPrimitive'
 import { useCollections, useTokens } from '../hooks'
 import { CSSProperties } from '@stitches/react'
-import { EnhancedCurrency } from '../hooks/usePaymentTokens'
+import { EnhancedCurrency } from '../hooks/usePaymentTokensv2'
 import { formatUnits } from 'viem'
 import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
 

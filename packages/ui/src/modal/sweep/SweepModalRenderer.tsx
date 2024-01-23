@@ -10,10 +10,10 @@ import React, {
 import {
   useChainCurrency,
   useCollections,
+  usePaymentTokensV2,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import usePaymentTokensv2 from '../../hooks/usePaymentTokensv2'
 import { useAccount, useWalletClient } from 'wagmi'
 import {
   BuyPath,
@@ -221,7 +221,7 @@ export const SweepModalRenderer: FC<Props> = ({
     } else return collectionContract
   }, [token, collectionId, , collectionContract, tokenData?.token?.tokenId])
 
-  const paymentTokens = usePaymentTokensv2({
+  const paymentTokens = usePaymentTokensV2({
     open,
     address: address as Address,
     quantityToken: {

@@ -2,7 +2,7 @@ import React, { FC, useContext } from 'react'
 import { CSS } from '@stitches/react'
 import { Flex, FormatCryptoCurrency, FormatCurrency, Text } from '../primitives'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
-import { EnhancedCurrency } from '../hooks/usePaymentTokens'
+import { EnhancedCurrency } from '../hooks/usePaymentTokensv2'
 
 type Props = {
   css?: CSS
