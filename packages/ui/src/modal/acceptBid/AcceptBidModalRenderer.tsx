@@ -133,10 +133,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     mutate: mutateTokens,
     isValidating: isFetchingTokenData,
   } = useTokens(
-    open && {
-      tokens: _tokenIds,
-      normalizeRoyalties,
-    },
+    open &&
+      _tokenIds &&
+      _tokenIds.length > 0 && {
+        tokens: _tokenIds,
+        normalizeRoyalties,
+      },
     {
       revalidateFirstPage: true,
     },
