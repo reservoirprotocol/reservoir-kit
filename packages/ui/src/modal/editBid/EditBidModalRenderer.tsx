@@ -19,7 +19,7 @@ import {
 import { useWalletClient, useAccount, useBalance } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 
-import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
@@ -364,6 +364,10 @@ export const EditBidModalRenderer: FC<Props> = ({
       setTrait(attribute)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'editBidModalRenderer'
+    : ''
 
   const editBid = useCallback(async () => {
     if (!wallet) {

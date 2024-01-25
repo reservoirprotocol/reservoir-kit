@@ -1,3 +1,5 @@
+import { axios } from '@reservoir0x/reservoir-sdk'
+
 const gatewayConfig = {
   'ipfs://': 'https://ipfs.io/ipfs/',
   'ar://': 'https://arweave.net/',
@@ -13,15 +15,15 @@ const convertToGatewayUrl = (url: string) => {
 }
 
 const fetchUri = async (uri: string) => {
-  const response = await fetch(convertToGatewayUrl(uri), {
+  const response = await axios(convertToGatewayUrl(uri), {
     method: 'GET',
   })
 
-  if (!response.ok) {
+  if (!(response.status >= 200 && response.status < 300)) {
     throw new Error('Failed to fetch URI')
   }
 
-  return response.json()
+  return response.data
 }
 
 export const convertTokenUriToImage = async (uri: string): Promise<string> => {

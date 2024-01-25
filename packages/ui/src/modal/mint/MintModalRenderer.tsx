@@ -18,6 +18,7 @@ import {
   ReservoirChain,
   ReservoirClientActions,
   ReservoirWallet,
+  axios,
   customChains,
 } from '@reservoir0x/reservoir-sdk'
 import {
@@ -506,6 +507,10 @@ export const MintModalRenderer: FC<Props> = ({
       setItemAmount(defaultQuantity || 1)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'mintModalRenderer'
+    : ''
 
   useEffect(() => {
     if (maxItemAmount > 0 && itemAmount > maxItemAmount) {

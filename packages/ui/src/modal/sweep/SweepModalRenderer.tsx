@@ -21,6 +21,7 @@ import {
   LogLevel,
   ReservoirChain,
   ReservoirClientActions,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
@@ -583,6 +584,10 @@ export const SweepModalRenderer: FC<Props> = ({
       setItemAmount(defaultQuantity || 1)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'sweepModalRenderer'
+    : ''
 
   useEffect(() => {
     if (maxItemAmount > 0 && itemAmount > maxItemAmount) {

@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useBids } from '../../hooks'
 import { useWalletClient } from 'wagmi'
-import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
@@ -206,6 +206,10 @@ export const CancelBidModalRenderer: FC<Props> = ({
       setSteps(null)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'cancelBidModalRenderer'
+    : ''
 
   let tokenId
 

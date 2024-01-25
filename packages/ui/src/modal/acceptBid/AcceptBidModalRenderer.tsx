@@ -14,6 +14,7 @@ import {
   ReservoirClientActions,
   ReservoirWallet,
   SellPath,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
 import { WalletClient, formatUnits, parseUnits } from 'viem'
@@ -598,6 +599,10 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       setTransactionError(null)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'acceptBidModalRenderer'
+    : ''
 
   return (
     <>

@@ -22,6 +22,7 @@ import {
   Execute,
   ReservoirClientActions,
   ReservoirWallet,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
@@ -407,6 +408,10 @@ export const BidModalRenderer: FC<Props> = ({
     }
     setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'bidModalRenderer'
+    : ''
 
   useEffect(() => {
     const supportedCurrencies =

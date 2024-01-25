@@ -1,4 +1,4 @@
-import { ReservoirChain, paths } from '@reservoir0x/reservoir-sdk'
+import { ReservoirChain, axios, paths } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr/immutable'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk'
 
@@ -8,8 +8,8 @@ type CurrencyConversionResponse =
 const fetcher = async (urls: string[]) => {
   const fetches = urls.map(
     (url) =>
-      fetch(url)
-        .then((r) => r.json())
+      axios(url)
+        .then((r) => JSON.parse(r.data))
         .catch(() => undefined) // If a fetch fails, return undefined
   )
   const results = await Promise.allSettled(fetches)

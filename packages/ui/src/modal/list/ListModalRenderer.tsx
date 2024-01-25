@@ -21,6 +21,7 @@ import {
   Execute,
   ReservoirClientActions,
   ReservoirWallet,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
@@ -258,6 +259,10 @@ export const ListModalRenderer: FC<Props> = ({
       setCurrency(defaultCurrency)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'listModalRenderer'
+    : ''
 
   const exchange = useMemo(() => {
     const exchanges: Record<string, Exchange> = marketplace?.exchanges || {}
