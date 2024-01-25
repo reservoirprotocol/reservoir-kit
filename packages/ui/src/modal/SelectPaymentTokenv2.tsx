@@ -7,7 +7,7 @@ import {
   Flex,
   Text,
 } from '../primitives'
-import { EnhancedCurrency } from '../hooks/usePaymentTokensv2'
+import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits, zeroAddress } from 'viem'
 import EthIconCircleBlue from '../img/EthIconCircleBlue'
 import { formatNumber } from '../lib/numbers'

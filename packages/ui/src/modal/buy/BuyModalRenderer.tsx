@@ -28,8 +28,8 @@ import {
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
-import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
-import { usePaymentTokensV2 } from '../../hooks'
+import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
+import { usePaymentTokens } from '../../hooks'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
@@ -170,7 +170,7 @@ export const BuyModalRenderer: FC<Props> = ({
     EnhancedCurrency | undefined
   >(undefined)
 
-  const paymentTokens = usePaymentTokensV2({
+  const paymentTokens = usePaymentTokens({
     open,
     address: address as Address,
     quantityToken: {

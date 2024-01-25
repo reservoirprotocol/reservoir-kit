@@ -10,7 +10,7 @@ import React, {
 import {
   useChainCurrency,
   useCollections,
-  usePaymentTokensV2,
+  usePaymentTokens,
   useReservoirClient,
   useTokens,
 } from '../../hooks'
@@ -23,7 +23,7 @@ import {
   ReservoirClientActions,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
-import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
+import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
 import {
@@ -221,7 +221,7 @@ export const SweepModalRenderer: FC<Props> = ({
     } else return collectionContract
   }, [token, collectionId, , collectionContract, tokenData?.token?.tokenId])
 
-  const paymentTokens = usePaymentTokensV2({
+  const paymentTokens = usePaymentTokens({
     open,
     address: address as Address,
     quantityToken: {

@@ -11,7 +11,7 @@ export {
   useUsersActivity,
   useReservoirClient,
   useTokens,
-  usePaymentTokensV2,
+  usePaymentTokens,
   useSearchActivities,
   useTokenActivity,
   useCoinConversion,
