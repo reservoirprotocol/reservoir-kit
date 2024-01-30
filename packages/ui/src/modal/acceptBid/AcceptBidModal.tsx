@@ -47,6 +47,7 @@ import { WalletClient } from 'viem'
 import { ReservoirWallet, SellPath } from '@reservoir0x/reservoir-sdk'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
+import { Currency } from '../../types/Currency'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -67,6 +68,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokens: AcceptBidTokenData[]
   chainId?: number
+  currency?: Currency
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   walletClient?: ReservoirWallet | WalletClient
@@ -100,6 +102,7 @@ export function AcceptBidModal({
   onBidAcceptError,
   onCurrentStepUpdate,
   onPointerDownOutside,
+  currency,
 }: Props): ReactElement {
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
@@ -119,6 +122,7 @@ export function AcceptBidModal({
 
   return (
     <AcceptBidModalRenderer
+      currency={currency}
       open={open}
       chainId={modalChain?.id}
       tokens={tokens}
@@ -483,6 +487,7 @@ export function AcceptBidModal({
                 {stepData?.steps.map((step) =>
                   step?.items && step.items.length > 0 ? (
                     <ApproveBidCollapsible
+                      currency={currency}
                       key={step.id}
                       step={step}
                       tokensData={tokensData}

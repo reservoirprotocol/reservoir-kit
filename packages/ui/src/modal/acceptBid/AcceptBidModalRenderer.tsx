@@ -6,7 +6,12 @@ import React, {
   ReactNode,
   useMemo,
 } from 'react'
-import { useTokens, useCoinConversion, useReservoirClient } from '../../hooks'
+import {
+  useTokens,
+  useCoinConversion,
+  useReservoirClient,
+  useCurrencyConversion,
+} from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
 import {
   Execute,
@@ -24,6 +29,7 @@ import * as allChains from 'viem/chains'
 export enum AcceptBidStep {
   Checkout,
   Auth,
+  ApproveCurrencySwap,
   ApproveMarketplace,
   Finalizing,
   Complete,
@@ -76,6 +82,7 @@ type Props = {
   open: boolean
   tokens: AcceptBidTokenData[]
   chainId?: number
+  currency?: Currency
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
@@ -92,6 +99,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   walletClient,
   feesOnTopBps,
   feesOnTopCustom,
+  currency,
 }) => {
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [prices, setPrices] = useState<AcceptBidPrice[]>([])
@@ -211,6 +219,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       >['0']['options']
       let options: AcceptOfferOptions = {
         onlyPath: true,
+        currency: currency?.contract,
         partial: true,
       }
       if (normalizeRoyalties !== undefined) {
@@ -299,6 +308,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         })
     },
     [
+      currency,
       client,
       wallet,
       rendererChain,
@@ -382,6 +392,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     >['0']['options']
     let options: AcceptOfferOptions = {
       partial: true,
+      currency: currency?.contract,
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -458,6 +469,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               currentStepItem,
               steps,
             })
+
             if (currentStep.id === 'auth') {
               setAcceptBidStep(AcceptBidStep.Auth)
             } else if (currentStep.id === 'nft-approval') {
@@ -504,6 +516,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         mutateTokens()
       })
   }, [
+    currency,
     bidsPath,
     bidTokenMap,
     rendererChain,
