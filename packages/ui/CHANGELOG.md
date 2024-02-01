@@ -1,4 +1,9 @@
 
+## [v1.25.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/df1444460d2569e168c8bd860625d90a30d79d0d) (2024-02-01)
+
+* Merge pull request #563 from reservoirprotocol/fix/edit-listing-modal-exchange [71d22b3f](https://github.com/reservoirprotocol/reservoir-kit/commit/71d22b3f1d9e35d07cc57fca94192cdc89094132)
+* Merge pull request #560 from reservoirprotocol/armando/grwth-3874-acceptbidmodal-should-check-if-tokenids-array-has-one-token [9ccb22ca](https://github.com/reservoirprotocol/reservoir-kit/commit/9ccb22ca370cf9fdd4a13ba3408708251cdb4c67)
+
 ## [v1.25.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/aae5391d42de77cba932e89192baefbfcf2da2fd) (2024-01-19)
 
 * Update EditBidModal UI [1e4a1996](https://github.com/reservoirprotocol/reservoir-kit/commit/1e4a1996f63db9a6a914724ed8cfa074d497b805)
