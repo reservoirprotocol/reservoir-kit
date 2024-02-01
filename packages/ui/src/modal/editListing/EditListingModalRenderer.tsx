@@ -154,7 +154,9 @@ export const EditListingModalRenderer: FC<Props> = ({
   const exchange = useMemo(() => {
     const exchanges: Record<string, Exchange> =
       reservoirMarketplace?.exchanges || {}
-    const exchange = exchanges[listing?.kind as string]
+    const exchange = Object.values(exchanges).find(
+      (exchange) => exchange?.orderKind === listing?.kind
+    )
     return exchange?.enabled ? exchange : undefined
   }, [reservoirMarketplace, listing])
 
