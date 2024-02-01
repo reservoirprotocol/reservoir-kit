@@ -3,7 +3,7 @@
 
 * EditListingModal: Fixed a bug where it wasn't pulling up the right exchange [71d22b3f](https://github.com/reservoirprotocol/reservoir-kit/commit/71d22b3f1d9e35d07cc57fca94192cdc89094132)
 * Bidmodal: Fix a bug where a request was made without any data [9ccb22ca](https://github.com/reservoirprotocol/reservoir-kit/commit/9ccb22ca370cf9fdd4a13ba3408708251cdb4c67)
-* BidModal: Ensure wrappedBalance value is a BigInt when subtracting from bid. Thanks @tomhirst [3dbd007](https://github.com/reservoirprotocol/reservoir-kit/pull/562)
+* BidModal: Ensure wrappedBalance value is a BigInt when subtracting from bid. Thanks [@tomhirst] (https://www.github.com/tomhirst) [3dbd007](https://github.com/reservoirprotocol/reservoir-kit/pull/562)
 
 ## [v1.25.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/aae5391d42de77cba932e89192baefbfcf2da2fd) (2024-01-19)
 
