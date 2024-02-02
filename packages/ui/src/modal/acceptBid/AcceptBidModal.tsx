@@ -303,10 +303,9 @@ export function AcceptBidModal({
                         netAmount={bidPath.quote}
                         price={bidPath.totalPrice}
                         fees={bidPath.builtInFees}
-                        currency={bidPath.sellOutCurrency || bidPath.currency}
+                        currency={swapCurrency?.contract || bidPath.currency}
                         decimals={
-                          bidPath?.sellOutCurrencyDecimals ||
-                          bidPath.currencyDecimals
+                          swapCurrency?.decimals || bidPath.currencyDecimals
                         }
                         sourceImg={
                           bidPath.source
