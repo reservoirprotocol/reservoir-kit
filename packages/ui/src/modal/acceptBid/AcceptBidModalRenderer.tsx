@@ -323,7 +323,11 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     () =>
       Array.from(
         enhancedTokens.reduce((symbols, { bidsPath }) => {
-          bidsPath.forEach(({ currencySymbol }) => {
+          bidsPath.forEach(({ sellOutCurrencySymbol, currencySymbol }) => {
+            if (sellOutCurrencySymbol) {
+              symbols.add(sellOutCurrencySymbol)
+            }
+
             if (currencySymbol) {
               symbols.add(currencySymbol)
             }
