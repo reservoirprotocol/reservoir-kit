@@ -6,12 +6,7 @@ import React, {
   ReactNode,
   useMemo,
 } from 'react'
-import {
-  useTokens,
-  useCoinConversion,
-  useReservoirClient,
-  useCurrencyConversion,
-} from '../../hooks'
+import { useTokens, useCoinConversion, useReservoirClient } from '../../hooks'
 import { useAccount, useWalletClient } from 'wagmi'
 import {
   Execute,
@@ -29,7 +24,6 @@ import * as allChains from 'viem/chains'
 export enum AcceptBidStep {
   Checkout,
   Auth,
-  ApproveCurrencySwap,
   ApproveMarketplace,
   Finalizing,
   Complete,
@@ -637,7 +631,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         {} as Record<string, AcceptBidPrice>
       )
 
-      console.log(prices)
       setPrices(Object.values(prices))
 
       if (acceptBidStep === AcceptBidStep.Unavailable) {
