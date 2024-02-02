@@ -125,8 +125,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const [isFetchingBidPath, setIsFetchingBidPath] = useState(false)
   const [bidsPath, setBidsPath] = useState<SellPath | null>(null)
   const [feesOnTop, setFeesOnTop] = useState<string[] | null>(null)
-  const [swapCurrency, setSwapCurrency] =
-    useState<ChildrenProps['swapCurrency']>(null)
 
   const _tokenIds = tokens.map((token) => {
     const contract = (token?.collectionId || '').split(':')[0]
@@ -642,17 +640,16 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     }
   }, [client, bidsPath, isFetchingBidPath])
 
-  useEffect(() => {
+  const swapCurrency = useMemo(() => {
     const bidPath = bidsPath?.[0]
-
     if (bidPath && bidPath.sellOutCurrency) {
-      setSwapCurrency({
+      return {
         contract: bidPath.sellOutCurrency as string,
         decimals: bidPath.sellOutCurrencyDecimals as number,
         symbol: bidPath.sellOutCurrencySymbol as string,
-      })
-    }
-  }, [currency, bidsPath])
+      }
+    } else return null
+  }, [bidsPath, currency])
 
   const { address } = useAccount()
 
