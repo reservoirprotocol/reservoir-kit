@@ -152,8 +152,7 @@ const AcceptBidPage: NextPage = () => {
       </div>
 
       <AcceptBidModal
-      currency={        {decimals: 18,
-        contract: '0x2C89bbc92BD86F8075d1DEcc58C7F4E0107f286b',coinGeckoId: 'avax', symbol: 'AVAX'}}
+      currency={'0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359'}
         chainId={Number(chainId)}
         trigger={
           <button

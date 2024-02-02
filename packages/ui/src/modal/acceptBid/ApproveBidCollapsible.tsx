@@ -19,7 +19,7 @@ type Props = {
   step: NonNullable<Execute['steps'][0]>
   tokensData: EnhancedAcceptBidTokenData[]
   chain?: ReservoirChain | null
-  currency?: Currency
+  currency?: Omit<Currency, 'coinGeckoId'> | null
   open?: boolean
   isCurrentStep?: boolean
 }
@@ -49,7 +49,6 @@ export const ApproveBidCollapsible: FC<Props> = ({
   isCurrentStep,
   currency,
 }) => {
-  console.log(currency)
   const [collapsibleOpen, setCollapsibleOpen] = useState(false)
   const isComplete =
     step && step.items?.every((item) => item?.status == 'complete')

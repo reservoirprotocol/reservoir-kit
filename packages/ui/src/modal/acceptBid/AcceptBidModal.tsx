@@ -47,7 +47,6 @@ import { WalletClient } from 'viem'
 import { ReservoirWallet, SellPath } from '@reservoir0x/reservoir-sdk'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
-import { Currency } from '../../types/Currency'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -68,7 +67,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokens: AcceptBidTokenData[]
   chainId?: number
-  currency?: Currency
+  currency?: string
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   walletClient?: ReservoirWallet | WalletClient
@@ -139,6 +138,7 @@ export function AcceptBidModal({
         usdPrices,
         prices,
         tokensData,
+        swapCurrency,
         address,
         stepData,
         acceptBid,
@@ -303,8 +303,11 @@ export function AcceptBidModal({
                         netAmount={bidPath.quote}
                         price={bidPath.totalPrice}
                         fees={bidPath.builtInFees}
-                        currency={bidPath.currency}
-                        decimals={bidPath.currencyDecimals}
+                        currency={bidPath.sellOutCurrency || bidPath.currency}
+                        decimals={
+                          bidPath?.sellOutCurrencyDecimals ||
+                          bidPath.currencyDecimals
+                        }
                         sourceImg={
                           bidPath.source
                             ? `${baseApiUrl}/redirect/sources/${bidPath.source}/logo/v2`
@@ -487,7 +490,7 @@ export function AcceptBidModal({
                 {stepData?.steps.map((step) =>
                   step?.items && step.items.length > 0 ? (
                     <ApproveBidCollapsible
-                      currency={currency}
+                      currency={swapCurrency}
                       key={step.id}
                       step={step}
                       tokensData={tokensData}
