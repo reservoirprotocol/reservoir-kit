@@ -2889,6 +2889,7 @@ export interface definitions {
     tokenCount?: number;
     /** @description Unique number of owners. */
     ownerCount?: number;
+    isMinting?: boolean;
     /** Format: date */
     createdAt?: string;
     /** Format: date */
@@ -6863,6 +6864,11 @@ export interface definitions {
     currencyDecimals?: number;
     quote?: number;
     rawQuote?: string;
+    sellOutCurrency?: string;
+    sellOutCurrencySymbol?: string;
+    sellOutCurrencyDecimals?: number;
+    sellOutQuote?: number;
+    sellOutRawQuote?: string;
     totalPrice?: number;
     totalRawPrice?: string;
     builtInFees?: definitions["builtInFees"];
@@ -8203,7 +8209,7 @@ export interface operations {
       query: {
         /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         collection?: string;
-        /** Filter to a particular token by name. This is case sensitive. Example: `token #1` */
+        /** Filter to a particular token by name. This is case insensitive. Example: `token #1` */
         tokenName?: string;
         /** Array of tokens. Max limit is 50. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
         tokens?: string[] | string;
@@ -11315,10 +11321,14 @@ export interface operations {
         excludeSpam?: boolean;
         /** If true, will filter any tokens marked as nsfw. */
         excludeNsfw?: boolean;
+        /** If true, will filter any tokens that are not listed */
+        onlyListed?: boolean;
         /** If true, will return the collection non flagged floor ask. */
         useNonFlaggedFloorAsk?: boolean;
         /** Input any ERC20 address to return result in given currency. Applies to `topBid` and `floorAsk`. */
         displayCurrency?: string;
+        /** Filter to a particular token by name. This is case sensitive. Example: `token #1` */
+        tokenName?: string;
       };
     };
     responses: {
@@ -11621,6 +11631,8 @@ export interface operations {
         collectionsSetId?: string;
         /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         collection?: string;
+        /** Filter to a particular collection with name. This is case insensitive. Example: `ape` */
+        name?: string;
         /** If true, top bid will be returned in the response. */
         includeTopBid?: boolean;
         /** If true, number of tokens with bids will be returned in the response. */
@@ -11637,8 +11649,8 @@ export interface operations {
         limit?: number;
         /** Input any ERC20 address to return result in given currency. Applies to `topBid` and `floorAsk`. */
         displayCurrency?: string;
-        /** Order the items are returned in the response. Options are `allTimeVolume`, `totalValue` */
-        sortBy?: "allTimeVolume" | "totalValue";
+        /** Order the items are returned in the response. Options are `allTimeVolume`, `totalValue`, `floorAskPrice` */
+        sortBy?: "allTimeVolume" | "totalValue" | "floorAskPrice";
         /** Order the items are returned in the response. */
         sortDirection?: "asc" | "desc";
       };
