@@ -173,10 +173,10 @@ const polygonZkEvm = {
 } satisfies ReservoirBaseChain
 
 const ancient8Testnet = {
-  id: 2863311531,
+  id: 28122024,
   name: 'Ancient8 Testnet',
   baseApiUrl: 'https://api-ancient8-testnet.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[2863311531],
+  paymentTokens: chainPaymentTokensMap[28122024],
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
