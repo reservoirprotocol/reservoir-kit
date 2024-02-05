@@ -19,7 +19,7 @@ const wrappedContractNames: Record<number, string> = {
   534352: 'WETH', //scroll
   7777777: 'WETH', //zora
   11155111: 'WETH', //sepolia
-  2863311531: 'WETH', //ancient8
+  28122024: 'WETH', //ancient8 testnet
   68840142: 'WETH', //frametestnet
 }
 export default wrappedContractNames

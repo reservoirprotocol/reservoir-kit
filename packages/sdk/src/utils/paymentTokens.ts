@@ -459,16 +459,16 @@ export const chainPaymentTokensMap = {
   ],
 
   // Ancient8 Testnet
-  2863311531: [
+  28122024: [
     {
-      chainId: 2863311531,
+      chainId: 28122024,
       address: zeroAddress,
       symbol: 'ETH',
       name: 'Ancient8 Testnet ETH',
       decimals: 18,
     },
     {
-      chainId: 2863311531,
+      chainId: 28122024,
       address: '0x4200000000000000000000000000000000000006',
       symbol: 'WETH',
       name: 'WETH',
