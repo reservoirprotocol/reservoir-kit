@@ -24,101 +24,101 @@ const Index: NextPage = () => {
       <h2>Modals</h2>
       <nav style={{ display: 'flex', gap: 15 }}>
         <Link href="/modal/buy">
-          <a>BuyModal</a>
+          BuyModal
         </Link>
         <Link href="/modal/list">
-          <a>ListModal</a>
+          ListModal
         </Link>
         <Link href="/modal/bid">
-          <a>BidModal</a>
+          BidModal
         </Link>
         <Link href="/modal/acceptBid">
-          <a>AcceptBidModal</a>
+          AcceptBidModal
         </Link>
         <Link href="/modal/cancelBid">
-          <a>CancelBidModal</a>
+          CancelBidModal
         </Link>
         <Link href="/modal/cancelListing">
-          <a>CancelListingModal</a>
+          CancelListingModal
         </Link>
         <Link href="/modal/editBid">
-          <a>EditBidModal</a>
+          EditBidModal
         </Link>
         <Link href="/modal/editListing">
-          <a>EditListingModal</a>
+          EditListingModal
         </Link>
         <Link href="/modal/mint">
-          <a>MintModal</a>
+          MintModal
         </Link>
         <Link href="/modal/sweep">
-          <a>SweepModal</a>
+          SweepModal
         </Link>
       </nav>
       <h2>Hooks</h2>
       <nav style={{ display: 'flex', gap: 15 }}>
         <Link href="/hook/collections">
-          <a>useCollections</a>
+          useCollections
         </Link>
         <Link href="/hook/bids">
-          <a>useBids</a>
+          useBids
         </Link>
         <Link href="/hook/collectionActivity">
-          <a>useCollectionActivity</a>
+          useCollectionActivity
         </Link>
         <Link href="/hook/listings">
-          <a>useListings</a>
+          useListings
         </Link>
         <Link href="/hook/tokenActivity">
-          <a>useTokenActivity</a>
+          useTokenActivity
         </Link>
         <Link href="/hook/useSearchActivities">
-          <a>useSearchActivities</a>
+          useSearchActivities
         </Link>
         <Link href="/hook/tokens">
-          <a>useTokens</a>
+          useTokens
         </Link>
         <Link href="/hook/useDynamicTokens">
-          <a>useDynamicTokens</a>
+          useDynamicTokens
         </Link>
         <Link href="/hook/userActivity">
-          <a>useUserActivity</a>
+          useUserActivity
         </Link>
         <Link href="/hook/userTokens">
-          <a>useUserTokens</a>
+          useUserTokens
         </Link>
         <Link href="/hook/userTopBids">
-          <a>useUserTopBids</a>
+          useUserTopBids
         </Link>
         <Link href="/hook/userCollections">
-          <a>useUserCollections</a>
+          useUserCollections
         </Link>
         <Link href="/hook/useTrendingCollections">
-          <a>useTrendingCollections</a>
+          useTrendingCollections
         </Link>
         <Link href="/hook/useTrendingMints">
-          <a>useTrendingMints</a>
+          useTrendingMints
         </Link>
         <Link href="/hook/useMarketplaceConfigs">
-          <a>useMarketplaceConfigs</a>
+          useMarketplaceConfigs
         </Link>
 
       </nav>
       <h2>UI Components</h2>
       <nav style={{ display: 'flex', gap: 15 }}>
         <Link href="/ui/tokenMedia">
-          <a>TokenMedia</a>
+          TokenMedia
         </Link>
         <Link href="/ui/cart">
-          <a>Cart</a>
+          Cart
         </Link>
         <Link href="/ui/collectButton">
-          <a>CollectButton</a>
+          CollectButton
         </Link>
       </nav>
       <h2>SDK Actions</h2>
       <nav style={{ display: 'flex', gap: 15 }}>
         <Link href="/sdk/callAction">
-          <a>Call</a>
+          Call
         </Link>
       </nav>
     </div>

@@ -276,6 +276,23 @@ export const chainPaymentTokensMap = {
       decimals: 6,
     },
   ],
+  // Base Sepolia
+  84532: [
+    {
+      chainId: 84532,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Base Sepolia ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 84531,
+      address: '0x4200000000000000000000000000000000000006',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
   // Scroll Testnet
   534353: [
     {

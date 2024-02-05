@@ -1,7 +1,7 @@
 import { ReservoirChain } from '../actions'
-import { chainPaymentTokensMap } from './paymentTokens';
+import { chainPaymentTokensMap } from './paymentTokens'
 
-type ReservoirBaseChain = Omit<ReservoirChain, 'active'>;
+type ReservoirBaseChain = Omit<ReservoirChain, 'active'>
 
 const mainnet = {
   id: 1,
@@ -79,7 +79,7 @@ const sepolia = {
   baseApiUrl: 'https://api-sepolia.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[11155111],
   websocketUrl: 'wss://ws-sepolia.reservoir.tools',
-  checkPollingInterval: 2000
+  checkPollingInterval: 2000,
 } satisfies ReservoirBaseChain
 
 const base = {
@@ -96,6 +96,14 @@ const baseGoerli = {
   name: 'Base Goerli',
   baseApiUrl: 'https://api-base-goerli.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[84531],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const baseSepolia = {
+  id: 84532,
+  name: 'Base Sepolia',
+  baseApiUrl: 'https://api-base-sepolia.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[84532],
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
@@ -180,4 +188,27 @@ const frameTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
-export const reservoirChains = { mainnet, goerli, polygon, mumbai, optimism, arbitrum, arbitrumNova, avalanche, sepolia, base, baseGoerli, bsc, scrollTestnet, scroll, linea, zora, zoraTestnet, zkSync, polygonZkEvm, ancient8Testnet, frameTestnet }
+export const reservoirChains = {
+  mainnet,
+  goerli,
+  polygon,
+  mumbai,
+  optimism,
+  arbitrum,
+  arbitrumNova,
+  avalanche,
+  sepolia,
+  base,
+  baseGoerli,
+  baseSepolia,
+  bsc,
+  scrollTestnet,
+  scroll,
+  linea,
+  zora,
+  zoraTestnet,
+  zkSync,
+  polygonZkEvm,
+  ancient8Testnet,
+  frameTestnet,
+}
