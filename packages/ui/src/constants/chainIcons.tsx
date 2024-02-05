@@ -78,6 +78,11 @@ const chainIcons = {
     dark: <BaseIconLight />,
     color: <BaseIconColor />,
   },
+  [reservoirChains.baseSepolia.id]: {
+    light: <BaseIconDark />,
+    dark: <BaseIconLight />,
+    color: <BaseIconColor />,
+  },
   [reservoirChains.bsc.id]: {
     light: <BscIconDark />,
     dark: <BscIconLight />,
