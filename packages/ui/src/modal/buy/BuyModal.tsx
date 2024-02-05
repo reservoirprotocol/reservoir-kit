@@ -152,6 +152,7 @@ export function BuyModal({
         quantity,
         averageUnitPrice,
         totalIncludingFees,
+        buyResponseFees,
         feeOnTop,
         paymentCurrency,
         paymentTokens,
@@ -370,6 +371,7 @@ export function BuyModal({
                   <PaymentDetails
                     feeOnTop={feeOnTop}
                     feeUsd={feeUsd}
+                    crosschainFees={buyResponseFees}
                     chainId={modalChain?.id}
                     paymentCurrency={paymentCurrency}
                     loading={isFetchingPath}

@@ -68,6 +68,7 @@ type ChildrenProps = {
   paymentTokens: EnhancedCurrency[]
   totalIncludingFees: bigint
   feeOnTop: bigint
+  buyResponseFees?: BuyResponses['fees']
   buyStep: BuyStep
   transactionError?: Error | null
   hasEnoughCurrency: boolean
@@ -760,6 +761,7 @@ export const BuyModalRenderer: FC<Props> = ({
         totalIncludingFees,
         averageUnitPrice,
         feeOnTop,
+        buyResponseFees,
         buyStep,
         transactionError,
         hasEnoughCurrency,
