@@ -3,6 +3,7 @@ const wrappedContracts: Record<number, string> = {
   5: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', //goerli
   10: '0x4200000000000000000000000000000000000006', //optimism
   56: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', //bnb
+  204: '0x4200000000000000000000000000000000000006', //opbnb
   137: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', //polygon
   324: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91', //zksync
   1101: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9', // zkEVM

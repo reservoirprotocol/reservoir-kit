@@ -140,6 +140,14 @@ const bsc = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const opBnb = {
+  id: 204,
+  name: 'opBNB',
+  baseApiUrl: 'https://api-opbnb.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[204],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 const zora = {
   id: 7777777,
   name: 'Zora',
@@ -210,6 +218,7 @@ export const reservoirChains = {
   baseGoerli,
   baseSepolia,
   bsc,
+  opBnb,
   scrollTestnet,
   scroll,
   linea,

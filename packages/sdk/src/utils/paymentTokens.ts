@@ -385,7 +385,23 @@ export const chainPaymentTokensMap = {
       decimals: 6,
     },
   ],
-
+  //opbnb
+  204: [
+    {
+      chainId: 204,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Op BNB ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 204,
+      address: '0x4200000000000000000000000000000000000006',
+      symbol: 'WBNB',
+      name: 'WBNB',
+      decimals: 18,
+    },
+  ],
   // Zora
   7777777: [
     {
