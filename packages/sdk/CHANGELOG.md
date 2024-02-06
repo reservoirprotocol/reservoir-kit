@@ -1,4 +1,7 @@
 
+## [v1.12.12-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/415bc69571795ea3944f8de4daba60e4311bf1f0) (2024-02-05)
+
+
 ## [v1.12.11-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d7c1e9ba9b8d8c42731704cee2b3c67f7ddc0d64) (2024-02-01)
 
 * Add context headers
