@@ -172,6 +172,14 @@ const polygonZkEvm = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const ancient8 = {
+  id: 888888888,
+  name: 'Ancient8 Testnet',
+  baseApiUrl: 'https://api-ancient8.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[888888888],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 const ancient8Testnet = {
   id: 28122024,
   name: 'Ancient8 Testnet',
@@ -209,6 +217,7 @@ export const reservoirChains = {
   zoraTestnet,
   zkSync,
   polygonZkEvm,
+  ancient8,
   ancient8Testnet,
   frameTestnet,
 }
