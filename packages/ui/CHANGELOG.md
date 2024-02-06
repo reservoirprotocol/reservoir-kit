@@ -1,9 +1,11 @@
 
 ## [v1.25.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/513e0c9172a726ce46471bd502db217f92cfbf13) (2024-02-05)
 
+* Fix ancient8 icon
+
 ## [v1.25.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6ecf8039a9ff2ca5fc0e4e933a0193531fa29f58) (2024-02-05)
 
-* Merge pull request #556 from reservoirprotocol/ted/grwth-3780-add-network-fee-estimate-on-mintbuysweep-modal [ae206283](https://github.com/reservoirprotocol/reservoir-kit/commit/ae20628356d8ea76ae62f2e4b41706ed1d4165bc)
+* MintModal, SweepModal, BuyModal: add network fee estimate [ae206283](https://github.com/reservoirprotocol/reservoir-kit/commit/ae20628356d8ea76ae62f2e4b41706ed1d4165bc)
 
 ## [v1.25.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/df1444460d2569e168c8bd860625d90a30d79d0d) (2024-02-01)
 
