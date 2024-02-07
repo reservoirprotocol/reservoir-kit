@@ -40,7 +40,7 @@
     ],
     "dependencies": {
         "@gelatonetwork/relay-sdk": "^4.0.0",
-        "axios": "^0.27.2"
+        "axios": "^1.6.7"
     },
     "publishConfig": {
         "access": "public"

@@ -5532,7 +5532,7 @@ __metadata:
     "@ethersproject/providers": ^5.7.2
     "@openzeppelin/defender-relay-client": ^1.47.1
     "@reservoir0x/ethers-wallet-adapter": ^0.6.26
-    axios: ^0.27.2
+    axios: ^1.6.7
   peerDependencies:
     "@reservoir0x/reservoir-sdk": "workspace:*"
     ethers: ^5.6.1
@@ -5544,7 +5544,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reservoir0x/ethers-wallet-adapter@workspace:packages/ethers-wallet-adapter"
   dependencies:
-    axios: ^0.27.2
+    axios: ^1.6.7
   peerDependencies:
     "@reservoir0x/reservoir-sdk": "workspace:*"
     ethers: ^5.6.1
@@ -5557,7 +5557,7 @@ __metadata:
   resolution: "@reservoir0x/gelato-adapter@workspace:packages/gelato-adapter"
   dependencies:
     "@gelatonetwork/relay-sdk": ^4.0.0
-    axios: ^0.27.2
+    axios: ^1.6.7
   peerDependencies:
     "@reservoir0x/reservoir-sdk": "workspace:*"
     ethers: ^5.6.1
@@ -5603,7 +5603,7 @@ __metadata:
   resolution: "@reservoir0x/reservoir-sdk@workspace:packages/sdk"
   dependencies:
     "@types/jest": ^29.5.2
-    axios: ^0.27.2
+    axios: ^1.6.7
     jest: ^29.5.0
     openapi-typescript: ^5.4.1
     ts-jest: ^29.1.0
@@ -8612,16 +8612,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.27.2":
-  version: 0.27.2
-  resolution: "axios@npm:0.27.2"
-  dependencies:
-    follow-redirects: ^1.14.9
-    form-data: ^4.0.0
-  checksum: 38cb7540465fe8c4102850c4368053c21683af85c5fdf0ea619f9628abbcb59415d1e22ebc8a6390d2bbc9b58a9806c874f139767389c862ec9b772235f06854
-  languageName: node
-  linkType: hard
-
 "axios@npm:^1.4.0":
   version: 1.6.5
   resolution: "axios@npm:1.6.5"
@@ -8630,6 +8620,17 @@ __metadata:
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
   checksum: e28d67b2d9134cb4608c44d8068b0678cfdccc652742e619006f27264a30c7aba13b2cd19c6f1f52ae195b5232734925928fb192d5c85feea7edd2f273df206d
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.6.7":
+  version: 1.6.7
+  resolution: "axios@npm:1.6.7"
+  dependencies:
+    follow-redirects: ^1.15.4
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: 87d4d429927d09942771f3b3a6c13580c183e31d7be0ee12f09be6d5655304996bb033d85e54be81606f4e89684df43be7bf52d14becb73a12727bf33298a082
   languageName: node
   linkType: hard
 
@@ -11816,7 +11817,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.9, follow-redirects@npm:^1.15.0, follow-redirects@npm:^1.15.4":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.15.0, follow-redirects@npm:^1.15.4":
   version: 1.15.5
   resolution: "follow-redirects@npm:1.15.5"
   peerDependenciesMeta:
