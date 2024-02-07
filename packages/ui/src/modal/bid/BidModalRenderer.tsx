@@ -351,7 +351,9 @@ export const BidModalRenderer: FC<Props> = ({
 
       if (!wrappedBalance?.value || wrappedBalance?.value < bid) {
         setHasEnoughWrappedCurrency(false)
-        const wrappedAmount = wrappedBalance?.value ? BigInt(wrappedBalance.value) : BigInt(0)
+        const wrappedAmount = wrappedBalance?.value
+          ? BigInt(wrappedBalance.value)
+          : BigInt(0)
         const amountToWrap = bid - wrappedAmount
         setAmountToWrap(formatBN(amountToWrap, 5))
 
@@ -411,7 +413,7 @@ export const BidModalRenderer: FC<Props> = ({
 
   axios.defaults.headers.common['x-rkui-context'] = open
     ? 'bidModalRenderer'
-    : ''
+    : delete axios.defaults.headers.common['x-rkui-context']
 
   useEffect(() => {
     const supportedCurrencies =

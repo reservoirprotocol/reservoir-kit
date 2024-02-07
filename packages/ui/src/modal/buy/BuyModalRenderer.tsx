@@ -739,7 +739,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
   axios.defaults.headers.common['x-rkui-context'] = open
     ? 'buyModalRenderer'
-    : ''
+    : delete axios.defaults.headers.common['x-rkui-context']
 
   useEffect(() => {
     if (quantityRemaining > 0 && quantity > quantityRemaining) {

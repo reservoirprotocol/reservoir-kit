@@ -209,7 +209,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
 
   axios.defaults.headers.common['x-rkui-context'] = open
     ? 'cancelBidModalRenderer'
-    : ''
+    : delete axios.defaults.headers.common['x-rkui-context']
 
   let tokenId
 

@@ -588,7 +588,7 @@ export const SweepModalRenderer: FC<Props> = ({
 
   axios.defaults.headers.common['x-rkui-context'] = open
     ? 'sweepModalRenderer'
-    : ''
+    : delete axios.defaults.headers.common['x-rkui-context']
 
   useEffect(() => {
     if (maxItemAmount > 0 && itemAmount > maxItemAmount) {

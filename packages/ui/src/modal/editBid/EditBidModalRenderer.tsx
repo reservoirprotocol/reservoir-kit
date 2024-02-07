@@ -367,7 +367,7 @@ export const EditBidModalRenderer: FC<Props> = ({
 
   axios.defaults.headers.common['x-rkui-context'] = open
     ? 'editBidModalRenderer'
-    : ''
+    : delete axios.defaults.headers.common['x-rkui-context']
 
   const editBid = useCallback(async () => {
     if (!wallet) {

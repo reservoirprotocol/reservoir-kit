@@ -262,7 +262,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   axios.defaults.headers.common['x-rkui-context'] = open
     ? 'listModalRenderer'
-    : ''
+    : delete axios.defaults.headers.common['x-rkui-context']
 
   const exchange = useMemo(() => {
     const exchanges: Record<string, Exchange> = marketplace?.exchanges || {}

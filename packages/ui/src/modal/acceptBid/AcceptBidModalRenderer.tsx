@@ -149,7 +149,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     const tokensDataMap = tokensData.reduce((map, data) => {
       map[`${data.token?.contract}:${data.token?.tokenId}`] = data
       return map
-    }, {} as Record<string, typeof tokensData[0]>)
+    }, {} as Record<string, (typeof tokensData)[0]>)
     const tokensBidPathMap =
       bidsPath?.reduce((map, path) => {
         const key = `${path.contract}:${path.tokenId}`
@@ -198,7 +198,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           map[bidId] = token
         })
         return map
-      }, {} as Record<string, typeof enhancedTokens[0]>),
+      }, {} as Record<string, (typeof enhancedTokens)[0]>),
     [enhancedTokens]
   )
 
@@ -604,7 +604,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
   axios.defaults.headers.common['x-rkui-context'] = open
     ? 'acceptBidModalRenderer'
-    : ''
+    : delete axios.defaults.headers.common['x-rkui-context']
 
   return (
     <>
