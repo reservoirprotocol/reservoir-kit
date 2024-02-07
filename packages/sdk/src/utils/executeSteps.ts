@@ -363,9 +363,9 @@ export async function executeSteps(
                   if (gas !== undefined) {
                     stepItem.data.gas = gas
                   }
-                  const headers: AxiosRequestHeaders = {
+                  const headers = {
                     'x-rkc-version': version,
-                  }
+                  } as any as AxiosRequestHeaders
 
                   if (request.headers && request.headers['x-api-key']) {
                     headers['x-api-key'] = request.headers['x-api-key']
@@ -467,10 +467,10 @@ export async function executeSteps(
                   )
 
                   try {
-                    const headers: AxiosRequestHeaders = {
+                    const headers = {
                       'Content-Type': 'application/json',
                       'x-rkc-version': version,
-                    }
+                    } as any as AxiosRequestHeaders
                     if (request.headers && request.headers['x-api-key']) {
                       headers['x-api-key'] = request.headers['x-api-key']
                     }
@@ -568,9 +568,9 @@ export async function executeSteps(
               (isSell || isBuy || isMint)
             ) {
               // @TODO: global headers declaration
-              const headers: AxiosRequestHeaders = {
+              const headers = {
                 'x-rkc-version': version,
-              }
+              } as any as AxiosRequestHeaders
 
               if (request.headers && request.headers['x-api-key']) {
                 headers['x-api-key'] = request.headers['x-api-key']
