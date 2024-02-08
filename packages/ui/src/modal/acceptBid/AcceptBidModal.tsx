@@ -18,6 +18,7 @@ import {
   ErrorWell,
   ChainIcon,
   Divider,
+  CryptoCurrencyIcon,
 } from '../../primitives'
 
 import { Modal } from '../Modal'
@@ -47,6 +48,8 @@ import { WalletClient } from 'viem'
 import { ReservoirWallet, SellPath } from '@reservoir0x/reservoir-sdk'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
+import { TokenInfo } from '../TokenInfo'
+import TransactionProgress from '../TransactionProgress'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -504,6 +507,96 @@ export function AcceptBidModal({
                   <Loader />
                   {copy.ctaAwaitingApproval}
                 </Button>
+              </Flex>
+            )}
+
+            {acceptBidStep === AcceptBidStep.TokenSwap && !loading && (
+              <Flex direction="column">
+                <Flex
+                  justify="between"
+                  direction="column"
+                  align="center"
+                  css={{ width: '100%', p: '$4', gap: 24 }}
+                >
+                  {transactionError && (
+                    <ErrorWell
+                      error={transactionError}
+                      css={{ width: '100%' }}
+                    />
+                  )}
+                  {stepData && (
+                    <>
+                      <Text css={{ textAlign: 'center' }} style="subtitle1">
+                        {stepData.currentStep.action}
+                      </Text>
+                      {stepData.currentStep.kind === 'signature' && (
+                        <TransactionProgress
+                          justify="center"
+                          fromImg={''}
+                          toImgs={['']}
+                        />
+                      )}
+                      {stepData.currentStep.kind !== 'signature' && (
+                        <Flex align="center" justify="center">
+                          <Flex
+                            css={{
+                              background: '$neutralLine',
+                              borderRadius: 8,
+                            }}
+                          >
+                            <CryptoCurrencyIcon
+                              chainId={modalChain?.id}
+                              css={{ height: 56, width: 56 }}
+                              address={swapCurrency?.contract as string}
+                            />
+                          </Flex>
+                        </Flex>
+                      )}
+                      <Text
+                        css={{
+                          textAlign: 'center',
+                          mt: 24,
+                          maxWidth: 395,
+                          mx: 'auto',
+                          mb: '$4',
+                        }}
+                        style="body2"
+                        color="subtle"
+                      >
+                        {stepData?.currentStep.description}
+                      </Text>
+                    </>
+                  )}
+                  {!stepData && (
+                    <Flex
+                      css={{ height: '100%', py: '$5' }}
+                      justify="center"
+                      align="center"
+                    >
+                      <Loader />
+                    </Flex>
+                  )}
+                  {!transactionError && (
+                    <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
+                      <Loader />
+                      {copy.ctaAwaitingApproval}
+                    </Button>
+                  )}
+                  {transactionError && (
+                    <Flex css={{ mt: 'auto', gap: 10, width: '100%' }}>
+                      <Button
+                        color="secondary"
+                        css={{ flex: 1 }}
+                        //onClick={() => setBidStep(BidStep.SetPrice)}
+                      >
+                        {'copy.ctaEditOffer'}
+                      </Button>
+                      <Button css={{ flex: 1 }} onClick={acceptBid}>
+                        {'copy.ctaRetry'}
+                      </Button>
+                    </Flex>
+                  )}
+                </Flex>
               </Flex>
             )}
 

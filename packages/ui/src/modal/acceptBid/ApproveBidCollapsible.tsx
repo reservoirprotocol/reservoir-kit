@@ -2,24 +2,15 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Execute, ReservoirChain } from '@reservoir0x/reservoir-sdk'
 import { ApproveCollapsible } from '../ApproveCollapisble'
 import { EnhancedAcceptBidTokenData } from './AcceptBidModalRenderer'
-import {
-  CryptoCurrencyIcon,
-  Flex,
-  Grid,
-  Img,
-  Loader,
-  Text,
-} from '../../primitives'
+import { Flex, Grid, Img, Loader, Text } from '../../primitives'
 import { styled } from '@stitches/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons'
-import { Currency } from '../../types/Currency'
 
 type Props = {
   step: NonNullable<Execute['steps'][0]>
   tokensData: EnhancedAcceptBidTokenData[]
   chain?: ReservoirChain | null
-  currency?: Omit<Currency, 'coinGeckoId'> | null
   open?: boolean
   isCurrentStep?: boolean
 }
@@ -47,7 +38,6 @@ export const ApproveBidCollapsible: FC<Props> = ({
   chain,
   open,
   isCurrentStep,
-  currency,
 }) => {
   const [collapsibleOpen, setCollapsibleOpen] = useState(false)
   const isComplete =
@@ -110,34 +100,6 @@ export const ApproveBidCollapsible: FC<Props> = ({
         }}
       >
         {step?.items?.map((item, i) => {
-          const currencySwapStep =
-            step.id === 'sale' && item?.orderIds?.length === 0
-
-          if (currencySwapStep) {
-            return (
-              <React.Fragment key={i}>
-                <Flex css={{ mr: '$2' }}>
-                  <CryptoCurrencyIcon
-                    css={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 4,
-                    }}
-                    address={currency?.contract as string}
-                  />
-                </Flex>
-                <Text
-                  style="body2"
-                  color="subtle"
-                  css={{ display: 'flex', alignItems: 'center' }}
-                >
-                  Confirm currency swap to {currency?.symbol.toUpperCase()}
-                </Text>
-                {isCurrentStep ? <Spinner /> : null}
-              </React.Fragment>
-            )
-          }
-
           const paths = item.orderIds?.map((id) => pathMap[id]) || []
           const marketplaces = Array.from(
             paths.reduce((marketplaces, path) => {
@@ -147,7 +109,6 @@ export const ApproveBidCollapsible: FC<Props> = ({
               return marketplaces
             }, new Set() as Set<string>)
           ).join(',')
-
           if (step.id === 'sale') {
             const images = paths.reduce((images, path) => {
               const tokenKey = `${path?.contract}:${path?.tokenId}`
