@@ -48,8 +48,6 @@ import { WalletClient } from 'viem'
 import { ReservoirWallet, SellPath } from '@reservoir0x/reservoir-sdk'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
-import { TokenInfo } from '../TokenInfo'
-import TransactionProgress from '../TransactionProgress'
 
 type BidData = {
   tokens?: EnhancedAcceptBidTokenData[]
@@ -492,7 +490,6 @@ export function AcceptBidModal({
                 {stepData?.steps.map((step) =>
                   step?.items && step.items.length > 0 ? (
                     <ApproveBidCollapsible
-                      currency={swapCurrency}
                       key={step.id}
                       step={step}
                       tokensData={tokensData}
@@ -526,32 +523,23 @@ export function AcceptBidModal({
                   )}
                   {stepData && (
                     <>
-                      <Text css={{ textAlign: 'center' }} style="subtitle1">
+                      <Text style="h6" css={{ textAlign: 'center' }}>
                         {stepData.currentStep.action}
                       </Text>
-                      {stepData.currentStep.kind === 'signature' && (
-                        <TransactionProgress
-                          justify="center"
-                          fromImg={''}
-                          toImgs={['']}
-                        />
-                      )}
-                      {stepData.currentStep.kind !== 'signature' && (
-                        <Flex align="center" justify="center">
-                          <Flex
-                            css={{
-                              background: '$neutralLine',
-                              borderRadius: 8,
-                            }}
-                          >
-                            <CryptoCurrencyIcon
-                              chainId={modalChain?.id}
-                              css={{ height: 56, width: 56 }}
-                              address={swapCurrency?.contract as string}
-                            />
-                          </Flex>
+                      <Flex align="center" justify="center">
+                        <Flex
+                          css={{
+                            background: '$neutralLine',
+                            borderRadius: 8,
+                          }}
+                        >
+                          <CryptoCurrencyIcon
+                            chainId={modalChain?.id}
+                            css={{ height: 56, width: 56 }}
+                            address={swapCurrency?.contract as string}
+                          />
                         </Flex>
-                      )}
+                      </Flex>
                       <Text
                         css={{
                           textAlign: 'center',
@@ -707,6 +695,7 @@ export function AcceptBidModal({
                   </Text>
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
                     {stepData?.currentStep?.items?.map((item, itemIndex) => {
+                      debugger
                       if (
                         Array.isArray(item?.txHashes) &&
                         item?.txHashes.length > 0
