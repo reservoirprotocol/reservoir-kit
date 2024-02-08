@@ -485,9 +485,9 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               } else {
                 setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
               }
+            } else if (currentStep.id === 'swap') {
+              setAcceptBidStep(AcceptBidStep.TokenSwap)
             }
-          } else if (currentStep.id === 'swap') {
-            setAcceptBidStep(AcceptBidStep.TokenSwap)
           } else if (
             executableSteps.every(
               (step) =>
