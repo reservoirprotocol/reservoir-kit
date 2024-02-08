@@ -573,20 +573,6 @@ export function AcceptBidModal({
                       {copy.ctaAwaitingApproval}
                     </Button>
                   )}
-                  {transactionError && (
-                    <Flex css={{ mt: 'auto', gap: 10, width: '100%' }}>
-                      <Button
-                        color="secondary"
-                        css={{ flex: 1 }}
-                        //onClick={() => setBidStep(BidStep.SetPrice)}
-                      >
-                        {'copy.ctaEditOffer'}
-                      </Button>
-                      <Button css={{ flex: 1 }} onClick={acceptBid}>
-                        {'copy.ctaRetry'}
-                      </Button>
-                    </Flex>
-                  )}
                 </Flex>
               </Flex>
             )}
