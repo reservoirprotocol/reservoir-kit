@@ -8,7 +8,8 @@ import {
   refreshLiquidity,
 } from '../utils'
 import { WalletClient } from 'viem'
-import axios, { AxiosRequestConfig } from 'axios'
+import { axios } from '../utils'
+import { AxiosRequestConfig } from 'axios'
 import { isViemWalletClient } from '../utils/viemWallet'
 
 type AcceptOfferBodyParameters =

@@ -14,6 +14,7 @@ import {
   ReservoirClientActions,
   ReservoirWallet,
   SellPath,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
 import { WalletClient, formatUnits, parseUnits } from 'viem'
@@ -135,10 +136,12 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     mutate: mutateTokens,
     isValidating: isFetchingTokenData,
   } = useTokens(
-    open && {
-      tokens: _tokenIds,
-      normalizeRoyalties,
-    },
+    open &&
+      _tokenIds &&
+      _tokenIds.length > 0 && {
+        tokens: _tokenIds,
+        normalizeRoyalties,
+      },
     {
       revalidateFirstPage: true,
     },
@@ -665,6 +668,10 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       setTransactionError(null)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'acceptBidModalRenderer'
+    : ''
 
   return (
     <>

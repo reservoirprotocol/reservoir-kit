@@ -1,4 +1,18 @@
 
+## [v1.25.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/513e0c9172a726ce46471bd502db217f92cfbf13) (2024-02-05)
+
+* Fix ancient8 icon
+
+## [v1.25.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6ecf8039a9ff2ca5fc0e4e933a0193531fa29f58) (2024-02-05)
+
+* MintModal, SweepModal, BuyModal: add network fee estimate [ae206283](https://github.com/reservoirprotocol/reservoir-kit/commit/ae20628356d8ea76ae62f2e4b41706ed1d4165bc)
+
+## [v1.25.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/df1444460d2569e168c8bd860625d90a30d79d0d) (2024-02-01)
+
+* EditListingModal: Fixed a bug where it wasn't pulling up the right exchange [71d22b3f](https://github.com/reservoirprotocol/reservoir-kit/commit/71d22b3f1d9e35d07cc57fca94192cdc89094132)
+* Bidmodal: Fix a bug where a request was made without any data [9ccb22ca](https://github.com/reservoirprotocol/reservoir-kit/commit/9ccb22ca370cf9fdd4a13ba3408708251cdb4c67)
+* BidModal: Ensure wrappedBalance value is a BigInt when subtracting from bid. Thanks [@tomhirst] (https://www.github.com/tomhirst) [3dbd007](https://github.com/reservoirprotocol/reservoir-kit/pull/562)
+
 ## [v1.25.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/aae5391d42de77cba932e89192baefbfcf2da2fd) (2024-01-19)
 
 * Update EditBidModal UI [1e4a1996](https://github.com/reservoirprotocol/reservoir-kit/commit/1e4a1996f63db9a6a914724ed8cfa074d497b805)

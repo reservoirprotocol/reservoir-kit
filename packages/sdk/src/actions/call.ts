@@ -1,13 +1,14 @@
-import { Execute, paths, ReservoirWallet } from '../types'
+import { AxiosRequestConfig } from 'axios'
+import { WalletClient, WriteContractParameters } from 'viem'
 import { getClient } from '.'
+import { Execute, ReservoirWallet, paths } from '../types'
 import {
-  executeSteps,
-  adaptViemWallet,
   APIError,
+  adaptViemWallet,
+  axios,
+  executeSteps,
   prepareCallTransaction,
 } from '../utils'
-import axios, { AxiosRequestConfig } from 'axios'
-import { WalletClient, WriteContractParameters } from 'viem'
 import { isViemWalletClient } from '../utils/viemWallet'
 
 type CallBody = NonNullable<
