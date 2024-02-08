@@ -182,8 +182,10 @@ export function AcceptBidModal({
           [tokensData]
         )
 
+        const saleStep = stepData?.steps.find((step) => step.id === 'sale')
+
         const transfersTxHashes =
-          stepData?.currentStep?.items?.reduce((txHashes, item) => {
+          saleStep?.items?.reduce((txHashes, item) => {
             item.transfersData?.forEach((transferData) => {
               if (transferData.txHash) {
                 txHashes.add(transferData.txHash)
@@ -192,8 +194,8 @@ export function AcceptBidModal({
             return txHashes
           }, new Set<string>()) || []
         const totalSales = Array.from(transfersTxHashes).length
-        const failedSales =
-          totalSales - (stepData?.currentStep?.items?.length || 0)
+        const failedSales = totalSales - (saleStep?.items?.length || 0)
+
         const successfulSales = totalSales - failedSales
 
         return (

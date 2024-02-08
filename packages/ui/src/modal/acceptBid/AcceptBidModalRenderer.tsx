@@ -498,28 +498,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           ) {
             setAcceptBidStep(AcceptBidStep.Complete)
 
-            /**
-             * If its a swap step we want to set the step data to the sale TX
-             * so that we display the sale TX as opposed to the transfer TX.
-             */
-            if (currentStep.id === 'swap') {
-              const saleStep = steps.find((step) => step.id === 'sale')
-
-              const lastStepItem = saleStep?.items
-                ? saleStep.items[saleStep?.items?.length - 1]
-                : undefined
-
-              if (saleStep && lastStepItem) {
-                setStepData({
-                  totalSteps: stepCount,
-                  steps,
-                  currentStep: saleStep,
-                  currentStepItem: lastStepItem,
-                })
-                return
-              }
-            }
-
             const lastStepItem = currentStep.items
               ? currentStep.items[currentStep.items?.length - 1]
               : undefined
