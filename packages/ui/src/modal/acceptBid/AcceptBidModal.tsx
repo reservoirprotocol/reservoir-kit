@@ -183,6 +183,7 @@ export function AcceptBidModal({
         )
 
         const saleStep = stepData?.steps.find((step) => step.id === 'sale')
+        const swapStep = stepData?.steps.find((step) => step.id === 'swap')
 
         const transfersTxHashes =
           saleStep?.items?.reduce((txHashes, item) => {
@@ -621,33 +622,35 @@ export function AcceptBidModal({
                   align="center"
                   css={{ gap: '$2', mb: '$3', width: '100%' }}
                 >
-                  {stepData?.currentStep?.items?.map((item, itemIndex) => {
-                    if (
-                      Array.isArray(item?.txHashes) &&
-                      item?.txHashes.length > 0
-                    ) {
-                      return item.txHashes.map((hash, txHashIndex) => {
-                        const truncatedTxHash = truncateAddress(hash.txHash)
-                        const blockExplorerBaseUrl = getChainBlockExplorerUrl(
-                          hash.chainId
-                        )
-                        return (
-                          <Anchor
-                            key={`${itemIndex}-${txHashIndex}`}
-                            href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
-                            color="primary"
-                            weight="medium"
-                            target="_blank"
-                            css={{ fontSize: 12 }}
-                          >
-                            View transaction: {truncatedTxHash}
-                          </Anchor>
-                        )
-                      })
-                    } else {
-                      return null
+                  {[...(swapStep?.items ?? []), ...(saleStep?.items ?? [])].map(
+                    (item, itemIndex) => {
+                      if (
+                        Array.isArray(item?.txHashes) &&
+                        item?.txHashes.length > 0
+                      ) {
+                        return item.txHashes.map((hash, txHashIndex) => {
+                          const truncatedTxHash = truncateAddress(hash.txHash)
+                          const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                            hash.chainId
+                          )
+                          return (
+                            <Anchor
+                              key={`${itemIndex}-${txHashIndex}`}
+                              href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
+                              color="primary"
+                              weight="medium"
+                              target="_blank"
+                              css={{ fontSize: 12 }}
+                            >
+                              View transaction: {truncatedTxHash}
+                            </Anchor>
+                          )
+                        })
+                      } else {
+                        return null
+                      }
                     }
-                  })}
+                  )}
                 </Flex>
                 <Box
                   css={{
@@ -696,8 +699,10 @@ export function AcceptBidModal({
                       : `${totalSales > 1 ? 'Offers' : 'Offer'} accepted!`}
                   </Text>
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-                    {stepData?.currentStep?.items?.map((item, itemIndex) => {
-                      debugger
+                    {[
+                      ...(swapStep?.items ?? []),
+                      ...(saleStep?.items ?? []),
+                    ]?.map((item, itemIndex) => {
                       if (
                         Array.isArray(item?.txHashes) &&
                         item?.txHashes.length > 0
