@@ -238,30 +238,27 @@ export default function (options: {
     let totalQuantities: Record<string, number> = {}
     let orders: Record<string, number> = {}
 
+    const normalizedQuantities: Record<string, number> = {}
+    for (const key in quantityToken) {
+      normalizedQuantities[key.toLowerCase()] = quantityToken[key]
+    }
+
     path?.forEach((pathItem, i) => {
-      const tokenKey = `${pathItem.contract}:${pathItem.tokenId}`
-      const tokenKeyInsensitive = `${pathItem.contract?.toLowerCase()}:${
-        pathItem.tokenId
-      }`
-      const contractKey = `${pathItem.contract}` //todo: test with sweeping
-      const contractKeyInsensitive = `${pathItem.contract?.toLowerCase()}`
+      const tokenKey = `${pathItem.contract?.toLowerCase()}:${pathItem.tokenId}`
+      const contractKey = `${pathItem.contract?.toLowerCase()}` //todo: test with sweeping
 
       let assetKey = tokenKey
       let totalQuantity = 0
       let requiredQuantity = 0
       //Determine correct key to use
-      if (quantityToken[tokenKey] !== undefined) {
+      if (normalizedQuantities[tokenKey] !== undefined) {
         assetKey = tokenKey
-      } else if (quantityToken[tokenKeyInsensitive] !== undefined) {
-        assetKey = tokenKeyInsensitive
-      } else if (quantityToken[contractKey] !== undefined) {
+      } else if (normalizedQuantities[contractKey] !== undefined) {
         assetKey = contractKey
-      } else if (quantityToken[contractKeyInsensitive] !== undefined) {
-        assetKey = contractKeyInsensitive
       }
 
       totalQuantity = totalQuantities[assetKey] || 0
-      requiredQuantity = quantityToken[assetKey] || 0
+      requiredQuantity = normalizedQuantities[assetKey] || 0
 
       //quantity check
       const pathQuantity = pathItem.quantity || 0
