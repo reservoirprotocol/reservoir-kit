@@ -45,9 +45,9 @@ const TokenInfo: FC<Props> = ({
   const floorAsk = token?.market?.floorAsk ?? collection?.floorAsk
   const topBid = token?.market?.topBid ?? collection?.topBid
 
-  const tokenName = token?.token?.tokenId
-    ? `#${token?.token?.tokenId}`
-    : token?.token?.name
+  const tokenName = token?.token?.name
+    ? token?.token?.name
+    : `#${token?.token?.tokenId}`
 
   return (
     <Flex
