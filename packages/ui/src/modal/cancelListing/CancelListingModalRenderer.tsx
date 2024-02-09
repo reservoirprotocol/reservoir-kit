@@ -210,7 +210,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
   open
     ? (axios.defaults.headers.common['x-rkui-context'] =
         'cancelListingRenderer')
-    : delete axios.defaults.headers.common['x-rkui-context']
+    : delete axios.defaults.headers.common?.['x-rkui-context']
 
   const tokenId = listing?.tokenSetId?.split(':')[2]
   const contract = listing?.tokenSetId?.split(':')[1]

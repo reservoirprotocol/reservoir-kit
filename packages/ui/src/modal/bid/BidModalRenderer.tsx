@@ -413,7 +413,7 @@ export const BidModalRenderer: FC<Props> = ({
 
   open
     ? (axios.defaults.headers.common['x-rkui-context'] = 'bidModalRenderer')
-    : delete axios.defaults.headers.common['x-rkui-context']
+    : delete axios.defaults.headers.common?.['x-rkui-context']
 
   useEffect(() => {
     const supportedCurrencies =

@@ -425,7 +425,7 @@ export const EditListingModalRenderer: FC<Props> = ({
   open
     ? (axios.defaults.headers.common['x-rkui-context'] =
         'editListingModalRenderer')
-    : delete axios.defaults.headers.common['x-rkui-context']
+    : delete axios.defaults.headers.common?.['x-rkui-context']
 
   return (
     <>
