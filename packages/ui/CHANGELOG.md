@@ -1,4 +1,15 @@
 
+## [v1.25.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/25205f6ab8d2e075357e9025a9f55051db366887) (2024-02-09)
+
+* Merge pull request #576 from coopbri/fix/currency-conversion [394af48f](https://github.com/reservoirprotocol/reservoir-kit/commit/394af48f3282083658709be86f806e9965466d23)
+* Merge pull request #578 from reservoirprotocol/fix/token-quantity-normalizing [195e8e6e](https://github.com/reservoirprotocol/reservoir-kit/commit/195e8e6eb00fc8c019c2021a5eb768e66ff5c1d8)
+## [v1.25.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/ada60bf0b2245898ec65fdfa04cfbfbf494d92e3) (2024-02-08)
+
+## [v1.25.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e2dfbd9e422c7ea95e437368f6ec13ed03bb72c4) (2024-02-07)
+
+## [v1.25.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/11b8cca3f8dd8cbd98cf5e0c8c795d946735b7d5) (2024-02-07)
+
+
 ## [v1.25.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/513e0c9172a726ce46471bd502db217f92cfbf13) (2024-02-05)
 
 * Fix ancient8 icon

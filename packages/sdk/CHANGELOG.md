@@ -1,4 +1,7 @@
 
+## [v1.12.13-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/740b9b4ab660f6ee67feaf2ede468701d3f0fab1) (2024-02-07)
+
+
 ## [v1.12.12-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/415bc69571795ea3944f8de4daba60e4311bf1f0) (2024-02-05)
 
 * Add ancient8, update ancient8 testnet, sepolia base and opbnb chains
