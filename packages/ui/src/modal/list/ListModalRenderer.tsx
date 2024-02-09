@@ -260,8 +260,8 @@ export const ListModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'listModalRenderer'
+  open
+    ? (axios.defaults.headers.common['x-rkui-context'] = 'listModalRenderer')
     : delete axios.defaults.headers.common['x-rkui-context']
 
   const exchange = useMemo(() => {

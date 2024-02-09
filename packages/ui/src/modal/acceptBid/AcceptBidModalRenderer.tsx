@@ -602,8 +602,9 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'acceptBidModalRenderer'
+  open
+    ? (axios.defaults.headers.common['x-rkui-context'] =
+        'acceptBidModalRenderer')
     : delete axios.defaults.headers.common['x-rkui-context']
 
   return (

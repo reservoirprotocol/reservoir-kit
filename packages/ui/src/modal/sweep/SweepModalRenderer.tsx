@@ -586,8 +586,8 @@ export const SweepModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'sweepModalRenderer'
+  open
+    ? (axios.defaults.headers.common['x-rkui-context'] = 'sweepModalRenderer')
     : delete axios.defaults.headers.common['x-rkui-context']
 
   useEffect(() => {
