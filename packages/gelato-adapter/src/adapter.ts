@@ -1,4 +1,4 @@
-import type { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import {
   ERC2771Type,
   GelatoRelay,
@@ -38,7 +38,9 @@ export const adaptGelatoRelayer = (
         if (signData.signatureKind === 'eip191') {
           if (signData.message.match(/0x[0-9a-fA-F]{64}/)) {
             // If the message represents a hash, we need to convert it to raw bytes first
-            signature = await signer.signMessage(utils.arrayify(signData.message))
+            signature = await signer.signMessage(
+              utils.arrayify(signData.message)
+            )
           } else {
             signature = await signer.signMessage(signData.message)
           }
@@ -85,14 +87,14 @@ export const adaptGelatoRelayer = (
               userNonce: Number(signatureData.struct.userNonce),
             },
           }
-          const response = await fetch(gelatoProxyApiUrl, {
+          const response = await axios(gelatoProxyApiUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ signatureData: signatureDataFormatted }),
+            data: JSON.stringify({ signatureData: signatureDataFormatted }),
           })
-          relayResponse = await response.json()
+          relayResponse = response.data
         } else {
           throw new Error(
             'You must supply either an apiKey or a proxy API url.'

@@ -3,7 +3,7 @@ import { Button, Flex, Text } from '../../primitives'
 import TokenMedia from './index'
 import { defaultHeaders } from '../../lib/swr'
 import { useReservoirClient } from '../../hooks'
-import { paths } from '@reservoir0x/reservoir-sdk'
+import { axios, paths } from '@reservoir0x/reservoir-sdk'
 import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -76,12 +76,12 @@ const TokenFallback: FC<TokenFallbackProps> = ({
                 ...defaultHeaders(client?.apiKey, client?.version),
                 'Content-Type': 'application/json',
               }
-              fetch(url, {
+              axios(url, {
                 headers,
                 method: 'POST',
-                body: JSON.stringify(body),
+                data: JSON.stringify(body),
               })
-                .then((res) => res.json())
+                .then((res) => res.data)
                 .catch((e) => {
                   throw e
                 })

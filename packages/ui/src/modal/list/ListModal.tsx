@@ -573,7 +573,7 @@ export function ListModal({
                 <Box css={{ p: '$4', width: '100%' }}>
                   <Button
                     disabled={canPurchase ? false : true}
-                    onClick={listToken}
+                    onClick={() => listToken()}
                     css={{ width: '100%' }}
                   >
                     {copy.ctaList}

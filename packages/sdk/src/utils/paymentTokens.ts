@@ -276,6 +276,23 @@ export const chainPaymentTokensMap = {
       decimals: 6,
     },
   ],
+  // Base Sepolia
+  84532: [
+    {
+      chainId: 84532,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Base Sepolia ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 84531,
+      address: '0x4200000000000000000000000000000000000006',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
   // Scroll Testnet
   534353: [
     {
@@ -368,7 +385,23 @@ export const chainPaymentTokensMap = {
       decimals: 6,
     },
   ],
-
+  //opbnb
+  204: [
+    {
+      chainId: 204,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Op BNB ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 204,
+      address: '0x4200000000000000000000000000000000000006',
+      symbol: 'WBNB',
+      name: 'WBNB',
+      decimals: 18,
+    },
+  ],
   // Zora
   7777777: [
     {
@@ -441,17 +474,35 @@ export const chainPaymentTokensMap = {
     },
   ],
 
-  // Ancient8 Testnet
-  2863311531: [
+  // Ancient8
+  888888888: [
     {
-      chainId: 2863311531,
+      chainId: 888888888,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Ancient8 ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 888888888,
+      address: '0x4200000000000000000000000000000000000006',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
+
+  // Ancient8 Testnet
+  28122024: [
+    {
+      chainId: 28122024,
       address: zeroAddress,
       symbol: 'ETH',
       name: 'Ancient8 Testnet ETH',
       decimals: 18,
     },
     {
-      chainId: 2863311531,
+      chainId: 28122024,
       address: '0x4200000000000000000000000000000000000006',
       symbol: 'WETH',
       name: 'WETH',

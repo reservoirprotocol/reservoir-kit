@@ -99,6 +99,7 @@ const PaymentTokenRow = ({
           </Box>
         ) : (
           <CryptoCurrencyIcon
+            chainId={paymentToken.chainId}
             address={paymentToken?.address as string}
             css={{ width: 34, height: 34, 'object-fit': 'contain' }}
           />

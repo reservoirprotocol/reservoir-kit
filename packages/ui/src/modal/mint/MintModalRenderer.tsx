@@ -18,6 +18,7 @@ import {
   ReservoirChain,
   ReservoirClientActions,
   ReservoirWallet,
+  axios,
   customChains,
 } from '@reservoir0x/reservoir-sdk'
 import {
@@ -67,6 +68,7 @@ type ChildrenProps = {
   address?: string
   balance?: bigint
   totalIncludingFees: bigint
+  mintResponseFees?: MintResponses['fees']
   feeOnTop: bigint
   feeUsd: string
   usdPrice: number
@@ -506,6 +508,10 @@ export const MintModalRenderer: FC<Props> = ({
     }
   }, [open])
 
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'mintModalRenderer'
+    : ''
+
   useEffect(() => {
     if (maxItemAmount > 0 && itemAmount > maxItemAmount) {
       setItemAmount(maxItemAmount)
@@ -704,6 +710,7 @@ export const MintModalRenderer: FC<Props> = ({
         token: tokenData,
         orders,
         totalIncludingFees,
+        mintResponseFees,
         feeOnTop,
         feeUsd,
         paymentTokens,

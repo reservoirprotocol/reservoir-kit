@@ -1,15 +1,20 @@
 import React, { FC, useContext } from 'react'
 import { CSS } from '@stitches/react'
 import {
+  Box,
   Flex,
   FormatCryptoCurrency,
   FormatCurrency,
   Loader,
   Text,
+  Tooltip,
 } from '../primitives'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
+import { BuyResponses, MintResponses } from '@reservoir0x/reservoir-sdk'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   css?: CSS
@@ -18,6 +23,7 @@ type Props = {
   loading?: boolean
   feeOnTop: bigint
   feeUsd: string
+  crosschainFees?: BuyResponses['fees'] | MintResponses['fees']
 }
 
 export const PaymentDetails: FC<Props> = ({
@@ -27,6 +33,7 @@ export const PaymentDetails: FC<Props> = ({
   loading,
   feeOnTop,
   feeUsd,
+  crosschainFees,
 }) => {
   const providerOptions = useContext(ProviderOptionsContext)
   const usdTotal = formatUnits(
@@ -56,6 +63,46 @@ export const PaymentDetails: FC<Props> = ({
           </Flex>
         </Flex>
       )}
+      {crosschainFees && crosschainFees?.relayer?.amount?.raw ? (
+        <Flex
+          justify="between"
+          align="start"
+          css={{ px: '$4', py: '$3', width: '100%' }}
+        >
+          <Flex align="center" css={{ gap: '$2' }}>
+            <Text style="subtitle3">Relayer Fee</Text>
+            <Tooltip
+              content={
+                <Text
+                  style="body3"
+                  css={{ maxWidth: 200, textAlign: 'center', display: 'block' }}
+                >
+                  A fee paid to the Relayer who executes your transaction on the
+                  destination chain.
+                </Text>
+              }
+            >
+              <Box css={{ color: '$neutralText' }}>
+                <FontAwesomeIcon icon={faInfoCircle} />
+              </Box>
+            </Tooltip>
+          </Flex>
+          <Flex direction="column" align="end" css={{ gap: '$1' }}>
+            <FormatCryptoCurrency
+              chainId={chainId}
+              amount={crosschainFees?.relayer?.amount?.raw}
+            />
+
+            {crosschainFees?.relayer?.amount?.usd ? (
+              <FormatCurrency
+                amount={crosschainFees?.relayer?.amount?.usd}
+                color="subtle"
+                style="tiny"
+              />
+            ) : null}
+          </Flex>
+        </Flex>
+      ) : null}
       <Flex justify="between" align="start" css={{ px: '$4' }}>
         <Text style="h6">You Pay</Text>
         <Flex direction="column" align="end" css={{ gap: '$1' }}>

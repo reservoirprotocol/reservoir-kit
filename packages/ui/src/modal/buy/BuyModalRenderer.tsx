@@ -23,6 +23,7 @@ import {
   LogLevel,
   ReservoirClientActions,
   ReservoirWallet,
+  axios,
   BuyTokenBodyParameters,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
@@ -66,6 +67,7 @@ type ChildrenProps = {
   paymentTokens: EnhancedCurrency[]
   totalIncludingFees: bigint
   feeOnTop: bigint
+  buyResponseFees?: BuyResponses['fees']
   buyStep: BuyStep
   transactionError?: Error | null
   hasEnoughCurrency: boolean
@@ -734,6 +736,10 @@ export const BuyModalRenderer: FC<Props> = ({
     }
   }, [open])
 
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'buyModalRenderer'
+    : ''
+
   useEffect(() => {
     if (quantityRemaining > 0 && quantity > quantityRemaining) {
       setQuantity(quantityRemaining)
@@ -754,6 +760,7 @@ export const BuyModalRenderer: FC<Props> = ({
         totalIncludingFees,
         averageUnitPrice,
         feeOnTop,
+        buyResponseFees,
         buyStep,
         transactionError,
         hasEnoughCurrency,

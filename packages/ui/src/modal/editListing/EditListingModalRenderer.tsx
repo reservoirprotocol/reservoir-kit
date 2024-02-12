@@ -18,7 +18,7 @@ import {
   useMarketplaces,
 } from '../../hooks'
 import { useWalletClient, useAccount } from 'wagmi'
-import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
@@ -154,7 +154,9 @@ export const EditListingModalRenderer: FC<Props> = ({
   const exchange = useMemo(() => {
     const exchanges: Record<string, Exchange> =
       reservoirMarketplace?.exchanges || {}
-    const exchange = exchanges[listing?.kind as string]
+    const exchange = Object.values(exchanges).find(
+      (exchange) => exchange?.orderKind === listing?.kind
+    )
     return exchange?.enabled ? exchange : undefined
   }, [reservoirMarketplace, listing])
 
@@ -419,6 +421,10 @@ export const EditListingModalRenderer: FC<Props> = ({
       setSteps(null)
     }
   }, [open])
+
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'cancelListingModalRenderer'
+    : ''
 
   return (
     <>

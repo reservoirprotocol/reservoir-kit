@@ -21,6 +21,7 @@ import {
   LogLevel,
   ReservoirChain,
   ReservoirClientActions,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
@@ -73,6 +74,7 @@ export type ChildrenProps = {
   chainCurrency: ReturnType<typeof useChainCurrency>
   paymentTokens: EnhancedCurrency[]
   totalIncludingFees: bigint
+  buyResponseFees?: BuyResponses['fees']
   feeOnTop: bigint
   feeUsd: string
   usdPrice: number
@@ -584,6 +586,10 @@ export const SweepModalRenderer: FC<Props> = ({
     }
   }, [open])
 
+  axios.defaults.headers.common['x-rkui-context'] = open
+    ? 'sweepModalRenderer'
+    : ''
+
   useEffect(() => {
     if (maxItemAmount > 0 && itemAmount > maxItemAmount) {
       setItemAmount(maxItemAmount)
@@ -805,6 +811,7 @@ export const SweepModalRenderer: FC<Props> = ({
         chainCurrency,
         paymentTokens,
         totalIncludingFees,
+        buyResponseFees,
         averageUnitPrice,
         feeOnTop,
         feeUsd,
