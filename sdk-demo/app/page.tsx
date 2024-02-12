@@ -14,9 +14,9 @@ import { WagmiConfig, createClient, configureChains } from 'wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
 import Actions from '../components/Actions'
 
-const ALCHEMY_KEY = process.env.REACT_APP_ALCHEMY_KEY || ''
+const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 const { chains, provider } = configureChains(
-  [allChains.goerli],
+  [allChains.polygon],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
 

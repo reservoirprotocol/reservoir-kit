@@ -339,336 +339,345 @@ export async function executeSteps(
       LogLevel.Verbose
     )
 
-    const promises = stepItems
-      .filter((stepItem) => stepItem.status === 'incomplete')
-      .map((stepItem) => {
-        return new Promise(async (resolve, reject) => {
-          try {
-            const stepData = stepItem.data
+    const items = stepItems.filter((stepItem) => stepItem.status === 'incomplete')
+    const pendingPromises: Promise<any>[] = []
+    for (var i = 0; i < items.length; i++) {
+      const promise = new Promise(async (resolve, reject) => {
+        try {
+          const stepItem = items[i]
+          const stepData = stepItem.data
 
-            if (!json) {
-              return
+          if (!json) {
+            return
+          }
+          // Handle each step based on it's kind
+          switch (kind) {
+            // Make an on-chain transaction
+            case 'transaction': {
+              try {
+                client.log(
+                  [
+                    'Execute Steps: Begin transaction step for, sending transaction',
+                  ],
+                  LogLevel.Verbose
+                )
+                if (gas !== undefined) {
+                  stepItem.data.gas = gas
+                }
+                const headers = {
+                  'x-rkc-version': version,
+                } as any as AxiosRequestHeaders
+
+                if (request.headers && request.headers['x-api-key']) {
+                  headers['x-api-key'] = request.headers['x-api-key']
+                }
+
+                if (request.headers && client?.uiVersion) {
+                  request.headers['x-rkui-version'] = client.uiVersion
+                }
+
+                // if chainId is present in the tx data field then you should relay the tx on that chain
+                // otherwise, it's assumed the chain id matched the network the api request was made on
+                const transactionChainId =
+                  stepItem?.data?.chainId ?? reservoirChain?.id ?? 1
+
+                const isCrossChainIntent =
+                  stepItem?.data?.chainId &&
+                  stepItem?.data?.chainId != reservoirChain?.id
+
+                const crossChainIntentChainId = reservoirChain?.id
+
+                await sendTransactionSafely(
+                  transactionChainId,
+                  viemClient,
+                  stepItem as TransactionStepItem,
+                  step,
+                  wallet,
+                  (txHashes) => {
+                    client.log(
+                      [
+                        'Execute Steps: Transaction step, got transactions',
+                        txHashes,
+                      ],
+                      LogLevel.Verbose
+                    )
+                    stepItem.txHashes = txHashes
+                    if (json) {
+                      setState([...json.steps], path, { ...json?.fees })
+                    }
+                  },
+                  (internalTxHashes) => {
+                    stepItem.internalTxHashes = internalTxHashes
+                    if (json) {
+                      setState([...json.steps], path, { ...json?.fees })
+                    }
+                  },
+                  request,
+                  headers,
+                  isCrossChainIntent,
+                  crossChainIntentChainId
+                )
+
+                stepItem?.txHashes?.forEach((hash) => {
+                  executeResults({
+                    request,
+                    stepId: step.id,
+                    requestId: json?.requestId,
+                    txHash: hash.txHash,
+                  })
+                })
+              } catch (e) {
+                stepItem?.txHashes?.forEach((hash) => {
+                  executeResults({
+                    request,
+                    stepId: step.id,
+                    requestId: json?.requestId,
+                    txHash: hash.txHash,
+                  })
+                })
+
+                throw e
+              }
+              break
             }
-            // Handle each step based on it's kind
-            switch (kind) {
-              // Make an on-chain transaction
-              case 'transaction': {
-                try {
-                  client.log(
-                    [
-                      'Execute Steps: Begin transaction step for, sending transaction',
-                    ],
-                    LogLevel.Verbose
-                  )
-                  if (gas !== undefined) {
-                    stepItem.data.gas = gas
+
+            // Sign a message
+            case 'signature': {
+              let signature: string | undefined
+              const signData = stepData['sign']
+              const postData = stepData['post']
+              client.log(
+                ['Execute Steps: Begin signature step'],
+                LogLevel.Verbose
+              )
+              if (signData) {
+                signature = await wallet.handleSignMessageStep(stepItem, step)
+
+                if (signature) {
+                  request.params = {
+                    ...request.params,
+                    signature,
                   }
+                }
+              }
+
+              if (postData) {
+                client.log(['Execute Steps: Posting order'], LogLevel.Verbose)
+                const postOrderUrl = new URL(
+                  `${request.baseURL}${postData.endpoint}`
+                )
+
+                try {
                   const headers = {
+                    'Content-Type': 'application/json',
                     'x-rkc-version': version,
                   } as any as AxiosRequestHeaders
-
                   if (request.headers && request.headers['x-api-key']) {
                     headers['x-api-key'] = request.headers['x-api-key']
                   }
-
-                  if (request.headers && client?.uiVersion) {
-                    request.headers['x-rkui-version'] = client.uiVersion
-                  }
-
-                  // if chainId is present in the tx data field then you should relay the tx on that chain
-                  // otherwise, it's assumed the chain id matched the network the api request was made on
-                  const transactionChainId =
-                    stepItem?.data?.chainId ?? reservoirChain?.id ?? 1
-
-                  const isCrossChainIntent =
-                    stepItem?.data?.chainId &&
-                    stepItem?.data?.chainId != reservoirChain?.id
-
-                  const crossChainIntentChainId = reservoirChain?.id
-
-                  await sendTransactionSafely(
-                    transactionChainId,
-                    viemClient,
-                    stepItem as TransactionStepItem,
-                    step,
-                    wallet,
-                    (txHashes) => {
-                      client.log(
-                        [
-                          'Execute Steps: Transaction step, got transactions',
-                          txHashes,
-                        ],
-                        LogLevel.Verbose
-                      )
-                      stepItem.txHashes = txHashes
-                      if (json) {
-                        setState([...json.steps], path, { ...json?.fees })
+                  const getData = async function () {
+                    let response = await axios.post(
+                      postOrderUrl.href,
+                      JSON.stringify(postData.body),
+                      {
+                        method: postData.method,
+                        headers,
+                        params: request.params,
                       }
-                    },
-                    (internalTxHashes) => {
-                      stepItem.internalTxHashes = internalTxHashes
-                      if (json) {
-                        setState([...json.steps], path, { ...json?.fees })
-                      }
-                    },
-                    request,
-                    headers,
-                    isCrossChainIntent,
-                    crossChainIntentChainId
-                  )
-
-                  stepItem?.txHashes?.forEach((hash) => {
-                    executeResults({
-                      request,
-                      stepId: step.id,
-                      requestId: json?.requestId,
-                      txHash: hash.txHash,
-                    })
-                  })
-                } catch (e) {
-                  stepItem?.txHashes?.forEach((hash) => {
-                    executeResults({
-                      request,
-                      stepId: step.id,
-                      requestId: json?.requestId,
-                      txHash: hash.txHash,
-                    })
-                  })
-
-                  throw e
-                }
-                break
-              }
-
-              // Sign a message
-              case 'signature': {
-                let signature: string | undefined
-                const signData = stepData['sign']
-                const postData = stepData['post']
-                client.log(
-                  ['Execute Steps: Begin signature step'],
-                  LogLevel.Verbose
-                )
-                if (signData) {
-                  signature = await wallet.handleSignMessageStep(stepItem, step)
-
-                  if (signature) {
-                    request.params = {
-                      ...request.params,
-                      signature,
-                    }
-                  }
-                }
-
-                if (postData) {
-                  client.log(['Execute Steps: Posting order'], LogLevel.Verbose)
-                  const postOrderUrl = new URL(
-                    `${request.baseURL}${postData.endpoint}`
-                  )
-
-                  try {
-                    const headers = {
-                      'Content-Type': 'application/json',
-                      'x-rkc-version': version,
-                    } as any as AxiosRequestHeaders
-                    if (request.headers && request.headers['x-api-key']) {
-                      headers['x-api-key'] = request.headers['x-api-key']
-                    }
-                    const getData = async function () {
-                      let response = await axios.post(
-                        postOrderUrl.href,
-                        JSON.stringify(postData.body),
-                        {
-                          method: postData.method,
-                          headers,
-                          params: request.params,
-                        }
-                      )
-
-                      return response
-                    }
-
-                    const res = await getData()
-
-                    // If check, poll check until validated
-                    if (stepItem?.check) {
-                      await pollUntilOk(
-                        {
-                          url: `${request.baseURL}${stepItem?.check.endpoint}`,
-                          method: stepItem?.check.method,
-                          headers: headers,
-                          data: stepItem?.check?.body,
-                        },
-                        (res) => {
-                          client.log(
-                            [
-                              `Execute Steps: Polling execute status to check if indexed`,
-                              res,
-                            ],
-                            LogLevel.Verbose
-                          )
-                          if (
-                            res?.data?.status === 'success' &&
-                            res?.data?.txHashes
-                          ) {
-                            const chainTxHashes: NonNullable<
-                              Execute['steps'][0]['items']
-                            >[0]['txHashes'] = res.data?.txHashes?.map(
-                              (hash: Address) => {
-                                return {
-                                  txHash: hash,
-                                  chainId: reservoirChain?.id,
-                                }
-                              }
-                            )
-                            stepItem.txHashes = chainTxHashes
-                            return true
-                          } else if (res?.data?.status === 'failure') {
-                            throw Error(
-                              res?.data?.details || 'Transaction failed'
-                            )
-                          }
-                          return false
-                        },
-                        maximumAttempts,
-                        0,
-                        pollingInterval
-                      )
-                    }
-
-                    if (res.status > 299 || res.status < 200) throw res.data
-
-                    if (res.data.results) {
-                      stepItem.orderData = res.data.results
-                    } else if (res.data && res.data.orderId) {
-                      stepItem.orderData = [
-                        {
-                          orderId: res.data.orderId,
-                          crossPostingOrderId: res.data.crossPostingOrderId,
-                          orderIndex: res.data.orderIndex || 0,
-                        },
-                      ]
-                    }
-                    setState([...json?.steps], path, { ...json?.fees })
-                  } catch (err) {
-                    throw err
-                  }
-                }
-
-                break
-              }
-
-              default:
-                break
-            }
-            //Confirm that on-chain tx has been picked up by the indexer
-            if (
-              (step.id === 'sale' || step.id === 'order-signature') &&
-              stepItem.txHashes &&
-              (isSell || isBuy || isMint)
-            ) {
-              // @TODO: global headers declaration
-              const headers = {
-                'x-rkc-version': version,
-              } as any as AxiosRequestHeaders
-
-              if (request.headers && request.headers['x-api-key']) {
-                headers['x-api-key'] = request.headers['x-api-key']
-              }
-
-              if (request.headers && client?.uiVersion) {
-                request.headers['x-rkui-version'] = client.uiVersion
-              }
-
-              client.log(
-                [
-                  'Execute Steps: Polling transfers to verify transaction was indexed',
-                ],
-                LogLevel.Verbose
-              )
-              const indexerConfirmationUrl = new URL(
-                `${request.baseURL}/transfers/bulk/v2`
-              )
-
-              const queryParams: paths['/transfers/bulk/v2']['get']['parameters']['query'] =
-                {
-                  txHash: stepItem.txHashes?.map((hash) => hash.txHash),
-                }
-              setParams(indexerConfirmationUrl, queryParams)
-              let transfersData: paths['/transfers/bulk/v2']['get']['responses']['200']['schema'] =
-                {}
-              await pollUntilOk(
-                {
-                  url: indexerConfirmationUrl.href,
-                  method: 'get',
-                  headers: headers,
-                },
-                (res) => {
-                  client.log(
-                    [
-                      'Execute Steps: Polling transfers to check if indexed',
-                      res,
-                    ],
-                    LogLevel.Verbose
-                  )
-                  if (res.status === 200) {
-                    transfersData = res.data
-
-                    const transferTxHashes = transfersData?.transfers?.map(
-                      (transfer) => transfer.txHash
                     )
 
-                    return transfersData.transfers &&
-                      transfersData.transfers.length > 0 &&
-                      stepItem.txHashes?.every((hash) =>
-                        transferTxHashes?.includes(hash.txHash)
-                      )
-                      ? true
-                      : false
+                    return response
                   }
-                  return false
-                },
-                maximumAttempts,
-                0,
-                pollingInterval
-              )
 
-              const taker = await wallet.address()
-              const contracts = path
-                ?.filter((order) => order.contract)
-                .map((order) => order.contract?.toLowerCase())
-              stepItem.transfersData = transfersData.transfers?.filter(
-                (transfer) =>
-                  contracts?.includes(
-                    transfer?.token?.contract?.toLowerCase()
-                  ) && isSell
-                    ? transfer.from?.toLowerCase() === taker.toLowerCase()
-                    : transfer.to?.toLowerCase() === taker.toLowerCase()
-              )
-              setState([...json?.steps], path, { ...json?.fees })
+                  const res = await getData()
+
+                  // If check, poll check until validated
+                  if (stepItem?.check) {
+                    await pollUntilOk(
+                      {
+                        url: `${request.baseURL}${stepItem?.check.endpoint}`,
+                        method: stepItem?.check.method,
+                        headers: headers,
+                        data: stepItem?.check?.body,
+                      },
+                      (res) => {
+                        client.log(
+                          [
+                            `Execute Steps: Polling execute status to check if indexed`,
+                            res,
+                          ],
+                          LogLevel.Verbose
+                        )
+                        if (
+                          res?.data?.status === 'success' &&
+                          res?.data?.txHashes
+                        ) {
+                          const chainTxHashes: NonNullable<
+                            Execute['steps'][0]['items']
+                          >[0]['txHashes'] = res.data?.txHashes?.map(
+                            (hash: Address) => {
+                              return {
+                                txHash: hash,
+                                chainId: reservoirChain?.id,
+                              }
+                            }
+                          )
+                          stepItem.txHashes = chainTxHashes
+                          return true
+                        } else if (res?.data?.status === 'failure') {
+                          throw Error(
+                            res?.data?.details || 'Transaction failed'
+                          )
+                        }
+                        return false
+                      },
+                      maximumAttempts,
+                      0,
+                      pollingInterval
+                    )
+                  }
+
+                  if (res.status > 299 || res.status < 200) throw res.data
+
+                  if (res.data.results) {
+                    stepItem.orderData = res.data.results
+                  } else if (res.data && res.data.orderId) {
+                    stepItem.orderData = [
+                      {
+                        orderId: res.data.orderId,
+                        crossPostingOrderId: res.data.crossPostingOrderId,
+                        orderIndex: res.data.orderIndex || 0,
+                      },
+                    ]
+                  }
+                  setState([...json?.steps], path, { ...json?.fees })
+                } catch (err) {
+                  throw err
+                }
+              }
+
+              break
             }
 
-            stepItem.status = 'complete'
-            setState([...json?.steps], path)
-            resolve(stepItem)
-          } catch (e) {
-            const error = e as Error
-            const errorMessage = error
-              ? error.message
-              : 'Error: something went wrong'
-
-            if (error && json?.steps) {
-              json.steps[incompleteStepIndex].error = errorMessage
-              stepItem.error = errorMessage
-              stepItem.errorData = (e as any)?.response?.data || e
-              setState([...json?.steps], path, { ...json?.fees })
-            }
-            reject(error)
+            default:
+              break
           }
-        })
+          //Confirm that on-chain tx has been picked up by the indexer
+          if (
+            (step.id === 'sale' || step.id === 'order-signature') &&
+            stepItem.txHashes &&
+            (isSell || isBuy || isMint)
+          ) {
+            // @TODO: global headers declaration
+            const headers = {
+              'x-rkc-version': version,
+            } as any as AxiosRequestHeaders
+
+            if (request.headers && request.headers['x-api-key']) {
+              headers['x-api-key'] = request.headers['x-api-key']
+            }
+
+            if (request.headers && client?.uiVersion) {
+              request.headers['x-rkui-version'] = client.uiVersion
+            }
+
+            client.log(
+              [
+                'Execute Steps: Polling transfers to verify transaction was indexed',
+              ],
+              LogLevel.Verbose
+            )
+            const indexerConfirmationUrl = new URL(
+              `${request.baseURL}/transfers/bulk/v2`
+            )
+
+            const queryParams: paths['/transfers/bulk/v2']['get']['parameters']['query'] =
+              {
+                txHash: stepItem.txHashes?.map((hash) => hash.txHash),
+              }
+            setParams(indexerConfirmationUrl, queryParams)
+            let transfersData: paths['/transfers/bulk/v2']['get']['responses']['200']['schema'] =
+              {}
+            await pollUntilOk(
+              {
+                url: indexerConfirmationUrl.href,
+                method: 'get',
+                headers: headers,
+              },
+              (res) => {
+                client.log(
+                  [
+                    'Execute Steps: Polling transfers to check if indexed',
+                    res,
+                  ],
+                  LogLevel.Verbose
+                )
+                if (res.status === 200) {
+                  transfersData = res.data
+
+                  const transferTxHashes = transfersData?.transfers?.map(
+                    (transfer) => transfer.txHash
+                  )
+
+                  return transfersData.transfers &&
+                    transfersData.transfers.length > 0 &&
+                    stepItem.txHashes?.every((hash) =>
+                      transferTxHashes?.includes(hash.txHash)
+                    )
+                    ? true
+                    : false
+                }
+                return false
+              },
+              maximumAttempts,
+              0,
+              pollingInterval
+            )
+
+            const taker = await wallet.address()
+            const contracts = path
+              ?.filter((order) => order.contract)
+              .map((order) => order.contract?.toLowerCase())
+            stepItem.transfersData = transfersData.transfers?.filter(
+              (transfer) =>
+                contracts?.includes(
+                  transfer?.token?.contract?.toLowerCase()
+                ) && isSell
+                  ? transfer.from?.toLowerCase() === taker.toLowerCase()
+                  : transfer.to?.toLowerCase() === taker.toLowerCase()
+            )
+            setState([...json?.steps], path, { ...json?.fees })
+          }
+
+          stepItem.status = 'complete'
+          setState([...json?.steps], path)
+          resolve(stepItem)
+        } catch (e) {
+          const error = e as Error
+          const errorMessage = error
+            ? error.message
+            : 'Error: something went wrong'
+
+          if (error && json?.steps) {
+            json.steps[incompleteStepIndex].error = errorMessage
+            stepItem.error = errorMessage
+            stepItem.errorData = (e as any)?.response?.data || e
+            setState([...json?.steps], path, { ...json?.fees })
+          }
+          reject(error)
+        }
       })
 
-    await Promise.all(promises)
+      if (client.synchronousStepItemExecution) {
+        await promise
+      } else {
+        pendingPromises.push(promise)
+      }
+    }
+
+    if (pendingPromises.length > 0) {
+      await Promise.all(pendingPromises)
+    }
 
     // Recursively call executeSteps()
     await executeSteps(request, wallet, setState, json)
