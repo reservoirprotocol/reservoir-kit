@@ -35,6 +35,7 @@
     "singleQuote": true
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.1",
     "@parcel/core": "^2.9.3",
     "@parcel/optimizer-data-url": "^2.9.3",
     "@parcel/packager-ts": "^2.9.3",
