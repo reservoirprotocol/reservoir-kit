@@ -1,7 +1,8 @@
 
 ## [v1.25.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a1760bed72f9a2f643e8c91e189987014dc5e4f5) (2024-02-13)
 
-* Merge pull request #571 from reservoirprotocol/armando/grwth-4012-remove-empty-context-header-from-reservoirkit [c7c70922](https://github.com/reservoirprotocol/reservoir-kit/commit/c7c709221fe6a380cc9a827373e4ebbde7623602)
+* Remove empty context headers [c7c70922](https://github.com/reservoirprotocol/reservoir-kit/commit/c7c709221fe6a380cc9a827373e4ebbde7623602)
+* SDK bump
 
 ## [v1.25.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/25205f6ab8d2e075357e9025a9f55051db366887) (2024-02-09)
 
