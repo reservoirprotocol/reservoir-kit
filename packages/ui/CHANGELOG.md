@@ -1,4 +1,8 @@
 
+## [v1.25.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a1760bed72f9a2f643e8c91e189987014dc5e4f5) (2024-02-13)
+
+* Merge pull request #571 from reservoirprotocol/armando/grwth-4012-remove-empty-context-header-from-reservoirkit [c7c70922](https://github.com/reservoirprotocol/reservoir-kit/commit/c7c709221fe6a380cc9a827373e4ebbde7623602)
+
 ## [v1.25.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/25205f6ab8d2e075357e9025a9f55051db366887) (2024-02-09)
 
 * Fix fiat currency conversion error Thanks [@coopbri](https://www.github.com/coopbri) [394af48f](https://github.com/reservoirprotocol/reservoir-kit/commit/394af48f3282083658709be86f806e9965466d23)
