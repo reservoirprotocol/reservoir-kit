@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["reservoir-kit-demo"]
+  "ignore": ["reservoir-kit-demo", "sdk-demo"]
 }

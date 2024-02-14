@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "reservoir-kit-demo",
+"name": "reservoir-kit-demo",
   "scripts": {
     "dev": "next-remote-watch ../packages/ui/dist",
     "build": "next build",
