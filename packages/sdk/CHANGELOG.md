@@ -1,9 +1,11 @@
 
 ## [v1.12.14-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4afb40e077c27bb4e8b500660971ad3249dc8b23) (2024-02-13)
 
+* Add property to force executeSteps to trigger signatures/transactions synchronously
 
 ## [v1.12.13-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/740b9b4ab660f6ee67feaf2ede468701d3f0fab1) (2024-02-07)
 
+* Update api types
 
 ## [v1.12.12-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/415bc69571795ea3944f8de4daba60e4311bf1f0) (2024-02-05)
 
