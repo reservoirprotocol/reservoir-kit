@@ -37,7 +37,7 @@ import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { truncateAddress } from '../../lib/truncate'
-import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
+import { SelectPaymentToken } from '../SelectPaymentToken'
 import { WalletClient } from 'viem'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
@@ -284,7 +284,7 @@ export function BuyModal({
                   </Button>
                   <Text style="subtitle2">Select Payment Method</Text>
                 </Flex>
-                <SelectPaymentTokenv2
+                <SelectPaymentToken
                   paymentTokens={paymentTokens}
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}

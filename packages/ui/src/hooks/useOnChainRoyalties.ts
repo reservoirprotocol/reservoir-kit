@@ -92,6 +92,7 @@ export default function ({
         enabled && tokenId && contract && amount && manifoldContract.length > 0
           ? true
           : false,
+      gcTime: 60 * 1000,
     },
   })
 }

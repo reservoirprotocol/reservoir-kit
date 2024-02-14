@@ -29,9 +29,9 @@ import {
 } from '../../hooks'
 import * as allChains from 'viem/chains'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import usePaymentTokensv2, {
+import usePaymentTokens, {
   EnhancedCurrency,
-} from '../../hooks/usePaymentTokensv2'
+} from '../../hooks/usePaymentTokens'
 
 export enum MintStep {
   Idle,
@@ -211,7 +211,7 @@ export const MintModalRenderer: FC<Props> = ({
     } else return collectionContract
   }, [token, collectionId, , collectionContract, tokenData?.token?.tokenId])
 
-  const paymentTokens = usePaymentTokensv2({
+  const paymentTokens = usePaymentTokens({
     open,
     address: address as Address,
     quantityToken: {

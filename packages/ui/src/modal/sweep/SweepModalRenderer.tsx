@@ -13,7 +13,7 @@ import {
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import usePaymentTokensv2 from '../../hooks/usePaymentTokensv2'
+import usePaymentTokens from '../../hooks/usePaymentTokens'
 import { useAccount, useConfig, useWalletClient } from 'wagmi'
 import {
   BuyPath,
@@ -24,7 +24,7 @@ import {
   axios,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
-import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
+import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 import { getAccount, switchChain } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
 import {
@@ -224,7 +224,7 @@ export const SweepModalRenderer: FC<Props> = ({
     } else return collectionContract
   }, [token, collectionId, , collectionContract, tokenData?.token?.tokenId])
 
-  const paymentTokens = usePaymentTokensv2({
+  const paymentTokens = usePaymentTokens({
     open,
     address: address as Address,
     quantityToken: {

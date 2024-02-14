@@ -7,7 +7,7 @@ import {
   Flex,
   Text,
 } from '../primitives'
-import { EnhancedCurrency } from '../hooks/usePaymentTokensv2'
+import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits, zeroAddress } from 'viem'
 import EthIconCircleBlue from '../img/EthIconCircleBlue'
 import { formatNumber } from '../lib/numbers'
@@ -115,7 +115,7 @@ const PaymentTokenRow = ({
   )
 }
 
-export const SelectPaymentTokenv2: FC<Props> = ({
+export const SelectPaymentToken: FC<Props> = ({
   paymentTokens,
   setCurrency,
   goBack,
