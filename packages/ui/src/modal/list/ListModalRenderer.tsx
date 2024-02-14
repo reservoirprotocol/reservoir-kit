@@ -20,6 +20,7 @@ import {
   Execute,
   ReservoirClientActions,
   ReservoirWallet,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
@@ -78,7 +79,7 @@ type ChildrenProps = {
   setPrice: React.Dispatch<React.SetStateAction<string>>
   setCurrency: (currency: Currency) => void
   setQuantity: React.Dispatch<React.SetStateAction<number>>
-  listToken: (options: { royaltyBps?: number }) => void
+  listToken: (options?: { royaltyBps?: number }) => void
 }
 
 type Props = {
@@ -237,6 +238,10 @@ export const ListModalRenderer: FC<Props> = ({
     }
   }, [open])
 
+  open
+    ? (axios.defaults.headers.common['x-rkui-context'] = 'listModalRenderer')
+    : delete axios.defaults.headers.common?.['x-rkui-context']
+
   const exchange = useMemo(() => {
     const exchanges: Record<string, Exchange> = marketplace?.exchanges || {}
     const exchange = orderKind
@@ -289,7 +294,8 @@ export const ListModalRenderer: FC<Props> = ({
   }, [currencies])
 
   const listToken = useCallback(
-    async ({ royaltyBps }: { royaltyBps?: number }) => {
+    async (options: { royaltyBps?: number } | undefined) => {
+      const { royaltyBps } = options ?? {}
       if (!wallet) {
         const error = new Error('Missing a wallet/signer')
         setTransactionError(error)
@@ -377,7 +383,7 @@ export const ListModalRenderer: FC<Props> = ({
         }
       }
 
-      if (royaltyBps) {
+      if (royaltyBps !== undefined) {
         listing.royaltyBps = royaltyBps
       }
 

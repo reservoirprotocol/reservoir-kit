@@ -1,28 +1,55 @@
-import { Chain } from "viem";
+import { Chain } from 'viem'
 
-export const ancient8Testnet = {
-  id: 2863311531,
-  name: 'Ancient8 Testnet',
+export const ancient8 = {
+  id: 888888888,
+  name: 'Ancient8',
   network: 'ancient8',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://rpc-testnet.ancient8.gg'],
-      webSocket: ['https://rpc-testnet.ancient8.gg'],
+      http: ['https://rpc.ancient8.gg'],
+      webSocket: ['wss://rpc.ancient8.gg'],
     },
     public: {
-      http: ['https://rpc-testnet.ancient8.gg'],
-      webSocket: ['https://rpc-testnet.ancient8.gg'],
+      http: ['https://rpc.ancient8.gg'],
+      webSocket: ['wss://rpc.ancient8.gg'],
     },
   },
   blockExplorers: {
     etherscan: {
       name: 'a8scan',
-      url: 'https://testnet.a8scan.io',
+      url: 'https://scan.ancient8.gg',
     },
     default: {
       name: 'a8scan',
-      url: 'https://testnet.a8scan.io',
+      url: 'https://scan.ancient8.gg',
+    },
+  },
+} as const satisfies Chain
+
+export const ancient8Testnet = {
+  id: 28122024,
+  name: 'Ancient8 Testnet',
+  network: 'ancient8',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpcv2-testnet.ancient8.gg'],
+      webSocket: ['wss://rpcv2-testnet.ancient8.gg'],
+    },
+    public: {
+      http: ['https://rpcv2-testnet.ancient8.gg'],
+      webSocket: ['wss://rpcv2-testnet.ancient8.gg'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'a8scan',
+      url: 'https://scanv2-testnet.ancient8.gg/',
+    },
+    default: {
+      name: 'a8scan',
+      url: 'https://scanv2-testnet.ancient8.gg/',
     },
   },
 } as const satisfies Chain
@@ -55,6 +82,7 @@ export const frameTestnet = {
 } as const satisfies Chain
 
 export const customChains = {
+  ancient8,
   ancient8Testnet,
-  frameTestnet
+  frameTestnet,
 } as const satisfies Record<string, Chain>

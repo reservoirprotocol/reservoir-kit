@@ -147,6 +147,7 @@ export function MintModal({
         token,
         orders,
         totalIncludingFees,
+        mintResponseFees,
         feeOnTop,
         feeUsd,
         paymentTokens,
@@ -420,6 +421,7 @@ export function MintModal({
                     ) : null}
                     <PaymentDetails
                       chainId={chainId}
+                      crosschainFees={mintResponseFees}
                       paymentCurrency={paymentCurrency}
                       feeOnTop={feeOnTop}
                       feeUsd={feeUsd}

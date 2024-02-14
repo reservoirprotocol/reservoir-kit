@@ -22,6 +22,7 @@ import {
   Execute,
   ReservoirClientActions,
   ReservoirWallet,
+  axios,
 } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
@@ -351,7 +352,9 @@ export const BidModalRenderer: FC<Props> = ({
 
       if (!wrappedBalance?.value || wrappedBalance?.value < bid) {
         setHasEnoughWrappedCurrency(false)
-        const wrappedAmount = wrappedBalance?.value || 0n
+        const wrappedAmount = wrappedBalance?.value
+          ? BigInt(wrappedBalance.value)
+          : BigInt(0)
         const amountToWrap = bid - wrappedAmount
         setAmountToWrap(formatBN(amountToWrap, 5))
 
@@ -408,6 +411,10 @@ export const BidModalRenderer: FC<Props> = ({
     }
     setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
   }, [open])
+
+  open
+    ? (axios.defaults.headers.common['x-rkui-context'] = 'bidModalRenderer')
+    : delete axios.defaults.headers.common?.['x-rkui-context']
 
   useEffect(() => {
     const supportedCurrencies =
@@ -569,7 +576,7 @@ export const BidModalRenderer: FC<Props> = ({
         bid.quantity = quantity
       }
 
-      if (options?.royaltyBps) {
+      if (options?.royaltyBps !== undefined) {
         bid.royaltyBps = options.royaltyBps
       }
 

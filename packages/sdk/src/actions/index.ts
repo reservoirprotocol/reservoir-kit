@@ -43,6 +43,7 @@ export type ReservoirClientOptions = {
   bountyReferrer?: string
   logLevel?: LogLevel
   maxPollingAttemptsBeforeTimeout?: number
+  synchronousStepItemExecution?: boolean
 }
 
 export type ReservoirClientActions = typeof actions
@@ -62,6 +63,7 @@ export class ReservoirClient {
   bountyReferrer?: string
   logLevel: LogLevel
   maxPollingAttemptsBeforeTimeout?: number
+  synchronousStepItemExecution?: boolean
   log(
     message: Parameters<typeof logUtil>['0'],
     level: LogLevel = LogLevel.Info
@@ -92,6 +94,7 @@ export class ReservoirClient {
       options.logLevel !== undefined ? options.logLevel : LogLevel.None
     this.maxPollingAttemptsBeforeTimeout =
       options.maxPollingAttemptsBeforeTimeout
+    this.synchronousStepItemExecution = options.synchronousStepItemExecution ?? false
   }
 
   configure(options: ReservoirClientOptions) {
@@ -121,7 +124,8 @@ export class ReservoirClient {
     this.logLevel =
       options.logLevel !== undefined ? options.logLevel : LogLevel.None
     this.maxPollingAttemptsBeforeTimeout =
-      options.maxPollingAttemptsBeforeTimeout
+    options.maxPollingAttemptsBeforeTimeout !== undefined ? options.maxPollingAttemptsBeforeTimeout : this.maxPollingAttemptsBeforeTimeout
+      this.synchronousStepItemExecution = options.synchronousStepItemExecution !== undefined ? options.synchronousStepItemExecution : this.synchronousStepItemExecution
   }
 
   currentChain() {

@@ -1,4 +1,49 @@
 
+## [v1.25.8-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/25205f6ab8d2e075357e9025a9f55051db366887) (2024-02-09)
+
+* Fix fiat currency conversion error Thanks [@coopbri](https://www.github.com/coopbri) [394af48f](https://github.com/reservoirprotocol/reservoir-kit/commit/394af48f3282083658709be86f806e9965466d23)
+* Normalize Token quantities to prevents mismtached quantities resulting in 0 total [195e8e6e](https://github.com/reservoirprotocol/reservoir-kit/commit/195e8e6eb00fc8c019c2021a5eb768e66ff5c1d8)
+
+## [v1.25.7-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/ada60bf0b2245898ec65fdfa04cfbfbf494d92e3) (2024-02-08)
+
+* ListModal: Fix bug where list button wasn't working
+* ListModal & BuyModal: Use token name instead of id
+
+## [v1.25.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/e2dfbd9e422c7ea95e437368f6ec13ed03bb72c4) (2024-02-07)
+
+* Fix chain id not passed in when rendering cross chain payment tokens as payment methods
+
+## [v1.25.5-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/11b8cca3f8dd8cbd98cf5e0c8c795d946735b7d5) (2024-02-07)
+
+* Upgrade axios to fix vulnerabilities
+
+## [v1.25.4-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/513e0c9172a726ce46471bd502db217f92cfbf13) (2024-02-05)
+
+* Fix ancient8 icon
+
+## [v1.25.3-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/6ecf8039a9ff2ca5fc0e4e933a0193531fa29f58) (2024-02-05)
+
+* MintModal, SweepModal, BuyModal: add network fee estimate [ae206283](https://github.com/reservoirprotocol/reservoir-kit/commit/ae20628356d8ea76ae62f2e4b41706ed1d4165bc)
+
+## [v1.25.2-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/df1444460d2569e168c8bd860625d90a30d79d0d) (2024-02-01)
+
+* EditListingModal: Fixed a bug where it wasn't pulling up the right exchange [71d22b3f](https://github.com/reservoirprotocol/reservoir-kit/commit/71d22b3f1d9e35d07cc57fca94192cdc89094132)
+* Bidmodal: Fix a bug where a request was made without any data [9ccb22ca](https://github.com/reservoirprotocol/reservoir-kit/commit/9ccb22ca370cf9fdd4a13ba3408708251cdb4c67)
+* BidModal: Ensure wrappedBalance value is a BigInt when subtracting from bid. Thanks [@tomhirst](https://www.github.com/tomhirst) [3dbd007](https://github.com/reservoirprotocol/reservoir-kit/pull/562)
+
+## [v1.25.1-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/aae5391d42de77cba932e89192baefbfcf2da2fd) (2024-01-19)
+
+* Update EditBidModal UI [1e4a1996](https://github.com/reservoirprotocol/reservoir-kit/commit/1e4a1996f63db9a6a914724ed8cfa074d497b805)
+
+## [v1.25.0-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/3150c8c2c67000e2171b87b362aef464a8b367e9) (2024-01-12)
+
+* useUserTokens: upgrade to v9 [a2cd5224](https://github.com/reservoirprotocol/reservoir-kit/commit/a2cd52247ba2248c8603ba1647611ba49ca20641)
+* BidModal & ListModal: handle 0 royaltyBps when calling underlying function [a0d864c1](https://github.com/reservoirprotocol/reservoir-kit/commit/a0d864c1670dac4063ec83fd2510d75f759789ba)
+
+### Breaking changes
+* useUserCollections: backend improvements which use a new underlying data table
+* useUserTokens: collection may be returned as null now as tokens are returned even if not assigned to a collection
+
 ## [v1.24.6-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/579a5bd4edccf60b045e5cc1a9f76a7c8c71fd53) (2024-01-10)
 
 * Update useMarketplaceConfigs hook [708ba2f9](https://github.com/reservoirprotocol/reservoir-kit/commit/708ba2f99936099f739edd53e36f1f12e1e81121)

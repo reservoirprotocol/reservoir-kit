@@ -1,4 +1,23 @@
 
+## [v1.12.13-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/740b9b4ab660f6ee67feaf2ede468701d3f0fab1) (2024-02-07)
+
+
+## [v1.12.12-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/415bc69571795ea3944f8de4daba60e4311bf1f0) (2024-02-05)
+
+* Add ancient8, update ancient8 testnet, sepolia base and opbnb chains
+
+## [v1.12.11-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d7c1e9ba9b8d8c42731704cee2b3c67f7ddc0d64) (2024-02-01)
+
+* Add context headers
+
+## [v1.12.10-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/47d392d0e16a754047f5ffe41ccef98498b704f8) (2024-01-19)
+
+* Fix polling validation for intents in sdk transaction util
+
+## [v1.12.9-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b6c51f8e8902f64cd630cce18ae47ec368429578) (2024-01-12)
+
+* Sync Api
+
 ## [v1.12.8-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d6a45190c90b4fbd4917b6c63b8683496670762f) (2024-01-10)
 
 * Sync Api 
