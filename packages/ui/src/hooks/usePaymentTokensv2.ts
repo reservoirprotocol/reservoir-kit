@@ -1,6 +1,6 @@
-import { erc20ABI, useContractReads } from 'wagmi'
-import { fetchBalance } from 'wagmi/actions'
-import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { Config, useConfig, useReadContracts } from 'wagmi'
+import { getBalance } from 'wagmi/actions'
+import { Address, formatUnits, parseUnits, zeroAddress, erc20Abi } from 'viem'
 import { useContext, useMemo } from 'react'
 import {
   useCurrencyConversions,
@@ -30,10 +30,11 @@ export type EnhancedCurrency =
 
 const fetchNativeBalances = async (
   address: Address,
+  config: Config,
   tokens?: PaymentToken[]
 ) => {
   const balancePromises = tokens?.map((currency) =>
-    fetchBalance({
+    getBalance(config, {
       address: address,
       chainId: currency?.chainId,
     })
@@ -68,6 +69,7 @@ export default function (options: {
   } = options
 
   const client = useReservoirClient()
+  const config = useConfig()
   const providerOptions = useContext(ProviderOptionsContext)
   const chain =
     chainId !== undefined
@@ -155,23 +157,25 @@ export default function (options: {
     includeListingCurrency,
   ])
 
-  const { data: nonNativeBalances } = useContractReads({
+  const { data: nonNativeBalances } = useReadContracts({
     contracts: open
       ? nonNativeCurrencies?.map((currency) => ({
-          abi: erc20ABI,
+          abi: erc20Abi,
           address: currency.address as `0x${string}`,
           chainId: chainId,
           functionName: 'balanceOf',
           args: [address],
         }))
       : [],
-    enabled: open,
+    query: {
+      enabled: open,
+    },
     allowFailure: false,
   })
 
   const { data: nativeBalances } = useSWR(
     open ? address : undefined,
-    () => fetchNativeBalances(address, nativeCurrencies),
+    () => fetchNativeBalances(address, config, nativeCurrencies),
     {
       revalidateOnFocus: false,
     }

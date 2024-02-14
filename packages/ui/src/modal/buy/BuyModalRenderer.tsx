@@ -13,8 +13,8 @@ import {
   useCollections,
   useListings,
 } from '../../hooks'
-import { useAccount, useWalletClient } from 'wagmi'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { useAccount, useConfig, useWalletClient } from 'wagmi'
+import { getAccount, switchChain } from 'wagmi/actions'
 import {
   APIError,
   BuyPath,
@@ -146,6 +146,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
+  const config = useConfig()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -453,12 +454,9 @@ export const BuyModalRenderer: FC<Props> = ({
       return
     }
 
-    let activeWalletChain = getNetwork().chain
-    if (
-      activeWalletChain &&
-      paymentCurrency?.chainId !== activeWalletChain?.id
-    ) {
-      activeWalletChain = await switchNetwork({
+    let activeWalletChain = getAccount(config).chain
+    if (paymentCurrency?.chainId !== activeWalletChain?.id) {
+      activeWalletChain = await switchChain(config, {
         chainId: paymentCurrency?.chainId as number,
       })
     }
@@ -632,6 +630,7 @@ export const BuyModalRenderer: FC<Props> = ({
     normalizeRoyalties,
     is1155,
     client,
+    config,
     rendererChain,
     rendererChain,
     totalIncludingFees,

@@ -8,8 +8,8 @@ import React, {
   useState,
 } from 'react'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
-import { useAccount, useWalletClient } from 'wagmi'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { useAccount, useConfig, useWalletClient } from 'wagmi'
+import { getAccount, switchChain } from 'wagmi/actions'
 import {
   Execute,
   LogLevel,
@@ -119,6 +119,7 @@ export const MintModalRenderer: FC<Props> = ({
   walletClient,
 }) => {
   const client = useReservoirClient()
+  const config = useConfig()
   const { address } = useAccount()
   const [mintStep, setMintStep] = useState<MintStep>(MintStep.Idle)
   const [stepData, setStepData] = useState<MintModalStepData | null>(null)
@@ -529,12 +530,9 @@ export const MintModalRenderer: FC<Props> = ({
       return
     }
 
-    let activeWalletChain = getNetwork().chain
-    if (
-      activeWalletChain &&
-      paymentCurrency?.chainId !== activeWalletChain?.id
-    ) {
-      activeWalletChain = await switchNetwork({
+    let activeWalletChain = getAccount(config).chain
+    if (paymentCurrency?.chainId !== activeWalletChain?.id) {
+      activeWalletChain = await switchChain(config, {
         chainId: paymentCurrency?.chainId as number,
       })
     }
@@ -678,6 +676,7 @@ export const MintModalRenderer: FC<Props> = ({
   }, [
     client,
     wallet,
+    config,
     address,
     wagmiChain,
     rendererChain,

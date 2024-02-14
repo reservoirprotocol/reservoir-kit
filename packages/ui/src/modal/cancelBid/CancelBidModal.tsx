@@ -229,18 +229,23 @@ export function CancelBidModal({
                       }
                       txHashes={stepData?.currentStepItem.txHashes}
                     />
-                    {isAttributeOffer && !stepData?.currentStepItem.txHashes && (
-                      <Flex justify="center">
-                        <Text
-                          style="body2"
-                          color="subtle"
-                          css={{ maxWidth: 400, textAlign: 'center', mx: '$3' }}
-                        >
-                          This will cancel your offer on all items that were
-                          included in this attribute offer.
-                        </Text>
-                      </Flex>
-                    )}
+                    {isAttributeOffer &&
+                      !stepData?.currentStepItem.txHashes && (
+                        <Flex justify="center">
+                          <Text
+                            style="body2"
+                            color="subtle"
+                            css={{
+                              maxWidth: 400,
+                              textAlign: 'center',
+                              mx: '$3',
+                            }}
+                          >
+                            This will cancel your offer on all items that were
+                            included in this attribute offer.
+                          </Text>
+                        </Flex>
+                      )}
                   </>
                 )}
                 <Button disabled={true} css={{ m: '$4' }}>

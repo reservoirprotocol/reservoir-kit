@@ -14,7 +14,7 @@ import {
   useTokens,
 } from '../../hooks'
 import usePaymentTokensv2 from '../../hooks/usePaymentTokensv2'
-import { useAccount, useWalletClient } from 'wagmi'
+import { useAccount, useConfig, useWalletClient } from 'wagmi'
 import {
   BuyPath,
   Execute,
@@ -25,7 +25,7 @@ import {
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { getAccount, switchChain } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
 import {
   customChains,
@@ -127,6 +127,7 @@ export const SweepModalRenderer: FC<Props> = ({
   usePermit,
 }) => {
   const client = useReservoirClient()
+  const config = useConfig()
   const { address } = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
   const [isFetchingPath, setIsFetchingPath] = useState(false)
@@ -606,12 +607,9 @@ export const SweepModalRenderer: FC<Props> = ({
       return
     }
 
-    let activeWalletChain = getNetwork().chain
-    if (
-      activeWalletChain &&
-      paymentCurrency?.chainId !== activeWalletChain?.id
-    ) {
-      activeWalletChain = await switchNetwork({
+    let activeWalletChain = getAccount(config).chain
+    if (paymentCurrency?.chainId !== activeWalletChain?.id) {
+      activeWalletChain = await switchChain(config, {
         chainId: paymentCurrency?.chainId as number,
       })
     }
@@ -766,6 +764,7 @@ export const SweepModalRenderer: FC<Props> = ({
     selectedTokens,
     client,
     wallet,
+    config,
     address,
     totalIncludingFees,
     normalizeRoyalties,

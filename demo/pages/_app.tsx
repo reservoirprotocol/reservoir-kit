@@ -10,12 +10,9 @@ import React, {
 } from 'react'
 import { darkTheme } from 'stitches.config'
 import { ThemeProvider } from 'next-themes'
-import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
-import { WagmiConfig, createConfig, configureChains } from 'wagmi'
+import { RainbowKitProvider, getDefaultConfig, getDefaultWallets } from '@rainbow-me/rainbowkit'
+import {  createConfig,  http,  WagmiProvider } from 'wagmi'
 import * as allChains from 'wagmi/chains'
-
-import { publicProvider } from 'wagmi/providers/public'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
 import '../fonts.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import {
@@ -28,6 +25,10 @@ import { LogLevel, customChains } from '@reservoir0x/reservoir-sdk'
 import configuredChains from '../utils/chains'
 import { useRouter } from 'next/router'
 import '../fonts.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { _transports } from '@rainbow-me/rainbowkit/dist/config/getDefaultConfig'
+import { chainIdToAlchemyNetworkMap } from 'utils/chainIdToAlchemyNetworkMap'
+import { Chain } from 'wagmi/chains'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
 const SOURCE = process.env.NEXT_PUBLIC_SOURCE || 'reservoirkit.demo'
@@ -41,8 +42,8 @@ const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 const WALLET_CONNECT_PROJECT_ID =
   process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || ''
 
-const { chains, publicClient } = configureChains(
-  [
+
+  const chains = [
     allChains.mainnet,
     allChains.goerli,
     allChains.sepolia,
@@ -56,21 +57,29 @@ const { chains, publicClient } = configureChains(
     allChains.scroll,
     allChains.arbitrumNova,
     customChains.frameTestnet
-  ],
-  [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
-)
+  ] as [
+    Chain,
+    ...Chain[]
+  ]
 
-const { connectors } = getDefaultWallets({
+
+const wagmiConfig = getDefaultConfig({
   appName: 'Reservoir Kit',
   projectId: WALLET_CONNECT_PROJECT_ID,
-  chains,
+  chains: chains,
+  transports: chains.reduce((transportsConfig: _transports, chain) => {
+    const network = chainIdToAlchemyNetworkMap[chain.id]
+    if (network && ALCHEMY_KEY) {
+      transportsConfig[chain.id] = http(
+        `https://${network}.g.alchemy.com/v2/${ALCHEMY_KEY}`
+      )
+    } else {
+      transportsConfig[chain.id] = http() // Fallback to default HTTP transport
+    }
+    return transportsConfig
+  }, {})
 })
 
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-})
 
 export const ThemeSwitcherContext = React.createContext<{
   theme: ReservoirKitTheme
@@ -124,6 +133,8 @@ const AppWrapper: FC<AppWrapperProps> = ({ children }) => {
   const { theme } = useContext(ThemeSwitcherContext)
   const { chain } = useContext(ChainSwitcherContext)
 
+  const queryClient = new QueryClient()
+
   const router = useRouter()
   const cartFeeBps = router.query.cartFeeBps
     ? JSON.parse(router.query.cartFeeBps as string)
@@ -133,7 +144,8 @@ const AppWrapper: FC<AppWrapperProps> = ({ children }) => {
     : undefined
 
   return (
-    <WagmiConfig config={wagmiConfig}>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
       <ReservoirKitProvider
         options={{
           apiKey: API_KEY,
@@ -161,11 +173,12 @@ const AppWrapper: FC<AppWrapperProps> = ({ children }) => {
             enableSystem={false}
             storageKey={'demo-theme'}
           >
-            <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
+            <RainbowKitProvider >{children}</RainbowKitProvider>
           </ThemeProvider>
         </CartProvider>
       </ReservoirKitProvider>
-    </WagmiConfig>
+      </QueryClientProvider>
+      </WagmiProvider>
   )
 }
 
