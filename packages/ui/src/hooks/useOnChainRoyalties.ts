@@ -92,7 +92,6 @@ export default function ({
         enabled && tokenId && contract && amount && manifoldContract.length > 0
           ? true
           : false,
-      cacheTime: 60 * 1000,
     },
   })
 }
