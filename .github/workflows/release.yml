@@ -31,7 +31,7 @@ jobs:
         run: sudo npm i -g yarn
 
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Creating .npmrc
         run: |
@@ -71,5 +71,5 @@ jobs:
         with:
           title: ${{ env.RELEASE_TITLE }}
           publish: echo 'Publishing Packages'
-          #publish: yarn package:release
+          publish: yarn package:release
 
