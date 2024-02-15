@@ -30,7 +30,7 @@
     "reset": "yarn clean && rm -rf node_modules .yarn/cache .parcel-cache",
     
     "package:change": "yarn changeset && git stage ./.changeset/* && git commit --m \"feat: changeset\" && git push",
-    "package:release": "yarn clean && yarn build && changeset version && yarn publish:stable && changeset tag && git push --follow-tags"
+    "package:release": "yarn clean && yarn build && changeset version && yarn publish:stable && changeset tag &&  git tag --delete relay-sdk-demo@undefined && git push --follow-tags"
   },
   "prettier": {
     "semi": false,
