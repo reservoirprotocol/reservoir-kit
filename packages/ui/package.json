@@ -28,7 +28,6 @@
   "sideEffects": false,
   "scripts": {
     "clean": "rm -rf dist"
-
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
