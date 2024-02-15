@@ -1,40 +1,45 @@
+## 1.12.15
+
+### Patch Changes
+
+- 578dd19: Upgrade SDK types
 
 ## [v1.12.14-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4afb40e077c27bb4e8b500660971ad3249dc8b23) (2024-02-13)
 
-* Add property to force executeSteps to trigger signatures/transactions synchronously
+- Add property to force executeSteps to trigger signatures/transactions synchronously
 
 ## [v1.12.13-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/740b9b4ab660f6ee67feaf2ede468701d3f0fab1) (2024-02-07)
 
-* Update api types
+- Update api types
 
 ## [v1.12.12-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/415bc69571795ea3944f8de4daba60e4311bf1f0) (2024-02-05)
 
-* Add ancient8, update ancient8 testnet, sepolia base and opbnb chains
+- Add ancient8, update ancient8 testnet, sepolia base and opbnb chains
 
 ## [v1.12.11-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d7c1e9ba9b8d8c42731704cee2b3c67f7ddc0d64) (2024-02-01)
 
-* Add context headers
+- Add context headers
 
 ## [v1.12.10-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/47d392d0e16a754047f5ffe41ccef98498b704f8) (2024-01-19)
 
-* Fix polling validation for intents in sdk transaction util
+- Fix polling validation for intents in sdk transaction util
 
 ## [v1.12.9-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/b6c51f8e8902f64cd630cce18ae47ec368429578) (2024-01-12)
 
-* Sync Api
+- Sync Api
 
 ## [v1.12.8-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d6a45190c90b4fbd4917b6c63b8683496670762f) (2024-01-10)
 
-* Sync Api 
+- Sync Api
 
 ## [v1.12.7-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/998a8cb6c4791bc6113f8da282b08c8c8b73b270) (2024-01-09)
 
-* Merge pull request #541 from reservoirprotocol/ted/grwth-3761-implement-intent-filling-for-blur-orders [1c810b0b](https://github.com/reservoirprotocol/reservoir-kit/commit/1c810b0b990c8e97e923911f183858751b9e40d3)
-* Merge pull request #536 from reservoirprotocol/ted/grwth-3770-better-handle-price-checks-for-intent-fills [a3981766](https://github.com/reservoirprotocol/reservoir-kit/commit/a39817667fa4df11c1807f908326011b16c354a8)
+- Merge pull request #541 from reservoirprotocol/ted/grwth-3761-implement-intent-filling-for-blur-orders [1c810b0b](https://github.com/reservoirprotocol/reservoir-kit/commit/1c810b0b990c8e97e923911f183858751b9e40d3)
+- Merge pull request #536 from reservoirprotocol/ted/grwth-3770-better-handle-price-checks-for-intent-fills [a3981766](https://github.com/reservoirprotocol/reservoir-kit/commit/a39817667fa4df11c1807f908326011b16c354a8)
 
 ## [v1.12.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/392c5f08196a223eeb0bc3e8391f01eea8fb24ba) (2024-01-08)
 
-* Merge pull request #537 from reservoirprotocol/ted/grwth-3792-debug-courtyard-http-transport [57b1079c](https://github.com/reservoirprotocol/reservoir-kit/commit/57b1079c20b5af1faf47719f209afd00f8809f0f)
+- Merge pull request #537 from reservoirprotocol/ted/grwth-3792-debug-courtyard-http-transport [57b1079c](https://github.com/reservoirprotocol/reservoir-kit/commit/57b1079c20b5af1faf47719f209afd00f8809f0f)
 
 ## [v1.12.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0048f8b70f3f1c3b0055289093fc7c61047f8faa) (2024-01-04)
 
@@ -46,12 +51,13 @@
 
 ## [v1.12.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e7678c150ce7fe600778da37fe434300b558a6b9) (2023-12-20)
 
-* Merge pull request #519 from reservoirprotocol/pedro/grwth-3690-prepare-custom-params-sdk-util-function [567b6238](https://github.com/reservoirprotocol/reservoir-kit/commit/567b623879f1e6176bdced0e70115eb7b0f473d4)
+- Merge pull request #519 from reservoirprotocol/pedro/grwth-3690-prepare-custom-params-sdk-util-function [567b6238](https://github.com/reservoirprotocol/reservoir-kit/commit/567b623879f1e6176bdced0e70115eb7b0f473d4)
 
 ## [v1.12.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8c72817d3e019bb6f1d5646f2443cfdf579f60b2) (2023-12-19)
 
 ### Breaking Changes:
-* Call action onProgress now includes fees, using precheck will now return the full data object as returned from the api.
+
+- Call action onProgress now includes fees, using precheck will now return the full data object as returned from the api.
 
 ## [v1.11.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1da0f5acba4f7dc84b2a6e5dde11f0dcc74cb1c6) (2023-12-15)
 
@@ -59,153 +65,159 @@
 
 ## [v1.11.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/c9474622b720c369249b9e224400facf0f9d2fda) (2023-12-13)
 
-* Mint Error Handling [b3f4552b](https://github.com/reservoirprotocol/reservoir-kit/commit/b3f4552b322dc4a3c1ffd27edc79151550e7e05f)
+- Mint Error Handling [b3f4552b](https://github.com/reservoirprotocol/reservoir-kit/commit/b3f4552b322dc4a3c1ffd27edc79151550e7e05f)
 
 ## [v1.10.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1946f746a78de48c8374370892358a3bb2cacbd6) (2023-12-04)
 
-* Sync Api [c1cbf47c](https://github.com/reservoirprotocol/reservoir-kit/commit/c1cbf47c48066da8d2cbb50f5c40e5c3c192c8bf)
+- Sync Api [c1cbf47c](https://github.com/reservoirprotocol/reservoir-kit/commit/c1cbf47c48066da8d2cbb50f5c40e5c3c192c8bf)
 
 ## [v1.9.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/c4d7d0a0ea018e41c7401f076d8faa14dd959471) (2023-11-29)
 
-* Sync api
+- Sync api
 
 ## [v1.9.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/29c202b46325b032d72cfbe8c51135fab0ae151d) (2023-11-29)
 
-* Add mint action to sdk [2f2819d9](https://github.com/reservoirprotocol/reservoir-kit/commit/2f2819d9adb781c021705abd00366f4a648a7a37)
-* Sync api [1f61127a](https://github.com/reservoirprotocol/reservoir-kit/commit/1f61127a0575a2c650be4623ecd8549144b8c1f3)
-* Update usdc contract for polygon payment token [f7a4c2b9](https://github.com/reservoirprotocol/reservoir-kit/commit/f7a4c2b917d9ed28b6ea21a4a36ca00445d088d8)
+- Add mint action to sdk [2f2819d9](https://github.com/reservoirprotocol/reservoir-kit/commit/2f2819d9adb781c021705abd00366f4a648a7a37)
+- Sync api [1f61127a](https://github.com/reservoirprotocol/reservoir-kit/commit/1f61127a0575a2c650be4623ecd8549144b8c1f3)
+- Update usdc contract for polygon payment token [f7a4c2b9](https://github.com/reservoirprotocol/reservoir-kit/commit/f7a4c2b917d9ed28b6ea21a4a36ca00445d088d8)
 
 ## [v1.9.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/7d571b6878377943a7d03b40de37ae33dc0259b6) (2023-11-20)
 
-* Fix x2y2 invalid signature when signing eip191 [6bedd07e](https://github.com/reservoirprotocol/reservoir-kit/commit/6bedd07eb8bf5e00242fe0fc10bf6d615f92587d)
-* Fix transfersData confirmation for sell transactions [ee32fd5a](https://github.com/reservoirprotocol/reservoir-kit/commit/ee32fd5a092f482682a2aa3913789909b58dae04)
-* Sync api [59c4cf45](https://github.com/reservoirprotocol/reservoir-kit/commit/59c4cf459580a1e9628425e28e1d8c802293f681)
+- Fix x2y2 invalid signature when signing eip191 [6bedd07e](https://github.com/reservoirprotocol/reservoir-kit/commit/6bedd07eb8bf5e00242fe0fc10bf6d615f92587d)
+- Fix transfersData confirmation for sell transactions [ee32fd5a](https://github.com/reservoirprotocol/reservoir-kit/commit/ee32fd5a092f482682a2aa3913789909b58dae04)
+- Sync api [59c4cf45](https://github.com/reservoirprotocol/reservoir-kit/commit/59c4cf459580a1e9628425e28e1d8c802293f681)
 
 ## [v1.8.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/9312dc4a3045ad0cb0a15a3d279f602ebefdd639) (2023-11-13)
 
-* Sync Api
+- Sync Api
 
 ## [v1.8.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/bc99616b5ff1b518e75f44b4f7b8de4aa54b2734) (2023-11-13)
 
-* Marketplace fee configuration per chain [2526b707](https://github.com/reservoirprotocol/reservoir-kit/commit/2526b7075fa5c0c5f938185d49cca46426717025)
-* Bubble up full error data when executing actions [57622109](https://github.com/reservoirprotocol/reservoir-kit/commit/57622109a537d08456191dbfe6556a5f590edc53)
-* Fix serialize transaction signature [34583c8b](https://github.com/reservoirprotocol/reservoir-kit/commit/34583c8b844e03b7ff408b920e57d24c151072ea)
+- Marketplace fee configuration per chain [2526b707](https://github.com/reservoirprotocol/reservoir-kit/commit/2526b7075fa5c0c5f938185d49cca46426717025)
+- Bubble up full error data when executing actions [57622109](https://github.com/reservoirprotocol/reservoir-kit/commit/57622109a537d08456191dbfe6556a5f590edc53)
+- Fix serialize transaction signature [34583c8b](https://github.com/reservoirprotocol/reservoir-kit/commit/34583c8b844e03b7ff408b920e57d24c151072ea)
 
 ## [v1.8.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/fadbf9e9d3e369d4a1ca75f9e3686f63c78ec55b) (2023-11-10)
 
 ## [v1.8.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/25cb72c9d788393e926b7ea52330e5643b262dc0) (2023-11-09)
 
-* Update cross-chain purchase error [1e42a456](https://github.com/reservoirprotocol/reservoir-kit/commit/1e42a456ca42287dfd988f16a0836ea49fca8598)
+- Update cross-chain purchase error [1e42a456](https://github.com/reservoirprotocol/reservoir-kit/commit/1e42a456ca42287dfd988f16a0836ea49fca8598)
 
 ## [v1.8.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8e85ad4f0ca2c59b6af349b77b658d8c9783a0ed) (2023-11-08)
 
-* Fix serialization of tx for solver api [7ef4512a](https://github.com/reservoirprotocol/reservoir-kit/commit/7ef4512ae3fdd2c6d1f173c5610b88c15dbb356a)
+- Fix serialization of tx for solver api [7ef4512a](https://github.com/reservoirprotocol/reservoir-kit/commit/7ef4512ae3fdd2c6d1f173c5610b88c15dbb356a)
+
 ## [v1.8.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/e49108009f7f2c62594c58c2ac90fe285e8ec06a) (2023-11-08)
 
-* Update payment token names [1633bab5](https://github.com/reservoirprotocol/reservoir-kit/commit/1633bab5da045956b3fa5d0c33226aea95691623)
-* Remove cross chain payment tokens from defaults [239ebf93](https://github.com/reservoirprotocol/reservoir-kit/commit/239ebf9345997972ecd7d9b09ec0d79d3706401c)
+- Update payment token names [1633bab5](https://github.com/reservoirprotocol/reservoir-kit/commit/1633bab5da045956b3fa5d0c33226aea95691623)
+- Remove cross chain payment tokens from defaults [239ebf93](https://github.com/reservoirprotocol/reservoir-kit/commit/239ebf9345997972ecd7d9b09ec0d79d3706401c)
 
 ## [v1.8.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/9ca1db7463ba59be32452832dfb2a07fb9b5fa3d) (2023-11-08)
 
-* Fix transaction polling interval when signature step [37cbbd04](https://github.com/reservoirprotocol/reservoir-kit/commit/37cbbd0444437fe1e492b312645e43af33ae2809)
-* Sync api and add gasCost to CollectModal [575285ec](https://github.com/reservoirprotocol/reservoir-kit/commit/575285ecdafd9ac4e49c5df2c00f8fd6aefab585)
+- Fix transaction polling interval when signature step [37cbbd04](https://github.com/reservoirprotocol/reservoir-kit/commit/37cbbd0444437fe1e492b312645e43af33ae2809)
+- Sync api and add gasCost to CollectModal [575285ec](https://github.com/reservoirprotocol/reservoir-kit/commit/575285ecdafd9ac4e49c5df2c00f8fd6aefab585)
 
 ## [v1.7.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4809c45d8ee9489886b8b0a8c8af0f4de334432d) (2023-11-07)
 
-* Fix error message for crosschain transactions [551b721f](https://github.com/reservoirprotocol/reservoir-kit/commit/551b721f59dad975da3cd03906c8ec5f44f2fc6a)
-* Configurable polling interval for transaction [fb7fe63b](https://github.com/reservoirprotocol/reservoir-kit/commit/fb7fe63b2fdaffb608ce145d9373934002e82fe6)
-* Improve crosschain transaction failure error handling [ba2c9736](https://github.com/reservoirprotocol/reservoir-kit/commit/ba2c9736661add665b8e89eaadd60ef644aca4f7)
-* Sync Api
+- Fix error message for crosschain transactions [551b721f](https://github.com/reservoirprotocol/reservoir-kit/commit/551b721f59dad975da3cd03906c8ec5f44f2fc6a)
+- Configurable polling interval for transaction [fb7fe63b](https://github.com/reservoirprotocol/reservoir-kit/commit/fb7fe63b2fdaffb608ce145d9373934002e82fe6)
+- Improve crosschain transaction failure error handling [ba2c9736](https://github.com/reservoirprotocol/reservoir-kit/commit/ba2c9736661add665b8e89eaadd60ef644aca4f7)
+- Sync Api
 
 ## [v1.7.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/359f02dd05fe07deee4a09a8cf969bb762420c94) (2023-11-03)
 
-* Cross Chain Transactions [54beebcd](https://github.com/reservoirprotocol/reservoir-kit/commit/54beebcd5a520699260499c9ed7087570f6ef736)
-* Standardize APIError by extending error and adding custom props [34ce97f2](https://github.com/reservoirprotocol/reservoir-kit/commit/34ce97f2f0c2092320ad66e4bb06c7ca9df148ac)
-* Fix issue with transaction detection for IERC2771 [559bf563](https://github.com/reservoirprotocol/reservoir-kit/commit/559bf563689ee7948e971a265877c215463312ac)
-* Sync api [60b9557c](https://github.com/reservoirprotocol/reservoir-kit/commit/60b9557cdc581c7b029e3ad4f255eb7ae7b86d76)
+- Cross Chain Transactions [54beebcd](https://github.com/reservoirprotocol/reservoir-kit/commit/54beebcd5a520699260499c9ed7087570f6ef736)
+- Standardize APIError by extending error and adding custom props [34ce97f2](https://github.com/reservoirprotocol/reservoir-kit/commit/34ce97f2f0c2092320ad66e4bb06c7ca9df148ac)
+- Fix issue with transaction detection for IERC2771 [559bf563](https://github.com/reservoirprotocol/reservoir-kit/commit/559bf563689ee7948e971a265877c215463312ac)
+- Sync api [60b9557c](https://github.com/reservoirprotocol/reservoir-kit/commit/60b9557cdc581c7b029e3ad4f255eb7ae7b86d76)
 
 ## [v1.6.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/bb2bced78527154cca38c621a75a21bb333187ac) (2023-11-02)
 
-* Sync api
-* Fix issue with transaction detection for IERC2771 [559bf563](https://github.com/reservoirprotocol/reservoir-kit/commit/559bf563689ee7948e971a265877c215463312ac)
+- Sync api
+- Fix issue with transaction detection for IERC2771 [559bf563](https://github.com/reservoirprotocol/reservoir-kit/commit/559bf563689ee7948e971a265877c215463312ac)
 
 ## [v1.6.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/78145884b50ab26db180c710d23c2976ed3bfe5e) (2023-10-30)
 
-* Upgrade wagmi to v~1.4.3 and viem to v~1.16.3 [38611577](https://github.com/reservoirprotocol/reservoir-kit/commit/38611577d63a546c02b135b92b4a7b9868486ed7)
+- Upgrade wagmi to v~1.4.3 and viem to v~1.16.3 [38611577](https://github.com/reservoirprotocol/reservoir-kit/commit/38611577d63a546c02b135b92b4a7b9868486ed7)
 
 ## [v1.5.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/37c66eb4a5df3a641c5b78d648714ec522a6b6a0) (2023-10-27)
 
-* Sync api [a9d57efb](https://github.com/reservoirprotocol/reservoir-kit/commit/a9d57efb9a4e47cd631b34810e3693b1c0c8f2b3)
-* Add websocket urls to reservoir chains [c9e6467c](https://github.com/reservoirprotocol/reservoir-kit/commit/c9e6467cbd283388c806b1e7c70dc75b84e3a319)
+- Sync api [a9d57efb](https://github.com/reservoirprotocol/reservoir-kit/commit/a9d57efb9a4e47cd631b34810e3693b1c0c8f2b3)
+- Add websocket urls to reservoir chains [c9e6467c](https://github.com/reservoirprotocol/reservoir-kit/commit/c9e6467cbd283388c806b1e7c70dc75b84e3a319)
 
 ## [v1.5.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/4852820a4075edce4e447c81d08c3dad9c2c57e9) (2023-10-19)
 
-* Add scroll chain [4d8e05b8](https://github.com/reservoirprotocol/reservoir-kit/commit/4d8e05b8b0ff27558541b3cc97f7b4c85ed4ca0e)
-* Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
+- Add scroll chain [4d8e05b8](https://github.com/reservoirprotocol/reservoir-kit/commit/4d8e05b8b0ff27558541b3cc97f7b4c85ed4ca0e)
+- Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
 
 ## [v1.5.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/616788fec594f503ea9f62d9828b687eeae06a43) (2023-10-12)
 
-* Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
-* Export api routes as runtime export [fb73f4f5](https://github.com/reservoirprotocol/reservoir-kit/commit/fb73f4f5f875ca8bc417c243e6c1a1dcc6327170)
+- Sync api [eda29832](https://github.com/reservoirprotocol/reservoir-kit/commit/eda29832906adff445cc9160d8b35df25b7ae00d)
+- Export api routes as runtime export [fb73f4f5](https://github.com/reservoirprotocol/reservoir-kit/commit/fb73f4f5f875ca8bc417c243e6c1a1dcc6327170)
 
 ## [v1.5.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/af5f3d11d93bcfd4b484bb6960f754f38883ec69) (2023-10-05)
 
-* Sync api [39a0cff0](https://github.com/reservoirprotocol/reservoir-kit/commit/39a0cff04e47dac0ca19890d9f665d732db92760)
-* Improve error handling across all modals [cc35a1cc](https://github.com/reservoirprotocol/reservoir-kit/commit/cc35a1ccd580ca7eb34c11170424db655e7b309a)
-* Improve transaction observability to reduce dependency on RPC [9347f698](https://github.com/reservoirprotocol/reservoir-kit/commit/9347f698ef341df963efe9396cdef5a06ee08bab)
+- Sync api [39a0cff0](https://github.com/reservoirprotocol/reservoir-kit/commit/39a0cff04e47dac0ca19890d9f665d732db92760)
+- Improve error handling across all modals [cc35a1cc](https://github.com/reservoirprotocol/reservoir-kit/commit/cc35a1ccd580ca7eb34c11170424db655e7b309a)
+- Improve transaction observability to reduce dependency on RPC [9347f698](https://github.com/reservoirprotocol/reservoir-kit/commit/9347f698ef341df963efe9396cdef5a06ee08bab)
 
 ## [v1.5.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/2ce88f4f6f06c57ceff1ac47ea46c06f4c52597d) (2023-10-04)
 
-* ReservoirChains prebundled configuration [e619f299](https://github.com/reservoirprotocol/reservoir-kit/commit/e619f299af3b5cf5ac8cbacc7d51cb61824903dd)
+- ReservoirChains prebundled configuration [e619f299](https://github.com/reservoirprotocol/reservoir-kit/commit/e619f299af3b5cf5ac8cbacc7d51cb61824903dd)
 
 ### Breaking Change Migrations:
-* apiKey moved to root configuration object, no longer required on every chain configuration.
+
+- apiKey moved to root configuration object, no longer required on every chain configuration.
 
 ## [v1.4.6-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/70b3ea56dfe92fa81930ec6360ebda8a30877d9e) (2023-10-02)
 
-* Add ancient8 chain [55dfc452](https://github.com/reservoirprotocol/reservoir-kit/commit/55dfc4525a38e762f16e02d983b103047b94589a)
-* Add Transfer sdk action [e85517a5](https://github.com/reservoirprotocol/reservoir-kit/commit/e85517a5f6062da15abed2968247b564732bd8d0)
+- Add ancient8 chain [55dfc452](https://github.com/reservoirprotocol/reservoir-kit/commit/55dfc4525a38e762f16e02d983b103047b94589a)
+- Add Transfer sdk action [e85517a5](https://github.com/reservoirprotocol/reservoir-kit/commit/e85517a5f6062da15abed2968247b564732bd8d0)
+
 ## [v1.4.5-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1a27e36fde5753db28a8ec2e08ddecce636c709e) (2023-09-25)
 
 ## [v1.4.4-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/d4881c50622cc88d19cd1a3b6bde9a6faea38082) (2023-09-21)
 
-* Improve the way we handle a cancelled transaction [5c9d70c7](https://github.com/reservoirprotocol/reservoir-kit/commit/5c9d70c73712b8fc7ec10408039cd2e64b7da026)
-* Remove unnecessary customChains that are now included in viem/wagmi [b5cdaf47](https://github.com/reservoirprotocol/reservoir-kit/commit/b5cdaf47e1464a19e82fddc7e04259e055a11a69)
+- Improve the way we handle a cancelled transaction [5c9d70c7](https://github.com/reservoirprotocol/reservoir-kit/commit/5c9d70c73712b8fc7ec10408039cd2e64b7da026)
+- Remove unnecessary customChains that are now included in viem/wagmi [b5cdaf47](https://github.com/reservoirprotocol/reservoir-kit/commit/b5cdaf47e1464a19e82fddc7e04259e055a11a69)
 
 ## [v1.4.3-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/a23cb189a88637c093a0f2229a50f0a507478cde) (2023-09-18)
 
-* Use locally scoped axios instance [d1f32c4](https://github.com/reservoirprotocol/reservoir-kit/commit/d1f32c46dd0e49072063119ca3542f120f20613d)
+- Use locally scoped axios instance [d1f32c4](https://github.com/reservoirprotocol/reservoir-kit/commit/d1f32c46dd0e49072063119ca3542f120f20613d)
 
 ## [v1.4.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/24c3283cd15b881fb83161fe3e5cd32d73562eb8) (2023-09-07)
 
-* Sync api [38ecc5a](https://github.com/reservoirprotocol/reservoir-kit/commit/38ecc5a922e31d8e38792d0bc11eed74ebb4e0f4)
+- Sync api [38ecc5a](https://github.com/reservoirprotocol/reservoir-kit/commit/38ecc5a922e31d8e38792d0bc11eed74ebb4e0f4)
 
 ## [v1.4.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/0578f8b9b4e3ae93aa732110b39886537001465c) (2023-08-31)
 
-* Sync api [8003a5a](https://github.com/reservoirprotocol/reservoir-kit/commit/8003a5a56623b1a3641f5c7f27f7b049d514525d)
-* Loosen comparison when searching for a chain via id [16a8e98](https://github.com/reservoirprotocol/reservoir-kit/commit/16a8e98f03241bf6637e5fe52eb6b73d266271e1)
+- Sync api [8003a5a](https://github.com/reservoirprotocol/reservoir-kit/commit/8003a5a56623b1a3641f5c7f27f7b049d514525d)
+- Loosen comparison when searching for a chain via id [16a8e98](https://github.com/reservoirprotocol/reservoir-kit/commit/16a8e98f03241bf6637e5fe52eb6b73d266271e1)
 
 ## [v1.4.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/07457a4001d540f58b312fdfb29e6588e8bffb0a) (2023-08-30)
 
-* Setup different exports based on the import flavor [ba5608d](https://github.com/reservoirprotocol/reservoir-kit/commit/ba5608d235ff57f2578d070f316cb4d83a6015f4)
+- Setup different exports based on the import flavor [ba5608d](https://github.com/reservoirprotocol/reservoir-kit/commit/ba5608d235ff57f2578d070f316cb4d83a6015f4)
+
 ## [v1.3.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/1dd88560a2fd8ebbbe6202cbb65c0038cb48ef8b) (2023-08-30)
 
-* Add bounty referrer global parameter for purchasing [82efe58](https://github.com/reservoirprotocol/reservoir-kit/commit/82efe58df8d6335bdc1f9b7c593405b5224ac82a)
+- Add bounty referrer global parameter for purchasing [82efe58](https://github.com/reservoirprotocol/reservoir-kit/commit/82efe58df8d6335bdc1f9b7c593405b5224ac82a)
 
 ## [v1.3.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/de7f3293de37c74d3831a7759728c0b994b5c8ee) (2023-08-28)
 
-* Upgrade wagmi [ typescript](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-21)
+- Upgrade wagmi [ typescript](https://github.com/reservoirprotocol/reservoir-kit/commit/2023-08-21)
 
 ## [v1.2.2-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/356d497855224ef3e4ac781bdb258bb73bde4787) (2023-08-25)
 
-* Sync api [7617f10](https://github.com/reservoirprotocol/reservoir-kit/commit/7617f10f34ff4be6b30859bd27ff62179e60b274)
+- Sync api [7617f10](https://github.com/reservoirprotocol/reservoir-kit/commit/7617f10f34ff4be6b30859bd27ff62179e60b274)
 
 ## [v1.2.1-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/8fed14b38eec0fff1a5b34ace1e11d8be6398e52) (2023-08-22)
 
-* Improve error message handling for network errors [8ff5b75](https://github.com/reservoirprotocol/reservoir-kit/commit/8ff5b75dee8e32f9bebad42e6e4fffc20ef0d54b)
+- Improve error message handling for network errors [8ff5b75](https://github.com/reservoirprotocol/reservoir-kit/commit/8ff5b75dee8e32f9bebad42e6e4fffc20ef0d54b)
+
 ## [v1.2.0-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/5a5f86a0304a3e20e64ebbe3ce247af0e2ea63e4) (2023-08-21)
 
-* Improve accuracy when checking expected price by using raw amount [1cd1944](https://github.com/reservoirprotocol/reservoir-kit/commit/1cd194442e8d2f957132513fc7327ce2fc5dbd08)
+- Improve accuracy when checking expected price by using raw amount [1cd1944](https://github.com/reservoirprotocol/reservoir-kit/commit/1cd194442e8d2f957132513fc7327ce2fc5dbd08)
+
 ## [v1.1.24-SDK](https://github.com/reservoirprotocol/reservoir-kit/commit/06b76ff3e18a32654df42d82a45650a76f75b1b4) (2023-08-03)
 
 - Upgrade to typescript v5
