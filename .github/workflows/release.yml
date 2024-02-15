@@ -80,7 +80,7 @@ jobs:
 
       - name: Determine Release Title
         run: |
-            if [[ "${{ env.BOT_PR_TITLE }}" == "NULL" ]]; then
+            if [[ "${{ env.BOT_PR_TITLE }}" == "null" ]]; then
             echo "FINAL_RELEASE_TITLE=${{ env.RELEASE_TITLE }}" >> $GITHUB_ENV
             else
             echo "FINAL_RELEASE_TITLE=${{ env.BOT_PR_TITLE }}" >> $GITHUB_ENV
