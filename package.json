@@ -26,11 +26,9 @@
     "build:cleanup": "mv tsconfig.json tsconfig.production.json && mv tsconfig.tmp.json tsconfig.json",
     "postbuild": "node ./scripts/check-missing-types",
     "publish:stable": "yarn workspaces foreach --no-private --exclude reservoir-kit --exclude demo --exclude sdk-demo npm publish --tolerate-republish --access public",
-    
     "reset": "yarn clean && rm -rf node_modules .yarn/cache .parcel-cache",
     "tags:delete": "git tag --delete sdk-demo@undefined && git tag --delete reservoir-kit-demo@undefined",
     "package:change": "yarn changeset && git stage ./.changeset/* && git commit --m \"feat: changeset\" && git push",
-
     "package:release": "yarn clean && yarn build && changeset version && yarn publish:stable && changeset tag && yarn tags:delete && git push --follow-tags"
   },
   "prettier": {
