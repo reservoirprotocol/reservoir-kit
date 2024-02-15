@@ -25,7 +25,7 @@
     "build:fix-type-defs": "node ./scripts/fix-type-defs-imports",
     "build:cleanup": "mv tsconfig.json tsconfig.production.json && mv tsconfig.tmp.json tsconfig.json",
     "postbuild": "node ./scripts/check-missing-types",
-    "publish:stable": "yarn workspaces foreach --no-private --exclude demo --exclude sdk-demo npm publish --tolerate-republish --access public",
+    "publish:stable": "yarn workspaces foreach --no-private --exclude reservoir-kit --exclude demo --exclude sdk-demo npm publish --tolerate-republish --access public",
     
     "reset": "yarn clean && rm -rf node_modules .yarn/cache .parcel-cache",
     "tags:delete": "git tag --delete sdk-demo@undefined && git tag --delete reservoir-kit-demo@undefined",
