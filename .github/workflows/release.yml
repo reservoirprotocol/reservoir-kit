@@ -90,4 +90,4 @@ jobs:
         uses: changesets/action@v1
         with:
           title: ${{ env.FINAL_RELEASE_TITLE }}
-          publish: echo 'Publishing Packages'
+          publish: yarn package:release
