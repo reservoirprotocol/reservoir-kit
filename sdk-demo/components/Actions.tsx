@@ -5,6 +5,7 @@ import BidButton from './BidButton'
 import { useEffect, useState } from 'react'
 import TransferButton from './TransferButton'
 import MintButton from './MintButton'
+import ListButton from 'components/ListButton'
 
 function Actions() {
   const { isConnected } = useAccount()
@@ -30,6 +31,7 @@ function Actions() {
       <BidButton />
       <TransferButton />
       <MintButton />
+      <ListButton/>
     </div>
   ) : (
     <></>

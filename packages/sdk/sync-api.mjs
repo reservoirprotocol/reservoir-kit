@@ -1,11 +1,11 @@
 import fs from 'node:fs'
 import openapiTS from 'openapi-typescript'
-import fetch from 'node-fetch'
+import axios from 'axios'
 
 const generateTypes = async () => {
   // Fetch the OpenAPI schema
-  const response = await fetch('https://api.reservoir.tools/swagger.json')
-  const openapiSchema = await response.json()
+  const response = await axios('https://api.reservoir.tools/swagger.json')
+  const openapiSchema = response.data
 
   // Extract routes
   const routes = Object.keys(openapiSchema.paths).filter(

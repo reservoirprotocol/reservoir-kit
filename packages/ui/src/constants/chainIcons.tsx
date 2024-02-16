@@ -48,6 +48,11 @@ import FrameIconLight from '../img/chains/FrameIconLight'
 import FrameIconColor from '../img/chains/FrameIconColor'
 
 const chainIcons = {
+  [reservoirChains.ancient8.id]: {
+    light: <Ancient8IconDark />,
+    dark: <Ancient8IconLight />,
+    color: <Ancient8IconColor />,
+  },
   [reservoirChains.ancient8Testnet.id]: {
     light: <Ancient8IconDark />,
     dark: <Ancient8IconLight />,
@@ -78,7 +83,17 @@ const chainIcons = {
     dark: <BaseIconLight />,
     color: <BaseIconColor />,
   },
+  [reservoirChains.baseSepolia.id]: {
+    light: <BaseIconDark />,
+    dark: <BaseIconLight />,
+    color: <BaseIconColor />,
+  },
   [reservoirChains.bsc.id]: {
+    light: <BscIconDark />,
+    dark: <BscIconLight />,
+    color: <BscIconColor />,
+  },
+  [reservoirChains.opBnb.id]: {
     light: <BscIconDark />,
     dark: <BscIconLight />,
     color: <BscIconColor />,

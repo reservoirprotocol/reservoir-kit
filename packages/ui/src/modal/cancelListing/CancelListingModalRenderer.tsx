@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useListings } from '../../hooks'
 import { useWalletClient } from 'wagmi'
-import { Execute, ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
@@ -206,6 +206,11 @@ export const CancelListingModalRenderer: FC<Props> = ({
       setSteps(null)
     }
   }, [open])
+
+  open
+    ? (axios.defaults.headers.common['x-rkui-context'] =
+        'cancelListingRenderer')
+    : delete axios.defaults.headers.common?.['x-rkui-context']
 
   const tokenId = listing?.tokenSetId?.split(':')[2]
   const contract = listing?.tokenSetId?.split(':')[1]

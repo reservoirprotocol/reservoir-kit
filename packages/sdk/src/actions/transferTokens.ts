@@ -1,7 +1,8 @@
 import { Execute, paths, ReservoirWallet } from '../types'
 import { getClient } from '.'
 import { executeSteps, adaptViemWallet, APIError } from '../utils'
-import axios, { AxiosRequestConfig } from 'axios'
+import { axios } from '../utils'
+import { AxiosRequestConfig } from 'axios'
 import { Address, WalletClient } from 'viem'
 import { isViemWalletClient } from '../utils/viemWallet'
 

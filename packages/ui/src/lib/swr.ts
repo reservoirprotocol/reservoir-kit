@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef } from 'react'
 import { Cache, SWRConfig } from 'swr'
 import { version } from '../../package.json'
+import { axios } from '@reservoir0x/reservoir-sdk'
 
 export const defaultHeaders = (
   apiKey?: string | null,
@@ -30,17 +31,17 @@ export const defaultFetcher = (params: string[] | string) => {
     resource = params
   }
   const headers = defaultHeaders(apiKey, clientVersion)
-  return fetch(resource, {
+  return axios(resource, {
     headers,
   })
     .then((res) => {
-      if (res.headers.get('deprecation') === 'true') {
+      if (res.headers?.['deprecation'] === 'true') {
         console.warn(
-          `Warning: API ${res.url} is deprecated. Stability and performance may be affected.`
+          `Warning: API ${res.config.url} is deprecated. Stability and performance may be affected.`
         )
       }
 
-      return res.json()
+      return res.data
     })
     .catch((e) => {
       throw e

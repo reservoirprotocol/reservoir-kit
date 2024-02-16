@@ -152,6 +152,7 @@ export function SweepModal({
         token,
         orders,
         totalIncludingFees,
+        buyResponseFees,
         averageUnitPrice,
         selectedTokens,
         feeOnTop,
@@ -422,6 +423,7 @@ export function SweepModal({
                     ) : null}
                     <PaymentDetails
                       chainId={chainId}
+                      crosschainFees={buyResponseFees}
                       paymentCurrency={paymentCurrency}
                       feeOnTop={feeOnTop}
                       feeUsd={feeUsd}
