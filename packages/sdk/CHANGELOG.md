@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 1.12.16
+
+### Patch Changes
+
+- 20f9271: Regenerate Types
+
 ### Patch Changes
 
 - 578dd19: Upgrade SDK types
