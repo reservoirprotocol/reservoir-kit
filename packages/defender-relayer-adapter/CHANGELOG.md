@@ -1,5 +1,11 @@
 # @reservoir0x/defender-relayer-adapter
 
+## 0.6.30
+
+### Patch Changes
+
+- aaf8973: Update deps
+
 ## 0.6.29
 
 ### Patch Changes
