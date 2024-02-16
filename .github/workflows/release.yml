@@ -74,7 +74,7 @@ jobs:
           word1=$(echo $responseAdj | jq -r ".[$random_index1].word")
           word2=$(echo $responseAnimal | jq -r ".[$random_index2].name")
           title="$word1 $word2"
-          title=$(title_case "$title")
+          title="Release the: $(title_case "$title")!"
           echo "Title is $title"
           echo "RELEASE_TITLE=$title" >> $GITHUB_ENV
 
