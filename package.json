@@ -15,24 +15,24 @@
   ],
   "scripts": {
     "lint": "tsc --skipLibCheck --noEmit",
-    "demo": "yarn workspace reservoir-kit-demo dev",
-    "clean": "yarn workspaces foreach --exclude primitives --exclude ssr-testing run clean",
-    "test": "yarn workspace @reservoir0x/reservoir-sdk test",
+    "demo": "pnpm -C demo dev",
+    "clean": "pnpm -r exec --exclude primitives --exclude ssr-testing run clean",
+    "test": "pnpm -C @reservoir0x/reservoir-sdk test",
     "dev:clean": "./scripts/package-cleanup.sh",
-    "dev": "yarn dev:watch",
+    "dev": "pnpm dev:watch",
     "dev:watch": "parcel watch 'packages/*' --no-cache --no-hmr --no-source-maps",
-    "build": "yarn build:config && yarn build:packages && yarn build:cleanup && yarn postbuild",
+    "build": "pnpm build:config && pnpm build:packages && pnpm build:cleanup && pnpm postbuild",
     "build:dev": "parcel build './packages/*'",
     "build:config": "mv tsconfig.json tsconfig.tmp.json && mv tsconfig.production.json tsconfig.json",
-    "build:packages": "parcel build 'packages/*' --no-cache && yarn build:fix-type-defs",
+    "build:packages": "parcel build 'packages/*' --no-cache && pnpm build:fix-type-defs",
     "build:fix-type-defs": "node ./scripts/fix-type-defs-imports",
     "build:cleanup": "mv tsconfig.json tsconfig.production.json && mv tsconfig.tmp.json tsconfig.json",
     "postbuild": "node ./scripts/check-missing-types",
-    "publish:stable": "yarn workspaces foreach --no-private --exclude reservoir-kit --exclude demo --exclude sdk-demo npm publish --tolerate-republish --access public",
-    "reset": "yarn clean && rm -rf node_modules .yarn/cache .parcel-cache",
+    "publish:stable": "pnpm -r exec --no-private --exclude reservoir-kit --exclude demo --exclude sdk-demo npm publish --tolerate-republish --access public",
+    "reset": "pnpm clean && rm -rf node_modules .parcel-cache",
     "tags:delete": "git tag --delete sdk-demo@undefined && git tag --delete reservoir-kit-demo@undefined",
-    "package:change": "yarn changeset && git stage ./.changeset/* && git commit --m \"feat: changeset\" && git push",
-    "package:release": "yarn clean && yarn build && changeset version && yarn publish:stable && changeset tag && yarn tags:delete && git push --follow-tags"
+    "package:change": "pnpm changeset && git stage ./.changeset/* && git commit --m \"feat: changeset\" && git push",
+    "package:release": "pnpm clean && pnpm build && changeset version && pnpm publish:stable && changeset tag && pnpm tags:delete && git push --follow-tags"
   },
   "prettier": {
     "semi": false,
@@ -58,7 +58,7 @@
     "typescript": "^5.0.4",
     "viem": "~1.19.15"
   },
-  "packageManager": "yarn@3.2.3",
+  "packageManager": "pnpm@8.15.1",
   "dependencies": {
     "@types/react-flatpickr": "^3.8.7",
     "next-remote-watch": "^1.0.0"

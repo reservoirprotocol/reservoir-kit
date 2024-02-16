@@ -3,13 +3,13 @@
 ### Installation
 
 ```
-yarn add @reservoir0x/ethers-wallet-adapter @reservoir0x/reservoir-sdk
+pnpm install @reservoir0x/ethers-wallet-adapter @reservoir0x/reservoir-sdk
 ```
 
 Also make sure to install the peer dependencies required by the adapter if your application doesn't already include them:
 
 ```
-yarn add ethers viem @reservoir0x/reservoir-sdk
+pnpm install ethers viem @reservoir0x/reservoir-sdk
 ```
 
 ### Usage
