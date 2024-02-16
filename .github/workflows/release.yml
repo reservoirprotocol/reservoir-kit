@@ -27,15 +27,17 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: Setup yarn
-        run: sudo npm i -g yarn
+      - name: Setup pnpm
+        run: sudo npm i -g pnpm@8.15.1
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install
 
       - name: Creating .npmrc
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > "$HOME/.npmrc"
+              cat << EOF > "$HOME/.npmrc"
+              //registry.npmjs.org/:_authToken=$NPM_TOKEN
+              EOF
 
       - name: Get Open PRs Created by Bots
         id: get_bot_prs
@@ -80,7 +82,7 @@ jobs:
 
       - name: Determine Release Title
         run: |
-            if [[ "${{ env.BOT_PR_TITLE }}" == "null" ]]; then
+            if [[ "${{ env.BOT_PR_TITLE }}" == "NULL" ]]; then
             echo "FINAL_RELEASE_TITLE=${{ env.RELEASE_TITLE }}" >> $GITHUB_ENV
             else
             echo "FINAL_RELEASE_TITLE=${{ env.BOT_PR_TITLE }}" >> $GITHUB_ENV
@@ -90,4 +92,5 @@ jobs:
         uses: changesets/action@v1
         with:
           title: ${{ env.FINAL_RELEASE_TITLE }}
-          publish: yarn package:release
+          publish: pnpm package:release
+

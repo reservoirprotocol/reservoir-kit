@@ -1,7 +1,10 @@
 {
-  "private": true,
   "name": "reservoir-kit",
-  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": "^18.x",
+    "pnpm": "8.15.1"
+  },
   "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
   "author": "Reservoir Protocol",
   "license": "MIT",
@@ -54,10 +57,6 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
     "viem": "~1.19.15"
-  },
-  "engines": {
-    "node": ">=12",
-    "yarn": ">=2"
   },
   "packageManager": "yarn@3.2.3",
   "dependencies": {
