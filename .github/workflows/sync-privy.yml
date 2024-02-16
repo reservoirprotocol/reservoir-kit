@@ -9,6 +9,10 @@ jobs:
   sync-privy:
     runs-on: ubuntu-latest
     name: Syncing privy with main
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: write
     steps:
       - uses: actions/checkout@v2
       - name: Set Git config
