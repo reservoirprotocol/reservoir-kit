@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/ethers-wallet-adapter",
-    "version": "0.6.28",
+    "version": "0.6.30",
     "description": "An adapter used to convert an ethersjs signer to a Reservoir Wallet for use in the @reservoir0x/reservoir-sdk",
     "exports": {
         ".": {
@@ -20,9 +20,6 @@
     ],
     "scripts": {
         "clean": "rm -rf dist",
-        "version": "yarn version",
-        "version:package": "sh ../../scripts/package-version.sh",
-        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release ethers wallet adapter package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-ETHERS; git push --tags;",
         "syncApi": "node ./sync-api.mjs"
     },
     "repository": {
