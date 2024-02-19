@@ -10,8 +10,8 @@ import React, {
 } from 'react'
 import { darkTheme } from 'stitches.config'
 import { ThemeProvider } from 'next-themes'
-import { RainbowKitProvider, getDefaultConfig, getDefaultWallets } from '@rainbow-me/rainbowkit'
-import {  createConfig,  http,  WagmiProvider } from 'wagmi'
+import { RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { http,  WagmiProvider } from 'wagmi'
 import * as allChains from 'wagmi/chains'
 import '../fonts.css'
 import '@rainbow-me/rainbowkit/styles.css'
@@ -80,6 +80,7 @@ const wagmiConfig = getDefaultConfig({
   }, {})
 })
 
+const queryClient = new QueryClient()
 
 export const ThemeSwitcherContext = React.createContext<{
   theme: ReservoirKitTheme
@@ -132,8 +133,6 @@ type AppWrapperProps = {
 const AppWrapper: FC<AppWrapperProps> = ({ children }) => {
   const { theme } = useContext(ThemeSwitcherContext)
   const { chain } = useContext(ChainSwitcherContext)
-
-  const queryClient = new QueryClient()
 
   const router = useRouter()
   const cartFeeBps = router.query.cartFeeBps
