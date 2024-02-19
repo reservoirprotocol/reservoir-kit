@@ -13,8 +13,8 @@ import {
   useCollections,
   useListings,
 } from '../../hooks'
-import { useAccount, useWalletClient } from 'wagmi'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { useAccount, useConfig, useWalletClient } from 'wagmi'
+import { getAccount, switchChain } from 'wagmi/actions'
 import {
   APIError,
   BuyPath,
@@ -29,9 +29,9 @@ import {
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
-import usePaymentTokensv2, {
+import usePaymentTokens, {
   EnhancedCurrency,
-} from '../../hooks/usePaymentTokensv2'
+} from '../../hooks/usePaymentTokens'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
@@ -146,6 +146,7 @@ export const BuyModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
+  const config = useConfig()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -173,7 +174,7 @@ export const BuyModalRenderer: FC<Props> = ({
     EnhancedCurrency | undefined
   >(undefined)
 
-  const paymentTokens = usePaymentTokensv2({
+  const paymentTokens = usePaymentTokens({
     open,
     address: address as Address,
     quantityToken: {
@@ -453,12 +454,9 @@ export const BuyModalRenderer: FC<Props> = ({
       return
     }
 
-    let activeWalletChain = getNetwork().chain
-    if (
-      activeWalletChain &&
-      paymentCurrency?.chainId !== activeWalletChain?.id
-    ) {
-      activeWalletChain = await switchNetwork({
+    let activeWalletChain = getAccount(config).chain
+    if (paymentCurrency?.chainId !== activeWalletChain?.id) {
+      activeWalletChain = await switchChain(config, {
         chainId: paymentCurrency?.chainId as number,
       })
     }
@@ -632,6 +630,7 @@ export const BuyModalRenderer: FC<Props> = ({
     normalizeRoyalties,
     is1155,
     client,
+    config,
     rendererChain,
     rendererChain,
     totalIncludingFees,

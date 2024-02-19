@@ -1,4 +1,4 @@
-import { useContractRead } from 'wagmi'
+import { useReadContract } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 import { useChainCurrency } from '../hooks/index'
 import { parseUnits } from 'viem'
@@ -81,16 +81,18 @@ export default function ({
   const currency = useChainCurrency(chainId)
   const amount = value ? value : parseUnits('1', currency.decimals || 18)
 
-  return useContractRead({
+  return useReadContract({
     chainId: chainId,
     address: manifoldContract as any,
     abi: MANIFOLD_ABI,
     args: [contract as any, tokenId as any, amount as any],
     functionName: 'getRoyaltyView',
-    enabled:
-      enabled && tokenId && contract && amount && manifoldContract.length > 0
-        ? true
-        : false,
-    cacheTime: 60 * 1000,
+    query: {
+      enabled:
+        enabled && tokenId && contract && amount && manifoldContract.length > 0
+          ? true
+          : false,
+      gcTime: 60 * 1000,
+    },
   })
 }

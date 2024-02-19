@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useListings } from '../../hooks'
-import { useWalletClient } from 'wagmi'
+import { useConfig, useWalletClient } from 'wagmi'
 import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { getAccount, switchChain } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { WalletClient } from 'viem'
@@ -61,6 +61,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
+  const config = useConfig()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -123,9 +124,9 @@ export const CancelListingModalRenderer: FC<Props> = ({
       throw error
     }
 
-    let activeWalletChain = getNetwork().chain
-    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
-      activeWalletChain = await switchNetwork({
+    let activeWalletChain = getAccount(config).chain
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchChain(config, {
         chainId: rendererChain?.id as number,
       })
     }
@@ -196,7 +197,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
         setStepData(null)
         setSteps(null)
       })
-  }, [listingId, client, rendererChain, wallet])
+  }, [listingId, client, rendererChain, wallet, config])
 
   useEffect(() => {
     if (!open) {

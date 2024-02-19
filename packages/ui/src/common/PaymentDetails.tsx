@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from '../primitives'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
-import { EnhancedCurrency } from '../hooks/usePaymentTokensv2'
+import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
 import { BuyResponses, MintResponses } from '@reservoir0x/reservoir-sdk'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
