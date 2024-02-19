@@ -251,7 +251,7 @@ export const ListModalRenderer: FC<Props> = ({
   }, [marketplace, orderKind])
 
   useEffect(() => {
-    if (exchange?.paymentTokens) {
+    if (exchange?.paymentTokens && exchange?.paymentTokens.length > 0) {
       const restrictedCurrencies = exchange.paymentTokens
         .filter((token) => token.address && token.symbol)
         .map((token) => ({

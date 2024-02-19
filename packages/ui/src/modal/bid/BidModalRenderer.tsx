@@ -421,7 +421,7 @@ export const BidModalRenderer: FC<Props> = ({
       exchange?.supportedBidCurrencies?.map((currency) =>
         currency.toLowerCase()
       ) || []
-    if (exchange?.paymentTokens) {
+    if (exchange?.paymentTokens && exchange?.paymentTokens.length > 0) {
       const restrictedCurrencies = exchange.paymentTokens
         .filter(
           (token) =>
