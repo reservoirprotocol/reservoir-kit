@@ -277,11 +277,13 @@ export const EditBidModalRenderer: FC<Props> = ({
         address: wrappedContractAddress as Address,
         abi: erc20Abi,
         functionName: 'decimals',
+        chainId: rendererChain?.id,
       },
       {
         address: wrappedContractAddress as Address,
         abi: erc20Abi,
         functionName: 'symbol',
+        chainId: rendererChain?.id,
       },
     ],
     query: {
