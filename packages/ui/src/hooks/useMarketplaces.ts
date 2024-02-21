@@ -6,7 +6,7 @@ import useSWR from 'swr'
 import { MarketPlaceConfigurationsQuery } from './useMarketplaceConfigs'
 
 export type Marketplace = NonNullable<
-  paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses']['200']['schema']['marketplaces']
+  paths['/collections/{collection}/marketplace-configurations/v2']['get']['responses']['200']['schema']['marketplaces']
 >[0] & {
   price: number | string
   truePrice: number | string
@@ -32,14 +32,14 @@ export default function (
       : client?.currentChain()
 
   const { data, isValidating } = useSWR<
-    paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses'][200]['schema']
+    paths['/collections/{collection}/marketplace-configurations/v2']['get']['responses'][200]['schema']
   >(() => {
     if (!enabled || !collectionId) {
       return null
     }
 
     const url = new URL(
-      `${chain?.baseApiUrl}/collections/${collectionId}/marketplace-configurations/v1`
+      `${chain?.baseApiUrl}/collections/${collectionId}/marketplace-configurations/v2`
     )
     if (tokenId) {
       let query: MarketPlaceConfigurationsQuery = { tokenId: tokenId }

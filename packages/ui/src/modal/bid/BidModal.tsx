@@ -361,14 +361,14 @@ export function BidModal({
           (currency?.contract?.toLowerCase() ===
             topBidPrice?.currency?.contract?.toLowerCase() &&
             decimalTopBidPrice) ||
-          (currency.symbol === 'USDC' && usdTopBidPrice) ||
-          (nativeTopBidPrice && currency.contract === zeroAddress) ||
+          (currency?.symbol === 'USDC' && usdTopBidPrice) ||
+          (nativeTopBidPrice && currency?.contract === zeroAddress) ||
           (nativeTopBidPrice && defaultCurrency)
 
         const handleSetBestOffer = () => {
           // If currency matches top bid currency, use decimal floor price
           if (
-            currency.contract?.toLowerCase() ===
+            currency?.contract?.toLowerCase() ===
               topBidPrice?.currency?.contract?.toLowerCase() &&
             decimalTopBidPrice
           ) {
@@ -376,11 +376,11 @@ export function BidModal({
           }
 
           // If currency is USDC, use usd floor price
-          else if (currency.symbol === 'USDC' && usdTopBidPrice) {
+          else if (currency?.symbol === 'USDC' && usdTopBidPrice) {
             setBidAmountPerUnit(usdTopBidPrice?.toString())
           } else if (nativeTopBidPrice) {
             // If currency is native currency, use native floor price
-            if (currency.contract === zeroAddress) {
+            if (currency?.contract === zeroAddress) {
               setBidAmountPerUnit(nativeTopBidPrice.toString())
             }
             // Fallback to default currency if it exists
@@ -477,7 +477,7 @@ export function BidModal({
                         style="body1"
                         color="subtle"
                       >
-                        {currencies.length > 1 ? (
+                        {currency && currencies.length > 1 ? (
                           <CurrencySelector
                             chainId={modalChain?.id}
                             currency={currency}

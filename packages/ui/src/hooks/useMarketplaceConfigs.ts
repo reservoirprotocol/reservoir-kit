@@ -3,10 +3,10 @@ import useSWR from 'swr/immutable'
 import { useReservoirClient } from './'
 
 type MarketplaceConfigurationsResponse =
-  paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses']['200']['schema']
+  paths['/collections/{collection}/marketplace-configurations/v2']['get']['responses']['200']['schema']
 
 export type MarketPlaceConfigurationsQuery =
-  paths['/collections/{collection}/marketplace-configurations/v1']['get']['parameters']['query']
+  paths['/collections/{collection}/marketplace-configurations/v2']['get']['parameters']['query']
 
 export default function (
   collectionId?: string,
@@ -26,7 +26,7 @@ export default function (
     }
 
     const url = new URL(
-      `${chain?.baseApiUrl}/collections/${collectionId}/marketplace-configurations/v1`
+      `${chain?.baseApiUrl}/collections/${collectionId}/marketplace-configurations/v2`
     )
     let query: MarketPlaceConfigurationsQuery = { ...options }
 
