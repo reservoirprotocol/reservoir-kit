@@ -319,11 +319,13 @@ export const BidModalRenderer: FC<Props> = ({
       {
         address: wrappedContractAddress as Address,
         abi: erc20Abi,
+        chainId: rendererChain?.id,
         functionName: 'decimals',
       },
       {
         address: wrappedContractAddress as Address,
         abi: erc20Abi,
+        chainId: rendererChain?.id,
         functionName: 'symbol',
       },
     ],
