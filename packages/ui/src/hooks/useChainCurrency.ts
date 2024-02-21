@@ -1,6 +1,5 @@
 import { getClient, customChains } from '@reservoir0x/reservoir-sdk'
-import { zeroAddress } from 'viem'
-import { Address } from 'wagmi'
+import { Address, zeroAddress } from 'viem'
 import * as allChains from 'viem/chains'
 
 export default (chainId?: number) => {

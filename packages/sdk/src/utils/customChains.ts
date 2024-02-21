@@ -3,7 +3,6 @@ import { Chain } from 'viem'
 export const ancient8 = {
   id: 888888888,
   name: 'Ancient8',
-  network: 'ancient8',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
@@ -30,7 +29,6 @@ export const ancient8 = {
 export const ancient8Testnet = {
   id: 28122024,
   name: 'Ancient8 Testnet',
-  network: 'ancient8',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
@@ -57,7 +55,6 @@ export const ancient8Testnet = {
 export const frameTestnet = {
   id: 68840142,
   name: 'Frame Testnet',
-  network: 'frametestnet',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {

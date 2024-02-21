@@ -461,10 +461,10 @@ export function BidModal({
                           chainId={modalChain?.id}
                           logoWidth={10}
                           textStyle="tiny"
-                          amount={wrappedBalance?.value}
+                          amount={wrappedBalance?.[0]}
                           address={wrappedContractAddress}
-                          decimals={wrappedBalance?.decimals}
-                          symbol={wrappedBalance?.symbol}
+                          decimals={wrappedBalance?.[1]}
+                          symbol={wrappedBalance?.[2]}
                         />{' '}
                       </Text>
                     </Flex>
