@@ -1,5 +1,16 @@
 ## 1.25.10
 
+## 2.0.0
+
+### Major Changes
+
+- b7ad7a5: Upgrade viem and wagmi to v2
+
+### Patch Changes
+
+- Updated dependencies [b7ad7a5]
+  - @reservoir0x/reservoir-sdk@2.0.0
+
 ## 1.25.11
 
 ### Patch Changes

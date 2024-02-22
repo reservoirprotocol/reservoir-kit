@@ -16,7 +16,7 @@ import {
   useChainCurrency,
   useOnChainRoyalties,
 } from '../../hooks'
-import { useAccount, useWalletClient } from 'wagmi'
+import { useAccount, useConfig, useWalletClient } from 'wagmi'
 import {
   Execute,
   ReservoirClientActions,
@@ -29,7 +29,7 @@ import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { Currency } from '../../types/Currency'
 import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { getAccount, switchChain } from 'wagmi/actions'
 
 export enum ListStep {
   Unavailable,
@@ -127,6 +127,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
+  const config = useConfig()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -324,9 +325,9 @@ export const ListModalRenderer: FC<Props> = ({
         throw error
       }
 
-      let activeWalletChain = getNetwork().chain
-      if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
-        activeWalletChain = await switchNetwork({
+      let activeWalletChain = getAccount(config).chain
+      if (rendererChain?.id !== activeWalletChain?.id) {
+        activeWalletChain = await switchChain(config, {
           chainId: rendererChain?.id as number,
         })
       }
@@ -512,6 +513,7 @@ export const ListModalRenderer: FC<Props> = ({
     [
       client,
       wallet,
+      config,
       collectionId,
       chainId,
       tokenId,

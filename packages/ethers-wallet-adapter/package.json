@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/ethers-wallet-adapter",
-    "version": "0.6.30",
+    "version": "1.0.0",
     "description": "An adapter used to convert an ethersjs signer to a Reservoir Wallet for use in the @reservoir0x/reservoir-sdk",
     "exports": {
         ".": {
@@ -44,6 +44,6 @@
     "peerDependencies": {
         "@reservoir0x/reservoir-sdk": "workspace:*",
         "ethers": "^5.6.1",
-        "viem": "~1.19.15"
+        "viem": "~2.7.8"
     }
 }

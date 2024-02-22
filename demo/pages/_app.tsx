@@ -10,13 +10,9 @@ import React, {
 } from 'react'
 import { darkTheme } from 'stitches.config'
 import { ThemeProvider } from 'next-themes'
-import { configureChains } from 'wagmi'
-import * as allChains from 'wagmi/chains'
+import {  http } from 'wagmi'
 import { PrivyProvider } from '@privy-io/react-auth'
-import { PrivyWagmiConnector } from '@privy-io/wagmi-connector'
-
-import { publicProvider } from 'wagmi/providers/public'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
+import * as allChains from 'wagmi/chains'
 import '../fonts.css'
 import {
   ReservoirKitProvider,
@@ -28,6 +24,13 @@ import { LogLevel, customChains } from '@reservoir0x/reservoir-sdk'
 import configuredChains from '../utils/chains'
 import { useRouter } from 'next/router'
 import '../fonts.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { chainIdToAlchemyNetworkMap } from 'utils/chainIdToAlchemyNetworkMap'
+import { Chain } from 'wagmi/chains'
+import { createConfig } from '@privy-io/wagmi'
+import {WagmiProvider} from '@privy-io/wagmi';
+import { _transports } from '@rainbow-me/rainbowkit/dist/config/getDefaultConfig'
+
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1)
 const SOURCE = process.env.NEXT_PUBLIC_SOURCE || 'reservoirkit.demo'
@@ -42,8 +45,8 @@ const WALLET_CONNECT_PROJECT_ID =
   process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || ''
 const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
 
-const configureChainsConfig = configureChains(
-  [
+
+  const chains = [
     allChains.mainnet,
     allChains.goerli,
     allChains.sepolia,
@@ -57,9 +60,28 @@ const configureChainsConfig = configureChains(
     allChains.scroll,
     allChains.arbitrumNova,
     customChains.frameTestnet
-  ],
-  [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
-)
+  ] as [
+    Chain,
+    ...Chain[]
+  ]
+
+  const wagmiConfig = createConfig({
+    chains,
+    ssr: true,
+    transports: chains.reduce((transportsConfig: _transports, chain) => {
+      const network = chainIdToAlchemyNetworkMap[chain.id]
+      if (network && ALCHEMY_KEY) {
+        transportsConfig[chain.id] = http(
+          `https://${network}.g.alchemy.com/v2/${ALCHEMY_KEY}`
+        )
+      } else {
+        transportsConfig[chain.id] = http() // Fallback to default HTTP transport
+      }
+      return transportsConfig
+    }, {}),
+  })
+
+const queryClient = new QueryClient()
 
 export const ThemeSwitcherContext = React.createContext<{
   theme: ReservoirKitTheme
@@ -130,40 +152,42 @@ const AppWrapper: FC<AppWrapperProps> = ({ children }) => {
           }
         }}
       >
-    <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-      <ReservoirKitProvider
-        options={{
-          apiKey: API_KEY,
-          chains: configuredChains.map((c) => {
-            return {
-              ...c,
-              active: chain === c.id,
-            }
-          }),
-          marketplaceFees: MARKETPLACE_FEES,
-          source: SOURCE,
-          normalizeRoyalties: NORMALIZE_ROYALTIES,
-          logLevel: LogLevel.Verbose,
-        }}
-        theme={theme}
-      >
-        <CartProvider feesOnTopBps={cartFeeBps} feesOnTopUsd={cartFeeUsd}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            value={{
-              dark: darkTheme.className,
-              light: 'light',
-            }}
-            enableSystem={false}
-            storageKey={'demo-theme'}
-          >
-            {children}
-          </ThemeProvider>
-        </CartProvider>
-      </ReservoirKitProvider>
-    </PrivyWagmiConnector>
-    </PrivyProvider>
+        <QueryClientProvider client={queryClient}>
+          <WagmiProvider config={wagmiConfig}>
+            <ReservoirKitProvider
+              options={{
+                apiKey: API_KEY,
+                chains: configuredChains.map((c) => {
+                  return {
+                    ...c,
+                    active: chain === c.id,
+                  }
+                }),
+                marketplaceFees: MARKETPLACE_FEES,
+                source: SOURCE,
+                normalizeRoyalties: NORMALIZE_ROYALTIES,
+                logLevel: LogLevel.Verbose,
+              }}
+              theme={theme}
+            >
+              <CartProvider feesOnTopBps={cartFeeBps} feesOnTopUsd={cartFeeUsd}>
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="dark"
+                  value={{
+                    dark: darkTheme.className,
+                    light: 'light',
+                  }}
+                  enableSystem={false}
+                  storageKey={'demo-theme'}
+                >
+                  {children}
+                </ThemeProvider>
+              </CartProvider>
+            </ReservoirKitProvider>
+          </WagmiProvider>
+        </QueryClientProvider>
+      </PrivyProvider>
   )
 }
 

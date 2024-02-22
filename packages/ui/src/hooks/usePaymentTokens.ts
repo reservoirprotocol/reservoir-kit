@@ -1,15 +1,17 @@
-import { erc20ABI, useContractReads } from 'wagmi'
-import { fetchBalance } from 'wagmi/actions'
-import { Address, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { Config, useConfig, useReadContracts } from 'wagmi'
+import { getBalance } from 'wagmi/actions'
+import { Address, formatUnits, parseUnits, zeroAddress, erc20Abi } from 'viem'
 import { useContext, useMemo } from 'react'
 import {
-  useReservoirClient,
   useCurrencyConversions,
+  useReservoirClient,
   useSolverCapacity,
 } from '.'
-import { ReservoirChain, PaymentToken } from '@reservoir0x/reservoir-sdk'
+import { BuyPath, ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { PaymentToken } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
+import { Currency } from '../types/Currency'
 
 export type EnhancedCurrency =
   | NonNullable<ReservoirChain['paymentTokens']>[0] & {
@@ -17,19 +19,22 @@ export type EnhancedCurrency =
       usdPriceRaw?: bigint
       usdTotalPriceRaw?: bigint
       usdTotalFormatted?: string
+      usdBalanceRaw?: bigint
       balance?: string | number | bigint
       currencyTotalRaw?: bigint
       currencyTotalFormatted?: string
       maxItems?: number
-      maxPricePerItem?: bigint
+      capacityPerRequest?: bigint
+      maxPricePerItem?: number
     }
 
 const fetchNativeBalances = async (
   address: Address,
+  config: Config,
   tokens?: PaymentToken[]
 ) => {
   const balancePromises = tokens?.map((currency) =>
-    fetchBalance({
+    getBalance(config, {
       address: address,
       chainId: currency?.chainId,
     })
@@ -44,17 +49,27 @@ const fetchNativeBalances = async (
   })
 }
 
-export default function (
-  open: boolean,
-  address: Address,
-  preferredCurrency: PaymentToken,
-  preferredCurrencyTotalPrice: bigint,
-  chainId?: number,
-  nativeOnly?: boolean,
-  crossChainDisabled?: boolean,
-  listingCurrency?: EnhancedCurrency
-) {
+export default function (options: {
+  open: boolean
+  address: Address
+  quantityToken: Record<string, number>
+  path?: BuyPath
+  nativeOnly?: boolean
+  chainId?: number
+  crossChainDisabled?: boolean
+}) {
+  const {
+    open,
+    address,
+    quantityToken,
+    path,
+    nativeOnly,
+    chainId,
+    crossChainDisabled,
+  } = options
+
   const client = useReservoirClient()
+  const config = useConfig()
   const providerOptions = useContext(ProviderOptionsContext)
   const chain =
     chainId !== undefined
@@ -64,6 +79,17 @@ export default function (
   const includeListingCurrency =
     providerOptions.alwaysIncludeListingCurrency !== false
 
+  const listingCurrency: Currency | undefined =
+    path && path[0] && path[0].currency
+      ? {
+          contract: path[0].currency,
+          decimals: path[0].currencyDecimals || 18,
+          symbol: path[0].currencySymbol || '',
+        }
+      : undefined
+  const listingCurrencyChainId =
+    path && path[0] && path[0].fromChainId ? path[0].fromChainId : chainId
+
   const allPaymentTokens = useMemo(() => {
     let paymentTokens = chain?.paymentTokens
 
@@ -71,11 +97,17 @@ export default function (
       const listingCurrencyAlreadyExists = paymentTokens?.some(
         (token) =>
           token?.address?.toLowerCase() ===
-            listingCurrency?.address?.toLowerCase() &&
-          token.chainId === listingCurrency?.chainId
+            listingCurrency?.contract?.toLowerCase() &&
+          token.chainId === listingCurrencyChainId
       )
       if (!listingCurrencyAlreadyExists && listingCurrency) {
-        paymentTokens?.push(listingCurrency)
+        paymentTokens?.push({
+          ...listingCurrency,
+          decimals: listingCurrency.decimals || 18,
+          address: listingCurrency.contract as Address,
+          chainId: listingCurrencyChainId || 1,
+          name: listingCurrency.symbol,
+        })
       }
     }
 
@@ -91,21 +123,14 @@ export default function (
       )
     }
 
-    if (
-      !paymentTokens
-        ?.map((currency) => currency?.address?.toLowerCase())
-        .includes(preferredCurrency?.address?.toLowerCase())
-    ) {
-      paymentTokens?.push(preferredCurrency)
-    }
     return paymentTokens
   }, [
     chain?.paymentTokens,
-    preferredCurrency.address,
     crossChainDisabled,
     nativeOnly,
-    listingCurrency,
     includeListingCurrency,
+    listingCurrency,
+    listingCurrencyChainId,
   ])
 
   const nonNativeCurrencies = useMemo(() => {
@@ -115,10 +140,8 @@ export default function (
   }, [
     allPaymentTokens,
     chain?.paymentTokens,
-    preferredCurrency.address,
     crossChainDisabled,
     nativeOnly,
-    listingCurrency,
     includeListingCurrency,
   ])
 
@@ -129,30 +152,30 @@ export default function (
   }, [
     allPaymentTokens,
     chain?.paymentTokens,
-    preferredCurrency.address,
     crossChainDisabled,
     nativeOnly,
-    listingCurrency,
     includeListingCurrency,
   ])
 
-  const { data: nonNativeBalances } = useContractReads({
+  const { data: nonNativeBalances } = useReadContracts({
     contracts: open
       ? nonNativeCurrencies?.map((currency) => ({
-          abi: erc20ABI,
+          abi: erc20Abi,
           address: currency.address as `0x${string}`,
           chainId: chainId,
           functionName: 'balanceOf',
           args: [address],
         }))
       : [],
-    enabled: open,
+    query: {
+      enabled: open,
+    },
     allowFailure: false,
   })
 
   const { data: nativeBalances } = useSWR(
     open ? address : undefined,
-    () => fetchNativeBalances(address, nativeCurrencies),
+    () => fetchNativeBalances(address, config, nativeCurrencies),
     {
       revalidateOnFocus: false,
     }
@@ -173,25 +196,147 @@ export default function (
   const { data: solverCapacity } = useSolverCapacity(chain?.id, open)
 
   const preferredCurrencyConversions = useCurrencyConversions(
-    preferredCurrency?.address,
+    path && path[0]
+      ? path[0].currency ?? path[0].buyInCurrency ?? undefined
+      : undefined,
     chain,
     open ? allPaymentTokens : undefined
   )
 
-  const paymentTokens = useMemo(() => {
+  return useMemo(() => {
     if (!open) {
       return []
     }
 
-    return allPaymentTokens
-      ?.map((currency, i) => {
+    const paymentTokens = allPaymentTokens?.reduce(
+      (tokens, token, i) => {
+        const conversionData = preferredCurrencyConversions?.data?.[i]
+        tokens[`${token.address.toLowerCase()}:${token.chainId}`] = {
+          total: 0n,
+          usdTotal: 0,
+          currency: {
+            ...token,
+            contract: token.address.toLowerCase(),
+          },
+          chainId: token.chainId,
+          conversionData,
+        }
+        return tokens
+      },
+      {} as Record<
+        string,
+        {
+          total: bigint
+          usdTotal: number
+          currency: Currency
+          chainId: number
+          conversionData?: { conversion?: string; usd?: string }
+        }
+      >
+    )
+
+    if (!paymentTokens) {
+      return []
+    }
+
+    let totalQuantities: Record<string, number> = {}
+    let orders: Record<string, number> = {}
+
+    const normalizedQuantities: Record<string, number> = {}
+    for (const key in quantityToken) {
+      normalizedQuantities[key.toLowerCase()] = quantityToken[key]
+    }
+
+    path?.forEach((pathItem, i) => {
+      const tokenKey = `${pathItem.contract?.toLowerCase()}:${pathItem.tokenId}`
+      const contractKey = `${pathItem.contract?.toLowerCase()}` //todo: test with sweeping
+
+      let assetKey = tokenKey
+      let totalQuantity = 0
+      let requiredQuantity = 0
+      //Determine correct key to use
+      if (normalizedQuantities[tokenKey] !== undefined) {
+        assetKey = tokenKey
+      } else if (normalizedQuantities[contractKey] !== undefined) {
+        assetKey = contractKey
+      }
+
+      totalQuantity = totalQuantities[assetKey] || 0
+      requiredQuantity = normalizedQuantities[assetKey] || 0
+
+      //quantity check
+      const pathQuantity = pathItem.quantity || 0
+      const quantityLeft = requiredQuantity - totalQuantity
+      if (totalQuantity === requiredQuantity) {
+        return
+      }
+
+      let quantityToTake = 0
+
+      if (quantityLeft >= pathQuantity) {
+        quantityToTake = pathQuantity
+      } else {
+        quantityToTake = quantityLeft
+      }
+
+      orders[pathItem.orderId as string] = quantityToTake
+      totalQuantities[assetKey] = totalQuantity + quantityToTake
+
+      //Total for BuyIn or listing currency
+      const currency = pathItem.buyInCurrency
+        ? pathItem.buyInCurrency
+        : pathItem.currency
+      const totalRaw = BigInt(
+        pathItem.buyInRawQuote
+          ? pathItem.buyInRawQuote
+          : pathItem.totalRawPrice ?? 0
+      )
+
+      const currencyChainId = pathItem.fromChainId || chainId
+      const currencyKey = `${currency?.toLowerCase()}:${currencyChainId}`
+      if (paymentTokens[currencyKey]) {
+        paymentTokens[currencyKey].total += totalRaw * BigInt(quantityToTake)
+      }
+    })
+
+    const preferredToken = Object.values(paymentTokens).find(
+      (token) => token.total > 0n
+    )
+
+    return Object.values(paymentTokens)
+      .map((token) => {
+        const currency = token.currency
+
+        let maxItems: EnhancedCurrency['maxItems'] = undefined
+        let capacityPerRequest: EnhancedCurrency['capacityPerRequest'] =
+          undefined
+
+        if (
+          !crossChainDisabled &&
+          crosschainChainIds?.length > 0 &&
+          solverCapacity &&
+          token.chainId !== chain?.id &&
+          path
+        ) {
+          maxItems = 0
+          for (
+            let i = 0;
+            i < Math.min(path.length, solverCapacity.maxItems);
+            i++
+          ) {
+            maxItems += path[i].quantity || 0
+          }
+
+          capacityPerRequest = BigInt(solverCapacity.capacityPerRequest)
+        }
+
         let balance: string | number | bigint = 0n
-        if (currency.address === zeroAddress) {
+        if (currency.contract === zeroAddress) {
           const index =
             nativeCurrencies?.findIndex(
               (nativeCurrency) =>
                 nativeCurrency.symbol === currency.symbol &&
-                nativeCurrency.chainId === currency.chainId
+                nativeCurrency.chainId === token.chainId
             ) || 0
 
           balance = nativeBalances?.[index]?.value ?? 0n
@@ -201,7 +346,7 @@ export default function (
               (nonNativeCurrency) =>
                 nonNativeCurrency.symbol === currency.symbol &&
                 nonNativeCurrency?.address?.toLowerCase() ===
-                  currency?.address?.toLowerCase()
+                  currency?.contract?.toLowerCase()
             ) || 0
           balance =
             nonNativeBalances &&
@@ -212,138 +357,76 @@ export default function (
               ? (nonNativeBalances[index] as string | number | bigint)
               : 0n
         }
+        const conversionData = token.conversionData
+        let currencyTotalRaw = token.total
+        if (
+          !currencyTotalRaw &&
+          (token.currency.contract !== preferredToken?.currency.contract ||
+            token.chainId !== preferredToken?.chainId)
+        ) {
+          currencyTotalRaw =
+            conversionData?.conversion &&
+            conversionData?.conversion !== '0' &&
+            preferredToken?.total
+              ? (preferredToken.total *
+                  parseUnits('1', currency.decimals ?? 18)) /
+                parseUnits(
+                  conversionData?.conversion?.toString(),
+                  preferredToken.currency.decimals ?? 18
+                )
+              : 0n
+        }
 
-        const conversionData = preferredCurrencyConversions?.data?.[i]
-
-        const currencyTotalRaw =
-          conversionData?.conversion && conversionData?.conversion !== '0'
-            ? (preferredCurrencyTotalPrice *
-                parseUnits('1', currency.decimals)) /
-              parseUnits(
-                conversionData?.conversion?.toString(),
-                preferredCurrency.decimals
-              )
+        const currencyTotalFormatted =
+          currencyTotalRaw > 0n
+            ? formatUnits(currencyTotalRaw, currency?.decimals || 18)
             : undefined
-
-        const currencyTotalFormatted = currencyTotalRaw
-          ? formatUnits(currencyTotalRaw, currency.decimals)
-          : undefined
 
         const usdPrice = Number(conversionData?.usd ?? 0)
         const usdPriceRaw = parseUnits(usdPrice.toString(), 6)
         const usdTotalPriceRaw = conversionData?.usd
-          ? (preferredCurrencyTotalPrice * usdPriceRaw) /
-            parseUnits('1', preferredCurrency?.decimals)
+          ? ((preferredToken?.total || 0n) * usdPriceRaw) /
+            parseUnits('1', preferredToken?.currency?.decimals ?? 18)
           : undefined
 
         const usdTotalFormatted = usdTotalPriceRaw
           ? formatUnits(usdTotalPriceRaw, 6)
           : undefined
-
-        let maxItems: EnhancedCurrency['maxItems'] = undefined
-        let maxPricePerItem: EnhancedCurrency['maxPricePerItem'] = undefined
-
-        if (
-          !crossChainDisabled &&
-          crosschainChainIds?.length > 0 &&
-          solverCapacity &&
-          currency.chainId !== chain?.id
-        ) {
-          maxItems = solverCapacity.maxItems
-          maxPricePerItem = BigInt(solverCapacity.maxPricePerItem)
-        }
+        const usdBalanceRaw =
+          conversionData?.usd && typeof balance === 'bigint'
+            ? ((balance || 0n) * usdPriceRaw) /
+              parseUnits('1', preferredToken?.currency?.decimals ?? 18)
+            : undefined
 
         return {
           ...currency,
-          address: currency?.address?.toLowerCase(),
-          usdPrice,
+          address: token?.currency?.contract?.toLowerCase(),
+          usdPrice: token.usdTotal,
           usdPriceRaw,
           usdTotalPriceRaw,
-          usdTotalFormatted,
           balance,
           currencyTotalRaw,
           currencyTotalFormatted,
+          usdTotalFormatted: usdTotalFormatted,
+          usdBalanceRaw: usdBalanceRaw,
           maxItems,
-          maxPricePerItem,
+          capacityPerRequest,
+          chainId: token.chainId,
         }
       })
       .sort((a, b) => {
-        // If user has enough balance in the listing currency, return first. Otherwise sort currencies by balance and chainId
-
-        // User has enough balance in listing currency
-        if (
-          listingCurrency &&
-          a.address === listingCurrency.address &&
-          a.chainId === listingCurrency.chainId &&
-          a.currencyTotalRaw &&
-          BigInt(a.balance) > a.currencyTotalRaw
-        ) {
-          return -1
-        }
-        if (
-          listingCurrency &&
-          b.address === listingCurrency.address &&
-          b.chainId === listingCurrency.chainId &&
-          b.currencyTotalRaw &&
-          BigInt(b.balance) > b.currencyTotalRaw
-        ) {
-          return 1
-        }
-
-        // User has enough balance in non-listing currency
-        if (a.currencyTotalRaw && BigInt(a.balance) > a.currencyTotalRaw) {
-          return -1
-        }
-
-        if (b.currencyTotalRaw && BigInt(b.balance) > b.currencyTotalRaw) {
-          return 1
-        }
-
-        // Currency is the listing currency
-        if (
-          listingCurrency &&
-          a.address === listingCurrency.address &&
-          a.chainId === listingCurrency.chainId
-        ) {
-          return -1
-        }
-
-        if (
-          listingCurrency &&
-          b.address === listingCurrency.address &&
-          b.chainId === listingCurrency.chainId
-        ) {
-          return 1
-        }
-
-        // Otherwise sort by usdPrice and chaindId
-        if (Number(b.usdPrice) === Number(a.usdPrice)) {
-          if (
-            a.chainId === preferredCurrency.chainId &&
-            b.chainId !== preferredCurrency.chainId
-          ) {
-            return -1
-          }
-          if (
-            a.chainId !== preferredCurrency.chainId &&
-            b.chainId === preferredCurrency.chainId
-          ) {
-            return 1
-          }
-        }
-        return Number(b.usdPrice ?? 0) - Number(a.usdPrice ?? 0)
-      }) as EnhancedCurrency[]
+        return Number(b.usdBalanceRaw) - Number(a.usdBalanceRaw)
+      })
   }, [
     address,
-    preferredCurrencyConversions,
-    preferredCurrency.address,
-    preferredCurrencyTotalPrice,
     chainId,
     allPaymentTokens,
+    path,
     nonNativeBalances,
     nativeBalances,
+    quantityToken,
     listingCurrency,
-  ])
-
-  return paymentTokens
+    listingCurrencyChainId,
+    preferredCurrencyConversions,
+  ]) as EnhancedCurrency[]
 }

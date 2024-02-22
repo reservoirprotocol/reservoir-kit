@@ -12,20 +12,21 @@
     "singleQuote": true
   },
   "dependencies": {
-    "@privy-io/react-auth": "^1.43.2",
-    "@privy-io/wagmi-connector": "^0.1.4",
+    "@privy-io/react-auth": "^1.56.2",
+    "@privy-io/wagmi": "^0.1.0",
     "@radix-ui/colors": "^0.1.8",
-    "@rainbow-me/rainbowkit": "1.3.6",
+    "@rainbow-me/rainbowkit": "2.0.0",
     "@reservoir0x/reservoir-kit-ui": "workspace:*",
     "@stitches/react": "1.3.1-1",
+    "@tanstack/react-query": "^5.20.2",
     "next": "latest",
     "next-remote-watch": "^1.0.0",
     "next-themes": "^0.2.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-intersection-observer": "^9.4.0",
-    "viem": "~1.19.15",
-    "wagmi": "~1.4.12"
+    "viem": "~2.7.8",
+    "wagmi": "~2.5.7"
   },
   "devDependencies": {
     "@types/node": "^12.12.21",
