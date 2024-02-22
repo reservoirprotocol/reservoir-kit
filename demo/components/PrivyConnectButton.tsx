@@ -1,15 +1,21 @@
-import {usePrivy, useWallets} from '@privy-io/react-auth'
-import {usePrivyWagmi} from '@privy-io/wagmi-connector'
-import { useNetwork } from 'wagmi'
+import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
+import { useSetActiveWallet } from '@privy-io/wagmi'
+import { useAccount } from 'wagmi'
+
 
 export const PrivyConnectButton = () => {
-  const { login, logout, ready, authenticated, connectWallet, linkWallet, unlinkWallet} = usePrivy()
+  const { logout, ready, authenticated, unlinkWallet, connectWallet, linkWallet } = usePrivy()
   const { wallets } = useWallets()
-  const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi()
-  const { chain } = useNetwork()
+  const { setActiveWallet } = useSetActiveWallet()
+  const { address } = useAccount()
 
+  const { login } = useLogin({
+    onComplete: (user, isNewUser, wasAlreadyAuthenticated) => {
+      console.log('Login complete')
+      setActiveWallet(wallets[0])
+    },
+  })
 
-  console.log(wallets)
 
   if (!ready) return null;
 
@@ -19,7 +25,7 @@ export const PrivyConnectButton = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px'}}>
-      <div>Active Wallet: {activeWallet?.address}</div>
+      <div>Active Wallet: {address}</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px'}}>
         {wallets.map((wallet) => {
           return (
@@ -38,7 +44,7 @@ export const PrivyConnectButton = () => {
                   if (!connectedWallet) connectWallet();
                   else setActiveWallet(connectedWallet);
                 }}
-                disabled={wallet.address === activeWallet?.address}
+                disabled={wallet.address === address}
               >Make active</button>
               <button onClick={() => unlinkWallet(wallet.address)}>Unlink</button>
             </div>
