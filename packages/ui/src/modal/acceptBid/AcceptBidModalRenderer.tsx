@@ -29,6 +29,7 @@ export enum AcceptBidStep {
   Finalizing,
   Complete,
   Unavailable,
+  TokenSwap,
 }
 
 export type AcceptBidTokenData = {
@@ -70,6 +71,7 @@ type ChildrenProps = {
   blockExplorerBaseUrl: string
   stepData: AcceptBidStepData | null
   acceptBid: () => void
+  swapCurrency: Omit<Currency, 'coinGeckoId'> | null
   setAcceptBidStep: React.Dispatch<React.SetStateAction<AcceptBidStep>>
 }
 
@@ -77,6 +79,7 @@ type Props = {
   open: boolean
   tokens: AcceptBidTokenData[]
   chainId?: number
+  currency?: string
   normalizeRoyalties?: boolean
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
@@ -93,6 +96,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   walletClient,
   feesOnTopBps,
   feesOnTopCustom,
+  currency,
 }) => {
   const [stepData, setStepData] = useState<AcceptBidStepData | null>(null)
   const [prices, setPrices] = useState<AcceptBidPrice[]>([])
@@ -215,6 +219,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       >['0']['options']
       let options: AcceptOfferOptions = {
         onlyPath: true,
+        ...(currency && { currency }),
         partial: true,
       }
       if (normalizeRoyalties !== undefined) {
@@ -303,6 +308,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         })
     },
     [
+      currency,
       client,
       wallet,
       rendererChain,
@@ -322,7 +328,11 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     () =>
       Array.from(
         enhancedTokens.reduce((symbols, { bidsPath }) => {
-          bidsPath.forEach(({ currencySymbol }) => {
+          bidsPath.forEach(({ sellOutCurrencySymbol, currencySymbol }) => {
+            if (sellOutCurrencySymbol) {
+              symbols.add(sellOutCurrencySymbol)
+            }
+
             if (currencySymbol) {
               symbols.add(currencySymbol)
             }
@@ -386,6 +396,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     >['0']['options']
     let options: AcceptOfferOptions = {
       partial: true,
+      ...(currency && { currency }),
     }
 
     if (normalizeRoyalties !== undefined) {
@@ -462,6 +473,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               currentStepItem,
               steps,
             })
+
             if (currentStep.id === 'auth') {
               setAcceptBidStep(AcceptBidStep.Auth)
             } else if (currentStep.id === 'nft-approval') {
@@ -474,6 +486,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               } else {
                 setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
               }
+            } else if (currentStep.id === 'swap') {
+              setAcceptBidStep(AcceptBidStep.TokenSwap)
             }
           } else if (
             executableSteps.every(
@@ -484,9 +498,11 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             )
           ) {
             setAcceptBidStep(AcceptBidStep.Complete)
+
             const lastStepItem = currentStep.items
               ? currentStep.items[currentStep.items?.length - 1]
               : undefined
+
             if (lastStepItem) {
               setStepData({
                 totalSteps: stepCount,
@@ -508,6 +524,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         mutateTokens()
       })
   }, [
+    currency,
     config,
     bidsPath,
     bidTokenMap,
@@ -526,6 +543,11 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           map,
           {
             quote,
+            sellOutCurrency,
+            sellOutCurrencyDecimals,
+            sellOutCurrencySymbol,
+            sellOutQuote,
+            sellOutRawQuote,
             currency,
             currencyDecimals,
             currencySymbol,
@@ -534,12 +556,50 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             totalPrice,
           }
         ) => {
-          const netAmount = quote || 0
+          const netAmount = sellOutQuote || quote || 0
           const amount = totalPrice || 0
           let royalty = 0
           let marketplaceFee = 0
 
-          if (currency && currencySymbol) {
+          if (sellOutCurrency && sellOutCurrencySymbol) {
+            const referralFee =
+              feesOnTop?.reduce(
+                (total, fee) => total + (fee?.amount || 0),
+                0
+              ) || 0
+            builtInFees?.forEach((fee) => {
+              switch (fee.kind) {
+                case 'marketplace': {
+                  marketplaceFee = fee.amount || 0
+                  break
+                }
+                case 'royalty': {
+                  royalty = fee.amount || 0
+                  break
+                }
+              }
+            })
+            if (!map[sellOutCurrencySymbol]) {
+              map[sellOutCurrencySymbol] = {
+                netAmount: netAmount - referralFee,
+                amount,
+                currency: {
+                  contract: sellOutCurrency,
+                  symbol: sellOutCurrencySymbol,
+                  decimals: currencyDecimals,
+                },
+                royalty,
+                marketplaceFee,
+                feesOnTop: referralFee,
+              }
+            } else if (map[sellOutCurrencySymbol]) {
+              map[sellOutCurrencySymbol].netAmount += netAmount - referralFee
+              map[sellOutCurrencySymbol].amount += amount
+              map[sellOutCurrencySymbol].royalty += royalty
+              map[sellOutCurrencySymbol].marketplaceFee += marketplaceFee
+              map[sellOutCurrencySymbol].feesOnTop += referralFee
+            }
+          } else if (currency && currencySymbol) {
             const referralFee =
               feesOnTop?.reduce(
                 (total, fee) => total + (fee?.amount || 0),
@@ -584,6 +644,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       )
 
       setPrices(Object.values(prices))
+
       if (acceptBidStep === AcceptBidStep.Unavailable) {
         setAcceptBidStep(AcceptBidStep.Checkout)
       }
@@ -592,6 +653,17 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       setAcceptBidStep(AcceptBidStep.Unavailable)
     }
   }, [client, bidsPath, isFetchingBidPath])
+
+  const swapCurrency = useMemo(() => {
+    const bidPath = bidsPath?.[0]
+    if (bidPath && bidPath.sellOutCurrency) {
+      return {
+        contract: bidPath.sellOutCurrency as string,
+        decimals: bidPath.sellOutCurrencyDecimals as number,
+        symbol: bidPath.sellOutCurrencySymbol as string,
+      }
+    } else return null
+  }, [bidsPath, currency])
 
   const { address } = useAccount()
 
@@ -612,6 +684,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   return (
     <>
       {children({
+        swapCurrency,
         loading: isFetchingBidPath || isFetchingTokenData,
         tokensData: enhancedTokens,
         acceptBidStep,
