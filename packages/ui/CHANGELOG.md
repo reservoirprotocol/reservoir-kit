@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.0.1
+
+### Patch Changes
+
+- c7c3368: Remove onChainRoyalties hook and logic, switch to marketplace configurations api
+
 ## 2.0.0
 
 ### Major Changes
