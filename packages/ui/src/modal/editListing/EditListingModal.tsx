@@ -48,7 +48,6 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   collectionId?: string
   chainId?: number
   normalizeRoyalties?: boolean
-  enableOnChainRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   walletClient?: ReservoirWallet | WalletClient
   onClose?: (data: any, currentStep: EditListingStep) => void
@@ -70,7 +69,6 @@ export function EditListingModal({
   chainId,
   trigger,
   normalizeRoyalties,
-  enableOnChainRoyalties = false,
   copyOverrides,
   walletClient,
   onClose,
@@ -99,7 +97,6 @@ export function EditListingModal({
       collectionId={collectionId}
       open={open}
       normalizeRoyalties={normalizeRoyalties}
-      enableOnChainRoyalties={enableOnChainRoyalties}
       walletClient={walletClient}
     >
       {({
@@ -129,9 +126,7 @@ export function EditListingModal({
         const expires = useTimeSince(listing?.expiration)
 
         const profit =
-          (1 - (collection?.royalties?.bps || 0) * 0.0001) *
-          (price || 0) *
-          quantity
+          (1 - (royaltyBps || 0) * 0.0001) * (price || 0) * quantity
         100
 
         const updatedTotalUsd = profit * usdPrice
