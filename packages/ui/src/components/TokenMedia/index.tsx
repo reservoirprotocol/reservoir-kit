@@ -20,9 +20,10 @@ import { Box, Loader } from '../../primitives'
 import MediaPlayButton from './MediaPlayButton'
 import { useMeasure } from '@react-hookz/web'
 import TokenFallback from './TokenFallback'
-import { Address, erc721ABI, useContractRead } from 'wagmi'
+import { useReadContract } from 'wagmi'
 import { convertTokenUriToImage } from '../../lib/processTokenURI'
 import { erc1155ABI } from '../../constants/abis'
+import { Address, erc721Abi } from 'viem'
 
 type MediaType =
   | 'mp4'
@@ -204,12 +205,12 @@ const TokenMedia: FC<Props> = ({
     data: tokenURI,
     isLoading: isFetchingTokenURI,
     isError: fetchTokenURIError,
-  } = useContractRead(
+  } = useReadContract(
     // @ts-ignore
     !disableOnChainRendering && (error || (!media && !tokenImage))
       ? {
           address: contract,
-          abi: is1155 ? erc1155ABI : erc721ABI,
+          abi: is1155 ? erc1155ABI : erc721Abi,
           functionName: is1155 ? 'uri' : 'tokenURI',
           args: token?.tokenId ? [BigInt(token?.tokenId)] : undefined,
           chainId: chainId,

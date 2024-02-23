@@ -1,7 +1,7 @@
 import FormatCrypto from './FormatCrypto'
 import React, { FC, ComponentProps } from 'react'
 import CryptoCurrencyIcon from './CryptoCurrencyIcon'
-import { useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import Tooltip from './Tooltip'
 import Anchor from './Anchor'
 import { zeroAddress } from 'viem'
@@ -27,7 +27,7 @@ const FormatCryptoCurrency: FC<Props> = ({
   chainId,
   symbol,
 }) => {
-  const { chain: activeChain } = useNetwork()
+  const { chain: activeChain } = useAccount()
   const blockExplorerBaseUrl =
     activeChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 

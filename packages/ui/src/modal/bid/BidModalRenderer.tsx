@@ -15,7 +15,13 @@ import {
   useChainCurrency,
   useMarketplaces,
 } from '../../hooks'
-import { useAccount, useBalance, useWalletClient } from 'wagmi'
+import {
+  useAccount,
+  useBalance,
+  useConfig,
+  useReadContracts,
+  useWalletClient,
+} from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 
 import {
@@ -32,10 +38,8 @@ import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
-import { WalletClient, parseUnits, zeroAddress } from 'viem'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
-import { customChains } from '@reservoir0x/reservoir-sdk'
-import * as allChains from 'viem/chains'
+import { Address, WalletClient, erc20Abi, parseUnits } from 'viem'
+import { getAccount, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
 
 const expirationOptions = [
@@ -97,7 +101,7 @@ type ChildrenProps = {
   amountToWrap: string
   usdPrice: number | null
   balance?: FetchBalanceResult
-  wrappedBalance?: FetchBalanceResult
+  wrappedBalance?: [bigint, number, string]
   wrappedContractName: string
   wrappedContractAddress: string
   canAutomaticallyConvert: boolean
@@ -167,12 +171,8 @@ export const BidModalRenderer: FC<Props> = ({
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
 
-  const wagmiChain: allChains.Chain | undefined = Object.values({
-    ...allChains,
-    ...customChains,
-  }).find(({ id }) => rendererChain?.id === id)
-
   const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id })
+  const config = useConfig()
 
   const wallet = walletClient || wagmiWallet
 
@@ -315,18 +315,38 @@ export const BidModalRenderer: FC<Props> = ({
   const { address } = useAccount()
   const { data: balance } = useBalance({
     address: address,
-    watch: open,
     chainId: rendererChain?.id,
+    query: {
+      enabled: open,
+    },
   })
 
-  const { data: wrappedBalance } = useBalance({
-    token:
-      wrappedContractAddress !== zeroAddress
-        ? (wrappedContractAddress as any)
-        : undefined,
-    address: address,
-    watch: open,
-    chainId: rendererChain?.id,
+  const { data: wrappedBalance } = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      {
+        address: wrappedContractAddress as Address,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        chainId: rendererChain?.id,
+        args: [address as Address],
+      },
+      {
+        address: wrappedContractAddress as Address,
+        abi: erc20Abi,
+        chainId: rendererChain?.id,
+        functionName: 'decimals',
+      },
+      {
+        address: wrappedContractAddress as Address,
+        abi: erc20Abi,
+        chainId: rendererChain?.id,
+        functionName: 'symbol',
+      },
+    ],
+    query: {
+      enabled: Boolean(open && address !== undefined),
+    },
   })
 
   const canAutomaticallyConvert =
@@ -338,9 +358,7 @@ export const BidModalRenderer: FC<Props> = ({
   if (canAutomaticallyConvert) {
     convertLink =
       rendererChain?.id === mainnet.id || rendererChain?.id === goerli.id
-        ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=${
-            wagmiChain?.network || 'mainnet'
-          }&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
+        ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=mainnet&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
   } else {
     convertLink = `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${wrappedContractAddress}`
@@ -359,15 +377,12 @@ export const BidModalRenderer: FC<Props> = ({
 
   useEffect(() => {
     if (totalBidAmount !== 0) {
-      const bid = parseUnits(
-        `${totalBidAmount}`,
-        wrappedBalance?.decimals || 18
-      )
+      const bid = parseUnits(`${totalBidAmount}`, wrappedBalance?.[1] || 18)
 
-      if (!wrappedBalance?.value || wrappedBalance?.value < bid) {
+      if (!wrappedBalance?.[0] || wrappedBalance?.[0] < bid) {
         setHasEnoughWrappedCurrency(false)
-        const wrappedAmount = wrappedBalance?.value
-          ? BigInt(wrappedBalance.value)
+        const wrappedAmount = wrappedBalance?.[0]
+          ? BigInt(wrappedBalance?.[0])
           : BigInt(0)
         const amountToWrap = bid - wrappedAmount
         setAmountToWrap(formatBN(amountToWrap, 5))
@@ -500,9 +515,9 @@ export const BidModalRenderer: FC<Props> = ({
         throw error
       }
 
-      let activeWalletChain = getNetwork().chain
-      if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
-        activeWalletChain = await switchNetwork({
+      let activeWalletChain = getAccount(config).chain
+      if (rendererChain?.id !== activeWalletChain?.id) {
+        activeWalletChain = await switchChain(config, {
           chainId: rendererChain?.id as number,
         })
       }
@@ -657,6 +672,7 @@ export const BidModalRenderer: FC<Props> = ({
         })
     },
     [
+      config,
       tokenId,
       rendererChain,
       collectionId,

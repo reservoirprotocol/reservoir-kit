@@ -1,8 +1,7 @@
 import { useCoinConversion, useCart, useReservoirClient } from '../../hooks'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
-import { useAccount, useBalance, useNetwork } from 'wagmi'
-import { zeroAddress, parseUnits } from 'viem'
-import { UseBalanceToken } from '../../types/wagmi'
+import { useAccount, useBalance, useChains, useReadContracts } from 'wagmi'
+import { zeroAddress, parseUnits, erc20Abi, Address } from 'viem'
 import { toFixed } from '../../lib/numbers'
 import {
   Cart,
@@ -57,7 +56,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
   )
   const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
 
-  const { chains } = useNetwork()
+  const chains = useChains()
   const chain = chains.find((chain) => chain.id === transaction?.chain.id)
   const blockExplorerBaseUrl =
     chain?.blockExplorers?.default?.url || 'https://etherscan.io'
@@ -92,15 +91,29 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     [items]
   )
   const { address } = useAccount()
+
   const { data: balance } = useBalance({
     chainId: cartChain?.id || client?.currentChain()?.id,
     address: address,
-    token:
-      currency?.contract !== zeroAddress
-        ? (currency?.contract as UseBalanceToken)
-        : undefined,
-    watch: open,
-    formatUnits: currency?.decimals,
+    query: {
+      enabled: currency?.contract === zeroAddress,
+    },
+  })
+
+  const { data: tokenBalance } = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      {
+        address: currency?.contract as Address,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        chainId: cartChain?.id || client?.currentChain()?.id,
+        args: [address as Address],
+      },
+    ],
+    query: {
+      enabled: address && currency?.contract !== zeroAddress,
+    },
   })
 
   useEffect(() => {
@@ -141,7 +154,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         feeOnTop,
         usdPrice,
         hasEnoughCurrency,
-        balance: balance?.value,
+        balance: balance?.value ?? tokenBalance?.[0],
         transaction,
         blockExplorerBaseUrl,
         cartChain,

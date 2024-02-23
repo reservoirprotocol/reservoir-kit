@@ -49,7 +49,7 @@ import { CollectionInfo } from '../CollectionInfo'
 import { PurchaseCheckout } from '../PurchaseCheckout'
 import { PaymentDetails } from '../../common/PaymentDetails'
 import { Dialog } from '../../primitives/Dialog'
-import { SelectPaymentTokenv2 } from '../SelectPaymentTokenv2'
+import { SelectPaymentToken } from '../SelectPaymentToken'
 
 export type SweepCallbackData = {
   collectionId?: string
@@ -494,7 +494,7 @@ export function SweepModal({
                   </Button>
                   <Text style="subtitle2">Select Payment Method</Text>
                 </Flex>
-                <SelectPaymentTokenv2
+                <SelectPaymentToken
                   paymentTokens={paymentTokens}
                   currency={paymentCurrency}
                   setCurrency={setPaymentCurrency}

@@ -15,14 +15,14 @@ import {
   useCollections,
   useMarketplaces,
 } from '../../hooks'
-import { useWalletClient, useAccount } from 'wagmi'
+import { useWalletClient, useAccount, useConfig } from 'wagmi'
 import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import { Listing } from '../list/ListModalRenderer'
 import { WalletClient, parseUnits, zeroAddress } from 'viem'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { getAccount, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
 
 type Exchange = NonNullable<Marketplace['exchanges']>['string']
@@ -94,6 +94,7 @@ export const EditListingModalRenderer: FC<Props> = ({
 }) => {
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
+  const config = useConfig()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -240,9 +241,9 @@ export const EditListingModalRenderer: FC<Props> = ({
       throw error
     }
 
-    let activeWalletChain = getNetwork().chain
-    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
-      activeWalletChain = await switchNetwork({
+    let activeWalletChain = getAccount(config).chain
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchChain(config, {
         chainId: rendererChain?.id as number,
       })
     }
@@ -378,6 +379,7 @@ export const EditListingModalRenderer: FC<Props> = ({
         setSteps(null)
       })
   }, [
+    config,
     client,
     wallet,
     rendererChain,
