@@ -4,7 +4,7 @@ import { CoinGecko, ProviderOptionsContext } from '../ReservoirKitProvider'
 import useCoinIds from './useCoinIds'
 
 const createBaseUrl = (config: CoinGecko | undefined) => {
-  if (config?.proxy) return `${config.proxy}?`
+  if (config?.proxy) return `${config.proxy}/api/v3/coins/markets?`
 
   if (config?.apiKey)
     return `https://pro-api.coingecko.com/api/v3/coins/markets?x_cg_pro_api_key={${config.apiKey}}&`
