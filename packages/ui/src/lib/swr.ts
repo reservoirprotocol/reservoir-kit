@@ -91,7 +91,7 @@ export const localStorageProvider = (): Cache<any> => {
   const mapSet = map.set.bind(map)
   map.set = (key: unknown, value: unknown) => {
     const url = key as string
-    const coingeckoCoinsApi = 'api.coingecko.com/api/v3/coins/list'
+    const coingeckoCoinsApi = '/api/v3/coins/list'
     if (url.includes(coingeckoCoinsApi)) {
       cacheTTL[url] = Date.now() + 7200000 //2hr
     } else {
@@ -104,7 +104,12 @@ export const localStorageProvider = (): Cache<any> => {
   if (typeof window !== 'undefined') {
     //Allowlist of all domains or urls we want to cache locally
     window.addEventListener('beforeunload', () => {
-      const cachedApis = ['api.coingecko.com', '/currencies/conversion/v']
+      const cachedApis = [
+        'api.coingecko.com',
+        '/api/v3/coins/list',
+        '/api/v3/coins/markets',
+        '/currencies/conversion/v',
+      ]
       for (let url of map.keys()) {
         if (
           !cachedApis.some((cachedApi) => (url as string).includes(cachedApi))
