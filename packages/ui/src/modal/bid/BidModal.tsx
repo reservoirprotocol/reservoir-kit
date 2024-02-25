@@ -30,6 +30,7 @@ import {
   BidData,
   Trait,
   BidModalStepData,
+  BID_AMOUNT_MINIMUM,
 } from './BidModalRenderer'
 import TokenInfo from './TokenInfo'
 import dayjs from 'dayjs'
@@ -52,7 +53,7 @@ import { CurrencySelector } from '../CurrencySelector'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import QuantitySelector from '../QuantitySelector'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
-import { WalletClient, formatUnits, zeroAddress } from 'viem'
+import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { formatNumber } from '../../lib/numbers'
 import { Dialog } from '../../primitives/Dialog'
 
@@ -117,7 +118,6 @@ function titleForStep(step: BidStep, copy: typeof ModalCopy) {
 }
 
 const MINIMUM_DATE = dayjs().add(1, 'h').format('MM/DD/YYYY h:mm A')
-const MINIMUM_AMOUNT = 0.000001
 const MAXIMUM_AMOUNT = Infinity
 
 export function BidModal({
@@ -332,7 +332,11 @@ export function BidModal({
                 currency?.decimals || 18
               )
             )
-          : MINIMUM_AMOUNT
+          : BID_AMOUNT_MINIMUM
+        const minimumAmountRaw = parseUnits(
+          `${minimumAmount}`,
+          currency?.decimals ?? 18
+        )
         const maximumAmount = exchange?.maxPriceRaw
           ? Number(
               formatUnits(
@@ -341,10 +345,14 @@ export function BidModal({
               )
             )
           : MAXIMUM_AMOUNT
+        const maximumAmountRaw =
+          maximumAmount !== Infinity
+            ? parseUnits(`${maximumAmount}`, currency?.decimals ?? 18)
+            : null
         const withinPricingBounds =
-          totalBidAmount !== 0 &&
-          totalBidAmount <= maximumAmount &&
-          totalBidAmount >= minimumAmount
+          totalBidAmount !== 0n &&
+          (maximumAmountRaw ? totalBidAmount <= maximumAmountRaw : true) &&
+          totalBidAmount >= minimumAmountRaw
 
         const canPurchase = bidAmountPerUnit !== '' && withinPricingBounds
 
@@ -538,15 +546,17 @@ export function BidModal({
                       ) : null}
                     </Flex>
 
-                    {totalBidAmount !== 0 && !withinPricingBounds && (
+                    {totalBidAmount !== 0n && !withinPricingBounds && (
                       <Box>
                         <Text style="body2" color="error">
                           {maximumAmount !== Infinity
                             ? `Amount must be between ${formatNumber(
-                                minimumAmount
+                                minimumAmount,
+                                6
                               )} - ${formatNumber(maximumAmount)}`
                             : `Amount must be higher than ${formatNumber(
-                                minimumAmount
+                                minimumAmount,
+                                6
                               )}`}
                         </Text>
                       </Box>
