@@ -32,7 +32,7 @@ import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
-import { WalletClient, parseUnits, zeroAddress } from 'viem'
+import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { getNetwork, switchNetwork } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
@@ -81,7 +81,7 @@ type ChildrenProps = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   attributes?: Traits
   bidAmountPerUnit: string
-  totalBidAmount: number
+  totalBidAmount: bigint
   totalBidAmountUsd: number
   quantity: number
   setQuantity: React.Dispatch<React.SetStateAction<number>>
@@ -133,6 +133,8 @@ type Props = {
   walletClient?: ReservoirWallet | WalletClient
   usePermit?: boolean
 }
+
+export const BID_AMOUNT_MINIMUM = 0.000001
 
 export type BidData = Parameters<
   ReservoirClientActions['placeBid']
@@ -256,8 +258,12 @@ export const BidModalRenderer: FC<Props> = ({
     wrappedContractName
   )
   const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
-  const totalBidAmount = Number(bidAmountPerUnit) * Math.max(1, quantity)
-  const totalBidAmountUsd = totalBidAmount * (usdPrice || 0)
+  const totalBidAmount =
+    parseUnits(bidAmountPerUnit, currency?.decimals ?? 18) *
+    BigInt(quantity ?? 1)
+  const totalBidAmountUsd =
+    Number(formatUnits(totalBidAmount, currency?.decimals ?? 18)) *
+    (usdPrice || 0)
 
   const [allMarketplaces] = useMarketplaces(
     collectionId,
@@ -343,11 +349,8 @@ export const BidModalRenderer: FC<Props> = ({
   }, [feesBps, client?.marketplaceFees, currency])
 
   useEffect(() => {
-    if (totalBidAmount !== 0) {
-      const bid = parseUnits(
-        `${totalBidAmount}`,
-        wrappedBalance?.decimals || 18
-      )
+    if (totalBidAmount !== 0n) {
+      const bid = totalBidAmount
 
       if (!wrappedBalance?.value || wrappedBalance?.value < bid) {
         setHasEnoughWrappedCurrency(false)
@@ -511,13 +514,8 @@ export const BidModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setBidData(null)
 
-      const atomicBidAmount = parseUnits(
-        `${totalBidAmount}`,
-        currency?.decimals || 18
-      ).toString()
-
       const bid: BidData = {
-        weiPrice: atomicBidAmount,
+        weiPrice: totalBidAmount.toString(),
         orderbook: 'reservoir',
         orderKind:
           orderKind ||
