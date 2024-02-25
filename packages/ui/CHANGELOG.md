@@ -1,5 +1,12 @@
 ## 1.25.10
 
+## 2.1.0
+
+### Minor Changes
+
+- 8dddcfe: Fix coingecko proxy config to use proxy as base url instead of path url
+- 89d2618: BidModal: Switch totalBidAmount to a bigint to avoid conversion errors when amount is tiny
+
 ## 2.0.1
 
 ### Patch Changes
