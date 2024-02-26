@@ -18,6 +18,7 @@ import {
   ErrorWell,
   ChainIcon,
   Divider,
+  CryptoCurrencyIcon,
 } from '../../primitives'
 
 import { Modal } from '../Modal'
@@ -67,6 +68,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   openState?: [boolean, Dispatch<SetStateAction<boolean>>]
   tokens: AcceptBidTokenData[]
   chainId?: number
+  currency?: string
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   walletClient?: ReservoirWallet | WalletClient
@@ -100,6 +102,7 @@ export function AcceptBidModal({
   onBidAcceptError,
   onCurrentStepUpdate,
   onPointerDownOutside,
+  currency,
 }: Props): ReactElement {
   const [open, setOpen] = useFallbackState(
     openState ? openState[0] : false,
@@ -119,6 +122,7 @@ export function AcceptBidModal({
 
   return (
     <AcceptBidModalRenderer
+      currency={currency}
       open={open}
       chainId={modalChain?.id}
       tokens={tokens}
@@ -135,6 +139,7 @@ export function AcceptBidModal({
         usdPrices,
         prices,
         tokensData,
+        swapCurrency,
         address,
         stepData,
         acceptBid,
@@ -177,8 +182,11 @@ export function AcceptBidModal({
           [tokensData]
         )
 
+        const saleStep = stepData?.steps.find((step) => step.id === 'sale')
+        const swapStep = stepData?.steps.find((step) => step.id === 'swap')
+
         const transfersTxHashes =
-          stepData?.currentStep?.items?.reduce((txHashes, item) => {
+          saleStep?.items?.reduce((txHashes, item) => {
             item.transfersData?.forEach((transferData) => {
               if (transferData.txHash) {
                 txHashes.add(transferData.txHash)
@@ -187,8 +195,8 @@ export function AcceptBidModal({
             return txHashes
           }, new Set<string>()) || []
         const totalSales = Array.from(transfersTxHashes).length
-        const failedSales =
-          totalSales - (stepData?.currentStep?.items?.length || 0)
+        const failedSales = totalSales - (saleStep?.items?.length || 0)
+
         const successfulSales = totalSales - failedSales
 
         return (
@@ -299,8 +307,10 @@ export function AcceptBidModal({
                         netAmount={bidPath.quote}
                         price={bidPath.totalPrice}
                         fees={bidPath.builtInFees}
-                        currency={bidPath.currency}
-                        decimals={bidPath.currencyDecimals}
+                        currency={swapCurrency?.contract || bidPath.currency}
+                        decimals={
+                          swapCurrency?.decimals || bidPath.currencyDecimals
+                        }
                         sourceImg={
                           bidPath.source
                             ? `${baseApiUrl}/redirect/sources/${bidPath.source}/logo/v2`
@@ -500,6 +510,73 @@ export function AcceptBidModal({
               </Flex>
             )}
 
+            {acceptBidStep === AcceptBidStep.TokenSwap && !loading && (
+              <Flex direction="column">
+                <Flex
+                  justify="between"
+                  direction="column"
+                  align="center"
+                  css={{ width: '100%', p: '$4', gap: 24 }}
+                >
+                  {transactionError && (
+                    <ErrorWell
+                      error={transactionError}
+                      css={{ width: '100%' }}
+                    />
+                  )}
+                  {stepData && (
+                    <>
+                      <Text style="h6" css={{ textAlign: 'center' }}>
+                        {stepData.currentStep.action}
+                      </Text>
+                      <Flex align="center" justify="center">
+                        <Flex
+                          css={{
+                            background: '$neutralLine',
+                            borderRadius: 8,
+                          }}
+                        >
+                          <CryptoCurrencyIcon
+                            chainId={modalChain?.id}
+                            css={{ height: 56, width: 56 }}
+                            address={swapCurrency?.contract as string}
+                          />
+                        </Flex>
+                      </Flex>
+                      <Text
+                        css={{
+                          textAlign: 'center',
+                          mt: 24,
+                          maxWidth: 395,
+                          mx: 'auto',
+                          mb: '$4',
+                        }}
+                        style="body2"
+                        color="subtle"
+                      >
+                        {stepData?.currentStep.description}
+                      </Text>
+                    </>
+                  )}
+                  {!stepData && (
+                    <Flex
+                      css={{ height: '100%', py: '$5' }}
+                      justify="center"
+                      align="center"
+                    >
+                      <Loader />
+                    </Flex>
+                  )}
+                  {!transactionError && (
+                    <Button css={{ width: '100%', mt: 'auto' }} disabled={true}>
+                      <Loader />
+                      {copy.ctaAwaitingApproval}
+                    </Button>
+                  )}
+                </Flex>
+              </Flex>
+            )}
+
             {acceptBidStep === AcceptBidStep.Finalizing && !loading && (
               <Flex
                 direction="column"
@@ -531,33 +608,35 @@ export function AcceptBidModal({
                   align="center"
                   css={{ gap: '$2', mb: '$3', width: '100%' }}
                 >
-                  {stepData?.currentStep?.items?.map((item, itemIndex) => {
-                    if (
-                      Array.isArray(item?.txHashes) &&
-                      item?.txHashes.length > 0
-                    ) {
-                      return item.txHashes.map((hash, txHashIndex) => {
-                        const truncatedTxHash = truncateAddress(hash.txHash)
-                        const blockExplorerBaseUrl = getChainBlockExplorerUrl(
-                          hash.chainId
-                        )
-                        return (
-                          <Anchor
-                            key={`${itemIndex}-${txHashIndex}`}
-                            href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
-                            color="primary"
-                            weight="medium"
-                            target="_blank"
-                            css={{ fontSize: 12 }}
-                          >
-                            View transaction: {truncatedTxHash}
-                          </Anchor>
-                        )
-                      })
-                    } else {
-                      return null
+                  {[...(swapStep?.items ?? []), ...(saleStep?.items ?? [])].map(
+                    (item, itemIndex) => {
+                      if (
+                        Array.isArray(item?.txHashes) &&
+                        item?.txHashes.length > 0
+                      ) {
+                        return item.txHashes.map((hash, txHashIndex) => {
+                          const truncatedTxHash = truncateAddress(hash.txHash)
+                          const blockExplorerBaseUrl = getChainBlockExplorerUrl(
+                            hash.chainId
+                          )
+                          return (
+                            <Anchor
+                              key={`${itemIndex}-${txHashIndex}`}
+                              href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
+                              color="primary"
+                              weight="medium"
+                              target="_blank"
+                              css={{ fontSize: 12 }}
+                            >
+                              View transaction: {truncatedTxHash}
+                            </Anchor>
+                          )
+                        })
+                      } else {
+                        return null
+                      }
                     }
-                  })}
+                  )}
                 </Flex>
                 <Box
                   css={{
@@ -606,7 +685,10 @@ export function AcceptBidModal({
                       : `${totalSales > 1 ? 'Offers' : 'Offer'} accepted!`}
                   </Text>
                   <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
-                    {stepData?.currentStep?.items?.map((item, itemIndex) => {
+                    {[
+                      ...(swapStep?.items ?? []),
+                      ...(saleStep?.items ?? []),
+                    ]?.map((item, itemIndex) => {
                       if (
                         Array.isArray(item?.txHashes) &&
                         item?.txHashes.length > 0
