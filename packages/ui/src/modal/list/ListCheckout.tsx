@@ -49,9 +49,9 @@ const ListCheckout: FC<ListCheckoutProps> = ({
         />
         <Flex direction="column" css={{ gap: '$1', overflow: 'hidden' }}>
           <Text style="h6" ellipsify>
-            {token?.token?.tokenId
-              ? `#${token?.token?.tokenId}`
-              : token?.token?.name}
+            {token?.token?.name
+              ? token?.token?.name
+              : `#${token?.token?.tokenId}`}
           </Text>
           <Flex align="center" css={{ gap: '$1' }}>
             <Text style="subtitle2" color="subtle" ellipsify>

@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useBids } from '../../hooks'
-import { useWalletClient } from 'wagmi'
+import { useConfig, useWalletClient } from 'wagmi'
 import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { getAccount, switchChain } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { WalletClient } from 'viem'
@@ -60,6 +60,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
 
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
+  const config = useConfig()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -111,9 +112,9 @@ export const CancelBidModalRenderer: FC<Props> = ({
       throw error
     }
 
-    let activeWalletChain = getNetwork().chain
-    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
-      activeWalletChain = await switchNetwork({
+    let activeWalletChain = getAccount(config).chain
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchChain(config, {
         chainId: rendererChain?.id as number,
       })
     }
@@ -196,7 +197,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
         setStepData(null)
         setSteps(null)
       })
-  }, [bidId, client, rendererChain, wallet])
+  }, [bidId, client, rendererChain, wallet, config])
 
   useEffect(() => {
     if (!open) {
@@ -207,9 +208,10 @@ export const CancelBidModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'cancelBidModalRenderer'
-    : ''
+  open
+    ? (axios.defaults.headers.common['x-rkui-context'] =
+        'cancelBidModalRenderer')
+    : delete axios.defaults.headers.common?.['x-rkui-context']
 
   let tokenId
 

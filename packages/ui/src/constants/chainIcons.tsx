@@ -93,6 +93,11 @@ const chainIcons = {
     dark: <BscIconLight />,
     color: <BscIconColor />,
   },
+  [reservoirChains.opBnb.id]: {
+    light: <BscIconDark />,
+    dark: <BscIconLight />,
+    color: <BscIconColor />,
+  },
   [reservoirChains.goerli.id]: {
     light: <GoerliIconDark />,
     dark: <GoerliIconLight />,

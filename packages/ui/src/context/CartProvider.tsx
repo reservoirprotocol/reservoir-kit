@@ -24,10 +24,10 @@ import React, {
   FC,
   useState,
 } from 'react'
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useChains, useConfig, useSwitchChain } from 'wagmi'
 import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { version } from '../../package.json'
-import { getNetwork, getWalletClient } from 'wagmi/actions'
+import { getAccount, getWalletClient } from 'wagmi/actions'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
@@ -120,8 +120,9 @@ function cartStore({
   walletClient,
 }: CartStoreProps) {
   const { address } = useAccount()
-  const { chains } = useNetwork()
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const chains = useChains()
+  const config = useConfig()
+  const { switchChainAsync } = useSwitchChain()
   const [cartCurrency, setCartCurrency] = useState<Cart['currency']>()
   const [cartChain, setCartChain] = useState<Cart['chain']>()
   const cartData = useRef<Cart>({
@@ -967,19 +968,22 @@ function cartStore({
         throw 'Reservoir SDK not initialized'
       }
 
-      const { chain: activeChain } = await getNetwork()
+      const { chain: activeChain } = await getAccount(config)
 
       if (
         cartData.current.chain &&
         cartData.current.chain?.id !== activeChain?.id
       ) {
-        const chain = await switchNetworkAsync?.(cartData.current.chain.id)
+        const chain = await switchChainAsync?.({
+          ...config,
+          chainId: cartData.current.chain.id,
+        })
         if (chain?.id !== cartData.current.chain.id) {
           throw 'Active chain does not match cart chain'
         }
       }
 
-      const wagmiWalletClient = await getWalletClient({
+      const wagmiWalletClient = await getWalletClient(config, {
         chainId: cartData.current.chain?.id,
       })
 
@@ -1248,7 +1252,7 @@ function cartStore({
           }
         })
     },
-    [client, switchNetworkAsync, usdPrice, walletClient]
+    [client, switchChainAsync, usdPrice, walletClient, config]
   )
 
   return {

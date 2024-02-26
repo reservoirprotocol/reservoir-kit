@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/reservoir-sdk",
-    "version": "1.12.12",
+    "version": "2.0.0",
     "description": "An SDK that can be used in any javascript/typescript context to easily interact with Reservoir liquidity APIs",
     "author": "Reservoir Protocol",
     "license": "MIT",
@@ -21,11 +21,7 @@
     "scripts": {
         "clean": "rm -rf dist",
         "test": "jest",
-        "version": "yarn version",
-        "version:package": "sh ../../scripts/package-version.sh",
-        "version:update": "yarn version ${0}; PACKAGE_VERSION=$(yarn version:package); git add -A; git commit -m \"🎉 Release client package v$PACKAGE_VERSION\"; git tag v${PACKAGE_VERSION}-SDK; git push --tags;",
-        "syncApi": "node ./sync-api.mjs",
-        "changelog": "node ../../scripts/generate-changelog.js package=sdk"
+        "syncApi": "node ./sync-api.mjs"
     },
     "repository": {
         "type": "git",
@@ -41,7 +37,7 @@
         "sdk"
     ],
     "dependencies": {
-        "axios": "^0.27.2"
+        "axios": "^1.6.7"
     },
     "publishConfig": {
         "access": "public"
@@ -53,6 +49,6 @@
         "ts-jest": "^29.1.0"
     },
     "peerDependencies": {
-        "viem": "~1.19.15"
+        "viem": "~2.7.8"
     }
 }

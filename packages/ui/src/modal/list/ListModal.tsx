@@ -68,7 +68,6 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   orderKind?: ListingData['listing']['orderKind']
   currencies?: Currency[]
   normalizeRoyalties?: boolean
-  enableOnChainRoyalties?: boolean
   oracleEnabled?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   feesBps?: string[]
@@ -100,7 +99,6 @@ export function ListModal({
   orderKind,
   currencies,
   normalizeRoyalties,
-  enableOnChainRoyalties = false,
   oracleEnabled = false,
   copyOverrides,
   feesBps,
@@ -136,7 +134,6 @@ export function ListModal({
       collectionId={collectionId}
       currencies={currencies}
       normalizeRoyalties={normalizeRoyalties}
-      enableOnChainRoyalties={enableOnChainRoyalties}
       oracleEnabled={oracleEnabled}
       feesBps={feesBps}
       walletClient={walletClient}
@@ -152,7 +149,7 @@ export function ListModal({
         exchange,
         expirationOption,
         expirationOptions,
-        isFetchingOnChainRoyalties,
+        royaltyBps,
         listingData,
         transactionError,
         stepData,
@@ -566,14 +563,14 @@ export function ListModal({
                     usdPrice={usdPrice}
                     currency={currency}
                     quantity={quantity}
-                    collection={collection}
+                    royaltyBps={royaltyBps}
                     marketplace={marketplace}
                   />
                 </Flex>
                 <Box css={{ p: '$4', width: '100%' }}>
                   <Button
                     disabled={canPurchase ? false : true}
-                    onClick={listToken}
+                    onClick={() => listToken()}
                     css={{ width: '100%' }}
                   >
                     {copy.ctaList}

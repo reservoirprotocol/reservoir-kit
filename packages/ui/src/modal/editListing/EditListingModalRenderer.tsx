@@ -13,18 +13,16 @@ import {
   useTokens,
   useUserTokens,
   useCollections,
-  useOnChainRoyalties,
-  useChainCurrency,
   useMarketplaces,
 } from '../../hooks'
-import { useWalletClient, useAccount } from 'wagmi'
+import { useWalletClient, useAccount, useConfig } from 'wagmi'
 import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
 import { Listing } from '../list/ListModalRenderer'
-import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { WalletClient, parseUnits, zeroAddress } from 'viem'
+import { getAccount, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
 
 type Exchange = NonNullable<Marketplace['exchanges']>['string']
@@ -80,7 +78,6 @@ type Props = {
   collectionId?: string
   chainId?: number
   normalizeRoyalties?: boolean
-  enableOnChainRoyalties: boolean
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
 }
@@ -92,12 +89,12 @@ export const EditListingModalRenderer: FC<Props> = ({
   collectionId,
   chainId,
   normalizeRoyalties,
-  enableOnChainRoyalties = false,
   children,
   walletClient,
 }) => {
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
+  const config = useConfig()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -132,11 +129,13 @@ export const EditListingModalRenderer: FC<Props> = ({
   )
 
   const listing = listings && listings[0] ? listings[0] : undefined
-  const contract = listing?.tokenSetId?.split(':')[1]
+  const contract =
+    listing?.tokenSetId?.split(':')[1] || collectionId?.split(':')[0]
   const currency = listing?.price?.currency
 
   const [allMarketplaces] = useMarketplaces(
     collectionId,
+    tokenId,
     undefined,
     undefined,
     rendererChain?.id,
@@ -188,7 +187,11 @@ export const EditListingModalRenderer: FC<Props> = ({
     rendererChain?.id
   )
   const collection = collections && collections[0] ? collections[0] : undefined
-  let royaltyBps = collection?.royalties?.bps
+  const royaltyBps = collection?.royalties?.bps
+    ? collection?.royalties?.bps
+    : reservoirMarketplace?.royalties?.maxBps
+    ? reservoirMarketplace?.royalties?.maxBps
+    : 0
 
   useEffect(() => {
     if (!open) {
@@ -231,30 +234,6 @@ export const EditListingModalRenderer: FC<Props> = ({
       ? Number(userTokens[0].ownership?.tokenCount || 1)
       : 1
 
-  const chainCurrency = useChainCurrency(rendererChain?.id)
-
-  const { data: onChainRoyalties } = useOnChainRoyalties({
-    contract,
-    tokenId,
-    chainId: chainCurrency.chainId,
-    enabled: enableOnChainRoyalties && open,
-  })
-
-  const onChainRoyaltyBps = useMemo(() => {
-    const totalRoyalty = onChainRoyalties?.[1].reduce((total, royalty) => {
-      total += parseFloat(formatUnits(royalty, currency?.decimals || 18))
-      return total
-    }, 0)
-    if (totalRoyalty) {
-      return (totalRoyalty / 1) * 10000
-    }
-    return 0
-  }, [onChainRoyalties, chainCurrency])
-
-  if (enableOnChainRoyalties && onChainRoyaltyBps) {
-    royaltyBps = onChainRoyaltyBps
-  }
-
   const editListing = useCallback(async () => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
@@ -262,9 +241,9 @@ export const EditListingModalRenderer: FC<Props> = ({
       throw error
     }
 
-    let activeWalletChain = getNetwork().chain
-    if (activeWalletChain && rendererChain?.id !== activeWalletChain?.id) {
-      activeWalletChain = await switchNetwork({
+    let activeWalletChain = getAccount(config).chain
+    if (rendererChain?.id !== activeWalletChain?.id) {
+      activeWalletChain = await switchChain(config, {
         chainId: rendererChain?.id as number,
       })
     }
@@ -400,6 +379,7 @@ export const EditListingModalRenderer: FC<Props> = ({
         setSteps(null)
       })
   }, [
+    config,
     client,
     wallet,
     rendererChain,
@@ -422,9 +402,10 @@ export const EditListingModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'cancelListingModalRenderer'
-    : ''
+  open
+    ? (axios.defaults.headers.common['x-rkui-context'] =
+        'editListingModalRenderer')
+    : delete axios.defaults.headers.common?.['x-rkui-context']
 
   return (
     <>

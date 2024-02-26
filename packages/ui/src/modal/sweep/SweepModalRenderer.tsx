@@ -13,8 +13,8 @@ import {
   useReservoirClient,
   useTokens,
 } from '../../hooks'
-import usePaymentTokensv2 from '../../hooks/usePaymentTokensv2'
-import { useAccount, useWalletClient } from 'wagmi'
+import usePaymentTokens from '../../hooks/usePaymentTokens'
+import { useAccount, useConfig, useWalletClient } from 'wagmi'
 import {
   BuyPath,
   Execute,
@@ -24,8 +24,8 @@ import {
   axios,
 } from '@reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
-import { EnhancedCurrency } from '../../hooks/usePaymentTokensv2'
-import { getNetwork, switchNetwork } from 'wagmi/actions'
+import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
+import { getAccount, switchChain } from 'wagmi/actions'
 import * as allChains from 'viem/chains'
 import {
   customChains,
@@ -127,6 +127,7 @@ export const SweepModalRenderer: FC<Props> = ({
   usePermit,
 }) => {
   const client = useReservoirClient()
+  const config = useConfig()
   const { address } = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
   const [isFetchingPath, setIsFetchingPath] = useState(false)
@@ -223,7 +224,7 @@ export const SweepModalRenderer: FC<Props> = ({
     } else return collectionContract
   }, [token, collectionId, , collectionContract, tokenData?.token?.tokenId])
 
-  const paymentTokens = usePaymentTokensv2({
+  const paymentTokens = usePaymentTokens({
     open,
     address: address as Address,
     quantityToken: {
@@ -586,9 +587,9 @@ export const SweepModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  axios.defaults.headers.common['x-rkui-context'] = open
-    ? 'sweepModalRenderer'
-    : ''
+  open
+    ? (axios.defaults.headers.common['x-rkui-context'] = 'sweepModalRenderer')
+    : delete axios.defaults.headers.common?.['x-rkui-context']
 
   useEffect(() => {
     if (maxItemAmount > 0 && itemAmount > maxItemAmount) {
@@ -606,12 +607,9 @@ export const SweepModalRenderer: FC<Props> = ({
       return
     }
 
-    let activeWalletChain = getNetwork().chain
-    if (
-      activeWalletChain &&
-      paymentCurrency?.chainId !== activeWalletChain?.id
-    ) {
-      activeWalletChain = await switchNetwork({
+    let activeWalletChain = getAccount(config).chain
+    if (paymentCurrency?.chainId !== activeWalletChain?.id) {
+      activeWalletChain = await switchChain(config, {
         chainId: paymentCurrency?.chainId as number,
       })
     }
@@ -766,6 +764,7 @@ export const SweepModalRenderer: FC<Props> = ({
     selectedTokens,
     client,
     wallet,
+    config,
     address,
     totalIncludingFees,
     normalizeRoyalties,

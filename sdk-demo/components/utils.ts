@@ -1,8 +1,8 @@
 import {
   createClient,
   getClient as getReservoirClient,
+  reservoirChains
 } from '@reservoir0x/reservoir-sdk'
-import * as allChains from 'wagmi/chains'
 
 export const getClient = () => {
   let client = getReservoirClient()
@@ -11,13 +11,12 @@ export const getClient = () => {
     return createClient({
       chains: [
         {
-          baseApiUrl: 'https://api-goerli.reservoir.tools',
-          id: allChains.goerli.id,
-          active: true,
-          name: 'Goerli'
+          ...reservoirChains.polygon,
+          active: true
         },
       ],
       source: 'reservoirkit.demo',
+      synchronousStepItemExecution: true
     })
   }
 

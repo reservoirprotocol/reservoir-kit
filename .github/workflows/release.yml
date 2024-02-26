@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Setup yarn
+        run: sudo npm i -g yarn
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Creating .npmrc
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > "$HOME/.npmrc"
+
+      - name: Get Open PRs Created by Bots
+        id: get_bot_prs
+        run: |
+          prs=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
+          -H "Accept: application/vnd.github+json" \
+          "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls?state=open&per_page=100" | \
+           jq -r '[.[] | select(.user.type == "Bot")][0] | {url: .html_url, title: .title} | @json')
+          echo "Found PRs: $prs"
+          if [[ $prs == "null" || $prs == "{}" ]]; then
+          echo "BOT_PR_TITLE=NULL" >> $GITHUB_ENV
+          else
+          bot_pr_title=$(echo $prs | jq -r .title)
+          echo "BOT_PR_TITLE=$bot_pr_title" >> $GITHUB_ENV
+          fi
+
+      - name: Generate Animal Title
+        run: |
+          title_case() {
+            echo "$1" | awk '{
+              for(i=1;i<=NF;i++){
+                $i=toupper(substr($i,1,1)) tolower(substr($i,2))
+              }
+            }1'
+          }
+
+          responseAdj=$(curl -s "https://api.datamuse.com/words?rel_jjb=animal&max=1000")
+          responseAnimal=$(curl -s "https://gist.githubusercontent.com/pedromcunha/d2b7f7b7e295cbafdd03af73bcd168ba/raw/c1d4b618da5051519c5d8ffce73d0ec6b018f356/animals.json")
+          lengthAdj=$(echo $responseAdj | jq length)
+          lengthAnimal=$(echo $responseAnimal | jq length)
+          random_index1=$(($RANDOM % lengthAdj))
+          random_index2=$(($RANDOM % lengthAnimal))
+          while [ $random_index1 -eq $random_index2 ]; do
+            random_index2=$(($RANDOM % length))
+          done
+          word1=$(echo $responseAdj | jq -r ".[$random_index1].word")
+          word2=$(echo $responseAnimal | jq -r ".[$random_index2].name")
+          title="$word1 $word2"
+          title="Release the: $(title_case "$title")!"
+          echo "Title is $title"
+          echo "RELEASE_TITLE=$title" >> $GITHUB_ENV
+
+      - name: Determine Release Title
+        run: |
+            if [[ "${{ env.BOT_PR_TITLE }}" == "null" ]]; then
+            echo "FINAL_RELEASE_TITLE=${{ env.RELEASE_TITLE }}" >> $GITHUB_ENV
+            else
+            echo "FINAL_RELEASE_TITLE=${{ env.BOT_PR_TITLE }}" >> $GITHUB_ENV
+            fi
+
+      - name: Create Release Pull Request or Publish to npm
+        uses: changesets/action@v1
+        with:
+          title: ${{ env.FINAL_RELEASE_TITLE }}
+          publish: yarn package:release

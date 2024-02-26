@@ -25,9 +25,9 @@ export function executeResults(data: ResultData) {
     return null
   }
 
-  const headers: AxiosRequestHeaders = {
+  const headers = {
     'x-rkc-version': version,
-  }
+  } as any as AxiosRequestHeaders
 
   if (request.headers && request.headers['x-api-key']) {
     headers['x-api-key'] = request.headers['x-api-key']

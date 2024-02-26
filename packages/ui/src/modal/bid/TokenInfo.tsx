@@ -18,7 +18,7 @@ type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   chain?: ReservoirChain | null
-  price?: number
+  price?: number | bigint
   currency?: Currency
   quantity?: number
   trait?: Trait
@@ -45,9 +45,9 @@ const TokenInfo: FC<Props> = ({
   const floorAsk = token?.market?.floorAsk ?? collection?.floorAsk
   const topBid = token?.market?.topBid ?? collection?.topBid
 
-  const tokenName = token?.token?.tokenId
-    ? `#${token?.token?.tokenId}`
-    : token?.token?.name
+  const tokenName = token?.token?.name
+    ? token?.token?.name
+    : `#${token?.token?.tokenId}`
 
   return (
     <Flex
@@ -163,7 +163,7 @@ const TokenInfo: FC<Props> = ({
         <Flex direction="column" align="end" css={{ gap: '$1', flexShrink: 0 }}>
           {price && currency ? (
             <FormatCryptoCurrency
-              amount={Number(price)}
+              amount={price}
               address={currency?.contract}
               symbol={currency?.symbol}
               textStyle="h6"
