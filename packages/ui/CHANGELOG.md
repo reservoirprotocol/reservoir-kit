@@ -1,5 +1,16 @@
 ## 1.25.10
 
+## 2.2.0
+
+### Minor Changes
+
+- cc4ec58: Allow override of AcceptBid currency
+
+### Patch Changes
+
+- Updated dependencies [cc4ec58]
+  - @reservoir0x/reservoir-sdk@2.0.1
+
 ## 2.1.0
 
 ### Minor Changes
