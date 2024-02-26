@@ -21,6 +21,7 @@ const AcceptBidPage: NextPage = () => {
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [tokenId, setTokenId] = useState(DEFAULT_TOKEN_ID)
   const [chainId, setChainId] = useState('')
+  const [swapCurrency, setSwapCurrency] = useState<string>('');
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [bidId, setBidId] = useState('')
@@ -100,6 +101,14 @@ const AcceptBidPage: NextPage = () => {
         />
       </div>
       <div>
+        <label>Swap Currency: </label>
+        <input
+          type="text"
+          value={swapCurrency}
+          onChange={(e) => setSwapCurrency(e.target.value)}
+        />
+      </div>
+      <div>
         <label>Fees on top (BPS): </label>
         <textarea
           onChange={() => {}}
@@ -152,6 +161,7 @@ const AcceptBidPage: NextPage = () => {
       </div>
 
       <AcceptBidModal
+      currency={swapCurrency}
         chainId={Number(chainId)}
         trigger={
           <button
