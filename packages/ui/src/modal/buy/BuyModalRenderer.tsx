@@ -107,6 +107,7 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
   usePermit?: boolean
+  forceRouter?: boolean
   executionMethod?: BuyTokenBodyParameters['executionMethod']
 }
 
@@ -123,6 +124,7 @@ export const BuyModalRenderer: FC<Props> = ({
   children,
   walletClient,
   usePermit,
+  forceRouter,
   executionMethod,
 }) => {
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
@@ -525,6 +527,9 @@ export const BuyModalRenderer: FC<Props> = ({
     if (usePermit) {
       options.usePermit = true
     }
+    if (forceRouter) {
+      options.forceRouter = true
+    }
 
     if (executionMethod) {
       options.executionMethod = executionMethod
@@ -637,6 +642,7 @@ export const BuyModalRenderer: FC<Props> = ({
     wallet,
     paymentCurrency,
     usePermit,
+    forceRouter,
     buyResponseFees,
     executionMethod,
     mutateTokens,
