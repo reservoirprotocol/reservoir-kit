@@ -23,7 +23,6 @@ import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGasPump } from '@fortawesome/free-solid-svg-icons'
 import { truncateAddress } from '../../lib/truncate'
 import { WalletClient } from 'viem'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
@@ -194,7 +193,7 @@ export function CancelListingModal({
                 </Text>
                 <Button onClick={cancelOrder} css={{ m: '$4' }}>
                   {!isOracleOrder && (
-                    <FontAwesomeIcon icon={faGasPump} width="16" height="16" />
+                    <FontAwesomeIcon icon={'gas-pump'} width="16" height="16" />
                   )}
                   {copy.ctaCancel}
                 </Button>

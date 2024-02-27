@@ -1,7 +1,6 @@
 import { Anchor, Box, Flex, Text } from '../primitives'
 import React, { FC, useMemo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCube, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { truncateAddress } from '../lib/truncate'
 import { Execute } from '@reservoir0x/reservoir-sdk'
 import getChainBlockExplorerUrl from '../lib/getChainBlockExplorerUrl'
@@ -40,7 +39,7 @@ const Progress: FC<Props> = ({ title, txHashes }) => {
       <Text style="h6">{title}</Text>
       <Box css={{ color: '$neutralText' }}>
         <FontAwesomeIcon
-          icon={hasTxHashes ? faCube : faWallet}
+          icon={hasTxHashes ? 'cube' : 'wallet'}
           style={{
             width: '32px',
             height: '32px',

@@ -5,7 +5,6 @@ import { EnhancedAcceptBidTokenData } from './AcceptBidModalRenderer'
 import { Flex, Grid, Img, Loader, Text } from '../../primitives'
 import { styled } from '@stitches/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleNotch } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   step: NonNullable<Execute['steps'][0]>
@@ -26,7 +25,7 @@ const Spinner = () => (
     css={{ display: 'flex', alignItems: 'center' }}
     icon={
       <Flex css={{ color: '$accentSolidHover' }}>
-        <FontAwesomeIcon icon={faCircleNotch} width={16} height={16} />
+        <FontAwesomeIcon icon={'circle-notch'} width={16} height={16} />
       </Flex>
     }
   />

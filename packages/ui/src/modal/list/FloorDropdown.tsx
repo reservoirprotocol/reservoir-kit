@@ -2,7 +2,6 @@ import React, { FC, useMemo } from 'react'
 import { useTokens } from '../../hooks'
 import { Dropdown, DropdownMenuItem } from '../../primitives/Dropdown'
 import { Button, Flex, FormatCryptoCurrency, Text } from '../../primitives'
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Currency } from '../../types/Currency'
 
@@ -76,7 +75,7 @@ const FloorDropdown: FC<FloorDropdownProps> = ({
             css={{ height: 44, px: '$4', borderRadius: 8 }}
           >
             <Flex css={{ color: '$textColor' }}>
-              <FontAwesomeIcon icon={faEllipsis} />
+              <FontAwesomeIcon icon={'ellipsis'} />
             </Flex>
           </Button>
         }

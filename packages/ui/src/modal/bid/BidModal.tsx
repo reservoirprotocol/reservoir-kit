@@ -35,12 +35,6 @@ import {
 import TokenInfo from './TokenInfo'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCalendar,
-  faClose,
-  faCheckCircle,
-  faHand,
-} from '@fortawesome/free-solid-svg-icons'
 import Flatpickr from 'react-flatpickr'
 import TransactionProgress from '../TransactionProgress'
 import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
@@ -626,7 +620,7 @@ export function BidModal({
                                           e.preventDefault()
                                           setTrait(undefined)
                                         }}
-                                        icon={faClose}
+                                        icon={'close'}
                                         width={16}
                                         height={16}
                                       />
@@ -1000,7 +994,7 @@ export function BidModal({
               <Flex direction="column" align="center" css={{ p: '$4' }}>
                 <Box css={{ color: '$successAccent', mt: 48 }}>
                   <FontAwesomeIcon
-                    icon={faCheckCircle}
+                    icon={'check-circle'}
                     style={{ width: '32px', height: '32px' }}
                   />
                 </Box>

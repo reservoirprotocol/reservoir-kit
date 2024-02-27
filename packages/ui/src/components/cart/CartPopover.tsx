@@ -24,12 +24,6 @@ import React, {
   useState,
 } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faClose,
-  faLock,
-  faRefresh,
-  faShoppingCart,
-} from '@fortawesome/free-solid-svg-icons'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import CartItem from './CartItem'
 import CartToast from './CartToast'
@@ -220,7 +214,7 @@ export function CartPopover({
                     setOpen(false)
                   }}
                 >
-                  <FontAwesomeIcon icon={faClose} width="16" height="16" />
+                  <FontAwesomeIcon icon={'close'} width="16" height="16" />
                 </Button>
               </Flex>
               {cartCurrencyConverted && (
@@ -330,7 +324,7 @@ export function CartPopover({
                     css={{ color: '$neutralBorderHover', flex: 1, gap: '$5' }}
                   >
                     <FontAwesomeIcon
-                      icon={faShoppingCart}
+                      icon={'shopping-cart'}
                       width="30"
                       height="30"
                       style={{ height: 30 }}
@@ -494,7 +488,7 @@ export function CartPopover({
                       clear()
                     }}
                   >
-                    <FontAwesomeIcon icon={faRefresh} width="16" height="16" />
+                    <FontAwesomeIcon icon={'refresh'} width="16" height="16" />
                     Refresh Cart
                   </Button>
                 )}
@@ -512,7 +506,7 @@ export function CartPopover({
                     }}
                   >
                     <Box css={{ color: '$neutralBorderHover' }}>
-                      <FontAwesomeIcon icon={faLock} width={9} height={10} />
+                      <FontAwesomeIcon icon={'lock'} width={9} height={10} />
                     </Box>
                     <Text
                       style="tiny"

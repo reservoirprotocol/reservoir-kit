@@ -23,7 +23,6 @@ import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import PriceInput from '../../primitives/PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { WalletClient, formatUnits, zeroAddress } from 'viem'
@@ -463,7 +462,7 @@ export function EditListingModal({
                   }}
                 >
                   <Box css={{ color: '$successAccent', mb: 24 }}>
-                    <FontAwesomeIcon icon={faCheckCircle} size="3x" />
+                    <FontAwesomeIcon icon={'check-circle'} size="3x" />
                   </Box>
                   <Text style="h5" css={{ mb: '$4' }}>
                     Listing Updated!

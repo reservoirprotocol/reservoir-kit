@@ -19,12 +19,6 @@ import {
 } from '../../primitives'
 import Progress from '../Progress'
 import { Modal } from '../Modal'
-import {
-  faCircleExclamation,
-  faCheckCircle,
-  faChevronLeft,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import {
@@ -280,7 +274,7 @@ export function BuyModal({
                     size="xs"
                     css={{ color: '$neutralSolidHover' }}
                   >
-                    <FontAwesomeIcon icon={faChevronLeft} width={10} />
+                    <FontAwesomeIcon icon={'chevron-left'} width={10} />
                   </Button>
                   <Text style="subtitle2">Select Payment Method</Text>
                 </Flex>
@@ -362,7 +356,10 @@ export function BuyModal({
                             </Text>
                           </Flex>
                           <Box css={{ color: '$neutralSolidHover' }}>
-                            <FontAwesomeIcon icon={faChevronRight} width={10} />
+                            <FontAwesomeIcon
+                              icon={'chevron-right'}
+                              width={10}
+                            />
                           </Box>
                         </Flex>
                       </Flex>
@@ -509,8 +506,8 @@ export function BuyModal({
                         <FontAwesomeIcon
                           icon={
                             failedPurchases
-                              ? faCircleExclamation
-                              : faCheckCircle
+                              ? 'circle-exclamation'
+                              : 'check-circle'
                           }
                           fontSize={32}
                         />
@@ -597,7 +594,7 @@ export function BuyModal({
                       </Flex>
                       <Flex css={{ mb: '$2' }} align="center">
                         <Box css={{ color: '$successAccent', mr: '$2' }}>
-                          <FontAwesomeIcon icon={faCheckCircle} />
+                          <FontAwesomeIcon icon={'check-circle'} />
                         </Box>
                         <Text style="body1">
                           Your transaction went through successfully

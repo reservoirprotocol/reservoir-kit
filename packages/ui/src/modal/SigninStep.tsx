@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Flex, Text } from '../primitives'
 import React, { FC } from 'react'
-import { faPenNib } from '@fortawesome/free-solid-svg-icons'
 import { CSS } from '@stitches/react'
 
 type Props = {
@@ -27,7 +26,7 @@ const SigninStep: FC<Props> = ({ css }) => {
         This is a one-time approval process that takes place once a month
       </Text>
       <FontAwesomeIcon
-        icon={faPenNib}
+        icon={'pen-nib'}
         width={32}
         height={32}
         style={{ height: 32 }}

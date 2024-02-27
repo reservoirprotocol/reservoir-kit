@@ -26,16 +26,6 @@ import {
   Text,
 } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCheckCircle,
-  faChevronLeft,
-  faChevronRight,
-  faCircleExclamation,
-  faCube,
-  faEye,
-  faPenNib,
-  faWallet,
-} from '@fortawesome/free-solid-svg-icons'
 import { formatNumber } from '../../lib/numbers'
 import { Path } from '../../components/cart/CartCheckoutModal'
 import QuantitySelector from '../QuantitySelector'
@@ -275,7 +265,7 @@ export function MintModal({
                 >
                   <Box css={{ color: '$neutralSolid' }}>
                     <FontAwesomeIcon
-                      icon={faEye}
+                      icon="eye"
                       style={{
                         width: '36px',
                         height: '32px',
@@ -411,7 +401,7 @@ export function MintModal({
                             </Flex>
                             <Box css={{ color: '$neutralSolidHover' }}>
                               <FontAwesomeIcon
-                                icon={faChevronRight}
+                                icon="chevron-right"
                                 width={10}
                               />
                             </Box>
@@ -482,7 +472,7 @@ export function MintModal({
                     size="xs"
                     css={{ color: '$neutralSolidHover' }}
                   >
-                    <FontAwesomeIcon icon={faChevronLeft} width={10} />
+                    <FontAwesomeIcon icon="chevron-left" width={10} />
                   </Button>
                   <Text style="subtitle2">Select Payment Method</Text>
                 </Flex>
@@ -565,7 +555,7 @@ export function MintModal({
                           {stepData.currentStep.description}
                         </Text>
                         <FontAwesomeIcon
-                          icon={faPenNib}
+                          icon="pen-nib"
                           width={32}
                           height={32}
                           style={{ height: 32 }}
@@ -631,7 +621,7 @@ export function MintModal({
                           </Text>
                           <Box css={{ color: '$neutralText' }}>
                             <FontAwesomeIcon
-                              icon={faWallet}
+                              icon="wallet"
                               style={{
                                 width: '32px',
                                 height: '32px',
@@ -702,7 +692,7 @@ export function MintModal({
                   </Text>
                   <Box css={{ color: '$neutralSolid' }}>
                     <FontAwesomeIcon
-                      icon={faCube}
+                      icon="cube"
                       style={{ width: 32, height: 32 }}
                     />
                   </Box>
@@ -740,7 +730,9 @@ export function MintModal({
                       }}
                     >
                       <FontAwesomeIcon
-                        icon={failedMints ? faCircleExclamation : faCheckCircle}
+                        icon={
+                          failedMints ? 'circle-exclamation' : 'check-circle'
+                        }
                         fontSize={16}
                       />
                     </Box>

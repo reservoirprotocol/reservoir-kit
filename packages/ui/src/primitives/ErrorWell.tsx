@@ -2,7 +2,6 @@ import React, { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Flex from './Flex'
 import Text from './Text'
-import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import Anchor from './Anchor'
 import { TransactionTimeoutError } from '@reservoir0x/reservoir-sdk'
 import { truncateAddress } from '../lib/truncate'
@@ -77,7 +76,7 @@ export default function ErrorWell({ error, css }: Props) {
       }}
       align="center"
     >
-      <FontAwesomeIcon icon={faCircleExclamation} width={16} height={16} />
+      <FontAwesomeIcon icon={'circle-exclamation'} width={16} height={16} />
       <Text style="body3" color="errorLight">
         {messageWithContent ? messageWithContent : message}
       </Text>

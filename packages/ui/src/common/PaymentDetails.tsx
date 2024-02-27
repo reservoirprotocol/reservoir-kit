@@ -14,7 +14,6 @@ import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
 import { BuyResponses, MintResponses } from '@reservoir0x/reservoir-sdk'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   css?: CSS
@@ -83,7 +82,7 @@ export const PaymentDetails: FC<Props> = ({
               }
             >
               <Box css={{ color: '$neutralText' }}>
-                <FontAwesomeIcon icon={faInfoCircle} />
+                <FontAwesomeIcon icon="info-circle" />
               </Box>
             </Tooltip>
           </Flex>

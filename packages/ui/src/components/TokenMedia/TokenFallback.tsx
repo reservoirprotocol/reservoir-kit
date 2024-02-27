@@ -4,7 +4,6 @@ import TokenMedia from './index'
 import { defaultHeaders } from '../../lib/swr'
 import { useReservoirClient } from '../../hooks'
 import { axios, paths } from '@reservoir0x/reservoir-sdk'
-import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type TokenFallbackProps = {
@@ -42,7 +41,7 @@ const TokenFallback: FC<TokenFallbackProps> = ({
       className={className}
     >
       {mode === 'simple' || !token?.collection?.id ? (
-        <FontAwesomeIcon icon={faImage} style={{ height: '50%' }} />
+        <FontAwesomeIcon icon={'image'} style={{ height: '50%' }} />
       ) : (
         <>
           {token?.collection?.image && (

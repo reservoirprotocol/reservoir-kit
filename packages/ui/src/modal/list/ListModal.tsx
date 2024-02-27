@@ -30,7 +30,6 @@ import {
   ListStep,
   ListModalStepData,
 } from './ListModalRenderer'
-import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'
@@ -314,7 +313,7 @@ export function ListModal({
               >
                 <Box css={{ color: '$neutralSolid', mt: 48 }}>
                   <FontAwesomeIcon
-                    icon={faTag}
+                    icon={'tag'}
                     style={{ width: '32px', height: '32px' }}
                   />
                 </Box>
@@ -515,7 +514,7 @@ export function ListModal({
                         ref={datetimeElement}
                         icon={
                           <FontAwesomeIcon
-                            icon={faCalendar}
+                            icon={'calendar'}
                             width={14}
                             height={16}
                           />
@@ -623,8 +622,8 @@ export function ListModal({
                         <FontAwesomeIcon
                           icon={
                             stepData.currentStep.kind === 'transaction'
-                              ? faImages
-                              : faTag
+                              ? 'image'
+                              : 'tag'
                           }
                           size="2x"
                         />

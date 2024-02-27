@@ -9,11 +9,6 @@ import {
 } from '../../primitives'
 import { styled } from '../../../stitches.config'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faArrowDown,
-  faArrowUp,
-  faClose,
-} from '@fortawesome/free-solid-svg-icons'
 import { Cart } from '../../context/CartProvider'
 import { formatNumber } from '../../lib/numbers'
 import QuantitySelector from '../../modal/QuantitySelector'
@@ -166,7 +161,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               }
             }}
           >
-            <FontAwesomeIcon icon={faClose} width="16" height="16" />
+            <FontAwesomeIcon icon="close" width="16" height="16" />
           </CloseButton>
         </Flex>
         <Flex
@@ -207,7 +202,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               css={{ gap: '$1', color: '$accentSolidHover' }}
               align="center"
             >
-              <FontAwesomeIcon width="11" icon={faArrowUp} />
+              <FontAwesomeIcon width="11" icon={'arrow-up'} />
               <Text style="body2" color="accent">
                 Price has gone up {formatNumber(priceDiff)}%
               </Text>
@@ -218,7 +213,7 @@ const CartItem: FC<Props> = ({ item, usdConversion, tokenUrl }) => {
               css={{ gap: '$1', color: '$accentSolidHover' }}
               align="center"
             >
-              <FontAwesomeIcon width="11" icon={faArrowDown} />
+              <FontAwesomeIcon width="11" icon={'arrow-down'} />
               <Text style="body3" color="accent">
                 Price went down {formatNumber(priceDiff)}%
               </Text>

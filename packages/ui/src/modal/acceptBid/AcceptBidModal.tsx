@@ -22,13 +22,6 @@ import {
 } from '../../primitives'
 
 import { Modal } from '../Modal'
-import {
-  faCircleExclamation,
-  faChevronDown,
-  faCube,
-  faCircleCheck,
-  faEnvelopeOpen,
-} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   AcceptBidStep,
@@ -229,7 +222,7 @@ export function AcceptBidModal({
               >
                 <Box css={{ color: '$neutralSolid', mt: 48 }}>
                   <FontAwesomeIcon
-                    icon={faEnvelopeOpen}
+                    icon={'envelope-open'}
                     style={{ height: 32, width: 32 }}
                   />
                 </Box>
@@ -330,7 +323,7 @@ export function AcceptBidModal({
                           {price.currency?.symbol} You Get{' '}
                           <Text css={{ color: '$neutralSolidHover', ml: '$2' }}>
                             <FontAwesomeIcon
-                              icon={faChevronDown}
+                              icon={'chevron-down'}
                               width={16}
                               height={16}
                             />
@@ -647,7 +640,7 @@ export function AcceptBidModal({
                   }}
                 >
                   <FontAwesomeIcon
-                    icon={faCube}
+                    icon={'cube'}
                     style={{ width: 32, height: 32 }}
                   />
                 </Box>
@@ -671,7 +664,7 @@ export function AcceptBidModal({
                     }}
                   >
                     <FontAwesomeIcon
-                      icon={failedSales ? faCircleExclamation : faCircleCheck}
+                      icon={failedSales ? 'circle-exclamation' : 'circle-check'}
                       fontSize={32}
                     />
                   </Box>

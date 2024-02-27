@@ -26,16 +26,6 @@ import {
   Text,
 } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCheckCircle,
-  faChevronLeft,
-  faChevronRight,
-  faCircleExclamation,
-  faCube,
-  faMagnifyingGlass,
-  faPenNib,
-  faWallet,
-} from '@fortawesome/free-solid-svg-icons'
 import { formatNumber } from '../../lib/numbers'
 import { Path } from '../../components/cart/CartCheckoutModal'
 import QuantitySelector from '../QuantitySelector'
@@ -282,7 +272,7 @@ export function SweepModal({
                 >
                   <Box css={{ color: '$neutralSolid' }}>
                     <FontAwesomeIcon
-                      icon={faMagnifyingGlass}
+                      icon={'magnifying-glass'}
                       style={{
                         width: '36px',
                         height: '32px',
@@ -413,7 +403,7 @@ export function SweepModal({
                             </Flex>
                             <Box css={{ color: '$neutralSolidHover' }}>
                               <FontAwesomeIcon
-                                icon={faChevronRight}
+                                icon={'chevron-right'}
                                 width={10}
                               />
                             </Box>
@@ -490,7 +480,7 @@ export function SweepModal({
                     size="xs"
                     css={{ color: '$neutralSolidHover' }}
                   >
-                    <FontAwesomeIcon icon={faChevronLeft} width={10} />
+                    <FontAwesomeIcon icon={'chevron-left'} width={10} />
                   </Button>
                   <Text style="subtitle2">Select Payment Method</Text>
                 </Flex>
@@ -573,7 +563,7 @@ export function SweepModal({
                           {stepData.currentStep.description}
                         </Text>
                         <FontAwesomeIcon
-                          icon={faPenNib}
+                          icon={'pen-nib'}
                           width={32}
                           height={32}
                           style={{ height: 32 }}
@@ -639,7 +629,7 @@ export function SweepModal({
                           </Text>
                           <Box css={{ color: '$neutralText' }}>
                             <FontAwesomeIcon
-                              icon={faWallet}
+                              icon={'wallet'}
                               style={{
                                 width: '32px',
                                 height: '32px',
@@ -710,7 +700,7 @@ export function SweepModal({
                   </Text>
                   <Box css={{ color: '$neutralSolid' }}>
                     <FontAwesomeIcon
-                      icon={faCube}
+                      icon={'cube'}
                       style={{ width: 32, height: 32 }}
                     />
                   </Box>
@@ -740,7 +730,7 @@ export function SweepModal({
                     }}
                   >
                     <FontAwesomeIcon
-                      icon={failedSales ? faCircleExclamation : faCheckCircle}
+                      icon={failedSales ? 'circle-exclamation' : 'check-circle'}
                       fontSize={32}
                     />
                   </Box>

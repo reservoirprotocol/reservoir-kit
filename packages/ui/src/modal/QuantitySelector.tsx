@@ -3,7 +3,6 @@ import { Button } from '../primitives'
 import PseudoInput from '../primitives/PseudoInput'
 import { styled } from '../../stitches.config'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   max: number
@@ -64,7 +63,7 @@ const QuantitySelector: FC<Props> = ({
         }}
       >
         <FontAwesomeIcon
-          icon={faMinus}
+          icon={'minus'}
           width="16"
           height="16"
           style={{ height: 16 }}
@@ -101,7 +100,7 @@ const QuantitySelector: FC<Props> = ({
         }}
       >
         <FontAwesomeIcon
-          icon={faPlus}
+          icon={'plus'}
           width="16"
           height="16"
           style={{ height: 16 }}

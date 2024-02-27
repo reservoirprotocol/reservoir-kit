@@ -1,6 +1,5 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { Box, Popover, Text } from '.'
 type Props = {
   side: string
@@ -21,7 +20,7 @@ const InfoTooltip = ({ side, content, width, kind = 'info' }: Props) => {
       }
     >
       <Box css={{ color: kind === 'error' ? '$errorAccent' : '$neutralText' }}>
-        <FontAwesomeIcon icon={faInfoCircle} />
+        <FontAwesomeIcon icon="info-circle" />
       </Box>
     </Popover>
   )

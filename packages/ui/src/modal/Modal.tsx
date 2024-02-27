@@ -7,11 +7,6 @@ import React, {
 } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faClose,
-  faChevronLeft,
-  faLock,
-} from '@fortawesome/free-solid-svg-icons'
 import { Anchor, Button, Flex, Text, Loader, Box } from '../primitives'
 import { styled } from '../../stitches.config'
 import { Dialog } from '../primitives/Dialog'
@@ -95,14 +90,14 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
                 css={{ mr: '$2', color: '$neutralText' }}
                 onClick={onBack}
               >
-                <FontAwesomeIcon icon={faChevronLeft} width={16} height={16} />
+                <FontAwesomeIcon icon={'left'} width={16} height={16} />
               </Button>
             )}
             <Text style="h6">{title}</Text>
           </Title>
           <DialogPrimitive.Close asChild>
             <Button color="ghost" size="none" css={{ color: '$neutralText' }}>
-              <FontAwesomeIcon icon={faClose} width={16} height={16} />
+              <FontAwesomeIcon icon={'close'} width={16} height={16} />
             </Button>
           </DialogPrimitive.Close>
         </Flex>
@@ -130,7 +125,7 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
             }}
           >
             <Box css={{ color: '$neutralBorderHover' }}>
-              <FontAwesomeIcon icon={faLock} width={9} height={10} />
+              <FontAwesomeIcon icon={'lock'} width={9} height={10} />
             </Box>
             <Text
               style="tiny"

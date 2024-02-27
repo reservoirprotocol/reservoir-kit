@@ -2,7 +2,6 @@ import React, { FC, useMemo } from 'react'
 import { Box, Flex, Text } from '../../primitives'
 import TokenMedia from '../../components/TokenMedia'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { useTokens } from '../../hooks'
 import { MintModalStepData } from './MintModalRenderer'
 
@@ -82,7 +81,7 @@ export const MintImages: FC<Props> = ({ stepData, tokenKind }) => {
                           justify="center"
                           align="center"
                         >
-                          <FontAwesomeIcon icon={faImage} size="2x" />
+                          <FontAwesomeIcon icon={'image'} size="2x" />
                         </Flex>
                       )}
                     />

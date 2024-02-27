@@ -3,7 +3,6 @@ import React, { FC, useEffect, useState } from 'react'
 import { Flex, FormatCryptoCurrency, Input, Text } from '../../primitives'
 import ScrollArea from '../../primitives/ScrollArea'
 import { Trait } from './BidModalRenderer'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { useAttributes } from '../../hooks'
 
 type Props = {
@@ -69,7 +68,7 @@ const AttributeSelector: FC<Props> = ({
         onChange={(e) => setQuery(e.target.value)}
         iconCss={{ top: '26px', color: '$neutralText' }}
         icon={
-          <FontAwesomeIcon icon={faMagnifyingGlass} width={16} height={16} />
+          <FontAwesomeIcon icon={'magnifying-glass'} width={16} height={16} />
         }
       />
       <Flex

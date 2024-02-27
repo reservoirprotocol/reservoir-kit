@@ -1,4 +1,3 @@
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { styled } from '../../stitches.config'
 import React, { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -27,7 +26,7 @@ export default function Loader(props: Props) {
         {icon ? (
           icon
         ) : (
-          <FontAwesomeIcon icon={faSpinner} width={20} height={20} />
+          <FontAwesomeIcon icon={'spinner'} width={20} height={20} />
         )}
       </motion.div>
     </LoaderContainer>

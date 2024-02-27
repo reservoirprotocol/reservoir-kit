@@ -29,7 +29,6 @@ import { EditBidModalRenderer, EditBidStep } from './EditBidModalRenderer'
 import { Modal } from '../Modal'
 import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheckCircle, faClose } from '@fortawesome/free-solid-svg-icons'
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient, formatUnits } from 'viem'
 import { formatNumber } from '../../lib/numbers'
@@ -452,7 +451,7 @@ export function EditBidModal({
                                             e.preventDefault()
                                             setTrait(undefined)
                                           }}
-                                          icon={faClose}
+                                          icon={'close'}
                                           width={16}
                                           height={16}
                                         />
@@ -762,7 +761,7 @@ export function EditBidModal({
               <Flex direction="column" align="center" css={{ p: '$4' }}>
                 <Box css={{ color: '$successAccent', mt: 48 }}>
                   <FontAwesomeIcon
-                    icon={faCheckCircle}
+                    icon={'check-circle'}
                     style={{ width: '32px', height: '32px' }}
                   />
                 </Box>

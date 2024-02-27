@@ -1,4 +1,3 @@
-import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Flex from './Flex'
 import { ComponentPropsWithoutRef, useEffect, useState } from 'react'
@@ -22,7 +21,7 @@ const Img = (props: ComponentPropsWithoutRef<typeof StyledImg>) => {
       justify="center"
       align="center"
     >
-      <FontAwesomeIcon icon={faImage} size="2x" />
+      <FontAwesomeIcon icon={'image'} size="2x" />
     </Flex>
   ) : (
     <StyledImg

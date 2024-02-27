@@ -5,14 +5,6 @@ import { AnimatedOverlay, StyledAnimatedContent } from '../../primitives/Dialog'
 import { Anchor, Button, Flex, Text, Box, Loader } from '../../primitives'
 import { styled } from '@stitches/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCheckCircle,
-  faCircleExclamation,
-  faClose,
-  faCube,
-  faLock,
-  faWallet,
-} from '@fortawesome/free-solid-svg-icons'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { TokenCheckout } from '../../modal/TokenCheckout'
 import { Cart, CheckoutStatus } from '../../context/CartProvider'
@@ -137,7 +129,7 @@ export function CartCheckoutModal({
                     size="none"
                     css={{ color: '$neutralText' }}
                   >
-                    <FontAwesomeIcon icon={faClose} width={16} height={16} />
+                    <FontAwesomeIcon icon="close" width={16} height={16} />
                   </Button>
                 </DialogPrimitive.Close>
               </Flex>
@@ -221,7 +213,7 @@ export function CartCheckoutModal({
                                 </Text>
                                 <Box css={{ color: '$neutralText' }}>
                                   <FontAwesomeIcon
-                                    icon={faWallet}
+                                    icon="wallet"
                                     style={{
                                       width: '32px',
                                       height: '32px',
@@ -264,7 +256,7 @@ export function CartCheckoutModal({
                         </Text>
 
                         <FontAwesomeIcon
-                          icon={faCube}
+                          icon="cube"
                           style={{ height: 24, width: 24 }}
                         />
                       </Flex>
@@ -301,7 +293,9 @@ export function CartCheckoutModal({
                         >
                           <FontAwesomeIcon
                             icon={
-                              failedSales ? faCircleExclamation : faCheckCircle
+                              failedSales
+                                ? 'circle-exclamation'
+                                : 'check-circle'
                             }
                             fontSize={32}
                           />
@@ -378,7 +372,7 @@ export function CartCheckoutModal({
                   }}
                 >
                   <Box css={{ color: '$neutralBorderHover' }}>
-                    <FontAwesomeIcon icon={faLock} width={9} height={10} />
+                    <FontAwesomeIcon icon="lock" width={9} height={10} />
                   </Box>
                   <Text
                     style="tiny"

@@ -1,4 +1,3 @@
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { FC, PropsWithChildren, useEffect } from 'react'
 import { Flex, Box, Text } from '../primitives'
@@ -75,7 +74,7 @@ export const ApproveCollapsible: FC<Props> = ({
               transition: '.3s',
             }}
           >
-            <FontAwesomeIcon icon={faChevronDown} />
+            <FontAwesomeIcon icon={'chevron-down'} />
           </Box>
         </Flex>
       </CollapsiblePrimitive.Trigger>

@@ -11,7 +11,6 @@ import {
 import { Currency } from '../../types/Currency'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import InfoTooltip from '../../primitives/InfoTooltip'
 
 type PriceBreakdownProps = {
@@ -67,7 +66,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
                   color: '$neutralSolidHover',
                 }}
               >
-                <FontAwesomeIcon icon={faChevronDown} width={16} height={16} />
+                <FontAwesomeIcon icon={'chevron-down'} width={16} height={16} />
               </Text>
             </Flex>
             <Flex direction="column" align="end">
