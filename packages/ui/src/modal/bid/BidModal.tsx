@@ -730,7 +730,7 @@ export function BidModal({
                         ref={datetimeElement}
                         icon={
                           <FontAwesomeIcon
-                            icon={faCalendar}
+                            icon={'calendar'}
                             width={14}
                             height={16}
                           />
@@ -1030,7 +1030,7 @@ export function BidModal({
               >
                 <Box css={{ color: '$neutralSolid', mt: 48 }}>
                   <FontAwesomeIcon
-                    icon={faHand}
+                    icon={'hand'}
                     style={{ width: '32px', height: '32px' }}
                   />
                 </Box>
