@@ -1,5 +1,19 @@
 ## 1.25.10
 
+## 2.3.0
+
+### Minor Changes
+
+- b1a96d8: BuyModal: Remove usePermit and useExecutionMethod and replace with executeBuyOptions
+
+### Patch Changes
+
+- 96bee20: Add blast sepolia chain configuration
+- c029a8e: Add apex proof of play chain configuration
+- Updated dependencies [96bee20]
+- Updated dependencies [c029a8e]
+  - @reservoir0x/reservoir-sdk@2.0.2
+
 ## 2.2.0
 
 ### Minor Changes
