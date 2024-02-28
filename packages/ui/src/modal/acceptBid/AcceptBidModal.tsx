@@ -23,6 +23,7 @@ import {
 
 import { Modal } from '../Modal'
 import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
+import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTriangleExclamation'
 import faChevronDown from '@fortawesome/free-solid-svg-icons/faChevronDown'
 import faCube from '@fortawesome/free-solid-svg-icons/faCube'
 import faCircleCheck from '@fortawesome/free-solid-svg-icons/faCircleCheck'
