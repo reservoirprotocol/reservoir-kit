@@ -1,5 +1,17 @@
 ## 1.12.15
 
+## 2.0.1
+
+### Patch Changes
+
+- cc4ec58: Allow override of AcceptBid currency
+
+## 2.0.0
+
+### Major Changes
+
+- b7ad7a5: Upgrade viem and wagmi to v2
+
 ## 1.12.16
 
 ### Patch Changes

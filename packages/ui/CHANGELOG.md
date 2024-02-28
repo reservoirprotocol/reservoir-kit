@@ -1,5 +1,40 @@
 ## 1.25.10
 
+## 2.2.0
+
+### Minor Changes
+
+- cc4ec58: Allow override of AcceptBid currency
+
+### Patch Changes
+
+- Updated dependencies [cc4ec58]
+  - @reservoir0x/reservoir-sdk@2.0.1
+
+## 2.1.0
+
+### Minor Changes
+
+- 8dddcfe: Fix coingecko proxy config to use proxy as base url instead of path url
+- 89d2618: BidModal: Switch totalBidAmount to a bigint to avoid conversion errors when amount is tiny
+
+## 2.0.1
+
+### Patch Changes
+
+- c7c3368: Remove onChainRoyalties hook and logic, switch to marketplace configurations api
+
+## 2.0.0
+
+### Major Changes
+
+- b7ad7a5: Upgrade viem and wagmi to v2
+
+### Patch Changes
+
+- Updated dependencies [b7ad7a5]
+  - @reservoir0x/reservoir-sdk@2.0.0
+
 ## 1.25.11
 
 ### Patch Changes
