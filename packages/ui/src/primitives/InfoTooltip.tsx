@@ -1,6 +1,6 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+import faInfoCircle from '@fortawesome/free-solid-svg-icons/faInfoCircle'
 import { Box, Popover, Text } from '.'
 type Props = {
   side: string
