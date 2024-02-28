@@ -78,8 +78,33 @@ export const frameTestnet = {
   },
 } as const satisfies Chain
 
+export const apexPop = {
+  id: 70700,
+  name: 'Apex Proof of Play',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['http://rpc.apex.proofofplay.com'],
+    },
+    public: {
+      http: ['http://rpc.apex.proofofplay.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Apex Pop Explorer',
+      url: 'explorer.apex.proofofplay.com',
+    },
+    default: {
+      name: 'Apex Pop Explorer',
+      url: 'explorer.apex.proofofplay.com',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
   frameTestnet,
+  apexPop,
 } as const satisfies Record<string, Chain>
