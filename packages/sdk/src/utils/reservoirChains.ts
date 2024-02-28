@@ -204,6 +204,14 @@ const frameTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const apexPop = {
+  id: 70700,
+  name: 'Apex Proof of Play',
+  baseApiUrl: 'https://api-apex.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70700],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   goerli,
@@ -229,4 +237,5 @@ export const reservoirChains = {
   ancient8,
   ancient8Testnet,
   frameTestnet,
+  apexPop,
 }
