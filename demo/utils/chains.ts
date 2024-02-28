@@ -161,5 +161,7 @@ export default [
   },
   {
     ...reservoirChains.blastSepolia
+  },{
+    ...reservoirChains.apexPop
   }
 ]

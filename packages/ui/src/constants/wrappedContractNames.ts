@@ -24,5 +24,6 @@ const wrappedContractNames: Record<number, string> = {
   28122024: 'WETH', //ancient8 testnet
   68840142: 'WETH', //frametestnet
   168587773: 'WETH', //blast sepolia
+  70700: 'WETH', //apex pop
 }
 export default wrappedContractNames
