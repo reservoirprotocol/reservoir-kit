@@ -74,8 +74,10 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   normalizeRoyalties?: boolean
   copyOverrides?: Partial<typeof ModalCopy>
   walletClient?: ReservoirWallet | WalletClient
-  usePermit?: boolean
-  executionMethod?: BuyTokenBodyParameters['executionMethod']
+  executeBuyOptions?: Omit<
+    NonNullable<BuyTokenBodyParameters>,
+    'items' | 'feesOnTop' | 'taker'
+  >
   onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -102,8 +104,7 @@ export function BuyModal({
   defaultQuantity,
   copyOverrides,
   walletClient,
-  usePermit,
-  executionMethod,
+  executeBuyOptions,
   onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
@@ -139,8 +140,7 @@ export function BuyModal({
       feesOnTopUsd={feesOnTopUsd}
       normalizeRoyalties={normalizeRoyalties}
       walletClient={walletClient}
-      usePermit={usePermit}
-      executionMethod={executionMethod}
+      executeBuyOptions={executeBuyOptions}
       onConnectWallet={onConnectWallet}
     >
       {({
