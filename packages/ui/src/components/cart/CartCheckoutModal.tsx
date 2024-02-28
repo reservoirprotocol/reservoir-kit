@@ -11,7 +11,6 @@ import faClose from '@fortawesome/free-solid-svg-icons/faClose'
 import faCube from '@fortawesome/free-solid-svg-icons/faCube'
 import faLock from '@fortawesome/free-solid-svg-icons/faLock'
 import faWallet from '@fortawesome/free-solid-svg-icons/faWallet'
-
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { TokenCheckout } from '../../modal/TokenCheckout'
 import { Cart, CheckoutStatus } from '../../context/CartProvider'
