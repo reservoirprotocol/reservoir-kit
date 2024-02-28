@@ -78,8 +78,33 @@ export const frameTestnet = {
   },
 } as const satisfies Chain
 
+export const blastSepolia = {
+  id: 168587773,
+  name: 'Blast Sepolia',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://sepolia.blast.io'],
+    },
+    public: {
+      http: ['https://sepolia.blast.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'BlastScan Sepolia',
+      url: 'https://testnet.blastscan.io',
+    },
+    default: {
+      name: 'BlastScan Sepolia',
+      url: 'https://testnet.blastscan.io',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
   frameTestnet,
+  blastSepolia,
 } as const satisfies Record<string, Chain>

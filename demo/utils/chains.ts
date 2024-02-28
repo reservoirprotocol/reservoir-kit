@@ -158,5 +158,8 @@ export default [
   },
   {
     ...reservoirChains.frameTestnet
+  },
+  {
+    ...reservoirChains.blastSepolia
   }
 ]

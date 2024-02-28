@@ -46,6 +46,9 @@ import ZoraIconColor from '../img/chains/ZoraIconColor'
 import FrameIconDark from '../img/chains/FrameIconDark'
 import FrameIconLight from '../img/chains/FrameIconLight'
 import FrameIconColor from '../img/chains/FrameIconColor'
+import BlastSepoliaIconColor from '../img/chains/BlastSepoliaIconColor'
+import BlastSepoliaIconLight from '../img/chains/BlastSepoliaIconLight'
+import BlastSepoliaIconDark from '../img/chains/BlastSepoliaIconDark'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -162,6 +165,11 @@ const chainIcons = {
     light: <FrameIconDark />,
     dark: <FrameIconLight />,
     color: <FrameIconColor />,
+  },
+  [reservoirChains.blastSepolia.id]: {
+    light: <BlastSepoliaIconDark />,
+    dark: <BlastSepoliaIconLight />,
+    color: <BlastSepoliaIconColor />,
   },
 }
 

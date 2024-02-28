@@ -204,6 +204,14 @@ const frameTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const blastSepolia = {
+  id: 168587773,
+  name: 'Blast Sepolia',
+  baseApiUrl: 'https://api-blast-sepolia.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[168587773],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   goerli,
@@ -229,4 +237,5 @@ export const reservoirChains = {
   ancient8,
   ancient8Testnet,
   frameTestnet,
+  blastSepolia,
 }
