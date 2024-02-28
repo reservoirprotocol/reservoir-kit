@@ -2846,6 +2846,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fortawesome/fontawesome-svg-core@npm:^6.1.1":
+  version: 6.5.1
+  resolution: "@fortawesome/fontawesome-svg-core@npm:6.5.1"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.5.1
+  checksum: e17f995abe215d288163b2cd009f935c7f96bc896ab4ea7a75de72789d52a1275bd112eeb60cadd63bb20017a05ed765232157079bfb7efda7347a5614e04ce1
+  languageName: node
+  linkType: hard
+
 "@fortawesome/free-solid-svg-icons@npm:^6.1.1":
   version: 6.5.1
   resolution: "@fortawesome/free-solid-svg-icons@npm:6.5.1"
@@ -6084,6 +6093,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reservoir0x/reservoir-kit-ui@workspace:packages/ui"
   dependencies:
+    "@fortawesome/fontawesome-svg-core": ^6.1.1
     "@fortawesome/free-solid-svg-icons": ^6.1.1
     "@fortawesome/react-fontawesome": ^0.2.0
     "@radix-ui/colors": ^0.1.8
