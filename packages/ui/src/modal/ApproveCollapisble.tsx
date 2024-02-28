@@ -1,4 +1,5 @@
-import faChevronDown from '@fortawesome/free-solid-svg-icons/faChevronDown'import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import faChevronDown from '@fortawesome/free-solid-svg-icons/faChevronDown'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { FC, PropsWithChildren, useEffect } from 'react'
 import { Flex, Box, Text } from '../primitives'
 import { CollapsibleContent, CollapsibleRoot } from '../primitives/Collapsible'
