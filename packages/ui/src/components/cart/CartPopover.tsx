@@ -24,12 +24,11 @@ import React, {
   useState,
 } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faClose,
-  faLock,
-  faRefresh,
-  faShoppingCart,
-} from '@fortawesome/free-solid-svg-icons'
+import faClose from '@fortawesome/free-solid-svg-icons/faClose'
+import faLock from '@fortawesome/free-solid-svg-icons/faLock'
+import faRefresh from '@fortawesome/free-solid-svg-icons/faRefresh'
+import faShoppingCart from '@fortawesome/free-solid-svg-icons/faShoppingCart'
+
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import CartItem from './CartItem'
 import CartToast from './CartToast'
