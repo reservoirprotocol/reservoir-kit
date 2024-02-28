@@ -160,6 +160,8 @@ export default [
     ...reservoirChains.frameTestnet
   },
   {
+    ...reservoirChains.blastSepolia
+  },{
     ...reservoirChains.apexPop
   }
 ]
