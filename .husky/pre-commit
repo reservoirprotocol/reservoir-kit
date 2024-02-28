@@ -1,2 +1,2 @@
-echo "Running Font Awesome Import Lint"
+echo "Linting FontAwesome imports"
 node ./scripts/fontAwesomeImports.js
