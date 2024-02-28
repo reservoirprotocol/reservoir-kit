@@ -38,7 +38,7 @@ import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
-import { Address, WalletClient, erc20Abi, parseUnits } from 'viem'
+import { Address, WalletClient, erc20Abi, formatUnits, parseUnits } from 'viem'
 import { getAccount, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
 
@@ -85,7 +85,7 @@ type ChildrenProps = {
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   attributes?: Traits
   bidAmountPerUnit: string
-  totalBidAmount: number
+  totalBidAmount: bigint
   totalBidAmountUsd: number
   quantity: number
   setQuantity: React.Dispatch<React.SetStateAction<number>>
@@ -97,6 +97,7 @@ type ChildrenProps = {
   traitBidSupported: boolean
   collectionBidSupported: boolean
   partialBidSupported: boolean
+  biddingSupported: boolean
   amountToWrap: string
   usdPrice: number | null
   balance?: FetchBalanceResult
@@ -110,7 +111,7 @@ type ChildrenProps = {
   expirationOption: ExpirationOption
   stepData: BidModalStepData | null
   currencies: Currency[]
-  currency: Currency
+  currency?: Currency
   exchange?: Exchange
   feeBps?: number
   setCurrency: (currency: Currency) => void
@@ -137,6 +138,8 @@ type Props = {
   walletClient?: ReservoirWallet | WalletClient
   usePermit?: boolean
 }
+
+export const BID_AMOUNT_MINIMUM = 0.000001
 
 export type BidData = Parameters<
   ReservoirClientActions['placeBid']
@@ -256,11 +259,16 @@ export const BidModalRenderer: FC<Props> = ({
     wrappedContractName
   )
   const usdPrice = usdConversion.length > 0 ? usdConversion[0].price : null
-  const totalBidAmount = Number(bidAmountPerUnit) * Math.max(1, quantity)
-  const totalBidAmountUsd = totalBidAmount * (usdPrice || 0)
+  const totalBidAmount =
+    parseUnits(bidAmountPerUnit, currency?.decimals ?? 18) *
+    BigInt(quantity ?? 1)
+  const totalBidAmountUsd =
+    Number(formatUnits(totalBidAmount, currency?.decimals ?? 18)) *
+    (usdPrice || 0)
 
   const [allMarketplaces] = useMarketplaces(
     collectionId,
+    tokenId,
     undefined,
     undefined,
     rendererChain?.id,
@@ -287,15 +295,28 @@ export const BidModalRenderer: FC<Props> = ({
   const traitBidSupported = Boolean(exchange?.traitBidSupported)
   const collectionBidSupported = Boolean(exchange?.collectionBidSupported)
   const partialBidSupported = Boolean(exchange?.partialOrderSupported)
+  const biddingSupported = exchange?.supportedBidCurrencies
+    ? exchange?.supportedBidCurrencies?.length > 0
+    : false
 
-  // Set bid step to unavailable if collection bid is not supported
+  // Set bid step to unavailable if collection bid is not supported or if bidding is not supported
   useEffect(() => {
-    if (open && !tokenId && reservoirMarketplace && !collectionBidSupported) {
+    if (
+      open &&
+      reservoirMarketplace &&
+      ((!tokenId && !collectionBidSupported) || !biddingSupported)
+    ) {
       setBidStep(BidStep.Unavailable)
     } else {
       setBidStep(BidStep.SetPrice)
     }
-  }, [open, tokenId, reservoirMarketplace, collectionBidSupported])
+  }, [
+    open,
+    tokenId,
+    reservoirMarketplace,
+    collectionBidSupported,
+    biddingSupported,
+  ])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -361,8 +382,8 @@ export const BidModalRenderer: FC<Props> = ({
   }, [feesBps, client?.marketplaceFees, currency])
 
   useEffect(() => {
-    if (totalBidAmount !== 0) {
-      const bid = parseUnits(`${totalBidAmount}`, wrappedBalance?.[1] || 18)
+    if (totalBidAmount !== 0n) {
+      const bid = totalBidAmount
 
       if (!wrappedBalance?.[0] || wrappedBalance?.[0] < bid) {
         setHasEnoughWrappedCurrency(false)
@@ -431,40 +452,57 @@ export const BidModalRenderer: FC<Props> = ({
     : delete axios.defaults.headers.common?.['x-rkui-context']
 
   useEffect(() => {
-    const supportedCurrencies =
-      exchange?.supportedBidCurrencies?.map((currency) =>
-        currency.toLowerCase()
-      ) || []
-    if (exchange?.paymentTokens) {
-      const restrictedCurrencies = exchange.paymentTokens
-        .filter(
-          (token) =>
-            token.address &&
-            token.symbol &&
-            supportedCurrencies.includes(token.address.toLowerCase())
-        )
-        .map((token) => ({
-          contract: token.address as string,
-          decimals: token.decimals,
-          name: token.name,
-          symbol: token.symbol as string,
-        }))
-      setCurrencies(restrictedCurrencies)
-
-      if (
-        !restrictedCurrencies.find(
-          (c) => currency.contract.toLowerCase() == c.contract.toLowerCase()
-        )
-      ) {
-        setCurrency(restrictedCurrencies[0])
-      }
-    } else {
-      const currencies = preferredCurrencies?.filter((currency) =>
-        currency.contract.toLowerCase()
+    const setDefaultCurrency = async () => {
+      const supportedCurrencies =
+        exchange?.supportedBidCurrencies?.map((currency) => {
+          return {
+            address: currency?.address?.toLowerCase() as string,
+            contract: currency?.address?.toLowerCase() as string,
+            decimals: currency?.decimals ?? 18,
+            name: currency?.name ?? '',
+            symbol: currency?.symbol ?? '',
+          }
+        }) || []
+      const supportedCurrencyAddresses = supportedCurrencies.map(
+        (currency) => currency.address
       )
-      setCurrency(currencies && currencies[0] ? currencies[0] : defaultCurrency)
-      setCurrencies(preferredCurrencies)
+      if (exchange?.paymentTokens) {
+        let restrictedCurrencies = exchange.paymentTokens
+          .filter(
+            (token) =>
+              token.address &&
+              token.symbol &&
+              supportedCurrencyAddresses.includes(token.address.toLowerCase())
+          )
+          .map((token) => ({
+            contract: token.address as string,
+            decimals: token.decimals,
+            name: token.name,
+            symbol: token.symbol as string,
+          }))
+        if (!restrictedCurrencies.length) {
+          restrictedCurrencies = supportedCurrencies ?? []
+        }
+        setCurrencies(restrictedCurrencies)
+
+        if (
+          !restrictedCurrencies.find(
+            (c) => currency.contract.toLowerCase() == c.contract.toLowerCase()
+          )
+        ) {
+          setCurrency(restrictedCurrencies[0])
+        }
+      } else {
+        const currencies = preferredCurrencies?.filter((currency) =>
+          currency.contract.toLowerCase()
+        )
+        setCurrency(
+          currencies && currencies[0] ? currencies[0] : defaultCurrency
+        )
+        setCurrencies(preferredCurrencies)
+      }
     }
+    setDefaultCurrency()
   }, [exchange, open])
 
   useEffect(() => {
@@ -526,13 +564,8 @@ export const BidModalRenderer: FC<Props> = ({
       setTransactionError(null)
       setBidData(null)
 
-      const atomicBidAmount = parseUnits(
-        `${totalBidAmount}`,
-        currency?.decimals || 18
-      ).toString()
-
       const bid: BidData = {
-        weiPrice: atomicBidAmount,
+        weiPrice: totalBidAmount.toString(),
         orderbook: 'reservoir',
         orderKind:
           orderKind ||
@@ -683,6 +716,7 @@ export const BidModalRenderer: FC<Props> = ({
         traitBidSupported,
         collectionBidSupported,
         partialBidSupported,
+        biddingSupported,
         amountToWrap,
         transactionError,
         expirationOption,

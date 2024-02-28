@@ -18,7 +18,7 @@ type Props = {
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>['0']
   collection: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   chain?: ReservoirChain | null
-  price?: number
+  price?: number | bigint
   currency?: Currency
   quantity?: number
   trait?: Trait
@@ -163,7 +163,7 @@ const TokenInfo: FC<Props> = ({
         <Flex direction="column" align="end" css={{ gap: '$1', flexShrink: 0 }}>
           {price && currency ? (
             <FormatCryptoCurrency
-              amount={Number(price)}
+              amount={price}
               address={currency?.contract}
               symbol={currency?.symbol}
               textStyle="h6"

@@ -1,11 +1,12 @@
-import { paths } from '@reservoir0x/reservoir-sdk'
+import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import getLocalMarketplaceData from '../lib/getLocalMarketplaceData'
 import { useEffect, useState } from 'react'
 import useReservoirClient from './useReservoirClient'
 import useSWR from 'swr'
+import { MarketPlaceConfigurationsQuery } from './useMarketplaceConfigs'
 
 export type Marketplace = NonNullable<
-  paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses']['200']['schema']['marketplaces']
+  paths['/collections/{collection}/marketplace-configurations/v2']['get']['responses']['200']['schema']['marketplaces']
 >[0] & {
   price: number | string
   truePrice: number | string
@@ -17,6 +18,7 @@ export type Marketplace = NonNullable<
 
 export default function (
   collectionId?: string,
+  tokenId?: string,
   listingEnabledOnly?: boolean,
   fees?: string[],
   chainId?: number,
@@ -28,18 +30,24 @@ export default function (
     chainId !== undefined
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
-  const path = new URL(
-    `${chain?.baseApiUrl}/collections/${collectionId}/marketplace-configurations/v1`
-  )
 
   const { data, isValidating } = useSWR<
-    paths['/collections/{collection}/marketplace-configurations/v1']['get']['responses'][200]['schema']
-  >(
-    collectionId && enabled
-      ? [path.href, client?.apiKey, client?.version]
-      : null,
-    null
-  )
+    paths['/collections/{collection}/marketplace-configurations/v2']['get']['responses'][200]['schema']
+  >(() => {
+    if (!enabled || !collectionId) {
+      return null
+    }
+
+    const url = new URL(
+      `${chain?.baseApiUrl}/collections/${collectionId}/marketplace-configurations/v2`
+    )
+    if (tokenId) {
+      let query: MarketPlaceConfigurationsQuery = { tokenId: tokenId }
+      setParams(url, query)
+    }
+
+    return [url.href, client?.apiKey, client?.version]
+  })
 
   useEffect(() => {
     if (data && data.marketplaces) {
