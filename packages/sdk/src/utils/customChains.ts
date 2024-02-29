@@ -116,12 +116,36 @@ export const apexPop = {
   },
   blockExplorers: {
     etherscan: {
-      name: 'Apex Explorer',
+      name: 'Apex',
       url: 'https://explorer.apex.proofofplay.com',
     },
     default: {
-      name: 'Apex Explorer',
+      name: 'Apex',
       url: 'https://explorer.apex.proofofplay.com',
+    },
+  },
+}
+
+export const blast = {
+  id: 81457,
+  name: 'Blast',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://blast.blockpi.network/v1/rpc/public'],
+    },
+    public: {
+      http: ['https://blast.blockpi.network/v1/rpc/public'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Blastscan',
+      url: 'https://blastscan.io',
+    },
+    default: {
+      name: 'Blastscan',
+      url: 'https://blastscan.io',
     },
   },
 }
@@ -132,4 +156,5 @@ export const customChains = {
   frameTestnet,
   blastSepolia,
   apexPop,
+  blast,
 } as const satisfies Record<string, Chain>
