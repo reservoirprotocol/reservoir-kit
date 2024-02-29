@@ -161,7 +161,7 @@ const BuyPage: NextPage = () => {
         feesOnTopBps={feesOnTopBps}
         feesOnTopUsd={feesOnTopUsd}
         normalizeRoyalties={normalizeRoyalties}
-        executionMethod={executionMethod}
+        executeBuyOptions={executionMethod ? { executionMethod } : undefined}
         openState={hasDeeplink ? deeplinkOpenState : undefined}
         onConnectWallet={() => {
           login?.()

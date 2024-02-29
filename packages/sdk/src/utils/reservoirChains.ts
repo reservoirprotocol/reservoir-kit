@@ -204,6 +204,29 @@ const frameTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const blastSepolia = {
+  id: 168587773,
+  name: 'Blast Sepolia',
+  baseApiUrl: 'https://api-blast-sepolia.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[168587773],
+  checkPollingInterval: 1000,
+}
+const apexPop = {
+  id: 70700,
+  name: 'Apex Proof of Play',
+  baseApiUrl: 'https://api-apex.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70700],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const blast = {
+  id: 81457,
+  name: 'Blast',
+  baseApiUrl: 'https://api-blast.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[81457],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   goerli,
@@ -229,4 +252,7 @@ export const reservoirChains = {
   ancient8,
   ancient8Testnet,
   frameTestnet,
+  blastSepolia,
+  apexPop,
+  blast,
 }
