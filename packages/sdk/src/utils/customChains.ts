@@ -108,20 +108,20 @@ export const apexPop = {
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['http://rpc.apex.proofofplay.com'],
+      http: ['https://rpc.apex.proofofplay.com'],
     },
     public: {
-      http: ['http://rpc.apex.proofofplay.com'],
+      http: ['https://rpc.apex.proofofplay.com'],
     },
   },
   blockExplorers: {
     etherscan: {
       name: 'Apex Explorer',
-      url: 'explorer.apex.proofofplay.com',
+      url: 'https://explorer.apex.proofofplay.com',
     },
     default: {
       name: 'Apex Explorer',
-      url: 'explorer.apex.proofofplay.com',
+      url: 'https://explorer.apex.proofofplay.com',
     },
   },
 }
