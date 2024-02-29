@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.4
+
+### Patch Changes
+
+- 46c7295: Fix paymentTokens for Blast Sepolia
+
 ## 2.0.3
 
 ### Patch Changes
