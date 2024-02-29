@@ -557,6 +557,23 @@ export const chainPaymentTokensMap = {
     },
     {
       chainId: 81457,
+      address: '0x4300000000000000000000000000000000000004',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
+  //Blast sepolia
+  168587773: [
+    {
+      chainId: 168587773,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 168587773,
       address: '0x4200000000000000000000000000000000000023',
       symbol: 'WETH',
       name: 'WETH',

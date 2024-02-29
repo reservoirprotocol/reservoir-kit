@@ -1,5 +1,21 @@
 # @reservoir0x/defender-relayer-adapter
 
+## 1.0.4
+
+### Patch Changes
+
+- Updated dependencies [46c7295]
+  - @reservoir0x/reservoir-sdk@2.0.4
+  - @reservoir0x/ethers-wallet-adapter@1.0.4
+
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies [4bc7810]
+  - @reservoir0x/reservoir-sdk@2.0.3
+  - @reservoir0x/ethers-wallet-adapter@1.0.3
+
 ## 1.0.2
 
 ### Patch Changes
