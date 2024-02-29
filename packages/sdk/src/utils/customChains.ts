@@ -104,7 +104,7 @@ export const blastSepolia = {
 
 export const apexPop = {
   id: 70700,
-  name: 'Apex Proof of Play',
+  name: 'Apex',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
@@ -116,11 +116,11 @@ export const apexPop = {
   },
   blockExplorers: {
     etherscan: {
-      name: 'Apex Pop Explorer',
+      name: 'Apex Explorer',
       url: 'explorer.apex.proofofplay.com',
     },
     default: {
-      name: 'Apex Pop Explorer',
+      name: 'Apex Explorer',
       url: 'explorer.apex.proofofplay.com',
     },
   },
