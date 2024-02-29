@@ -1,5 +1,12 @@
 ## 1.12.15
 
+## 2.0.2
+
+### Patch Changes
+
+- 96bee20: Add blast sepolia chain configuration
+- c029a8e: Add apex proof of play chain configuration
+
 ## 2.0.1
 
 ### Patch Changes

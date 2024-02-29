@@ -527,4 +527,40 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  //Apex PoP
+  70700: [
+    {
+      chainId: 70700,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 70700,
+      address: '0x77684A04145a5924eFCE0D92A7c4a2A2E8C359de',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
+
+  //Blast
+  81457: [
+    {
+      chainId: 81457,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 81457,
+      address: '0x4200000000000000000000000000000000000023',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>

@@ -78,8 +78,83 @@ export const frameTestnet = {
   },
 } as const satisfies Chain
 
+export const blastSepolia = {
+  id: 168587773,
+  name: 'Blast Sepolia',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://sepolia.blast.io'],
+    },
+    public: {
+      http: ['https://sepolia.blast.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'BlastScan Sepolia',
+      url: 'https://testnet.blastscan.io',
+    },
+    default: {
+      name: 'BlastScan Sepolia',
+      url: 'https://testnet.blastscan.io',
+    },
+  },
+} as const satisfies Chain
+
+export const apexPop = {
+  id: 70700,
+  name: 'Apex Proof of Play',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['http://rpc.apex.proofofplay.com'],
+    },
+    public: {
+      http: ['http://rpc.apex.proofofplay.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Apex Pop Explorer',
+      url: 'https://explorer.apex.proofofplay.com',
+    },
+    default: {
+      name: 'Apex Pop Explorer',
+      url: 'https://explorer.apex.proofofplay.com',
+    },
+  },
+}
+
+export const blast = {
+  id: 81457,
+  name: 'Blast',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.blast.io'],
+    },
+    public: {
+      http: ['https://rpc.blast.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Blastscan',
+      url: 'https://blastscan.io',
+    },
+    default: {
+      name: 'Blastscan',
+      url: 'https://blastscan.io',
+    },
+  },
+}
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
   frameTestnet,
+  blastSepolia,
+  apexPop,
+  blast,
 } as const satisfies Record<string, Chain>
