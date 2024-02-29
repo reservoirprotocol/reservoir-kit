@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.5
+
+### Patch Changes
+
+- 9d802e7: Add blast chain configuration
+
 ## 2.0.4
 
 ### Patch Changes

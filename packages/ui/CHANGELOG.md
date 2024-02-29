@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.3.3
+
+### Patch Changes
+
+- 9d802e7: Add blast chain configuration
+- Updated dependencies [9d802e7]
+  - @reservoir0x/reservoir-sdk@2.0.5
+
 ## 2.3.2
 
 ### Patch Changes
