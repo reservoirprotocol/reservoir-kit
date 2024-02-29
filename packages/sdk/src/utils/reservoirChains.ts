@@ -206,7 +206,7 @@ const frameTestnet = {
 
 const apexPop = {
   id: 70700,
-  name: 'Apex Proof of Play',
+  name: 'Apex',
   baseApiUrl: 'https://api-apex.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[70700],
   checkPollingInterval: 1000,
