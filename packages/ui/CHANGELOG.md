@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.3.2
+
+### Patch Changes
+
+- 46c7295: Fix paymentTokens for Blast Sepolia
+- Updated dependencies [46c7295]
+  - @reservoir0x/reservoir-sdk@2.0.4
+
 ## 2.3.1
 
 ### Patch Changes
