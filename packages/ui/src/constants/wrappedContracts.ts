@@ -24,6 +24,7 @@ const wrappedContracts: Record<number, string> = {
   28122024: '0x4200000000000000000000000000000000000006', //ancient8testnet
   68840142: '0x822b4c4713433c6b88547845850a39343bf0957e', //frametestnet
   70700: '0x77684A04145a5924eFCE0D92A7c4a2A2E8C359de', //apex pop
+  81457: '0x4200000000000000000000000000000000000023', //blast
 }
 
 export default wrappedContracts

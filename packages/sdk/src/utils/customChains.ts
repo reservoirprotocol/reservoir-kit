@@ -81,6 +81,31 @@ export const frameTestnet = {
   },
 } as const satisfies Chain
 
+export const blastSepolia = {
+  id: 168587773,
+  name: 'Blast Sepolia',
+  network: 'blast-sepolia',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://sepolia.blast.io'],
+    },
+    public: {
+      http: ['https://sepolia.blast.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'BlastScan Sepolia',
+      url: 'https://testnet.blastscan.io',
+    },
+    default: {
+      name: 'BlastScan Sepolia',
+      url: 'https://testnet.blastscan.io',
+    },
+  },
+} as const satisfies Chain
+
 export const apexPop = {
   id: 70700,
   name: 'Apex',
@@ -104,6 +129,31 @@ export const apexPop = {
       url: 'https://explorer.apex.proofofplay.com',
     },
   },
+}
+
+export const blast = {
+  id: 81457,
+  name: 'Blast',
+  network: 'blast',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.blast.io'],
+    },
+    public: {
+      http: ['https://rpc.blast.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Blastscan',
+      url: 'https://blastscan.io',
+    },
+    default: {
+      name: 'Blastscan',
+      url: 'https://blastscan.io',
+    },
+  },
 } as const satisfies Chain
 
 export const customChains = {
@@ -111,4 +161,6 @@ export const customChains = {
   ancient8Testnet,
   frameTestnet,
   apexPop,
+  blast,
+  blastSepolia,
 } as const satisfies Record<string, Chain>

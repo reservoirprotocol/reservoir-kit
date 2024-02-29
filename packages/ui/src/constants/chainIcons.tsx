@@ -49,6 +49,9 @@ import FrameIconColor from '../img/chains/FrameIconColor'
 import ApexPopIconLight from '../img/chains/ApexPopIconLight'
 import ApexPopIconDark from '../img/chains/ApexPopIconDark'
 import ApexPopIconColor from '../img/chains/ApexPopIconColor'
+import BlastIconColor from '../img/chains/BlastIconColor'
+import BlastIconDark from '../img/chains/BlastIconDark'
+import BlastIconLight from '../img/chains/BlastIconLight'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -170,6 +173,11 @@ const chainIcons = {
     light: <ApexPopIconLight />,
     dark: <ApexPopIconDark />,
     color: <ApexPopIconColor />,
+  },
+  [reservoirChains.blast.id]: {
+    light: <BlastIconLight />,
+    dark: <BlastIconDark />,
+    color: <BlastIconColor />,
   },
 }
 

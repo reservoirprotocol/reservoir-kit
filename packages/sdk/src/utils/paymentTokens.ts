@@ -545,4 +545,22 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  //Blast
+  81457: [
+    {
+      chainId: 81457,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 81457,
+      address: '0x4200000000000000000000000000000000000023',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>
