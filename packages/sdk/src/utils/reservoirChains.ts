@@ -219,6 +219,14 @@ const apexPop = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const blast = {
+  id: 81457,
+  name: 'Blast',
+  baseApiUrl: 'https://api-blast.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[81457],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   goerli,
@@ -246,4 +254,5 @@ export const reservoirChains = {
   frameTestnet,
   blastSepolia,
   apexPop,
+  blast,
 }
