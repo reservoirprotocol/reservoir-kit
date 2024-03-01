@@ -254,8 +254,8 @@ export const BuyModalRenderer: FC<Props> = ({
         !open ||
         !client ||
         !tokenData ||
-        !token ||
-        paymentTokens.length === 0
+        !token
+        // || paymentTokens.length === 0
       ) {
         setPath(undefined)
         return
@@ -295,7 +295,7 @@ export const BuyModalRenderer: FC<Props> = ({
         if (paymentCurrency.chainId) {
           options.currencyChainId = paymentCurrency.chainId
         }
-      } else if (!includeListingCurrency) {
+      } else if (!includeListingCurrency && paymentTokens[0]) {
         options.currency = paymentTokens[0].address
         if (paymentTokens[0].chainId) {
           options.currencyChainId = paymentTokens[0].chainId
