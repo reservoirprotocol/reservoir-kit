@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 import { styled } from '../../stitches.config'
 import * as Select from '@radix-ui/react-select'
-import faChevronDown from '@fortawesome/free-solid-svg-icons/faChevronDown'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Box from './Box'
 

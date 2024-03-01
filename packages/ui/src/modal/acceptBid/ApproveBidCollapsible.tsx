@@ -5,7 +5,7 @@ import { EnhancedAcceptBidTokenData } from './AcceptBidModalRenderer'
 import { Flex, Grid, Img, Loader, Text } from '../../primitives'
 import { styled } from '@stitches/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faCircleNotch from '@fortawesome/free-solid-svg-icons/faCircleNotch'
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons/faCircleNotch'
 
 type Props = {
   step: NonNullable<Execute['steps'][0]>

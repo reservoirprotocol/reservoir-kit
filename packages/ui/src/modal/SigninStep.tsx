@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Flex, Text } from '../primitives'
 import React, { FC } from 'react'
-import faPenNib from '@fortawesome/free-solid-svg-icons/faPenNib'
+import { faPenNib } from '@fortawesome/free-solid-svg-icons/faPenNib'
 
 import { CSS } from '@stitches/react'
 
