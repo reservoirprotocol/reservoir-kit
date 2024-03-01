@@ -250,13 +250,7 @@ export const BuyModalRenderer: FC<Props> = ({
       paymentCurrency: EnhancedCurrency | undefined,
       paymentTokens: EnhancedCurrency[]
     ) => {
-      if (
-        !open ||
-        !client ||
-        !tokenData ||
-        !token
-        // || paymentTokens.length === 0
-      ) {
+      if (!open || !client || !tokenData || !token) {
         setPath(undefined)
         return
       }

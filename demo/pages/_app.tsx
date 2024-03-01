@@ -21,7 +21,7 @@ import {
   ReservoirKitTheme,
   CartProvider,
 } from '@reservoir0x/reservoir-kit-ui'
-import { LogLevel, customChains, reservoirChains } from '@reservoir0x/reservoir-sdk'
+import { LogLevel, customChains } from '@reservoir0x/reservoir-sdk'
 import configuredChains from '../utils/chains'
 import { useRouter } from 'next/router'
 import '../fonts.css'
