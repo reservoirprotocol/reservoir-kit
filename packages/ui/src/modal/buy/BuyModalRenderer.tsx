@@ -106,8 +106,10 @@ type Props = {
   onConnectWallet: () => void
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
-  usePermit?: boolean
-  executionMethod?: BuyTokenBodyParameters['executionMethod']
+  executeBuyOptions?: Omit<
+    NonNullable<BuyTokenBodyParameters>,
+    'items' | 'feesOnTop' | 'taker'
+  >
 }
 
 export const BuyModalRenderer: FC<Props> = ({
@@ -122,8 +124,7 @@ export const BuyModalRenderer: FC<Props> = ({
   onConnectWallet,
   children,
   walletClient,
-  usePermit,
-  executionMethod,
+  executeBuyOptions,
 }) => {
   const [totalIncludingFees, setTotalIncludingFees] = useState(0n)
   const [averageUnitPrice, setAverageUnitPrice] = useState(0n)
@@ -182,7 +183,8 @@ export const BuyModalRenderer: FC<Props> = ({
     },
     path,
     chainId: rendererChain?.id,
-    nativeOnly: executionMethod !== undefined,
+    nativeOnly:
+      executeBuyOptions && executeBuyOptions.executionMethod !== undefined,
   })
 
   const paymentCurrency = paymentTokens?.find(
@@ -263,6 +265,7 @@ export const BuyModalRenderer: FC<Props> = ({
       setIsFetchingPath(true)
 
       const options: BuyTokenOptions = {
+        ...executeBuyOptions,
         onlyPath: true,
         partial: true,
       }
@@ -285,10 +288,6 @@ export const BuyModalRenderer: FC<Props> = ({
 
       if (normalizeRoyalties !== undefined) {
         options.normalizeRoyalties = normalizeRoyalties
-      }
-
-      if (executionMethod) {
-        options.executionMethod = executionMethod
       }
 
       if (paymentCurrency) {
@@ -386,7 +385,7 @@ export const BuyModalRenderer: FC<Props> = ({
       includeListingCurrency,
       feesOnTopBps,
       feesOnTopUsd,
-      executionMethod,
+      executeBuyOptions,
       _setPaymentCurrency,
     ]
   )
@@ -480,6 +479,7 @@ export const BuyModalRenderer: FC<Props> = ({
     }
 
     let options: BuyTokenOptions = {
+      ...executeBuyOptions,
       currency: paymentCurrency?.address,
       currencyChainId: paymentCurrency?.chainId,
     }
@@ -520,14 +520,6 @@ export const BuyModalRenderer: FC<Props> = ({
 
     if (normalizeRoyalties !== undefined) {
       options.normalizeRoyalties = normalizeRoyalties
-    }
-
-    if (usePermit) {
-      options.usePermit = true
-    }
-
-    if (executionMethod) {
-      options.executionMethod = executionMethod
     }
 
     setBuyStep(BuyStep.Approving)
@@ -636,9 +628,8 @@ export const BuyModalRenderer: FC<Props> = ({
     totalIncludingFees,
     wallet,
     paymentCurrency,
-    usePermit,
     buyResponseFees,
-    executionMethod,
+    executeBuyOptions,
     mutateTokens,
     mutateCollection,
     onConnectWallet,
