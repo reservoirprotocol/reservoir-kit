@@ -48,6 +48,7 @@ const WALLET_CONNECT_PROJECT_ID =
     allChains.goerli,
     allChains.sepolia,
     allChains.polygon,
+    allChains.polygonMumbai,
     allChains.optimism,
     allChains.arbitrum,
     allChains.zora,

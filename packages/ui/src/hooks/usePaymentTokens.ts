@@ -100,6 +100,7 @@ export default function (options: {
             listingCurrency?.contract?.toLowerCase() &&
           token.chainId === listingCurrencyChainId
       )
+
       if (!listingCurrencyAlreadyExists && listingCurrency) {
         paymentTokens?.push({
           ...listingCurrency,
