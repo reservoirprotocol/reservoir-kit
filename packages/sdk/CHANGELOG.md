@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.6
+
+### Patch Changes
+
+- 61b2d03: Added Astar ZkEVM
+
 ## 2.0.5
 
 ### Patch Changes

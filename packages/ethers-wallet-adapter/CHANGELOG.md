@@ -1,5 +1,12 @@
 # @reservoir0x/ethers-wallet-adapter
 
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies [61b2d03]
+  - @reservoir0x/reservoir-sdk@2.0.6
+
 ## 1.0.5
 
 ### Patch Changes
