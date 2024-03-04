@@ -227,6 +227,14 @@ const blast = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const astarZkEVM = {
+  id: 3776,
+  name: 'Astar zkEVM',
+  baseApiUrl: 'https://api-astar-zkevm.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[3776],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   goerli,
@@ -255,4 +263,5 @@ export const reservoirChains = {
   blastSepolia,
   apexPop,
   blast,
+  astarZkEVM,
 }

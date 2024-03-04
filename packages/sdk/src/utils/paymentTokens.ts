@@ -580,4 +580,21 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+  // Astar zkEVM
+  3776: [
+    {
+      chainId: 3776,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 3776,
+      address: '0x81ECac0D6Be0550A00FF064a4f9dd2400585FE9c',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>

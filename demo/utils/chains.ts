@@ -168,4 +168,7 @@ export default [
   {
     ...reservoirChains.blast
   },
+  {
+    ...reservoirChains.astarZkEVM,
+  }
 ]
