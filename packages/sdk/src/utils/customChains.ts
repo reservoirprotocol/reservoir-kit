@@ -165,11 +165,11 @@ export const astarZkEVM = {
   blockExplorers: {
     etherscan: {
       name: 'Astar zkEVM',
-      url: 'https://astar-zkevm.explorer.startale.com/',
+      url: 'https://astar-zkevm.explorer.startale.com',
     },
     default: {
       name: 'Astar zkEVM',
-      url: 'https://astar-zkevm.explorer.startale.com/',
+      url: 'https://astar-zkevm.explorer.startale.com',
     },
   },
 } as const satisfies Chain
