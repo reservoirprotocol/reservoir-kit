@@ -150,6 +150,30 @@ export const blast = {
   },
 }
 
+export const astarZkEVM = {
+  id: 3776,
+  name: 'Astar ZkEVM',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.startale.com/astar-zkevm'],
+    },
+    public: {
+      http: ['https://rpc.startale.com/astar-zkevm'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Astar zkEVM',
+      url: 'https://astar-zkevm.explorer.startale.com',
+    },
+    default: {
+      name: 'Astar zkEVM',
+      url: 'https://astar-zkevm.explorer.startale.com',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -157,4 +181,5 @@ export const customChains = {
   blastSepolia,
   apexPop,
   blast,
+  astarZkEVM,
 } as const satisfies Record<string, Chain>
