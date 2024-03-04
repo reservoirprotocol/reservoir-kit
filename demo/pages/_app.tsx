@@ -51,6 +51,7 @@ const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
     allChains.goerli,
     allChains.sepolia,
     allChains.polygon,
+    allChains.polygonMumbai,
     allChains.optimism,
     allChains.arbitrum,
     allChains.zora,
