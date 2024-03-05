@@ -41,7 +41,9 @@
 
 ### Major Changes
 
-- b7ad7a5: Upgrade viem and wagmi to v2
+- b7ad7a5: Upgrade viem to v2
+ ### Breaking Changes:
+  Make sure to upgrade peer dependency `viem` to 2.x.x
 
 ## 1.12.16
 
