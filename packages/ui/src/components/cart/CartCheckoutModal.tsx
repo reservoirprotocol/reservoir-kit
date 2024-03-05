@@ -5,14 +5,12 @@ import { AnimatedOverlay, StyledAnimatedContent } from '../../primitives/Dialog'
 import { Anchor, Button, Flex, Text, Box, Loader } from '../../primitives'
 import { styled } from '@stitches/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCheckCircle,
-  faCircleExclamation,
-  faClose,
-  faCube,
-  faLock,
-  faWallet,
-} from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons/faCheckCircle'
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
+import { faClose } from '@fortawesome/free-solid-svg-icons/faClose'
+import { faCube } from '@fortawesome/free-solid-svg-icons/faCube'
+import { faLock } from '@fortawesome/free-solid-svg-icons/faLock'
+import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { TokenCheckout } from '../../modal/TokenCheckout'
 import { Cart, CheckoutStatus } from '../../context/CartProvider'

@@ -1,0 +1,2 @@
+echo "Linting FontAwesome imports"
+node ./scripts/fontAwesomeImports.js

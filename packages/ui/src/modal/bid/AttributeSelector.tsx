@@ -3,7 +3,8 @@ import React, { FC, useEffect, useState } from 'react'
 import { Flex, FormatCryptoCurrency, Input, Text } from '../../primitives'
 import ScrollArea from '../../primitives/ScrollArea'
 import { Trait } from './BidModalRenderer'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass'
+
 import { useAttributes } from '../../hooks'
 
 type Props = {

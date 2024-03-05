@@ -2,7 +2,8 @@ import React, { FC, useMemo } from 'react'
 import { useTokens } from '../../hooks'
 import { Dropdown, DropdownMenuItem } from '../../primitives/Dropdown'
 import { Button, Flex, FormatCryptoCurrency, Text } from '../../primitives'
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons/faEllipsis'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Currency } from '../../types/Currency'
 

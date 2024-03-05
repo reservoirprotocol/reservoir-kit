@@ -7,11 +7,10 @@ import React, {
 } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faClose,
-  faChevronLeft,
-  faLock,
-} from '@fortawesome/free-solid-svg-icons'
+import { faClose } from '@fortawesome/free-solid-svg-icons/faClose'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
+import { faLock } from '@fortawesome/free-solid-svg-icons/faLock'
+
 import { Anchor, Button, Flex, Text, Loader, Box } from '../primitives'
 import { styled } from '../../stitches.config'
 import { Dialog } from '../primitives/Dialog'
