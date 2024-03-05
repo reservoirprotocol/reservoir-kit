@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.3.4
+
+### Patch Changes
+
+- dd14735: Fix empty payment tokens bug in Buy and Sweep modals
+- Updated dependencies [61b2d03]
+  - @reservoir0x/reservoir-sdk@2.0.6
+
 ## 2.3.3
 
 ### Patch Changes
