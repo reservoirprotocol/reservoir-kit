@@ -75,6 +75,9 @@
 
 - b7ad7a5: Upgrade viem and wagmi to v2
 
+### Breaking Changes:
+Make sure to upgrade peer dependencies `viem` and `wagmi` to 2.x.x
+
 ### Patch Changes
 
 - Updated dependencies [b7ad7a5]
