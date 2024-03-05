@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.3.5
+
+### Patch Changes
+
+- 8c1edc3: Use deep imports for icons
+
 ## 2.3.4
 
 ### Patch Changes
@@ -76,6 +82,7 @@
 - b7ad7a5: Upgrade viem and wagmi to v2
 
 ### Breaking Changes:
+
 Make sure to upgrade peer dependencies `viem` and `wagmi` to 2.x.x
 
 ### Patch Changes
