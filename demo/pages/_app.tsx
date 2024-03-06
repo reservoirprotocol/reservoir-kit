@@ -57,7 +57,8 @@ const WALLET_CONNECT_PROJECT_ID =
     allChains.linea,
     allChains.scroll,
     allChains.arbitrumNova,
-    customChains.frameTestnet
+    customChains.frameTestnet,
+    customChains.astarZkEVM,
   ] as [
     Chain,
     ...Chain[]
