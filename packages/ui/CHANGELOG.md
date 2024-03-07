@@ -1,5 +1,12 @@
 ## 1.25.10
 
+## 2.3.6
+
+### Patch Changes
+
+- 4bb523d: Fix a bug where normalized royalties were being considered referral fees
+- 1e40ab8: Update astar zkevm WETH address
+
 ## 2.3.5
 
 ### Patch Changes
