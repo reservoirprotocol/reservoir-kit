@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.7
+
+### Patch Changes
+
+- 213a434: Fix Astar WETH paymentToken
+
 ## 2.0.6
 
 ### Patch Changes
@@ -42,8 +48,10 @@
 ### Major Changes
 
 - b7ad7a5: Upgrade viem to v2
- ### Breaking Changes:
-  Make sure to upgrade peer dependency `viem` to 2.x.x
+
+### Breaking Changes:
+
+Make sure to upgrade peer dependency `viem` to 2.x.x
 
 ## 1.12.16
 
