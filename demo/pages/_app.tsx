@@ -69,6 +69,7 @@ const wagmiConfig = getDefaultConfig({
   appName: 'Reservoir Kit',
   projectId: WALLET_CONNECT_PROJECT_ID,
   chains: chains,
+  ssr: true,
   transports: chains.reduce((transportsConfig: _transports, chain) => {
     const network = chainIdToAlchemyNetworkMap[chain.id]
     if (network && ALCHEMY_KEY) {
