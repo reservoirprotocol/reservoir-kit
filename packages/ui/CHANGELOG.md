@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.3.8
+
+### Patch Changes
+
+- a32e68b: Fixed missing font awesome icons
+
 ## 2.3.7
 
 ### Patch Changes
