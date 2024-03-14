@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.8
+
+### Patch Changes
+
+- c2ef89f: Fix passing chainId in recursive call to executeSteps
+
 ## 2.0.7
 
 ### Patch Changes
