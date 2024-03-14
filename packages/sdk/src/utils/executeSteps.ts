@@ -124,6 +124,7 @@ export async function executeSteps(
 ) {
   const client = getClient()
   let reservoirChain = client?.currentChain()
+
   if (chainId) {
     reservoirChain = client.chains.find((chain) => chain.id == chainId) || null
   }
@@ -339,7 +340,9 @@ export async function executeSteps(
       LogLevel.Verbose
     )
 
-    const items = stepItems.filter((stepItem) => stepItem.status === 'incomplete')
+    const items = stepItems.filter(
+      (stepItem) => stepItem.status === 'incomplete'
+    )
     const pendingPromises: Promise<any>[] = []
     for (var i = 0; i < items.length; i++) {
       const promise = new Promise(async (resolve, reject) => {
@@ -606,10 +609,7 @@ export async function executeSteps(
               },
               (res) => {
                 client.log(
-                  [
-                    'Execute Steps: Polling transfers to check if indexed',
-                    res,
-                  ],
+                  ['Execute Steps: Polling transfers to check if indexed', res],
                   LogLevel.Verbose
                 )
                 if (res.status === 200) {
@@ -640,9 +640,8 @@ export async function executeSteps(
               .map((order) => order.contract?.toLowerCase())
             stepItem.transfersData = transfersData.transfers?.filter(
               (transfer) =>
-                contracts?.includes(
-                  transfer?.token?.contract?.toLowerCase()
-                ) && isSell
+                contracts?.includes(transfer?.token?.contract?.toLowerCase()) &&
+                isSell
                   ? transfer.from?.toLowerCase() === taker.toLowerCase()
                   : transfer.to?.toLowerCase() === taker.toLowerCase()
             )
@@ -680,7 +679,7 @@ export async function executeSteps(
     }
 
     // Recursively call executeSteps()
-    await executeSteps(request, wallet, setState, json)
+    await executeSteps(request, wallet, setState, json, undefined, chainId)
   } catch (err: any) {
     let blockNumber = 0n
     try {
