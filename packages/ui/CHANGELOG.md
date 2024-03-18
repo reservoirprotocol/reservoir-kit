@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- 5a0aa7f: Sync api types
+- 5a0aa7f: Upgrade useUserTokens hook to use v10 api
 
 ### Patch Changes
 
