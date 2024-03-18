@@ -1,5 +1,12 @@
 ## 1.12.15
 
+## 2.0.9
+
+### Patch Changes
+
+- fd61f2b: Remove submitting transaction to solver
+- 5a0aa7f: Sync api types
+
 ## 2.0.8
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 ## 1.25.10
 
+## 2.4.0
+
+### Minor Changes
+
+- 5a0aa7f: Upgrade useUserTokens hook to use v10 api
+
+### Patch Changes
+
+- Updated dependencies [fd61f2b]
+- Updated dependencies [5a0aa7f]
+  - @reservoir0x/reservoir-sdk@2.0.9
+
 ## 2.3.9
 
 ### Patch Changes
