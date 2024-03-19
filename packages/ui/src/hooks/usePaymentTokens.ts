@@ -144,6 +144,7 @@ export default function (options: {
     crossChainDisabled,
     nativeOnly,
     includeListingCurrency,
+    listingCurrency,
   ])
 
   const nativeCurrencies = useMemo(() => {
@@ -156,6 +157,7 @@ export default function (options: {
     crossChainDisabled,
     nativeOnly,
     includeListingCurrency,
+    listingCurrency,
   ])
 
   const { data: nonNativeBalances } = useReadContracts({

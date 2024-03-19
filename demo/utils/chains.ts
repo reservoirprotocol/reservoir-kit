@@ -147,6 +147,19 @@ export default [
     }]
   },
   {
+    ...reservoirChains.baseSepolia,
+    paymentTokens: [
+      ...reservoirChains.base.paymentTokens,
+      {
+        chainId: 11155111,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'Sepolia ETH',
+        decimals: 18,
+      },
+    ]
+  },
+  {
     ...reservoirChains.linea,
   },
   {

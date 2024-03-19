@@ -26,16 +26,15 @@ import {
   Text,
 } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCheckCircle,
-  faChevronLeft,
-  faChevronRight,
-  faCircleExclamation,
-  faCube,
-  faMagnifyingGlass,
-  faPenNib,
-  faWallet,
-} from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons/faCheckCircle'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
+import { faCube } from '@fortawesome/free-solid-svg-icons/faCube'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass'
+import { faPenNib } from '@fortawesome/free-solid-svg-icons/faPenNib'
+import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet'
+
 import { formatNumber } from '../../lib/numbers'
 import { Path } from '../../components/cart/CartCheckoutModal'
 import QuantitySelector from '../QuantitySelector'

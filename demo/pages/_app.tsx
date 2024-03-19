@@ -60,7 +60,8 @@ const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
     allChains.linea,
     allChains.scroll,
     allChains.arbitrumNova,
-    customChains.frameTestnet
+    customChains.frameTestnet,
+    customChains.astarZkEVM,
   ] as [
     Chain,
     ...Chain[]

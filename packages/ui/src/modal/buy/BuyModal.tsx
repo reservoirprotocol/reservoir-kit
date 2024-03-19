@@ -19,12 +19,11 @@ import {
 } from '../../primitives'
 import Progress from '../Progress'
 import { Modal } from '../Modal'
-import {
-  faCircleExclamation,
-  faCheckCircle,
-  faChevronLeft,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons'
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons/faCheckCircle'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
 import {

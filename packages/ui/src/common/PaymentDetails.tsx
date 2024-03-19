@@ -14,7 +14,7 @@ import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
 import { BuyResponses, MintResponses } from '@reservoir0x/reservoir-sdk'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle'
 
 type Props = {
   css?: CSS

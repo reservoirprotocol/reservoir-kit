@@ -30,7 +30,10 @@ import {
   ListStep,
   ListModalStepData,
 } from './ListModalRenderer'
-import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
+import { faCalendar } from '@fortawesome/free-solid-svg-icons/faCalendar'
+import { faImages } from '@fortawesome/free-solid-svg-icons/faImages'
+import { faTag } from '@fortawesome/free-solid-svg-icons/faTag'
+
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
 import SigninStep from '../SigninStep'

@@ -3,7 +3,8 @@ import { Button } from '../primitives'
 import PseudoInput from '../primitives/PseudoInput'
 import { styled } from '../../stitches.config'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus'
+import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
 
 type Props = {
   max: number

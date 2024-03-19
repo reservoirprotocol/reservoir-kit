@@ -1,5 +1,24 @@
 ## 1.12.15
 
+## 2.0.9
+
+### Patch Changes
+
+- fd61f2b: Remove submitting transaction to solver
+- 5a0aa7f: Sync api types
+
+## 2.0.8
+
+### Patch Changes
+
+- c2ef89f: Fix passing chainId in recursive call to executeSteps
+
+## 2.0.7
+
+### Patch Changes
+
+- 213a434: Fix Astar WETH paymentToken
+
 ## 2.0.6
 
 ### Patch Changes
@@ -42,8 +61,10 @@
 ### Major Changes
 
 - b7ad7a5: Upgrade viem to v2
- ### Breaking Changes:
-  Make sure to upgrade peer dependency `viem` to 2.x.x
+
+### Breaking Changes:
+
+Make sure to upgrade peer dependency `viem` to 2.x.x
 
 ## 1.12.16
 
