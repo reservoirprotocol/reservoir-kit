@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.4.1
+
+### Patch Changes
+
+- d9b23ed: Fix listing currency as payment token dependency bug
+
 ## 2.4.0
 
 ### Minor Changes
