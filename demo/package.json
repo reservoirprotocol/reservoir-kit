@@ -12,8 +12,8 @@
     "singleQuote": true
   },
   "dependencies": {
-    "@privy-io/react-auth": "^1.56.2",
-    "@privy-io/wagmi": "^0.1.0",
+    "@privy-io/react-auth": "latest",
+    "@privy-io/wagmi": "latest",
     "@radix-ui/colors": "^0.1.8",
     "@rainbow-me/rainbowkit": "2.0.0",
     "@reservoir0x/reservoir-kit-ui": "workspace:*",

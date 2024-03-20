@@ -1,18 +1,22 @@
 import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
+import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 
 
 export const PrivyConnectButton = () => {
-  const { logout, ready, authenticated, unlinkWallet, connectWallet, linkWallet } = usePrivy()
-  const { wallets } = useWallets()
+  const { logout, ready, authenticated, unlinkWallet, connectWallet, linkWallet, } = usePrivy()
+  const { wallets} = useWallets()
   const { setActiveWallet } = useSetActiveWallet()
   const { address } = useAccount()
 
   const { login } = useLogin({
     onComplete: (user, isNewUser, wasAlreadyAuthenticated) => {
       console.log('Login complete')
-      setActiveWallet(wallets[0])
+      if(wallets[0]) {
+        console.log('setting active wallet')
+        setActiveWallet(wallets[0])
+      }
     },
   })
 
