@@ -28,6 +28,7 @@ const wrappedContracts: Record<number, string> = {
   70800: '0xBfB86801053600dd3C7FCBa6d5E85017a64cE728', //apex pop testnet
   81457: '0x4300000000000000000000000000000000000004', //blast
   3776: '0xE9CC37904875B459Fa5D0FE37680d36F1ED55e38', // astar zkEVM
+  17001: '0x09d940117bd1df3165a22820517a946426605f60', // redstone testnet
 }
 
 export default wrappedContracts

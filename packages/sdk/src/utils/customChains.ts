@@ -198,6 +198,30 @@ export const astarZkEVM = {
   },
 } as const satisfies Chain
 
+export const redstoneTestnet = {
+  id: 17001,
+  name: 'Redstone Testnet',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.holesky.redstone.xyz'],
+    },
+    public: {
+      http: ['https://rpc.holesky.redstone.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Redstone Testnet',
+      url: 'https://explorer.holesky.redstone.xyz',
+    },
+    default: {
+      name: 'Redstone Testnet',
+      url: 'https://explorer.holesky.redstone.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -207,4 +231,5 @@ export const customChains = {
   apexPopTestnet,
   blast,
   astarZkEVM,
+  redstoneTestnet,
 } as const satisfies Record<string, Chain>

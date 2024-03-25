@@ -28,5 +28,6 @@ const wrappedContractNames: Record<number, string> = {
   70800: 'WETH', //apex pop testnet
   81457: 'WETH', //blast
   3776: 'WETH', // astar zkevm,
+  17001: 'WETH', // redstone testnet
 }
 export default wrappedContractNames
