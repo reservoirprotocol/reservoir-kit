@@ -189,5 +189,8 @@ export default [
   },
   {
     ...reservoirChains.astarZkEVM,
+  },
+  {
+    ...reservoirChains.redstoneTestnet,
   }
 ]
