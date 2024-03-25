@@ -182,6 +182,9 @@ export default [
     ...reservoirChains.apexPop
   },
   {
+    ...reservoirChains.apexPopTestnet
+  },
+  {
     ...reservoirChains.blast
   },
   {

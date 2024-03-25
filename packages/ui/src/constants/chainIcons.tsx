@@ -185,6 +185,11 @@ const chainIcons = {
     dark: <ApexPopIconDark />,
     color: <ApexPopIconColor />,
   },
+  [reservoirChains.apexPopTestnet.id]: {
+    light: <ApexPopIconLight />,
+    dark: <ApexPopIconDark />,
+    color: <ApexPopIconColor />,
+  },
   [reservoirChains.blast.id]: {
     light: <BlastIconLight />,
     dark: <BlastIconDark />,

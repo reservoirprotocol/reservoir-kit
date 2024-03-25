@@ -219,6 +219,14 @@ const apexPop = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const apexPopTestnet = {
+  id: 70800,
+  name: 'Apex Testnet',
+  baseApiUrl: 'https://api-apex-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70800],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 const blast = {
   id: 81457,
   name: 'Blast',
@@ -262,6 +270,7 @@ export const reservoirChains = {
   frameTestnet,
   blastSepolia,
   apexPop,
+  apexPopTestnet,
   blast,
   astarZkEVM,
 }
