@@ -23,7 +23,7 @@ import { Modal } from '../Modal'
 import TokenPrimitive from '../TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faGasPump from '@fortawesome/free-solid-svg-icons/faGasPump'
+import { faGasPump } from '@fortawesome/free-solid-svg-icons/faGasPump'
 
 import { truncateAddress } from '../../lib/truncate'
 import { WalletClient } from 'viem'

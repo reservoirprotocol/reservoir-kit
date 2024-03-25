@@ -55,6 +55,9 @@ import ApexPopIconColor from '../img/chains/ApexPopIconColor'
 import BlastIconColor from '../img/chains/BlastIconColor'
 import BlastIconDark from '../img/chains/BlastIconDark'
 import BlastIconLight from '../img/chains/BlastIconLight'
+import AstarZkEVMLight from '../img/chains/AstarZkEVMLight'
+import AstarZkEVMDark from '../img/chains/AstarZkEVMDark'
+import AstarZkEVMColor from '../img/chains/AstarZkEVMColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -182,10 +185,20 @@ const chainIcons = {
     dark: <ApexPopIconDark />,
     color: <ApexPopIconColor />,
   },
+  [reservoirChains.apexPopTestnet.id]: {
+    light: <ApexPopIconLight />,
+    dark: <ApexPopIconDark />,
+    color: <ApexPopIconColor />,
+  },
   [reservoirChains.blast.id]: {
     light: <BlastIconLight />,
     dark: <BlastIconDark />,
     color: <BlastIconColor />,
+  },
+  [reservoirChains.astarZkEVM.id]: {
+    light: <AstarZkEVMLight />,
+    dark: <AstarZkEVMDark />,
+    color: <AstarZkEVMColor />,
   },
 }
 

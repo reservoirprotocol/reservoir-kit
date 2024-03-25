@@ -1,5 +1,87 @@
 ## 1.25.10
 
+## 2.4.1
+
+### Patch Changes
+
+- d9b23ed: Fix listing currency as payment token dependency bug
+
+## 2.4.0
+
+### Minor Changes
+
+- 5a0aa7f: Upgrade useUserTokens hook to use v10 api
+
+### Patch Changes
+
+- Updated dependencies [fd61f2b]
+- Updated dependencies [5a0aa7f]
+  - @reservoir0x/reservoir-sdk@2.0.9
+
+## 2.3.9
+
+### Patch Changes
+
+- Updated dependencies [c2ef89f]
+  - @reservoir0x/reservoir-sdk@2.0.8
+
+## 2.3.8
+
+### Patch Changes
+
+- a32e68b: Fixed missing font awesome icons
+
+## 2.3.7
+
+### Patch Changes
+
+- Updated dependencies [213a434]
+  - @reservoir0x/reservoir-sdk@2.0.7
+
+## 2.3.6
+
+### Patch Changes
+
+- 4bb523d: Fix a bug where normalized royalties were being considered referral fees
+- 1e40ab8: Update astar zkevm WETH address
+
+## 2.3.5
+
+### Patch Changes
+
+- 8c1edc3: Use deep imports for icons
+
+## 2.3.4
+
+### Patch Changes
+
+- dd14735: Fix empty payment tokens bug in Buy and Sweep modals
+- Updated dependencies [61b2d03]
+  - @reservoir0x/reservoir-sdk@2.0.6
+
+## 2.3.3
+
+### Patch Changes
+
+- 9d802e7: Add blast chain configuration
+- Updated dependencies [9d802e7]
+  - @reservoir0x/reservoir-sdk@2.0.5
+
+## 2.3.2
+
+### Patch Changes
+
+- 46c7295: Fix paymentTokens for Blast Sepolia
+- Updated dependencies [46c7295]
+  - @reservoir0x/reservoir-sdk@2.0.4
+
+## 2.3.1
+
+### Patch Changes
+
+- Updated dependencies [4bc7810]
+  - @reservoir0x/reservoir-sdk@2.0.3
+
 ## 2.3.0
 
 ### Minor Changes
@@ -43,6 +125,10 @@
 ### Major Changes
 
 - b7ad7a5: Upgrade viem and wagmi to v2
+
+### Breaking Changes:
+
+Make sure to upgrade peer dependencies `viem` and `wagmi` to 2.x.x
 
 ### Patch Changes
 

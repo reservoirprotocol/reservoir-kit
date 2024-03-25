@@ -9,9 +9,9 @@ import {
 } from '../../primitives'
 import { styled } from '../../../stitches.config'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faArrowDown from '@fortawesome/free-solid-svg-icons/faArrowDown'
-import faArrowUp from '@fortawesome/free-solid-svg-icons/faArrowUp'
-import faClose from '@fortawesome/free-solid-svg-icons/faClose'
+import { faArrowDown } from '@fortawesome/free-solid-svg-icons/faArrowDown'
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons/faArrowUp'
+import { faClose } from '@fortawesome/free-solid-svg-icons/faClose'
 
 import { Cart } from '../../context/CartProvider'
 import { formatNumber } from '../../lib/numbers'

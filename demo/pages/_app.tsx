@@ -48,6 +48,7 @@ const WALLET_CONNECT_PROJECT_ID =
     allChains.goerli,
     allChains.sepolia,
     allChains.polygon,
+    allChains.polygonMumbai,
     allChains.optimism,
     allChains.arbitrum,
     allChains.zora,
@@ -56,7 +57,8 @@ const WALLET_CONNECT_PROJECT_ID =
     allChains.linea,
     allChains.scroll,
     allChains.arbitrumNova,
-    customChains.frameTestnet
+    customChains.frameTestnet,
+    customChains.astarZkEVM,
   ] as [
     Chain,
     ...Chain[]
@@ -67,6 +69,7 @@ const wagmiConfig = getDefaultConfig({
   appName: 'Reservoir Kit',
   projectId: WALLET_CONNECT_PROJECT_ID,
   chains: chains,
+  ssr: true,
   transports: chains.reduce((transportsConfig: _transports, chain) => {
     const network = chainIdToAlchemyNetworkMap[chain.id]
     if (network && ALCHEMY_KEY) {

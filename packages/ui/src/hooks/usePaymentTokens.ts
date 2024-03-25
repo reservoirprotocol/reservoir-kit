@@ -100,6 +100,7 @@ export default function (options: {
             listingCurrency?.contract?.toLowerCase() &&
           token.chainId === listingCurrencyChainId
       )
+
       if (!listingCurrencyAlreadyExists && listingCurrency) {
         paymentTokens?.push({
           ...listingCurrency,
@@ -143,6 +144,7 @@ export default function (options: {
     crossChainDisabled,
     nativeOnly,
     includeListingCurrency,
+    listingCurrency,
   ])
 
   const nativeCurrencies = useMemo(() => {
@@ -155,6 +157,7 @@ export default function (options: {
     crossChainDisabled,
     nativeOnly,
     includeListingCurrency,
+    listingCurrency,
   ])
 
   const { data: nonNativeBalances } = useReadContracts({

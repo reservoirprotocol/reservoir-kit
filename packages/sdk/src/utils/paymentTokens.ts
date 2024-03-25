@@ -546,6 +546,24 @@ export const chainPaymentTokensMap = {
     },
   ],
 
+  //Apex PoP Testnet
+  70800: [
+    {
+      chainId: 70800,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 70800,
+      address: '0xBfB86801053600dd3C7FCBa6d5E85017a64cE728',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
+
   //Blast
   81457: [
     {
@@ -557,7 +575,41 @@ export const chainPaymentTokensMap = {
     },
     {
       chainId: 81457,
+      address: '0x4300000000000000000000000000000000000004',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
+  //Blast sepolia
+  168587773: [
+    {
+      chainId: 168587773,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 168587773,
       address: '0x4200000000000000000000000000000000000023',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
+  // Astar zkEVM
+  3776: [
+    {
+      chainId: 3776,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 3776,
+      address: '0xE9CC37904875B459Fa5D0FE37680d36F1ED55e38',
       symbol: 'WETH',
       name: 'WETH',
       decimals: 18,

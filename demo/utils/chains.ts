@@ -63,6 +63,9 @@ export default [
     ...reservoirChains.polygon,
   },
   {
+    ...reservoirChains.mumbai
+  },
+  {
     ...reservoirChains.optimism,
     paymentTokens: [...reservoirChains.optimism.paymentTokens, {
       chainId: 1,
@@ -144,6 +147,19 @@ export default [
     }]
   },
   {
+    ...reservoirChains.baseSepolia,
+    paymentTokens: [
+      ...reservoirChains.base.paymentTokens,
+      {
+        chainId: 11155111,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'Sepolia ETH',
+        decimals: 18,
+      },
+    ]
+  },
+  {
     ...reservoirChains.linea,
   },
   {
@@ -166,6 +182,12 @@ export default [
     ...reservoirChains.apexPop
   },
   {
+    ...reservoirChains.apexPopTestnet
+  },
+  {
     ...reservoirChains.blast
   },
+  {
+    ...reservoirChains.astarZkEVM,
+  }
 ]

@@ -104,24 +104,48 @@ export const blastSepolia = {
 
 export const apexPop = {
   id: 70700,
-  name: 'Apex Proof of Play',
+  name: 'Apex',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['http://rpc.apex.proofofplay.com'],
+      http: ['https://rpc.apex.proofofplay.com'],
     },
     public: {
-      http: ['http://rpc.apex.proofofplay.com'],
+      http: ['https://rpc.apex.proofofplay.com'],
     },
   },
   blockExplorers: {
     etherscan: {
-      name: 'Apex Pop Explorer',
+      name: 'Apex',
       url: 'https://explorer.apex.proofofplay.com',
     },
     default: {
-      name: 'Apex Pop Explorer',
+      name: 'Apex',
       url: 'https://explorer.apex.proofofplay.com',
+    },
+  },
+}
+
+export const apexPopTestnet = {
+  id: 70800,
+  name: 'Apex Testnet',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-pop-testnet-barret-oxaolmcfss.t.conduit.xyz'],
+    },
+    public: {
+      http: ['https://rpc-pop-testnet-barret-oxaolmcfss.t.conduit.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Apex Testnet',
+      url: 'https://explorerl2new-pop-testnet-barret-oxaolmcfss.t.conduit.xyz',
+    },
+    default: {
+      name: 'Apex Testnet',
+      url: 'https://explorerl2new-pop-testnet-barret-oxaolmcfss.t.conduit.xyz',
     },
   },
 }
@@ -132,10 +156,10 @@ export const blast = {
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://rpc.blast.io'],
+      http: ['https://blast.blockpi.network/v1/rpc/public'],
     },
     public: {
-      http: ['https://rpc.blast.io'],
+      http: ['https://blast.blockpi.network/v1/rpc/public'],
     },
   },
   blockExplorers: {
@@ -150,11 +174,37 @@ export const blast = {
   },
 }
 
+export const astarZkEVM = {
+  id: 3776,
+  name: 'Astar ZkEVM',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.startale.com/astar-zkevm'],
+    },
+    public: {
+      http: ['https://rpc.startale.com/astar-zkevm'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Astar zkEVM',
+      url: 'https://astar-zkevm.explorer.startale.com',
+    },
+    default: {
+      name: 'Astar zkEVM',
+      url: 'https://astar-zkevm.explorer.startale.com',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
   frameTestnet,
   blastSepolia,
   apexPop,
+  apexPopTestnet,
   blast,
+  astarZkEVM,
 } as const satisfies Record<string, Chain>

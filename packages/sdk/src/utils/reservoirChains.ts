@@ -213,9 +213,17 @@ const blastSepolia = {
 }
 const apexPop = {
   id: 70700,
-  name: 'Apex Proof of Play',
+  name: 'Apex',
   baseApiUrl: 'https://api-apex.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[70700],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const apexPopTestnet = {
+  id: 70800,
+  name: 'Apex Testnet',
+  baseApiUrl: 'https://api-apex-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70800],
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
@@ -224,6 +232,14 @@ const blast = {
   name: 'Blast',
   baseApiUrl: 'https://api-blast.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[81457],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const astarZkEVM = {
+  id: 3776,
+  name: 'Astar zkEVM',
+  baseApiUrl: 'https://api-astar-zkevm.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[3776],
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
@@ -254,5 +270,7 @@ export const reservoirChains = {
   frameTestnet,
   blastSepolia,
   apexPop,
+  apexPopTestnet,
   blast,
+  astarZkEVM,
 }
