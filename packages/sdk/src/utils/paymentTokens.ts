@@ -546,6 +546,24 @@ export const chainPaymentTokensMap = {
     },
   ],
 
+  //Apex PoP Testnet
+  70800: [
+    {
+      chainId: 70800,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 70800,
+      address: '0xBfB86801053600dd3C7FCBa6d5E85017a64cE728',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
+
   //Blast
   81457: [
     {

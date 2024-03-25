@@ -126,6 +126,30 @@ export const apexPop = {
   },
 }
 
+export const apexPopTestnet = {
+  id: 70800,
+  name: 'Apex Testnet',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-pop-testnet-barret-oxaolmcfss.t.conduit.xyz'],
+    },
+    public: {
+      http: ['https://rpc-pop-testnet-barret-oxaolmcfss.t.conduit.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Apex Testnet',
+      url: 'https://explorerl2new-pop-testnet-barret-oxaolmcfss.t.conduit.xyz',
+    },
+    default: {
+      name: 'Apex Testnet',
+      url: 'https://explorerl2new-pop-testnet-barret-oxaolmcfss.t.conduit.xyz',
+    },
+  },
+}
+
 export const blast = {
   id: 81457,
   name: 'Blast',
@@ -180,6 +204,7 @@ export const customChains = {
   frameTestnet,
   blastSepolia,
   apexPop,
+  apexPopTestnet,
   blast,
   astarZkEVM,
 } as const satisfies Record<string, Chain>
