@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.4.2
+
+### Patch Changes
+
+- 2198ecd: Add apex pop testnet configuration
+- Updated dependencies [2198ecd]
+  - @reservoir0x/reservoir-sdk@2.0.10
+
 ## 2.4.1
 
 ### Patch Changes
