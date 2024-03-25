@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.10
+
+### Patch Changes
+
+- 2198ecd: Add apex pop testnet configuration
+
 ## 2.0.9
 
 ### Patch Changes
