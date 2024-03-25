@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.11
+
+### Patch Changes
+
+- 9c46f40: Add redstone testnet configuration
+
 ## 2.0.10
 
 ### Patch Changes

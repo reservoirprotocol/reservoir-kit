@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.4.3
+
+### Patch Changes
+
+- 9c46f40: Add redstone testnet configuration
+- Updated dependencies [9c46f40]
+  - @reservoir0x/reservoir-sdk@2.0.11
+
 ## 2.4.2
 
 ### Patch Changes
