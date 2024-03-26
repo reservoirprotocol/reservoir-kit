@@ -59,6 +59,8 @@ const WALLET_CONNECT_PROJECT_ID =
     allChains.arbitrumNova,
     customChains.frameTestnet,
     customChains.astarZkEVM,
+    customChains.apexPop,
+    customChains.apexPopTestnet,
   ] as [
     Chain,
     ...Chain[]
