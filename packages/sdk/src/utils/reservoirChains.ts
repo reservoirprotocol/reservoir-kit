@@ -243,6 +243,14 @@ const astarZkEVM = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const redstoneTestnet = {
+  id: 17001,
+  name: 'Redstone Testnet',
+  baseApiUrl: 'https://api-redstone-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[17001],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   goerli,
@@ -273,4 +281,5 @@ export const reservoirChains = {
   apexPopTestnet,
   blast,
   astarZkEVM,
+  redstoneTestnet
 }
