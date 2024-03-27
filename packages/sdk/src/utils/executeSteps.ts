@@ -552,7 +552,7 @@ export async function executeSteps(
                         orderIndex: res.data.orderIndex || 0,
                       },
                     ]
-                  }
+                  } else if(res.data.auth) request.data.blurAuth = res.data.auth; 
                   setState([...json?.steps], path, { ...json?.fees })
                 } catch (err) {
                   throw err
