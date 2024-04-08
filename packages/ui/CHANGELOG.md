@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.4.4
+
+### Patch Changes
+
+- 8861cb7: Fixed Flatpickr import namespace
+
 ## 2.4.3
 
 ### Patch Changes
