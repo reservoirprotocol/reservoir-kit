@@ -63,7 +63,7 @@ import RedstoneTestnetDark from '../img/chains/RedstoneTestnetDark'
 import RedstoneTestnetLight from '../img/chains/RedstoneTestnetLight'
 import BerachainIconLight from '../img/chains/BerachainIconLight'
 import BerachainIconDark from '../img/chains/BerachainIconDark'
-import BeraChainIconColor from '../img/chains/BeraChainIconColor'
+import BerachainIconColor from '../img/chains/BerachainIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -214,7 +214,7 @@ const chainIcons = {
   [reservoirChains.berachainTestnet.id]: {
     light: <BerachainIconLight />,
     dark: <BerachainIconDark />,
-    color: <BeraChainIconColor />,
+    color: <BerachainIconColor />,
   },
 }
 
