@@ -251,6 +251,14 @@ const redstoneTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const redstone = {
+  id: 690,
+  name: 'Redstone',
+  baseApiUrl: 'https://api-redstone.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[690],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 const berachainTestnet = {
   id: 80085,
   name: 'Berachain Testnet',
@@ -290,5 +298,6 @@ export const reservoirChains = {
   blast,
   astarZkEVM,
   redstoneTestnet,
+  redstone,
   berachainTestnet,
 }
