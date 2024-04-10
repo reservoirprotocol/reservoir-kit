@@ -192,5 +192,8 @@ export default [
   },
   {
     ...reservoirChains.redstoneTestnet,
+  },
+  {
+    ...reservoirChains.berachainTestnet
   }
 ]
