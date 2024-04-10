@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.4.6
+
+### Patch Changes
+
+- 7c556b3: Add redstone chain
+- Updated dependencies [7c556b3]
+  - @reservoir0x/reservoir-sdk@2.0.13
+
 ## 2.4.5
 
 ### Patch Changes
