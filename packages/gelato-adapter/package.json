@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/gelato-adapter",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "description": "An adapter used to enhance a ethers wallet adapter with the gelato SDK for use in the @reservoir0x/reservoir-sdk to enable gasless transactions",
     "exports": {
         ".": {

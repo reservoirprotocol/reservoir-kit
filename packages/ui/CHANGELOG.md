@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.4.5
+
+### Patch Changes
+
+- 2ecd779: Add berachain testnet
+- Updated dependencies [2ecd779]
+  - @reservoir0x/reservoir-sdk@2.0.12
+
 ## 2.4.4
 
 ### Patch Changes

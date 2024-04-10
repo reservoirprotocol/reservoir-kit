@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.12
+
+### Patch Changes
+
+- 2ecd779: Add berachain testnet
+
 ## 2.0.11
 
 ### Patch Changes
