@@ -222,6 +222,30 @@ export const redstoneTestnet = {
   },
 } as const satisfies Chain
 
+export const redstone = {
+  id: 690,
+  name: 'Redstone',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.redstonechain.com'],
+    },
+    public: {
+      http: ['https://rpc.redstonechain.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Redstone',
+      url: 'https://explorer.redstone.xyz',
+    },
+    default: {
+      name: 'Redstone',
+      url: 'https://explorer.redstone.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -232,4 +256,5 @@ export const customChains = {
   blast,
   astarZkEVM,
   redstoneTestnet,
+  redstone,
 } as const satisfies Record<string, Chain>

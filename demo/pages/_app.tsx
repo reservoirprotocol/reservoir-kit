@@ -61,6 +61,8 @@ const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
     allChains.scroll,
     allChains.arbitrumNova,
     allChains.berachainTestnet,
+    customChains.redstone,
+    customChains.redstoneTestnet,
     customChains.frameTestnet,
     customChains.astarZkEVM,
     customChains.apexPop,
