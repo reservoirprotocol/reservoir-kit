@@ -58,9 +58,9 @@ import BlastIconLight from '../img/chains/BlastIconLight'
 import AstarZkEVMLight from '../img/chains/AstarZkEVMLight'
 import AstarZkEVMDark from '../img/chains/AstarZkEVMDark'
 import AstarZkEVMColor from '../img/chains/AstarZkEVMColor'
-import RedstoneTestnetColor from '../img/chains/RedstoneTestnetColor'
-import RedstoneTestnetDark from '../img/chains/RedstoneTestnetDark'
-import RedstoneTestnetLight from '../img/chains/RedstoneTestnetLight'
+import RedstoneColor from '../img/chains/RedstoneColor'
+import RedstoneDark from '../img/chains/RedstoneDark'
+import RedstoneLight from '../img/chains/RedstoneLight'
 import BerachainIconLight from '../img/chains/BerachainIconLight'
 import BerachainIconDark from '../img/chains/BerachainIconDark'
 import BerachainIconColor from '../img/chains/BerachainIconColor'
@@ -207,9 +207,14 @@ const chainIcons = {
     color: <AstarZkEVMColor />,
   },
   [reservoirChains.redstoneTestnet.id]: {
-    light: <RedstoneTestnetLight />,
-    dark: <RedstoneTestnetDark />,
-    color: <RedstoneTestnetColor />,
+    light: <RedstoneLight />,
+    dark: <RedstoneDark />,
+    color: <RedstoneColor />,
+  },
+  [reservoirChains.redstone.id]: {
+    light: <RedstoneLight />,
+    dark: <RedstoneDark />,
+    color: <RedstoneColor />,
   },
   [reservoirChains.berachainTestnet.id]: {
     light: <BerachainIconLight />,

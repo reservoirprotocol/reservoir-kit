@@ -29,6 +29,7 @@ const wrappedContractNames: Record<number, string> = {
   81457: 'WETH', //blast
   3776: 'WETH', // astar zkevm,
   17001: 'WETH', // redstone testnet
+  690: 'WETH', // redstone
   80085: 'WBERA', // berachain testnet
 }
 export default wrappedContractNames
