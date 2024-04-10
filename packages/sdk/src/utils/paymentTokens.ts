@@ -632,4 +632,22 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  // Berachain Testnet
+  80085: [
+    {
+      chainId: 80085,
+      address: zeroAddress,
+      symbol: 'BERA',
+      name: 'BERA',
+      decimals: 18,
+    },
+    {
+      chainId: 80085,
+      address: '0x5806e416da447b267cea759358cf22cc41fae80f',
+      symbol: 'WBERA',
+      name: 'WBERA',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>

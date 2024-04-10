@@ -251,6 +251,14 @@ const redstoneTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const berachainTestnet = {
+  id: 80085,
+  name: 'Berachain Testnet',
+  baseApiUrl: 'http://api-berachain-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[80085],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   goerli,
@@ -281,5 +289,6 @@ export const reservoirChains = {
   apexPopTestnet,
   blast,
   astarZkEVM,
-  redstoneTestnet
+  redstoneTestnet,
+  berachainTestnet,
 }
