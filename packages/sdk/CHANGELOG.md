@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.13
+
+### Patch Changes
+
+- 7c556b3: Add redstone chain
+
 ## 2.0.12
 
 ### Patch Changes
