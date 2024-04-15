@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.4.7
+
+### Patch Changes
+
+- 63472f2: Update berachain and redstone icon dimeinsions
+
 ## 2.4.6
 
 ### Patch Changes
