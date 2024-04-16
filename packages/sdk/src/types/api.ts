@@ -497,6 +497,10 @@ export interface paths {
     /** This API can be used to build a feed for a user including sales, asks, transfers, mints, bids, cancelled bids, and cancelled asks types. */
     get: operations["getUsersActivityV6"];
   };
+  "/collections/{collectionId}/bids/v1": {
+    /** Get a list of bids (offers), filtered by collection. */
+    get: operations["getCollectionsCollectionidBidsV1"];
+  };
   "/collections/{collection}/marketplace-configurations/v2": {
     /** This API returns recommended marketplace configurations given a collection id */
     get: operations["getCollectionsCollectionMarketplaceconfigurationsV2"];
@@ -845,6 +849,10 @@ export interface paths {
   "/users/{user}/positions/v1": {
     /** Get aggregate user liquidity, grouped by collection. Useful for showing a summary of liquidity being provided (orders made). */
     get: operations["getUsersUserPositionsV1"];
+  };
+  "/users/{user}/bids/v1": {
+    /** Get a list of bids (offers), filtered by maker. */
+    get: operations["getUsersUserBidsV1"];
   };
   "/users/{user}/tokens/v1": {
     /** Get tokens held by a user, along with ownership information such as associated orders and date acquired. */
@@ -1253,6 +1261,14 @@ export interface paths {
      * Caution: This API should be used in moderation, like only when missing data is discovered. Calling it in bulk or programmatically will result in your API key getting rate limited.
      */
     post: operations["postTokensRefreshV1"];
+  };
+  "/tokens/refresh/v2": {
+    /**
+     * Token metadata is never automatically refreshed, but may be manually refreshed with this API.
+     *
+     * Caution: This API should be used in moderation, like only when missing data is discovered. Calling it in bulk or programmatically will result in your API key getting rate limited.
+     */
+    post: operations["postTokensRefreshV2"];
   };
   "/tokens/simulate-floor/v1": {
     post: operations["postTokensSimulatefloorV1"];
@@ -1845,6 +1861,8 @@ export interface definitions {
     primaryContract?: string;
     tokenSetId?: string;
     creator?: string;
+    /** @default false */
+    isSharedContract?: boolean;
     royalties?: definitions["Model17"];
     allRoyalties?: definitions["metadata"];
     floorAsk?: definitions["Model19"];
@@ -5696,6 +5714,7 @@ export interface definitions {
     update_nsfw_status?: boolean;
     entity_data_override?: boolean;
     invalidate_orders?: boolean;
+    set_collection_magiceden_verification_status?: boolean;
   };
   Model462: {
     /** @description The api key to update */
@@ -5787,6 +5806,7 @@ export interface definitions {
       | "seaport"
       | "seaport-v1.4"
       | "seaport-v1.5"
+      | "seaport-v1.6"
       | "x2y2"
       | "alienswap";
     data: definitions["metadata"];
@@ -5819,6 +5839,7 @@ export interface definitions {
       | "seaport"
       | "seaport-v1.4"
       | "seaport-v1.5"
+      | "seaport-v1.6"
       | "x2y2"
       | "alienswap"
       | "payment-processor"
@@ -5834,7 +5855,7 @@ export interface definitions {
      * @default seaport-v1.5
      * @enum {string}
      */
-    kind?: "seaport-v1.4" | "seaport-v1.5" | "alienswap";
+    kind?: "seaport-v1.4" | "seaport-v1.5" | "seaport-v1.6" | "alienswap";
     data?: definitions["Model474"];
   };
   Model475: {
@@ -5881,6 +5902,7 @@ export interface definitions {
       | "x2y2"
       | "seaport-v1.4"
       | "seaport-v1.5"
+      | "seaport-v1.6"
       | "element"
       | "rarible"
       | "manifold"
@@ -6091,6 +6113,7 @@ export interface definitions {
   options: {
     "seaport-v1.4"?: definitions["seaport-v1.4"];
     "seaport-v1.5"?: definitions["seaport-v1.4"];
+    "seaport-v1.6"?: definitions["seaport-v1.4"];
     "payment-processor-v2"?: definitions["payment-processor-v2"];
   };
   /** @description Deprecated, use `marketplaceFees` and/or `customRoyalties` */
@@ -6127,6 +6150,7 @@ export interface definitions {
       | "seaport"
       | "seaport-v1.4"
       | "seaport-v1.5"
+      | "seaport-v1.6"
       | "looks-rare"
       | "looks-rare-v2"
       | "x2y2"
@@ -6411,6 +6435,7 @@ export interface definitions {
       | "seaport"
       | "seaport-v1.4"
       | "seaport-v1.5"
+      | "seaport-v1.6"
       | "x2y2"
       | "rarible"
       | "sudoswap"
@@ -6441,6 +6466,8 @@ export interface definitions {
      * @enum {string}
      */
     fillType?: "trade" | "mint" | "preferMint";
+    /** @description Optionally specify a stage to mint */
+    preferredMintStage?: string;
     /**
      * @description If there are multiple listings with equal best price, prefer this source over others.
      * NOTE: if you want to fill a listing that is not the best priced, you need to pass a specific order id or use `exactOrderSource`.
@@ -6661,6 +6688,7 @@ export interface definitions {
       | "seaport"
       | "seaport-v1.4"
       | "seaport-v1.5"
+      | "seaport-v1.6"
       | "looks-rare-v2"
       | "zeroex-v4-erc721"
       | "zeroex-v4-erc1155"
@@ -6705,6 +6733,7 @@ export interface definitions {
     orderKind:
       | "seaport-v1.4"
       | "seaport-v1.5"
+      | "seaport-v1.6"
       | "alienswap"
       | "blur-bid"
       | "payment-processor-v2";
@@ -6794,6 +6823,7 @@ export interface definitions {
   Model561: {
     "seaport-v1.4"?: definitions["seaport-v1.4"];
     "seaport-v1.5"?: definitions["seaport-v1.4"];
+    "seaport-v1.6"?: definitions["seaport-v1.4"];
     "payment-processor-v2"?: definitions["payment-processor-v2"];
     alienswap?: definitions["alienswap"];
   };
@@ -6819,6 +6849,7 @@ export interface definitions {
       | "seaport"
       | "seaport-v1.4"
       | "seaport-v1.5"
+      | "seaport-v1.6"
       | "x2y2"
       | "alienswap"
       | "payment-processor"
@@ -6927,6 +6958,8 @@ export interface definitions {
     custom?: definitions["custom"];
     /** @description Quantity of tokens to mint. */
     quantity?: number;
+    /** @description Optionally specify a stage to mint */
+    preferredMintStage?: string;
   };
   /** @description List of items to mint. */
   Model573: definitions["Model572"][];
@@ -7088,6 +7121,7 @@ export interface definitions {
       | "seaport"
       | "seaport-v1.4"
       | "seaport-v1.5"
+      | "seaport-v1.6"
       | "x2y2"
       | "rarible"
       | "sudoswap"
@@ -7348,7 +7382,31 @@ export interface definitions {
      */
     overrideCoolDown?: boolean;
   };
-  Model613: {
+  /** @description Array of tokens to refresh. Max limit is 50. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
+  Model613: string[];
+  Model614: {
+    tokens: definitions["Model613"];
+    /**
+     * @description If true, only liquidity data will be refreshed.
+     * @default false
+     */
+    liquidityOnly?: boolean;
+    /**
+     * @description If true, will force a refresh regardless of cool down. Requires an authorized api key to be passed.
+     * @default false
+     */
+    overrideCoolDown?: boolean;
+  };
+  Model615: {
+    token?: string;
+    result?: string;
+    isError?: boolean;
+  };
+  Model616: definitions["Model615"][];
+  postTokensRefreshV2Response: {
+    results?: definitions["Model616"];
+  };
+  Model617: {
     token?: string;
     /**
      * @default v6
@@ -7356,10 +7414,10 @@ export interface definitions {
      */
     router?: "v5" | "v6";
   };
-  Model614: {
+  Model618: {
     token?: string;
   };
-  Model615: {
+  Model619: {
     tokens: definitions["Model610"];
     /**
      * @description API to update the spam status of a token
@@ -7367,13 +7425,13 @@ export interface definitions {
      */
     spam?: boolean;
   };
-  Model616: {
+  Model620: {
     bps?: number;
     recipient?: string;
   };
-  Model617: definitions["Model616"][];
+  Model621: definitions["Model620"][];
   /** @description Params that can be passed in order to override existing ones, to disable override pass null */
-  Model618: {
+  Model622: {
     name?: string;
     description?: string;
     imageUrl?: string;
@@ -7381,9 +7439,9 @@ export interface definitions {
     discordUrl?: string;
     externalUrl?: string;
     magicedenVerificationStatus?: string;
-    royalties?: definitions["Model617"];
+    royalties?: definitions["Model621"];
   };
-  Model619: {
+  Model623: {
     /** @enum {string} */
     kind: "seaport-intent";
   };
@@ -7398,12 +7456,12 @@ export interface definitions {
     maxItems: number;
     maxPricePerItem: string;
   };
-  Model620: {
+  Model624: {
     collection: string;
     stage: string;
     tokenId?: string;
   };
-  Model621: {
+  Model625: {
     id?: string;
     token?: string;
     collection?: string;
@@ -9996,6 +10054,7 @@ export interface operations {
         /**
          * activeª^º = currently valid
          * inactiveª^ = temporarily invalid
+         * valid^ = both active and inactive orders
          * expiredª^, cancelledª^, filledª^ = permanently invalid
          * anyªº = any status
          * ª when an `id` is passed
@@ -10718,6 +10777,39 @@ export interface operations {
       /** Successful */
       200: {
         schema: definitions["getUserActivityV6Response"];
+      };
+    };
+  };
+  /** Get a list of bids (offers), filtered by collection. */
+  getCollectionsCollectionidBidsV1: {
+    parameters: {
+      path: {
+        /** Filter to a particular collection. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collectionId: string;
+      };
+      query: {
+        /** Filter to a particular order type. Must be one of `token`, `collection`, `attribute`, `custom`. */
+        type?: "token" | "collection" | "attribute" | "custom";
+        /** If true, criteria metadata is included in the response. */
+        includeCriteriaMetadata?: boolean;
+        /** If true, raw data is included in the response. */
+        includeRawData?: boolean;
+        /** If true, the depth of each order is included in the response. */
+        includeDepth?: boolean;
+        /** If true, prices will include missing royalties to be added on-top. */
+        normalizeRoyalties?: boolean;
+        /** Use continuation token to request next offset of items. */
+        continuation?: string;
+        /** Amount of items returned in response. Max limit is 50. */
+        limit?: number;
+        /** Return result in given currency */
+        displayCurrency?: string;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getOrdersBidsV5Response"];
       };
     };
   };
@@ -11727,8 +11819,8 @@ export interface operations {
         community?: string;
         /** Filter to a particular collection set. Example: `8daa732ebe5db23f267e58d52f1c9b1879279bcdf4f78b8fb563390e6946ea65` */
         collectionsSetId?: string;
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection?: string;
+        /** Array of collections. Max limit is 100. Example: `collections[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection?: string[] | string;
         excludeCollections?: string[] | string;
         /** Filter to a particular contract, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contract?: string;
@@ -11955,8 +12047,8 @@ export interface operations {
         community?: string;
         /** Filter to a particular collection set. Example: `8daa732ebe5db23f267e58d52f1c9b1879279bcdf4f78b8fb563390e6946ea65` */
         collectionsSetId?: string;
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection?: string;
+        /** Array of collections. Max limit is 100. Example: `collections[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection?: string[] | string;
         excludeCollections?: string[] | string;
         /** Filter to a particular collection with name. This is case insensitive. Example: `ape` */
         name?: string;
@@ -12135,6 +12227,47 @@ export interface operations {
       };
     };
   };
+  /** Get a list of bids (offers), filtered by maker. */
+  getUsersUserBidsV1: {
+    parameters: {
+      path: {
+        /** Filter to a particular user. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
+        user: string;
+      };
+      query: {
+        /** Filter to a particular order type. Must be one of `token`, `collection`, `attribute`, `custom`. */
+        type?: "token" | "collection" | "attribute" | "custom";
+        /**
+         * activeª^º = currently valid
+         * inactiveª^ = temporarily invalid
+         * valid^ = both active and inactive orders
+         */
+        status?: "active" | "inactive" | "valid";
+        /** Order the items are returned in the response. Defaults sorting direction to descending. */
+        sortBy?: "createdAt" | "price";
+        /** If true, criteria metadata is included in the response. */
+        includeCriteriaMetadata?: boolean;
+        /** If true, raw data is included in the response. */
+        includeRawData?: boolean;
+        /** If true, the depth of each order is included in the response. */
+        includeDepth?: boolean;
+        /** If true, prices will include missing royalties to be added on-top. */
+        normalizeRoyalties?: boolean;
+        /** Use continuation token to request next offset of items. */
+        continuation?: string;
+        /** Amount of items returned in response. Max limit is 50. */
+        limit?: number;
+        /** Return result in given currency */
+        displayCurrency?: string;
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["getOrdersBidsV5Response"];
+      };
+    };
+  };
   /** Get tokens held by a user, along with ownership information such as associated orders and date acquired. */
   getUsersUserTokensV1: {
     parameters: {
@@ -12301,8 +12434,8 @@ export interface operations {
         community?: string;
         /** Filter to a particular collection set. Example: `8daa732ebe5db23f267e58d52f1c9b1879279bcdf4f78b8fb563390e6946ea65` */
         collectionsSetId?: string;
-        /** Filter to a particular collection with collection-id. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
-        collection?: string;
+        /** Array of collections. Max limit is 100. Example: `collections[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
+        collection?: string[] | string;
         excludeCollections?: string[] | string;
         /** Filter to a particular contract, e.g. `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63` */
         contract?: string;
@@ -14070,10 +14203,28 @@ export interface operations {
       };
     };
   };
+  /**
+   * Token metadata is never automatically refreshed, but may be manually refreshed with this API.
+   *
+   * Caution: This API should be used in moderation, like only when missing data is discovered. Calling it in bulk or programmatically will result in your API key getting rate limited.
+   */
+  postTokensRefreshV2: {
+    parameters: {
+      body: {
+        body?: definitions["Model614"];
+      };
+    };
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions["postTokensRefreshV2Response"];
+      };
+    };
+  };
   postTokensSimulatefloorV1: {
     parameters: {
       body: {
-        body?: definitions["Model613"];
+        body?: definitions["Model617"];
       };
     };
     responses: {
@@ -14086,7 +14237,7 @@ export interface operations {
   postTokensSimulatetopbidV1: {
     parameters: {
       body: {
-        body?: definitions["Model614"];
+        body?: definitions["Model618"];
       };
     };
     responses: {
@@ -14103,7 +14254,7 @@ export interface operations {
         "x-api-key": string;
       };
       body: {
-        body?: definitions["Model615"];
+        body?: definitions["Model619"];
       };
     };
     responses: {
@@ -14124,7 +14275,7 @@ export interface operations {
         collection: string;
       };
       body: {
-        body?: definitions["Model618"];
+        body?: definitions["Model622"];
       };
     };
     responses: {
@@ -14137,7 +14288,7 @@ export interface operations {
   postExecuteSolveCapacityV1: {
     parameters: {
       body: {
-        body?: definitions["Model619"];
+        body?: definitions["Model623"];
       };
     };
     responses: {
@@ -14150,7 +14301,7 @@ export interface operations {
   postManagementMintsSimulateV1: {
     parameters: {
       body: {
-        body?: definitions["Model620"];
+        body?: definitions["Model624"];
       };
     };
     responses: {
@@ -14163,7 +14314,7 @@ export interface operations {
   postManagementOrdersSimulateV1: {
     parameters: {
       body: {
-        body?: definitions["Model621"];
+        body?: definitions["Model625"];
       };
     };
     responses: {
