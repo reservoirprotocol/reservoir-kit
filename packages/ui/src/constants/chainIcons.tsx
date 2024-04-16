@@ -156,6 +156,11 @@ const chainIcons = {
     dark: <PolygonIconLight />,
     color: <PolygonIconColor />,
   },
+  [reservoirChains.polygonAmoy.id]: {
+    light: <PolygonIconDark />,
+    dark: <PolygonIconLight />,
+    color: <PolygonIconColor />,
+  },
   [reservoirChains.scrollTestnet.id]: {
     light: <ScrollIconDark />,
     dark: <ScrollIconLight />,

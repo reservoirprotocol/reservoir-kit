@@ -134,6 +134,24 @@ export const chainPaymentTokensMap = {
     },
   ],
 
+  // Amoy
+  80002: [
+    {
+      chainId: 80002,
+      address: zeroAddress,
+      symbol: 'MATIC',
+      name: 'MATIC',
+      decimals: 18,
+    },
+    {
+      chainId: 80002,
+      address: '0x41Dc3C8eB8368bd9139Cec50434a0C294c8c1102',
+      symbol: 'WMATIC',
+      name: 'WMATIC',
+      decimals: 18,
+    },
+  ],
+
   // Arbitrum
   42161: [
     {

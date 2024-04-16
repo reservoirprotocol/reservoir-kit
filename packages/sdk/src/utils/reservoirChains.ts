@@ -48,6 +48,15 @@ const mumbai = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const polygonAmoy = {
+  id: 80002,
+  name: 'Polygon Amoy',
+  baseApiUrl: 'https://api-amoy.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[80002],
+  websocketUrl: 'wss://ws-amoy.reservoir.tools',
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 const arbitrum = {
   id: 42161,
   name: 'Arbitrum',
@@ -272,6 +281,7 @@ export const reservoirChains = {
   goerli,
   polygon,
   mumbai,
+  polygonAmoy,
   optimism,
   arbitrum,
   arbitrumNova,

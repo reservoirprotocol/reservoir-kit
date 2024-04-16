@@ -66,6 +66,9 @@ export default [
     ...reservoirChains.mumbai
   },
   {
+    ...reservoirChains.polygonAmoy
+  },
+  {
     ...reservoirChains.optimism,
     paymentTokens: [...reservoirChains.optimism.paymentTokens, {
       chainId: 1,
