@@ -1,5 +1,13 @@
 ## 1.12.15
 
+## 2.0.14
+
+### Patch Changes
+
+- 432bdbb: Add garnet and remove redstone testnet
+- 00cfcfe: Update tokens/refresh api to v2
+- ff2b661: Add polygon amoy
+
 ## 2.0.13
 
 ### Patch Changes
