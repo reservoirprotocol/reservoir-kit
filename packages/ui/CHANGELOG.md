@@ -1,5 +1,17 @@
 ## 1.25.10
 
+## 2.4.8
+
+### Patch Changes
+
+- 432bdbb: Add garnet and remove redstone testnet
+- 00cfcfe: Update tokens/refresh api to v2
+- ff2b661: Add polygon amoy
+- Updated dependencies [432bdbb]
+- Updated dependencies [00cfcfe]
+- Updated dependencies [ff2b661]
+  - @reservoir0x/reservoir-sdk@2.0.14
+
 ## 2.4.7
 
 ### Patch Changes
