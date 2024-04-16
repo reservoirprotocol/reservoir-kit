@@ -198,26 +198,26 @@ export const astarZkEVM = {
   },
 } as const satisfies Chain
 
-export const redstoneTestnet = {
-  id: 17001,
-  name: 'Redstone Testnet',
+export const garnet = {
+  id: 17069,
+  name: 'Garnet',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://rpc.holesky.redstone.xyz'],
+      http: ['https://rpc.garnet.qry.live'],
     },
     public: {
-      http: ['https://rpc.holesky.redstone.xyz'],
+      http: ['https://rpc.garnet.qry.live'],
     },
   },
   blockExplorers: {
     etherscan: {
-      name: 'Redstone Testnet',
-      url: 'https://explorer.holesky.redstone.xyz',
+      name: 'Garnet',
+      url: 'https://explorer.garnet.qry.live',
     },
     default: {
-      name: 'Redstone Testnet',
-      url: 'https://explorer.holesky.redstone.xyz',
+      name: 'Garnet',
+      url: 'https://explorer.garnet.qry.live',
     },
   },
 } as const satisfies Chain
@@ -255,6 +255,6 @@ export const customChains = {
   apexPopTestnet,
   blast,
   astarZkEVM,
-  redstoneTestnet,
+  garnet,
   redstone,
 } as const satisfies Record<string, Chain>

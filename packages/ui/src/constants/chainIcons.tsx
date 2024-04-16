@@ -211,7 +211,7 @@ const chainIcons = {
     dark: <AstarZkEVMDark />,
     color: <AstarZkEVMColor />,
   },
-  [reservoirChains.redstoneTestnet.id]: {
+  [reservoirChains.garnet.id]: {
     light: <RedstoneLight />,
     dark: <RedstoneDark />,
     color: <RedstoneColor />,

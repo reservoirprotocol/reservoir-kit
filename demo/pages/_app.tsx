@@ -60,7 +60,7 @@ const WALLET_CONNECT_PROJECT_ID =
     allChains.arbitrumNova,
     allChains.berachainTestnet,
     customChains.redstone,
-    customChains.redstoneTestnet,
+    customChains.garnet,
     customChains.frameTestnet,
     customChains.astarZkEVM,
     customChains.apexPop,

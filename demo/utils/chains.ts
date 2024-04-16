@@ -194,7 +194,7 @@ export default [
     ...reservoirChains.astarZkEVM,
   },
   {
-    ...reservoirChains.redstoneTestnet,
+    ...reservoirChains.garnet,
   },
   {
     ...reservoirChains.redstone
