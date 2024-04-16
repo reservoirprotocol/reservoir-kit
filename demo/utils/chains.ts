@@ -66,6 +66,9 @@ export default [
     ...reservoirChains.mumbai
   },
   {
+    ...reservoirChains.polygonAmoy
+  },
+  {
     ...reservoirChains.optimism,
     paymentTokens: [...reservoirChains.optimism.paymentTokens, {
       chainId: 1,
@@ -191,7 +194,7 @@ export default [
     ...reservoirChains.astarZkEVM,
   },
   {
-    ...reservoirChains.redstoneTestnet,
+    ...reservoirChains.garnet,
   },
   {
     ...reservoirChains.redstone
