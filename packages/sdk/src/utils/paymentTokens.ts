@@ -134,6 +134,24 @@ export const chainPaymentTokensMap = {
     },
   ],
 
+  // Amoy
+  80002: [
+    {
+      chainId: 80002,
+      address: zeroAddress,
+      symbol: 'MATIC',
+      name: 'MATIC',
+      decimals: 18,
+    },
+    {
+      chainId: 80002,
+      address: '0x41Dc3C8eB8368bd9139Cec50434a0C294c8c1102',
+      symbol: 'WMATIC',
+      name: 'WMATIC',
+      decimals: 18,
+    },
+  ],
+
   // Arbitrum
   42161: [
     {
@@ -615,18 +633,18 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
-  // Redstone Testnet
-  17001: [
+  // Garnet
+  17069: [
     {
-      chainId: 17001,
+      chainId: 17069,
       address: zeroAddress,
       symbol: 'ETH',
       name: 'ETH',
       decimals: 18,
     },
     {
-      chainId: 17001,
-      address: '0x09d940117bd1df3165a22820517a946426605f60',
+      chainId: 17069,
+      address: '0x4200000000000000000000000000000000000006',
       symbol: 'WETH',
       name: 'WETH',
       decimals: 18,
