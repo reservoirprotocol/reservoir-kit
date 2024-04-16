@@ -67,10 +67,10 @@ const TokenFallback: FC<TokenFallbackProps> = ({
                 throw 'ReservoirClient missing chain configuration'
               }
               onRefreshClicked()
-              const url = `${reservoirChain?.baseApiUrl}/tokens/refresh/v1`
-              const body: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
+              const url = `${reservoirChain?.baseApiUrl}/tokens/refresh/v2`
+              const body: paths['/tokens/refresh/v2']['post']['parameters']['body']['body'] =
                 {
-                  token: `${contract}:${token?.tokenId}`,
+                  tokens: [`${contract}:${token?.tokenId}`],
                 }
               const headers = {
                 ...defaultHeaders(client?.apiKey, client?.version),
