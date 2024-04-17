@@ -70,7 +70,7 @@ export const PaymentDetails: FC<Props> = ({
           css={{ px: '$4', py: '$3', width: '100%' }}
         >
           <Flex align="center" css={{ gap: '$2' }}>
-            <Text style="subtitle3">Relayer Fee</Text>
+            <Text style="subtitle3">Relay Cost</Text>
             <Tooltip
               content={
                 <Text
