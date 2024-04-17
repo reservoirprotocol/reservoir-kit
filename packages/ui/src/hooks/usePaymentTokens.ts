@@ -164,7 +164,7 @@ export default function (options: {
     contracts: open
       ? nonNativeCurrencies?.map((currency) => ({
           abi: erc20Abi,
-          address: currency.address as `0x${string}`,
+          address: currency.address.toLowerCase() as `0x${string}`,
           chainId: chainId,
           functionName: 'balanceOf',
           args: [address],
