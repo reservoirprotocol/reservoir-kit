@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.4.9
+
+### Patch Changes
+
+- 7cedee8: Rename relayer fee, fix payment tokens currency bug, fix bid modal ui getting elipsified
+
 ## 2.4.8
 
 ### Patch Changes
