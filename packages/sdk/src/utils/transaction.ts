@@ -50,7 +50,7 @@ export async function sendTransactionSafely(
   setTxHashes([{ txHash: txHash, chainId: chainId }])
 
   // Handle transaction replacements and cancellations
-  viemClient
+  const receipt = await viemClient
     .waitForTransactionReceipt({
       hash: txHash,
       onReplaced: (replacement) => {
@@ -76,6 +76,13 @@ export async function sendTransactionSafely(
         LogLevel.Error
       )
     })
+  if (!receipt || receipt.status === 'reverted') {
+    getClient()?.log(
+      ['Transaction reverted or missing tx receipt', receipt],
+      LogLevel.Verbose
+    )
+    throw Error('Transaction reverted or missing tx receipt')
+  }
 
   const validate = (res: AxiosResponse) => {
     getClient()?.log(
