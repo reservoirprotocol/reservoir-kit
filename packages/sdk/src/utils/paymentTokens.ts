@@ -145,7 +145,7 @@ export const chainPaymentTokensMap = {
     },
     {
       chainId: 80002,
-      address: '0x41Dc3C8eB8368bd9139Cec50434a0C294c8c1102',
+      address: '0x0ae690aad8663aab12a671a6a0d74242332de85f',
       symbol: 'WMATIC',
       name: 'WMATIC',
       decimals: 18,
