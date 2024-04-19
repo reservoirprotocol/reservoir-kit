@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.16
+
+### Patch Changes
+
+- 5a6b034: Update polygon amoy wmatic address
+
 ## 2.0.15
 
 ### Patch Changes
