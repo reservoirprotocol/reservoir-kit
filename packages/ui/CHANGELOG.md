@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.4.10
+
+### Patch Changes
+
+- 8bfb69e: Fix weth address for garnet
+- Updated dependencies [b1bdf17]
+  - @reservoir0x/reservoir-sdk@2.0.15
+
 ## 2.4.9
 
 ### Patch Changes
