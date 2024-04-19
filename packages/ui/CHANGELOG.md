@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.4.11
+
+### Patch Changes
+
+- 5a6b034: Update polygon amoy wmatic address
+- Updated dependencies [5a6b034]
+  - @reservoir0x/reservoir-sdk@2.0.16
+
 ## 2.4.10
 
 ### Patch Changes
