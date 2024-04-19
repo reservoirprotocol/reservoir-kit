@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.0.15
+
+### Patch Changes
+
+- b1bdf17: Handle reverted transactions by throwing an error after receiving receipt
+
 ## 2.0.14
 
 ### Patch Changes
