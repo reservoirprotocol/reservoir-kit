@@ -1,5 +1,16 @@
 ## 1.25.10
 
+## 2.5.0
+
+### Minor Changes
+
+- 433943d: Removed deprecated chains
+
+### Patch Changes
+
+- Updated dependencies [433943d]
+  - @reservoir0x/reservoir-sdk@2.1.0
+
 ## 2.4.11
 
 ### Patch Changes
