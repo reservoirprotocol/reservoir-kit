@@ -12,15 +12,6 @@ const mainnet = {
   checkPollingInterval: 2000,
 } satisfies ReservoirBaseChain
 
-const goerli = {
-  id: 5,
-  name: 'Goerli',
-  baseApiUrl: 'https://api-goerli.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[5],
-  websocketUrl: 'wss://ws-goerli.reservoir.tools',
-  checkPollingInterval: 2000,
-} satisfies ReservoirBaseChain
-
 const optimism = {
   id: 10,
   name: 'Optimism',
@@ -36,15 +27,6 @@ const polygon = {
   baseApiUrl: 'https://api-polygon.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[137],
   websocketUrl: 'wss://ws-polygon.reservoir.tools',
-  checkPollingInterval: 1000,
-} satisfies ReservoirBaseChain
-
-const mumbai = {
-  id: 80001,
-  name: 'Polygon Mumbai',
-  baseApiUrl: 'https://api-mumbai.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[80001],
-  websocketUrl: 'wss://ws-mumbai.reservoir.tools',
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
@@ -97,14 +79,6 @@ const base = {
   baseApiUrl: 'https://api-base.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[8453],
   websocketUrl: 'wss://ws-base.reservoir.tools',
-  checkPollingInterval: 1000,
-} satisfies ReservoirBaseChain
-
-const baseGoerli = {
-  id: 84531,
-  name: 'Base Goerli',
-  baseApiUrl: 'https://api-base-goerli.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[84531],
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
@@ -278,9 +252,7 @@ const berachainTestnet = {
 
 export const reservoirChains = {
   mainnet,
-  goerli,
   polygon,
-  mumbai,
   polygonAmoy,
   optimism,
   arbitrum,
@@ -288,7 +260,6 @@ export const reservoirChains = {
   avalanche,
   sepolia,
   base,
-  baseGoerli,
   baseSepolia,
   bsc,
   opBnb,
