@@ -1,6 +1,5 @@
 const wrappedContractNames: Record<number, string> = {
   1: 'WETH', //mainnet
-  5: 'WETH', //goerli
   10: 'WETH', //optimism
   56: 'WBNB', //bnb
   204: 'WBNB', //opbnb
@@ -12,10 +11,8 @@ const wrappedContractNames: Record<number, string> = {
   43114: 'WAVAX', //avalance
   59144: 'WETH',
   999: 'WETH', //zoratestnet
-  80001: 'WMATIC', //mumbai
   80002: 'WMATIC', //amoy
   8453: 'WETH', //base
-  84531: 'WETH', //base goerli
   84532: 'WETH', //base sepolia
   534353: 'WETH', //scrolltestnet
   534352: 'WETH', //scroll

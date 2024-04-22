@@ -23,8 +23,8 @@ import AvalancheIconColor from '../img/chains/AvalancheIconColor'
 import BscIconDark from '../img/chains/BscIconDark'
 import BscIconLight from '../img/chains/BscIconLight'
 import BscIconColor from '../img/chains/BscIconColor'
-import GoerliIconDark from '../img/chains/GoerliIconDark'
-import GoerliIconLight from '../img/chains/GoerliIconLight'
+import SepoliaIconDark from '../img/chains/SepoliaIconDark'
+import SepoliaIconLight from '../img/chains/SepoliaIconLight'
 import LineaIconDark from '../img/chains/LineaIconDark'
 import LineaIconLight from '../img/chains/LineaIconLight'
 import LineaIconColor from '../img/chains/LineaIconColor'
@@ -96,11 +96,6 @@ const chainIcons = {
     dark: <BaseIconLight />,
     color: <BaseIconColor />,
   },
-  [reservoirChains.baseGoerli.id]: {
-    light: <BaseIconDark />,
-    dark: <BaseIconLight />,
-    color: <BaseIconColor />,
-  },
   [reservoirChains.baseSepolia.id]: {
     light: <BaseIconDark />,
     dark: <BaseIconLight />,
@@ -116,14 +111,9 @@ const chainIcons = {
     dark: <BscIconLight />,
     color: <BscIconColor />,
   },
-  [reservoirChains.goerli.id]: {
-    light: <GoerliIconDark />,
-    dark: <GoerliIconLight />,
-    color: null,
-  },
   [reservoirChains.sepolia.id]: {
-    light: <GoerliIconDark />,
-    dark: <GoerliIconLight />,
+    light: <SepoliaIconDark />,
+    dark: <SepoliaIconLight />,
     color: null,
   },
   [reservoirChains.linea.id]: {
@@ -151,11 +141,7 @@ const chainIcons = {
     dark: <PolygonIconLight />,
     color: <PolygonIconColor />,
   },
-  [reservoirChains.mumbai.id]: {
-    light: <PolygonIconDark />,
-    dark: <PolygonIconLight />,
-    color: <PolygonIconColor />,
-  },
+
   [reservoirChains.polygonAmoy.id]: {
     light: <PolygonIconDark />,
     dark: <PolygonIconLight />,
