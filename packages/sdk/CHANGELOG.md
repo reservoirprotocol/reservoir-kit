@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.1.0
+
+### Minor Changes
+
+- 433943d: Removed deprecated chains
+
 ## 2.0.16
 
 ### Patch Changes
