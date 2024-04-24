@@ -134,6 +134,23 @@ export const chainPaymentTokensMap = {
     },
   ],
 
+  80002: [
+    {
+      chainId: 80002,
+      address: zeroAddress,
+      symbol: 'MATIC',
+      name: 'MATIC',
+      decimals: 18,
+    },
+    {
+      chainId: 80002,
+      address: '0x0ae690aad8663aab12a671a6a0d74242332de85f',
+      symbol: 'WMATIC',
+      name: 'WMATIC',
+      decimals: 18,
+    },
+  ],
+
   // Arbitrum
   42161: [
     {
