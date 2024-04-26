@@ -170,7 +170,7 @@ export async function executeSteps(
     client.maxPollingAttemptsBeforeTimeout ??
     (2.5 * 60 * 1000) / pollingInterval // default to 2 minutes and 30 seconds worth of attempts
 
-  let viemChain: allChains.Chain
+  let viemChain: allViemChains.Chain
   const customChain = Object.values(customChains).find(
     (chain) => chain.id == (reservoirChain?.id || 1)
   )
