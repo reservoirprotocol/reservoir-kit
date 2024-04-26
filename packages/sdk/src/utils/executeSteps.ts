@@ -17,8 +17,44 @@ import { version } from '../../package.json'
 import { LogLevel } from '../utils/logger'
 import { generateEvent } from '../utils/events'
 import { sendTransactionSafely } from './transaction'
-import * as allChains from 'viem/chains'
+import * as allViemChains from 'viem/chains'
 import { executeResults } from './executeResults'
+
+const polygonMumbai = allViemChains.polygonMumbai
+
+const polygonAmoy = {
+  ...polygonMumbai,
+  id: 80_002,
+  name: 'Polygon Amoy',
+  nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-amoy.polygon.technology'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'PolygonScan',
+      url: 'https://amoy.polygonscan.com',
+    },
+    default: {
+      name: 'PolygonScan',
+      url: 'https://amoy.polygonscan.com',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xca11bde05977b3631167028862be2a173976ca11',
+      blockCreated: 3127388,
+    },
+  },
+  testnet: true,
+} as typeof polygonMumbai & { id: 80_002 }
+
+const allChains = {
+  ...allViemChains,
+  polygonAmoy,
+}
 
 type ExpectedQuote = {
   raw: bigint
@@ -339,7 +375,9 @@ export async function executeSteps(
       LogLevel.Verbose
     )
 
-    const items = stepItems.filter((stepItem) => stepItem.status === 'incomplete')
+    const items = stepItems.filter(
+      (stepItem) => stepItem.status === 'incomplete'
+    )
     const pendingPromises: Promise<any>[] = []
     for (var i = 0; i < items.length; i++) {
       const promise = new Promise(async (resolve, reject) => {
@@ -606,10 +644,7 @@ export async function executeSteps(
               },
               (res) => {
                 client.log(
-                  [
-                    'Execute Steps: Polling transfers to check if indexed',
-                    res,
-                  ],
+                  ['Execute Steps: Polling transfers to check if indexed', res],
                   LogLevel.Verbose
                 )
                 if (res.status === 200) {
@@ -640,9 +675,8 @@ export async function executeSteps(
               .map((order) => order.contract?.toLowerCase())
             stepItem.transfersData = transfersData.transfers?.filter(
               (transfer) =>
-                contracts?.includes(
-                  transfer?.token?.contract?.toLowerCase()
-                ) && isSell
+                contracts?.includes(transfer?.token?.contract?.toLowerCase()) &&
+                isSell
                   ? transfer.from?.toLowerCase() === taker.toLowerCase()
                   : transfer.to?.toLowerCase() === taker.toLowerCase()
             )
