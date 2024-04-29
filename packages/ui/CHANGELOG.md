@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.5.1
+
+### Patch Changes
+
+- e2be1a0: Fix quantity for unlimited 1155 mint
+
 ## 2.5.0
 
 ### Minor Changes
