@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.1.1
+
+### Patch Changes
+
+- e9fd498: Sync api types
+
 ## 2.1.0
 
 ### Minor Changes
