@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.1.2
+
+### Patch Changes
+
+- d0d6298: Fix berachain testnet url
+
 ## 2.1.1
 
 ### Patch Changes
