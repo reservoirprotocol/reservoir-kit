@@ -5,6 +5,7 @@ import React, {
   useCallback,
   ReactNode,
   useMemo,
+  useContext,
 } from 'react'
 import {
   useTokens,
@@ -41,6 +42,7 @@ import { Currency } from '../../types/Currency'
 import { Address, WalletClient, erc20Abi, formatUnits, parseUnits } from 'viem'
 import { getAccount, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
+import { ProviderOptionsContext } from 'packages/ui/src/ReservoirKitProvider'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -166,6 +168,7 @@ export const BidModalRenderer: FC<Props> = ({
   walletClient,
   usePermit,
 }) => {
+  const providerOptions = useContext(ProviderOptionsContext)
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
 
@@ -361,9 +364,11 @@ export const BidModalRenderer: FC<Props> = ({
       nativeWrappedContractAddress.toLowerCase()
   let convertLink: string = ''
 
-  if (client?.convertLink) {
+  if (providerOptions?.convertLink) {
     convertLink =
-      client.convertLink.tokenUrl ?? client.convertLink.chainUrl ?? ''
+      providerOptions.convertLink.tokenUrl ??
+      providerOptions.convertLink.chainUrl ??
+      ''
     if (rendererChain?.id) {
       convertLink = convertLink.replace('{toChain}', `${rendererChain.id}`)
     }

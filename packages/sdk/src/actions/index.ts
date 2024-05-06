@@ -68,10 +68,6 @@ export class ReservoirClient {
   logLevel: LogLevel
   maxPollingAttemptsBeforeTimeout?: number
   synchronousStepItemExecution?: boolean
-  convertLink?: {
-    tokenUrl?: string
-    chainUrl?: string
-  }
   log(
     message: Parameters<typeof logUtil>['0'],
     level: LogLevel = LogLevel.Info
@@ -104,7 +100,6 @@ export class ReservoirClient {
       options.maxPollingAttemptsBeforeTimeout
     this.synchronousStepItemExecution =
       options.synchronousStepItemExecution ?? false
-    this.convertLink = options.convertLink ?? undefined
   }
 
   configure(options: ReservoirClientOptions) {
@@ -141,9 +136,6 @@ export class ReservoirClient {
       options.synchronousStepItemExecution !== undefined
         ? options.synchronousStepItemExecution
         : this.synchronousStepItemExecution
-    this.convertLink = options.convertLink
-      ? options.convertLink
-      : this.convertLink
   }
 
   currentChain() {

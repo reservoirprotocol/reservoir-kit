@@ -477,11 +477,11 @@ export const MintModalRenderer: FC<Props> = ({
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
 
-  if (client?.convertLink?.chainUrl) {
+  if (providerOptions?.convertLink?.chainUrl) {
     addFundsLink =
-      paymentCurrency?.address && client.convertLink.tokenUrl
-        ? client.convertLink.tokenUrl
-        : client.convertLink.chainUrl
+      paymentCurrency?.address && providerOptions.convertLink.tokenUrl
+        ? providerOptions.convertLink.tokenUrl
+        : providerOptions.convertLink.chainUrl
     if (rendererChain?.id) {
       addFundsLink = addFundsLink.replace('{toChain}', `${rendererChain.id}`)
     }
