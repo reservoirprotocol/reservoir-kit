@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.5.4
+
+### Patch Changes
+
+- 4173ccd: Allow configuring the convert funds links
+
 ## 2.5.3
 
 ### Patch Changes
