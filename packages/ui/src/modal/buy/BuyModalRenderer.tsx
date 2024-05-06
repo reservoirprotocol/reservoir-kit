@@ -243,7 +243,7 @@ export const BuyModalRenderer: FC<Props> = ({
   let addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
-  debugger
+
   if (providerOptions?.convertLink?.chainUrl) {
     addFundsLink =
       paymentCurrency?.address && providerOptions.convertLink.tokenUrl
