@@ -533,9 +533,22 @@ export const SweepModalRenderer: FC<Props> = ({
     buyResponseFees,
   ])
 
-  const addFundsLink = paymentCurrency?.address
+  let addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+
+  if (client?.convertLink?.chainUrl) {
+    addFundsLink =
+      paymentCurrency?.address && client.convertLink.tokenUrl
+        ? client.convertLink.tokenUrl
+        : client.convertLink.chainUrl
+    if (rendererChain?.id) {
+      addFundsLink = addFundsLink.replace('{toChain}', `${rendererChain.id}`)
+    }
+    if (paymentCurrency?.address) {
+      addFundsLink = addFundsLink.replace('{toToken}', paymentCurrency?.address)
+    }
+  }
 
   // Determine if user has enough funds in paymentToken
   useEffect(() => {

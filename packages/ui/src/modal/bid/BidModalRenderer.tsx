@@ -361,7 +361,14 @@ export const BidModalRenderer: FC<Props> = ({
       nativeWrappedContractAddress.toLowerCase()
   let convertLink: string = ''
 
-  if (canAutomaticallyConvert) {
+  if (client?.convertLink) {
+    convertLink =
+      client.convertLink.tokenUrl ?? client.convertLink.chainUrl ?? ''
+    if (rendererChain?.id) {
+      convertLink = convertLink.replace('{toChain}', `${rendererChain.id}`)
+    }
+    convertLink = convertLink.replace('{toToken}', wrappedContractAddress)
+  } else if (canAutomaticallyConvert) {
     convertLink =
       rendererChain?.id === mainnet.id || rendererChain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=mainnet&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`

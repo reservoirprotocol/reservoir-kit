@@ -44,6 +44,10 @@ export type ReservoirClientOptions = {
   logLevel?: LogLevel
   maxPollingAttemptsBeforeTimeout?: number
   synchronousStepItemExecution?: boolean
+  convertLink?: {
+    tokenUrl?: string
+    chainUrl?: string
+  }
 }
 
 export type ReservoirClientActions = typeof actions
@@ -64,6 +68,10 @@ export class ReservoirClient {
   logLevel: LogLevel
   maxPollingAttemptsBeforeTimeout?: number
   synchronousStepItemExecution?: boolean
+  convertLink?: {
+    tokenUrl?: string
+    chainUrl?: string
+  }
   log(
     message: Parameters<typeof logUtil>['0'],
     level: LogLevel = LogLevel.Info
@@ -94,7 +102,9 @@ export class ReservoirClient {
       options.logLevel !== undefined ? options.logLevel : LogLevel.None
     this.maxPollingAttemptsBeforeTimeout =
       options.maxPollingAttemptsBeforeTimeout
-    this.synchronousStepItemExecution = options.synchronousStepItemExecution ?? false
+    this.synchronousStepItemExecution =
+      options.synchronousStepItemExecution ?? false
+    this.convertLink = options.convertLink ?? undefined
   }
 
   configure(options: ReservoirClientOptions) {
@@ -124,8 +134,16 @@ export class ReservoirClient {
     this.logLevel =
       options.logLevel !== undefined ? options.logLevel : LogLevel.None
     this.maxPollingAttemptsBeforeTimeout =
-    options.maxPollingAttemptsBeforeTimeout !== undefined ? options.maxPollingAttemptsBeforeTimeout : this.maxPollingAttemptsBeforeTimeout
-      this.synchronousStepItemExecution = options.synchronousStepItemExecution !== undefined ? options.synchronousStepItemExecution : this.synchronousStepItemExecution
+      options.maxPollingAttemptsBeforeTimeout !== undefined
+        ? options.maxPollingAttemptsBeforeTimeout
+        : this.maxPollingAttemptsBeforeTimeout
+    this.synchronousStepItemExecution =
+      options.synchronousStepItemExecution !== undefined
+        ? options.synchronousStepItemExecution
+        : this.synchronousStepItemExecution
+    this.convertLink = options.convertLink
+      ? options.convertLink
+      : this.convertLink
   }
 
   currentChain() {
