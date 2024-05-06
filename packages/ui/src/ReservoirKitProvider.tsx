@@ -32,6 +32,10 @@ type ReservoirKitProviderOptions = {
   coinGecko?: CoinGecko
   alwaysIncludeListingCurrency?: boolean
   preferDisplayFiatTotal?: boolean
+  convertLink?: {
+    tokenUrl?: string
+    chainUrl?: string
+  }
 }
 export interface ReservoirKitProviderProps {
   children: ReactNode
