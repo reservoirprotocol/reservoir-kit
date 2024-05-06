@@ -44,7 +44,7 @@ import { getAccount, switchChain } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { Marketplace } from '../../hooks/useMarketplaces'
-import { ProviderOptionsContext } from 'packages/ui/src/ReservoirKitProvider'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type Exchange = NonNullable<Marketplace['exchanges']>['string']
 
