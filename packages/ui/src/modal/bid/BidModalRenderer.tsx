@@ -42,7 +42,7 @@ import { Currency } from '../../types/Currency'
 import { Address, WalletClient, erc20Abi, formatUnits, parseUnits } from 'viem'
 import { getAccount, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
-import { ProviderOptionsContext } from 'packages/ui/src/ReservoirKitProvider'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
