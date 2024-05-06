@@ -5,6 +5,7 @@ import React, {
   useCallback,
   ReactNode,
   useMemo,
+  useContext,
 } from 'react'
 import {
   useCoinConversion,
@@ -43,6 +44,7 @@ import { getAccount, switchChain } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { Marketplace } from '../../hooks/useMarketplaces'
+import { ProviderOptionsContext } from 'packages/ui/src/ReservoirKitProvider'
 
 type Exchange = NonNullable<Marketplace['exchanges']>['string']
 
@@ -129,6 +131,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   walletClient,
   children,
 }) => {
+  const providerOptions = useContext(ProviderOptionsContext)
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
   const config = useConfig()
@@ -296,7 +299,16 @@ export const EditBidModalRenderer: FC<Props> = ({
     !currency || currency.contract === nativeWrappedContractAddress
   let convertLink: string = ''
 
-  if (canAutomaticallyConvert) {
+  if (providerOptions?.convertLink) {
+    convertLink =
+      providerOptions.convertLink.tokenUrl ??
+      providerOptions.convertLink.chainUrl ??
+      ''
+    if (rendererChain?.id) {
+      convertLink = convertLink.replace('{toChain}', `${rendererChain.id}`)
+    }
+    convertLink = convertLink.replace('{toToken}', wrappedContractAddress)
+  } else if (canAutomaticallyConvert) {
     convertLink =
       wagmiChain?.id === mainnet.id || wagmiChain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=mainnet&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`

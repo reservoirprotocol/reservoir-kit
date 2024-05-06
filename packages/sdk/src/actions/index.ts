@@ -94,7 +94,8 @@ export class ReservoirClient {
       options.logLevel !== undefined ? options.logLevel : LogLevel.None
     this.maxPollingAttemptsBeforeTimeout =
       options.maxPollingAttemptsBeforeTimeout
-    this.synchronousStepItemExecution = options.synchronousStepItemExecution ?? false
+    this.synchronousStepItemExecution =
+      options.synchronousStepItemExecution ?? false
   }
 
   configure(options: ReservoirClientOptions) {
@@ -124,8 +125,13 @@ export class ReservoirClient {
     this.logLevel =
       options.logLevel !== undefined ? options.logLevel : LogLevel.None
     this.maxPollingAttemptsBeforeTimeout =
-    options.maxPollingAttemptsBeforeTimeout !== undefined ? options.maxPollingAttemptsBeforeTimeout : this.maxPollingAttemptsBeforeTimeout
-      this.synchronousStepItemExecution = options.synchronousStepItemExecution !== undefined ? options.synchronousStepItemExecution : this.synchronousStepItemExecution
+      options.maxPollingAttemptsBeforeTimeout !== undefined
+        ? options.maxPollingAttemptsBeforeTimeout
+        : this.maxPollingAttemptsBeforeTimeout
+    this.synchronousStepItemExecution =
+      options.synchronousStepItemExecution !== undefined
+        ? options.synchronousStepItemExecution
+        : this.synchronousStepItemExecution
   }
 
   currentChain() {
