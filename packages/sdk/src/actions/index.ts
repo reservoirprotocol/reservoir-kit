@@ -44,10 +44,6 @@ export type ReservoirClientOptions = {
   logLevel?: LogLevel
   maxPollingAttemptsBeforeTimeout?: number
   synchronousStepItemExecution?: boolean
-  convertLink?: {
-    tokenUrl?: string
-    chainUrl?: string
-  }
 }
 
 export type ReservoirClientActions = typeof actions
