@@ -246,6 +246,30 @@ export const redstone = {
   },
 } as const satisfies Chain
 
+export const degen = {
+  id: 666666666,
+  name: 'Degen',
+  nativeCurrency: { name: 'DEGEN', symbol: 'DEGEN', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.degen.tips'],
+    },
+    public: {
+      http: ['https://rpc.degen.tips'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Degen Chain Explorer',
+      url: 'https://explorer.degen.tips',
+    },
+    default: {
+      name: 'Degen Chain Explorer',
+      url: 'https://explorer.degen.tips',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -257,4 +281,5 @@ export const customChains = {
   astarZkEVM,
   garnet,
   redstone,
+  degen,
 } as const satisfies Record<string, Chain>

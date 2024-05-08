@@ -66,6 +66,7 @@ const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
     customChains.astarZkEVM,
     customChains.apexPop,
     customChains.apexPopTestnet,
+    customChains.degen
   ] as [
     Chain,
     ...Chain[]
