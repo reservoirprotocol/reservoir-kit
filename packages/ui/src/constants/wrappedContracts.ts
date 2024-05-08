@@ -29,6 +29,7 @@ const wrappedContracts: Record<number, string> = {
   17069: '0x4200000000000000000000000000000000000006', // garnet
   690: '0x4200000000000000000000000000000000000006', // redstone
   80085: '0x5806e416da447b267cea759358cf22cc41fae80f', // berachain testnet
+  666666666: '0xeb54dacb4c2ccb64f8074eceea33b5ebb38e5387', // degen
 }
 
 export default wrappedContracts

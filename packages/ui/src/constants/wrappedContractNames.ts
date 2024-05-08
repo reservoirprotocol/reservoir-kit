@@ -29,5 +29,6 @@ const wrappedContractNames: Record<number, string> = {
   17069: 'WETH', // garnet
   690: 'WETH', // redstone
   80085: 'WBERA', // berachain testnet
+  666666666: 'WDEGEN', // degen
 }
 export default wrappedContractNames

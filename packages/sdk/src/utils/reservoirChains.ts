@@ -250,6 +250,14 @@ const berachainTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const degen = {
+  id: 666666666,
+  name: 'Degen',
+  baseApiUrl: 'https://api-degen.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[666666666],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -281,4 +289,5 @@ export const reservoirChains = {
   garnet,
   redstone,
   berachainTestnet,
+  degen,
 }
