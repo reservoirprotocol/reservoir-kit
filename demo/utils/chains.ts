@@ -163,5 +163,8 @@ export default [
   },
   {
     ...reservoirChains.berachainTestnet
+  },
+  {
+    ...reservoirChains.degen
   }
 ]
