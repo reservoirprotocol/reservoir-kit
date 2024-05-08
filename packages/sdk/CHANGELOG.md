@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.1.3
+
+### Patch Changes
+
+- 7eb8fe1: Add degen chain configuration
+
 ## 2.1.2
 
 ### Patch Changes
