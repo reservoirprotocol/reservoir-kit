@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.6
+
+### Patch Changes
+
+- 7eb8fe1: Add degen chain configuration
+- Updated dependencies [7eb8fe1]
+  - @reservoir0x/reservoir-sdk@2.1.3
+
 ## 2.5.5
 
 ### Patch Changes
