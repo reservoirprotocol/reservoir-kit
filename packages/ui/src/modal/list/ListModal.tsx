@@ -207,10 +207,13 @@ export function ListModal({
           }
         }, [transactionError])
 
-        const floorAskPrice = collection?.floorAsk?.price
-        const decimalFloorPrice = collection?.floorAsk?.price?.amount?.decimal
-        const nativeFloorPrice = collection?.floorAsk?.price?.amount?.native
-        const usdFloorPrice = collection?.floorAsk?.price?.amount?.usd
+        const floorAskPrice =
+          token?.token?.kind === 'erc1155'
+            ? token?.market?.floorAsk?.price
+            : collection?.floorAsk?.price
+        const decimalFloorPrice = floorAskPrice?.amount?.decimal
+        const nativeFloorPrice = floorAskPrice?.amount?.native
+        const usdFloorPrice = floorAskPrice?.amount?.usd
         const defaultCurrency = currencies?.find(
           (currency) => currency?.contract === zeroAddress
         )
@@ -466,23 +469,17 @@ export function ListModal({
                         </Text>
                       </Box>
                     )}
-                    {collection &&
-                      collection?.floorAsk?.price?.amount?.native !==
-                        undefined &&
+                    {floorAskPrice?.amount?.native !== undefined &&
                       Number(price) !== 0 &&
                       Number(price) >= minimumAmount &&
                       currency.contract === zeroAddress &&
-                      Number(price) <
-                        collection?.floorAsk?.price.amount.native && (
+                      Number(price) < floorAskPrice.amount.native && (
                         <Box>
                           <Text style="body2" color="error">
                             Price is{' '}
                             {Math.round(
-                              ((collection.floorAsk.price.amount.native -
-                                +price) /
-                                ((collection.floorAsk.price.amount.native +
-                                  +price) /
-                                  2)) *
+                              ((floorAskPrice.amount.native - +price) /
+                                ((floorAskPrice.amount.native + +price) / 2)) *
                                 100 *
                                 1000
                             ) / 1000}
