@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.5.5
+
+### Patch Changes
+
+- d88c64d: ListModal: fix 1155 floor price to reflect token instead of collection
+
 ## 2.5.4
 
 ### Patch Changes
