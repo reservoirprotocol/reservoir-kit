@@ -1,5 +1,77 @@
 # @reservoir0x/gelato-adapter
 
+## 2.0.4
+
+### Patch Changes
+
+- Updated dependencies [4ca3b81]
+  - @reservoir0x/reservoir-sdk@2.1.4
+
+## 2.0.3
+
+### Patch Changes
+
+- Updated dependencies [7eb8fe1]
+  - @reservoir0x/reservoir-sdk@2.1.3
+
+## 2.0.2
+
+### Patch Changes
+
+- Updated dependencies [d0d6298]
+  - @reservoir0x/reservoir-sdk@2.1.2
+
+## 2.0.1
+
+### Patch Changes
+
+- Updated dependencies [e9fd498]
+  - @reservoir0x/reservoir-sdk@2.1.1
+
+## 2.0.0
+
+### Patch Changes
+
+- Updated dependencies [433943d]
+  - @reservoir0x/reservoir-sdk@2.1.0
+
+## 1.0.16
+
+### Patch Changes
+
+- Updated dependencies [5a6b034]
+  - @reservoir0x/reservoir-sdk@2.0.16
+
+## 1.0.15
+
+### Patch Changes
+
+- Updated dependencies [b1bdf17]
+  - @reservoir0x/reservoir-sdk@2.0.15
+
+## 1.0.14
+
+### Patch Changes
+
+- Updated dependencies [432bdbb]
+- Updated dependencies [00cfcfe]
+- Updated dependencies [ff2b661]
+  - @reservoir0x/reservoir-sdk@2.0.14
+
+## 1.0.13
+
+### Patch Changes
+
+- Updated dependencies [7c556b3]
+  - @reservoir0x/reservoir-sdk@2.0.13
+
+## 1.0.12
+
+### Patch Changes
+
+- Updated dependencies [2ecd779]
+  - @reservoir0x/reservoir-sdk@2.0.12
+
 ## 1.0.11
 
 ### Patch Changes

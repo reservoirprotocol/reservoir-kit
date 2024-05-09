@@ -144,7 +144,6 @@ export const BuyModalRenderer: FC<Props> = ({
   const [buyResponseFees, setBuyResponseFees] = useState<
     BuyResponses['fees'] | undefined
   >(undefined)
-
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
   const config = useConfig()
@@ -241,9 +240,22 @@ export const BuyModalRenderer: FC<Props> = ({
   )
   const totalUsd = totalIncludingFees * usdPriceRaw
 
-  const addFundsLink = paymentCurrency?.address
+  let addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+
+  if (providerOptions?.convertLink?.chainUrl) {
+    addFundsLink =
+      paymentCurrency?.address && providerOptions.convertLink.tokenUrl
+        ? providerOptions.convertLink.tokenUrl
+        : providerOptions.convertLink.chainUrl
+    if (rendererChain?.id) {
+      addFundsLink = addFundsLink.replace('{toChain}', `${rendererChain.id}`)
+    }
+    if (paymentCurrency?.address) {
+      addFundsLink = addFundsLink.replace('{toToken}', paymentCurrency?.address)
+    }
+  }
 
   const fetchPath = useCallback(
     (

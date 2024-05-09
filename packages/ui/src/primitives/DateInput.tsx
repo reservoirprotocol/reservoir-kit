@@ -9,6 +9,9 @@ import React, {
 
 //@ts-ignore
 const Flatpickr = FlatpickrModule.default
+  ? //@ts-ignore
+    FlatpickrModule.default
+  : FlatpickrModule
 
 type FlatPickrProps = ComponentPropsWithoutRef<typeof Flatpickr>
 

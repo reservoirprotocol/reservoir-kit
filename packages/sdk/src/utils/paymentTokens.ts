@@ -34,31 +34,6 @@ export const chainPaymentTokensMap = {
     },
   ],
 
-  // Goerli
-  5: [
-    {
-      chainId: 5,
-      address: zeroAddress,
-      symbol: 'ETH',
-      name: 'Goerli ETH',
-      decimals: 18,
-    },
-    {
-      chainId: 5,
-      address: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
-      symbol: 'WETH',
-      name: 'WETH',
-      decimals: 18,
-    },
-    {
-      chainId: 5,
-      address: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
-      symbol: 'USDC',
-      name: 'USDC',
-      decimals: 6,
-    },
-  ],
-
   // Optimism
   10: [
     {
@@ -109,28 +84,21 @@ export const chainPaymentTokensMap = {
     },
   ],
 
-  // Mumbai
-  80001: [
+  // Amoy
+  80002: [
     {
-      chainId: 80001,
+      chainId: 80002,
       address: zeroAddress,
       symbol: 'MATIC',
       name: 'MATIC',
       decimals: 18,
     },
     {
-      chainId: 80001,
-      address: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
+      chainId: 80002,
+      address: '0x0ae690aad8663aab12a671a6a0d74242332de85f',
       symbol: 'WMATIC',
       name: 'WMATIC',
       decimals: 18,
-    },
-    {
-      chainId: 80001,
-      address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23',
-      symbol: 'USDC',
-      name: 'USDC',
-      decimals: 6,
     },
   ],
 
@@ -252,30 +220,6 @@ export const chainPaymentTokensMap = {
     },
   ],
 
-  // Base Goerli
-  84531: [
-    {
-      chainId: 84531,
-      address: zeroAddress,
-      symbol: 'ETH',
-      name: 'Base Goerli ETH',
-      decimals: 18,
-    },
-    {
-      chainId: 84531,
-      address: '0x4200000000000000000000000000000000000006',
-      symbol: 'WETH',
-      name: 'WETH',
-      decimals: 18,
-    },
-    {
-      chainId: 84531,
-      address: '0xf175520c52418dfe19c8098071a252da48cd1c19',
-      symbol: 'USDC',
-      name: 'USDC',
-      decimals: 6,
-    },
-  ],
   // Base Sepolia
   84532: [
     {
@@ -293,6 +237,7 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
   // Scroll Testnet
   534353: [
     {
@@ -615,20 +560,80 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
-  // Redstone Testnet
-  17001: [
+  // Garnet
+  17069: [
     {
-      chainId: 17001,
+      chainId: 17069,
       address: zeroAddress,
       symbol: 'ETH',
       name: 'ETH',
       decimals: 18,
     },
     {
-      chainId: 17001,
-      address: '0x09d940117bd1df3165a22820517a946426605f60',
+      chainId: 17069,
+      address: '0x4200000000000000000000000000000000000006',
       symbol: 'WETH',
       name: 'WETH',
+      decimals: 18,
+    },
+  ],
+
+  // Redstone
+  690: [
+    {
+      chainId: 690,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 690,
+      address: '0x4200000000000000000000000000000000000006',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
+
+  // Berachain Testnet
+  80085: [
+    {
+      chainId: 80085,
+      address: zeroAddress,
+      symbol: 'BERA',
+      name: 'BERA',
+      decimals: 18,
+    },
+    {
+      chainId: 80085,
+      address: '0x5806e416da447b267cea759358cf22cc41fae80f',
+      symbol: 'WBERA',
+      name: 'WBERA',
+      decimals: 18,
+    },
+  ],
+
+  // Degen
+  666666666: [
+    {
+      chainId: 666666666,
+      address: zeroAddress,
+      symbol: 'DEGEN',
+      name: 'DEGEN',
+      decimals: 18,
+    },
+    {
+      chainId: 8453,
+      address: '0x4ed4e862860bed51a9570b96d89af5e1b0efefed',
+      symbol: 'DEGEN',
+      name: 'Base DEGEN',
+    },
+    {
+      chainId: 666666666,
+      address: '0xeb54dacb4c2ccb64f8074eceea33b5ebb38e5387',
+      symbol: 'WDEGEN',
+      name: 'WDEGEN',
       decimals: 18,
     },
   ],

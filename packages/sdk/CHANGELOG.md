@@ -1,5 +1,67 @@
 ## 1.12.15
 
+## 2.1.4
+
+### Patch Changes
+
+- 4ca3b81: Fix payment token balance fetching for crosschain non native currencies
+
+## 2.1.3
+
+### Patch Changes
+
+- 7eb8fe1: Add degen chain configuration
+
+## 2.1.2
+
+### Patch Changes
+
+- d0d6298: Fix berachain testnet url
+
+## 2.1.1
+
+### Patch Changes
+
+- e9fd498: Sync api types
+
+## 2.1.0
+
+### Minor Changes
+
+- 433943d: Removed deprecated chains
+
+## 2.0.16
+
+### Patch Changes
+
+- 5a6b034: Update polygon amoy wmatic address
+
+## 2.0.15
+
+### Patch Changes
+
+- b1bdf17: Handle reverted transactions by throwing an error after receiving receipt
+
+## 2.0.14
+
+### Patch Changes
+
+- 432bdbb: Add garnet and remove redstone testnet
+- 00cfcfe: Update tokens/refresh api to v2
+- ff2b661: Add polygon amoy
+
+## 2.0.13
+
+### Patch Changes
+
+- 7c556b3: Add redstone chain
+
+## 2.0.12
+
+### Patch Changes
+
+- 2ecd779: Add berachain testnet
+
 ## 2.0.11
 
 ### Patch Changes

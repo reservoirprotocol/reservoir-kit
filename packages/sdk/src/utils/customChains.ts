@@ -198,26 +198,74 @@ export const astarZkEVM = {
   },
 } as const satisfies Chain
 
-export const redstoneTestnet = {
-  id: 17001,
-  name: 'Redstone Testnet',
+export const garnet = {
+  id: 17069,
+  name: 'Garnet',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://rpc.holesky.redstone.xyz'],
+      http: ['https://rpc.garnet.qry.live'],
     },
     public: {
-      http: ['https://rpc.holesky.redstone.xyz'],
+      http: ['https://rpc.garnet.qry.live'],
     },
   },
   blockExplorers: {
     etherscan: {
-      name: 'Redstone Testnet',
-      url: 'https://explorer.holesky.redstone.xyz',
+      name: 'Garnet',
+      url: 'https://explorer.garnet.qry.live',
     },
     default: {
-      name: 'Redstone Testnet',
-      url: 'https://explorer.holesky.redstone.xyz',
+      name: 'Garnet',
+      url: 'https://explorer.garnet.qry.live',
+    },
+  },
+} as const satisfies Chain
+
+export const redstone = {
+  id: 690,
+  name: 'Redstone',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.redstonechain.com'],
+    },
+    public: {
+      http: ['https://rpc.redstonechain.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Redstone',
+      url: 'https://explorer.redstone.xyz',
+    },
+    default: {
+      name: 'Redstone',
+      url: 'https://explorer.redstone.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const degen = {
+  id: 666666666,
+  name: 'Degen',
+  nativeCurrency: { name: 'DEGEN', symbol: 'DEGEN', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.degen.tips'],
+    },
+    public: {
+      http: ['https://rpc.degen.tips'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Degen Chain Explorer',
+      url: 'https://explorer.degen.tips',
+    },
+    default: {
+      name: 'Degen Chain Explorer',
+      url: 'https://explorer.degen.tips',
     },
   },
 } as const satisfies Chain
@@ -231,5 +279,7 @@ export const customChains = {
   apexPopTestnet,
   blast,
   astarZkEVM,
-  redstoneTestnet,
+  garnet,
+  redstone,
+  degen,
 } as const satisfies Record<string, Chain>

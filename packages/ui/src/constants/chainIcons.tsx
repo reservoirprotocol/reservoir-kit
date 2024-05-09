@@ -23,8 +23,8 @@ import AvalancheIconColor from '../img/chains/AvalancheIconColor'
 import BscIconDark from '../img/chains/BscIconDark'
 import BscIconLight from '../img/chains/BscIconLight'
 import BscIconColor from '../img/chains/BscIconColor'
-import GoerliIconDark from '../img/chains/GoerliIconDark'
-import GoerliIconLight from '../img/chains/GoerliIconLight'
+import SepoliaIconDark from '../img/chains/SepoliaIconDark'
+import SepoliaIconLight from '../img/chains/SepoliaIconLight'
 import LineaIconDark from '../img/chains/LineaIconDark'
 import LineaIconLight from '../img/chains/LineaIconLight'
 import LineaIconColor from '../img/chains/LineaIconColor'
@@ -58,9 +58,15 @@ import BlastIconLight from '../img/chains/BlastIconLight'
 import AstarZkEVMLight from '../img/chains/AstarZkEVMLight'
 import AstarZkEVMDark from '../img/chains/AstarZkEVMDark'
 import AstarZkEVMColor from '../img/chains/AstarZkEVMColor'
-import RedstoneTestnetColor from '../img/chains/RedstoneTestnetColor'
-import RedstoneTestnetDark from '../img/chains/RedstoneTestnetDark'
-import RedstoneTestnetLight from '../img/chains/RedstoneTestnetLight'
+import RedstoneColor from '../img/chains/RedstoneColor'
+import RedstoneDark from '../img/chains/RedstoneDark'
+import RedstoneLight from '../img/chains/RedstoneLight'
+import BerachainIconLight from '../img/chains/BerachainIconLight'
+import BerachainIconDark from '../img/chains/BerachainIconDark'
+import BerachainIconColor from '../img/chains/BerachainIconColor'
+import DegenIconLight from '../img/chains/DegenIconLight'
+import DegenIconDark from '../img/chains/DegenIconDark'
+// import DegenIconColor from '../img/chains/DegenIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -93,11 +99,6 @@ const chainIcons = {
     dark: <BaseIconLight />,
     color: <BaseIconColor />,
   },
-  [reservoirChains.baseGoerli.id]: {
-    light: <BaseIconDark />,
-    dark: <BaseIconLight />,
-    color: <BaseIconColor />,
-  },
   [reservoirChains.baseSepolia.id]: {
     light: <BaseIconDark />,
     dark: <BaseIconLight />,
@@ -113,14 +114,9 @@ const chainIcons = {
     dark: <BscIconLight />,
     color: <BscIconColor />,
   },
-  [reservoirChains.goerli.id]: {
-    light: <GoerliIconDark />,
-    dark: <GoerliIconLight />,
-    color: null,
-  },
   [reservoirChains.sepolia.id]: {
-    light: <GoerliIconDark />,
-    dark: <GoerliIconLight />,
+    light: <SepoliaIconDark />,
+    dark: <SepoliaIconLight />,
     color: null,
   },
   [reservoirChains.linea.id]: {
@@ -148,7 +144,8 @@ const chainIcons = {
     dark: <PolygonIconLight />,
     color: <PolygonIconColor />,
   },
-  [reservoirChains.mumbai.id]: {
+
+  [reservoirChains.polygonAmoy.id]: {
     light: <PolygonIconDark />,
     dark: <PolygonIconLight />,
     color: <PolygonIconColor />,
@@ -203,10 +200,25 @@ const chainIcons = {
     dark: <AstarZkEVMDark />,
     color: <AstarZkEVMColor />,
   },
-  [reservoirChains.redstoneTestnet.id]: {
-    light: <RedstoneTestnetLight />,
-    dark: <RedstoneTestnetDark />,
-    color: <RedstoneTestnetColor />,
+  [reservoirChains.garnet.id]: {
+    light: <RedstoneLight />,
+    dark: <RedstoneDark />,
+    color: <RedstoneColor />,
+  },
+  [reservoirChains.redstone.id]: {
+    light: <RedstoneLight />,
+    dark: <RedstoneDark />,
+    color: <RedstoneColor />,
+  },
+  [reservoirChains.berachainTestnet.id]: {
+    light: <BerachainIconLight />,
+    dark: <BerachainIconDark />,
+    color: <BerachainIconColor />,
+  },
+  [reservoirChains.degen.id]: {
+    light: <DegenIconLight />,
+    dark: <DegenIconDark />,
+    color: <DegenIconDark />,
   },
 }
 

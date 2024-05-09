@@ -312,8 +312,17 @@ export const MintModalRenderer: FC<Props> = ({
             if ('maxQuantities' in data && data.maxQuantities?.[0]) {
               if (is1155) {
                 totalMaxQuantity = data.maxQuantities.reduce(
-                  (total, currentQuantity) =>
-                    total + Number(currentQuantity.maxQuantity ?? 1),
+                  (total, currentQuantity) => {
+                    let maxQuantity = 0
+                    if (currentQuantity.maxQuantity === null) {
+                      //Hardcoded to 30k items if unlimited
+                      maxQuantity = 30000
+                    } else if (!currentQuantity.maxQuantity) {
+                      // if value is undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+                      maxQuantity = 1
+                    }
+                    return total + maxQuantity
+                  },
                   0
                 )
               } else {
@@ -464,9 +473,22 @@ export const MintModalRenderer: FC<Props> = ({
     mintResponseFees,
   ])
 
-  const addFundsLink = paymentCurrency?.address
+  let addFundsLink = paymentCurrency?.address
     ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
     : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+
+  if (providerOptions?.convertLink?.chainUrl) {
+    addFundsLink =
+      paymentCurrency?.address && providerOptions.convertLink.tokenUrl
+        ? providerOptions.convertLink.tokenUrl
+        : providerOptions.convertLink.chainUrl
+    if (rendererChain?.id) {
+      addFundsLink = addFundsLink.replace('{toChain}', `${rendererChain.id}`)
+    }
+    if (paymentCurrency?.address) {
+      addFundsLink = addFundsLink.replace('{toToken}', paymentCurrency?.address)
+    }
+  }
 
   // Determine if user has enough funds in paymentToken
   useEffect(() => {
