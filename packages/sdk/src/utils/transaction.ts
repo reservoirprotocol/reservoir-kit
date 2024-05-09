@@ -138,7 +138,7 @@ export async function sendTransactionSafely(
       })
     } else {
       res = await axios.request({
-        url: `${request.baseURL}/transactions/${txHash}/synced/v2`,
+        url: `${request.baseURL}/transactions/synced/v2?txHash=${txHash}`,
         method: 'get',
         headers: headers,
       })
