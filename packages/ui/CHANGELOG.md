@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.7
+
+### Patch Changes
+
+- 4ca3b81: Fix payment token balance fetching for crosschain non native currencies
+- Updated dependencies [4ca3b81]
+  - @reservoir0x/reservoir-sdk@2.1.4
+
 ## 2.5.6
 
 ### Patch Changes

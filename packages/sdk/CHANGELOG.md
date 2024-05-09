@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.1.4
+
+### Patch Changes
+
+- 4ca3b81: Fix payment token balance fetching for crosschain non native currencies
+
 ## 2.1.3
 
 ### Patch Changes
