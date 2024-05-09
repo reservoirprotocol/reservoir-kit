@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.5.8
+
+### Patch Changes
+
+- 01f63a4: Remove useSearchActivities hook
+
 ## 2.5.7
 
 ### Patch Changes
