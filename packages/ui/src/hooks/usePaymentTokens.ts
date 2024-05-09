@@ -165,7 +165,7 @@ export default function (options: {
       ? nonNativeCurrencies?.map((currency) => ({
           abi: erc20Abi,
           address: currency.address.toLowerCase() as `0x${string}`,
-          chainId: chainId,
+          chainId: currency.chainId,
           functionName: 'balanceOf',
           args: [address],
         }))
