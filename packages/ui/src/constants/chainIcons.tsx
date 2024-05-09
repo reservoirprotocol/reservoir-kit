@@ -64,6 +64,9 @@ import RedstoneLight from '../img/chains/RedstoneLight'
 import BerachainIconLight from '../img/chains/BerachainIconLight'
 import BerachainIconDark from '../img/chains/BerachainIconDark'
 import BerachainIconColor from '../img/chains/BerachainIconColor'
+import DegenIconLight from '../img/chains/DegenIconLight'
+import DegenIconDark from '../img/chains/DegenIconDark'
+// import DegenIconColor from '../img/chains/DegenIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -211,6 +214,11 @@ const chainIcons = {
     light: <BerachainIconLight />,
     dark: <BerachainIconDark />,
     color: <BerachainIconColor />,
+  },
+  [reservoirChains.degen.id]: {
+    light: <DegenIconLight />,
+    dark: <DegenIconDark />,
+    color: <DegenIconDark />,
   },
 }
 
