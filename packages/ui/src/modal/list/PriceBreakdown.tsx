@@ -14,6 +14,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
 import InfoTooltip from '../../primitives/InfoTooltip'
 
+type Exchange = NonNullable<Marketplace['exchanges']>['string']
+
 type PriceBreakdownProps = {
   price: string
   usdPrice: number
@@ -21,6 +23,7 @@ type PriceBreakdownProps = {
   quantity: number
   royaltyBps?: number
   marketplace?: Marketplace
+  exchange?: Exchange
 }
 
 const PriceBreakdown: FC<PriceBreakdownProps> = ({
@@ -30,9 +33,13 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
   quantity,
   royaltyBps,
   marketplace,
+  exchange,
 }) => {
   let profit =
-    (1 - (marketplace?.fee?.percent || 0) / 100 - (royaltyBps || 0) * 0.0001) *
+    (1 -
+      (exchange?.fee?.bps ?? 0) -
+      (marketplace?.fee?.percent || 0) / 100 -
+      (royaltyBps || 0) * 0.0001) *
     Number(price) *
     quantity
   100
