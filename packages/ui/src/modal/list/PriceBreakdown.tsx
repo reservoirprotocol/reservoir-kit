@@ -35,13 +35,10 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
   marketplace,
   exchange,
 }) => {
-  let profit =
-    (1 -
-      (exchange?.fee?.bps ?? 0) -
-      (marketplace?.fee?.percent || 0) / 100 -
-      (royaltyBps || 0) * 0.0001) *
-    Number(price) *
-    quantity
+  const marketplaceFee =
+    (marketplace?.fee?.percent ?? 0) / 100 + (exchange?.fee?.bps ?? 0) * 0.0001
+  const royaltyFee = (royaltyBps || 0) * 0.0001
+  const profit = (1 - marketplaceFee - royaltyFee) * Number(price) * quantity
   100
 
   if (Number(price) > 0 && (marketplace?.fee?.percent || royaltyBps)) {
@@ -128,7 +125,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
                   -
                 </Text>
                 <FormatCryptoCurrency
-                  amount={quantity * Number(price) * (royaltyBps || 0) * 0.0001}
+                  amount={quantity * Number(price) * royaltyFee}
                   address={currency.contract}
                   symbol={currency.symbol}
                   textStyle="subtitle2"
@@ -137,7 +134,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
               </Flex>
             </Flex>
           ) : null}
-          {marketplace?.fee?.bps ? (
+          {marketplaceFee ? (
             <Flex justify="between" align="center">
               <Text style="subtitle2" color="subtle">
                 {marketplace?.name || 'Marketplace'} Fee
@@ -148,9 +145,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
                   -
                 </Text>
                 <FormatCryptoCurrency
-                  amount={
-                    quantity * Number(price) * (marketplace?.fee?.percent / 100)
-                  }
+                  amount={quantity * Number(price) * marketplaceFee}
                   address={currency.contract}
                   symbol={currency.symbol}
                   textStyle="subtitle2"
