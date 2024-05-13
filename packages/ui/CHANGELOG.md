@@ -1,5 +1,15 @@
 ## 1.25.10
 
+## 2.5.8
+
+### Patch Changes
+
+- bfb6f8f: BidModal & ListModal: Include exchange fee in feesBps calculation
+- 01f63a4: Remove useSearchActivities hook
+- Updated dependencies [bfb6f8f]
+- Updated dependencies [25e8677]
+  - @reservoir0x/reservoir-sdk@2.2.0
+
 ## 2.5.7
 
 ### Patch Changes
