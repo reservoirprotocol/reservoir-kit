@@ -30,5 +30,8 @@ const wrappedContractNames: Record<number, string> = {
   690: 'WETH', // redstone
   80085: 'WBERA', // berachain testnet
   666666666: 'WDEGEN', // degen
+  660279: 'WXAI', // xai
+  1482601649: 'ETH', // nebula
+  713715: 'WSEI', // sei testnet
 }
 export default wrappedContractNames

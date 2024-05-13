@@ -66,7 +66,16 @@ import BerachainIconDark from '../img/chains/BerachainIconDark'
 import BerachainIconColor from '../img/chains/BerachainIconColor'
 import DegenIconLight from '../img/chains/DegenIconLight'
 import DegenIconDark from '../img/chains/DegenIconDark'
+import XaiIconLight from '../img/chains/XaiIconLight'
+import XaiIconDark from '../img/chains/XaiIconDark'
+import NebulaIconLight from '../img/chains/NebulaIconLight'
+import NebulaIconDark from '../img/chains/NebulaIconDark'
+import SeiTestnetIconLight from '../img/chains/SeiTestnetIconLight'
+import SeiTestnetIconDark from '../img/chains/SeiTestnetIconDark'
 // import DegenIconColor from '../img/chains/DegenIconColor'
+// import XaiIconColor from '../img/chains/XaiIconColor'
+// import NebulaIconColor from '../img/chains/NebulaIconColor'
+// import SeiTestnetIconColor from '../img/chains/SeiTestnetIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -219,6 +228,21 @@ const chainIcons = {
     light: <DegenIconLight />,
     dark: <DegenIconDark />,
     color: <DegenIconDark />,
+  },
+  [reservoirChains.xai.id]: {
+    light: <XaiIconLight />,
+    dark: <XaiIconDark />,
+    color: <XaiIconDark />,
+  },
+  [reservoirChains.nebula.id]: {
+    light: <NebulaIconLight />,
+    dark: <NebulaIconDark />,
+    color: <NebulaIconDark />,
+  },
+  [reservoirChains.seiTestnet.id]: {
+    light: <SeiTestnetIconLight />,
+    dark: <SeiTestnetIconDark />,
+    color: <SeiTestnetIconDark />,
   },
 }
 
