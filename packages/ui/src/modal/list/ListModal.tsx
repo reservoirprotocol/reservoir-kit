@@ -565,6 +565,7 @@ export function ListModal({
                     quantity={quantity}
                     royaltyBps={royaltyBps}
                     marketplace={marketplace}
+                    exchange={exchange}
                   />
                 </Flex>
                 <Box css={{ p: '$4', width: '100%' }}>
