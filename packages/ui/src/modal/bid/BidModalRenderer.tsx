@@ -383,15 +383,18 @@ export const BidModalRenderer: FC<Props> = ({
   }
 
   const feeBps: number | undefined = useMemo(() => {
-    let bpsFees = feesBps || client?.marketplaceFees
-    if (bpsFees) {
-      return bpsFees.reduce((total, fee) => {
+    let totalFeeBps = 0
+    const bpsFees = feesBps || client?.marketplaceFees
+    totalFeeBps +=
+      bpsFees?.reduce((total, fee) => {
         const bps = Number(fee.split(':')[1])
         total += bps
         return total
-      }, 0)
-    }
-  }, [feesBps, client?.marketplaceFees, currency])
+      }, 0) ?? 0
+    totalFeeBps += exchange?.fee?.bps ?? 0
+    return totalFeeBps
+  }, [feesBps, client?.marketplaceFees, currency, exchange])
+  console.log(feeBps)
 
   useEffect(() => {
     if (totalBidAmount !== 0n) {
