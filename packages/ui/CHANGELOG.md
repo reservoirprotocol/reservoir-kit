@@ -13,6 +13,13 @@
 - d10c230: Adding Xai, Nebula, and Sei chains
 - Updated dependencies [bfb6f8f]
 - Updated dependencies [d10c230]
+- bfb6f8f: BidModal & ListModal: Include exchange fee in feesBps calculation
+- 01f63a4: Remove useSearchActivities hook
+- d10c230: Adding Xai, Nebula, and Sei chains
+- 5534b08: Removing degen currencies and adding nebula as a custom chain
+- Updated dependencies [bfb6f8f]
+- Updated dependencies [d10c230]
+- Updated dependencies [5534b08]
 - Updated dependencies [25e8677]
   - @reservoir0x/reservoir-sdk@2.2.0
 
