@@ -63,7 +63,10 @@ const WALLET_CONNECT_PROJECT_ID =
     customChains.astarZkEVM,
     customChains.apexPop,
     customChains.apexPopTestnet,
-    customChains.degen
+    customChains.degen,
+    customChains.xai,
+    allChains.skaleNebula,
+    customChains.seiTestnet,
   ] as [
     Chain,
     ...Chain[]
