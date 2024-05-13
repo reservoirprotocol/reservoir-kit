@@ -258,6 +258,30 @@ const degen = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const xai = {
+  id: 660279,
+  name: 'Xai',
+  baseApiUrl: 'https://api-xai.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[660279],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const nebula = {
+  id: 1482601649,
+  name: 'Nebula',
+  baseApiUrl: 'https://api-nebula.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1482601649],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const seiTestnet = {
+  id: 713715,
+  name: 'Sei Testnet',
+  baseApiUrl: 'https://api-sei-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[713715],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -290,4 +314,7 @@ export const reservoirChains = {
   redstone,
   berachainTestnet,
   degen,
+  xai,
+  nebula,
+  seiTestnet,
 }

@@ -5,6 +5,7 @@
 ### Patch Changes
 
 - Updated dependencies [bfb6f8f]
+- Updated dependencies [d10c230]
 - Updated dependencies [25e8677]
   - @reservoir0x/reservoir-sdk@2.2.0
 

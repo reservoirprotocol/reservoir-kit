@@ -9,6 +9,7 @@
 ### Patch Changes
 
 - bfb6f8f: BidModal & ListModal: Include exchange fee in feesBps calculation
+- d10c230: Adding Xai, Nebula, and Sei chains
 
 ## 2.1.4
 
