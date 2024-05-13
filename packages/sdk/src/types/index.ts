@@ -18,6 +18,12 @@ export type BuyResponses =
 export type MintResponses =
   paths['/execute/mint/v1']['post']['responses']['200']['schema']
 
+export type TransferData = NonNullable<
+  NonNullable<
+    paths['/transactions/synced/v2']['get']['responses']['200']['schema']['transactions']
+  >['0']['transfers']
+>['0'] & { txHash?: string }
+
 export type SignatureStepItem = Pick<
   NonNullable<Execute['steps'][0]['items']>[0],
   'status' | 'orderIds' | 'orderIndexes' | 'orderData'
@@ -92,8 +98,7 @@ export type Execute = {
         orderId: string
         orderIndex: string
       }[]
-      transfersData?: paths['/transfers/bulk/v2']['get']['responses']['200']['schema']['transfers']
-      //
+      transfersData?: TransferData[]
     }[]
   }[]
 }

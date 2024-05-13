@@ -1,5 +1,15 @@
 ## 1.12.15
 
+## 2.2.0
+
+### Minor Changes
+
+- 25e8677: Replace bulk transfers api with transactions/synced/v2 api
+
+### Patch Changes
+
+- bfb6f8f: BidModal & ListModal: Include exchange fee in feesBps calculation
+
 ## 2.1.4
 
 ### Patch Changes
