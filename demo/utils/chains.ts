@@ -166,5 +166,14 @@ export default [
   },
   {
     ...reservoirChains.degen
+  },
+  {
+    ...reservoirChains.xai
+  },
+  {
+    ...reservoirChains.nebula
+  },
+  {
+    ...reservoirChains.seiTestnet
   }
 ]

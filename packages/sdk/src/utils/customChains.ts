@@ -270,6 +270,78 @@ export const degen = {
   },
 } as const satisfies Chain
 
+export const xai = {
+  id: 660279,
+  name: 'Xai',
+  nativeCurrency: { name: 'Xai', symbol: 'XAI', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://xai-chain.net/rpc'],
+    },
+    public: {
+      http: ['https://xai-chain.net/rpc'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Xai',
+      url: 'https://explorer.xai-chain.net',
+    },
+    default: {
+      name: 'Xai',
+      url: 'https://explorer.xai-chain.net',
+    },
+  },
+} as const satisfies Chain
+
+export const nebula = {
+  id: 1482601649,
+  name: 'Nebula',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet.skalenodes.com/v1/green-giddy-denebola'],
+    },
+    public: {
+      http: ['https://mainnet.skalenodes.com/v1/green-giddy-denebola'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Nebula Gaming Hub Explorer',
+      url: 'https://green-giddy-denebola.explorer.mainnet.skalenodes.com',
+    },
+    default: {
+      name: 'Nebula Gaming Hub Explorer',
+      url: 'https://green-giddy-denebola.explorer.mainnet.skalenodes.com',
+    },
+  },
+} as const satisfies Chain
+
+export const seiTestnet = {
+  id: 713715,
+  name: 'Sei Testnet',
+  nativeCurrency: { name: 'Sei', symbol: 'SEI', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://evm-rpc-arctic-1.sei-apis.com'],
+    },
+    public: {
+      http: ['https://evm-rpc-arctic-1.sei-apis.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Sei Testnet',
+      url: 'https://seistream.app',
+    },
+    default: {
+      name: 'Sei Testnet',
+      url: 'https://seistream.app',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -282,4 +354,7 @@ export const customChains = {
   garnet,
   redstone,
   degen,
+  xai,
+  nebula,
+  seiTestnet,
 } as const satisfies Record<string, Chain>

@@ -623,17 +623,51 @@ export const chainPaymentTokensMap = {
       name: 'DEGEN',
       decimals: 18,
     },
+  ],
+
+  // Xai
+  660279: [
     {
-      chainId: 8453,
-      address: '0x4ed4e862860bed51a9570b96d89af5e1b0efefed',
-      symbol: 'DEGEN',
-      name: 'Base DEGEN',
+      chainId: 660279,
+      address: zeroAddress,
+      symbol: 'XAI',
+      name: 'Xai',
+      decimals: 18,
     },
     {
-      chainId: 666666666,
-      address: '0xeb54dacb4c2ccb64f8074eceea33b5ebb38e5387',
-      symbol: 'WDEGEN',
-      name: 'WDEGEN',
+      chainId: 660279,
+      address: '0x3fb787101dc6be47cfe18aeee15404dcc842e6af',
+      symbol: 'WXAI',
+      name: 'WXAI',
+      decimals: 18,
+    },
+  ],
+
+  // Nebula
+  1482601649: [
+    {
+      chainId: 1482601649,
+      address: '0xab01bad2c86e24d371a13ed6367bdca819589c5d',
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+  ],
+
+  // Sei Testnet
+  713715: [
+    {
+      chainId: 713715,
+      address: zeroAddress,
+      symbol: 'SEI',
+      name: 'SEI',
+      decimals: 18,
+    },
+    {
+      chainId: 713715,
+      address: '0x48a9b22b80f566e88f0f1dcc90ea15a8a3bae8a4',
+      symbol: 'WSEI',
+      name: 'WSEI',
       decimals: 18,
     },
   ],
