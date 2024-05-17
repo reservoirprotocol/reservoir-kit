@@ -11,7 +11,7 @@ import React, {
 import { darkTheme } from 'stitches.config'
 import { ThemeProvider } from 'next-themes'
 import {  http } from 'wagmi'
-import { PrivyProvider } from '@privy-io/react-auth'
+import { PrivyProvider, addRpcUrlOverrideToChain } from '@privy-io/react-auth'
 import * as allChains from 'wagmi/chains'
 import '../fonts.css'
 import {
@@ -64,6 +64,19 @@ const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
     Chain,
     ...Chain[]
   ]
+
+  const supportedPrivyChains = chains.map((chain) => {
+    let transport: string
+    const network = chainIdToAlchemyNetworkMap[chain.id]
+      if (network && ALCHEMY_KEY) {
+        transport = 
+          `https://${network}.g.alchemy.com/v2/${ALCHEMY_KEY}`
+
+      } else {
+        transport = chain.rpcUrls.default.http[0] // Fallback to default HTTP transport
+      }
+      return addRpcUrlOverrideToChain(chain, transport)
+  })
 
   const wagmiConfig = createConfig({
     chains,
@@ -149,7 +162,8 @@ const AppWrapper: FC<AppWrapperProps> = ({ children }) => {
         config={{
           appearance: { 
             theme:'dark'
-          }
+          },
+          supportedChains: supportedPrivyChains
         }}
       >
         <QueryClientProvider client={queryClient}>
