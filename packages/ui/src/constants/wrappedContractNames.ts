@@ -33,5 +33,6 @@ const wrappedContractNames: Record<number, string> = {
   660279: 'WXAI', // xai
   1482601649: 'ETH', // nebula
   713715: 'WSEI', // sei testnet
+  7560: 'WETH', // sei testnet
 }
 export default wrappedContractNames

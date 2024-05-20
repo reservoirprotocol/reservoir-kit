@@ -342,6 +342,30 @@ export const seiTestnet = {
   },
 } as const satisfies Chain
 
+export const cyber = {
+  id: 7560,
+  name: 'Cyber',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://cyber.alt.technology'],
+    },
+    public: {
+      http: ['https://cyber.alt.technology'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Cyber Explorer',
+      url: 'https://cyberscan.co',
+    },
+    default: {
+      name: 'Cyber Explorer',
+      url: 'https://cyberscan.co',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -357,4 +381,5 @@ export const customChains = {
   xai,
   nebula,
   seiTestnet,
+  cyber,
 } as const satisfies Record<string, Chain>

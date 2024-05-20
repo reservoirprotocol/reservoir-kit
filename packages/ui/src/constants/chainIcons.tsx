@@ -76,6 +76,9 @@ import NebulaIconColor from '../img/chains/NebulaIconColor'
 import SeiTestnetIconLight from '../img/chains/SeiTestnetIconLight'
 import SeiTestnetIconDark from '../img/chains/SeiTestnetIconDark'
 import SeiTestnetIconColor from '../img/chains/SeiTestnetIconColor'
+import CyberIconLight from '../img/chains/CyberIconLight'
+import CyberIconDark from '../img/chains/CyberIconDark'
+import CyberIconColor from '../img/chains/CyberIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -243,6 +246,11 @@ const chainIcons = {
     light: <SeiTestnetIconLight />,
     dark: <SeiTestnetIconDark />,
     color: <SeiTestnetIconColor />,
+  },
+  [reservoirChains.cyber.id]: {
+    light: <CyberIconLight />,
+    dark: <CyberIconDark />,
+    color: <CyberIconColor />,
   },
 }
 
