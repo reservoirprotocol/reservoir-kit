@@ -591,15 +591,16 @@ export async function executeSteps(
               LogLevel.Verbose
             )
             const indexerConfirmationUrl = new URL(
-              `${request.baseURL}/transfers/bulk/v2`
+              `${request.baseURL}/transactions/synced/v2`
             )
 
-            const queryParams: paths['/transfers/bulk/v2']['get']['parameters']['query'] =
+            const queryParams: paths['/transactions/synced/v2']['get']['parameters']['query'] =
               {
                 txHash: stepItem.txHashes?.map((hash) => hash.txHash),
+                includeTransfers: true,
               }
             setParams(indexerConfirmationUrl, queryParams)
-            let transfersData: paths['/transfers/bulk/v2']['get']['responses']['200']['schema'] =
+            let transactionsData: paths['/transactions/synced/v2']['get']['responses']['200']['schema'] =
               {}
             await pollUntilOk(
               {
@@ -609,20 +610,24 @@ export async function executeSteps(
               },
               (res) => {
                 client.log(
-                  ['Execute Steps: Polling transfers to check if indexed', res],
+                  [
+                    'Execute Steps: Polling transactions to check if indexed',
+                    res,
+                  ],
                   LogLevel.Verbose
                 )
                 if (res.status === 200) {
-                  transfersData = res.data
+                  transactionsData = res.data
 
-                  const transferTxHashes = transfersData?.transfers?.map(
-                    (transfer) => transfer.txHash
-                  )
+                  const transactionTxHashes =
+                    transactionsData?.transactions?.map(
+                      (transaction) => transaction.hash
+                    )
 
-                  return transfersData.transfers &&
-                    transfersData.transfers.length > 0 &&
+                  return transactionsData.transactions &&
+                    transactionsData.transactions.length > 0 &&
                     stepItem.txHashes?.every((hash) =>
-                      transferTxHashes?.includes(hash.txHash)
+                      transactionTxHashes?.includes(hash.txHash)
                     )
                     ? true
                     : false
@@ -638,13 +643,31 @@ export async function executeSteps(
             const contracts = path
               ?.filter((order) => order.contract)
               .map((order) => order.contract?.toLowerCase())
-            stepItem.transfersData = transfersData.transfers?.filter(
-              (transfer) =>
-                contracts?.includes(transfer?.token?.contract?.toLowerCase()) &&
-                isSell
-                  ? transfer.from?.toLowerCase() === taker.toLowerCase()
-                  : transfer.to?.toLowerCase() === taker.toLowerCase()
+            stepItem.transfersData = transactionsData?.transactions?.reduce(
+              (transfers, transaction) => {
+                const validTransfers = transaction.transfers?.filter(
+                  (transfer) =>
+                    contracts?.includes(
+                      transfer.token?.contract?.toLowerCase()
+                    ) && isSell
+                      ? transfer.from?.toLowerCase() === taker.toLowerCase()
+                      : transfer.to?.toLowerCase() === taker.toLowerCase()
+                )
+                validTransfers?.forEach((transfer) => {
+                  ;(transfer as any).txHash = transaction.hash
+                })
+                transfers = validTransfers
+                  ? validTransfers.concat(transfers)
+                  : transfers
+                return transfers
+              },
+              [] as NonNullable<
+                NonNullable<
+                  (typeof transactionsData)['transactions']
+                >['0']['transfers']
+              >
             )
+
             setState([...json?.steps], path, { ...json?.fees })
           }
 
