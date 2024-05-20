@@ -175,5 +175,8 @@ export default [
   },
   {
     ...reservoirChains.seiTestnet
+  },
+  {
+    ...reservoirChains.cyber
   }
 ]

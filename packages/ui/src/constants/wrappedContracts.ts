@@ -33,6 +33,7 @@ const wrappedContracts: Record<number, string> = {
   660279: '0x3fb787101dc6be47cfe18aeee15404dcc842e6af', // xai
   1482601649: '0xab01bad2c86e24d371a13ed6367bdca819589c5d', // nebula
   713715: '0x48a9b22b80f566e88f0f1dcc90ea15a8a3bae8a4', // sei testnet
+  7560: '0x4200000000000000000000000000000000000006', // cyber
 }
 
 export default wrappedContracts

@@ -282,6 +282,14 @@ const seiTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const cyber = {
+  id: 7560,
+  name: 'Cyber',
+  baseApiUrl: 'https://api-cyber.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[7560],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -317,4 +325,5 @@ export const reservoirChains = {
   xai,
   nebula,
   seiTestnet,
+  cyber,
 }

@@ -67,6 +67,7 @@ const WALLET_CONNECT_PROJECT_ID =
     customChains.xai,
     allChains.skaleNebula,
     customChains.seiTestnet,
+    customChains.cyber,
   ] as [
     Chain,
     ...Chain[]
