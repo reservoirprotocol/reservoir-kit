@@ -70,6 +70,7 @@ const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
     customChains.xai,
     allChains.skaleNebula,
     customChains.seiTestnet,
+    customChains.cyber,
   ] as [
     Chain,
     ...Chain[]
