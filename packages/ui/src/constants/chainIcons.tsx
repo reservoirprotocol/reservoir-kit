@@ -66,16 +66,16 @@ import BerachainIconDark from '../img/chains/BerachainIconDark'
 import BerachainIconColor from '../img/chains/BerachainIconColor'
 import DegenIconLight from '../img/chains/DegenIconLight'
 import DegenIconDark from '../img/chains/DegenIconDark'
+import DegenIconColor from '../img/chains/DegenIconColor'
 import XaiIconLight from '../img/chains/XaiIconLight'
 import XaiIconDark from '../img/chains/XaiIconDark'
+import XaiIconColor from '../img/chains/XaiIconColor'
 import NebulaIconLight from '../img/chains/NebulaIconLight'
 import NebulaIconDark from '../img/chains/NebulaIconDark'
+import NebulaIconColor from '../img/chains/NebulaIconColor'
 import SeiTestnetIconLight from '../img/chains/SeiTestnetIconLight'
 import SeiTestnetIconDark from '../img/chains/SeiTestnetIconDark'
-// import DegenIconColor from '../img/chains/DegenIconColor'
-// import XaiIconColor from '../img/chains/XaiIconColor'
-// import NebulaIconColor from '../img/chains/NebulaIconColor'
-// import SeiTestnetIconColor from '../img/chains/SeiTestnetIconColor'
+import SeiTestnetIconColor from '../img/chains/SeiTestnetIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -227,22 +227,22 @@ const chainIcons = {
   [reservoirChains.degen.id]: {
     light: <DegenIconLight />,
     dark: <DegenIconDark />,
-    color: <DegenIconDark />,
+    color: <DegenIconColor />,
   },
   [reservoirChains.xai.id]: {
     light: <XaiIconLight />,
     dark: <XaiIconDark />,
-    color: <XaiIconDark />,
+    color: <XaiIconColor />,
   },
   [reservoirChains.nebula.id]: {
     light: <NebulaIconLight />,
     dark: <NebulaIconDark />,
-    color: <NebulaIconDark />,
+    color: <NebulaIconColor />,
   },
   [reservoirChains.seiTestnet.id]: {
     light: <SeiTestnetIconLight />,
     dark: <SeiTestnetIconDark />,
-    color: <SeiTestnetIconDark />,
+    color: <SeiTestnetIconColor />,
   },
 }
 
