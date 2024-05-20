@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.5.9
+
+### Patch Changes
+
+- 8f4e4e2: added xai, nebula, degen, and sei tesnet icons
+
 ## 2.5.8
 
 ### Patch Changes
