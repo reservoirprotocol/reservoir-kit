@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.10
+
+### Patch Changes
+
+- 4d60cb3: adding cyber
+- Updated dependencies [4d60cb3]
+  - @reservoir0x/reservoir-sdk@2.2.1
+
 ## 2.5.9
 
 ### Patch Changes

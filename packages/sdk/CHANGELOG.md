@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.2.1
+
+### Patch Changes
+
+- 4d60cb3: adding cyber
+
 ## 2.2.0
 
 ### Minor Changes
