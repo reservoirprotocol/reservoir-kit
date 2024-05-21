@@ -648,8 +648,8 @@ export const chainPaymentTokensMap = {
     {
       chainId: 1482601649,
       address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
+      symbol: 'SFUEL',
+      name: 'SFUEL',
       decimals: 18,
     },
   ],
