@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.2.3
+
+### Patch Changes
+
+- d0bf12c: adding bitlayer
+
 ## 2.2.2
 
 ### Patch Changes
