@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.2.2
+
+### Patch Changes
+
+- ca98e56: changing nebula payment token address
+
 ## 2.2.1
 
 ### Patch Changes
