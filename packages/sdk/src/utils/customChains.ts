@@ -366,6 +366,30 @@ export const cyber = {
   },
 } as const satisfies Chain
 
+export const bitlayer = {
+  id: 200901,
+  name: 'Bitlayer',
+  nativeCurrency: { name: 'Bitcoin', symbol: 'BTC', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.bitlayer.org'],
+    },
+    public: {
+      http: ['https://rpc.bitlayer.org'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Bitlayer Scan',
+      url: 'https://www.btrscan.com',
+    },
+    default: {
+      name: 'Bitlayer Scan',
+      url: 'https://www.btrscan.com',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -382,4 +406,5 @@ export const customChains = {
   nebula,
   seiTestnet,
   cyber,
+  bitlayer,
 } as const satisfies Record<string, Chain>

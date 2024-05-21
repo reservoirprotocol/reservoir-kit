@@ -34,6 +34,7 @@ const wrappedContracts: Record<number, string> = {
   1482601649: '0xab01bad2c86e24d371a13ed6367bdca819589c5d', // nebula
   713715: '0x48a9b22b80f566e88f0f1dcc90ea15a8a3bae8a4', // sei testnet
   7560: '0x4200000000000000000000000000000000000006', // cyber
+  200901: '0xff204e2681a6fa0e2c3fade68a1b28fb90e4fc5f', // bitlayer
 }
 
 export default wrappedContracts
