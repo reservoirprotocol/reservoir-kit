@@ -68,6 +68,7 @@ const WALLET_CONNECT_PROJECT_ID =
     allChains.skaleNebula,
     customChains.seiTestnet,
     customChains.cyber,
+    customChains.bitlayer,
   ] as [
     Chain,
     ...Chain[]

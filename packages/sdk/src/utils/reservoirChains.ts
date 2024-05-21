@@ -290,6 +290,14 @@ const cyber = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const bitlayer = {
+  id: 200901,
+  name: 'Bitlayer',
+  baseApiUrl: 'https://api-bitlayer.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[200901],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -326,4 +334,5 @@ export const reservoirChains = {
   nebula,
   seiTestnet,
   cyber,
+  bitlayer,
 }

@@ -696,4 +696,22 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  // Bitlayer
+  200901: [
+    {
+      chainId: 200901,
+      address: zeroAddress,
+      symbol: 'BTC',
+      name: 'Bitcoin',
+      decimals: 18,
+    },
+    {
+      chainId: 200901,
+      address: '0xff204e2681a6fa0e2c3fade68a1b28fb90e4fc5f',
+      symbol: 'WBTC',
+      name: 'Wrapped BTC',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>

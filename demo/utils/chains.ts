@@ -178,5 +178,8 @@ export default [
   },
   {
     ...reservoirChains.cyber
+  },
+  {
+    ...reservoirChains.bitlayer
   }
 ]
