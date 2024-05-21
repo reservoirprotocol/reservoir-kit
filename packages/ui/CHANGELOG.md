@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.12
+
+### Patch Changes
+
+- d0bf12c: adding bitlayer
+- Updated dependencies [d0bf12c]
+  - @reservoir0x/reservoir-sdk@2.2.3
+
 ## 2.5.11
 
 ### Patch Changes
