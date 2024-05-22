@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.2.4
+
+### Patch Changes
+
+- 8f9e134: Fix validation error with new synced api integration
+
 ## 2.2.3
 
 ### Patch Changes
