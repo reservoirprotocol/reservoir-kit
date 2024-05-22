@@ -111,7 +111,13 @@ export async function sendTransactionSafely(
       return true
     }
 
-    return res.data.transactions.every((transaction: any) => transaction.synced)
+    if (res.data.transactions) {
+      return res.data.transactions.every(
+        (transaction: any) => transaction.synced
+      )
+    } else {
+      return res.data.synced || false
+    }
   }
 
   // Poll the confirmation url to confirm the transaction went through
