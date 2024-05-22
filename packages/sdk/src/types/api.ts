@@ -2117,6 +2117,7 @@ export interface definitions {
     orderSide?: "ask" | "bid";
     orderKind?: string;
     orderId?: string;
+    orderIsReservoir?: boolean;
     from?: string;
     to?: string;
     amount?: string;
@@ -2133,6 +2134,7 @@ export interface definitions {
     marketplaceFeeBps?: number;
     paidFullRoyalty?: boolean;
     feeBreakdown?: definitions["Model58"];
+    comment?: string;
     isDeleted?: boolean;
     /** @description Time when added to indexer */
     createdAt?: string;
@@ -2803,6 +2805,7 @@ export interface definitions {
     batchIndex?: number;
     fillSource?: definitions["source"];
     isAirdrop?: boolean;
+    comment?: string;
     order?: definitions["Model125"];
   };
   Model127: definitions["Model126"][];
@@ -4069,6 +4072,7 @@ export interface definitions {
     batchIndex?: number;
     fillSource?: definitions["source"];
     isAirdrop?: boolean;
+    comment?: string;
     order?: definitions["Model125"];
     createdAt?: string;
   };
@@ -4558,6 +4562,7 @@ export interface definitions {
     batchIndex?: number;
     fillSource?: definitions["source"];
     isAirdrop?: boolean;
+    comment?: string;
     order?: definitions["Model125"];
   };
   Model319: definitions["Model318"][];
@@ -5539,6 +5544,7 @@ export interface definitions {
     tier?: number;
     /** @default */
     apiKey?: string;
+    apiTag?: string;
     /**
      * @default
      * @enum {string}
@@ -5637,6 +5643,8 @@ export interface definitions {
   Model451: {
     user: string;
     collection?: string;
+    /** @default false */
+    fullResync?: boolean;
   };
   Model452: {
     /** @description The queue name to retry */
@@ -5756,6 +5764,7 @@ export interface definitions {
     pointsToConsume?: number;
     duration?: number;
     apiKey?: string;
+    apiTag?: string;
     /** @enum {string} */
     method?: "get" | "post" | "delete" | "put";
     payload?: definitions["Model434"];
@@ -6863,7 +6872,7 @@ export interface definitions {
     alienswap?: definitions["alienswap"];
   };
   Model565: {
-    /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
+    /** @description The token the user is listing. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Quantity of tokens user is listing. Only compatible with ERC1155 tokens. Example: `5` */
     quantity?: number;
@@ -12071,6 +12080,7 @@ export interface operations {
         user: string;
       };
       query: {
+        ids?: string[] | string;
         /** Filter to a particular order type. Must be one of `token`, `collection`, `attribute`, `custom`. */
         type?: "token" | "collection" | "attribute" | "custom";
         /**
