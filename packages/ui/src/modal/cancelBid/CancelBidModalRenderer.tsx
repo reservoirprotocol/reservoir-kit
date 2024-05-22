@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
-import { useCoinConversion, useReservoirClient, useBids } from '../../hooks'
-import { useConfig, useWalletClient } from 'wagmi'
+import { useCoinConversion, useReservoirClient, useUserBids } from '../../hooks'
+import { useAccount, useConfig, useWalletClient } from 'wagmi'
 import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import { getAccount, switchChain } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
@@ -22,7 +22,7 @@ export type CancelBidStepData = {
 
 type ChildrenProps = {
   loading: boolean
-  bid?: NonNullable<ReturnType<typeof useBids>['data']>[0]
+  bid?: NonNullable<ReturnType<typeof useUserBids>['data']>[0]
   tokenId?: string
   cancelStep: CancelStep
   transactionError?: Error | null
@@ -61,6 +61,7 @@ export const CancelBidModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
   const config = useConfig()
+  const { address } = useAccount()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -81,7 +82,8 @@ export const CancelBidModalRenderer: FC<Props> = ({
   const blockExplorerName =
     wagmiChain?.blockExplorers?.default?.name || 'Etherscan'
 
-  const { data: bids, isFetchingPage } = useBids(
+  const { data: bids, isFetchingPage } = useUserBids(
+    address,
     {
       ids: bidId,
       normalizeRoyalties,

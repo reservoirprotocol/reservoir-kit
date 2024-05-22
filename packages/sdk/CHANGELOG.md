@@ -1,5 +1,29 @@
 ## 1.12.15
 
+## 2.2.4
+
+### Patch Changes
+
+- 8f9e134: Fix validation error with new synced api integration
+
+## 2.2.3
+
+### Patch Changes
+
+- d0bf12c: adding bitlayer
+
+## 2.2.2
+
+### Patch Changes
+
+- ca98e56: changing nebula payment token address
+
+## 2.2.1
+
+### Patch Changes
+
+- 4d60cb3: adding cyber
+
 ## 2.2.0
 
 ### Minor Changes

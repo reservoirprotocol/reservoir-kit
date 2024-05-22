@@ -1,5 +1,41 @@
 ## 1.25.10
 
+## 2.5.13
+
+### Patch Changes
+
+- Updated dependencies [8f9e134]
+  - @reservoir0x/reservoir-sdk@2.2.4
+
+## 2.5.12
+
+### Patch Changes
+
+- d0bf12c: adding bitlayer
+- Updated dependencies [d0bf12c]
+  - @reservoir0x/reservoir-sdk@2.2.3
+
+## 2.5.11
+
+### Patch Changes
+
+- Updated dependencies [ca98e56]
+  - @reservoir0x/reservoir-sdk@2.2.2
+
+## 2.5.10
+
+### Patch Changes
+
+- 4d60cb3: adding cyber
+- Updated dependencies [4d60cb3]
+  - @reservoir0x/reservoir-sdk@2.2.1
+
+## 2.5.9
+
+### Patch Changes
+
+- 8f4e4e2: added xai, nebula, degen, and sei tesnet icons
+
 ## 2.5.8
 
 ### Patch Changes
