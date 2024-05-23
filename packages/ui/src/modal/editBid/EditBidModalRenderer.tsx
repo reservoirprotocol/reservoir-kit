@@ -13,9 +13,9 @@ import {
   useTokens,
   useCollections,
   useChainCurrency,
-  useBids,
   useAttributes,
   useMarketplaces,
+  useUserBids,
 } from '../../hooks'
 import {
   useWalletClient,
@@ -63,7 +63,7 @@ export type EditBidStepData = {
 
 type ChildrenProps = {
   loading: boolean
-  bid?: NonNullable<ReturnType<typeof useBids>['data']>[0]
+  bid?: NonNullable<ReturnType<typeof useUserBids>['data']>[0]
   attributes?: Traits
   trait: Trait
   tokenId?: string
@@ -78,7 +78,7 @@ type ChildrenProps = {
   usdPrice: number | null
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   currency: NonNullable<
-    NonNullable<ReturnType<typeof useBids>['data']>[0]['price']
+    NonNullable<ReturnType<typeof useUserBids>['data']>[0]['price']
   >['currency']
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   editBidStep: EditBidStep
@@ -135,6 +135,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
   const config = useConfig()
+  const { address } = useAccount()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -175,7 +176,8 @@ export const EditBidModalRenderer: FC<Props> = ({
       ? wrappedContractNames[chainCurrency.chainId]
       : wrappedContractNames[1]
 
-  const { data: bids } = useBids(
+  const { data: bids } = useUserBids(
+    address,
     {
       ids: bidId,
       normalizeRoyalties,
@@ -258,7 +260,6 @@ export const EditBidModalRenderer: FC<Props> = ({
   const totalBidAmount = Number(bidAmountPerUnit) * Math.max(1, quantity)
   const totalBidAmountUsd = totalBidAmount * (usdPrice || 0)
 
-  const { address } = useAccount()
   const { data: balance } = useBalance({
     address: address,
     chainId: rendererChain?.id,

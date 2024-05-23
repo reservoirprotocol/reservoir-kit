@@ -1,5 +1,17 @@
 ## 1.12.15
 
+## 2.2.6
+
+### Patch Changes
+
+- 18abb7c: adding ETH symbol check, removing SFUEL paymentToken for nebula
+
+## 2.2.5
+
+### Patch Changes
+
+- 57b6b0d: Add useUserBids hook and replace EditBidModal/CancelBidModal
+
 ## 2.2.4
 
 ### Patch Changes

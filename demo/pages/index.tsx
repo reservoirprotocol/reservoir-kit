@@ -89,6 +89,9 @@ const Index: NextPage = () => {
         <Link href="/hook/userListings">
           useUserListings
         </Link>
+        <Link href="/hook/userBids">
+          useUserBids
+        </Link>
         <Link href="/hook/userCollections">
           useUserCollections
         </Link>

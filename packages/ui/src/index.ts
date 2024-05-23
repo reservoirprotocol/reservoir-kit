@@ -28,6 +28,7 @@ export {
   useSolverCapacity,
   useMarketplaceConfigs,
   useUserListings,
+  useUserBids,
 } from './hooks'
 
 // Themes
