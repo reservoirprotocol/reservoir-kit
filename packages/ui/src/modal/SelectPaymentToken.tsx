@@ -74,7 +74,8 @@ const PaymentTokenRow = ({
           width: '100%',
         }}
       >
-        {paymentToken?.address === zeroAddress ? (
+        {paymentToken?.address === zeroAddress &&
+        paymentToken.symbol === 'ETH' ? (
           <Box
             css={{
               display: 'flex',
