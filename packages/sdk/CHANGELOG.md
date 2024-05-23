@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.2.5
+
+### Patch Changes
+
+- 57b6b0d: Add useUserBids hook and replace EditBidModal/CancelBidModal
+
 ## 2.2.4
 
 ### Patch Changes
