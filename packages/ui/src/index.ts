@@ -27,6 +27,7 @@ export {
   useCurrencyConversion,
   useSolverCapacity,
   useMarketplaceConfigs,
+  useUserBids,
 } from './hooks'
 
 // Themes
