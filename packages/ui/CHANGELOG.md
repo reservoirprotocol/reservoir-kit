@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.16
+
+### Patch Changes
+
+- 18abb7c: adding ETH symbol check, removing SFUEL paymentToken for nebula
+- Updated dependencies [18abb7c]
+  - @reservoir0x/reservoir-sdk@2.2.6
+
 ## 2.5.15
 
 ### Patch Changes
