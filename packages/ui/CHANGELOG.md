@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.14
+
+### Patch Changes
+
+- 57b6b0d: Add useUserBids hook and replace EditBidModal/CancelBidModal
+- Updated dependencies [57b6b0d]
+  - @reservoir0x/reservoir-sdk@2.2.5
+
 ## 2.5.13
 
 ### Patch Changes
