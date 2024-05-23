@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.5.15
+
+### Patch Changes
+
+- 1316b8a: adding cyber and bitlayer icons
+
 ## 2.5.14
 
 ### Patch Changes
