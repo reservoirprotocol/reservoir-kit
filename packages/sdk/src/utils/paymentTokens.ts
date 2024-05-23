@@ -647,13 +647,6 @@ export const chainPaymentTokensMap = {
   1482601649: [
     {
       chainId: 1482601649,
-      address: zeroAddress,
-      symbol: 'SFUEL',
-      name: 'SFUEL',
-      decimals: 18,
-    },
-    {
-      chainId: 1482601649,
       address: '0xab01bad2c86e24d371a13ed6367bdca819589c5d',
       symbol: 'ETH',
       name: 'Europa ETH',
