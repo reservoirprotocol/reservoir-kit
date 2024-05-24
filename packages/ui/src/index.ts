@@ -27,6 +27,7 @@ export {
   useCurrencyConversion,
   useSolverCapacity,
   useMarketplaceConfigs,
+  useUserListings,
   useUserBids,
 } from './hooks'
 
