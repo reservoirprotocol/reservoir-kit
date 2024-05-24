@@ -14,6 +14,7 @@ import {
   useUserTokens,
   useCollections,
   useMarketplaces,
+  useUserListings,
 } from '../../hooks'
 import { useWalletClient, useAccount, useConfig } from 'wagmi'
 import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
@@ -114,7 +115,8 @@ export const EditListingModalRenderer: FC<Props> = ({
   const [price, setPrice] = useState<number | undefined>(0)
   const [quantity, setQuantity] = useState(1)
 
-  const { data: listings } = useListings(
+  const { data: listings } = useUserListings(
+    account.address,
     {
       ids: listingId,
       normalizeRoyalties,
