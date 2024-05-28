@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.2.7
+
+### Patch Changes
+
+- 16db325: Add new useUserListings hook and replace existing useListings hook in EditListingModal/CancelListingModal
+
 ## 2.2.6
 
 ### Patch Changes

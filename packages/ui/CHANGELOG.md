@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.17
+
+### Patch Changes
+
+- 16db325: Add new useUserListings hook and replace existing useListings hook in EditListingModal/CancelListingModal
+- Updated dependencies [16db325]
+  - @reservoir0x/reservoir-sdk@2.2.7
+
 ## 2.5.16
 
 ### Patch Changes
