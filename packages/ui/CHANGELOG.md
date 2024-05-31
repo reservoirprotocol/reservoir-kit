@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.18
+
+### Patch Changes
+
+- c1b0b1a: adding sei chain
+- Updated dependencies [c1b0b1a]
+  - @reservoir0x/reservoir-sdk@2.2.8
+
 ## 2.5.17
 
 ### Patch Changes

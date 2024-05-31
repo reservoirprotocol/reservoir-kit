@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.2.8
+
+### Patch Changes
+
+- c1b0b1a: adding sei chain
+
 ## 2.2.7
 
 ### Patch Changes
