@@ -298,6 +298,14 @@ const bitlayer = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const sei = {
+  id: 1329,
+  name: 'Sei',
+  baseApiUrl: 'https://api-sei.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1329],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -335,4 +343,5 @@ export const reservoirChains = {
   seiTestnet,
   cyber,
   bitlayer,
+  sei,
 }
