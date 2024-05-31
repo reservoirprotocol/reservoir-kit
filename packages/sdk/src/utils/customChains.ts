@@ -390,6 +390,30 @@ export const bitlayer = {
   },
 } as const satisfies Chain
 
+export const sei = {
+  id: 1329,
+  name: 'Sei',
+  nativeCurrency: { name: 'Sei', symbol: 'SEI', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://evm-rpc.sei-apis.com'],
+    },
+    public: {
+      http: ['https://evm-rpc.sei-apis.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Sei Scan',
+      url: 'https://seitrace.com',
+    },
+    default: {
+      name: 'Sei Scan',
+      url: 'https://seitrace.com',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -407,4 +431,5 @@ export const customChains = {
   seiTestnet,
   cyber,
   bitlayer,
+  sei,
 } as const satisfies Record<string, Chain>

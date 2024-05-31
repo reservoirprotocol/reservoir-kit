@@ -707,4 +707,22 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  // Sei Testnet
+  1329: [
+    {
+      chainId: 1329,
+      address: zeroAddress,
+      symbol: 'SEI',
+      name: 'SEI',
+      decimals: 18,
+    },
+    {
+      chainId: 1329,
+      address: '0xE30feDd158A2e3b13e9badaeABaFc5516e95e8C7',
+      symbol: 'WSEI',
+      name: 'WSEI',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>

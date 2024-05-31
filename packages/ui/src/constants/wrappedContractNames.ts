@@ -35,5 +35,6 @@ const wrappedContractNames: Record<number, string> = {
   713715: 'WSEI', // sei testnet
   7560: 'WETH', // cyber
   200901: 'WBTC', // bitlayer
+  1329: 'WSEI', // sei
 }
 export default wrappedContractNames

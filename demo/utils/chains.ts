@@ -181,5 +181,8 @@ export default [
   },
   {
     ...reservoirChains.bitlayer
+  },
+  {
+    ...reservoirChains.sei
   }
 ]
