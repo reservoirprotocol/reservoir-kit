@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.2.9
+
+### Patch Changes
+
+- e778554: Fixing buying and listing on nebula
+
 ## 2.2.8
 
 ### Patch Changes
