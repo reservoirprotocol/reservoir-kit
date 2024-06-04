@@ -82,6 +82,9 @@ import CyberIconColor from '../img/chains/CyberIconColor'
 import BitlayerIconLight from '../img/chains/BitlayerIconLight'
 import BitlayerIconDark from '../img/chains/BitlayerIconDark'
 import BitlayerIconColor from '../img/chains/BitlayerIconColor'
+import SeiIconLight from '../img/chains/SeiIconLight'
+import SeiIconDark from '../img/chains/SeiIconDark'
+import SeiIconColor from '../img/chains/SeiIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -259,6 +262,11 @@ const chainIcons = {
     light: <BitlayerIconLight />,
     dark: <BitlayerIconDark />,
     color: <BitlayerIconColor />,
+  },
+  [reservoirChains.sei.id]: {
+    light: <SeiIconLight />,
+    dark: <SeiIconDark />,
+    color: <SeiIconColor />,
   },
 }
 

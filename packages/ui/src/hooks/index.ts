@@ -21,6 +21,7 @@ export { default as useTrendingMints } from './useTrendingMints'
 export { default as useMarketplaceConfigs } from './useMarketplaceConfigs'
 export { default as useSolverCapacity } from './useSolverCapacity'
 export { default as useCurrencyConversion } from './useCurrencyConversion'
+export { default as useUserListings } from './useUserListings'
 
 //Internal
 export { default as useMediaQuery } from './useMediaQuery'

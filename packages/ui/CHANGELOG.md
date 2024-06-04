@@ -1,5 +1,43 @@
 ## 1.25.10
 
+## 2.5.18
+
+### Patch Changes
+
+- c1b0b1a: adding sei chain
+- Updated dependencies [c1b0b1a]
+  - @reservoir0x/reservoir-sdk@2.2.8
+
+## 2.5.17
+
+### Patch Changes
+
+- 16db325: Add new useUserListings hook and replace existing useListings hook in EditListingModal/CancelListingModal
+- Updated dependencies [16db325]
+  - @reservoir0x/reservoir-sdk@2.2.7
+
+## 2.5.16
+
+### Patch Changes
+
+- 18abb7c: adding ETH symbol check, removing SFUEL paymentToken for nebula
+- Updated dependencies [18abb7c]
+  - @reservoir0x/reservoir-sdk@2.2.6
+
+## 2.5.15
+
+### Patch Changes
+
+- 1316b8a: adding cyber and bitlayer icons
+
+## 2.5.14
+
+### Patch Changes
+
+- 57b6b0d: Add useUserBids hook and replace EditBidModal/CancelBidModal
+- Updated dependencies [57b6b0d]
+  - @reservoir0x/reservoir-sdk@2.2.5
+
 ## 2.5.13
 
 ### Patch Changes
