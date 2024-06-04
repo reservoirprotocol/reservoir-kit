@@ -284,7 +284,7 @@ export const ListModalRenderer: FC<Props> = ({
     if (marketplace && !exchange) {
       setListStep(ListStep.Unavailable)
     }
-  }, [marketplace, exchange])
+  }, [marketplace, exchange, open])
 
   useEffect(() => {
     if (currencies && currencies.length > 5) {
