@@ -1,5 +1,14 @@
 ## 1.25.10
 
+## 2.5.19
+
+### Patch Changes
+
+- 0355cfb: Fix issue with setting unavailable state in list modal renderer
+- e778554: Fixing buying and listing on nebula
+- Updated dependencies [e778554]
+  - @reservoir0x/reservoir-sdk@2.2.9
+
 ## 2.5.18
 
 ### Patch Changes
