@@ -25,7 +25,7 @@ export default (chainId?: number) => {
       address: zeroAddress as Address,
       chainId: chain?.id || allChains.mainnet.id,
     }
-  } else if (chain.id === 1482601649) {
+  } else if (chain.id === allChains.skaleNebula.id) {
     return {
       name: 'Europa ETH',
       symbol: 'ETH',

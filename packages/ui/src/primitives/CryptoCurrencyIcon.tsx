@@ -2,6 +2,7 @@ import EthLogo from './EthLogo'
 import React, { FC } from 'react'
 import { useReservoirClient, useChainCurrency } from '../hooks/index'
 import { zeroAddress } from 'viem'
+import * as allChains from 'viem/chains'
 import { styled } from '../../stitches.config'
 import { StyledComponent } from '@stitches/react/types/styled-component'
 import Box from './Box'
@@ -27,7 +28,10 @@ const CryptoCurrencyIcon: FC<Props> = ({
   )
 
   if (chainCurrency.symbol === 'ETH') {
-    if (chainCurrency.chainId === 1482601649 || zeroAddress === address) {
+    if (
+      chainCurrency.chainId === allChains.skaleNebula.id ||
+      zeroAddress === address
+    ) {
       return (
         <Box css={{ display: 'flex', ...css }}>
           <EthLogo />
