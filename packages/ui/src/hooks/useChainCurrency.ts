@@ -25,6 +25,14 @@ export default (chainId?: number) => {
       address: zeroAddress as Address,
       chainId: chain?.id || allChains.mainnet.id,
     }
+  } else if (chain.id === 1482601649) {
+    return {
+      name: 'Europa ETH',
+      symbol: 'ETH',
+      decimals: 18,
+      address: '0xab01bad2c86e24d371a13ed6367bdca819589c5d' as Address,
+      chainId: 1482601649,
+    }
   } else {
     return {
       ...chain.nativeCurrency,

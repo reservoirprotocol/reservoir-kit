@@ -294,30 +294,6 @@ export const xai = {
   },
 } as const satisfies Chain
 
-export const nebula = {
-  id: 1482601649,
-  name: 'Nebula',
-  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-  rpcUrls: {
-    default: {
-      http: ['https://mainnet.skalenodes.com/v1/green-giddy-denebola'],
-    },
-    public: {
-      http: ['https://mainnet.skalenodes.com/v1/green-giddy-denebola'],
-    },
-  },
-  blockExplorers: {
-    etherscan: {
-      name: 'Nebula Gaming Hub Explorer',
-      url: 'https://green-giddy-denebola.explorer.mainnet.skalenodes.com',
-    },
-    default: {
-      name: 'Nebula Gaming Hub Explorer',
-      url: 'https://green-giddy-denebola.explorer.mainnet.skalenodes.com',
-    },
-  },
-} as const satisfies Chain
-
 export const seiTestnet = {
   id: 713715,
   name: 'Sei Testnet',
@@ -427,7 +403,6 @@ export const customChains = {
   redstone,
   degen,
   xai,
-  nebula,
   seiTestnet,
   cyber,
   bitlayer,

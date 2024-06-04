@@ -27,14 +27,13 @@ const CryptoCurrencyIcon: FC<Props> = ({
   )
 
   if (chainCurrency.symbol === 'ETH') {
-    if (zeroAddress === address) {
+    if (chainCurrency.chainId === 1482601649 || zeroAddress === address) {
       return (
         <Box css={{ display: 'flex', ...css }}>
           <EthLogo />
         </Box>
       )
-    }
-    if (wrappedContracts[chainCurrency.chainId] === address) {
+    } else if (wrappedContracts[chainCurrency.chainId] === address) {
       return (
         <Box css={{ display: 'flex', ...css }}>
           <WEthIcon />
@@ -47,7 +46,8 @@ const CryptoCurrencyIcon: FC<Props> = ({
     <StyledImg
       src={`${chain?.baseApiUrl}/redirect/currency/${address}/icon/v1`}
       css={{
-        borderRadius: '100%', ...css
+        borderRadius: '100%',
+        ...css,
       }}
     />
   )
