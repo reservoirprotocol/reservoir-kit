@@ -65,7 +65,7 @@ const WALLET_CONNECT_PROJECT_ID =
     customChains.apexPopTestnet,
     customChains.degen,
     customChains.xai,
-    allChains.skaleNebula,
+    customChains.nebula,
     customChains.seiTestnet,
     customChains.cyber,
     customChains.bitlayer,

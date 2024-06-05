@@ -2,12 +2,12 @@ import EthLogo from './EthLogo'
 import React, { FC } from 'react'
 import { useReservoirClient, useChainCurrency } from '../hooks/index'
 import { zeroAddress } from 'viem'
-import * as allChains from 'viem/chains'
 import { styled } from '../../stitches.config'
 import { StyledComponent } from '@stitches/react/types/styled-component'
 import Box from './Box'
 import wrappedContracts from '../constants/wrappedContracts'
 import WEthIcon from '../img/WEthIcon'
+import { customChains } from '@reservoir0x/reservoir-sdk'
 
 type Props = {
   address: string
@@ -27,9 +27,11 @@ const CryptoCurrencyIcon: FC<Props> = ({
     (chain) => chain.id === chainCurrency.chainId
   )
 
+  console.log('chain', chain)
+
   if (chainCurrency.symbol === 'ETH') {
     if (
-      chainCurrency.chainId === allChains.skaleNebula.id ||
+      chainCurrency.chainId === customChains.nebula.id ||
       zeroAddress === address
     ) {
       return (
