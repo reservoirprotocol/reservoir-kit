@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.20
+
+### Patch Changes
+
+- 4d94ea4: fixing cryptocurrencyicon nebula import
+- Updated dependencies [4d94ea4]
+  - @reservoir0x/reservoir-sdk@2.2.10
+
 ## 2.5.19
 
 ### Patch Changes

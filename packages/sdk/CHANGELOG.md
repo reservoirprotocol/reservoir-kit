@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.2.10
+
+### Patch Changes
+
+- 4d94ea4: fixing cryptocurrencyicon nebula import
+
 ## 2.2.9
 
 ### Patch Changes
