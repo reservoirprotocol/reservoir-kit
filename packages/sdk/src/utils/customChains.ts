@@ -390,6 +390,30 @@ export const sei = {
   },
 } as const satisfies Chain
 
+export const nebula = {
+  id: 1482601649,
+  name: 'Nebula',
+  nativeCurrency: { name: 'sFUEL', symbol: 'sFUEL', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet.skalenodes.com/v1/green-giddy-denebola'],
+    },
+    public: {
+      http: ['https://mainnet.skalenodes.com/v1/green-giddy-denebola'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'SKALE Explorer',
+      url: 'https://green-giddy-denebola.explorer.mainnet.skalenodes.com',
+    },
+    default: {
+      name: 'SKALE Explorer',
+      url: 'https://green-giddy-denebola.explorer.mainnet.skalenodes.com',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -407,4 +431,5 @@ export const customChains = {
   cyber,
   bitlayer,
   sei,
+  nebula,
 } as const satisfies Record<string, Chain>
