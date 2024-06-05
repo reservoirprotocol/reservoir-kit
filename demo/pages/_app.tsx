@@ -68,7 +68,7 @@ const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
     customChains.apexPopTestnet,
     customChains.degen,
     customChains.xai,
-    allChains.skaleNebula,
+    customChains.nebula,
     customChains.seiTestnet,
     customChains.cyber,
     customChains.bitlayer,
