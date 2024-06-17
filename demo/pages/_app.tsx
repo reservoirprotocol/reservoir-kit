@@ -69,6 +69,7 @@ const WALLET_CONNECT_PROJECT_ID =
     customChains.seiTestnet,
     customChains.cyber,
     customChains.bitlayer,
+    customChains.b3Testnet,
   ] as [
     Chain,
     ...Chain[]
