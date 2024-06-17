@@ -85,6 +85,9 @@ import BitlayerIconColor from '../img/chains/BitlayerIconColor'
 import SeiIconLight from '../img/chains/SeiIconLight'
 import SeiIconDark from '../img/chains/SeiIconDark'
 import SeiIconColor from '../img/chains/SeiIconColor'
+import B3TestnetIconLight from '../img/chains/B3TestnetIconLight'
+import B3TestnetIconDark from '../img/chains/B3TestnetIconDark'
+import B3TestnetIconColor from '../img/chains/B3TestnetIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -267,6 +270,11 @@ const chainIcons = {
     light: <SeiIconLight />,
     dark: <SeiIconDark />,
     color: <SeiIconColor />,
+  },
+  [reservoirChains.b3Testnet.id]: {
+    light: <B3TestnetIconLight />,
+    dark: <B3TestnetIconDark />,
+    color: <B3TestnetIconColor />,
   },
 }
 
