@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.2.11
+
+### Patch Changes
+
+- 057dc4d: Adding b3 testnet
+
 ## 2.2.10
 
 ### Patch Changes
