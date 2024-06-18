@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.22
+
+### Patch Changes
+
+- 626ea97: adding flow previewnet, fixing b3 icons
+- Updated dependencies [626ea97]
+  - @reservoir0x/reservoir-sdk@2.2.12
+
 ## 2.5.21
 
 ### Patch Changes
