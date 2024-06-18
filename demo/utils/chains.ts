@@ -184,5 +184,11 @@ export default [
   },
   {
     ...reservoirChains.sei
+  },
+  {
+    ...reservoirChains.b3Testnet
+  },
+  {
+    ...reservoirChains.flowPreviewnet
   }
 ]

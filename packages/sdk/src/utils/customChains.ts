@@ -438,6 +438,30 @@ export const b3Testnet = {
   },
 } as const satisfies Chain
 
+export const flowPreviewnet = {
+  id: 646,
+  name: 'Flow Previewnet',
+  nativeCurrency: { name: 'Flow', symbol: 'FLOW', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://previewnet.evm.nodes.onflow.org'],
+    },
+    public: {
+      http: ['https://previewnet.evm.nodes.onflow.org'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Flow Previewnet Explorer',
+      url: 'https://eth.flowscan.io/',
+    },
+    default: {
+      name: 'Flow Previewnet Explorer',
+      url: 'https://eth.flowscan.io/',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -457,4 +481,5 @@ export const customChains = {
   sei,
   nebula,
   b3Testnet,
+  flowPreviewnet,
 } as const satisfies Record<string, Chain>
