@@ -314,6 +314,14 @@ const b3Testnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const flowPreviewnet = {
+  id: 646,
+  name: 'Flow Previewnet',
+  baseApiUrl: 'https://api-flow-previewnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[646],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -353,4 +361,5 @@ export const reservoirChains = {
   bitlayer,
   sei,
   b3Testnet,
+  flowPreviewnet,
 }

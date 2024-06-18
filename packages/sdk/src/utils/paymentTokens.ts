@@ -743,4 +743,22 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  // Flow Previewnet
+  646: [
+    {
+      chainId: 646,
+      address: zeroAddress,
+      symbol: 'FLOW',
+      name: 'Flow',
+      decimals: 18,
+    },
+    {
+      chainId: 646,
+      address: '0x48a9b22b80f566e88f0f1dcc90ea15a8a3bae8a4',
+      symbol: 'WFLOW',
+      name: 'WFLOW',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>
