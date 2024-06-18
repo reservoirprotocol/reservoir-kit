@@ -306,6 +306,14 @@ const sei = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const b3Testnet = {
+  id: 1993,
+  name: 'B3 Testnet',
+  baseApiUrl: 'https://api-b3-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1993],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -344,4 +352,5 @@ export const reservoirChains = {
   cyber,
   bitlayer,
   sei,
+  b3Testnet,
 }

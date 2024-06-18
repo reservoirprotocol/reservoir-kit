@@ -414,6 +414,30 @@ export const nebula = {
   },
 } as const satisfies Chain
 
+export const b3Testnet = {
+  id: 1993,
+  name: 'B3 Testnet',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://sepolia.b3.fun/http'],
+    },
+    public: {
+      http: ['https://sepolia.b3.fun/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'B3 Sepolia Explorer',
+      url: 'https://sepolia.explorer.b3.fun',
+    },
+    default: {
+      name: 'B3 Sepolia Explorer',
+      url: 'https://sepolia.explorer.b3.fun',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -432,4 +456,5 @@ export const customChains = {
   bitlayer,
   sei,
   nebula,
+  b3Testnet,
 } as const satisfies Record<string, Chain>
