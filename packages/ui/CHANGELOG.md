@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.5.21
+
+### Patch Changes
+
+- 057dc4d: Adding b3 testnet
+- Updated dependencies [057dc4d]
+  - @reservoir0x/reservoir-sdk@2.2.11
+
 ## 2.5.20
 
 ### Patch Changes
