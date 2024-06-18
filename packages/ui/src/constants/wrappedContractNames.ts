@@ -37,5 +37,6 @@ const wrappedContractNames: Record<number, string> = {
   200901: 'WBTC', // bitlayer
   1329: 'WSEI', // sei
   1993: 'WETH', // b3 testnet
+  646: 'WFLOW', // flow previewnet
 }
 export default wrappedContractNames
