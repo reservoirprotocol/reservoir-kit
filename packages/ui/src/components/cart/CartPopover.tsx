@@ -108,6 +108,7 @@ export function CartPopover({
         feeOnTop,
         usdPrice,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         balance,
         currency,
         cartCurrencyConverted,
@@ -437,26 +438,28 @@ export function CartPopover({
                   setCartPopoverOpen={setOpen}
                 />
 
-                {!hasEnoughCurrency && isConnected && (
-                  <Flex
-                    align="center"
-                    justify="center"
-                    css={{ mb: '$2', gap: '$2' }}
-                  >
-                    <Text style="body3" color="error">
-                      Insufficient balance
-                    </Text>
-                    <FormatCryptoCurrency
-                      textStyle="body3"
-                      chainId={cartChain?.id}
-                      amount={balance}
-                      address={currency?.contract}
-                      decimals={currency?.decimals}
-                      symbol={currency?.symbol}
-                      logoWidth={10}
-                    />
-                  </Flex>
-                )}
+                {!hasEnoughCurrency &&
+                  !hasAuxiliaryFundsSupport &&
+                  isConnected && (
+                    <Flex
+                      align="center"
+                      justify="center"
+                      css={{ mb: '$2', gap: '$2' }}
+                    >
+                      <Text style="body3" color="error">
+                        Insufficient balance
+                      </Text>
+                      <FormatCryptoCurrency
+                        textStyle="body3"
+                        chainId={cartChain?.id}
+                        amount={balance}
+                        address={currency?.contract}
+                        decimals={currency?.decimals}
+                        symbol={currency?.symbol}
+                        logoWidth={10}
+                      />
+                    </Flex>
+                  )}
                 {isCartEmpty && !displayPendingTransaction && (
                   <Button disabled={true}>Select Items to Buy</Button>
                 )}
@@ -465,12 +468,18 @@ export function CartPopover({
                   (transaction?.status === CheckoutStatus.Idle ||
                     !displayPendingTransaction) && (
                     <Button
-                      disabled={!hasEnoughCurrency && isConnected}
+                      disabled={
+                        !hasEnoughCurrency &&
+                        !hasAuxiliaryFundsSupport &&
+                        isConnected
+                      }
                       onClick={async () => {
                         if (!isConnected) {
                           onConnectWallet?.()
                         } else {
-                          checkout()
+                          checkout({
+                            skipBalanceCheck: hasAuxiliaryFundsSupport,
+                          })
                             .then(() => {
                               setDisplayPendingTransaction(true)
                             })
@@ -481,7 +490,9 @@ export function CartPopover({
                         }
                       }}
                     >
-                      {hasEnoughCurrency || !isConnected
+                      {hasEnoughCurrency ||
+                      !isConnected ||
+                      hasAuxiliaryFundsSupport
                         ? 'Purchase'
                         : 'Add Funds to Purchase'}
                     </Button>

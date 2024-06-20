@@ -24,7 +24,7 @@ import {
   useWalletClient,
 } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
-
+import { useCapabilities } from 'wagmi/experimental'
 import {
   Execute,
   ReservoirClientActions,
@@ -34,7 +34,6 @@ import {
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
-
 import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
@@ -95,6 +94,7 @@ type ChildrenProps = {
   bidStep: BidStep
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
+  hasAuxiliaryFundsSupport: boolean
   loading: boolean
   traitBidSupported: boolean
   collectionBidSupported: boolean
@@ -321,7 +321,21 @@ export const BidModalRenderer: FC<Props> = ({
     biddingSupported,
   ])
 
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
+
+  const { data: capabilities } = useCapabilities({
+    query: {
+      enabled:
+        connector &&
+        (connector.id === 'coinbaseWalletSDK' || connector.id === 'coinbase'),
+    },
+  })
+  const hasAuxiliaryFundsSupport = Boolean(
+    rendererChain?.id
+      ? capabilities?.[rendererChain?.id]?.auxiliaryFunds?.supported
+      : false
+  )
+
   const { data: balance } = useBalance({
     address: address,
     chainId: rendererChain?.id,
@@ -394,7 +408,6 @@ export const BidModalRenderer: FC<Props> = ({
     totalFeeBps += exchange?.fee?.bps ?? 0
     return totalFeeBps
   }, [feesBps, client?.marketplaceFees, currency, exchange])
-  console.log(feeBps)
 
   useEffect(() => {
     if (totalBidAmount !== 0n) {
@@ -728,6 +741,7 @@ export const BidModalRenderer: FC<Props> = ({
         loading: !collection || !reservoirMarketplace,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        hasAuxiliaryFundsSupport,
         traitBidSupported,
         collectionBidSupported,
         partialBidSupported,
