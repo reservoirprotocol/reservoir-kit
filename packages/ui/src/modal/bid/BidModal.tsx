@@ -198,6 +198,7 @@ export function BidModal({
         setQuantity,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        hasAuxiliaryFundsSupport,
         loading,
         traitBidSupported,
         collectionBidSupported,
@@ -832,18 +833,19 @@ export function BidModal({
                     )}
                     {canPurchase && !hasEnoughWrappedCurrency && (
                       <>
-                        {!hasEnoughNativeCurrency && (
-                          <Flex css={{ gap: '$2', mt: 10 }} justify="center">
-                            <Text style="body3" color="error">
-                              {balance?.symbol || 'ETH'} Balance
-                            </Text>
-                            <FormatCryptoCurrency
-                              chainId={modalChain?.id}
-                              amount={balance?.value}
-                              symbol={balance?.symbol}
-                            />
-                          </Flex>
-                        )}
+                        {!hasEnoughNativeCurrency &&
+                          !hasAuxiliaryFundsSupport && (
+                            <Flex css={{ gap: '$2', mt: 10 }} justify="center">
+                              <Text style="body3" color="error">
+                                {balance?.symbol || 'ETH'} Balance
+                              </Text>
+                              <FormatCryptoCurrency
+                                chainId={modalChain?.id}
+                                amount={balance?.value}
+                                symbol={balance?.symbol}
+                              />
+                            </Flex>
+                          )}
                         <Flex
                           css={{
                             gap: '$2',
@@ -870,7 +872,10 @@ export function BidModal({
                           {canAutomaticallyConvert && (
                             <Button
                               css={{ flex: 1, maxHeight: 44 }}
-                              disabled={!hasEnoughNativeCurrency}
+                              disabled={
+                                !hasEnoughNativeCurrency &&
+                                !hasAuxiliaryFundsSupport
+                              }
                               onClick={() => placeBid()}
                             >
                               <Text style="h6" color="button" ellipsify>

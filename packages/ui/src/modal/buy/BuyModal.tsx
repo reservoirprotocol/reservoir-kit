@@ -158,6 +158,7 @@ export function BuyModal({
         buyStep,
         transactionError,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         addFundsLink,
         steps,
         stepData,
@@ -379,10 +380,16 @@ export function BuyModal({
                 </Flex>
 
                 <Box css={{ p: '$4', width: '100%' }}>
-                  {hasEnoughCurrency || !isConnected ? (
+                  {hasEnoughCurrency ||
+                  !isConnected ||
+                  hasAuxiliaryFundsSupport ? (
                     <>
                       <Button
-                        disabled={!hasEnoughCurrency && isConnected}
+                        disabled={
+                          !hasEnoughCurrency &&
+                          !hasAuxiliaryFundsSupport &&
+                          isConnected
+                        }
                         onClick={buyToken}
                         css={{ width: '100%' }}
                         color="primary"

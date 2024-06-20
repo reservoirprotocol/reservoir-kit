@@ -56,8 +56,8 @@
     "@tanstack/react-query": "^5.20.2",
     "react": "^18.0",
     "react-dom": "^18.0",
-    "viem": "~2.7.8",
-    "wagmi": "~2.5.7"
+    "viem": "~2.9.31",
+    "wagmi": "~2.10.3"
   },
   "repository": {
     "type": "git",

@@ -45,6 +45,7 @@ import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import { useCapabilities } from 'wagmi/experimental'
 
 type Exchange = NonNullable<Marketplace['exchanges']>['string']
 
@@ -85,6 +86,7 @@ type ChildrenProps = {
   transactionError?: Error | null
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
+  hasAuxiliaryFundsSupport: boolean
   balance?: FetchBalanceResult
   wrappedBalance?: [bigint, number, string]
   wrappedContractName: string
@@ -135,7 +137,7 @@ export const EditBidModalRenderer: FC<Props> = ({
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
   const config = useConfig()
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -147,6 +149,18 @@ export const EditBidModalRenderer: FC<Props> = ({
   }).find(({ id }) => rendererChain?.id === id)
 
   const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: capabilities } = useCapabilities({
+    query: {
+      enabled:
+        connector &&
+        (connector.id === 'coinbaseWalletSDK' || connector.id === 'coinbase'),
+    },
+  })
+  const hasAuxiliaryFundsSupport = Boolean(
+    rendererChain?.id
+      ? capabilities?.[rendererChain?.id]?.auxiliaryFunds?.supported
+      : false
+  )
 
   const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -601,6 +615,7 @@ export const EditBidModalRenderer: FC<Props> = ({
         transactionError,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        hasAuxiliaryFundsSupport,
         balance,
         wrappedBalance,
         wrappedContractName,

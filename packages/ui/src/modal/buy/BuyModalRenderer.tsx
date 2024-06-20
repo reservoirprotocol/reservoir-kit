@@ -33,6 +33,7 @@ import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import { useCapabilities } from 'wagmi/experimental'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
@@ -72,6 +73,7 @@ type ChildrenProps = {
   buyStep: BuyStep
   transactionError?: Error | null
   hasEnoughCurrency: boolean
+  hasAuxiliaryFundsSupport: boolean
   addFundsLink: string
   feeUsd: string
   totalUsd: bigint
@@ -168,7 +170,20 @@ export const BuyModalRenderer: FC<Props> = ({
   const blockExplorerBaseName =
     wagmiChain?.blockExplorers?.default?.name || 'Etherscan'
 
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
+
+  const { data: capabilities } = useCapabilities({
+    query: {
+      enabled:
+        connector &&
+        (connector.id === 'coinbaseWalletSDK' || connector.id === 'coinbase'),
+    },
+  })
+  const hasAuxiliaryFundsSupport = Boolean(
+    rendererChain?.id
+      ? capabilities?.[rendererChain?.id]?.auxiliaryFunds?.supported
+      : false
+  )
 
   const [_paymentCurrency, _setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
@@ -488,6 +503,7 @@ export const BuyModalRenderer: FC<Props> = ({
       ...executeBuyOptions,
       currency: paymentCurrency?.address,
       currencyChainId: paymentCurrency?.chainId,
+      skipBalanceCheck: hasAuxiliaryFundsSupport,
     }
 
     const relayerFee = BigInt(buyResponseFees?.relayer?.amount?.raw ?? 0)
@@ -632,6 +648,7 @@ export const BuyModalRenderer: FC<Props> = ({
     rendererChain,
     rendererChain,
     totalIncludingFees,
+    hasAuxiliaryFundsSupport,
     wallet,
     paymentCurrency,
     buyResponseFees,
@@ -761,6 +778,7 @@ export const BuyModalRenderer: FC<Props> = ({
         buyStep,
         transactionError,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         addFundsLink,
         feeUsd,
         totalUsd,
