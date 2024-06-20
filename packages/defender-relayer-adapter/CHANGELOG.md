@@ -1,5 +1,17 @@
 # @reservoir0x/defender-relayer-adapter
 
+## 4.0.0
+
+### Minor Changes
+
+- 2ad9e96: Add support for auxiliary funds
+
+### Patch Changes
+
+- Updated dependencies [2ad9e96]
+  - @reservoir0x/ethers-wallet-adapter@4.0.0
+  - @reservoir0x/reservoir-sdk@2.3.0
+
 ## 3.0.12
 
 ### Patch Changes

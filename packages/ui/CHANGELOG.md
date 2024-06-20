@@ -1,5 +1,16 @@
 ## 1.25.10
 
+## 2.6.0
+
+### Minor Changes
+
+- 2ad9e96: Add support for auxiliary funds
+
+### Patch Changes
+
+- Updated dependencies [2ad9e96]
+  - @reservoir0x/reservoir-sdk@2.3.0
+
 ## 2.5.22
 
 ### Patch Changes

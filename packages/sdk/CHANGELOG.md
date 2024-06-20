@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.3.0
+
+### Minor Changes
+
+- 2ad9e96: Add support for auxiliary funds
+
 ## 2.2.12
 
 ### Patch Changes
