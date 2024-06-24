@@ -322,6 +322,15 @@ const flowPreviewnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const devSepolia = {
+  id: 11155111,
+  name: 'Dev Sepolia',
+  baseApiUrl: 'https://api-sepolia.dev.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[11155111],
+  websocketUrl: 'wss://ws.dev.reservoir.tools',
+  checkPollingInterval: 2000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -362,4 +371,5 @@ export const reservoirChains = {
   sei,
   b3Testnet,
   flowPreviewnet,
+  devSepolia,
 }

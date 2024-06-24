@@ -44,33 +44,7 @@ const WALLET_CONNECT_PROJECT_ID =
 
 
   const chains = [
-    allChains.mainnet,
     allChains.sepolia,
-    allChains.polygon,
-    allChains.polygonAmoy,
-    allChains.optimism,
-    allChains.arbitrum,
-    allChains.zora,
-    allChains.base,
-    allChains.avalanche,
-    allChains.linea,
-    allChains.scroll,
-    allChains.arbitrumNova,
-    allChains.berachainTestnet,
-    customChains.redstone,
-    customChains.garnet,
-    customChains.frameTestnet,
-    customChains.astarZkEVM,
-    customChains.apexPop,
-    customChains.apexPopTestnet,
-    customChains.degen,
-    customChains.xai,
-    customChains.nebula,
-    customChains.seiTestnet,
-    customChains.cyber,
-    customChains.bitlayer,
-    customChains.b3Testnet,
-    customChains.flowPreviewnet,
   ] as [
     Chain,
     ...Chain[]
