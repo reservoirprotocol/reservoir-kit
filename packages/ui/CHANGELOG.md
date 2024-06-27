@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.6.1
+
+### Patch Changes
+
+- db8e44b: Fix CartPopover balance for custom tokens
+
 ## 2.6.0
 
 ### Minor Changes
