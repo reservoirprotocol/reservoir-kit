@@ -108,11 +108,12 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
     cartChainId ? capabilities?.[cartChainId]?.auxiliaryFunds?.supported : false
   )
 
-  const { data: balance } = useBalance({
+  const isNativeListing = currency?.contract === zeroAddress
+  const { data: nativeBalance } = useBalance({
     chainId: cartChainId,
     address: address,
     query: {
-      enabled: currency?.contract === zeroAddress,
+      enabled: isNativeListing,
     },
   })
 
@@ -128,9 +129,13 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
       },
     ],
     query: {
-      enabled: address && currency?.contract !== zeroAddress,
+      enabled: address && !isNativeListing,
     },
   })
+
+  const balance = isNativeListing
+    ? nativeBalance
+    : { ...currency, value: tokenBalance?.[0] ?? 0n }
 
   useEffect(() => {
     if (balance) {
@@ -171,7 +176,7 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         usdPrice,
         hasEnoughCurrency,
         hasAuxiliaryFundsSupport,
-        balance: balance?.value ?? tokenBalance?.[0],
+        balance: balance?.value,
         transaction,
         blockExplorerBaseUrl,
         cartChain,
