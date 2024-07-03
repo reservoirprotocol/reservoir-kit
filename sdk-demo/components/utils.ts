@@ -11,7 +11,7 @@ export const getClient = () => {
     return createClient({
       chains: [
         {
-          ...reservoirChains.polygon,
+          ...reservoirChains.mainnet,
           active: true
         },
       ],
