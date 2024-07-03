@@ -146,9 +146,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   const marketplace = useMemo(
     () =>
-      allMarketplaces.find(
-        (marketplace) => marketplace.orderbook === 'reservoir'
-      ),
+      allMarketplaces.find((marketplace) => marketplace.orderbook === 'blur'),
     [allMarketplaces]
   )
 
