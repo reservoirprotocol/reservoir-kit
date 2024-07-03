@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.6.2
+
+### Patch Changes
+
+- e4f7185: Fix 1155 mint quantity bug
+
 ## 2.6.1
 
 ### Patch Changes
