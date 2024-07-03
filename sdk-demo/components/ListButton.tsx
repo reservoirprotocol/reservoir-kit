@@ -29,18 +29,11 @@ function ListButton() {
           getClient().actions.listToken({
             listings: [
               {
-                token: "0x473989bf6409d21f8a7fdd7133a40f9251cc1839:1",
+                token: "0x1193af965786fc46a63cb4d92c33a48219d1c8b6:678",
                 weiPrice: price,
-                orderbook: 'reservoir',
-                orderKind: 'seaport-v1.5',
-                expirationTime: '1707769831'
-              },
-              {
-                token: "0x78f887a92602bb58cc7a8bba3fb83a11393568fc:67875155203898376266226417105519496041030022655099455128664563017684613070948",
-                weiPrice: price,
-                orderbook: 'reservoir',
-                orderKind: 'seaport-v1.5',
-                expirationTime: '1707769831'
+                orderbook: 'blur',
+                orderKind: 'blur',
+                expirationTime: '1720025956'
               },
             ],
             wallet: adaptEthersSigner(signer),
