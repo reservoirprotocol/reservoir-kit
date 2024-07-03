@@ -335,6 +335,8 @@ export const MintModalRenderer: FC<Props> = ({
                     } else if (!currentQuantity.maxQuantity) {
                       // if value is undefined, we don't know max quantity, but simulation succeeed with quantity of 1
                       maxQuantity = 1
+                    } else {
+                      maxQuantity = Number(currentQuantity.maxQuantity ?? 0)
                     }
                     return total + maxQuantity
                   },
