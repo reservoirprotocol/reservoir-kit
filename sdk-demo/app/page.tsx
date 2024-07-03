@@ -16,7 +16,7 @@ import Actions from '../components/Actions'
 
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 const { chains, provider } = configureChains(
-  [allChains.polygon],
+  [allChains.mainnet],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )
 
