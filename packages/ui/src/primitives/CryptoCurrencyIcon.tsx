@@ -29,7 +29,8 @@ const CryptoCurrencyIcon: FC<Props> = ({
 
   if (chainCurrency.symbol === 'ETH') {
     if (
-      chainCurrency.chainId === customChains.nebula.id ||
+      (chainCurrency.chainId === customChains.nebula.id &&
+        wrappedContracts[chainCurrency.chainId] === address) ||
       zeroAddress === address
     ) {
       return (
