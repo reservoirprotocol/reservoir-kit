@@ -556,7 +556,13 @@ export const SweepModalRenderer: FC<Props> = ({
     addFundsLink =
       paymentCurrency?.address && providerOptions.convertLink.tokenUrl
         ? providerOptions.convertLink.tokenUrl
-        : providerOptions.convertLink.chainUrl
+        : providerOptions.convertLink.chainUrl ??
+          providerOptions.convertLink.customUrl?.({
+            toChain: rendererChain?.id,
+            toToken: paymentCurrency?.address,
+            toCurrency: paymentCurrency,
+          })
+
     if (rendererChain?.id) {
       addFundsLink = addFundsLink.replace('{toChain}', `${rendererChain.id}`)
     }

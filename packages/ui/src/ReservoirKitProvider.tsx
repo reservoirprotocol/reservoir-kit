@@ -35,6 +35,16 @@ type ReservoirKitProviderOptions = {
   convertLink?: {
     tokenUrl?: string
     chainUrl?: string
+    customUrl?: ({
+      toChain,
+      toToken,
+      toCurrency,
+    }: {
+      toChain?: number
+      toToken?: string
+      amountToWrap?: string
+      toCurrency?: EnhancedCurrency
+    }) => string
   }
 }
 export interface ReservoirKitProviderProps {
@@ -63,6 +73,7 @@ const classNameObserverOptions = {
 
 import calendarCss from './styles/calendar'
 import useMutationObservable from './hooks/useMutationObservable'
+import { EnhancedCurrency } from './hooks/usePaymentTokens'
 
 export const ReservoirKitProvider: FC<ReservoirKitProviderProps> = function ({
   children,
