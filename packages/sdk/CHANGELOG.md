@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.3.1
+
+### Patch Changes
+
+- 9686ca3: fixing nebula currencies
+
 ## 2.3.0
 
 ### Minor Changes

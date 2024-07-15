@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.6.3
+
+### Patch Changes
+
+- 9686ca3: fixing nebula currencies
+- Updated dependencies [9686ca3]
+  - @reservoir0x/reservoir-sdk@2.3.1
+
 ## 2.6.2
 
 ### Patch Changes
