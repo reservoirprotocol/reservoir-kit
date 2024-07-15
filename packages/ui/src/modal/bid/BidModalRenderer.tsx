@@ -23,7 +23,7 @@ import {
   useReadContracts,
   useWalletClient,
 } from 'wagmi'
-import { mainnet, goerli } from 'wagmi/chains'
+import { mainnet, goerli, skaleNebula } from 'wagmi/chains'
 import { useCapabilities } from 'wagmi/experimental'
 import {
   Execute,
@@ -392,6 +392,8 @@ export const BidModalRenderer: FC<Props> = ({
       rendererChain?.id === mainnet.id || rendererChain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=mainnet&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
+  } else if (rendererChain?.id === skaleNebula.id) {
+    convertLink = `https://portal.skale.space/bridge?from=mainnet&to=green-giddy-denebola&token=eth&type=eth`
   } else {
     convertLink = `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${wrappedContractAddress}`
   }

@@ -505,6 +505,16 @@ export const MintModalRenderer: FC<Props> = ({
     if (paymentCurrency?.address) {
       addFundsLink = addFundsLink.replace('{toToken}', paymentCurrency?.address)
     }
+  } else if (rendererChain?.id === allChains.skaleNebula.id) {
+    let addFundsTokenParam = ''
+    if (paymentCurrency?.symbol) {
+      if (paymentCurrency?.symbol === 'ETH') {
+        addFundsTokenParam = '&token=eth&type=eth'
+      } else {
+        addFundsTokenParam = `&token=${paymentCurrency?.symbol}&type=erc20`
+      }
+    }
+    addFundsLink = `https://portal.skale.space/bridge?from=mainnet&to=green-giddy-denebola${addFundsTokenParam}`
   }
 
   // Determine if user has enough funds in paymentToken

@@ -328,6 +328,8 @@ export const EditBidModalRenderer: FC<Props> = ({
       wagmiChain?.id === mainnet.id || wagmiChain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=mainnet&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
         : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
+  } else if (rendererChain?.id === allChains.skaleNebula.id) {
+    convertLink = `https://portal.skale.space/bridge?from=mainnet&to=green-giddy-denebola&token=eth&type=eth`
   } else {
     convertLink = `https://jumper.exchange/?toChain=${wagmiChain?.id}&toToken=${wrappedContractAddress}`
   }
