@@ -318,6 +318,11 @@ export const EditBidModalRenderer: FC<Props> = ({
     convertLink =
       providerOptions.convertLink.tokenUrl ??
       providerOptions.convertLink.chainUrl ??
+      providerOptions.convertLink.customUrl?.({
+        toChain: rendererChain?.id,
+        toToken: wrappedContractAddress,
+        amountToWrap: amountToWrap,
+      }) ??
       ''
     if (rendererChain?.id) {
       convertLink = convertLink.replace('{toChain}', `${rendererChain.id}`)

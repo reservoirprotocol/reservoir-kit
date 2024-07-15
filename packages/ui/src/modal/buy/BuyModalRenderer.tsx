@@ -264,12 +264,19 @@ export const BuyModalRenderer: FC<Props> = ({
       paymentCurrency?.address && providerOptions.convertLink.tokenUrl
         ? providerOptions.convertLink.tokenUrl
         : providerOptions.convertLink.chainUrl
+
     if (rendererChain?.id) {
       addFundsLink = addFundsLink.replace('{toChain}', `${rendererChain.id}`)
     }
     if (paymentCurrency?.address) {
       addFundsLink = addFundsLink.replace('{toToken}', paymentCurrency?.address)
     }
+  } else if (providerOptions?.convertLink?.customUrl) {
+    addFundsLink = providerOptions.convertLink.customUrl?.({
+      toChain: rendererChain?.id,
+      toToken: paymentCurrency?.address,
+      toCurrency: paymentCurrency,
+    })
   }
 
   const fetchPath = useCallback(
