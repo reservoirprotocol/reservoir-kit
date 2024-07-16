@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.1
+
+### Patch Changes
+
+- 49fc944: Fix berachain definitions
+
 ## 2.4.0
 
 ### Minor Changes

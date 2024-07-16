@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.1
+
+### Patch Changes
+
+- 49fc944: Fix berachain definitions
+- Updated dependencies [49fc944]
+  - @reservoir0x/reservoir-sdk@2.4.1
+
 ## 2.7.0
 
 ### Minor Changes
