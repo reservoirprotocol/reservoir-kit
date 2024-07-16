@@ -243,10 +243,10 @@ const redstone = {
 } satisfies ReservoirBaseChain
 
 const berachainTestnet = {
-  id: 80085,
+  id: 80084,
   name: 'Berachain Testnet',
   baseApiUrl: 'https://api-berachain-testnet.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[80085],
+  paymentTokens: chainPaymentTokensMap[80084],
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 

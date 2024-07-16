@@ -28,7 +28,7 @@ const wrappedContracts: Record<number, string> = {
   3776: '0xE9CC37904875B459Fa5D0FE37680d36F1ED55e38', // astar zkEVM
   17069: '0x4200000000000000000000000000000000000006', // garnet
   690: '0x4200000000000000000000000000000000000006', // redstone
-  80085: '0x5806e416da447b267cea759358cf22cc41fae80f', // berachain testnet
+  80084: '0x5806e416da447b267cea759358cf22cc41fae80f', // berachain testnet
   666666666: '0xeb54dacb4c2ccb64f8074eceea33b5ebb38e5387', // degen
   660279: '0x3fb787101dc6be47cfe18aeee15404dcc842e6af', // xai
   1482601649: '0xab01bad2c86e24d371a13ed6367bdca819589c5d', // nebula
