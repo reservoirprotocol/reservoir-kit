@@ -1,5 +1,17 @@
 # @reservoir0x/defender-relayer-adapter
 
+## 5.0.0
+
+### Minor Changes
+
+- b9063e3: Upgrade viem and wagmi
+
+### Patch Changes
+
+- Updated dependencies [b9063e3]
+  - @reservoir0x/ethers-wallet-adapter@5.0.0
+  - @reservoir0x/reservoir-sdk@2.4.0
+
 ## 4.0.1
 
 ### Patch Changes
