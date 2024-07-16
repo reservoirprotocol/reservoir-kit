@@ -1,5 +1,17 @@
 ## 1.25.10
 
+## 2.7.0
+
+### Minor Changes
+
+- b9063e3: Upgrade viem and wagmi
+
+### Patch Changes
+
+- e666856: adding amountToWrap to customUrl props
+- Updated dependencies [b9063e3]
+  - @reservoir0x/reservoir-sdk@2.4.0
+
 ## 2.6.3
 
 ### Patch Changes
