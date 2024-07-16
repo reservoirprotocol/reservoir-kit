@@ -28,7 +28,7 @@ const wrappedContractNames: Record<number, string> = {
   3776: 'WETH', // astar zkevm,
   17069: 'WETH', // garnet
   690: 'WETH', // redstone
-  80085: 'WBERA', // berachain testnet
+  80084: 'WBERA', // berachain testnet
   666666666: 'WDEGEN', // degen
   660279: 'WXAI', // xai
   1482601649: 'ETH', // nebula
