@@ -38,6 +38,7 @@ type ReservoirKitProviderOptions = {
     customUrl?: ({
       toChain,
       toToken,
+      amountToWrap,
       toCurrency,
     }: {
       toChain?: number
