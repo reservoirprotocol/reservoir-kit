@@ -84,6 +84,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   chainId?: number
   collectionId?: string
   attribute?: Trait
+  conduitKey?: string
   normalizeRoyalties?: boolean
   currencies?: Currency[]
   oracleEnabled?: boolean
@@ -126,6 +127,7 @@ export function BidModal({
   chainId,
   collectionId,
   attribute,
+  conduitKey,
   normalizeRoyalties,
   currencies,
   oracleEnabled = false,
@@ -174,6 +176,7 @@ export function BidModal({
       tokenId={tokenId}
       collectionId={collectionId}
       attribute={attribute}
+      conduitKey={conduitKey}
       normalizeRoyalties={normalizeRoyalties}
       oracleEnabled={oracleEnabled}
       currencies={currencies}
