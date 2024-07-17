@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.7.2
+
+### Patch Changes
+
+- 3c669df: Add conduit key param to List and Bid modals
+
 ## 2.7.1
 
 ### Patch Changes
