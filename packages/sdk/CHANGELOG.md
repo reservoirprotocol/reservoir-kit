@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.2
+
+### Patch Changes
+
+- e46059b: updating explore attributes version
+
 ## 2.4.1
 
 ### Patch Changes
