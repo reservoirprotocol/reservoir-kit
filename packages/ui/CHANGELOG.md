@@ -1,5 +1,14 @@
 ## 1.25.10
 
+## 2.7.4
+
+### Patch Changes
+
+- ee9b0e8: adding cloud and game7
+- Updated dependencies [d08dccf]
+- Updated dependencies [ee9b0e8]
+  - @reservoir0x/reservoir-sdk@2.4.3
+
 ## 2.7.3
 
 ### Patch Changes
