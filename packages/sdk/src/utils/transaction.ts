@@ -49,6 +49,10 @@ export async function sendTransactionSafely(
   }
   setTxHashes([{ txHash: txHash, chainId: chainId }])
 
+  console.log('chainId: ', chainId)
+  console.log('txHash: ', txHash)
+  console.log('viemClient: ', viemClient)
+
   // Handle transaction replacements and cancellations
   const receipt = await viemClient
     .waitForTransactionReceipt({
