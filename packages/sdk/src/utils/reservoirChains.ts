@@ -322,6 +322,22 @@ const flowPreviewnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const cloud = {
+  id: 70805,
+  name: 'Cloud',
+  baseApiUrl: 'https://api-cloud.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70805],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const game7Testnet = {
+  id: 13746,
+  name: 'Game7 Testnet',
+  baseApiUrl: 'https://api-game7-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[13746],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -362,4 +378,6 @@ export const reservoirChains = {
   sei,
   b3Testnet,
   flowPreviewnet,
+  cloud,
+  game7Testnet,
 }

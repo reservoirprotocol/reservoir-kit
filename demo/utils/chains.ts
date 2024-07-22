@@ -190,5 +190,11 @@ export default [
   },
   {
     ...reservoirChains.flowPreviewnet
+  },
+  {
+    ...reservoirChains.cloud
+  },
+  {
+    ...reservoirChains.game7Testnet
   }
 ]
