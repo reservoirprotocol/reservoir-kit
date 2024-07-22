@@ -14,9 +14,13 @@ axios.interceptors.response.use(
     return _res
   },
   (error) => {
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      `Request failed with status code ${error.response?.data?.statusCode}`
     return Promise.reject(
       new APIError(
-        error.response?.data?.message,
+        message,
         error.response?.data?.statusCode || 500,
         error.response?.data
       )
