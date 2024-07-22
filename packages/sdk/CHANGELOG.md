@@ -1,5 +1,12 @@
 ## 1.12.15
 
+## 2.4.3
+
+### Patch Changes
+
+- d08dccf: Improve fallback logic for api errors
+- ee9b0e8: adding cloud and game7
+
 ## 2.4.2
 
 ### Patch Changes
