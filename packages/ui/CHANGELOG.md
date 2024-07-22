@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.5
+
+### Patch Changes
+
+- 6da031f: Update wbera address
+- Updated dependencies [6da031f]
+  - @reservoir0x/reservoir-sdk@2.4.4
+
 ## 2.7.4
 
 ### Patch Changes
