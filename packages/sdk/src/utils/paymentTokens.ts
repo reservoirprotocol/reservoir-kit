@@ -607,7 +607,7 @@ export const chainPaymentTokensMap = {
     },
     {
       chainId: 80084,
-      address: '0x5806e416da447b267cea759358cf22cc41fae80f',
+      address: '0x7507c1dc16935b82698e4c63f2746a2fcf994df8',
       symbol: 'WBERA',
       name: 'WBERA',
       decimals: 18,
