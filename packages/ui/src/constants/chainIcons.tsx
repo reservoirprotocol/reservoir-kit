@@ -91,6 +91,12 @@ import B3TestnetIconColor from '../img/chains/B3TestnetIconColor'
 import FlowPreviewnetIconLight from '../img/chains/FlowPreviewnetIconLight'
 import FlowPreviewnetIconDark from '../img/chains/FlowPreviewnetIconDark'
 import FlowPreviewnetIconColor from '../img/chains/FlowPreviewnetIconColor'
+import CloudIconLight from '../img/chains/CloudIconLight'
+import CloudIconDark from '../img/chains/CloudIconDark'
+import CloudIconColor from '../img/chains/CloudIconColor'
+import Game7TestnetIconLight from '../img/chains/Game7TestnetIconLight'
+import Game7TestnetIconDark from '../img/chains/Game7TestnetIconDark'
+import Game7TestnetIconColor from '../img/chains/Game7TestnetIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -283,6 +289,16 @@ const chainIcons = {
     light: <FlowPreviewnetIconLight />,
     dark: <FlowPreviewnetIconDark />,
     color: <FlowPreviewnetIconColor />,
+  },
+  [reservoirChains.cloud.id]: {
+    light: <CloudIconLight />,
+    dark: <CloudIconDark />,
+    color: <CloudIconColor />,
+  },
+  [reservoirChains.game7Testnet.id]: {
+    light: <Game7TestnetIconLight />,
+    dark: <Game7TestnetIconDark />,
+    color: <Game7TestnetIconColor />,
   },
 }
 

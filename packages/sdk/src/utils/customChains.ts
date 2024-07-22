@@ -462,6 +462,54 @@ export const flowPreviewnet = {
   },
 } as const satisfies Chain
 
+export const cloud = {
+  id: 70805,
+  name: 'Cloud',
+  nativeCurrency: { name: 'Eth', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-pop-testnet-cloud-fmg1z6e0a9.t.conduit.xyz'],
+    },
+    public: {
+      http: ['https://rpc-pop-testnet-cloud-fmg1z6e0a9.t.conduit.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Cloud Explorer',
+      url: 'https://explorer-pop-testnet-cloud-fmg1z6e0a9.t.conduit.xyz',
+    },
+    default: {
+      name: 'Cloud Explorer',
+      url: 'https://explorer-pop-testnet-cloud-fmg1z6e0a9.t.conduit.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const game7Testnet = {
+  id: 13746,
+  name: 'Game7 Testnet',
+  nativeCurrency: { name: 'TG7T', symbol: 'TG7T', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz'],
+    },
+    public: {
+      http: ['https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Game7 Testnet Explorer',
+      url: 'https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz',
+    },
+    default: {
+      name: 'Game7 Testnet Explorer',
+      url: 'https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -482,4 +530,6 @@ export const customChains = {
   nebula,
   b3Testnet,
   flowPreviewnet,
+  cloud,
+  game7Testnet,
 } as const satisfies Record<string, Chain>

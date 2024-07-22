@@ -71,6 +71,8 @@ const WALLET_CONNECT_PROJECT_ID =
     customChains.bitlayer,
     customChains.b3Testnet,
     customChains.flowPreviewnet,
+    customChains.cloud,
+    customChains.game7Testnet
   ] as [
     Chain,
     ...Chain[]
