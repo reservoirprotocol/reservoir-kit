@@ -2,7 +2,6 @@
 /coverage
 .next/
 node_modules/
-demo/
 sdk-demo/
 scripts/
 .yarn/

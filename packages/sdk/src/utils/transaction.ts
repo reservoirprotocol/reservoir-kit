@@ -1,4 +1,4 @@
-import { Address, PublicClient } from 'viem'
+import { Address, createPublicClient, fallback, http } from 'viem'
 import { LogLevel, getClient } from '..'
 import { Execute, ReservoirWallet, TransactionStepItem } from '../types'
 import { CrossChainTransactionError, TransactionTimeoutError } from '../errors'
@@ -17,7 +17,6 @@ import * as allChains from 'viem/chains'
  */
 export async function sendTransactionSafely(
   chainId: number,
-  viemClient: PublicClient,
   item: TransactionStepItem,
   step: Execute['steps'][0],
   wallet: ReservoirWallet,
@@ -49,9 +48,19 @@ export async function sendTransactionSafely(
   }
   setTxHashes([{ txHash: txHash, chainId: chainId }])
 
-  console.log('chainId: ', chainId)
-  console.log('txHash: ', txHash)
-  console.log('viemClient: ', viemClient)
+  const viemChain =
+    Object.values(customChains).find(
+      (chain) => chain.id === (reservoirChain?.id || 1)
+    ) ||
+    Object.values(allChains).find(
+      (chain) => chain.id === (reservoirChain?.id || 1)
+    ) ||
+    allChains.mainnet
+
+  const viemClient = createPublicClient({
+    chain: viemChain,
+    transport: wallet.transport ? fallback([wallet.transport, http()]) : http(),
+  })
 
   // Handle transaction replacements and cancellations
   const receipt = await viemClient
@@ -80,6 +89,7 @@ export async function sendTransactionSafely(
         LogLevel.Error
       )
     })
+
   if (!receipt || receipt.status === 'reverted') {
     getClient()?.log(
       ['Transaction reverted or missing tx receipt', receipt],
