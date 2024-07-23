@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.6
+
+### Patch Changes
+
+- 3aae35c: Fix viem public client initialization bug
+
 ## 2.4.5
 
 ### Patch Changes
