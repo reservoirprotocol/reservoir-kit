@@ -338,6 +338,14 @@ const game7Testnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const boss = {
+  id: 70701,
+  name: 'Boss',
+  baseApiUrl: 'https://api-boss.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70701],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -380,4 +388,5 @@ export const reservoirChains = {
   flowPreviewnet,
   cloud,
   game7Testnet,
+  boss,
 }
