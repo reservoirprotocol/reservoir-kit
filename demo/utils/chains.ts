@@ -196,5 +196,8 @@ export default [
   },
   {
     ...reservoirChains.game7Testnet
+  },
+  {
+    ...reservoirChains.boss
   }
 ]

@@ -510,6 +510,30 @@ export const game7Testnet = {
   },
 } as const satisfies Chain
 
+export const boss = {
+  id: 70701,
+  name: 'Boss',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.boss.proofofplay.com'],
+    },
+    public: {
+      http: ['https://rpc.boss.proofofplay.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Boss Explorer',
+      url: 'https://explorer-proofofplay-boss-mainnet.t.conduit.xyz',
+    },
+    default: {
+      name: 'Boss Explorer',
+      url: 'https://explorer-proofofplay-boss-mainnet.t.conduit.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -532,4 +556,5 @@ export const customChains = {
   flowPreviewnet,
   cloud,
   game7Testnet,
+  boss,
 } as const satisfies Record<string, Chain>
