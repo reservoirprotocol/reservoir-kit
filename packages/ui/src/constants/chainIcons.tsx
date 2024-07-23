@@ -300,6 +300,11 @@ const chainIcons = {
     dark: <Game7TestnetIconDark />,
     color: <Game7TestnetIconColor />,
   },
+  [reservoirChains.boss.id]: {
+    light: <ApexPopIconLight />,
+    dark: <ApexPopIconDark />,
+    color: <ApexPopIconColor />,
+  },
 }
 
 export default chainIcons

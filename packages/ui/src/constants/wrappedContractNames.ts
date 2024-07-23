@@ -38,5 +38,8 @@ const wrappedContractNames: Record<number, string> = {
   1329: 'WSEI', // sei
   1993: 'WETH', // b3 testnet
   646: 'WFLOW', // flow previewnet
+  70805: 'WETH', // cloud
+  13746: 'WTG7T', // game7 testnet
+  70701: 'WETH', // boss
 }
 export default wrappedContractNames

@@ -1,5 +1,17 @@
 ## 1.12.15
 
+## 2.4.5
+
+### Patch Changes
+
+- c3a53b6: adding boss
+
+## 2.4.4
+
+### Patch Changes
+
+- 6da031f: Update wbera address
+
 ## 2.4.3
 
 ### Patch Changes

@@ -73,6 +73,7 @@ const chains = [
   customChains.flowPreviewnet,
   customChains.cloud,
   customChains.game7Testnet,
+  customChains.boss,
 ] as [Chain, ...Chain[]]
 
 const wagmiConfig = getDefaultConfig({

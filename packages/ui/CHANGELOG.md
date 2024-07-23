@@ -1,5 +1,21 @@
 ## 1.25.10
 
+## 2.7.6
+
+### Patch Changes
+
+- c3a53b6: adding boss
+- Updated dependencies [c3a53b6]
+  - @reservoir0x/reservoir-sdk@2.4.5
+
+## 2.7.5
+
+### Patch Changes
+
+- 6da031f: Update wbera address
+- Updated dependencies [6da031f]
+  - @reservoir0x/reservoir-sdk@2.4.4
+
 ## 2.7.4
 
 ### Patch Changes

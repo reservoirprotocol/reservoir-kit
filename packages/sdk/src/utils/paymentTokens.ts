@@ -607,7 +607,7 @@ export const chainPaymentTokensMap = {
     },
     {
       chainId: 80084,
-      address: '0x5806e416da447b267cea759358cf22cc41fae80f',
+      address: '0x7507c1dc16935b82698e4c63f2746a2fcf994df8',
       symbol: 'WBERA',
       name: 'WBERA',
       decimals: 18,
@@ -808,6 +808,24 @@ export const chainPaymentTokensMap = {
       address: '0x6b885d96916d18cd78e44b42c6489ca6f8794565',
       symbol: 'WTG7T',
       name: 'WTG7T',
+      decimals: 18,
+    },
+  ],
+
+  // Boss
+  70701: [
+    {
+      chainId: 70701,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Ether',
+      decimals: 18,
+    },
+    {
+      chainId: 70701,
+      address: '0x48a9b22b80f566e88f0f1dcc90ea15a8a3bae8a4',
+      symbol: 'WETH',
+      name: 'WETH',
       decimals: 18,
     },
   ],
