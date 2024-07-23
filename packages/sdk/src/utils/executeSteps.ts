@@ -392,7 +392,6 @@ export async function executeSteps(
 
                 await sendTransactionSafely(
                   transactionChainId,
-                  viemClient,
                   stepItem as TransactionStepItem,
                   step,
                   wallet,
