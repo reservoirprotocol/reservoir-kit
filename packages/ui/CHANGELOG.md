@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.7.8
+
+### Patch Changes
+
+- 286a562: Fix custom Reservoir wallet bug in Cart Provider
+
 ## 2.7.7
 
 ### Patch Changes
