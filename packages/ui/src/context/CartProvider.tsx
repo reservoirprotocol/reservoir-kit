@@ -983,9 +983,12 @@ function cartStore({
         }
       }
 
-      const wagmiWalletClient = await getWalletClient(config, {
-        chainId: cartData.current.chain?.id,
-      })
+      let wagmiWalletClient
+      if (!walletClient) {
+        wagmiWalletClient = await getWalletClient(config, {
+          chainId: cartData.current.chain?.id,
+        })
+      }
 
       const wallet = walletClient || wagmiWalletClient
 
