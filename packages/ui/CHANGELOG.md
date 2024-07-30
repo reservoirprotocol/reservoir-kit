@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.7.9
+
+### Patch Changes
+
+- a31b4ff: Fix CartProvider props to support custom Reservoir wallet
+
 ## 2.7.8
 
 ### Patch Changes
