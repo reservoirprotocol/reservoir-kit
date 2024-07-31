@@ -41,5 +41,7 @@ const wrappedContractNames: Record<number, string> = {
   70805: 'WETH', // cloud
   13746: 'WTG7T', // game7 testnet
   70701: 'WETH', // boss
+  984122: 'WTIA', // forma
+  984123: 'WTIA', // forma sketchpad
 }
 export default wrappedContractNames

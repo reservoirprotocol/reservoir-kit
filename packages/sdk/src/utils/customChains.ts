@@ -534,6 +534,54 @@ export const boss = {
   },
 } as const satisfies Chain
 
+export const forma = {
+  id: 984122,
+  name: 'Forma',
+  nativeCurrency: { name: 'TIA', symbol: 'TIA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.forma.art'],
+    },
+    public: {
+      http: ['https://rpc.forma.art'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Forma Explorer',
+      url: 'https://explorer.forma.art',
+    },
+    default: {
+      name: 'Forma Explorer',
+      url: 'https://explorer.forma.art',
+    },
+  },
+} as const satisfies Chain
+
+export const formaSketchpad = {
+  id: 984123,
+  name: 'Forma Sketchpad',
+  nativeCurrency: { name: 'TIA', symbol: 'TIA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.sketchpad-1.forma.art'],
+    },
+    public: {
+      http: ['https://rpc.sketchpad-1.forma.art'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Forma Sketchpad Explorer',
+      url: 'https://explorer.sketchpad-1.forma.art',
+    },
+    default: {
+      name: 'Forma Sketchpad Explorer',
+      url: 'https://explorer.sketchpad-1.forma.art',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -557,4 +605,6 @@ export const customChains = {
   cloud,
   game7Testnet,
   boss,
+  forma,
+  formaSketchpad,
 } as const satisfies Record<string, Chain>

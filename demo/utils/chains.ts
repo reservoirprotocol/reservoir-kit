@@ -272,4 +272,10 @@ export default [
   {
     ...reservoirChains.boss,
   },
+  {
+    ...reservoirChains.forma,
+  },
+  {
+    ...reservoirChains.formaSketchpad,
+  },
 ]

@@ -97,6 +97,9 @@ import CloudIconColor from '../img/chains/CloudIconColor'
 import Game7TestnetIconLight from '../img/chains/Game7TestnetIconLight'
 import Game7TestnetIconDark from '../img/chains/Game7TestnetIconDark'
 import Game7TestnetIconColor from '../img/chains/Game7TestnetIconColor'
+import FormaIconLight from '../img/chains/FormaIconLight'
+import FormaIconDark from '../img/chains/FormaIconDark'
+import FormaIconColor from '../img/chains/FormaIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -304,6 +307,21 @@ const chainIcons = {
     light: <ApexPopIconLight />,
     dark: <ApexPopIconDark />,
     color: <ApexPopIconColor />,
+  },
+  [reservoirChains.forma.id]: {
+    light: <FormaIconLight />,
+    dark: <FormaIconDark />,
+    color: <FormaIconColor />,
+  },
+  [reservoirChains.forma.id]: {
+    light: <FormaIconLight />,
+    dark: <FormaIconDark />,
+    color: <FormaIconColor />,
+  },
+  [reservoirChains.formaSketchpad.id]: {
+    light: <FormaIconLight />,
+    dark: <FormaIconDark />,
+    color: <FormaIconColor />,
   },
 }
 
