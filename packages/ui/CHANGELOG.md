@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.10
+
+### Patch Changes
+
+- 71664d9: adding forma, syncing api types
+- Updated dependencies [71664d9]
+  - @reservoir0x/reservoir-sdk@2.4.7
+
 ## 2.7.9
 
 ### Patch Changes

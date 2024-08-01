@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.7
+
+### Patch Changes
+
+- 71664d9: adding forma, syncing api types
+
 ## 2.4.6
 
 ### Patch Changes
