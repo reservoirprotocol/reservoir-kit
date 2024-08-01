@@ -829,4 +829,40 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  // Forma
+  984122: [
+    {
+      chainId: 984122,
+      address: zeroAddress,
+      symbol: 'TIA',
+      name: 'TIA',
+      decimals: 18,
+    },
+    {
+      chainId: 984122,
+      address: '0xd5eace1274dbf70960714f513db207433615a263',
+      symbol: 'WTIA',
+      name: 'WTIA',
+      decimals: 18,
+    },
+  ],
+
+  // Forma Sketchpad
+  984123: [
+    {
+      chainId: 984123,
+      address: zeroAddress,
+      symbol: 'TIA',
+      name: 'TIA',
+      decimals: 18,
+    },
+    {
+      chainId: 984123,
+      address: '0xd5eace1274dbf70960714f513db207433615a263',
+      symbol: 'WTIA',
+      name: 'WTIA',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>

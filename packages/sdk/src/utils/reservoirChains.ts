@@ -346,6 +346,22 @@ const boss = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const forma = {
+  id: 984122,
+  name: 'Forma',
+  baseApiUrl: 'https://api-forma.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[984122],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const formaSketchpad = {
+  id: 984123,
+  name: 'Forma Sketchpad',
+  baseApiUrl: 'https://api-forma-sketchpad.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[984123],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -389,4 +405,6 @@ export const reservoirChains = {
   cloud,
   game7Testnet,
   boss,
+  forma,
+  formaSketchpad,
 }
