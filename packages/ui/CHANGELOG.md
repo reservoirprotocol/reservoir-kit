@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.11
+
+### Patch Changes
+
+- e575a14: Sync api types
+- Updated dependencies [e575a14]
+  - @reservoir0x/reservoir-sdk@2.4.8
+
 ## 2.7.10
 
 ### Patch Changes
