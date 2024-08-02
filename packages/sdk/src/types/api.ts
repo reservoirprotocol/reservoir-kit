@@ -6561,13 +6561,14 @@ export interface definitions {
       | "mint";
     data?: definitions["metadata"];
   };
-  Model534: {
+  Model534: string[];
+  Model535: {
     orderId: string;
     price?: string;
   };
   /** @description Items to exclude */
-  exclusions: definitions["Model534"][];
-  Model535: {
+  exclusions: definitions["Model535"][];
+  Model536: {
     /** @description Collection to buy. */
     collection?: string;
     /** @description Token to buy. */
@@ -6590,14 +6591,13 @@ export interface definitions {
      * NOTE: if you want to fill a listing that is not the best priced, you need to pass a specific order id or use `exactOrderSource`.
      */
     preferredOrderSource?: string;
-    /** @description Only consider orders from this source. */
-    exactOrderSource?: string;
+    exactOrderSource?: definitions["Model534"];
     exclusions?: definitions["exclusions"];
   };
   /** @description List of items to buy. */
-  Model536: definitions["Model535"][];
-  Model537: {
-    items: definitions["Model536"];
+  Model537: definitions["Model536"][];
+  Model538: {
+    items: definitions["Model537"];
     /** @description Address of wallet filling (receiver of the NFT). */
     taker: string;
     /** @description Address of wallet relaying the fill transaction (paying for the NFT). */
@@ -6677,7 +6677,7 @@ export interface definitions {
     method: "POST";
     body?: string;
   };
-  Model538: {
+  Model539: {
     /**
      * @description Response is `complete` or `incomplete`.
      * @enum {string}
@@ -6690,22 +6690,22 @@ export interface definitions {
     /** @description Approximation of gas used (only applies to `transaction` items) */
     gasEstimate?: number;
   };
-  Model539: definitions["Model538"][];
-  Model540: {
+  Model540: definitions["Model539"][];
+  Model541: {
     id: string;
     action: string;
     description: string;
     /** @enum {string} */
     kind: "signature" | "transaction";
-    items: definitions["Model539"];
+    items: definitions["Model540"];
   };
-  Model541: definitions["Model540"][];
-  Model542: {
+  Model542: definitions["Model541"][];
+  Model543: {
     message?: string;
     orderId?: string;
   };
-  Model543: definitions["Model542"][];
-  Model544: {
+  Model544: definitions["Model543"][];
+  Model545: {
     kind?: string;
     recipient?: string;
     bps?: number;
@@ -6713,10 +6713,10 @@ export interface definitions {
     rawAmount?: string;
   };
   /** @description Can be marketplace fees or royalties */
-  builtInFees: definitions["Model544"][];
+  builtInFees: definitions["Model545"][];
   /** @description Can be referral fees. */
-  Model545: definitions["Model544"][];
-  Model546: {
+  Model546: definitions["Model545"][];
+  Model547: {
     orderId?: string;
     contract?: string;
     tokenId?: string;
@@ -6735,39 +6735,39 @@ export interface definitions {
     totalPrice?: number;
     totalRawPrice?: string;
     builtInFees?: definitions["builtInFees"];
-    feesOnTop?: definitions["Model545"];
+    feesOnTop?: definitions["Model546"];
     /** @description Chain id buying from */
     fromChainId?: number;
     gasCost?: string;
     isNativeOffChainCancellable?: boolean;
   };
-  Model547: definitions["Model546"][];
-  Model548: {
+  Model548: definitions["Model547"][];
+  Model549: {
     itemIndex: number;
     maxQuantity?: string;
   };
-  maxQuantities: definitions["Model548"][];
-  Model549: {
+  maxQuantities: definitions["Model549"][];
+  Model550: {
     gas?: definitions["price"];
     relayer?: definitions["price"];
   };
   getExecuteBuyV7Response: {
     requestId?: string;
-    steps?: definitions["Model541"];
-    errors?: definitions["Model543"];
-    path?: definitions["Model547"];
+    steps?: definitions["Model542"];
+    errors?: definitions["Model544"];
+    path?: definitions["Model548"];
     maxQuantities?: definitions["maxQuantities"];
-    fees?: definitions["Model549"];
+    fees?: definitions["Model550"];
     gasEstimate?: number;
   };
-  Model550: {
+  Model551: {
     to: string;
     data: string;
     value: string;
   };
   /** @description List of transactions to execute */
-  txs: definitions["Model550"][];
-  Model551: {
+  txs: definitions["Model551"][];
+  Model552: {
     /** @description User requesting the calls */
     user: string;
     txs: definitions["txs"];
@@ -6776,29 +6776,29 @@ export interface definitions {
     /** @description Filling source used for attribution. Example: `reservoir.market` */
     source?: string;
   };
-  Model552: {
+  Model553: {
     /** @enum {string} */
     status: "complete" | "incomplete";
     data?: definitions["metadata"];
     check?: definitions["check"];
   };
-  Model553: definitions["Model552"][];
-  Model554: {
+  Model554: definitions["Model553"][];
+  Model555: {
     id: string;
     action: string;
     description: string;
     /** @enum {string} */
     kind: "signature" | "transaction";
-    items: definitions["Model553"];
+    items: definitions["Model554"];
   };
-  Model555: definitions["Model554"][];
+  Model556: definitions["Model555"][];
   postExecuteCallV1Response: {
-    steps?: definitions["Model555"];
-    fees?: definitions["Model549"];
+    steps?: definitions["Model556"];
+    fees?: definitions["Model550"];
   };
-  Model556: string[];
-  Model557: {
-    orderIds?: definitions["Model556"];
+  Model557: string[];
+  Model558: {
+    orderIds?: definitions["Model557"];
     maker?: string;
     /** @enum {string} */
     orderKind?:
@@ -6822,30 +6822,30 @@ export interface definitions {
     /** @description Optional. Set custom gas price */
     maxPriorityFeePerGas?: string;
   };
-  Model558: {
+  Model559: {
     /** @enum {string} */
     status: "complete" | "incomplete";
     orderIds?: definitions["sampleImages"];
     tip?: string;
     data?: definitions["metadata"];
   };
-  Model559: definitions["Model558"][];
-  Model560: {
+  Model560: definitions["Model559"][];
+  Model561: {
     id: string;
     action: string;
     description: string;
     /** @enum {string} */
     kind: "signature" | "transaction";
-    items: definitions["Model559"];
+    items: definitions["Model560"];
   };
-  Model561: definitions["Model560"][];
+  Model562: definitions["Model561"][];
   getExecuteCancelV3Response: {
-    steps?: definitions["Model561"];
+    steps?: definitions["Model562"];
   };
   /** @description Ids of the orders to cancel */
-  Model562: string[];
-  Model563: {
-    orderIds: definitions["Model562"];
+  Model563: string[];
+  Model564: {
+    orderIds: definitions["Model563"];
     /**
      * @description Exchange protocol used to bulk cancel order. Example: `seaport-v1.5`
      * @enum {string}
@@ -6860,26 +6860,26 @@ export interface definitions {
       | "payment-processor-v2"
       | "payment-processor-v2.1";
   };
-  Model564: {
+  Model565: {
     /** @description User depositing */
     user: string;
     /** @description Amount to deposit */
     amount: string;
   };
-  Model565: {
+  Model566: {
     id: string;
     action: string;
     description: string;
     /** @enum {string} */
     kind: "transaction";
-    items: definitions["Model553"];
+    items: definitions["Model554"];
   };
-  Model566: definitions["Model565"][];
+  Model567: definitions["Model566"][];
   postExecuteDepositV1Response: {
-    steps?: definitions["Model566"];
-    fees?: definitions["Model549"];
+    steps?: definitions["Model567"];
+    fees?: definitions["Model550"];
   };
-  Model567: {
+  Model568: {
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Quantity of tokens user is listing. Only compatible with ERC1155 tokens. Example: `5` */
@@ -6926,13 +6926,13 @@ export interface definitions {
     /** @default 0x0000000000000000000000000000000000000000 */
     currency?: string;
   };
-  Model568: definitions["Model567"][];
-  Model569: {
+  Model569: definitions["Model568"][];
+  Model570: {
     /** @description Address of wallet making the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     maker: string;
     /** @description Domain of your app that is creating the order, e.g. `myapp.xyz`. This is used for filtering, and to attribute the "order source" of sales in on-chain analytics, to help your app get discovered. Lean more <a href='https://docs.reservoir.tools/docs/calldata-attribution'>here</a> */
     source?: string;
-    params?: definitions["Model568"];
+    params?: definitions["Model569"];
   };
   getExecuteListV4Response: {
     steps?: definitions["Model508"];
@@ -6942,7 +6942,7 @@ export interface definitions {
     replaceOrderId?: string;
   };
   /** @description Additional options. */
-  Model570: {
+  Model571: {
     "seaport-v1.4"?: definitions["seaport-v1.4"];
     "seaport-v1.5"?: definitions["seaport-v1.4"];
     "seaport-v1.6"?: definitions["seaport-v1.4"];
@@ -6951,7 +6951,7 @@ export interface definitions {
     "payment-processor-v2.1"?: definitions["payment-processor-v2"];
     alienswap?: definitions["alienswap"];
   };
-  Model571: {
+  Model572: {
     /** @description The token the user is listing. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Quantity of tokens user is listing. Only compatible with ERC1155 tokens. Example: `5` */
@@ -6980,7 +6980,7 @@ export interface definitions {
       | "payment-processor"
       | "payment-processor-v2"
       | "payment-processor-v2.1";
-    options?: definitions["Model570"];
+    options?: definitions["Model571"];
     /**
      * @description Orderbook where order is placed. Example: `Reservoir`
      * @default reservoir
@@ -7013,17 +7013,17 @@ export interface definitions {
     /** @description Address of wallet taking the private order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     taker?: string;
   };
-  Model572: definitions["Model571"][];
-  Model573: {
+  Model573: definitions["Model572"][];
+  Model574: {
     /** @description Address of wallet making the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
     maker: string;
     /** @description Domain of your app that is creating the order, e.g. `myapp.xyz`. This is used for filtering, and to attribute the "order source" of sales in on-chain analytics, to help your app get discovered. Lean more <a href='https://docs.reservoir.tools/docs/calldata-attribution'>here</a> */
     source?: string;
     /** @description Advanced use case to pass personal blurAuthToken; the API will generate one if left empty. */
     blurAuth?: string;
-    params?: definitions["Model572"];
+    params?: definitions["Model573"];
   };
-  Model574: {
+  Model575: {
     /**
      * @description Returns `complete` or `incomplete`.
      * @enum {string}
@@ -7033,8 +7033,8 @@ export interface definitions {
     data?: definitions["metadata"];
     orderIndexes?: definitions["floorAskPrices"];
   };
-  Model575: definitions["Model574"][];
-  Model576: {
+  Model576: definitions["Model575"][];
+  Model577: {
     /** @description Returns `nft-approval` or `order-signature` */
     id: string;
     /**
@@ -7044,28 +7044,28 @@ export interface definitions {
     kind: "request" | "signature" | "transaction";
     action: string;
     description: string;
-    items: definitions["Model575"];
+    items: definitions["Model576"];
   };
-  Model577: definitions["Model576"][];
+  Model578: definitions["Model577"][];
   getExecuteListV5Response: {
-    steps?: definitions["Model577"];
+    steps?: definitions["Model578"];
     errors?: definitions["errors"];
   };
-  Model578: {
+  Model579: {
     abiType: string;
     abiValue: string;
   };
   /** @description Parameters to be passed into the mint method, each parameter is made up of a type and a value. */
-  Model579: definitions["Model578"][];
-  Model580: {
+  Model580: definitions["Model579"][];
+  Model581: {
     /** @description Signature of the mint function, computed as keccak256. For example: keccak256('mintWithRewards(address,uint256,uint256,bytes,address)')) */
     signature: string;
-    params?: definitions["Model579"];
+    params?: definitions["Model580"];
   };
   tx: {
     /** @description Contract where to send the mint transaction */
     to: string;
-    data?: definitions["Model580"];
+    data?: definitions["Model581"];
   };
   details: {
     tx?: definitions["tx"];
@@ -7076,7 +7076,7 @@ export interface definitions {
     price: string;
     details: definitions["details"];
   };
-  Model581: {
+  Model582: {
     /** @description Collection to mint. */
     collection?: string;
     /** @description Token to mint. */
@@ -7088,15 +7088,15 @@ export interface definitions {
     preferredMintStage?: string;
   };
   /** @description List of items to mint. */
-  Model582: definitions["Model581"][];
+  Model583: definitions["Model582"][];
   /**
    * @description List of fees (formatted as `feeRecipient:feeAmount`) to be taken when minting.
    * Unless overridden via the `currency` param, the currency used for any fees on top matches the buy-in currency detected by the backend.
    * Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00:1000000000000000`
    */
-  Model583: string[];
-  Model584: {
-    items: definitions["Model582"];
+  Model584: string[];
+  Model585: {
+    items: definitions["Model583"];
     /** @description Address of wallet minting (receiver of the NFT). */
     taker: string;
     /** @description Address of wallet relaying the mint transaction(s) (paying for the NFT). */
@@ -7110,7 +7110,7 @@ export interface definitions {
     currencyChainId?: number;
     /** @description Filling source used for attribution. Example: `reservoir.market` */
     source?: string;
-    feesOnTop?: definitions["Model583"];
+    feesOnTop?: definitions["Model584"];
     /**
      * @description If true, any off-chain or on-chain errors will be skipped.
      * @default false
@@ -7126,7 +7126,7 @@ export interface definitions {
     /** @description Mint comment (where suported). */
     comment?: string;
   };
-  Model585: {
+  Model586: {
     orderId?: string;
     contract?: string;
     tokenId?: string;
@@ -7144,32 +7144,32 @@ export interface definitions {
     buyInRawQuote?: string;
     totalPrice?: number;
     totalRawPrice?: string;
-    feesOnTop?: definitions["Model545"];
+    feesOnTop?: definitions["Model546"];
     gasCost?: string;
     /** @description Chain id buying from */
     fromChainId?: number;
   };
-  Model586: definitions["Model585"][];
+  Model587: definitions["Model586"][];
   postExecuteMintV1Response: {
     requestId?: string;
-    steps?: definitions["Model541"];
-    errors?: definitions["Model543"];
-    path?: definitions["Model586"];
+    steps?: definitions["Model542"];
+    errors?: definitions["Model544"];
+    path?: definitions["Model587"];
     maxQuantities?: definitions["maxQuantities"];
-    fees?: definitions["Model549"];
+    fees?: definitions["Model550"];
     gasEstimate?: number;
   };
-  Model587: {
+  Model588: {
     /** @description Id of the permit */
     id: string;
     /** @description Whether to persist the permit or not */
     persist?: boolean;
   };
-  Model588: {
+  Model589: {
     /** @description Id of the pre-signature */
     id: string;
   };
-  Model589: {
+  Model590: {
     /** @description Request id of the associate execute API request */
     requestId: string;
     /** @description Step id of the relevant execute item */
@@ -7182,7 +7182,7 @@ export interface definitions {
   postExecuteResultsV1Response: {
     message: string;
   };
-  Model590: {
+  Model591: {
     /** @enum {string} */
     kind:
       | "opensea"
@@ -7199,10 +7199,10 @@ export interface definitions {
    * The currency used for any fees on top matches the accepted bid's currency.
    * Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00:1000000000000000`
    */
-  Model591: string[];
-  Model592: {
+  Model592: string[];
+  Model593: {
     orderId?: string;
-    rawOrder?: definitions["Model590"];
+    rawOrder?: definitions["Model591"];
     /** @description Filter to a particular token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /** @description Address of wallet filling the order. Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00` */
@@ -7211,7 +7211,7 @@ export interface definitions {
     quantity?: number;
     /** @description Filling source used for attribution. Example: `reservoir.market` */
     source?: string;
-    feesOnTop?: definitions["Model591"];
+    feesOnTop?: definitions["Model592"];
     /**
      * @description If true, only the path will be returned.
      * @default false
@@ -7237,7 +7237,7 @@ export interface definitions {
     x2y2ApiKey?: string;
   };
   /** @description Optional raw order to sell into. */
-  Model593: {
+  Model594: {
     /** @enum {string} */
     kind?:
       | "blur-partial"
@@ -7255,7 +7255,7 @@ export interface definitions {
       | "nftx";
     data?: definitions["metadata"];
   };
-  Model594: {
+  Model595: {
     /** @description Token to sell. */
     token: string;
     /**
@@ -7265,26 +7265,25 @@ export interface definitions {
     quantity?: number;
     /** @description Optional order id to sell into. */
     orderId?: string;
-    rawOrder?: definitions["Model593"];
-    /** @description Only consider orders from this source. */
-    exactOrderSource?: string;
+    rawOrder?: definitions["Model594"];
+    exactOrderSource?: definitions["Model534"];
     exclusions?: definitions["exclusions"];
   };
   /** @description List of items to sell. */
-  Model595: definitions["Model594"][];
+  Model596: definitions["Model595"][];
   /**
    * @description List of fees (formatted as `feeRecipient:feeAmount`) to be taken when filling.
    * The currency used for any fees on top is always the wrapped native currency of the chain.
    * Example: `0xF296178d553C8Ec21A2fBD2c5dDa8CA9ac905A00:1000000000000000`
    */
-  Model596: string[];
-  Model597: {
-    items: definitions["Model595"];
+  Model597: string[];
+  Model598: {
+    items: definitions["Model596"];
     /** @description Address of wallet filling. */
     taker: string;
     /** @description Filling source used for attribution. */
     source?: string;
-    feesOnTop?: definitions["Model596"];
+    feesOnTop?: definitions["Model597"];
     /**
      * @description If true, only the filling path will be returned.
      * @default false
@@ -7330,7 +7329,7 @@ export interface definitions {
     /** @description Optional Blur auth used for filling */
     blurAuth?: string;
   };
-  Model598: {
+  Model599: {
     /**
      * @description Returns `complete` or `incomplete`.
      * @enum {string}
@@ -7342,8 +7341,8 @@ export interface definitions {
     /** @description Approximation of gas used (only applies to `transaction` items) */
     gasEstimate?: number;
   };
-  Model599: definitions["Model598"][];
-  Model600: {
+  Model600: definitions["Model599"][];
+  Model601: {
     /** @description Returns `auth` or `nft-approval` */
     id: string;
     action: string;
@@ -7353,10 +7352,10 @@ export interface definitions {
      * @enum {string}
      */
     kind: "signature" | "transaction";
-    items: definitions["Model599"];
+    items: definitions["Model600"];
   };
-  Model601: definitions["Model600"][];
-  Model602: {
+  Model602: definitions["Model601"][];
+  Model603: {
     orderId?: string;
     contract?: string;
     tokenId?: string;
@@ -7375,16 +7374,16 @@ export interface definitions {
     totalPrice?: number;
     totalRawPrice?: string;
     builtInFees?: definitions["builtInFees"];
-    feesOnTop?: definitions["Model545"];
+    feesOnTop?: definitions["Model546"];
   };
-  Model603: definitions["Model602"][];
+  Model604: definitions["Model603"][];
   getExecuteSellV7Response: {
     requestId?: string;
-    steps?: definitions["Model601"];
-    errors?: definitions["Model543"];
-    path?: definitions["Model603"];
+    steps?: definitions["Model602"];
+    errors?: definitions["Model544"];
+    path?: definitions["Model604"];
   };
-  Model604: {
+  Model605: {
     /** @enum {string} */
     kind: "cross-chain-intent";
     request?: string;
@@ -7399,7 +7398,7 @@ export interface definitions {
   postExecuteSolveV1Response: {
     status?: definitions["status"];
   };
-  Model605: {
+  Model606: {
     /**
      * @description Execution kind
      * @enum {string}
@@ -7418,18 +7417,18 @@ export interface definitions {
     txHashes?: definitions["txHashes"];
     time?: number;
   };
-  Model606: {
+  Model607: {
     token: string;
     /** @default 1 */
     quantity?: number;
   };
-  Model607: definitions["Model606"][];
-  Model608: {
+  Model608: definitions["Model607"][];
+  Model609: {
     from: string;
     to: string;
-    items?: definitions["Model607"];
+    items?: definitions["Model608"];
   };
-  Model609: {
+  Model610: {
     /**
      * @description Returns `complete` or `incomplete`.
      * @enum {string}
@@ -7437,8 +7436,8 @@ export interface definitions {
     status: "complete" | "incomplete";
     data?: definitions["metadata"];
   };
-  Model610: definitions["Model609"][];
-  Model611: {
+  Model611: definitions["Model610"][];
+  Model612: {
     /** @description Returns `nft-approval` or `transfer` */
     id: string;
     /**
@@ -7448,32 +7447,32 @@ export interface definitions {
     kind: "transaction";
     action: string;
     description: string;
-    items: definitions["Model610"];
+    items: definitions["Model611"];
   };
-  Model612: definitions["Model611"][];
+  Model613: definitions["Model612"][];
   postExecuteTransferV1Response: {
-    steps?: definitions["Model612"];
+    steps?: definitions["Model613"];
   };
-  Model613: {
+  Model614: {
     signer: string;
     endpoint: string;
   };
   /** @description Array of order ids to invalidate. Max limit is 50. Example: `ids[0]: 0x505b35e849bccbd787bf670b3e85577fa5c2814cfa0ecab50867e4dc5b5362d4 ids[1]: 0xd0e83bdeb5b79352d4a3657387d1e438e9df68d773bb3b3c88da41948ef48188` */
-  Model614: string[];
-  Model615: {
-    ids: definitions["Model614"];
+  Model615: string[];
+  Model616: {
+    ids: definitions["Model615"];
   };
   /** @description Array of tokens to disable or reenable metadata for. Max limit is 50. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
-  Model616: string[];
-  Model617: {
-    tokens: definitions["Model616"];
+  Model617: string[];
+  Model618: {
+    tokens: definitions["Model617"];
     /**
      * @description Whether to disable or reenable the metadata. Defaults to true (disable)
      * @default true
      */
     disable?: boolean;
   };
-  Model618: {
+  Model619: {
     /** @description The token to update the flag status for. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -7483,16 +7482,16 @@ export interface definitions {
     flag: 0 | 1;
   };
   /** @description Array of tokens. Max limit is 50. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
-  Model619: string[];
-  Model620: {
-    tokens: definitions["Model619"];
+  Model620: string[];
+  Model621: {
+    tokens: definitions["Model620"];
     /**
      * @description The new status of the nsfw
      * @default true
      */
     nsfw?: boolean;
   };
-  Model621: {
+  Model622: {
     /** @description Refresh the given token. Example: `0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:123` */
     token: string;
     /**
@@ -7507,9 +7506,9 @@ export interface definitions {
     overrideCoolDown?: boolean;
   };
   /** @description Array of tokens to refresh. Max limit is 50. Example: `tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:979` */
-  Model622: string[];
-  Model623: {
-    tokens: definitions["Model622"];
+  Model623: string[];
+  Model624: {
+    tokens: definitions["Model623"];
     /**
      * @description If true, only liquidity data will be refreshed.
      * @default false
@@ -7521,16 +7520,16 @@ export interface definitions {
      */
     overrideCoolDown?: boolean;
   };
-  Model624: {
+  Model625: {
     token?: string;
     result?: string;
     isError?: boolean;
   };
-  Model625: definitions["Model624"][];
+  Model626: definitions["Model625"][];
   postTokensRefreshV2Response: {
-    results?: definitions["Model625"];
+    results?: definitions["Model626"];
   };
-  Model626: {
+  Model627: {
     token?: string;
     /**
      * @default v6
@@ -7538,24 +7537,24 @@ export interface definitions {
      */
     router?: "v5" | "v6";
   };
-  Model627: {
+  Model628: {
     token?: string;
   };
-  Model628: {
-    tokens: definitions["Model619"];
+  Model629: {
+    tokens: definitions["Model620"];
     /**
      * @description API to update the spam status of a token
      * @default true
      */
     spam?: boolean;
   };
-  Model629: {
+  Model630: {
     bps?: number;
     recipient?: string;
   };
-  Model630: definitions["Model629"][];
+  Model631: definitions["Model630"][];
   /** @description Params that can be passed in order to override existing ones, to disable override pass null */
-  Model631: {
+  Model632: {
     name?: string;
     description?: string;
     imageUrl?: string;
@@ -7564,9 +7563,9 @@ export interface definitions {
     discordUrl?: string;
     externalUrl?: string;
     magicedenVerificationStatus?: string;
-    royalties?: definitions["Model630"];
+    royalties?: definitions["Model631"];
   };
-  Model632: {
+  Model633: {
     /** @enum {string} */
     kind: "cross-chain-intent";
     user?: string;
@@ -7582,12 +7581,12 @@ export interface definitions {
     maxItems: number;
     maxPricePerItem: string;
   };
-  Model633: {
+  Model634: {
     collection: string;
     stage: string;
     tokenId?: string;
   };
-  Model634: {
+  Model635: {
     id?: string;
     token?: string;
     collection?: string;
@@ -14140,7 +14139,7 @@ export interface operations {
   postExecuteBuyV7: {
     parameters: {
       body: {
-        body?: definitions["Model537"];
+        body?: definitions["Model538"];
       };
     };
     responses: {
@@ -14153,7 +14152,7 @@ export interface operations {
   postExecuteCallV1: {
     parameters: {
       body: {
-        body?: definitions["Model551"];
+        body?: definitions["Model552"];
       };
     };
     responses: {
@@ -14167,7 +14166,7 @@ export interface operations {
   postExecuteCancelV3: {
     parameters: {
       body: {
-        body?: definitions["Model557"];
+        body?: definitions["Model558"];
       };
     };
     responses: {
@@ -14187,7 +14186,7 @@ export interface operations {
         auth?: string;
       };
       body: {
-        body?: definitions["Model563"];
+        body?: definitions["Model564"];
       };
     };
     responses: {
@@ -14200,7 +14199,7 @@ export interface operations {
   postExecuteDepositV1: {
     parameters: {
       body: {
-        body?: definitions["Model564"];
+        body?: definitions["Model565"];
       };
     };
     responses: {
@@ -14214,7 +14213,7 @@ export interface operations {
   postExecuteListV4: {
     parameters: {
       body: {
-        body?: definitions["Model569"];
+        body?: definitions["Model570"];
       };
     };
     responses: {
@@ -14236,7 +14235,7 @@ export interface operations {
   postExecuteListV5: {
     parameters: {
       body: {
-        body?: definitions["Model573"];
+        body?: definitions["Model574"];
       };
     };
     responses: {
@@ -14250,7 +14249,7 @@ export interface operations {
   postExecuteMintV1: {
     parameters: {
       body: {
-        body?: definitions["Model584"];
+        body?: definitions["Model585"];
       };
     };
     responses: {
@@ -14267,7 +14266,7 @@ export interface operations {
         signature: string;
       };
       body: {
-        body?: definitions["Model587"];
+        body?: definitions["Model588"];
       };
     };
     responses: {
@@ -14284,7 +14283,7 @@ export interface operations {
         signature: string;
       };
       body: {
-        body?: definitions["Model588"];
+        body?: definitions["Model589"];
       };
     };
     responses: {
@@ -14297,7 +14296,7 @@ export interface operations {
   postExecuteResultsV1: {
     parameters: {
       body: {
-        body?: definitions["Model589"];
+        body?: definitions["Model590"];
       };
     };
     responses: {
@@ -14310,7 +14309,7 @@ export interface operations {
   postExecuteSellV6: {
     parameters: {
       body: {
-        body?: definitions["Model592"];
+        body?: definitions["Model593"];
       };
     };
     responses: {
@@ -14324,7 +14323,7 @@ export interface operations {
   postExecuteSellV7: {
     parameters: {
       body: {
-        body?: definitions["Model597"];
+        body?: definitions["Model598"];
       };
     };
     responses: {
@@ -14341,7 +14340,7 @@ export interface operations {
         signature?: string;
       };
       body: {
-        body?: definitions["Model604"];
+        body?: definitions["Model605"];
       };
     };
     responses: {
@@ -14354,7 +14353,7 @@ export interface operations {
   postExecuteStatusV1: {
     parameters: {
       body: {
-        body?: definitions["Model605"];
+        body?: definitions["Model606"];
       };
     };
     responses: {
@@ -14368,7 +14367,7 @@ export interface operations {
   postExecuteTransferV1: {
     parameters: {
       body: {
-        body?: definitions["Model608"];
+        body?: definitions["Model609"];
       };
     };
     responses: {
@@ -14381,7 +14380,7 @@ export interface operations {
   postManagementCosignersV1: {
     parameters: {
       body: {
-        body?: definitions["Model613"];
+        body?: definitions["Model614"];
       };
     };
     responses: {
@@ -14397,7 +14396,7 @@ export interface operations {
         "x-api-key": string;
       };
       body: {
-        body?: definitions["Model615"];
+        body?: definitions["Model616"];
       };
     };
     responses: {
@@ -14414,7 +14413,7 @@ export interface operations {
         "x-api-key": string;
       };
       body: {
-        body?: definitions["Model617"];
+        body?: definitions["Model618"];
       };
     };
     responses: {
@@ -14427,7 +14426,7 @@ export interface operations {
   postTokensFlagV1: {
     parameters: {
       body: {
-        body?: definitions["Model618"];
+        body?: definitions["Model619"];
       };
     };
     responses: {
@@ -14444,7 +14443,7 @@ export interface operations {
         "x-api-key": string;
       };
       body: {
-        body?: definitions["Model620"];
+        body?: definitions["Model621"];
       };
     };
     responses: {
@@ -14462,7 +14461,7 @@ export interface operations {
   postTokensRefreshV1: {
     parameters: {
       body: {
-        body?: definitions["Model621"];
+        body?: definitions["Model622"];
       };
     };
     responses: {
@@ -14480,7 +14479,7 @@ export interface operations {
   postTokensRefreshV2: {
     parameters: {
       body: {
-        body?: definitions["Model623"];
+        body?: definitions["Model624"];
       };
     };
     responses: {
@@ -14493,7 +14492,7 @@ export interface operations {
   postTokensSimulatefloorV1: {
     parameters: {
       body: {
-        body?: definitions["Model626"];
+        body?: definitions["Model627"];
       };
     };
     responses: {
@@ -14506,7 +14505,7 @@ export interface operations {
   postTokensSimulatetopbidV1: {
     parameters: {
       body: {
-        body?: definitions["Model627"];
+        body?: definitions["Model628"];
       };
     };
     responses: {
@@ -14523,7 +14522,7 @@ export interface operations {
         "x-api-key": string;
       };
       body: {
-        body?: definitions["Model628"];
+        body?: definitions["Model629"];
       };
     };
     responses: {
@@ -14544,7 +14543,7 @@ export interface operations {
         collection: string;
       };
       body: {
-        body?: definitions["Model631"];
+        body?: definitions["Model632"];
       };
     };
     responses: {
@@ -14557,7 +14556,7 @@ export interface operations {
   postExecuteSolveCapacityV1: {
     parameters: {
       body: {
-        body?: definitions["Model632"];
+        body?: definitions["Model633"];
       };
     };
     responses: {
@@ -14570,7 +14569,7 @@ export interface operations {
   postManagementMintsSimulateV1: {
     parameters: {
       body: {
-        body?: definitions["Model633"];
+        body?: definitions["Model634"];
       };
     };
     responses: {
@@ -14583,7 +14582,7 @@ export interface operations {
   postManagementOrdersSimulateV1: {
     parameters: {
       body: {
-        body?: definitions["Model634"];
+        body?: definitions["Model635"];
       };
     };
     responses: {
