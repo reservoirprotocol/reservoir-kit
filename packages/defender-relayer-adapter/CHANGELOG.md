@@ -1,5 +1,14 @@
 # @reservoir0x/defender-relayer-adapter
 
+## 5.0.8
+
+### Patch Changes
+
+- e575a14: Sync api types
+- Updated dependencies [e575a14]
+  - @reservoir0x/ethers-wallet-adapter@5.0.8
+  - @reservoir0x/reservoir-sdk@2.4.8
+
 ## 5.0.7
 
 ### Patch Changes

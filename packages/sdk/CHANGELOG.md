@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.8
+
+### Patch Changes
+
+- e575a14: Sync api types
+
 ## 2.4.7
 
 ### Patch Changes
