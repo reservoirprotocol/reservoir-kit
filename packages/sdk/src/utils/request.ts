@@ -40,9 +40,5 @@ export class APIError extends Error {
     this.statusCode = statusCode
     this.rawError = rawError
     this.requestUrl = requestUrl
-
-    if (rawError?.stack) {
-      this.stack = rawError.stack
-    }
   }
 }
