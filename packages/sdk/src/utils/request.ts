@@ -22,13 +22,15 @@ export function isAPIError(error?: Error) {
 
 export class APIError extends Error {
   type: string
-  statusCode: number
+  statusCode: number | undefined
   rawError: any
+  requestUrl: string | undefined
 
   constructor(
     message: string = 'Unknown Reason',
     statusCode: number,
     rawError?: any,
+    requestUrl?: string,
     type: string = 'APIError',
     options: any = {}
   ) {
@@ -37,5 +39,10 @@ export class APIError extends Error {
     this.type = type
     this.statusCode = statusCode
     this.rawError = rawError
+    this.requestUrl = requestUrl
+
+    if (rawError?.stack) {
+      this.stack = rawError.stack
+    }
   }
 }
