@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.10
+
+### Patch Changes
+
+- ff0433f: Include request url in APIError and fix unknown status code
+
 ## 2.4.9
 
 ### Patch Changes
