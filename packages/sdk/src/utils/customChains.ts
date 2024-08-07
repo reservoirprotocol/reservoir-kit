@@ -582,6 +582,30 @@ export const formaSketchpad = {
   },
 } as const satisfies Chain
 
+export const b3 = {
+  id: 8333,
+  name: 'B3',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet-rpc.b3.fun/http'],
+    },
+    public: {
+      http: ['https://mainnet-rpc.b3.fun/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'B3 Explorer',
+      url: 'https://explorer.b3.fun',
+    },
+    default: {
+      name: 'B3 Explorer',
+      url: 'https://explorer.b3.fun',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -607,4 +631,5 @@ export const customChains = {
   boss,
   forma,
   formaSketchpad,
+  b3,
 } as const satisfies Record<string, Chain>

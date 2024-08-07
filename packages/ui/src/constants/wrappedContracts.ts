@@ -43,6 +43,7 @@ const wrappedContracts: Record<number, string> = {
   70701: '0x48a9b22b80f566e88f0f1dcc90ea15a8a3bae8a4', // boss
   984122: '0xd5eace1274dbf70960714f513db207433615a263', // forma
   984123: '0xd5eace1274dbf70960714f513db207433615a263', // forma sketchpad
+  8333: '0x48a9b22b80f566e88f0f1dcc90ea15a8a3bae8a4', // b3
 }
 
 export default wrappedContracts

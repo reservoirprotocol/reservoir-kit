@@ -865,4 +865,22 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  // B3
+  8333: [
+    {
+      chainId: 8333,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 8333,
+      address: '0x48a9b22b80f566e88f0f1dcc90ea15a8a3bae8a4',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>

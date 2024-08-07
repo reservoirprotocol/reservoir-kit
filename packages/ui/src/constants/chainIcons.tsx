@@ -85,9 +85,9 @@ import BitlayerIconColor from '../img/chains/BitlayerIconColor'
 import SeiIconLight from '../img/chains/SeiIconLight'
 import SeiIconDark from '../img/chains/SeiIconDark'
 import SeiIconColor from '../img/chains/SeiIconColor'
-import B3TestnetIconLight from '../img/chains/B3TestnetIconLight'
-import B3TestnetIconDark from '../img/chains/B3TestnetIconDark'
-import B3TestnetIconColor from '../img/chains/B3TestnetIconColor'
+import B3IconLight from '../img/chains/B3IconLight'
+import B3IconDark from '../img/chains/B3IconDark'
+import B3IconColor from '../img/chains/B3IconColor'
 import FlowPreviewnetIconLight from '../img/chains/FlowPreviewnetIconLight'
 import FlowPreviewnetIconDark from '../img/chains/FlowPreviewnetIconDark'
 import FlowPreviewnetIconColor from '../img/chains/FlowPreviewnetIconColor'
@@ -284,9 +284,9 @@ const chainIcons = {
     color: <SeiIconColor />,
   },
   [reservoirChains.b3Testnet.id]: {
-    light: <B3TestnetIconLight />,
-    dark: <B3TestnetIconDark />,
-    color: <B3TestnetIconColor />,
+    light: <B3IconLight />,
+    dark: <B3IconDark />,
+    color: <B3IconColor />,
   },
   [reservoirChains.flowPreviewnet.id]: {
     light: <FlowPreviewnetIconLight />,
@@ -322,6 +322,11 @@ const chainIcons = {
     light: <FormaIconLight />,
     dark: <FormaIconDark />,
     color: <FormaIconColor />,
+  },
+  [reservoirChains.b3.id]: {
+    light: <B3IconLight />,
+    dark: <B3IconDark />,
+    color: <B3IconColor />,
   },
 }
 

@@ -76,6 +76,7 @@ const chains = [
   customChains.boss,
   customChains.forma,
   customChains.formaSketchpad,
+  customChains.b3,
 ] as [Chain, ...Chain[]]
 
 const wagmiConfig = getDefaultConfig({
