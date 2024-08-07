@@ -362,6 +362,14 @@ const formaSketchpad = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const b3 = {
+  id: 8333,
+  name: 'B3',
+  baseApiUrl: 'https://api-b3.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[8333],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -407,4 +415,5 @@ export const reservoirChains = {
   boss,
   forma,
   formaSketchpad,
+  b3,
 }

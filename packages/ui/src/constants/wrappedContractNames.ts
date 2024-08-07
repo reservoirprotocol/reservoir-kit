@@ -43,5 +43,6 @@ const wrappedContractNames: Record<number, string> = {
   70701: 'WETH', // boss
   984122: 'WTIA', // forma
   984123: 'WTIA', // forma sketchpad
+  8333: 'WETH', // b3
 }
 export default wrappedContractNames
