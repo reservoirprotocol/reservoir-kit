@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.9
+
+### Patch Changes
+
+- 9a8b493: adding b3
+
 ## 2.4.8
 
 ### Patch Changes

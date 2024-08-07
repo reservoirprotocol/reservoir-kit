@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.12
+
+### Patch Changes
+
+- 9a8b493: adding b3
+- Updated dependencies [9a8b493]
+  - @reservoir0x/reservoir-sdk@2.4.9
+
 ## 2.7.11
 
 ### Patch Changes
