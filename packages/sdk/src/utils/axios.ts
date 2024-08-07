@@ -17,15 +17,15 @@ axios.interceptors.response.use(
     const message =
       error.response?.data?.message ||
       error.response?.data?.error ||
-      `Request failed with status code ${
-        error.response?.data?.statusCode || 500
-      }`
+      error?.message
+
+    const statusCode =
+      error?.response?.data?.statusCode || error?.response?.status
+
+    const requestUrl = error?.config?.url || error?.request?.responseURL
+
     return Promise.reject(
-      new APIError(
-        message,
-        error.response?.data?.statusCode || 500,
-        error.response?.data
-      )
+      new APIError(message, statusCode, error.response?.data, requestUrl)
     )
   }
 )
