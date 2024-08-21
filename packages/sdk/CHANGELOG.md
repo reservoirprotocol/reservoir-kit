@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.11
+
+### Patch Changes
+
+- 6118898: sync api types
+
 ## 2.4.10
 
 ### Patch Changes
