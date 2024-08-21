@@ -218,6 +218,7 @@ export const routes = [
   "/tokens/simulate-floor/v1",
   "/tokens/simulate-top-bid/v1",
   "/tokens/spam-status/v1",
+  "/collections/{collection}/override/v2",
   "/collections/{collection}/override/v1",
   "/execute/solve/capacity/v1",
   "/management/mints/simulate/v1",
