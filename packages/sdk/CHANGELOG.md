@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.13
+
+### Patch Changes
+
+- 9e723b8: adding shape and shape sepolia
+
 ## 2.4.12
 
 ### Patch Changes
