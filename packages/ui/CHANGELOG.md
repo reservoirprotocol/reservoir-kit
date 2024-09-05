@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.16
+
+### Patch Changes
+
+- 9e723b8: adding shape and shape sepolia
+- Updated dependencies [9e723b8]
+  - @reservoir0x/reservoir-sdk@2.4.13
+
 ## 2.7.15
 
 ### Patch Changes
