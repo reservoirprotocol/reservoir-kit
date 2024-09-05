@@ -370,6 +370,14 @@ const b3 = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const apechain = {
+  id: 33139,
+  name: 'Apechain',
+  baseApiUrl: 'https://api-apechain.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[33139],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -416,4 +424,5 @@ export const reservoirChains = {
   forma,
   formaSketchpad,
   b3,
+  apechain,
 }

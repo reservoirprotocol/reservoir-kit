@@ -278,4 +278,7 @@ export default [
   {
     ...reservoirChains.formaSketchpad,
   },
+  {
+    ...reservoirChains.apechain,
+  },
 ]
