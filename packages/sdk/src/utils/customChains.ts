@@ -606,6 +606,30 @@ export const b3 = {
   },
 } as const satisfies Chain
 
+export const apechain = {
+  id: 33139,
+  name: 'Apechain',
+  nativeCurrency: { name: 'ApeCoin', symbol: 'APE', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://apechain.calderachain.xyz/http'],
+    },
+    public: {
+      http: ['https://apechain.calderachain.xyz/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Apechain Explorer',
+      url: 'https://apechain.calderaexplorer.xyz',
+    },
+    default: {
+      name: 'Apechain Explorer',
+      url: 'https://apechain.calderaexplorer.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -632,4 +656,5 @@ export const customChains = {
   forma,
   formaSketchpad,
   b3,
+  apechain,
 } as const satisfies Record<string, Chain>

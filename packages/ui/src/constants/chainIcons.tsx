@@ -100,6 +100,9 @@ import Game7TestnetIconColor from '../img/chains/Game7TestnetIconColor'
 import FormaIconLight from '../img/chains/FormaIconLight'
 import FormaIconDark from '../img/chains/FormaIconDark'
 import FormaIconColor from '../img/chains/FormaIconColor'
+import ApechainIconLight from '../img/chains/ApechainIconLight'
+import ApechainIconDark from '../img/chains/ApechainIconDark'
+import ApechainIconColor from '../img/chains/ApechainIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -327,6 +330,11 @@ const chainIcons = {
     light: <B3IconLight />,
     dark: <B3IconDark />,
     color: <B3IconColor />,
+  },
+  [reservoirChains.apechain.id]: {
+    light: <ApechainIconLight />,
+    dark: <ApechainIconDark />,
+    color: <ApechainIconColor />,
   },
 }
 
