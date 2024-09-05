@@ -103,6 +103,9 @@ import FormaIconColor from '../img/chains/FormaIconColor'
 import ApechainIconLight from '../img/chains/ApechainIconLight'
 import ApechainIconDark from '../img/chains/ApechainIconDark'
 import ApechainIconColor from '../img/chains/ApechainIconColor'
+import ShapeIconLight from '../img/chains/ShapeIconLight'
+import ShapeIconDark from '../img/chains/ShapeIconDark'
+import ShapeIconColor from '../img/chains/ShapeIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -335,6 +338,16 @@ const chainIcons = {
     light: <ApechainIconLight />,
     dark: <ApechainIconDark />,
     color: <ApechainIconColor />,
+  },
+  [reservoirChains.shape.id]: {
+    light: <ShapeIconLight />,
+    dark: <ShapeIconDark />,
+    color: <ShapeIconColor />,
+  },
+  [reservoirChains.shapeSepolia.id]: {
+    light: <ShapeIconLight />,
+    dark: <ShapeIconDark />,
+    color: <ShapeIconColor />,
   },
 }
 
