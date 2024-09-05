@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.15
+
+### Patch Changes
+
+- 55f67f6: adding apechain
+- Updated dependencies [55f67f6]
+  - @reservoir0x/reservoir-sdk@2.4.12
+
 ## 2.7.14
 
 ### Patch Changes
