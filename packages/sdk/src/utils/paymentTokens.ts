@@ -902,6 +902,24 @@ export const chainPaymentTokensMap = {
     },
   ],
 
+  // Curtis
+  33111: [
+    {
+      chainId: 33111,
+      address: zeroAddress,
+      symbol: 'APE',
+      name: 'APE',
+      decimals: 18,
+    },
+    {
+      chainId: 33111,
+      address: '0x34b097b133bf3fe3b7dad0d65e8f18dd5bf1a57b',
+      symbol: 'WAPE',
+      name: 'WAPE',
+      decimals: 18,
+    },
+  ],
+
   // Shape
   360: [
     {

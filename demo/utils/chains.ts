@@ -282,6 +282,9 @@ export default [
     ...reservoirChains.apechain,
   },
   {
+    ...reservoirChains.curtis,
+  },
+  {
     ...reservoirChains.shape,
   },
   {

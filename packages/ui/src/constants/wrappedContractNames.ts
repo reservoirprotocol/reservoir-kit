@@ -45,6 +45,7 @@ const wrappedContractNames: Record<number, string> = {
   984123: 'WTIA', // forma sketchpad
   8333: 'WETH', // b3
   33139: 'WAPE', // apechain
+  33111: 'WAPE', // apechain
   360: 'WETH', // shape
   11011: 'WETH', // shape sepolia
 }

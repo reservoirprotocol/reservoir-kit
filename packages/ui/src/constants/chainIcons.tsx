@@ -339,6 +339,11 @@ const chainIcons = {
     dark: <ApechainIconDark />,
     color: <ApechainIconColor />,
   },
+  [reservoirChains.curtis.id]: {
+    light: <ApechainIconLight />,
+    dark: <ApechainIconDark />,
+    color: <ApechainIconColor />,
+  },
   [reservoirChains.shape.id]: {
     light: <ShapeIconLight />,
     dark: <ShapeIconDark />,

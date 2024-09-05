@@ -630,6 +630,30 @@ export const apechain = {
   },
 } as const satisfies Chain
 
+export const curtis = {
+  id: 33111,
+  name: 'Curtis',
+  nativeCurrency: { name: 'ApeCoin', symbol: 'APE', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://curtis.rpc.caldera.xyz/http'],
+    },
+    public: {
+      http: ['https://curtis.rpc.caldera.xyz/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Curtis Explorer',
+      url: 'https://curtis.explorer.caldera.xyz',
+    },
+    default: {
+      name: 'Curtis Explorer',
+      url: 'https://curtis.explorer.caldera.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const shape = {
   id: 360,
   name: 'Shape',
@@ -705,6 +729,7 @@ export const customChains = {
   formaSketchpad,
   b3,
   apechain,
+  curtis,
   shape,
   shapeSepolia,
 } as const satisfies Record<string, Chain>
