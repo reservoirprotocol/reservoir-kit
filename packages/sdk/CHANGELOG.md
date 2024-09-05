@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.12
+
+### Patch Changes
+
+- 55f67f6: adding apechain
+
 ## 2.4.11
 
 ### Patch Changes
