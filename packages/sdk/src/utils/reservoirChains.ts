@@ -378,6 +378,30 @@ const apechain = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const curtis = {
+  id: 33111,
+  name: 'Curtis',
+  baseApiUrl: 'https://api-curtis.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[33111],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const shape = {
+  id: 360,
+  name: 'Shape',
+  baseApiUrl: 'https://api-shape.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[360],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const shapeSepolia = {
+  id: 11011,
+  name: 'Shape Sepolia',
+  baseApiUrl: 'https://api-shape-sepolia.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[11011],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -425,4 +449,7 @@ export const reservoirChains = {
   formaSketchpad,
   b3,
   apechain,
+  curtis,
+  shape,
+  shapeSepolia,
 }

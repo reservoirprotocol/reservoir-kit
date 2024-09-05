@@ -630,6 +630,78 @@ export const apechain = {
   },
 } as const satisfies Chain
 
+export const curtis = {
+  id: 33111,
+  name: 'Curtis',
+  nativeCurrency: { name: 'ApeCoin', symbol: 'APE', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://curtis.rpc.caldera.xyz/http'],
+    },
+    public: {
+      http: ['https://curtis.rpc.caldera.xyz/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Curtis Explorer',
+      url: 'https://curtis.explorer.caldera.xyz',
+    },
+    default: {
+      name: 'Curtis Explorer',
+      url: 'https://curtis.explorer.caldera.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const shape = {
+  id: 360,
+  name: 'Shape',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet.shape.network'],
+    },
+    public: {
+      http: ['https://mainnet.shape.network'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Shape Explorer',
+      url: 'https://internal-shaper-explorer.alchemypreview.com',
+    },
+    default: {
+      name: 'Shape Explorer',
+      url: 'https://internal-shaper-explorer.alchemypreview.com',
+    },
+  },
+} as const satisfies Chain
+
+export const shapeSepolia = {
+  id: 11011,
+  name: 'Shape Sepolia',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://sepolia.shape.network'],
+    },
+    public: {
+      http: ['https://sepolia.shape.network'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Shape Sepolia Explorer',
+      url: 'https://explorer-sepolia.shape.network',
+    },
+    default: {
+      name: 'Shape Sepolia Explorer',
+      url: 'https://explorer-sepolia.shape.network',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -657,4 +729,7 @@ export const customChains = {
   formaSketchpad,
   b3,
   apechain,
+  curtis,
+  shape,
+  shapeSepolia,
 } as const satisfies Record<string, Chain>

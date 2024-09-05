@@ -78,6 +78,9 @@ const chains = [
   customChains.formaSketchpad,
   customChains.b3,
   customChains.apechain,
+  customChains.curtis,
+  customChains.shape,
+  customChains.shapeSepolia,
 ] as [Chain, ...Chain[]]
 
 const wagmiConfig = getDefaultConfig({

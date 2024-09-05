@@ -281,4 +281,13 @@ export default [
   {
     ...reservoirChains.apechain,
   },
+  {
+    ...reservoirChains.curtis,
+  },
+  {
+    ...reservoirChains.shape,
+  },
+  {
+    ...reservoirChains.shapeSepolia,
+  },
 ]
