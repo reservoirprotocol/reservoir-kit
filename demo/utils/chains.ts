@@ -290,4 +290,16 @@ export default [
   {
     ...reservoirChains.shapeSepolia,
   },
+  {
+    ...reservoirChains.abstractTestnet,
+  },
+  {
+    ...reservoirChains.minato,
+  },
+  {
+    ...reservoirChains.hychain,
+  },
+  {
+    ...reservoirChains.hychainTestnet,
+  },
 ]

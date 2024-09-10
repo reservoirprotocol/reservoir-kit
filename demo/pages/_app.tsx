@@ -81,6 +81,10 @@ const chains = [
   customChains.curtis,
   customChains.shape,
   customChains.shapeSepolia,
+  customChains.abstractTestnet,
+  customChains.minato,
+  customChains.hychain,
+  customChains.hychainTestnet,
 ] as [Chain, ...Chain[]]
 
 const wagmiConfig = getDefaultConfig({

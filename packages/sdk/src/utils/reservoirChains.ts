@@ -402,6 +402,38 @@ const shapeSepolia = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const abstractTestnet = {
+  id: 11124,
+  name: 'Abstract Testnet',
+  baseApiUrl: 'https://api-abstract-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[11124],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const minato = {
+  id: 1946,
+  name: 'Minato',
+  baseApiUrl: 'https://api-minato.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1946],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const hychain = {
+  id: 2911,
+  name: 'Hychain',
+  baseApiUrl: 'https://api-hychain.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[2911],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const hychainTestnet = {
+  id: 29112,
+  name: 'Hychain Testnet',
+  baseApiUrl: 'https://api-hychain-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[29112],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -452,4 +484,8 @@ export const reservoirChains = {
   curtis,
   shape,
   shapeSepolia,
+  abstractTestnet,
+  minato,
+  hychain,
+  hychainTestnet,
 }
