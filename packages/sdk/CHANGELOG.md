@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.14
+
+### Patch Changes
+
+- 9adc2db: support for abstract testnet, minato, hychain
+
 ## 2.4.13
 
 ### Patch Changes

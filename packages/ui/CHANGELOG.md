@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.17
+
+### Patch Changes
+
+- 9adc2db: support for abstract testnet, minato, hychain
+- Updated dependencies [9adc2db]
+  - @reservoir0x/reservoir-sdk@2.4.14
+
 ## 2.7.16
 
 ### Patch Changes
