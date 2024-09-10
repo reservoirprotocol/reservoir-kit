@@ -702,6 +702,102 @@ export const shapeSepolia = {
   },
 } as const satisfies Chain
 
+export const abstractTestnet = {
+  id: 11124,
+  name: 'Abstract Testnet',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://api.testnet.abs.xyz'],
+    },
+    public: {
+      http: ['https://api.testnet.abs.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Abstract Testnet Explorer',
+      url: 'https://explorer.testnet.abs.xyz',
+    },
+    default: {
+      name: 'Abstract Testnet Explorer',
+      url: 'https://explorer.testnet.abs.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const minato = {
+  id: 1946,
+  name: 'Minato',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.minato.soneium.org'],
+    },
+    public: {
+      http: ['https://rpc.minato.soneium.org'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Minato Explorer',
+      url: 'https://explorer-testnet.soneium.org',
+    },
+    default: {
+      name: 'Minato Explorer',
+      url: 'https://explorer-testnet.soneium.org',
+    },
+  },
+} as const satisfies Chain
+
+export const hychain = {
+  id: 2911,
+  name: 'Hychain',
+  nativeCurrency: { name: 'Hychain', symbol: 'TOPIA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.hychain.com/http'],
+    },
+    public: {
+      http: ['https://rpc.hychain.com/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Hychain Explorer',
+      url: 'https://explorer.hychain.com',
+    },
+    default: {
+      name: 'Hychain Explorer',
+      url: 'https://explorer.hychain.com',
+    },
+  },
+} as const satisfies Chain
+
+export const hychainTestnet = {
+  id: 29112,
+  name: 'Hychain Testnet',
+  nativeCurrency: { name: 'Hychain', symbol: 'TOPIA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://testnet-rpc.hychain.com/http'],
+    },
+    public: {
+      http: ['https://testnet-rpc.hychain.com/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Hychain Testnet Explorer',
+      url: 'https://testnet.explorer.hychain.com',
+    },
+    default: {
+      name: 'Hychain Testnet Explorer',
+      url: 'https://testnet.explorer.hychain.com',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -732,4 +828,8 @@ export const customChains = {
   curtis,
   shape,
   shapeSepolia,
+  abstractTestnet,
+  minato,
+  hychain,
+  hychainTestnet,
 } as const satisfies Record<string, Chain>
