@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/reservoir-sdk",
-    "version": "2.2.8",
+    "version": "2.4.14",
     "description": "An SDK that can be used in any javascript/typescript context to easily interact with Reservoir liquidity APIs",
     "author": "Reservoir Protocol",
     "license": "MIT",
@@ -49,6 +49,6 @@
         "ts-jest": "^29.1.0"
     },
     "peerDependencies": {
-        "viem": "~2.7.8"
+        "viem": "~2.17.4"
     }
 }

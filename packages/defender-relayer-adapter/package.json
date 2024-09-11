@@ -1,6 +1,6 @@
 {
     "name": "@reservoir0x/defender-relayer-adapter",
-    "version": "3.0.8",
+    "version": "5.0.14",
     "description": "An adapter that intergrates OpenZeppelins defender relayer wallet to a Reservoir Wallet for use in the @reservoir0x/reservoir-sdk",
     "exports": {
         ".": {
@@ -50,6 +50,6 @@
     "peerDependencies": {
         "@reservoir0x/reservoir-sdk": "workspace:*",
         "ethers": "^5.6.1",
-        "viem": "~2.7.8"
+        "viem": "~2.17.4"
     }
 }

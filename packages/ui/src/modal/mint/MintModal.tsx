@@ -166,6 +166,7 @@ export function MintModal({
         disableJumperLink,
         balance,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         transactionError,
         fetchMintPathError,
         stepData,
@@ -428,10 +429,16 @@ export function MintModal({
                       css={{ pt: '$4' }}
                     />
                   </Flex>
-                  {hasEnoughCurrency || !isConnected ? (
+                  {hasEnoughCurrency ||
+                  !isConnected ||
+                  hasAuxiliaryFundsSupport ? (
                     <Button
                       css={{ m: '$4' }}
-                      disabled={!hasEnoughCurrency && isConnected}
+                      disabled={
+                        !hasEnoughCurrency &&
+                        !hasAuxiliaryFundsSupport &&
+                        isConnected
+                      }
                       onClick={mintTokens}
                     >
                       {!isConnected ? copy.ctaConnect : copy.mintCtaBuy}

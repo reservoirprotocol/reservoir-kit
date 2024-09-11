@@ -7,6 +7,7 @@ import { StyledComponent } from '@stitches/react/types/styled-component'
 import Box from './Box'
 import wrappedContracts from '../constants/wrappedContracts'
 import WEthIcon from '../img/WEthIcon'
+import { customChains } from '@reservoir0x/reservoir-sdk'
 
 type Props = {
   address: string
@@ -27,14 +28,17 @@ const CryptoCurrencyIcon: FC<Props> = ({
   )
 
   if (chainCurrency.symbol === 'ETH') {
-    if (zeroAddress === address) {
+    if (
+      (chainCurrency.chainId === customChains.nebula.id &&
+        wrappedContracts[chainCurrency.chainId] === address) ||
+      zeroAddress === address
+    ) {
       return (
         <Box css={{ display: 'flex', ...css }}>
           <EthLogo />
         </Box>
       )
-    }
-    if (wrappedContracts[chainCurrency.chainId] === address) {
+    } else if (wrappedContracts[chainCurrency.chainId] === address) {
       return (
         <Box css={{ display: 'flex', ...css }}>
           <WEthIcon />
@@ -47,7 +51,8 @@ const CryptoCurrencyIcon: FC<Props> = ({
     <StyledImg
       src={`${chain?.baseApiUrl}/redirect/currency/${address}/icon/v1`}
       css={{
-        borderRadius: '100%', ...css
+        borderRadius: '100%',
+        ...css,
       }}
     />
   )

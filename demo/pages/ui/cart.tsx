@@ -3,6 +3,7 @@ import { CartPopover, useDynamicTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useState } from 'react'
 import ThemeSwitcher from 'components/ThemeSwitcher'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useRouter } from 'next/router'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||
@@ -14,6 +15,9 @@ const CartPage: NextPage = () => {
   const { openConnectModal } = useConnectModal()
   const [collectionId, setCollectionId] = useState(DEFAULT_COLLECTION_ID)
   const [orderId, setOrderId] = useState('')
+  const router = useRouter()
+
+  const chainId = router.query['chainId'] ?? CHAIN_ID
 
   const {
     data: tokens,
@@ -78,7 +82,7 @@ const CartPage: NextPage = () => {
         <button
           style={{ marginLeft: 10 }}
           onClick={() => {
-            add([{ orderId: orderId }], Number(CHAIN_ID))
+            add([{ orderId: orderId }], Number(chainId))
           }}
         >
           Add to cart
@@ -92,7 +96,7 @@ const CartPage: NextPage = () => {
               checked={token.isInCart}
               onChange={() => {}}
               onClick={() => {
-                if (!token?.token || !token.token.collection?.id || !CHAIN_ID) {
+                if (!token?.token || !token.token.collection?.id || !chainId) {
                   return
                 }
 
@@ -101,7 +105,7 @@ const CartPage: NextPage = () => {
                     `${token.token.collection.id}:${token.token.tokenId}`,
                   ])
                 } else {
-                  add([token], Number(CHAIN_ID))
+                  add([token], Number(chainId))
                 }
               }}
             />

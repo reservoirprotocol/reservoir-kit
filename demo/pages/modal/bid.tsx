@@ -61,6 +61,7 @@ const BidPage: NextPage = () => {
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
+  const [conduitKey, setConduitKey] = useState<string | undefined>()
   const [oracleEnabled, setOracleEnabled] = useState(false)
 
   const computeAttribute = () => {
@@ -189,6 +190,14 @@ const BidPage: NextPage = () => {
           }}
         />
       </div>
+      <div>
+        <label>Conduit Key: </label>
+        <input
+          type="text"
+          value={conduitKey}
+          onChange={(e) => setConduitKey(e.target.value)}
+        />
+      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -234,6 +243,7 @@ const BidPage: NextPage = () => {
         tokenId={tokenId}
         currencies={currencies}
         attribute={attribute}
+        conduitKey={conduitKey}
         normalizeRoyalties={normalizeRoyalties}
         oracleEnabled={oracleEnabled}
         openState={hasDeeplink ? deeplinkOpenState : undefined}

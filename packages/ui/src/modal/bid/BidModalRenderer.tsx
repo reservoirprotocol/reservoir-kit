@@ -24,7 +24,7 @@ import {
   useWalletClient,
 } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
-
+import { useCapabilities } from 'wagmi/experimental'
 import {
   Execute,
   ReservoirClientActions,
@@ -34,7 +34,6 @@ import {
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'
-
 import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
@@ -95,6 +94,7 @@ type ChildrenProps = {
   bidStep: BidStep
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
+  hasAuxiliaryFundsSupport: boolean
   loading: boolean
   traitBidSupported: boolean
   collectionBidSupported: boolean
@@ -133,6 +133,7 @@ type Props = {
   attribute?: Trait
   normalizeRoyalties?: boolean
   currencies?: Currency[]
+  conduitKey?: string
   oracleEnabled: boolean
   feesBps?: string[] | null
   orderKind?: BidData['orderKind']
@@ -160,6 +161,7 @@ export const BidModalRenderer: FC<Props> = ({
   collectionId,
   orderKind,
   attribute,
+  conduitKey,
   normalizeRoyalties,
   currencies: preferredCurrencies,
   oracleEnabled = false,
@@ -321,7 +323,21 @@ export const BidModalRenderer: FC<Props> = ({
     biddingSupported,
   ])
 
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
+
+  const { data: capabilities } = useCapabilities({
+    query: {
+      enabled:
+        connector &&
+        (connector.id === 'coinbaseWalletSDK' || connector.id === 'coinbase'),
+    },
+  })
+  const hasAuxiliaryFundsSupport = Boolean(
+    rendererChain?.id
+      ? capabilities?.[rendererChain?.id]?.auxiliaryFunds?.supported
+      : false
+  )
+
   const { data: balance } = useBalance({
     address: address,
     chainId: rendererChain?.id,
@@ -368,6 +384,11 @@ export const BidModalRenderer: FC<Props> = ({
     convertLink =
       providerOptions.convertLink.tokenUrl ??
       providerOptions.convertLink.chainUrl ??
+      providerOptions.convertLink.customUrl?.({
+        toChain: rendererChain?.id,
+        toToken: wrappedContractAddress,
+        amountToWrap: amountToWrap,
+      }) ??
       ''
     if (rendererChain?.id) {
       convertLink = convertLink.replace('{toChain}', `${rendererChain.id}`)
@@ -394,7 +415,6 @@ export const BidModalRenderer: FC<Props> = ({
     totalFeeBps += exchange?.fee?.bps ?? 0
     return totalFeeBps
   }, [feesBps, client?.marketplaceFees, currency, exchange])
-  console.log(feeBps)
 
   useEffect(() => {
     if (totalBidAmount !== 0n) {
@@ -630,6 +650,14 @@ export const BidModalRenderer: FC<Props> = ({
         }
       }
 
+      if (conduitKey) {
+        bid.options = {
+          [exchange.orderKind as string]: {
+            conduitKey: conduitKey,
+          },
+        }
+      }
+
       if (usePermit) {
         bid.usePermit = true
       }
@@ -702,6 +730,7 @@ export const BidModalRenderer: FC<Props> = ({
       feesBps,
       exchange,
       usePermit,
+      conduitKey,
     ]
   )
 
@@ -728,6 +757,7 @@ export const BidModalRenderer: FC<Props> = ({
         loading: !collection || !reservoirMarketplace,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        hasAuxiliaryFundsSupport,
         traitBidSupported,
         collectionBidSupported,
         partialBidSupported,

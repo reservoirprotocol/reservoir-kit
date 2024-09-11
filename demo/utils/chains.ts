@@ -4,112 +4,184 @@ import { zeroAddress } from 'viem'
 export default [
   {
     ...reservoirChains.mainnet,
-    paymentTokens: [...reservoirChains.mainnet.paymentTokens, {
-      chainId: 8453,
-      address: zeroAddress,
-      symbol: 'Base ETH',
-      name: 'Base ETH',
-      decimals: 18,
-    },
-    {
-      chainId: 10,
-      address: zeroAddress,
-      symbol: 'Optimism ETH',
-      name: 'Optimism ETH',
-      decimals: 18,
-    }]
+    paymentTokens: [
+      ...reservoirChains.mainnet.paymentTokens,
+      {
+        chainId: 8453,
+        address: zeroAddress,
+        symbol: 'Base ETH',
+        name: 'Base ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 10,
+        address: zeroAddress,
+        symbol: 'Optimism ETH',
+        name: 'Optimism ETH',
+        decimals: 18,
+      },
+    ],
   },
   {
     ...reservoirChains.sepolia,
     baseApiUrl: 'https://api-sepolia.reservoir.tools',
-    paymentTokens: [...reservoirChains.sepolia.paymentTokens]
+    paymentTokens: [
+      ...reservoirChains.sepolia.paymentTokens,
+      {
+        chainId: 999999999,
+        address: zeroAddress,
+        symbol: 'Zora Sepolia ETH',
+        name: 'Zora Sepolia ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 84532,
+        address: zeroAddress,
+        symbol: 'Base Sepolia ETH',
+        name: 'Base Sepolia ETH',
+        decimals: 18,
+      },
+    ],
   },
   {
     ...reservoirChains.polygon,
   },
   {
-    ...reservoirChains.polygonAmoy
+    ...reservoirChains.polygonAmoy,
   },
   {
     ...reservoirChains.optimism,
-    paymentTokens: [...reservoirChains.optimism.paymentTokens, {
-      chainId: 1,
-      address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
-      decimals: 18,
-    },
-    {
-      chainId: 8453,
-      address: zeroAddress,
-      symbol: 'Base ETH',
-      name: 'Base ETH',
-      decimals: 18,
-    }]
+    paymentTokens: [
+      ...reservoirChains.optimism.paymentTokens,
+      {
+        chainId: 1,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 8453,
+        address: zeroAddress,
+        symbol: 'Base ETH',
+        name: 'Base ETH',
+        decimals: 18,
+      },
+    ],
   },
   {
     ...reservoirChains.arbitrum,
-    paymentTokens: [...reservoirChains.arbitrum.paymentTokens, {
-      chainId: 1,
-      address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
-      decimals: 18,
-    },
-    {
-      chainId: 8453,
-      address: zeroAddress,
-      symbol: 'Base ETH',
-      name: 'Base ETH',
-      decimals: 18,
-    }]
+    paymentTokens: [
+      ...reservoirChains.arbitrum.paymentTokens,
+      {
+        chainId: 1,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 8453,
+        address: zeroAddress,
+        symbol: 'Base ETH',
+        name: 'Base ETH',
+        decimals: 18,
+      },
+    ],
   },
   {
     ...reservoirChains.zora,
-    paymentTokens: [...reservoirChains.zora.paymentTokens, {
-      chainId: 1,
-      address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
-      decimals: 18,
-    },
-    {
-      chainId: 8453,
-      address: zeroAddress,
-      symbol: 'Base ETH',
-      name: 'Base ETH',
-      decimals: 18,
-    },{
-      chainId: 10,
-      address: zeroAddress,
-      symbol: 'Optimism ETH',
-      name: 'Optimism ETH',
-      decimals: 18,
-    }]
+    paymentTokens: [
+      ...reservoirChains.zora.paymentTokens,
+      {
+        chainId: 1,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 8453,
+        address: zeroAddress,
+        symbol: 'Base ETH',
+        name: 'Base ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 10,
+        address: zeroAddress,
+        symbol: 'Optimism ETH',
+        name: 'Optimism ETH',
+        decimals: 18,
+      },
+    ],
   },
   {
     ...reservoirChains.base,
-    paymentTokens: [...reservoirChains.base.paymentTokens, {
-      chainId: 1,
-      address: zeroAddress,
-      symbol: 'ETH',
-      name: 'ETH',
-      decimals: 18,
-    },
-    {
-      chainId: 10,
-      address: zeroAddress,
-      symbol: 'ETH',
-      name: 'Optimism ETH',
-      decimals: 18,
-    },
-    {
-      chainId: 7777777,
-      address: zeroAddress,
-      symbol: 'ETH',
-      name: 'Zora ETH',
-      decimals: 18,
-    }]
+    paymentTokens: [
+      ...reservoirChains.base.paymentTokens,
+      {
+        chainId: 1,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 10,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'Optimism ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 7777777,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'Zora ETH',
+        decimals: 18,
+      },
+    ],
+  },
+  {
+    ...reservoirChains.zkSync,
+    paymentTokens: [
+      {
+        chainId: 324,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'zkSync ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 324,
+        address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
+        symbol: 'WETH',
+        name: 'WETH',
+        decimals: 18,
+      },
+      {
+        chainId: 1,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 10,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'Optimism ETH',
+        decimals: 18,
+      },
+      {
+        chainId: 8453,
+        address: zeroAddress,
+        symbol: 'ETH',
+        name: 'Base ETH',
+        decimals: 18,
+      },
+    ],
   },
   {
     ...reservoirChains.baseSepolia,
@@ -122,7 +194,7 @@ export default [
         name: 'Sepolia ETH',
         decimals: 18,
       },
-    ]
+    ],
   },
   {
     ...reservoirChains.linea,
@@ -138,19 +210,19 @@ export default [
     ...reservoirChains.scroll,
   },
   {
-    ...reservoirChains.frameTestnet
+    ...reservoirChains.frameTestnet,
   },
   {
-    ...reservoirChains.blastSepolia
+    ...reservoirChains.blastSepolia,
   },
   {
-    ...reservoirChains.apexPop
+    ...reservoirChains.apexPop,
   },
   {
-    ...reservoirChains.apexPopTestnet
+    ...reservoirChains.apexPopTestnet,
   },
   {
-    ...reservoirChains.blast
+    ...reservoirChains.blast,
   },
   {
     ...reservoirChains.astarZkEVM,
@@ -159,30 +231,75 @@ export default [
     ...reservoirChains.garnet,
   },
   {
-    ...reservoirChains.redstone
+    ...reservoirChains.redstone,
   },
   {
-    ...reservoirChains.berachainTestnet
+    ...reservoirChains.berachainTestnet,
   },
   {
-    ...reservoirChains.degen
+    ...reservoirChains.degen,
   },
   {
-    ...reservoirChains.xai
+    ...reservoirChains.xai,
   },
   {
-    ...reservoirChains.nebula
+    ...reservoirChains.nebula,
   },
   {
-    ...reservoirChains.seiTestnet
+    ...reservoirChains.seiTestnet,
   },
   {
-    ...reservoirChains.cyber
+    ...reservoirChains.cyber,
   },
   {
-    ...reservoirChains.bitlayer
+    ...reservoirChains.bitlayer,
   },
   {
-    ...reservoirChains.sei
-  }
+    ...reservoirChains.sei,
+  },
+  {
+    ...reservoirChains.b3Testnet,
+  },
+  {
+    ...reservoirChains.flowPreviewnet,
+  },
+  {
+    ...reservoirChains.cloud,
+  },
+  {
+    ...reservoirChains.game7Testnet,
+  },
+  {
+    ...reservoirChains.boss,
+  },
+  {
+    ...reservoirChains.forma,
+  },
+  {
+    ...reservoirChains.formaSketchpad,
+  },
+  {
+    ...reservoirChains.apechain,
+  },
+  {
+    ...reservoirChains.curtis,
+  },
+  {
+    ...reservoirChains.shape,
+  },
+  {
+    ...reservoirChains.shapeSepolia,
+  },
+  {
+    ...reservoirChains.abstractTestnet,
+  },
+  {
+    ...reservoirChains.minato,
+  },
+  {
+    ...reservoirChains.hychain,
+  },
+  {
+    ...reservoirChains.hychainTestnet,
+  },
 ]
