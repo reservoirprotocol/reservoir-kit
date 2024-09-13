@@ -22,7 +22,7 @@ import { Modal } from '../Modal'
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons/faCheckCircle'
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
@@ -351,7 +351,7 @@ export function BuyModal({
                           gap: '$1',
                         }}
                       >
-                        <Text style="subtitle2">Payment Method</Text>
+                        <Text style="subtitle2">Select Payment Method</Text>
                         <Flex
                           align="center"
                           css={{ gap: '$2', cursor: 'pointer' }}
@@ -362,7 +362,7 @@ export function BuyModal({
                             </Text>
                           </Flex>
                           <Box css={{ color: '$neutralSolidHover' }}>
-                            <FontAwesomeIcon icon={faChevronRight} width={10} />
+                            <FontAwesomeIcon icon={faChevronDown} width={10} />
                           </Box>
                         </Flex>
                       </Flex>
