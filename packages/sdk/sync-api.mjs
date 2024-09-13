@@ -26,9 +26,28 @@ const generateTypes = async () => {
         schemaObject.type
       ) {
         const typeName = `\`${schemaObject.name}[\${string}]\` | \`${schemaObject.name}[\${string}]\`[]`
-        console.log('Generated custom type for:', schemaObject.name)
-        console.log('Output:', typeName)
+        // console.log('Generated custom type for:', schemaObject.name)
+        // console.log('Output:', typeName)
         return typeName
+      }
+
+      //
+
+      if (
+        schemaObject?.properties?.exchanges?.properties?.string?.$ref ===
+        'definitions["string"]'
+      ) {
+        schemaObject.properties.exchanges = {
+          type: 'object',
+          additionalProperties:
+            schemaObject.properties.exchanges.properties.string,
+        }
+
+        console.log('Generated custom type for: exchanges')
+        console.log(
+          'Output:',
+          JSON.stringify(schemaObject.properties.exchanges)
+        )
       }
 
       const alternatives = schemaObject['x-alternatives']
@@ -46,8 +65,8 @@ const generateTypes = async () => {
             return alternative.type
           })
           .join(' | ')
-        console.log('Generated alternative types for:', schemaObject.name)
-        console.log('Output:', types)
+        // console.log('Generated alternative types for:', schemaObject.name)
+        // console.log('Output:', types)
         return types
       }
     },
