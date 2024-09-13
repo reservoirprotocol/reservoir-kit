@@ -133,6 +133,7 @@ type Props = {
   attribute?: Trait
   normalizeRoyalties?: boolean
   currencies?: Currency[]
+  conduitKey?: string
   oracleEnabled: boolean
   feesBps?: string[] | null
   orderKind?: BidData['orderKind']
@@ -160,6 +161,7 @@ export const BidModalRenderer: FC<Props> = ({
   collectionId,
   orderKind,
   attribute,
+  conduitKey,
   normalizeRoyalties,
   currencies: preferredCurrencies,
   oracleEnabled = false,
@@ -382,6 +384,11 @@ export const BidModalRenderer: FC<Props> = ({
     convertLink =
       providerOptions.convertLink.tokenUrl ??
       providerOptions.convertLink.chainUrl ??
+      providerOptions.convertLink.customUrl?.({
+        toChain: rendererChain?.id,
+        toToken: wrappedContractAddress,
+        amountToWrap: amountToWrap,
+      }) ??
       ''
     if (rendererChain?.id) {
       convertLink = convertLink.replace('{toChain}', `${rendererChain.id}`)
@@ -643,6 +650,14 @@ export const BidModalRenderer: FC<Props> = ({
         }
       }
 
+      if (conduitKey) {
+        bid.options = {
+          [exchange.orderKind as string]: {
+            conduitKey: conduitKey,
+          },
+        }
+      }
+
       if (usePermit) {
         bid.usePermit = true
       }
@@ -715,6 +730,7 @@ export const BidModalRenderer: FC<Props> = ({
       feesBps,
       exchange,
       usePermit,
+      conduitKey,
     ]
   )
 

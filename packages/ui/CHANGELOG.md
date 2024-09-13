@@ -1,5 +1,164 @@
 ## 1.25.10
 
+## 2.7.17
+
+### Patch Changes
+
+- 9adc2db: support for abstract testnet, minato, hychain
+- Updated dependencies [9adc2db]
+  - @reservoir0x/reservoir-sdk@2.4.14
+
+## 2.7.16
+
+### Patch Changes
+
+- 9e723b8: adding shape and shape sepolia
+- Updated dependencies [9e723b8]
+  - @reservoir0x/reservoir-sdk@2.4.13
+
+## 2.7.15
+
+### Patch Changes
+
+- 55f67f6: adding apechain
+- Updated dependencies [55f67f6]
+  - @reservoir0x/reservoir-sdk@2.4.12
+
+## 2.7.14
+
+### Patch Changes
+
+- Updated dependencies [6118898]
+  - @reservoir0x/reservoir-sdk@2.4.11
+
+## 2.7.13
+
+### Patch Changes
+
+- Updated dependencies [ff0433f]
+  - @reservoir0x/reservoir-sdk@2.4.10
+
+## 2.7.12
+
+### Patch Changes
+
+- 9a8b493: adding b3
+- Updated dependencies [9a8b493]
+  - @reservoir0x/reservoir-sdk@2.4.9
+
+## 2.7.11
+
+### Patch Changes
+
+- e575a14: Sync api types
+- Updated dependencies [e575a14]
+  - @reservoir0x/reservoir-sdk@2.4.8
+
+## 2.7.10
+
+### Patch Changes
+
+- 71664d9: adding forma, syncing api types
+- Updated dependencies [71664d9]
+  - @reservoir0x/reservoir-sdk@2.4.7
+
+## 2.7.9
+
+### Patch Changes
+
+- a31b4ff: Fix CartProvider props to support custom Reservoir wallet
+
+## 2.7.8
+
+### Patch Changes
+
+- 286a562: Fix custom Reservoir wallet bug in Cart Provider
+
+## 2.7.7
+
+### Patch Changes
+
+- Updated dependencies [3aae35c]
+  - @reservoir0x/reservoir-sdk@2.4.6
+
+## 2.7.6
+
+### Patch Changes
+
+- c3a53b6: adding boss
+- Updated dependencies [c3a53b6]
+  - @reservoir0x/reservoir-sdk@2.4.5
+
+## 2.7.5
+
+### Patch Changes
+
+- 6da031f: Update wbera address
+- Updated dependencies [6da031f]
+  - @reservoir0x/reservoir-sdk@2.4.4
+
+## 2.7.4
+
+### Patch Changes
+
+- ee9b0e8: adding cloud and game7
+- Updated dependencies [d08dccf]
+- Updated dependencies [ee9b0e8]
+  - @reservoir0x/reservoir-sdk@2.4.3
+
+## 2.7.3
+
+### Patch Changes
+
+- Updated dependencies [e46059b]
+  - @reservoir0x/reservoir-sdk@2.4.2
+
+## 2.7.2
+
+### Patch Changes
+
+- 3c669df: Add conduit key param to List and Bid modals
+
+## 2.7.1
+
+### Patch Changes
+
+- 49fc944: Fix berachain definitions
+- Updated dependencies [49fc944]
+  - @reservoir0x/reservoir-sdk@2.4.1
+
+## 2.7.0
+
+### Minor Changes
+
+- b9063e3: Upgrade viem and wagmi
+
+### Patch Changes
+
+- e666856: adding amountToWrap to customUrl props
+- Updated dependencies [b9063e3]
+  - @reservoir0x/reservoir-sdk@2.4.0
+
+## 2.6.3
+
+### Patch Changes
+
+- 9686ca3: fixing nebula currencies
+- Updated dependencies [9686ca3]
+  - @reservoir0x/reservoir-sdk@2.3.1
+
+## 2.6.2
+
+### Patch Changes
+
+- e4f7185: Fix 1155 mint quantity bug
+
+## 2.6.1
+
+### Patch Changes
+
+- db8e44b: Fix CartPopover balance for custom tokens
+
 ## 2.6.0
 
 ### Minor Changes

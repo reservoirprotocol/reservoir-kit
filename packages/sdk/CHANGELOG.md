@@ -1,5 +1,102 @@
 ## 1.12.15
 
+## 2.4.14
+
+### Patch Changes
+
+- 9adc2db: support for abstract testnet, minato, hychain
+
+## 2.4.13
+
+### Patch Changes
+
+- 9e723b8: adding shape and shape sepolia
+
+## 2.4.12
+
+### Patch Changes
+
+- 55f67f6: adding apechain
+
+## 2.4.11
+
+### Patch Changes
+
+- 6118898: sync api types
+
+## 2.4.10
+
+### Patch Changes
+
+- ff0433f: Include request url in APIError and fix unknown status code
+
+## 2.4.9
+
+### Patch Changes
+
+- 9a8b493: adding b3
+
+## 2.4.8
+
+### Patch Changes
+
+- e575a14: Sync api types
+
+## 2.4.7
+
+### Patch Changes
+
+- 71664d9: adding forma, syncing api types
+
+## 2.4.6
+
+### Patch Changes
+
+- 3aae35c: Fix viem public client initialization bug
+
+## 2.4.5
+
+### Patch Changes
+
+- c3a53b6: adding boss
+
+## 2.4.4
+
+### Patch Changes
+
+- 6da031f: Update wbera address
+
+## 2.4.3
+
+### Patch Changes
+
+- d08dccf: Improve fallback logic for api errors
+- ee9b0e8: adding cloud and game7
+
+## 2.4.2
+
+### Patch Changes
+
+- e46059b: updating explore attributes version
+
+## 2.4.1
+
+### Patch Changes
+
+- 49fc944: Fix berachain definitions
+
+## 2.4.0
+
+### Minor Changes
+
+- b9063e3: Upgrade viem and wagmi
+
+## 2.3.1
+
+### Patch Changes
+
+- 9686ca3: fixing nebula currencies
+
 ## 2.3.0
 
 ### Minor Changes

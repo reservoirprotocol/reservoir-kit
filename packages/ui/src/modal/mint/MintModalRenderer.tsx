@@ -335,6 +335,8 @@ export const MintModalRenderer: FC<Props> = ({
                     } else if (!currentQuantity.maxQuantity) {
                       // if value is undefined, we don't know max quantity, but simulation succeeed with quantity of 1
                       maxQuantity = 1
+                    } else {
+                      maxQuantity = Number(currentQuantity.maxQuantity ?? 0)
                     }
                     return total + maxQuantity
                   },
@@ -497,12 +499,19 @@ export const MintModalRenderer: FC<Props> = ({
       paymentCurrency?.address && providerOptions.convertLink.tokenUrl
         ? providerOptions.convertLink.tokenUrl
         : providerOptions.convertLink.chainUrl
+
     if (rendererChain?.id) {
       addFundsLink = addFundsLink.replace('{toChain}', `${rendererChain.id}`)
     }
     if (paymentCurrency?.address) {
       addFundsLink = addFundsLink.replace('{toToken}', paymentCurrency?.address)
     }
+  } else if (providerOptions?.convertLink?.customUrl) {
+    addFundsLink = providerOptions.convertLink.customUrl?.({
+      toChain: rendererChain?.id,
+      toToken: paymentCurrency?.address,
+      toCurrency: paymentCurrency,
+    })
   }
 
   // Determine if user has enough funds in paymentToken

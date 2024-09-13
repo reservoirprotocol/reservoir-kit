@@ -3,6 +3,15 @@ import { chainPaymentTokensMap } from './paymentTokens'
 
 type ReservoirBaseChain = Omit<ReservoirChain, 'active'>
 
+const devSepolia = {
+  id: 11155111,
+  name: 'Dev Sepolia',
+  baseApiUrl: 'https://api-sepolia.dev.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[11155111],
+  websocketUrl: 'wss://ws.dev.reservoir.tools',
+  checkPollingInterval: 2000,
+} satisfies ReservoirBaseChain
+
 const mainnet = {
   id: 1,
   name: 'Ethereum',
@@ -243,10 +252,10 @@ const redstone = {
 } satisfies ReservoirBaseChain
 
 const berachainTestnet = {
-  id: 80085,
+  id: 80084,
   name: 'Berachain Testnet',
   baseApiUrl: 'https://api-berachain-testnet.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[80085],
+  paymentTokens: chainPaymentTokensMap[80084],
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
@@ -322,16 +331,120 @@ const flowPreviewnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
-const devSepolia = {
-  id: 11155111,
-  name: 'Dev Sepolia',
-  baseApiUrl: 'https://api-sepolia.dev.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[11155111],
-  websocketUrl: 'wss://ws.dev.reservoir.tools',
-  checkPollingInterval: 2000,
+const cloud = {
+  id: 70805,
+  name: 'Cloud',
+  baseApiUrl: 'https://api-cloud.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70805],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const game7Testnet = {
+  id: 13746,
+  name: 'Game7 Testnet',
+  baseApiUrl: 'https://api-game7-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[13746],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const boss = {
+  id: 70701,
+  name: 'Boss',
+  baseApiUrl: 'https://api-boss.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70701],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const forma = {
+  id: 984122,
+  name: 'Forma',
+  baseApiUrl: 'https://api-forma.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[984122],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const formaSketchpad = {
+  id: 984123,
+  name: 'Forma Sketchpad',
+  baseApiUrl: 'https://api-forma-sketchpad.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[984123],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const b3 = {
+  id: 8333,
+  name: 'B3',
+  baseApiUrl: 'https://api-b3.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[8333],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const apechain = {
+  id: 33139,
+  name: 'Apechain',
+  baseApiUrl: 'https://api-apechain.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[33139],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const curtis = {
+  id: 33111,
+  name: 'Curtis',
+  baseApiUrl: 'https://api-curtis.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[33111],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const shape = {
+  id: 360,
+  name: 'Shape',
+  baseApiUrl: 'https://api-shape.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[360],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const shapeSepolia = {
+  id: 11011,
+  name: 'Shape Sepolia',
+  baseApiUrl: 'https://api-shape-sepolia.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[11011],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const abstractTestnet = {
+  id: 11124,
+  name: 'Abstract Testnet',
+  baseApiUrl: 'https://api-abstract-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[11124],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const minato = {
+  id: 1946,
+  name: 'Minato',
+  baseApiUrl: 'https://api-minato.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1946],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const hychain = {
+  id: 2911,
+  name: 'Hychain',
+  baseApiUrl: 'https://api-hychain.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[2911],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const hychainTestnet = {
+  id: 29112,
+  name: 'Hychain Testnet',
+  baseApiUrl: 'https://api-hychain-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[29112],
+  checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
 export const reservoirChains = {
+  devSepolia,
   mainnet,
   polygon,
   polygonAmoy,
@@ -371,5 +484,18 @@ export const reservoirChains = {
   sei,
   b3Testnet,
   flowPreviewnet,
-  devSepolia,
+  cloud,
+  game7Testnet,
+  boss,
+  forma,
+  formaSketchpad,
+  b3,
+  apechain,
+  curtis,
+  shape,
+  shapeSepolia,
+  abstractTestnet,
+  minato,
+  hychain,
+  hychainTestnet,
 }

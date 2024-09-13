@@ -3,6 +3,6 @@ import { zeroAddress } from 'viem'
 
 export default [
   {
-    ...reservoirChains.devSepolia
+    ...reservoirChains.devSepolia,
   },
 ]

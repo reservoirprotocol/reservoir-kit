@@ -983,9 +983,12 @@ function cartStore({
         }
       }
 
-      const wagmiWalletClient = await getWalletClient(config, {
-        chainId: cartData.current.chain?.id,
-      })
+      let wagmiWalletClient
+      if (!walletClient) {
+        wagmiWalletClient = await getWalletClient(config, {
+          chainId: cartData.current.chain?.id,
+        })
+      }
 
       const wallet = walletClient || wagmiWalletClient
 
@@ -1278,6 +1281,7 @@ type CartProviderProps = {
   feesOnTopBps?: string[]
   feesOnTopUsd?: string[]
   persist?: boolean
+  walletClient?: ReservoirWallet | WalletClient
 }
 
 export const CartProvider: FC<CartProviderProps> = function ({
@@ -1285,10 +1289,11 @@ export const CartProvider: FC<CartProviderProps> = function ({
   feesOnTopBps,
   feesOnTopUsd,
   persist,
+  walletClient,
 }) {
   return (
     <CartContext.Provider
-      value={cartStore({ feesOnTopBps, feesOnTopUsd, persist })}
+      value={cartStore({ feesOnTopBps, feesOnTopUsd, persist, walletClient })}
     >
       {children}
     </CartContext.Provider>
