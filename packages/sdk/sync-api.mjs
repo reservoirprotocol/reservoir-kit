@@ -31,8 +31,6 @@ const generateTypes = async () => {
         return typeName
       }
 
-      //
-
       if (
         schemaObject?.properties?.exchanges?.properties?.string?.$ref ===
         'definitions["string"]'
