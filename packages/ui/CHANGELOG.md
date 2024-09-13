@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.18
+
+### Patch Changes
+
+- 02390c4: updating refund error message
+- Updated dependencies [02390c4]
+  - @reservoir0x/reservoir-sdk@2.4.15
+
 ## 2.7.17
 
 ### Patch Changes
