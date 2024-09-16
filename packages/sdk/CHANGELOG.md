@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.16
+
+### Patch Changes
+
+- b71da2f: Sync api types, fix marketplace-configurations/v2 exchange type
+
 ## 2.4.15
 
 ### Patch Changes
