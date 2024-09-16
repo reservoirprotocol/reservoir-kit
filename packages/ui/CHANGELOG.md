@@ -1,5 +1,12 @@
 ## 1.25.10
 
+## 2.7.19
+
+### Patch Changes
+
+- Updated dependencies [b71da2f]
+  - @reservoir0x/reservoir-sdk@2.4.16
+
 ## 2.7.18
 
 ### Patch Changes
