@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.17
+
+### Patch Changes
+
+- 31f3762: updating tx syncing to be async
+
 ## 2.4.16
 
 ### Patch Changes
