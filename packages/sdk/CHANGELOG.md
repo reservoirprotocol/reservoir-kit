@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.18
+
+### Patch Changes
+
+- 12c1717: updating WAPE on apechain and curtis
+
 ## 2.4.17
 
 ### Patch Changes
