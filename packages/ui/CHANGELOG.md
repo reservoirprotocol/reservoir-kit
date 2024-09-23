@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.22
+
+### Patch Changes
+
+- ce16bbd: adding flow
+- Updated dependencies [ce16bbd]
+  - @reservoir0x/reservoir-sdk@2.4.19
+
 ## 2.7.21
 
 ### Patch Changes
