@@ -434,6 +434,14 @@ const hychainTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const flow = {
+  id: 747,
+  name: 'Flow',
+  baseApiUrl: 'https://api-flow.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[747],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -488,4 +496,5 @@ export const reservoirChains = {
   minato,
   hychain,
   hychainTestnet,
+  flow,
 }
