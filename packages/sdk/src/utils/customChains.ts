@@ -798,6 +798,30 @@ export const hychainTestnet = {
   },
 } as const satisfies Chain
 
+export const flow = {
+  id: 747,
+  name: 'Flow',
+  nativeCurrency: { name: 'Flow', symbol: 'FLOW', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet.evm.nodes.onflow.org'],
+    },
+    public: {
+      http: ['https://mainnet.evm.nodes.onflow.org'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Flow Explorer',
+      url: 'https://evm.flowscan.io',
+    },
+    default: {
+      name: 'Flow Explorer',
+      url: 'https://evm.flowscan.io',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -832,4 +856,5 @@ export const customChains = {
   minato,
   hychain,
   hychainTestnet,
+  flow,
 } as const satisfies Record<string, Chain>

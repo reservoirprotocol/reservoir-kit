@@ -85,6 +85,7 @@ const chains = [
   customChains.minato,
   customChains.hychain,
   customChains.hychainTestnet,
+  customChains.flow,
 ] as [Chain, ...Chain[]]
 
 const wagmiConfig = getDefaultConfig({

@@ -302,4 +302,7 @@ export default [
   {
     ...reservoirChains.hychainTestnet,
   },
+  {
+    ...reservoirChains.flow,
+  },
 ]
