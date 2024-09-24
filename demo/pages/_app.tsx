@@ -55,7 +55,8 @@ const { chains, publicClient } = configureChains(
     allChains.linea,
     allChains.scroll,
     allChains.arbitrumNova,
-    customChains.frameTestnet
+    customChains.frameTestnet,
+    customChains.ancient8
   ],
   [alchemyProvider({ apiKey: ALCHEMY_KEY }), publicProvider()]
 )

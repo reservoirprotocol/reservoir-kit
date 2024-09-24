@@ -1,4 +1,4 @@
-import { customChains, reservoirChains } from '@reservoir0x/reservoir-sdk'
+import { ancient8, customChains, reservoirChains } from '@reservoir0x/reservoir-sdk'
 import { zeroAddress } from 'viem'
 
 export default [
@@ -168,4 +168,8 @@ export default [
   {
     ...reservoirChains.blast
   },
+  {
+    ...reservoirChains.ancient8,
+    id: reservoirChains.ancient8.id
+  }
 ]

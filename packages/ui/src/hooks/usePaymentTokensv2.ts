@@ -130,7 +130,6 @@ export default function (options: {
     listingCurrency,
     listingCurrencyChainId,
   ])
-
   const nonNativeCurrencies = useMemo(() => {
     return allPaymentTokens?.filter(
       (currency) => currency.address !== zeroAddress
@@ -141,6 +140,7 @@ export default function (options: {
     crossChainDisabled,
     nativeOnly,
     includeListingCurrency,
+    listingCurrency,
   ])
 
   const nativeCurrencies = useMemo(() => {
@@ -153,6 +153,7 @@ export default function (options: {
     crossChainDisabled,
     nativeOnly,
     includeListingCurrency,
+    listingCurrency,
   ])
 
   const { data: nonNativeBalances } = useContractReads({
@@ -160,7 +161,7 @@ export default function (options: {
       ? nonNativeCurrencies?.map((currency) => ({
           abi: erc20ABI,
           address: currency.address as `0x${string}`,
-          chainId: chainId,
+          chainId: currency.chainId,
           functionName: 'balanceOf',
           args: [address],
         }))
