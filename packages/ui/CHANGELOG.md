@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.7.24
+
+### Patch Changes
+
+- 3b98d57: fixing flow block explorer
+
 ## 2.7.23
 
 ### Patch Changes
