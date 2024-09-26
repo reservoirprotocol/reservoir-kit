@@ -28,7 +28,7 @@ const wrappedContractNames: Record<number, string> = {
   3776: 'WETH', // astar zkevm,
   17069: 'WETH', // garnet
   690: 'WETH', // redstone
-  80085: 'WBERA', // berachain testnet
+  80084: 'WBERA', // berachain testnet
   666666666: 'WDEGEN', // degen
   660279: 'WXAI', // xai
   1482601649: 'ETH', // nebula
@@ -38,5 +38,20 @@ const wrappedContractNames: Record<number, string> = {
   1329: 'WSEI', // sei
   1993: 'WETH', // b3 testnet
   646: 'WFLOW', // flow previewnet
+  70805: 'WETH', // cloud
+  13746: 'WTG7T', // game7 testnet
+  70701: 'WETH', // boss
+  984122: 'WTIA', // forma
+  984123: 'WTIA', // forma sketchpad
+  8333: 'WETH', // b3
+  33139: 'WAPE', // apechain
+  33111: 'WAPE', // apechain
+  360: 'WETH', // shape
+  11011: 'WETH', // shape sepolia
+  11124: 'WETH', // abstract testnet
+  1946: 'WETH', // minato
+  2911: 'WTOPIA', // hychain
+  29112: 'WTOPIA', // hychain testnet
+  747: 'WFLOW', // flow
 }
 export default wrappedContractNames

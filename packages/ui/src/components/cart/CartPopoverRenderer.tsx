@@ -8,6 +8,7 @@ import {
   CheckoutStatus,
   CheckoutTransactionError,
 } from '../../context/CartProvider'
+import { useCapabilities } from 'wagmi/experimental'
 
 type ChildrenProps = {
   loading: boolean
@@ -18,6 +19,7 @@ type ChildrenProps = {
   usdPrice: number | null
   balance?: bigint
   hasEnoughCurrency: boolean
+  hasAuxiliaryFundsSupport: boolean
   items: Cart['items']
   unavailableItems: Cart['items']
   priceChangeItems: Cart['items']
@@ -90,13 +92,28 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
       ),
     [items]
   )
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
 
-  const { data: balance } = useBalance({
-    chainId: cartChain?.id || client?.currentChain()?.id,
+  const { data: capabilities } = useCapabilities({
+    query: {
+      enabled:
+        connector &&
+        (connector.id === 'coinbaseWalletSDK' || connector.id === 'coinbase'),
+    },
+  })
+
+  const cartChainId = cartChain?.id ?? client?.currentChain()?.id
+
+  const hasAuxiliaryFundsSupport = Boolean(
+    cartChainId ? capabilities?.[cartChainId]?.auxiliaryFunds?.supported : false
+  )
+
+  const isNativeListing = currency?.contract === zeroAddress
+  const { data: nativeBalance } = useBalance({
+    chainId: cartChainId,
     address: address,
     query: {
-      enabled: currency?.contract === zeroAddress,
+      enabled: isNativeListing,
     },
   })
 
@@ -107,14 +124,18 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         address: currency?.contract as Address,
         abi: erc20Abi,
         functionName: 'balanceOf',
-        chainId: cartChain?.id || client?.currentChain()?.id,
+        chainId: cartChainId,
         args: [address as Address],
       },
     ],
     query: {
-      enabled: address && currency?.contract !== zeroAddress,
+      enabled: address && !isNativeListing,
     },
   })
+
+  const balance = isNativeListing
+    ? nativeBalance
+    : { ...currency, value: tokenBalance?.[0] ?? 0n }
 
   useEffect(() => {
     if (balance) {
@@ -154,7 +175,8 @@ export const CartPopoverRenderer: FC<Props> = ({ open, children }) => {
         feeOnTop,
         usdPrice,
         hasEnoughCurrency,
-        balance: balance?.value ?? tokenBalance?.[0],
+        hasAuxiliaryFundsSupport,
+        balance: balance?.value,
         transaction,
         blockExplorerBaseUrl,
         cartChain,

@@ -173,6 +173,7 @@ export function SweepModal({
         disableJumperLink,
         balance,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         transactionError,
         stepData,
         sweepStep,
@@ -430,12 +431,16 @@ export function SweepModal({
                       css={{ pt: '$4' }}
                     />
                   </Flex>
-                  {hasEnoughCurrency || !isConnected ? (
+                  {hasEnoughCurrency ||
+                  !isConnected ||
+                  hasAuxiliaryFundsSupport ? (
                     <Button
                       css={{ m: '$4' }}
                       disabled={
                         !(selectedTokens.length > 0) ||
-                        (!hasEnoughCurrency && isConnected)
+                        (!hasEnoughCurrency &&
+                          !hasAuxiliaryFundsSupport &&
+                          isConnected)
                       }
                       onClick={sweepTokens}
                     >

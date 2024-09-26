@@ -72,6 +72,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   currencies?: Currency[]
   normalizeRoyalties?: boolean
   oracleEnabled?: boolean
+  conduitKey?: string
   copyOverrides?: Partial<typeof ModalCopy>
   feesBps?: string[]
   walletClient?: ReservoirWallet | WalletClient
@@ -103,6 +104,7 @@ export function ListModal({
   currencies,
   normalizeRoyalties,
   oracleEnabled = false,
+  conduitKey,
   copyOverrides,
   feesBps,
   walletClient,
@@ -138,6 +140,7 @@ export function ListModal({
       currencies={currencies}
       normalizeRoyalties={normalizeRoyalties}
       oracleEnabled={oracleEnabled}
+      conduitKey={conduitKey}
       feesBps={feesBps}
       walletClient={walletClient}
     >

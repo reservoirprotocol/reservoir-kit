@@ -462,6 +462,366 @@ export const flowPreviewnet = {
   },
 } as const satisfies Chain
 
+export const cloud = {
+  id: 70805,
+  name: 'Cloud',
+  nativeCurrency: { name: 'Eth', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-pop-testnet-cloud-fmg1z6e0a9.t.conduit.xyz'],
+    },
+    public: {
+      http: ['https://rpc-pop-testnet-cloud-fmg1z6e0a9.t.conduit.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Cloud Explorer',
+      url: 'https://explorer-pop-testnet-cloud-fmg1z6e0a9.t.conduit.xyz',
+    },
+    default: {
+      name: 'Cloud Explorer',
+      url: 'https://explorer-pop-testnet-cloud-fmg1z6e0a9.t.conduit.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const game7Testnet = {
+  id: 13746,
+  name: 'Game7 Testnet',
+  nativeCurrency: { name: 'TG7T', symbol: 'TG7T', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz'],
+    },
+    public: {
+      http: ['https://rpc-game7-testnet-0ilneybprf.t.conduit.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Game7 Testnet Explorer',
+      url: 'https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz',
+    },
+    default: {
+      name: 'Game7 Testnet Explorer',
+      url: 'https://explorer-game7-testnet-0ilneybprf.t.conduit.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const boss = {
+  id: 70701,
+  name: 'Boss',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.boss.proofofplay.com'],
+    },
+    public: {
+      http: ['https://rpc.boss.proofofplay.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Boss Explorer',
+      url: 'https://explorer-proofofplay-boss-mainnet.t.conduit.xyz',
+    },
+    default: {
+      name: 'Boss Explorer',
+      url: 'https://explorer-proofofplay-boss-mainnet.t.conduit.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const forma = {
+  id: 984122,
+  name: 'Forma',
+  nativeCurrency: { name: 'TIA', symbol: 'TIA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.forma.art'],
+    },
+    public: {
+      http: ['https://rpc.forma.art'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Forma Explorer',
+      url: 'https://explorer.forma.art',
+    },
+    default: {
+      name: 'Forma Explorer',
+      url: 'https://explorer.forma.art',
+    },
+  },
+} as const satisfies Chain
+
+export const formaSketchpad = {
+  id: 984123,
+  name: 'Forma Sketchpad',
+  nativeCurrency: { name: 'TIA', symbol: 'TIA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.sketchpad-1.forma.art'],
+    },
+    public: {
+      http: ['https://rpc.sketchpad-1.forma.art'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Forma Sketchpad Explorer',
+      url: 'https://explorer.sketchpad-1.forma.art',
+    },
+    default: {
+      name: 'Forma Sketchpad Explorer',
+      url: 'https://explorer.sketchpad-1.forma.art',
+    },
+  },
+} as const satisfies Chain
+
+export const b3 = {
+  id: 8333,
+  name: 'B3',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet-rpc.b3.fun/http'],
+    },
+    public: {
+      http: ['https://mainnet-rpc.b3.fun/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'B3 Explorer',
+      url: 'https://explorer.b3.fun',
+    },
+    default: {
+      name: 'B3 Explorer',
+      url: 'https://explorer.b3.fun',
+    },
+  },
+} as const satisfies Chain
+
+export const apechain = {
+  id: 33139,
+  name: 'Apechain',
+  nativeCurrency: { name: 'ApeCoin', symbol: 'APE', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://apechain.calderachain.xyz/http'],
+    },
+    public: {
+      http: ['https://apechain.calderachain.xyz/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Apechain Explorer',
+      url: 'https://apechain.calderaexplorer.xyz',
+    },
+    default: {
+      name: 'Apechain Explorer',
+      url: 'https://apechain.calderaexplorer.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const curtis = {
+  id: 33111,
+  name: 'Curtis',
+  nativeCurrency: { name: 'ApeCoin', symbol: 'APE', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://curtis.rpc.caldera.xyz/http'],
+    },
+    public: {
+      http: ['https://curtis.rpc.caldera.xyz/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Curtis Explorer',
+      url: 'https://curtis.explorer.caldera.xyz',
+    },
+    default: {
+      name: 'Curtis Explorer',
+      url: 'https://curtis.explorer.caldera.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const shape = {
+  id: 360,
+  name: 'Shape',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet.shape.network'],
+    },
+    public: {
+      http: ['https://mainnet.shape.network'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Shape Explorer',
+      url: 'https://internal-shaper-explorer.alchemypreview.com',
+    },
+    default: {
+      name: 'Shape Explorer',
+      url: 'https://internal-shaper-explorer.alchemypreview.com',
+    },
+  },
+} as const satisfies Chain
+
+export const shapeSepolia = {
+  id: 11011,
+  name: 'Shape Sepolia',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://sepolia.shape.network'],
+    },
+    public: {
+      http: ['https://sepolia.shape.network'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Shape Sepolia Explorer',
+      url: 'https://explorer-sepolia.shape.network',
+    },
+    default: {
+      name: 'Shape Sepolia Explorer',
+      url: 'https://explorer-sepolia.shape.network',
+    },
+  },
+} as const satisfies Chain
+
+export const abstractTestnet = {
+  id: 11124,
+  name: 'Abstract Testnet',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://api.testnet.abs.xyz'],
+    },
+    public: {
+      http: ['https://api.testnet.abs.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Abstract Testnet Explorer',
+      url: 'https://explorer.testnet.abs.xyz',
+    },
+    default: {
+      name: 'Abstract Testnet Explorer',
+      url: 'https://explorer.testnet.abs.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const minato = {
+  id: 1946,
+  name: 'Minato',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.minato.soneium.org'],
+    },
+    public: {
+      http: ['https://rpc.minato.soneium.org'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Minato Explorer',
+      url: 'https://explorer-testnet.soneium.org',
+    },
+    default: {
+      name: 'Minato Explorer',
+      url: 'https://explorer-testnet.soneium.org',
+    },
+  },
+} as const satisfies Chain
+
+export const hychain = {
+  id: 2911,
+  name: 'Hychain',
+  nativeCurrency: { name: 'Hychain', symbol: 'TOPIA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.hychain.com/http'],
+    },
+    public: {
+      http: ['https://rpc.hychain.com/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Hychain Explorer',
+      url: 'https://explorer.hychain.com',
+    },
+    default: {
+      name: 'Hychain Explorer',
+      url: 'https://explorer.hychain.com',
+    },
+  },
+} as const satisfies Chain
+
+export const hychainTestnet = {
+  id: 29112,
+  name: 'Hychain Testnet',
+  nativeCurrency: { name: 'Hychain', symbol: 'TOPIA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://testnet-rpc.hychain.com/http'],
+    },
+    public: {
+      http: ['https://testnet-rpc.hychain.com/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Hychain Testnet Explorer',
+      url: 'https://testnet.explorer.hychain.com',
+    },
+    default: {
+      name: 'Hychain Testnet Explorer',
+      url: 'https://testnet.explorer.hychain.com',
+    },
+  },
+} as const satisfies Chain
+
+export const flow = {
+  id: 747,
+  name: 'Flow',
+  nativeCurrency: { name: 'Flow', symbol: 'FLOW', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet.evm.nodes.onflow.org'],
+    },
+    public: {
+      http: ['https://mainnet.evm.nodes.onflow.org'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Flow Explorer',
+      url: 'https://evm.flowscan.io',
+    },
+    default: {
+      name: 'Flow Explorer',
+      url: 'https://evm.flowscan.io',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -482,4 +842,19 @@ export const customChains = {
   nebula,
   b3Testnet,
   flowPreviewnet,
+  cloud,
+  game7Testnet,
+  boss,
+  forma,
+  formaSketchpad,
+  b3,
+  apechain,
+  curtis,
+  shape,
+  shapeSepolia,
+  abstractTestnet,
+  minato,
+  hychain,
+  hychainTestnet,
+  flow,
 } as const satisfies Record<string, Chain>

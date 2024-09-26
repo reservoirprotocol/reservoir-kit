@@ -31,6 +31,23 @@ const generateTypes = async () => {
         return typeName
       }
 
+      if (
+        schemaObject?.properties?.exchanges?.properties?.string?.$ref ===
+        'definitions["string"]'
+      ) {
+        schemaObject.properties.exchanges = {
+          type: 'object',
+          additionalProperties:
+            schemaObject.properties.exchanges.properties.string,
+        }
+
+        console.log('Generated custom type for: exchanges')
+        console.log(
+          'Output:',
+          JSON.stringify(schemaObject.properties.exchanges)
+        )
+      }
+
       const alternatives = schemaObject['x-alternatives']
       if (alternatives && alternatives[0] && alternatives[0].items) {
         const types = alternatives

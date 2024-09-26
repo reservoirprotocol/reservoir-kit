@@ -85,12 +85,36 @@ import BitlayerIconColor from '../img/chains/BitlayerIconColor'
 import SeiIconLight from '../img/chains/SeiIconLight'
 import SeiIconDark from '../img/chains/SeiIconDark'
 import SeiIconColor from '../img/chains/SeiIconColor'
-import B3TestnetIconLight from '../img/chains/B3TestnetIconLight'
-import B3TestnetIconDark from '../img/chains/B3TestnetIconDark'
-import B3TestnetIconColor from '../img/chains/B3TestnetIconColor'
+import B3IconLight from '../img/chains/B3IconLight'
+import B3IconDark from '../img/chains/B3IconDark'
+import B3IconColor from '../img/chains/B3IconColor'
 import FlowPreviewnetIconLight from '../img/chains/FlowPreviewnetIconLight'
 import FlowPreviewnetIconDark from '../img/chains/FlowPreviewnetIconDark'
 import FlowPreviewnetIconColor from '../img/chains/FlowPreviewnetIconColor'
+import CloudIconLight from '../img/chains/CloudIconLight'
+import CloudIconDark from '../img/chains/CloudIconDark'
+import CloudIconColor from '../img/chains/CloudIconColor'
+import Game7TestnetIconLight from '../img/chains/Game7TestnetIconLight'
+import Game7TestnetIconDark from '../img/chains/Game7TestnetIconDark'
+import Game7TestnetIconColor from '../img/chains/Game7TestnetIconColor'
+import FormaIconLight from '../img/chains/FormaIconLight'
+import FormaIconDark from '../img/chains/FormaIconDark'
+import FormaIconColor from '../img/chains/FormaIconColor'
+import ApechainIconLight from '../img/chains/ApechainIconLight'
+import ApechainIconDark from '../img/chains/ApechainIconDark'
+import ApechainIconColor from '../img/chains/ApechainIconColor'
+import ShapeIconLight from '../img/chains/ShapeIconLight'
+import ShapeIconDark from '../img/chains/ShapeIconDark'
+import ShapeIconColor from '../img/chains/ShapeIconColor'
+import AbstractIconLight from '../img/chains/AbstractIconLight'
+import AbstractIconDark from '../img/chains/AbstractIconDark'
+import AbstractIconColor from '../img/chains/AbstractIconColor'
+import MinatoIconLight from '../img/chains/MinatoIconLight'
+import MinatoIconDark from '../img/chains/MinatoIconDark'
+import MinatoIconColor from '../img/chains/MinatoIconColor'
+import HychainIconLight from '../img/chains/HychainIconLight'
+import HychainIconDark from '../img/chains/HychainIconDark'
+import HychainIconColor from '../img/chains/HychainIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -275,11 +299,91 @@ const chainIcons = {
     color: <SeiIconColor />,
   },
   [reservoirChains.b3Testnet.id]: {
-    light: <B3TestnetIconLight />,
-    dark: <B3TestnetIconDark />,
-    color: <B3TestnetIconColor />,
+    light: <B3IconLight />,
+    dark: <B3IconDark />,
+    color: <B3IconColor />,
   },
   [reservoirChains.flowPreviewnet.id]: {
+    light: <FlowPreviewnetIconLight />,
+    dark: <FlowPreviewnetIconDark />,
+    color: <FlowPreviewnetIconColor />,
+  },
+  [reservoirChains.cloud.id]: {
+    light: <CloudIconLight />,
+    dark: <CloudIconDark />,
+    color: <CloudIconColor />,
+  },
+  [reservoirChains.game7Testnet.id]: {
+    light: <Game7TestnetIconLight />,
+    dark: <Game7TestnetIconDark />,
+    color: <Game7TestnetIconColor />,
+  },
+  [reservoirChains.boss.id]: {
+    light: <ApexPopIconLight />,
+    dark: <ApexPopIconDark />,
+    color: <ApexPopIconColor />,
+  },
+  [reservoirChains.forma.id]: {
+    light: <FormaIconLight />,
+    dark: <FormaIconDark />,
+    color: <FormaIconColor />,
+  },
+  [reservoirChains.forma.id]: {
+    light: <FormaIconLight />,
+    dark: <FormaIconDark />,
+    color: <FormaIconColor />,
+  },
+  [reservoirChains.formaSketchpad.id]: {
+    light: <FormaIconLight />,
+    dark: <FormaIconDark />,
+    color: <FormaIconColor />,
+  },
+  [reservoirChains.b3.id]: {
+    light: <B3IconLight />,
+    dark: <B3IconDark />,
+    color: <B3IconColor />,
+  },
+  [reservoirChains.apechain.id]: {
+    light: <ApechainIconLight />,
+    dark: <ApechainIconDark />,
+    color: <ApechainIconColor />,
+  },
+  [reservoirChains.curtis.id]: {
+    light: <ApechainIconLight />,
+    dark: <ApechainIconDark />,
+    color: <ApechainIconColor />,
+  },
+  [reservoirChains.shape.id]: {
+    light: <ShapeIconLight />,
+    dark: <ShapeIconDark />,
+    color: <ShapeIconColor />,
+  },
+  [reservoirChains.shapeSepolia.id]: {
+    light: <ShapeIconLight />,
+    dark: <ShapeIconDark />,
+    color: <ShapeIconColor />,
+  },
+  [reservoirChains.abstractTestnet.id]: {
+    light: <AbstractIconLight />,
+    dark: <AbstractIconDark />,
+    color: <AbstractIconColor />,
+  },
+  [reservoirChains.minato.id]: {
+    light: <MinatoIconLight />,
+    dark: <MinatoIconDark />,
+    color: <MinatoIconColor />,
+  },
+  [reservoirChains.hychain.id]: {
+    light: <HychainIconLight />,
+    dark: <HychainIconDark />,
+    color: <HychainIconColor />,
+  },
+  [reservoirChains.hychainTestnet.id]: {
+    light: <HychainIconLight />,
+    dark: <HychainIconDark />,
+    color: <HychainIconColor />,
+  },
+  [reservoirChains.flow.id]: {
     light: <FlowPreviewnetIconLight />,
     dark: <FlowPreviewnetIconDark />,
     color: <FlowPreviewnetIconColor />,

@@ -33,6 +33,7 @@ import {
   BuyResponses,
 } from '@reservoir0x/reservoir-sdk'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import { useCapabilities } from 'wagmi/experimental'
 
 export enum SweepStep {
   Idle,
@@ -85,6 +86,7 @@ export type ChildrenProps = {
   isConnected: boolean
   disableJumperLink?: boolean
   hasEnoughCurrency: boolean
+  hasAuxiliaryFundsSupport: boolean
   addFundsLink: string
   blockExplorerBaseUrl: string
   transactionError: Error | null | undefined
@@ -128,7 +130,7 @@ export const SweepModalRenderer: FC<Props> = ({
 }) => {
   const client = useReservoirClient()
   const config = useConfig()
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
   const [selectedTokens, setSelectedTokens] = useState<NonNullable<BuyPath>>([])
   const [isFetchingPath, setIsFetchingPath] = useState(false)
   const [fetchedInitialOrders, setFetchedInitialOrders] = useState(false)
@@ -173,6 +175,19 @@ export const SweepModalRenderer: FC<Props> = ({
   const { data: wagmiWallet } = useWalletClient({ chainId: rendererChain?.id })
 
   const wallet = walletClient || wagmiWallet
+
+  const { data: capabilities } = useCapabilities({
+    query: {
+      enabled:
+        connector &&
+        (connector.id === 'coinbaseWalletSDK' || connector.id === 'coinbase'),
+    },
+  })
+  const hasAuxiliaryFundsSupport = Boolean(
+    rendererChain?.id
+      ? capabilities?.[rendererChain?.id]?.auxiliaryFunds?.supported
+      : false
+  )
 
   const blockExplorerBaseUrl =
     wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
@@ -542,12 +557,19 @@ export const SweepModalRenderer: FC<Props> = ({
       paymentCurrency?.address && providerOptions.convertLink.tokenUrl
         ? providerOptions.convertLink.tokenUrl
         : providerOptions.convertLink.chainUrl
+
     if (rendererChain?.id) {
       addFundsLink = addFundsLink.replace('{toChain}', `${rendererChain.id}`)
     }
     if (paymentCurrency?.address) {
       addFundsLink = addFundsLink.replace('{toToken}', paymentCurrency?.address)
     }
+  } else if (providerOptions?.convertLink?.customUrl) {
+    addFundsLink = providerOptions.convertLink.customUrl?.({
+      toChain: rendererChain?.id,
+      toToken: paymentCurrency?.address,
+      toCurrency: paymentCurrency,
+    })
   }
 
   // Determine if user has enough funds in paymentToken
@@ -643,6 +665,7 @@ export const SweepModalRenderer: FC<Props> = ({
       partial: true,
       currency: paymentCurrency?.address,
       currencyChainId: paymentCurrency?.chainId,
+      skipBalanceCheck: hasAuxiliaryFundsSupport,
     }
 
     const relayerFee = BigInt(buyResponseFees?.relayer?.amount?.raw ?? 0)
@@ -798,6 +821,7 @@ export const SweepModalRenderer: FC<Props> = ({
     paymentTokens,
     buyResponseFees,
     usePermit,
+    hasAuxiliaryFundsSupport,
   ])
 
   return (
@@ -837,6 +861,7 @@ export const SweepModalRenderer: FC<Props> = ({
           ? BigInt(paymentCurrency.balance)
           : undefined,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         addFundsLink,
         blockExplorerBaseUrl,
         transactionError,

@@ -10,7 +10,7 @@ import React, {
 } from 'react'
 import { darkTheme } from 'stitches.config'
 import { ThemeProvider } from 'next-themes'
-import {  http } from 'wagmi'
+import { http } from 'wagmi'
 import { PrivyProvider, addRpcUrlOverrideToChain } from '@privy-io/react-auth'
 import * as allChains from 'wagmi/chains'
 import '../fonts.css'
@@ -28,7 +28,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { chainIdToAlchemyNetworkMap } from 'utils/chainIdToAlchemyNetworkMap'
 import { Chain } from 'wagmi/chains'
 import { createConfig } from '@privy-io/wagmi'
-import {WagmiProvider} from '@privy-io/wagmi';
+import { WagmiProvider } from '@privy-io/wagmi'
 import { _transports } from '@rainbow-me/rainbowkit/dist/config/getDefaultConfig'
 
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY
@@ -45,68 +45,62 @@ const WALLET_CONNECT_PROJECT_ID =
   process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || ''
 const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
 
+const chains = [
+  allChains.mainnet,
+  allChains.sepolia,
+  allChains.polygon,
+  allChains.polygonAmoy,
+  allChains.optimism,
+  allChains.arbitrum,
+  allChains.zora,
+  allChains.base,
+  allChains.avalanche,
+  allChains.linea,
+  allChains.scroll,
+  allChains.arbitrumNova,
+  allChains.berachainTestnet,
+  customChains.redstone,
+  customChains.garnet,
+  customChains.frameTestnet,
+  customChains.astarZkEVM,
+  customChains.apexPop,
+  customChains.apexPopTestnet,
+  customChains.degen,
+  customChains.xai,
+  customChains.nebula,
+  customChains.seiTestnet,
+  customChains.cyber,
+  customChains.bitlayer,
+  customChains.b3Testnet,
+  customChains.flowPreviewnet,
+] as [Chain, ...Chain[]]
 
-  const chains = [
-    allChains.mainnet,
-    allChains.sepolia,
-    allChains.polygon,
-    allChains.polygonAmoy,
-    allChains.optimism,
-    allChains.arbitrum,
-    allChains.zora,
-    allChains.base,
-    allChains.avalanche,
-    allChains.linea,
-    allChains.scroll,
-    allChains.arbitrumNova,
-    allChains.berachainTestnet,
-    customChains.redstone,
-    customChains.garnet,
-    customChains.frameTestnet,
-    customChains.astarZkEVM,
-    customChains.apexPop,
-    customChains.apexPopTestnet,
-    customChains.degen,
-    customChains.xai,
-    customChains.nebula,
-    customChains.seiTestnet,
-    customChains.cyber,
-    customChains.bitlayer,
-    customChains.b3Testnet,
-    customChains.flowPreviewnet,
-  ] as [
-    Chain,
-    ...Chain[]
-  ]
+const supportedPrivyChains = chains.map((chain) => {
+  let transport: string
+  const network = chainIdToAlchemyNetworkMap[chain.id]
+  if (network && ALCHEMY_KEY) {
+    transport = `https://${network}.g.alchemy.com/v2/${ALCHEMY_KEY}`
+  } else {
+    transport = chain.rpcUrls.default.http[0] // Fallback to default HTTP transport
+  }
+  return addRpcUrlOverrideToChain(chain, transport)
+})
 
-  const supportedPrivyChains = chains.map((chain) => {
-    let transport: string
+const wagmiConfig = createConfig({
+  chains,
+  ssr: true,
+  transports: chains.reduce((transportsConfig: _transports, chain) => {
     const network = chainIdToAlchemyNetworkMap[chain.id]
-      if (network && ALCHEMY_KEY) {
-        transport = 
-          `https://${network}.g.alchemy.com/v2/${ALCHEMY_KEY}`
-        
-      } else {
-        transport = chain.rpcUrls.default.http[0] // Fallback to default HTTP transport
-      }
-      return addRpcUrlOverrideToChain(chain, transport)
-  })
-
-  const wagmiConfig = createConfig({
-    chains,
-    ssr: true,
-    transports: chains.reduce((transportsConfig: _transports, chain) => {
-      const network = chainIdToAlchemyNetworkMap[chain.id]
-      if (network && ALCHEMY_KEY) {
-        transportsConfig[chain.id] = http(
-          `https://${network}.g.alchemy.com/v2/${ALCHEMY_KEY}`
-        )
-      } else {
-        transportsConfig[chain.id] = http() // Fallback to default HTTP transport
-      }
-      return transportsConfig
-    }, {}),
-  })
+    if (network && ALCHEMY_KEY) {
+      transportsConfig[chain.id] = http(
+        `https://${network}.g.alchemy.com/v2/${ALCHEMY_KEY}`
+      )
+    } else {
+      transportsConfig[chain.id] = http() // Fallback to default HTTP transport
+    }
+    return transportsConfig
+  }, {}),
+})
 
 const queryClient = new QueryClient()
 
@@ -141,12 +135,12 @@ const ChainSwitcher: FC<any> = ({ children }) => {
   const [chain, setChain] = useState<number | null>(null)
 
   useEffect(() => {
-    if(!chain && router.query.chainId) {
+    if (!chain && router.query.chainId) {
       const routerChainId = Number(router.query.chainId)
       setChain(routerChainId)
     }
   }, [router.query.chainId])
-  
+
   return (
     <ChainSwitcherContext.Provider value={{ chain, setChain }}>
       {children}
@@ -172,50 +166,50 @@ const AppWrapper: FC<AppWrapperProps> = ({ children }) => {
 
   return (
     <PrivyProvider
-        appId={PRIVY_APP_ID}
-        config={{
-          appearance: { 
-            theme:'dark'
-          },
-          supportedChains: supportedPrivyChains
-        }}
-      >
-        <QueryClientProvider client={queryClient}>
-          <WagmiProvider config={wagmiConfig}>
-            <ReservoirKitProvider
-              options={{
-                apiKey: API_KEY,
-                chains: configuredChains.map((c) => {
-                  return {
-                    ...c,
-                    active: chain === c.id,
-                  }
-                }),
-                marketplaceFees: MARKETPLACE_FEES,
-                source: SOURCE,
-                normalizeRoyalties: NORMALIZE_ROYALTIES,
-                logLevel: LogLevel.Verbose,
-              }}
-              theme={theme}
-            >
-              <CartProvider feesOnTopBps={cartFeeBps} feesOnTopUsd={cartFeeUsd}>
-                <ThemeProvider
-                  attribute="class"
-                  defaultTheme="dark"
-                  value={{
-                    dark: darkTheme.className,
-                    light: 'light',
-                  }}
-                  enableSystem={false}
-                  storageKey={'demo-theme'}
-                >
-                  {children}
-                </ThemeProvider>
-              </CartProvider>
-            </ReservoirKitProvider>
-          </WagmiProvider>
-        </QueryClientProvider>
-      </PrivyProvider>
+      appId={PRIVY_APP_ID}
+      config={{
+        appearance: {
+          theme: 'dark',
+        },
+        supportedChains: supportedPrivyChains,
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <WagmiProvider config={wagmiConfig}>
+          <ReservoirKitProvider
+            options={{
+              apiKey: API_KEY,
+              chains: configuredChains.map((c) => {
+                return {
+                  ...c,
+                  active: chain === c.id,
+                }
+              }),
+              marketplaceFees: MARKETPLACE_FEES,
+              source: SOURCE,
+              normalizeRoyalties: NORMALIZE_ROYALTIES,
+              logLevel: LogLevel.Verbose,
+            }}
+            theme={theme}
+          >
+            <CartProvider feesOnTopBps={cartFeeBps} feesOnTopUsd={cartFeeUsd}>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                value={{
+                  dark: darkTheme.className,
+                  light: 'light',
+                }}
+                enableSystem={false}
+                storageKey={'demo-theme'}
+              >
+                {children}
+              </ThemeProvider>
+            </CartProvider>
+          </ReservoirKitProvider>
+        </WagmiProvider>
+      </QueryClientProvider>
+    </PrivyProvider>
   )
 }
 
