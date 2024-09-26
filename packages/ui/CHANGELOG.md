@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.7.23
+
+### Patch Changes
+
+- 7949c03: fixing block explorer url for flow
+
 ## 2.7.22
 
 ### Patch Changes
