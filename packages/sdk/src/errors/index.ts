@@ -19,7 +19,7 @@ export class TransactionTimeoutError extends Error {
 export class CrossChainTransactionError extends Error {
   constructor() {
     super(
-      'Cross-chain purchase failed, please try again. Your balance can be used for another purchase. For assistance or withdrawal help, please contact Reservoir.'
+      'Cross-chain purchase failed and funds have been refunded. Please try again.'
     )
     this.name = 'CrossChainTransactionError'
   }

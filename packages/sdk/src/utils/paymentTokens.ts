@@ -895,7 +895,7 @@ export const chainPaymentTokensMap = {
     },
     {
       chainId: 33139,
-      address: '0x8073b2158aa023dd7f8d4799c883b65daf6baa57',
+      address: '0x8643a49363e80c7a15790703b915d1b0b6b71d56',
       symbol: 'WAPE',
       name: 'WAPE',
       decimals: 18,
@@ -913,7 +913,7 @@ export const chainPaymentTokensMap = {
     },
     {
       chainId: 33111,
-      address: '0x34b097b133bf3fe3b7dad0d65e8f18dd5bf1a57b',
+      address: '0x8643a49363e80c7a15790703b915d1b0b6b71d56',
       symbol: 'WAPE',
       name: 'WAPE',
       decimals: 18,
@@ -1024,6 +1024,24 @@ export const chainPaymentTokensMap = {
       address: '0x2549584be33491340eee6762992055cda05b2581',
       symbol: 'WTOPIA',
       name: 'Wrapped TOPIA',
+      decimals: 18,
+    },
+  ],
+
+  // Flow
+  747: [
+    {
+      chainId: 747,
+      address: zeroAddress,
+      symbol: 'FLOW',
+      name: 'Flow',
+      decimals: 18,
+    },
+    {
+      chainId: 747,
+      address: '0xd3bf53dac106a0290b0483ecbc89d40fcc961f3e',
+      symbol: 'WFLOW',
+      name: 'WFLOW',
       decimals: 18,
     },
   ],

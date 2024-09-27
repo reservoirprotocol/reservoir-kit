@@ -1,5 +1,55 @@
 ## 1.25.10
 
+## 2.7.24
+
+### Patch Changes
+
+- 3b98d57: fixing flow block explorer
+
+## 2.7.23
+
+### Patch Changes
+
+- 7949c03: fixing block explorer url for flow
+
+## 2.7.22
+
+### Patch Changes
+
+- ce16bbd: adding flow
+- Updated dependencies [ce16bbd]
+  - @reservoir0x/reservoir-sdk@2.4.19
+
+## 2.7.21
+
+### Patch Changes
+
+- 12c1717: updating WAPE on apechain and curtis
+- Updated dependencies [12c1717]
+  - @reservoir0x/reservoir-sdk@2.4.18
+
+## 2.7.20
+
+### Patch Changes
+
+- Updated dependencies [31f3762]
+  - @reservoir0x/reservoir-sdk@2.4.17
+
+## 2.7.19
+
+### Patch Changes
+
+- Updated dependencies [b71da2f]
+  - @reservoir0x/reservoir-sdk@2.4.16
+
+## 2.7.18
+
+### Patch Changes
+
+- 02390c4: updating refund error message
+- Updated dependencies [02390c4]
+  - @reservoir0x/reservoir-sdk@2.4.15
+
 ## 2.7.17
 
 ### Patch Changes

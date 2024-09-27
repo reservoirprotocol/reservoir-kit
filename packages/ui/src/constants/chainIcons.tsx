@@ -383,6 +383,11 @@ const chainIcons = {
     dark: <HychainIconDark />,
     color: <HychainIconColor />,
   },
+  [reservoirChains.flow.id]: {
+    light: <FlowPreviewnetIconLight />,
+    dark: <FlowPreviewnetIconDark />,
+    color: <FlowPreviewnetIconColor />,
+  },
 }
 
 export default chainIcons

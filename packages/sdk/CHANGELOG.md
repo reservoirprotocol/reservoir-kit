@@ -1,5 +1,35 @@
 ## 1.12.15
 
+## 2.4.19
+
+### Patch Changes
+
+- ce16bbd: adding flow
+
+## 2.4.18
+
+### Patch Changes
+
+- 12c1717: updating WAPE on apechain and curtis
+
+## 2.4.17
+
+### Patch Changes
+
+- 31f3762: updating tx syncing to be async
+
+## 2.4.16
+
+### Patch Changes
+
+- b71da2f: Sync api types, fix marketplace-configurations/v2 exchange type
+
+## 2.4.15
+
+### Patch Changes
+
+- 02390c4: updating refund error message
+
 ## 2.4.14
 
 ### Patch Changes
