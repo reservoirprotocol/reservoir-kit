@@ -250,6 +250,9 @@ export default function (options: {
       normalizedQuantities[key.toLowerCase()] = quantityToken[key]
     }
 
+    let crossChainPurchase = false
+    let currencyChainId = chainId
+
     path?.forEach((pathItem, i) => {
       const tokenKey = `${pathItem.contract?.toLowerCase()}:${pathItem.tokenId}`
       const contractKey = `${pathItem.contract?.toLowerCase()}` //todo: test with sweeping
@@ -295,10 +298,21 @@ export default function (options: {
           : pathItem.totalRawPrice ?? 0
       )
 
-      const currencyChainId = pathItem.fromChainId || chainId
+      if (pathItem.fromChainId && pathItem.fromChainId !== chainId) {
+        crossChainPurchase = true
+        currencyChainId = pathItem.fromChainId
+      }
+
       const currencyKey = `${currency?.toLowerCase()}:${currencyChainId}`
       if (paymentTokens[currencyKey]) {
-        paymentTokens[currencyKey].total += totalRaw * BigInt(quantityToTake)
+        if (crossChainPurchase && i === 0) {
+          paymentTokens[currencyKey].total +=
+            (totalRaw - BigInt(pathItem.gasCost ?? 0)) *
+              BigInt(quantityToTake) +
+            BigInt(pathItem.gasCost ?? 0)
+        } else {
+          paymentTokens[currencyKey].total += totalRaw * BigInt(quantityToTake)
+        }
       }
     })
 

@@ -225,7 +225,9 @@ export async function executeSteps(
                 currencyDecimals:
                   buyInCurrencyDecimals || currencyDecimals || 18,
               }
-            } else {
+            } else if (
+              !(relayerFee && relayerFee?.currency?.contract === currency)
+            ) {
               quotes[currencyKey].raw += BigInt(buyInRawQuote || rawQuote || 0)
               quotes[currencyKey].amount += buyInQuote || quote || 0
             }
