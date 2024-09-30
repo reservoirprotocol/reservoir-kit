@@ -334,11 +334,7 @@ export default function (options: {
           path
         ) {
           maxItems = 0
-          for (
-            let i = 0;
-            i < Math.min(path.length, solverCapacity.maxItems);
-            i++
-          ) {
+          for (let i = 0; i < path.length; i++) {
             maxItems += path[i].quantity || 0
           }
 
