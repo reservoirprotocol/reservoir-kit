@@ -629,6 +629,9 @@ export async function executeSteps(
                     transactionsData.transactions.length > 0 &&
                     stepItem.txHashes?.every((hash) =>
                       transactionTxHashes?.includes(hash.txHash)
+                    ) &&
+                    transactionsData.transactions.every(
+                      (transaction) => transaction.synced
                     )
                     ? true
                     : false
