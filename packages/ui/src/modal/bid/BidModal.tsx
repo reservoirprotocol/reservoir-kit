@@ -68,7 +68,7 @@ const ModalCopy = {
   titleComplete: 'Offer Submitted',
   ctaBidDisabled: 'Enter a Price',
   ctaBid: '',
-  ctaConvertManually: 'Convert Manually',
+  ctaConvertManually: 'Get ',
   ctaConvertAutomatically: '',
   ctaAwaitingApproval: 'Waiting for Approval',
   ctaEditOffer: 'Edit Offer',
@@ -870,7 +870,7 @@ export function BidModal({
                           >
                             {providerOptionsContext.disableJumperLink
                               ? ctaButtonText
-                              : copy.ctaConvertManually}
+                              : copy.ctaConvertManually + wrappedContractName}
                           </Button>
                           {canAutomaticallyConvert && (
                             <Button

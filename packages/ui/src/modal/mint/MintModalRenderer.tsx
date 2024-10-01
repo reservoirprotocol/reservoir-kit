@@ -33,6 +33,7 @@ import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
 import { useCapabilities } from 'wagmi/experimental'
+import useRelayChains from '../../hooks/useRelayChains'
 
 export enum MintStep {
   Idle,
@@ -490,9 +491,19 @@ export const MintModalRenderer: FC<Props> = ({
     mintResponseFees,
   ])
 
-  let addFundsLink = paymentCurrency?.address
-    ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
-    : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  const { relayLink } = useRelayChains(rendererChain?.id)
+
+  let addFundsLink: string = ''
+
+  if (relayLink) {
+    addFundsLink = paymentCurrency?.address
+      ? `${relayLink}?toCurrency=${paymentCurrency?.address}`
+      : relayLink
+  } else {
+    addFundsLink = paymentCurrency?.address
+      ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
+      : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  }
 
   if (providerOptions?.convertLink?.chainUrl) {
     addFundsLink =
