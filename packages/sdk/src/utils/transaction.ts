@@ -220,18 +220,23 @@ export async function sendTransactionSafely(
   }
 
   //Sequence internal functions
-  const { promise: receiptPromise, controller: receiptController } =
-    waitForTransaction()
-  const confirmationPromise = pollForConfirmation()
+  if (step.id === 'approval' && crossChainIntentChainId) {
+    await waitForTransaction().promise
+  } else {
+    const { promise: receiptPromise, controller: receiptController } =
+      waitForTransaction()
 
-  await Promise.race([receiptPromise, confirmationPromise])
+    const confirmationPromise = pollForConfirmation()
 
-  if (waitingForConfirmation) {
-    await confirmationPromise
-  }
+    await Promise.race([receiptPromise, confirmationPromise])
 
-  if (!receipt) {
-    receiptController.abort()
+    if (waitingForConfirmation) {
+      await confirmationPromise
+    }
+
+    if (!receipt) {
+      receiptController.abort()
+    }
   }
 
   return true
