@@ -1,5 +1,13 @@
 ## 1.12.15
 
+## 2.4.20
+
+### Patch Changes
+
+- 6280bb9: Fixing cross chain purchasing of 1155 tokens when filliing from multiple orders
+- 4a7fe0b: fixing base sepolia WETH chain ID
+- 39eb10b: Skip checking tx for synced/check api if crosschain approval
+
 ## 2.4.19
 
 ### Patch Changes

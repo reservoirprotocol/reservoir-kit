@@ -1,5 +1,15 @@
 ## 1.25.10
 
+## 2.7.25
+
+### Patch Changes
+
+- 6280bb9: Fixing cross chain purchasing of 1155 tokens when filliing from multiple orders
+- Updated dependencies [6280bb9]
+- Updated dependencies [4a7fe0b]
+- Updated dependencies [39eb10b]
+  - @reservoir0x/reservoir-sdk@2.4.20
+
 ## 2.7.24
 
 ### Patch Changes
