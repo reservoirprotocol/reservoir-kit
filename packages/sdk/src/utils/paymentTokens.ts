@@ -230,7 +230,7 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
     {
-      chainId: 84531,
+      chainId: 84532,
       address: '0x4200000000000000000000000000000000000006',
       symbol: 'WETH',
       name: 'WETH',
