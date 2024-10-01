@@ -186,7 +186,7 @@ export default [
   {
     ...reservoirChains.baseSepolia,
     paymentTokens: [
-      ...reservoirChains.base.paymentTokens,
+      ...reservoirChains.baseSepolia.paymentTokens,
       {
         chainId: 11155111,
         address: zeroAddress,

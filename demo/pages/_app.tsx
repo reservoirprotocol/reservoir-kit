@@ -59,6 +59,7 @@ const chains = [
   allChains.scroll,
   allChains.arbitrumNova,
   allChains.berachainTestnet,
+  allChains.baseSepolia,
   customChains.redstone,
   customChains.garnet,
   customChains.frameTestnet,
