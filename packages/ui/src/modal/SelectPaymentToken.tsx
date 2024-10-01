@@ -171,9 +171,6 @@ export const SelectPaymentToken: FC<Props> = ({
           <Text style="subtitle2" color="subtle">
             CrossChain ETH
           </Text>
-          <Text color="accent" style="body3">
-            *CrossChain payment is currently limited to a single item.
-          </Text>
         </Flex>
       ) : null}
       {crossChainCurrencies.map((paymentToken, idx) => (
