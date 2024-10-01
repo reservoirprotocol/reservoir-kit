@@ -870,7 +870,9 @@ export function BidModal({
                           >
                             {providerOptionsContext.disableJumperLink
                               ? ctaButtonText
-                              : copy.ctaConvertManually + wrappedContractName}
+                              : currency?.symbol
+                              ? copy.ctaConvertManually + currency?.symbol
+                              : 'Convert Manually'}
                           </Button>
                           {canAutomaticallyConvert && (
                             <Button

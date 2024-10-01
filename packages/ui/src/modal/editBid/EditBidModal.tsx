@@ -637,7 +637,9 @@ export function EditBidModal({
                             >
                               {providerOptionsContext.disableJumperLink
                                 ? copy.ctaConfirm
-                                : copy.ctaConvertManually + wrappedContractName}
+                                : currency?.symbol
+                                ? copy.ctaConvertManually + currency?.symbol
+                                : 'Convert Manually'}
                             </Button>
                             {canAutomaticallyConvert && (
                               <Button
