@@ -378,18 +378,11 @@ export const ListModalRenderer: FC<Props> = ({
         listing.currency = currency.contract
       }
 
-      if (oracleEnabled) {
+      if (oracleEnabled || conduitKey) {
         listing.options = {
           [`${listing.orderKind}`]: {
-            useOffChainCancellation: true,
-          },
-        }
-      }
-
-      if (conduitKey) {
-        listing.options = {
-          [`${listing.orderKind}`]: {
-            conduitKey: conduitKey,
+            useOffChainCancellation: oracleEnabled,
+            conduitKey,
           },
         }
       }
