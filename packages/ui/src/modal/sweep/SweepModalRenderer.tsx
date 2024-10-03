@@ -34,6 +34,7 @@ import {
 } from '@reservoir0x/reservoir-sdk'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { useCapabilities } from 'wagmi/experimental'
+import useRelayChains from '../../hooks/useRelayChains'
 
 export enum SweepStep {
   Idle,
@@ -548,9 +549,19 @@ export const SweepModalRenderer: FC<Props> = ({
     buyResponseFees,
   ])
 
-  let addFundsLink = paymentCurrency?.address
-    ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
-    : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  const { relayLink } = useRelayChains(rendererChain?.id)
+
+  let addFundsLink: string = ''
+
+  if (relayLink) {
+    addFundsLink = paymentCurrency?.address
+      ? `${relayLink}?toCurrency=${paymentCurrency?.address}`
+      : relayLink
+  } else {
+    addFundsLink = paymentCurrency?.address
+      ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
+      : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  }
 
   if (providerOptions?.convertLink?.chainUrl) {
     addFundsLink =
