@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.26
+
+### Patch Changes
+
+- e2a1d03: fixing shape weth address
+- Updated dependencies [e2a1d03]
+  - @reservoir0x/reservoir-sdk@2.4.21
+
 ## 2.7.25
 
 ### Patch Changes

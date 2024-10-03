@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.21
+
+### Patch Changes
+
+- e2a1d03: fixing shape weth address
+
 ## 2.4.20
 
 ### Patch Changes
