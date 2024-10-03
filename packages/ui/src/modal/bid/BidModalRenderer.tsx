@@ -642,18 +642,11 @@ export const BidModalRenderer: FC<Props> = ({
         }
       }
 
-      if (oracleEnabled) {
+      if (oracleEnabled || conduitKey) {
         bid.options = {
           [exchange.orderKind as string]: {
-            useOffChainCancellation: true,
-          },
-        }
-      }
-
-      if (conduitKey) {
-        bid.options = {
-          [exchange.orderKind as string]: {
-            conduitKey: conduitKey,
+            useOffChainCancellation: oracleEnabled,
+            conduitKey,
           },
         }
       }
