@@ -1,5 +1,12 @@
 ## 1.25.10
 
+## 2.7.27
+
+### Patch Changes
+
+- 9af102d: link to relay when available instead of jumper/uniswap
+- 10a76dd: fixing listing and bidding options being overwritten when conduitKey is passed
+
 ## 2.7.26
 
 ### Patch Changes
