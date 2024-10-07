@@ -1,5 +1,14 @@
 ## 1.25.10
 
+## 2.7.28
+
+### Patch Changes
+
+- 1274874: fixing b3 wrapped native currency
+- d6ca994: optimizing nebula icons
+- Updated dependencies [1274874]
+  - @reservoir0x/reservoir-sdk@2.4.22
+
 ## 2.7.27
 
 ### Patch Changes

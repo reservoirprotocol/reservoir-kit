@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.22
+
+### Patch Changes
+
+- 1274874: fixing b3 wrapped native currency
+
 ## 2.4.21
 
 ### Patch Changes
