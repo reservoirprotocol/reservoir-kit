@@ -206,10 +206,6 @@ export function SweepModal({
 
         const hasTokens = orders && orders.length > 0
 
-        const maxQuantity = paymentCurrency?.maxItems
-          ? paymentCurrency?.maxItems
-          : maxItemAmount
-
         const pathMap = stepData?.path
           ? (stepData.path as Path[]).reduce(
               (paths: Record<string, Path>, path: Path) => {
@@ -339,15 +335,15 @@ export function SweepModal({
                             ellipsify
                             css={{ width: '100%' }}
                           >
-                            {formatNumber(maxQuantity)}{' '}
-                            {maxQuantity === 1 ? 'item' : 'items'} available
+                            {formatNumber(maxItemAmount)}{' '}
+                            {maxItemAmount === 1 ? 'item' : 'items'} available
                           </Text>
                         </Flex>
                         <QuantitySelector
                           quantity={itemAmount}
                           setQuantity={setItemAmount}
                           min={1}
-                          max={maxQuantity}
+                          max={maxItemAmount}
                           css={{
                             width: '100%',
                             justifyContent: 'space-between',

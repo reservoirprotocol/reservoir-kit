@@ -211,10 +211,6 @@ export function MintModal({
             )
           : {}
 
-        const maxQuantity = paymentCurrency?.maxItems
-          ? paymentCurrency?.maxItems
-          : maxItemAmount
-
         const totalMints =
           stepData?.currentStep?.items?.reduce((total, item) => {
             item.transfersData?.forEach((transferData) => {
@@ -354,15 +350,15 @@ export function MintModal({
                             ellipsify
                             css={{ width: '100%' }}
                           >
-                            {formatNumber(maxQuantity)}{' '}
-                            {maxQuantity > 1 ? 'items' : 'item'} available
+                            {formatNumber(maxItemAmount)}{' '}
+                            {maxItemAmount > 1 ? 'items' : 'item'} available
                           </Text>
                         </Flex>
                         <QuantitySelector
                           quantity={itemAmount}
                           setQuantity={setItemAmount}
                           min={1}
-                          max={maxQuantity}
+                          max={maxItemAmount}
                           css={{
                             width: '100%',
                             justifyContent: 'space-between',
