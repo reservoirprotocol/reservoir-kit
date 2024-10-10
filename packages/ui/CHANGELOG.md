@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.29
+
+### Patch Changes
+
+- 2ca4b46: Removing maxItems check
+- Updated dependencies [2ca4b46]
+  - @reservoir0x/reservoir-sdk@2.4.23
+
 ## 2.7.28
 
 ### Patch Changes

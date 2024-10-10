@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.23
+
+### Patch Changes
+
+- 2ca4b46: Removing maxItems check
+
 ## 2.4.22
 
 ### Patch Changes
