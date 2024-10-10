@@ -49,7 +49,7 @@ const ModalCopy = {
   ctaDisabled: 'Enter a Price',
   ctaEditOffer: 'Edit Offer',
   ctaRetry: 'Retry',
-  ctaConvertManually: 'Convert Manually',
+  ctaConvertManually: 'Get ',
   ctaConvertAutomatically: '',
   ctaAwaitingApproval: 'Waiting for approval...',
   ctaAwaitingValidation: 'Waiting for transaction to be validated',
@@ -637,7 +637,9 @@ export function EditBidModal({
                             >
                               {providerOptionsContext.disableJumperLink
                                 ? copy.ctaConfirm
-                                : copy.ctaConvertManually}
+                                : currency?.symbol
+                                ? copy.ctaConvertManually + currency?.symbol
+                                : 'Convert Manually'}
                             </Button>
                             {canAutomaticallyConvert && (
                               <Button

@@ -566,6 +566,7 @@ export async function executeSteps(
             default:
               break
           }
+
           //Confirm that on-chain tx has been picked up by the indexer
           if (
             (step.id === 'sale' || step.id === 'order-signature') &&

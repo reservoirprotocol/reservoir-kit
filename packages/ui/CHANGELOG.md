@@ -1,5 +1,39 @@
 ## 1.25.10
 
+## 2.7.28
+
+### Patch Changes
+
+- 1274874: fixing b3 wrapped native currency
+- d6ca994: optimizing nebula icons
+- Updated dependencies [1274874]
+  - @reservoir0x/reservoir-sdk@2.4.22
+
+## 2.7.27
+
+### Patch Changes
+
+- 9af102d: link to relay when available instead of jumper/uniswap
+- 10a76dd: fixing listing and bidding options being overwritten when conduitKey is passed
+
+## 2.7.26
+
+### Patch Changes
+
+- e2a1d03: fixing shape weth address
+- Updated dependencies [e2a1d03]
+  - @reservoir0x/reservoir-sdk@2.4.21
+
+## 2.7.25
+
+### Patch Changes
+
+- 6280bb9: Fixing cross chain purchasing of 1155 tokens when filliing from multiple orders
+- Updated dependencies [6280bb9]
+- Updated dependencies [4a7fe0b]
+- Updated dependencies [39eb10b]
+  - @reservoir0x/reservoir-sdk@2.4.20
+
 ## 2.7.24
 
 ### Patch Changes

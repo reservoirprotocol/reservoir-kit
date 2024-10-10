@@ -46,6 +46,7 @@ import * as allChains from 'viem/chains'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { useCapabilities } from 'wagmi/experimental'
+import useRelayChains from '../../hooks/useRelayChains'
 
 type Exchange = NonNullable<Marketplace['exchanges']>['string']
 
@@ -310,6 +311,8 @@ export const EditBidModalRenderer: FC<Props> = ({
     },
   })
 
+  const { relayLink } = useRelayChains(rendererChain?.id)
+
   const canAutomaticallyConvert =
     !currency || currency.contract === nativeWrappedContractAddress
   let convertLink: string = ''
@@ -328,6 +331,8 @@ export const EditBidModalRenderer: FC<Props> = ({
       convertLink = convertLink.replace('{toChain}', `${rendererChain.id}`)
     }
     convertLink = convertLink.replace('{toToken}', wrappedContractAddress)
+  } else if (relayLink) {
+    convertLink = `${relayLink}?toCurrency=${wrappedContractAddress}&fromChainId=${rendererChain?.id}&fromCurrency=${chainCurrency.address}`
   } else if (canAutomaticallyConvert) {
     convertLink =
       wagmiChain?.id === mainnet.id || wagmiChain?.id === goerli.id

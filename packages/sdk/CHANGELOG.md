@@ -1,5 +1,25 @@
 ## 1.12.15
 
+## 2.4.22
+
+### Patch Changes
+
+- 1274874: fixing b3 wrapped native currency
+
+## 2.4.21
+
+### Patch Changes
+
+- e2a1d03: fixing shape weth address
+
+## 2.4.20
+
+### Patch Changes
+
+- 6280bb9: Fixing cross chain purchasing of 1155 tokens when filliing from multiple orders
+- 4a7fe0b: fixing base sepolia WETH chain ID
+- 39eb10b: Skip checking tx for synced/check api if crosschain approval
+
 ## 2.4.19
 
 ### Patch Changes

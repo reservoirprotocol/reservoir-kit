@@ -42,6 +42,7 @@ import { Address, WalletClient, erc20Abi, formatUnits, parseUnits } from 'viem'
 import { getAccount, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import useRelayChains from '../../hooks/useRelayChains'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -374,6 +375,8 @@ export const BidModalRenderer: FC<Props> = ({
     },
   })
 
+  const { relayLink } = useRelayChains(rendererChain?.id)
+
   const canAutomaticallyConvert =
     !currency ||
     currency.contract.toLowerCase() ===
@@ -394,6 +397,8 @@ export const BidModalRenderer: FC<Props> = ({
       convertLink = convertLink.replace('{toChain}', `${rendererChain.id}`)
     }
     convertLink = convertLink.replace('{toToken}', wrappedContractAddress)
+  } else if (relayLink) {
+    convertLink = `${relayLink}?toCurrency=${wrappedContractAddress}&fromChainId=${rendererChain?.id}&fromCurrency=${chainCurrency.address}`
   } else if (canAutomaticallyConvert) {
     convertLink =
       rendererChain?.id === mainnet.id || rendererChain?.id === goerli.id
@@ -642,18 +647,11 @@ export const BidModalRenderer: FC<Props> = ({
         }
       }
 
-      if (oracleEnabled) {
+      if (oracleEnabled || conduitKey) {
         bid.options = {
           [exchange.orderKind as string]: {
-            useOffChainCancellation: true,
-          },
-        }
-      }
-
-      if (conduitKey) {
-        bid.options = {
-          [exchange.orderKind as string]: {
-            conduitKey: conduitKey,
+            useOffChainCancellation: oracleEnabled,
+            conduitKey,
           },
         }
       }

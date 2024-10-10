@@ -23,7 +23,6 @@ export type EnhancedCurrency =
       balance?: string | number | bigint
       currencyTotalRaw?: bigint
       currencyTotalFormatted?: string
-      maxItems?: number
       capacityPerRequest?: bigint
       maxPricePerItem?: number
     }
@@ -322,7 +321,6 @@ export default function (options: {
       .map((token) => {
         const currency = token.currency
 
-        let maxItems: EnhancedCurrency['maxItems'] = undefined
         let capacityPerRequest: EnhancedCurrency['capacityPerRequest'] =
           undefined
 
@@ -333,11 +331,6 @@ export default function (options: {
           token.chainId !== chain?.id &&
           path
         ) {
-          maxItems = 0
-          for (let i = 0; i < path.length; i++) {
-            maxItems += path[i].quantity || 0
-          }
-
           capacityPerRequest = BigInt(solverCapacity.capacityPerRequest)
         }
 
@@ -420,7 +413,6 @@ export default function (options: {
           currencyTotalFormatted,
           usdTotalFormatted: usdTotalFormatted,
           usdBalanceRaw: usdBalanceRaw,
-          maxItems,
           capacityPerRequest,
           chainId: token.chainId,
         }
