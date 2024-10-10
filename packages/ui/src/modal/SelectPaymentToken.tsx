@@ -128,23 +128,16 @@ export const SelectPaymentToken: FC<Props> = ({
     const isSelectedCurrency =
       currency?.address.toLowerCase() === paymentToken?.address &&
       currency?.chainId === paymentToken?.chainId
-    const hasMaxItemAmount = paymentToken?.maxItems != undefined
     const hasMaxPricePerItem = paymentToken?.maxPricePerItem != undefined
     const hasCurrencyTotalRaw = paymentToken?.currencyTotalRaw != undefined
-
     const maxPurchasablePrice = paymentToken?.capacityPerRequest
-    const maxItemAmount = paymentToken?.maxItems
-      ? BigInt(paymentToken?.maxItems)
-      : undefined
 
     return Boolean(
       isSelectedCurrency ||
-        (!hasMaxPricePerItem && !hasMaxItemAmount && hasCurrencyTotalRaw) ||
+        (!hasMaxPricePerItem && hasCurrencyTotalRaw) ||
         (maxPurchasablePrice &&
           paymentToken?.currencyTotalRaw !== undefined &&
-          maxPurchasablePrice >= paymentToken?.currencyTotalRaw &&
-          maxItemAmount &&
-          maxItemAmount >= itemAmount)
+          maxPurchasablePrice >= paymentToken?.currencyTotalRaw)
     )
   })
 
