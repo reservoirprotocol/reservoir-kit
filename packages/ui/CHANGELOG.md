@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.30
+
+### Patch Changes
+
+- df57dc4: updating WETH address for abstract testnet
+- Updated dependencies [df57dc4]
+  - @reservoir0x/reservoir-sdk@2.4.24
+
 ## 2.7.29
 
 ### Patch Changes
