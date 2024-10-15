@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.24
+
+### Patch Changes
+
+- df57dc4: updating WETH address for abstract testnet
+
 ## 2.4.23
 
 ### Patch Changes
