@@ -62,7 +62,7 @@ jobs:
             }1'
           }
 
-          responseAdj=$(curl -s "https://gist.githubusercontent.com/pedromcunha/9e0ea328b5c320264ddcdcc5e5b6ce48/raw/f0857be15382fdae5cf6346eb2b120fc34725387/adjectives.json")
+          responseAdj=$(curl -s "https://gist.githubusercontent.com/pedromcunha/9e0ea328b5c320264ddcdcc5e5b6ce48/raw/5ffec8da5b4300934f9bedca2707f1d4d2845f4f/adjectives.json")
           responseAnimal=$(curl -s "https://gist.githubusercontent.com/pedromcunha/d2b7f7b7e295cbafdd03af73bcd168ba/raw/c1d4b618da5051519c5d8ffce73d0ec6b018f356/animals.json")
           lengthAdj=$(echo $responseAdj | jq length)
           lengthAnimal=$(echo $responseAnimal | jq length)
