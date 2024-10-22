@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.25
+
+### Patch Changes
+
+- b5b3c49: updating wape address
+
 ## 2.4.24
 
 ### Patch Changes
