@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.31
+
+### Patch Changes
+
+- b5b3c49: updating wape address
+- Updated dependencies [b5b3c49]
+  - @reservoir0x/reservoir-sdk@2.4.25
+
 ## 2.7.30
 
 ### Patch Changes
