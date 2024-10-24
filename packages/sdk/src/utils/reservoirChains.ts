@@ -442,6 +442,14 @@ const flow = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const zero = {
+  id: 543210,
+  name: 'Zero',
+  baseApiUrl: 'https://api-zero.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[543210],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -497,4 +505,5 @@ export const reservoirChains = {
   hychain,
   hychainTestnet,
   flow,
+  zero,
 }

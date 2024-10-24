@@ -364,4 +364,7 @@ export default [
   {
     ...reservoirChains.flow,
   },
+  {
+    ...reservoirChains.zero,
+  },
 ]
