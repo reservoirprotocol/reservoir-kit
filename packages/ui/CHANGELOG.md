@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.32
+
+### Patch Changes
+
+- 88b6291: adding zero mainnet
+- Updated dependencies [88b6291]
+  - @reservoir0x/reservoir-sdk@2.4.26
+
 ## 2.7.31
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.26
+
+### Patch Changes
+
+- 88b6291: adding zero mainnet
+
 ## 2.4.25
 
 ### Patch Changes
