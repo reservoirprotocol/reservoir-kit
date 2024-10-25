@@ -822,6 +822,30 @@ export const flow = {
   },
 } as const satisfies Chain
 
+export const zero = {
+  id: 543210,
+  name: 'Zero',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://zero-network.calderachain.xyz'],
+    },
+    public: {
+      http: ['https://zero-network.calderachain.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Zero Explorer',
+      url: 'https://zero-network.calderaexplorer.xyz',
+    },
+    default: {
+      name: 'Zero Explorer',
+      url: 'https://zero-network.calderaexplorer.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -857,4 +881,5 @@ export const customChains = {
   hychain,
   hychainTestnet,
   flow,
+  zero,
 } as const satisfies Record<string, Chain>

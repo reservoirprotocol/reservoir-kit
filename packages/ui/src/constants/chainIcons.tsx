@@ -115,6 +115,9 @@ import MinatoIconColor from '../img/chains/MinatoIconColor'
 import HychainIconLight from '../img/chains/HychainIconLight'
 import HychainIconDark from '../img/chains/HychainIconDark'
 import HychainIconColor from '../img/chains/HychainIconColor'
+import ZeroIconLight from '../img/chains/ZeroIconLight'
+import ZeroIconDark from '../img/chains/ZeroIconDark'
+import ZeroIconColor from '../img/chains/ZeroIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -387,6 +390,11 @@ const chainIcons = {
     light: <FlowPreviewnetIconLight />,
     dark: <FlowPreviewnetIconDark />,
     color: <FlowPreviewnetIconColor />,
+  },
+  [reservoirChains.zero.id]: {
+    light: <ZeroIconLight />,
+    dark: <ZeroIconDark />,
+    color: <ZeroIconColor />,
   },
 }
 
