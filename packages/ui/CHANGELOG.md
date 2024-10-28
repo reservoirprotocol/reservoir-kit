@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.33
+
+### Patch Changes
+
+- 59e1d6a: adding zero testnet
+- Updated dependencies [59e1d6a]
+  - @reservoir0x/reservoir-sdk@2.4.27
+
 ## 2.7.32
 
 ### Patch Changes
