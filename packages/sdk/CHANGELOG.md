@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.27
+
+### Patch Changes
+
+- 59e1d6a: adding zero testnet
+
 ## 2.4.26
 
 ### Patch Changes
