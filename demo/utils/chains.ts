@@ -367,4 +367,7 @@ export default [
   {
     ...reservoirChains.zero,
   },
+  {
+    ...reservoirChains.zeroTestnet,
+  },
 ]
