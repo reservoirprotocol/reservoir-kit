@@ -88,6 +88,7 @@ const chains = [
   customChains.hychainTestnet,
   customChains.flow,
   customChains.zero,
+  customChains.zeroTestnet,
 ] as [Chain, ...Chain[]]
 
 const wagmiConfig = getDefaultConfig({

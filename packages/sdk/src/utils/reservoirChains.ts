@@ -450,6 +450,14 @@ const zero = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const zeroTestnet = {
+  id: 43210,
+  name: 'Zero',
+  baseApiUrl: 'https://api-zero-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[43210],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -506,4 +514,5 @@ export const reservoirChains = {
   hychainTestnet,
   flow,
   zero,
+  zeroTestnet,
 }

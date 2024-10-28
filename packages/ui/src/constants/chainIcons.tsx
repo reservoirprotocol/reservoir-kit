@@ -396,6 +396,11 @@ const chainIcons = {
     dark: <ZeroIconDark />,
     color: <ZeroIconColor />,
   },
+  [reservoirChains.zeroTestnet.id]: {
+    light: <ZeroIconLight />,
+    dark: <ZeroIconDark />,
+    color: <ZeroIconColor />,
+  },
 }
 
 export default chainIcons

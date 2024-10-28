@@ -54,5 +54,6 @@ const wrappedContractNames: Record<number, string> = {
   29112: 'WTOPIA', // hychain testnet
   747: 'WFLOW', // flow
   543210: 'WETH', // zero
+  43210: 'WETH', // zero testnet
 }
 export default wrappedContractNames
