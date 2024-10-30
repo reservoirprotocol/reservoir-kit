@@ -621,11 +621,11 @@ export const apechain = {
   blockExplorers: {
     etherscan: {
       name: 'Apechain Explorer',
-      url: 'https://apechain.calderaexplorer.xyz',
+      url: 'https://apescan.io',
     },
     default: {
       name: 'Apechain Explorer',
-      url: 'https://apechain.calderaexplorer.xyz',
+      url: 'https://apescan.io',
     },
   },
 } as const satisfies Chain
@@ -669,11 +669,11 @@ export const shape = {
   blockExplorers: {
     etherscan: {
       name: 'Shape Explorer',
-      url: 'https://internal-shaper-explorer.alchemypreview.com',
+      url: 'https://shapescan.xyz',
     },
     default: {
       name: 'Shape Explorer',
-      url: 'https://internal-shaper-explorer.alchemypreview.com',
+      url: 'https://shapescan.xyz',
     },
   },
 } as const satisfies Chain
