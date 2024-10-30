@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.28
+
+### Patch Changes
+
+- 36a821d: updating explorer urls for apechain and shape
+
 ## 2.4.27
 
 ### Patch Changes
