@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.29
+
+### Patch Changes
+
+- 82d1a80: adding abstract mainnet
+
 ## 2.4.28
 
 ### Patch Changes
