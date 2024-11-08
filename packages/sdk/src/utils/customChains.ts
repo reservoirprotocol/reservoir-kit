@@ -870,6 +870,30 @@ export const zeroTestnet = {
   },
 } as const satisfies Chain
 
+export const abstract = {
+  id: 2741,
+  name: 'Abstract',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://api.raas.matterhosted.dev'],
+    },
+    public: {
+      http: ['https://api.raas.matterhosted.dev'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Abstract Explorer',
+      url: 'https://explorer.mainnet.abs.xyz',
+    },
+    default: {
+      name: 'Abstract Explorer',
+      url: 'https://explorer.mainnet.abs.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -907,4 +931,5 @@ export const customChains = {
   flow,
   zero,
   zeroTestnet,
+  abstract,
 } as const satisfies Record<string, Chain>

@@ -55,6 +55,7 @@ const wrappedContracts: Record<number, string> = {
   747: '0xd3bf53dac106a0290b0483ecbc89d40fcc961f3e', // flow
   543210: '0xac98b49576b1c892ba6bfae08fe1bb0d80cf599c', // zero
   43210: '0xee6b04fcd07a54d78a7a23f353f2b4a0bfb4a78c', // zero testnet
+  2741: '0x3439153eb7af838ad19d56e1571fbd09333c2809', // abstract
 }
 
 export default wrappedContracts

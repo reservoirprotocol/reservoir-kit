@@ -452,9 +452,17 @@ const zero = {
 
 const zeroTestnet = {
   id: 43210,
-  name: 'Zero',
+  name: 'Zero Testnet',
   baseApiUrl: 'https://api-zero-testnet.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[43210],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const abstract = {
+  id: 2741,
+  name: 'Abstract',
+  baseApiUrl: 'https://api-abstract.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[2741],
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
@@ -515,4 +523,5 @@ export const reservoirChains = {
   flow,
   zero,
   zeroTestnet,
+  abstract,
 }
