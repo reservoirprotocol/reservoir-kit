@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.35
+
+### Patch Changes
+
+- 82d1a80: adding abstract mainnet
+- Updated dependencies [82d1a80]
+  - @reservoir0x/reservoir-sdk@2.4.29
+
 ## 2.7.34
 
 ### Patch Changes
