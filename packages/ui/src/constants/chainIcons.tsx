@@ -401,6 +401,11 @@ const chainIcons = {
     dark: <ZeroIconDark />,
     color: <ZeroIconColor />,
   },
+  [reservoirChains.abstract.id]: {
+    light: <AbstractIconLight />,
+    dark: <AbstractIconDark />,
+    color: <AbstractIconColor />,
+  },
 }
 
 export default chainIcons

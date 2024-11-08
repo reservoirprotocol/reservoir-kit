@@ -55,5 +55,6 @@ const wrappedContractNames: Record<number, string> = {
   747: 'WFLOW', // flow
   543210: 'WETH', // zero
   43210: 'WETH', // zero testnet
+  2741: 'WETH', // abstract
 }
 export default wrappedContractNames
