@@ -466,6 +466,14 @@ const abstract = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const animeTestnet = {
+  id: 6900,
+  name: 'Anime Testnet',
+  baseApiUrl: 'https://api-anime-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[6900],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -524,4 +532,5 @@ export const reservoirChains = {
   zero,
   zeroTestnet,
   abstract,
+  animeTestnet,
 }
