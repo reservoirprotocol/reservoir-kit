@@ -118,6 +118,9 @@ import HychainIconColor from '../img/chains/HychainIconColor'
 import ZeroIconLight from '../img/chains/ZeroIconLight'
 import ZeroIconDark from '../img/chains/ZeroIconDark'
 import ZeroIconColor from '../img/chains/ZeroIconColor'
+import AnimeIconLight from '../img/chains/AnimeIconLight'
+import AnimeIconDark from '../img/chains/AnimeIconDark'
+import AnimeIconColor from '../img/chains/AnimeIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -405,6 +408,11 @@ const chainIcons = {
     light: <AbstractIconLight />,
     dark: <AbstractIconDark />,
     color: <AbstractIconColor />,
+  },
+  [reservoirChains.animeTestnet.id]: {
+    light: <AnimeIconLight />,
+    dark: <AnimeIconDark />,
+    color: <AnimeIconColor />,
   },
 }
 

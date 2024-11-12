@@ -741,11 +741,11 @@ export const minato = {
   blockExplorers: {
     etherscan: {
       name: 'Minato Explorer',
-      url: 'https://explorer-testnet.soneium.org',
+      url: 'https://soneium-minato.blockscout.com',
     },
     default: {
       name: 'Minato Explorer',
-      url: 'https://explorer-testnet.soneium.org',
+      url: 'https://soneium-minato.blockscout.com',
     },
   },
 } as const satisfies Chain
@@ -894,6 +894,30 @@ export const abstract = {
   },
 } as const satisfies Chain
 
+export const animeTestnet = {
+  id: 6900,
+  name: 'Anime Testnet',
+  nativeCurrency: { name: 'ANIME', symbol: 'ANIME', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-animechain-testnet-i8yja6a1a0.t.conduit.xyz'],
+    },
+    public: {
+      http: ['https://rpc-animechain-testnet-i8yja6a1a0.t.conduit.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Anime Testnet Explorer',
+      url: 'https://testnet-explorer.anime.xyz',
+    },
+    default: {
+      name: 'Anime Testnet Explorer',
+      url: 'https://testnet-explorer.anime.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -932,4 +956,5 @@ export const customChains = {
   zero,
   zeroTestnet,
   abstract,
+  animeTestnet,
 } as const satisfies Record<string, Chain>
