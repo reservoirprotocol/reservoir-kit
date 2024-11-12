@@ -77,6 +77,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
     NonNullable<BuyTokenBodyParameters>,
     'items' | 'feesOnTop' | 'taker'
   >
+  promptPaymentMethod?: boolean
   onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -104,6 +105,7 @@ export function BuyModal({
   copyOverrides,
   walletClient,
   executeBuyOptions,
+  promptPaymentMethod,
   onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
@@ -436,13 +438,21 @@ export function BuyModal({
                       ) : null} */}
 
                       <Button
-                        disabled={providerOptions.disableJumperLink}
+                        disabled={
+                          !promptPaymentMethod &&
+                          providerOptions.disableJumperLink
+                        }
                         onClick={() => {
-                          window.open(addFundsLink, '_blank')
+                          if (promptPaymentMethod) {
+                            setBuyStep(BuyStep.SelectPayment)
+                          } else {
+                            window.open(addFundsLink, '_blank')
+                          }
                         }}
                         css={{ width: '100%' }}
                       >
-                        {providerOptions.disableJumperLink
+                        {!promptPaymentMethod &&
+                        providerOptions.disableJumperLink
                           ? copy.ctaCheckout
                           : copy.ctaInsufficientFunds}
                       </Button>

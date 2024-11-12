@@ -18,19 +18,21 @@ const NORMALIZE_ROYALTIES = process.env.NEXT_PUBLIC_NORMALIZE_ROYALTIES
 
 const BuyPage: NextPage = () => {
   const router = useRouter()
-  const [token, setToken] = useState(`${DEFAULT_COLLECTION_ID}:${DEFAULT_TOKEN_ID}`)
+  const [token, setToken] = useState(
+    `${DEFAULT_COLLECTION_ID}:${DEFAULT_TOKEN_ID}`
+  )
   const [orderId, setOrderId] = useState('')
   const [chainId, setChainId] = useState<string | number>('')
   const [feesOnTopBps, setFeesOnTopBps] = useState<string[]>([])
   const [feesOnTopUsd, setFeesOnTopUsd] = useState<string[]>([])
-  const [executionMethod, setExecutionMethod] = useState<BuyTokenBodyParameters['executionMethod']>()
+  const [executionMethod, setExecutionMethod] =
+    useState<BuyTokenBodyParameters['executionMethod']>()
   const deeplinkOpenState = useState(true)
   const hasDeeplink = router.query.deeplink !== undefined
   const [normalizeRoyalties, setNormalizeRoyalties] =
     useState(NORMALIZE_ROYALTIES)
   const { openConnectModal } = useConnectModal()
   const collectionId = token?.split(':')[0]
-
 
   return (
     <div
@@ -114,12 +116,13 @@ const BuyPage: NextPage = () => {
         <input
           type="text"
           value={executionMethod}
-          onChange={(e) => { 
-            if(e.target.value === '') {
+          onChange={(e) => {
+            if (e.target.value === '') {
               setExecutionMethod(undefined)
-            }
-            else {
-              setExecutionMethod(e.target.value as BuyTokenBodyParameters['executionMethod'])
+            } else {
+              setExecutionMethod(
+                e.target.value as BuyTokenBodyParameters['executionMethod']
+              )
             }
           }}
         />
