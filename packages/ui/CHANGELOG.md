@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.7.36
+
+### Patch Changes
+
+- 9c5f6ee: BuyModal: add funds prompt payment methods
+
 ## 2.7.35
 
 ### Patch Changes
