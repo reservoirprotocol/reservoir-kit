@@ -1,5 +1,12 @@
 # @reservoir0x/gelato-adapter
 
+## 5.0.30
+
+### Patch Changes
+
+- Updated dependencies [3806fa5]
+  - @reservoir0x/reservoir-sdk@2.4.30
+
 ## 5.0.29
 
 ### Patch Changes

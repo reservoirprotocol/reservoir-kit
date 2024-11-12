@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.37
+
+### Patch Changes
+
+- 3806fa5: adding anime testnet
+- Updated dependencies [3806fa5]
+  - @reservoir0x/reservoir-sdk@2.4.30
+
 ## 2.7.36
 
 ### Patch Changes
