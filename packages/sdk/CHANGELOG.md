@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.30
+
+### Patch Changes
+
+- 3806fa5: adding anime testnet
+
 ## 2.4.29
 
 ### Patch Changes
