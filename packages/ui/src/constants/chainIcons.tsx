@@ -121,6 +121,9 @@ import ZeroIconColor from '../img/chains/ZeroIconColor'
 import AnimeIconLight from '../img/chains/AnimeIconLight'
 import AnimeIconDark from '../img/chains/AnimeIconDark'
 import AnimeIconColor from '../img/chains/AnimeIconColor'
+import MonadIconLight from '../img/chains/MonadIconLight'
+import MonadIconDark from '../img/chains/MonadIconDark'
+import MonadIconColor from '../img/chains/MonadIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -413,6 +416,11 @@ const chainIcons = {
     light: <AnimeIconLight />,
     dark: <AnimeIconDark />,
     color: <AnimeIconColor />,
+  },
+  [reservoirChains.monadDevnet.id]: {
+    light: <MonadIconLight />,
+    dark: <MonadIconDark />,
+    color: <MonadIconColor />,
   },
 }
 
