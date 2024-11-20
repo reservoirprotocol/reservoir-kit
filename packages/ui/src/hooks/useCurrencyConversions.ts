@@ -1,6 +1,7 @@
-import { ReservoirChain, axios, paths } from '@reservoir0x/reservoir-sdk'
+import { axios, paths } from '@reservoir0x/reservoir-sdk'
 import useSWR from 'swr/immutable'
 import { PaymentToken } from '@reservoir0x/reservoir-sdk'
+import { useReservoirClient } from '.'
 
 type CurrencyConversionResponse =
   paths['/currencies/conversion/v1']['get']['responses']['200']['schema']
@@ -19,14 +20,16 @@ const fetcher = async (urls: string[]) => {
 }
 
 export default function (
-  prefferedCurrencyAddress?: string,
-  chain?: ReservoirChain | null | undefined,
+  preferredCurrencyAddress?: string,
   currencies?: PaymentToken[]
 ) {
-  const urls = prefferedCurrencyAddress
+  const client = useReservoirClient()
+  const urls = preferredCurrencyAddress
     ? currencies?.map(
         (currency) =>
-          `${chain?.baseApiUrl}/currencies/conversion/v1?from=${currency.address}&to=${prefferedCurrencyAddress}`
+          client?.chains.find((chain) => chain.id === currency.chainId)
+            ?.baseApiUrl +
+          `/currencies/conversion/v1?from=${currency.address}&to=${preferredCurrencyAddress}`
       )
     : undefined
 
