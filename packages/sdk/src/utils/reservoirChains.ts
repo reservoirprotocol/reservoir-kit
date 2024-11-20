@@ -474,6 +474,14 @@ const animeTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const monadDevnet = {
+  id: 41454,
+  name: 'Monad Devnet',
+  baseApiUrl: 'https://api-monad-devnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[41454],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -533,4 +541,5 @@ export const reservoirChains = {
   zeroTestnet,
   abstract,
   animeTestnet,
+  monadDevnet,
 }

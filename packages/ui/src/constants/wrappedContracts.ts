@@ -57,6 +57,7 @@ const wrappedContracts: Record<number, string> = {
   43210: '0xee6b04fcd07a54d78a7a23f353f2b4a0bfb4a78c', // zero testnet
   2741: '0x3439153eb7af838ad19d56e1571fbd09333c2809', // abstract
   6900: '0x8f3e2785985aa4005c63f97f7cc89ce91a948267', // anime testnet
+  41454: '0x3c6dd29e612b28c10f3ee9bacf0f4af5f17b3f3e', // monad devnet
 }
 
 export default wrappedContracts

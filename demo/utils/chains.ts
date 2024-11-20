@@ -376,4 +376,7 @@ export default [
   {
     ...reservoirChains.animeTestnet,
   },
+  {
+    ...reservoirChains.monadDevnet,
+  },
 ]

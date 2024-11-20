@@ -91,6 +91,7 @@ const chains = [
   customChains.zeroTestnet,
   customChains.abstract,
   customChains.animeTestnet,
+  customChains.monadDevnet,
 ] as [Chain, ...Chain[]]
 
 const wagmiConfig = getDefaultConfig({

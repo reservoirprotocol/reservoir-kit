@@ -918,6 +918,34 @@ export const animeTestnet = {
   },
 } as const satisfies Chain
 
+export const monadDevnet = {
+  id: 41454,
+  name: 'Monad Devnet',
+  nativeCurrency: { name: 'MON', symbol: 'MON', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: [
+        'https://devnet1.monad.xyz/rpc/diJoIRvXonYUWPhZNBtJAv1ffPjrkYBXXewh4PZe',
+      ],
+    },
+    public: {
+      http: [
+        'https://devnet1.monad.xyz/rpc/diJoIRvXonYUWPhZNBtJAv1ffPjrkYBXXewh4PZe',
+      ],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Monad Devnet Explorer',
+      url: 'https://brightstar-884.devnet1.monad.xyz',
+    },
+    default: {
+      name: 'Monad Devnet Explorer',
+      url: 'https://brightstar-884.devnet1.monad.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -957,4 +985,5 @@ export const customChains = {
   zeroTestnet,
   abstract,
   animeTestnet,
+  monadDevnet,
 } as const satisfies Record<string, Chain>
