@@ -24,9 +24,9 @@ export default function (
   currencies?: PaymentToken[]
 ) {
   const client = useReservoirClient()
-  const chains = client?.chains.reduce((acc, chain) => {
-    acc[chain.id] = chain.baseApiUrl
-    return acc
+  const chains = client?.chains.reduce((map, chain) => {
+    map[chain.id] = chain.baseApiUrl
+    return map
   }, {} as Record<string, string>)
   const urls = preferredCurrencyAddress
     ? currencies?.map(
