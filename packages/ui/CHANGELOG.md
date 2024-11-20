@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.38
+
+### Patch Changes
+
+- ccafb5e: adding monad devnet
+- Updated dependencies [ccafb5e]
+  - @reservoir0x/reservoir-sdk@2.4.31
+
 ## 2.7.37
 
 ### Patch Changes

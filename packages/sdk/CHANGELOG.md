@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.31
+
+### Patch Changes
+
+- ccafb5e: adding monad devnet
+
 ## 2.4.30
 
 ### Patch Changes
