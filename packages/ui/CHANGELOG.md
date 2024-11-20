@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.7.40
+
+### Patch Changes
+
+- d5216ac: fixing currency price and icons
+
 ## 2.7.39
 
 ### Patch Changes
