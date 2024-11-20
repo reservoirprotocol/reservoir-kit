@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.7.39
+
+### Patch Changes
+
+- c73f503: fixing currency price and icons
+
 ## 2.7.38
 
 ### Patch Changes
