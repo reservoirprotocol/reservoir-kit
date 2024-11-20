@@ -201,7 +201,6 @@ export default function (options: {
     path && path[0]
       ? path[0].currency ?? path[0].buyInCurrency ?? undefined
       : undefined,
-    chain,
     open ? allPaymentTokens : undefined
   )
 

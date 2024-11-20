@@ -53,7 +53,7 @@ export const PaymentDetails: FC<Props> = ({
           <Text style="subtitle3">Referral Fee</Text>
           <Flex direction="column" align="end" css={{ gap: '$1' }}>
             <FormatCryptoCurrency
-              chainId={chainId}
+              chainId={paymentCurrency?.chainId ?? chainId}
               amount={feeOnTop}
               address={paymentCurrency?.address}
               decimals={paymentCurrency?.decimals}
@@ -89,7 +89,7 @@ export const PaymentDetails: FC<Props> = ({
           </Flex>
           <Flex direction="column" align="end" css={{ gap: '$1' }}>
             <FormatCryptoCurrency
-              chainId={chainId}
+              chainId={paymentCurrency?.chainId ?? chainId}
               amount={crosschainFees?.relayer?.amount?.raw}
             />
 
@@ -114,7 +114,7 @@ export const PaymentDetails: FC<Props> = ({
                 <>
                   <FormatCurrency amount={usdTotal} style="h6" color="base" />
                   <FormatCryptoCurrency
-                    chainId={chainId}
+                    chainId={paymentCurrency?.chainId ?? chainId}
                     textStyle="body2"
                     textColor="subtle"
                     amount={
@@ -129,7 +129,7 @@ export const PaymentDetails: FC<Props> = ({
               ) : (
                 <>
                   <FormatCryptoCurrency
-                    chainId={chainId}
+                    chainId={paymentCurrency?.chainId ?? chainId}
                     textStyle="h6"
                     textColor="base"
                     amount={
