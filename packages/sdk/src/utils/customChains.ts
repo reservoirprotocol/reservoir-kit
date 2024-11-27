@@ -946,6 +946,30 @@ export const monadDevnet = {
   },
 } as const satisfies Chain
 
+export const game7 = {
+  id: 2187,
+  name: 'game7',
+  nativeCurrency: { name: 'Game7', symbol: 'G7', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet-rpc.game7.io'],
+    },
+    public: {
+      http: ['https://mainnet-rpc.game7.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'G7 Network Explorer',
+      url: 'https://mainnet.game7.io',
+    },
+    default: {
+      name: 'G7 Network Explorer',
+      url: 'https://mainnet.game7.io',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -986,4 +1010,5 @@ export const customChains = {
   abstract,
   animeTestnet,
   monadDevnet,
+  game7,
 } as const satisfies Record<string, Chain>
