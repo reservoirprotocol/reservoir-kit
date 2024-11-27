@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.41
+
+### Patch Changes
+
+- 707cdbf: Add game7 chain configuration
+- Updated dependencies [707cdbf]
+  - @reservoir0x/reservoir-sdk@2.4.32
+
 ## 2.7.40
 
 ### Patch Changes
