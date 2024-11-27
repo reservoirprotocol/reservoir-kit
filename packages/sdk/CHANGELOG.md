@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.32
+
+### Patch Changes
+
+- 707cdbf: Add game7 chain configuration
+
 ## 2.4.31
 
 ### Patch Changes
