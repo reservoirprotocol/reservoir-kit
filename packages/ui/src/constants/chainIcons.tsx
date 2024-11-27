@@ -94,9 +94,9 @@ import FlowPreviewnetIconColor from '../img/chains/FlowPreviewnetIconColor'
 import CloudIconLight from '../img/chains/CloudIconLight'
 import CloudIconDark from '../img/chains/CloudIconDark'
 import CloudIconColor from '../img/chains/CloudIconColor'
-import Game7TestnetIconLight from '../img/chains/Game7TestnetIconLight'
-import Game7TestnetIconDark from '../img/chains/Game7TestnetIconDark'
-import Game7TestnetIconColor from '../img/chains/Game7TestnetIconColor'
+import Game7IconLight from '../img/chains/Game7IconLight'
+import Game7IconDark from '../img/chains/Game7IconDark'
+import Game7IconColor from '../img/chains/Game7IconColor'
 import FormaIconLight from '../img/chains/FormaIconLight'
 import FormaIconDark from '../img/chains/FormaIconDark'
 import FormaIconColor from '../img/chains/FormaIconColor'
@@ -323,9 +323,9 @@ const chainIcons = {
     color: <CloudIconColor />,
   },
   [reservoirChains.game7Testnet.id]: {
-    light: <Game7TestnetIconLight />,
-    dark: <Game7TestnetIconDark />,
-    color: <Game7TestnetIconColor />,
+    light: <Game7IconLight />,
+    dark: <Game7IconDark />,
+    color: <Game7IconColor />,
   },
   [reservoirChains.boss.id]: {
     light: <ApexPopIconLight />,
@@ -421,6 +421,11 @@ const chainIcons = {
     light: <MonadIconLight />,
     dark: <MonadIconDark />,
     color: <MonadIconColor />,
+  },
+  [reservoirChains.game7.id]: {
+    light: <Game7IconLight />,
+    dark: <Game7IconDark />,
+    color: <Game7IconColor />,
   },
 }
 

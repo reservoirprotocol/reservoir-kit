@@ -482,6 +482,14 @@ const monadDevnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const game7 = {
+  id: 2187,
+  name: 'game7',
+  baseApiUrl: 'https://api-game7.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[2187],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -542,4 +550,5 @@ export const reservoirChains = {
   abstract,
   animeTestnet,
   monadDevnet,
+  game7,
 }
