@@ -490,7 +490,16 @@ const game7 = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const creatorTestnet = {
+  id: 4654,
+  name: 'Creator Testnet',
+  baseApiUrl: 'https://api-creator-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[4654],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
+  creatorTestnet,
   mainnet,
   polygon,
   polygonAmoy,
