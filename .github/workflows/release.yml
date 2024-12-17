@@ -43,7 +43,7 @@ jobs:
           prs=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
           -H "Accept: application/vnd.github+json" \
           "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls?state=open&per_page=100" | \
-           jq -r '[.[] | select(.user.type == "Bot")][0] | {url: .html_url, title: .title} | @json')
+           jq -r '[.[] | select(.user.type == "Bot" and (.title | contains("Release")))][0] | {url: .html_url, title: .title} | @json')
           echo "Found PRs: $prs"
           if [[ $prs == "null" || $prs == "{}" ]]; then
           echo "BOT_PR_TITLE=NULL" >> $GITHUB_ENV
