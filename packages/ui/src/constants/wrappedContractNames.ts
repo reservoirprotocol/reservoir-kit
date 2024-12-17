@@ -59,5 +59,6 @@ const wrappedContractNames: Record<number, string> = {
   6900: 'WANIME', // anime testnet
   41454: 'WMON', // monad devnet
   2187: 'WG7', //game7
+  4654: 'WETH', // creator testnet
 }
 export default wrappedContractNames

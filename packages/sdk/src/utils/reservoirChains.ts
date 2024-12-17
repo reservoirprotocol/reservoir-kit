@@ -499,7 +499,6 @@ const creatorTestnet = {
 } satisfies ReservoirBaseChain
 
 export const reservoirChains = {
-  creatorTestnet,
   mainnet,
   polygon,
   polygonAmoy,
@@ -560,4 +559,5 @@ export const reservoirChains = {
   animeTestnet,
   monadDevnet,
   game7,
+  creatorTestnet,
 }

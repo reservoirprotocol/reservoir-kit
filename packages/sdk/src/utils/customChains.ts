@@ -995,7 +995,6 @@ export const creatorTestnet = {
 } as const satisfies Chain
 
 export const customChains = {
-  creatorTestnet,
   ancient8,
   ancient8Testnet,
   frameTestnet,
@@ -1036,4 +1035,5 @@ export const customChains = {
   animeTestnet,
   monadDevnet,
   game7,
+  creatorTestnet,
 } as const satisfies Record<string, Chain>
