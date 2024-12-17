@@ -382,8 +382,8 @@ const chainIcons = {
   },
   [reservoirChains.minato.id]: {
     light: <MinatoIconLight />,
-    dark: <MinatoDark />,
-    color: <MinatoColor />,
+    dark: <MinatoIconDark />,
+    color: <MinatoIconColor />,
   },
   [reservoirChains.hychain.id]: {
     light: <HychainIconLight />,
