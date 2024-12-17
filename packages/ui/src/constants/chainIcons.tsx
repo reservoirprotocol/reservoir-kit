@@ -124,6 +124,9 @@ import AnimeIconColor from '../img/chains/AnimeIconColor'
 import MonadIconLight from '../img/chains/MonadIconLight'
 import MonadIconDark from '../img/chains/MonadIconDark'
 import MonadIconColor from '../img/chains/MonadIconColor'
+import CreatorTestnetIconLight from '../img/chains/CreatorTestnetIconLight'
+import CreatorTestnetIconDark from '../img/chains/CreatorTestnetIconDark'
+import CreatorTestnetIconColor from '../img/chains/CreatorTestnetIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -379,8 +382,8 @@ const chainIcons = {
   },
   [reservoirChains.minato.id]: {
     light: <MinatoIconLight />,
-    dark: <MinatoIconDark />,
-    color: <MinatoIconColor />,
+    dark: <MinatoDark />,
+    color: <MinatoColor />,
   },
   [reservoirChains.hychain.id]: {
     light: <HychainIconLight />,
@@ -426,6 +429,11 @@ const chainIcons = {
     light: <Game7IconLight />,
     dark: <Game7IconDark />,
     color: <Game7IconColor />,
+  },
+  [reservoirChains.creatorTestnet.id]: {
+    light: <CreatorTestnetIconLight />,
+    dark: <CreatorTestnetIconDark />,
+    color: <CreatorTestnetIconColor />,
   },
 }
 
