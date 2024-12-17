@@ -1,5 +1,11 @@
 ## 1.25.10
 
+## 2.7.42
+
+### Patch Changes
+
+- 42dc07d: fixing currency icon chain for crosschain mint/buy
+
 ## 2.7.41
 
 ### Patch Changes
