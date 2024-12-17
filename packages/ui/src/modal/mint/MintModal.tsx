@@ -399,6 +399,7 @@ export function MintModal({
                             <Flex align="center">
                               <CryptoCurrencyIcon
                                 address={paymentCurrency?.address as string}
+                                chainId={paymentCurrency?.chainId}
                                 css={{ width: 16, height: 16, mr: '$1' }}
                               />
                               <Text style="subtitle2">
@@ -451,7 +452,7 @@ export function MintModal({
                         </Text>
 
                         <FormatCryptoCurrency
-                          chainId={chainId}
+                          chainId={paymentCurrency?.chainId}
                           amount={paymentCurrency?.balance}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
