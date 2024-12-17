@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.33
+
+### Patch Changes
+
+- 29a0710: feat(sdk,ui,demo): add Creator Testnet chain support (chain ID 4654) with native ETH and WETH token configurations, including demo app integration
+
 ## 2.4.32
 
 ### Patch Changes
