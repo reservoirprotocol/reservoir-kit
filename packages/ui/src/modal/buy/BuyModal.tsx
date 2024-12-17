@@ -16,6 +16,7 @@ import {
   FormatCryptoCurrency,
   Loader,
   ErrorWell,
+  CryptoCurrencyIcon,
 } from '../../primitives'
 import Progress from '../Progress'
 import { Modal } from '../Modal'
@@ -359,6 +360,11 @@ export function BuyModal({
                           css={{ gap: '$2', cursor: 'pointer' }}
                         >
                           <Flex align="center">
+                            <CryptoCurrencyIcon
+                              address={paymentCurrency?.address as string}
+                              chainId={paymentCurrency?.chainId}
+                              css={{ width: 16, height: 16, mr: '$1' }}
+                            />
                             <Text style="subtitle2">
                               {paymentCurrency?.name}
                             </Text>
@@ -411,7 +417,7 @@ export function BuyModal({
                         </Text>
 
                         <FormatCryptoCurrency
-                          chainId={modalChain?.id}
+                          chainId={paymentCurrency?.chainId}
                           amount={paymentCurrency?.balance}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
