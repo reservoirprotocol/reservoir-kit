@@ -109,6 +109,9 @@ import ShapeIconColor from '../img/chains/ShapeIconColor'
 import AbstractIconLight from '../img/chains/AbstractIconLight'
 import AbstractIconDark from '../img/chains/AbstractIconDark'
 import AbstractIconColor from '../img/chains/AbstractIconColor'
+import MinatoIconLight from '../img/chains/MinatoIconLight'
+import MinatoIconDark from '../img/chains/MinatoIconDark'
+import MinatoIconColor from '../img/chains/MinatoIconColor'
 import HychainIconLight from '../img/chains/HychainIconLight'
 import HychainIconDark from '../img/chains/HychainIconDark'
 import HychainIconColor from '../img/chains/HychainIconColor'
@@ -379,6 +382,11 @@ const chainIcons = {
     light: <AbstractIconLight />,
     dark: <AbstractIconDark />,
     color: <AbstractIconColor />,
+  },
+  [reservoirChains.minato.id]: {
+    light: <MinatoIconLight />,
+    dark: <MinatoIconDark />,
+    color: <MinatoIconColor />,
   },
   [reservoirChains.hychain.id]: {
     light: <HychainIconLight />,
