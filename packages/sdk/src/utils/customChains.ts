@@ -726,8 +726,29 @@ export const abstractTestnet = {
   },
 } as const satisfies Chain
 
-
-
+export const minato = {
+  id: 1946,
+  name: 'Minato',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.minato.soneium.org'],
+    },
+    public: {
+      http: ['https://rpc.minato.soneium.org'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Minato Explorer',
+      url: 'https://soneium-minato.blockscout.com',
+    },
+    default: {
+      name: 'Minato Explorer',
+      url: 'https://soneium-minato.blockscout.com',
+    },
+  },
+} as const satisfies Chain
 
 export const hychain = {
   id: 2911,

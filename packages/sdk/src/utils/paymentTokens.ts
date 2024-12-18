@@ -992,7 +992,23 @@ export const chainPaymentTokensMap = {
     },
   ],
 
-
+  // Minato
+  1946: [
+    {
+      chainId: 1946,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 1946,
+      address: '0x4200000000000000000000000000000000000006',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
 
   // Hychain
   2911: [
