@@ -109,9 +109,6 @@ import ShapeIconColor from '../img/chains/ShapeIconColor'
 import AbstractIconLight from '../img/chains/AbstractIconLight'
 import AbstractIconDark from '../img/chains/AbstractIconDark'
 import AbstractIconColor from '../img/chains/AbstractIconColor'
-import MinatoIconLight from '../img/chains/MinatoIconLight'
-import MinatoIconDark from '../img/chains/MinatoIconDark'
-import MinatoIconColor from '../img/chains/MinatoIconColor'
 import HychainIconLight from '../img/chains/HychainIconLight'
 import HychainIconDark from '../img/chains/HychainIconDark'
 import HychainIconColor from '../img/chains/HychainIconColor'
@@ -127,6 +124,9 @@ import MonadIconColor from '../img/chains/MonadIconColor'
 import CreatorTestnetIconLight from '../img/chains/CreatorTestnetIconLight'
 import CreatorTestnetIconDark from '../img/chains/CreatorTestnetIconDark'
 import CreatorTestnetIconColor from '../img/chains/CreatorTestnetIconColor'
+import SoneiumIconLight from '../img/chains/SoneiumIconLight'
+import SoneiumIconDark from '../img/chains/SoneiumIconDark'
+import SoneiumIconColor from '../img/chains/SoneiumIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -381,9 +381,9 @@ const chainIcons = {
     color: <AbstractIconColor />,
   },
   [reservoirChains.minato.id]: {
-    light: <MinatoIconLight />,
-    dark: <MinatoIconDark />,
-    color: <MinatoIconColor />,
+    light: <SoneiumIconLight />,
+    dark: <SoneiumIconDark />,
+    color: <SoneiumIconColor />,
   },
   [reservoirChains.hychain.id]: {
     light: <HychainIconLight />,
@@ -434,6 +434,11 @@ const chainIcons = {
     light: <CreatorTestnetIconLight />,
     dark: <CreatorTestnetIconDark />,
     color: <CreatorTestnetIconColor />,
+  },
+  [reservoirChains.soneium.id]: {
+    light: <SoneiumIconLight />,
+    dark: <SoneiumIconDark />,
+    color: <SoneiumIconColor />,
   },
 }
 
