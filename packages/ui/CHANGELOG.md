@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.44
+
+### Patch Changes
+
+- 7db63ef: Add Soneium chain configuration (Chain ID: 1868)
+- Updated dependencies [7db63ef]
+  - @reservoir0x/reservoir-sdk@2.4.34
+
 ## 2.7.43
 
 ### Patch Changes

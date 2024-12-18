@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.34
+
+### Patch Changes
+
+- 7db63ef: Add Soneium chain configuration (Chain ID: 1868)
+
 ## 2.4.33
 
 ### Patch Changes
