@@ -994,6 +994,30 @@ export const creatorTestnet = {
   },
 } as const satisfies Chain
 
+export const soneium = {
+  id: 1868,
+  name: 'Soneium',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['http://yellow-flash-rpc.dwellir.com'],
+    },
+    public: {
+      http: ['http://yellow-flash-rpc.dwellir.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Soneium Explorer',
+      url: 'https://vk9a3tgpne6qmub8.blockscout.com',
+    },
+    default: {
+      name: 'Soneium Explorer',
+      url: 'https://vk9a3tgpne6qmub8.blockscout.com',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -1036,4 +1060,5 @@ export const customChains = {
   monadDevnet,
   game7,
   creatorTestnet,
+  soneium,
 } as const satisfies Record<string, Chain>

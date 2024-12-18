@@ -60,5 +60,6 @@ const wrappedContractNames: Record<number, string> = {
   41454: 'WMON', // monad devnet
   2187: 'WG7', //game7
   4654: 'WETH', // creator testnet
+  1868: 'WETH', // Soneium
 }
 export default wrappedContractNames

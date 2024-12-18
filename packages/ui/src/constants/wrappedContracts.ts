@@ -60,6 +60,7 @@ const wrappedContracts: Record<number, string> = {
   41454: '0x3c6dd29e612b28c10f3ee9bacf0f4af5f17b3f3e', // monad devnet
   2187: '0xfa3ed70386b9255fC04aA008A8ad1B0CDa816Fac', //game7
   4654: '0x34AF38Ec07708dBC01C5A814fc418D3840448fce', // creator testnet
+  1868: '0x4200000000000000000000000000000000000006', // Soneium
 }
 
 export default wrappedContracts

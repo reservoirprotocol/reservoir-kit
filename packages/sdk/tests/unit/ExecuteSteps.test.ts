@@ -12,7 +12,7 @@ import { mainnet } from 'viem/chains'
 import signatureStepDataEIP712 from '../data/signatureStepEIP712.json'
 import signatureStepDataEIP191 from '../data/signatureStepEIP191.json'
 import transactionStepData from '../data/transactionStep.json'
-import multiTransactionStep from '../data/multiTransactionStep.json'
+import multiTransactionStep from '../data/multitransactionStep.json'
 
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -129,7 +129,7 @@ beforeEach(() => {
   jest.clearAllMocks()
   jest.resetModules()
   transactionStepData.steps.forEach(step => step.items.forEach(item => item.status = 'incomplete'))
-  multiTransactionStep.steps.forEach(step => step.items.forEach(item => item.status = 'incomplete'))
+  multiTransactionStep.steps.forEach((step: { items: Array<{ status: string }> }) => step.items.forEach((item: { status: string }) => item.status = 'incomplete'))
   signatureStepDataEIP712.steps.forEach(step => step.items.forEach(item => item.status = 'incomplete'))
   signatureStepDataEIP191.steps.forEach(step => step.items.forEach(item => item.status = 'incomplete'))
   sendTransactionSpyTriggerTimes = []

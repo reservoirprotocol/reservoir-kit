@@ -385,4 +385,7 @@ export default [
   {
     ...reservoirChains.creatorTestnet,
   },
+  {
+    ...reservoirChains.soneium,
+  },
 ]
