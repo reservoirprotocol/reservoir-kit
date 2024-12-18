@@ -1049,6 +1049,7 @@ export const customChains = {
   shape,
   shapeSepolia,
   abstractTestnet,
+  minato,
   hychain,
   hychainTestnet,
   flow,
