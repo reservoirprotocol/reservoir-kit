@@ -970,6 +970,30 @@ export const game7 = {
   },
 } as const satisfies Chain
 
+export const creatorTestnet = {
+  id: 4654,
+  name: 'Creator Testnet',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://creator-testnet.rpc.caldera.xyz/http'],
+    },
+    public: {
+      http: ['https://creator-testnet.rpc.caldera.xyz/http'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Creator Testnet Explorer',
+      url: 'https://creator-testnet.explorer.caldera.xyz',
+    },
+    default: {
+      name: 'Creator Testnet Explorer',
+      url: 'https://creator-testnet.explorer.caldera.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -1011,4 +1035,5 @@ export const customChains = {
   animeTestnet,
   monadDevnet,
   game7,
+  creatorTestnet,
 } as const satisfies Record<string, Chain>

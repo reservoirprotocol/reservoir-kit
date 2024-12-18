@@ -1,5 +1,19 @@
 ## 1.25.10
 
+## 2.7.43
+
+### Patch Changes
+
+- 29a0710: feat(sdk,ui,demo): add Creator Testnet chain support (chain ID 4654) with native ETH and WETH token configurations, including demo app integration
+- Updated dependencies [29a0710]
+  - @reservoir0x/reservoir-sdk@2.4.33
+
+## 2.7.42
+
+### Patch Changes
+
+- 42dc07d: fixing currency icon chain for crosschain mint/buy
+
 ## 2.7.41
 
 ### Patch Changes

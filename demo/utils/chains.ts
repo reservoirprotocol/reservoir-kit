@@ -382,4 +382,7 @@ export default [
   {
     ...reservoirChains.game7,
   },
+  {
+    ...reservoirChains.creatorTestnet,
+  },
 ]
