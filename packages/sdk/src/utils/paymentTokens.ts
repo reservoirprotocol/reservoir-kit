@@ -306,6 +306,24 @@ export const chainPaymentTokensMap = {
     },
   ],
 
+  // Soneium
+  1868: [
+    {
+      chainId: 1868,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Soneium ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 1868,
+      address: '0x4200000000000000000000000000000000000006',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
+
   // Bsc
   56: [
     {

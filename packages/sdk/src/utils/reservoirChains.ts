@@ -498,6 +498,14 @@ const creatorTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const soneium = {
+  id: 1868,
+  name: 'Soneium',
+  baseApiUrl: 'https://api-soneium.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1868],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -560,4 +568,5 @@ export const reservoirChains = {
   monadDevnet,
   game7,
   creatorTestnet,
+  soneium,
 }
