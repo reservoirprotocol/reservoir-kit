@@ -49,7 +49,6 @@ const wrappedContractNames: Record<number, string> = {
   360: 'WETH', // shape
   11011: 'WETH', // shape sepolia
   11124: 'WETH', // abstract testnet
-  1946: 'WETH', // minato
   2911: 'WTOPIA', // hychain
   29112: 'WTOPIA', // hychain testnet
   747: 'WFLOW', // flow
@@ -60,5 +59,6 @@ const wrappedContractNames: Record<number, string> = {
   41454: 'WMON', // monad devnet
   2187: 'WG7', //game7
   4654: 'WETH', // creator testnet
+  1868: 'WETH', // Soneium
 }
 export default wrappedContractNames

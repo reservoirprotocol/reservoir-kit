@@ -410,13 +410,8 @@ const abstractTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
-const minato = {
-  id: 1946,
-  name: 'Minato',
-  baseApiUrl: 'https://api-minato.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[1946],
-  checkPollingInterval: 1000,
-} satisfies ReservoirBaseChain
+
+
 
 const hychain = {
   id: 2911,
@@ -557,7 +552,6 @@ export const reservoirChains = {
   shape,
   shapeSepolia,
   abstractTestnet,
-  minato,
   hychain,
   hychainTestnet,
   flow,

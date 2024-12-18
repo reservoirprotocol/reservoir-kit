@@ -49,7 +49,6 @@ const wrappedContracts: Record<number, string> = {
   360: '0x4200000000000000000000000000000000000006', // shape
   11011: '0x48a9b22b80f566e88f0f1dcc90ea15a8a3bae8a4', // shape sepolia
   11124: '0x9edcde0257f2386ce177c3a7fcdd97787f0d841d', // abstract testnet
-  1946: '0x4200000000000000000000000000000000000006', // minato
   2911: '0x2b1499d631bffb29eed7749b12cba754273d6da7', // hychain
   29112: '0x2549584be33491340eee6762992055cda05b2581', // hychain testnet
   747: '0xd3bf53dac106a0290b0483ecbc89d40fcc961f3e', // flow
@@ -60,6 +59,7 @@ const wrappedContracts: Record<number, string> = {
   41454: '0x3c6dd29e612b28c10f3ee9bacf0f4af5f17b3f3e', // monad devnet
   2187: '0xfa3ed70386b9255fC04aA008A8ad1B0CDa816Fac', //game7
   4654: '0x34AF38Ec07708dBC01C5A814fc418D3840448fce', // creator testnet
+  1868: '0x4200000000000000000000000000000000000006', // Soneium
 }
 
 export default wrappedContracts
