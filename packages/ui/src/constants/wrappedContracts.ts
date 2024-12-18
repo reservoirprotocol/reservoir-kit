@@ -49,6 +49,7 @@ const wrappedContracts: Record<number, string> = {
   360: '0x4200000000000000000000000000000000000006', // shape
   11011: '0x48a9b22b80f566e88f0f1dcc90ea15a8a3bae8a4', // shape sepolia
   11124: '0x9edcde0257f2386ce177c3a7fcdd97787f0d841d', // abstract testnet
+  1946: '0x4200000000000000000000000000000000000006', // minato
   2911: '0x2b1499d631bffb29eed7749b12cba754273d6da7', // hychain
   29112: '0x2549584be33491340eee6762992055cda05b2581', // hychain testnet
   747: '0xd3bf53dac106a0290b0483ecbc89d40fcc961f3e', // flow
