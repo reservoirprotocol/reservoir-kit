@@ -48,8 +48,8 @@ const wrappedContractNames: Record<number, string> = {
   33111: 'WAPE', // apechain
   360: 'WETH', // shape
   11011: 'WETH', // shape sepolia
-  1946: 'WETH', // minato
   11124: 'WETH', // abstract testnet
+  1946: 'WETH', // minato
   2911: 'WTOPIA', // hychain
   29112: 'WTOPIA', // hychain testnet
   747: 'WFLOW', // flow
