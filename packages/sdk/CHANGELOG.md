@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.35
+
+### Patch Changes
+
+- afcd970: fixing soneium rpc
+
 ## 2.4.34
 
 ### Patch Changes
