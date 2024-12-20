@@ -1000,10 +1000,10 @@ export const soneium = {
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['http://yellow-flash-rpc.dwellir.com'],
+      http: ['https://yellow-flash-rpc.dwellir.com'],
     },
     public: {
-      http: ['http://yellow-flash-rpc.dwellir.com'],
+      http: ['https://yellow-flash-rpc.dwellir.com'],
     },
   },
   blockExplorers: {
