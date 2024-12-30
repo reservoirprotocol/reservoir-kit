@@ -156,10 +156,10 @@ export const blast = {
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://blast.blockpi.network/v1/rpc/public'],
+      http: ['https://rpc.blast.io'],
     },
     public: {
-      http: ['https://blast.blockpi.network/v1/rpc/public'],
+      http: ['https://rpc.blast.io'],
     },
   },
   blockExplorers: {
@@ -172,7 +172,7 @@ export const blast = {
       url: 'https://blastscan.io',
     },
   },
-}
+} as const satisfies Chain
 
 export const astarZkEVM = {
   id: 3776,
