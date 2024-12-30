@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.36
+
+### Patch Changes
+
+- 493bf6f: fixing blast rpc url
+
 ## 2.4.35
 
 ### Patch Changes
