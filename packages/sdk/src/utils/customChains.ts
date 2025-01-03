@@ -6,7 +6,13 @@ export const mainnet = {
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://ethereum-rpc.publicnode.com'],
+      http: [
+        'https://ethereum-rpc.publicnode.com',
+        'https://mainnet.gateway.tenderly.co',
+        'https://rpc.flashbots.net',
+        'https://rpc.mevblocker.io',
+        'https://eth.drpc.org',
+      ],
     },
   },
   blockExplorers: {
@@ -29,7 +35,7 @@ export const mainnet = {
       blockCreated: 14_353_601,
     },
   },
-}
+} as const satisfies Chain
 
 export const ancient8 = {
   id: 888888888,
