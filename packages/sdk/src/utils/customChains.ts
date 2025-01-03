@@ -1056,6 +1056,7 @@ export const soneium = {
 } as const satisfies Chain
 
 export const customChains = {
+  mainnet,
   ancient8,
   ancient8Testnet,
   frameTestnet,
