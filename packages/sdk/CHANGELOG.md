@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.37
+
+### Patch Changes
+
+- a76f685: fixing mainnet rpc
+
 ## 2.4.36
 
 ### Patch Changes
