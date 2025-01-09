@@ -562,11 +562,11 @@ export const boss = {
   blockExplorers: {
     etherscan: {
       name: 'Boss Explorer',
-      url: 'https://explorer-proofofplay-boss-mainnet.t.conduit.xyz',
+      url: 'https://explorer.boss.proofofplay.com',
     },
     default: {
       name: 'Boss Explorer',
-      url: 'https://explorer-proofofplay-boss-mainnet.t.conduit.xyz',
+      url: 'https://explorer.boss.proofofplay.com',
     },
   },
 } as const satisfies Chain
@@ -874,11 +874,11 @@ export const zero = {
   blockExplorers: {
     etherscan: {
       name: 'Zero Explorer',
-      url: 'https://zero-network.calderaexplorer.xyz',
+      url: 'https://explorer.zero.network',
     },
     default: {
       name: 'Zero Explorer',
-      url: 'https://zero-network.calderaexplorer.xyz',
+      url: 'https://explorer.zero.network',
     },
   },
 } as const satisfies Chain
