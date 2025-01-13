@@ -506,6 +506,14 @@ const soneium = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const storyOdyssey = {
+  id: 1516,
+  name: 'Story Odyssey',
+  baseApiUrl: 'https://api-story-odyssey.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1516],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -569,4 +577,5 @@ export const reservoirChains = {
   game7,
   creatorTestnet,
   soneium,
+  storyOdyssey,
 }

@@ -1189,4 +1189,22 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  // Story Odyssey
+  1516: [
+    {
+      chainId: 1516,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'Story Odyssey ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 1516,
+      address: '0x1516000000000000000000000000000000000000',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>

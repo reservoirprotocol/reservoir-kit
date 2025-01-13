@@ -61,6 +61,7 @@ const wrappedContracts: Record<number, string> = {
   2187: '0xfa3ed70386b9255fC04aA008A8ad1B0CDa816Fac', //game7
   4654: '0x34AF38Ec07708dBC01C5A814fc418D3840448fce', // creator testnet
   1868: '0x4200000000000000000000000000000000000006', // Soneium
+  1516: '0x1516000000000000000000000000000000000000', // Story Odyssey
 }
 
 export default wrappedContracts

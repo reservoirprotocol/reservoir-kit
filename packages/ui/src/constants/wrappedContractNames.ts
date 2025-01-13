@@ -61,5 +61,6 @@ const wrappedContractNames: Record<number, string> = {
   2187: 'WG7', //game7
   4654: 'WETH', // creator testnet
   1868: 'WETH', // Soneium
+  1516: 'WETH', // Story Odyssey
 }
 export default wrappedContractNames
