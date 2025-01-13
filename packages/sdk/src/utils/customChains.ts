@@ -1058,7 +1058,7 @@ export const soneium = {
 export const storyOdyssey = {
   id: 1516,
   name: 'Story Odyssey',
-  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  nativeCurrency: { name: 'IP', symbol: 'IP', decimals: 18 },
   rpcUrls: {
     default: {
       http: ['https://rpc.odyssey.storyrpc.io'],
