@@ -1,5 +1,8 @@
 import React from 'react'
 import { reservoirChains } from '@reservoir0x/reservoir-sdk'
+import StoryOdysseyIconDark from '../img/chains/StoryOdysseyIconDark'
+import StoryOdysseyIconLight from '../img/chains/StoryOdysseyIconLight'
+import StoryOdysseyIconColor from '../img/chains/StoryOdysseyIconColor'
 import MainnetIconDark from '../img/chains/MainnetIconDark'
 import MainnetIconLight from '../img/chains/MainnetIconLight'
 import PolygonIconDark from '../img/chains/PolygonIconDark'
@@ -439,6 +442,11 @@ const chainIcons = {
     light: <SoneiumIconLight />,
     dark: <SoneiumIconDark />,
     color: <SoneiumIconColor />,
+  },
+  [reservoirChains.storyOdyssey.id]: {
+    light: <StoryOdysseyIconLight />,
+    dark: <StoryOdysseyIconDark />,
+    color: <StoryOdysseyIconColor />,
   },
 }
 

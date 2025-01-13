@@ -1055,6 +1055,30 @@ export const soneium = {
   },
 } as const satisfies Chain
 
+export const storyOdyssey = {
+  id: 1516,
+  name: 'Story Odyssey',
+  nativeCurrency: { name: 'IP', symbol: 'IP', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.odyssey.storyrpc.io'],
+    },
+    public: {
+      http: ['https://rpc.odyssey.storyrpc.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Story Odyssey Explorer',
+      url: 'https://odyssey.storyscan.xyz',
+    },
+    default: {
+      name: 'Story Odyssey Explorer',
+      url: 'https://odyssey.storyscan.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -1098,4 +1122,5 @@ export const customChains = {
   game7,
   creatorTestnet,
   soneium,
+  storyOdyssey,
 } as const satisfies Record<string, Chain>

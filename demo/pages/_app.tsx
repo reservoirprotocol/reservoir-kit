@@ -94,6 +94,7 @@ const chains = [
   customChains.monadDevnet,
   customChains.game7,
   customChains.blast,
+  customChains.storyOdyssey,
 ] as [Chain, ...Chain[]]
 
 const wagmiConfig = getDefaultConfig({

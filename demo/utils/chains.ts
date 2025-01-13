@@ -388,4 +388,7 @@ export default [
   {
     ...reservoirChains.soneium,
   },
+  {
+    ...reservoirChains.storyOdyssey,
+  },
 ]
