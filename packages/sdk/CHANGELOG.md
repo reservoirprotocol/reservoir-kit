@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.39
+
+### Patch Changes
+
+- 495ac1c: add story odyssey chain support
+
 ## 2.4.38
 
 ### Patch Changes

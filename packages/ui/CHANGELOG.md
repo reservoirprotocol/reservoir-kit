@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.49
+
+### Patch Changes
+
+- 495ac1c: add story odyssey chain support
+- Updated dependencies [495ac1c]
+  - @reservoir0x/reservoir-sdk@2.4.39
+
 ## 2.7.48
 
 ### Patch Changes
