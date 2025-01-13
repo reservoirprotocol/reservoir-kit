@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.38
+
+### Patch Changes
+
+- 18ff2f0: adding new block explorers for boss and zero
+
 ## 2.4.37
 
 ### Patch Changes
