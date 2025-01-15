@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.52
+
+### Patch Changes
+
+- 8916b59: feat: add Ink chain support (id: 57073)
+- Updated dependencies [8916b59]
+  - @reservoir0x/reservoir-sdk@2.4.41
+
 ## 2.7.51
 
 ### Patch Changes
