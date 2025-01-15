@@ -130,6 +130,9 @@ import CreatorTestnetIconColor from '../img/chains/CreatorTestnetIconColor'
 import SoneiumIconLight from '../img/chains/SoneiumIconLight'
 import SoneiumIconDark from '../img/chains/SoneiumIconDark'
 import SoneiumIconColor from '../img/chains/SoneiumIconColor'
+import InkIconLight from '../img/chains/InkIconLight'
+import InkIconDark from '../img/chains/InkIconDark'
+import InkIconColor from '../img/chains/InkIconColor'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -452,6 +455,11 @@ const chainIcons = {
     light: <MonadIconLight />,
     dark: <MonadIconDark />,
     color: <MonadIconColor />,
+  },
+  [reservoirChains.ink.id]: {
+    light: <InkIconLight />,
+    dark: <InkIconDark />,
+    color: <InkIconColor />,
   },
 }
 

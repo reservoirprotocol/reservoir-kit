@@ -63,5 +63,6 @@ const wrappedContractNames: Record<number, string> = {
   4654: 'WETH', // creator testnet
   1868: 'WETH', // Soneium
   1516: 'WIP', // Story Odyssey
+  57073: 'WETH', // Ink
 }
 export default wrappedContractNames

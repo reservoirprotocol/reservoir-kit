@@ -1103,6 +1103,30 @@ export const monadTestnet = {
   },
 } as const satisfies Chain
 
+export const ink = {
+  id: 57073,
+  name: 'Ink',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-gel.inkonchain.com'],
+    },
+    public: {
+      http: ['https://rpc-gel.inkonchain.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Ink Explorer',
+      url: 'https://explorer.inkonchain.com',
+    },
+    default: {
+      name: 'Ink Explorer',
+      url: 'https://explorer.inkonchain.com',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -1148,4 +1172,5 @@ export const customChains = {
   soneium,
   storyOdyssey,
   monadTestnet,
+  ink,
 } as const satisfies Record<string, Chain>
