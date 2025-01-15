@@ -92,6 +92,7 @@ const chains = [
   customChains.abstract,
   customChains.animeTestnet,
   customChains.monadDevnet,
+  customChains.monadTestnet,
   customChains.game7,
   customChains.blast,
   customChains.storyOdyssey,

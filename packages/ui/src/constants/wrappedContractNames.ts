@@ -58,6 +58,7 @@ const wrappedContractNames: Record<number, string> = {
   2741: 'WETH', // abstract
   6900: 'WANIME', // anime testnet
   41454: 'WMON', // monad devnet
+  10143: 'WMON', // monad testnet
   2187: 'WG7', //game7
   4654: 'WETH', // creator testnet
   1868: 'WETH', // Soneium
