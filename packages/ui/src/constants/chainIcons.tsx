@@ -448,6 +448,11 @@ const chainIcons = {
     dark: <StoryOdysseyIconDark />,
     color: <StoryOdysseyIconColor />,
   },
+  [reservoirChains.monadTestnet.id]: {
+    light: <MonadIconLight />,
+    dark: <MonadIconDark />,
+    color: <MonadIconColor />,
+  },
 }
 
 export default chainIcons
