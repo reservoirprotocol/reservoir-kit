@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.41
+
+### Patch Changes
+
+- 8916b59: feat: add Ink chain support (id: 57073)
+
 ## 2.4.40
 
 ### Patch Changes
