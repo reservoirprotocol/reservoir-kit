@@ -514,6 +514,14 @@ const storyOdyssey = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const monadTestnet = {
+  id: 10143,
+  name: 'Monad Testnet',
+  baseApiUrl: 'https://api-monad-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[10143],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -578,4 +586,5 @@ export const reservoirChains = {
   creatorTestnet,
   soneium,
   storyOdyssey,
+  monadTestnet,
 }

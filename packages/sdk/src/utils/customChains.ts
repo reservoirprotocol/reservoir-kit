@@ -1079,6 +1079,30 @@ export const storyOdyssey = {
   },
 } as const satisfies Chain
 
+export const monadTestnet = {
+  id: 10143,
+  name: 'Monad Testnet',
+  nativeCurrency: { name: 'Monad', symbol: 'MON', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.monad-testnet.category.xyz/rpc/g6uEr06zOc3FDxtbHDcytyebCOrJxfLkuouFs09j'],
+    },
+    public: {
+      http: ['https://rpc.monad-testnet.category.xyz/rpc/g6uEr06zOc3FDxtbHDcytyebCOrJxfLkuouFs09j'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Monad Testnet Explorer',
+      url: 'https://explorer.monad-testnet.category.xyz',
+    },
+    default: {
+      name: 'Monad Testnet Explorer',
+      url: 'https://explorer.monad-testnet.category.xyz',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -1123,4 +1147,5 @@ export const customChains = {
   creatorTestnet,
   soneium,
   storyOdyssey,
+  monadTestnet,
 } as const satisfies Record<string, Chain>
