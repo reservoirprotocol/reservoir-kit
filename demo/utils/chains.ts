@@ -380,6 +380,9 @@ export default [
     ...reservoirChains.monadDevnet,
   },
   {
+    ...reservoirChains.monadTestnet,
+  },
+  {
     ...reservoirChains.game7,
   },
   {
