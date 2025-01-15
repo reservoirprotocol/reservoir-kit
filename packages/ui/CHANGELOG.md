@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.7.51
+
+### Patch Changes
+
+- dccac49: Added Monad Testnet chain support (ID: 10143) to SDK and UI packages. Includes chain configuration, payment tokens (MON/WMON), wrapped contract details, and demo app integration.
+- Updated dependencies [dccac49]
+  - @reservoir0x/reservoir-sdk@2.4.40
+
 ## 2.7.50
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.40
+
+### Patch Changes
+
+- dccac49: Added Monad Testnet chain support (ID: 10143) to SDK and UI packages. Includes chain configuration, payment tokens (MON/WMON), wrapped contract details, and demo app integration.
+
 ## 2.4.39
 
 ### Patch Changes
