@@ -394,4 +394,7 @@ export default [
   {
     ...reservoirChains.storyOdyssey,
   },
+  {
+    ...reservoirChains.ink,
+  },
 ]

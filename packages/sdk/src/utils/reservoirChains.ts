@@ -522,6 +522,14 @@ const monadTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const ink = {
+  id: 57073,
+  name: 'Ink',
+  baseApiUrl: 'https://api-ink.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[57073],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -587,4 +595,5 @@ export const reservoirChains = {
   soneium,
   storyOdyssey,
   monadTestnet,
+  ink,
 }

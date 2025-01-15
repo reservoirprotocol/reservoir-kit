@@ -1225,4 +1225,22 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  // Ink
+  57073: [
+    {
+      chainId: 57073,
+      address: zeroAddress,
+      symbol: 'ETH',
+      name: 'ETH',
+      decimals: 18,
+    },
+    {
+      chainId: 57073,
+      address: '0x4200000000000000000000000000000000000006',
+      symbol: 'WETH',
+      name: 'WETH',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>
