@@ -416,11 +416,6 @@ const chainIcons = {
     dark: <ZeroIconDark />,
     color: <ZeroIconColor />,
   },
-  [reservoirChains.abstract.id]: {
-    light: <AbstractIconLight />,
-    dark: <AbstractIconDark />,
-    color: <AbstractIconColor />,
-  },
   [reservoirChains.animeTestnet.id]: {
     light: <AnimeIconLight />,
     dark: <AnimeIconDark />,

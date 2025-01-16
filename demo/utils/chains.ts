@@ -371,9 +371,6 @@ export default [
     ...reservoirChains.zeroTestnet,
   },
   {
-    ...reservoirChains.abstract,
-  },
-  {
     ...reservoirChains.animeTestnet,
   },
   {

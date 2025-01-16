@@ -907,30 +907,6 @@ export const zeroTestnet = {
   },
 } as const satisfies Chain
 
-export const abstract = {
-  id: 2741,
-  name: 'Abstract',
-  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-  rpcUrls: {
-    default: {
-      http: ['https://api.raas.matterhosted.dev'],
-    },
-    public: {
-      http: ['https://api.raas.matterhosted.dev'],
-    },
-  },
-  blockExplorers: {
-    etherscan: {
-      name: 'Abstract Explorer',
-      url: 'https://explorer.mainnet.abs.xyz',
-    },
-    default: {
-      name: 'Abstract Explorer',
-      url: 'https://explorer.mainnet.abs.xyz',
-    },
-  },
-} as const satisfies Chain
-
 export const animeTestnet = {
   id: 6900,
   name: 'Anime Testnet',
@@ -1085,10 +1061,14 @@ export const monadTestnet = {
   nativeCurrency: { name: 'Monad', symbol: 'MON', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://rpc.monad-testnet.category.xyz/rpc/g6uEr06zOc3FDxtbHDcytyebCOrJxfLkuouFs09j'],
+      http: [
+        'https://rpc.monad-testnet.category.xyz/rpc/g6uEr06zOc3FDxtbHDcytyebCOrJxfLkuouFs09j',
+      ],
     },
     public: {
-      http: ['https://rpc.monad-testnet.category.xyz/rpc/g6uEr06zOc3FDxtbHDcytyebCOrJxfLkuouFs09j'],
+      http: [
+        'https://rpc.monad-testnet.category.xyz/rpc/g6uEr06zOc3FDxtbHDcytyebCOrJxfLkuouFs09j',
+      ],
     },
   },
   blockExplorers: {
@@ -1164,7 +1144,6 @@ export const customChains = {
   flow,
   zero,
   zeroTestnet,
-  abstract,
   animeTestnet,
   monadDevnet,
   game7,

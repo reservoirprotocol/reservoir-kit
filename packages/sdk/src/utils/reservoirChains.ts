@@ -458,14 +458,6 @@ const zeroTestnet = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
-const abstract = {
-  id: 2741,
-  name: 'Abstract',
-  baseApiUrl: 'https://api-abstract.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[2741],
-  checkPollingInterval: 1000,
-} satisfies ReservoirBaseChain
-
 const animeTestnet = {
   id: 6900,
   name: 'Anime Testnet',

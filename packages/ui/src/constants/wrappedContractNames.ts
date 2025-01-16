@@ -55,7 +55,6 @@ const wrappedContractNames: Record<number, string> = {
   747: 'WFLOW', // flow
   543210: 'WETH', // zero
   43210: 'WETH', // zero testnet
-  2741: 'WETH', // abstract
   6900: 'WANIME', // anime testnet
   41454: 'WMON', // monad devnet
   10143: 'WMON', // monad testnet

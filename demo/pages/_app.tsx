@@ -89,7 +89,6 @@ const chains = [
   customChains.flow,
   customChains.zero,
   customChains.zeroTestnet,
-  customChains.abstract,
   customChains.animeTestnet,
   customChains.monadDevnet,
   customChains.monadTestnet,
