@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.4.42
+
+### Patch Changes
+
+- 87cd822: tweak
+
 ## 2.4.41
 
 ### Patch Changes
