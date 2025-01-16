@@ -90,6 +90,7 @@ type Props = {
   orderKind?: ListingData['listing']['orderKind']
   currencies?: Currency[]
   normalizeRoyalties?: boolean
+  conduitKey?: string
   oracleEnabled: boolean
   feesBps?: string[]
   children: (props: ChildrenProps) => ReactNode
@@ -114,6 +115,7 @@ export const ListModalRenderer: FC<Props> = ({
   currencies: preferredCurrencies,
   chainId,
   normalizeRoyalties,
+  conduitKey,
   oracleEnabled = false,
   feesBps,
   children,
@@ -284,7 +286,7 @@ export const ListModalRenderer: FC<Props> = ({
     if (marketplace && !exchange) {
       setListStep(ListStep.Unavailable)
     }
-  }, [marketplace, exchange])
+  }, [marketplace, exchange, open])
 
   useEffect(() => {
     if (currencies && currencies.length > 5) {
@@ -376,10 +378,11 @@ export const ListModalRenderer: FC<Props> = ({
         listing.currency = currency.contract
       }
 
-      if (oracleEnabled) {
+      if (oracleEnabled || conduitKey) {
         listing.options = {
           [`${listing.orderKind}`]: {
-            useOffChainCancellation: true,
+            useOffChainCancellation: oracleEnabled,
+            conduitKey,
           },
         }
       }
@@ -482,6 +485,7 @@ export const ListModalRenderer: FC<Props> = ({
       price,
       marketplace,
       exchange,
+      conduitKey,
     ]
   )
 

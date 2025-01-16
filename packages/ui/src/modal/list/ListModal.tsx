@@ -30,9 +30,9 @@ import {
   ListStep,
   ListModalStepData,
 } from './ListModalRenderer'
-import faCalendar from '@fortawesome/free-solid-svg-icons/faCalendar'
-import faImages from '@fortawesome/free-solid-svg-icons/faImages'
-import faTag from '@fortawesome/free-solid-svg-icons/faTag'
+import { faCalendar } from '@fortawesome/free-solid-svg-icons/faCalendar'
+import { faImages } from '@fortawesome/free-solid-svg-icons/faImages'
+import { faTag } from '@fortawesome/free-solid-svg-icons/faTag'
 
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
@@ -72,6 +72,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   currencies?: Currency[]
   normalizeRoyalties?: boolean
   oracleEnabled?: boolean
+  conduitKey?: string
   copyOverrides?: Partial<typeof ModalCopy>
   feesBps?: string[]
   walletClient?: ReservoirWallet | WalletClient
@@ -103,6 +104,7 @@ export function ListModal({
   currencies,
   normalizeRoyalties,
   oracleEnabled = false,
+  conduitKey,
   copyOverrides,
   feesBps,
   walletClient,
@@ -138,6 +140,7 @@ export function ListModal({
       currencies={currencies}
       normalizeRoyalties={normalizeRoyalties}
       oracleEnabled={oracleEnabled}
+      conduitKey={conduitKey}
       feesBps={feesBps}
       walletClient={walletClient}
     >
@@ -207,10 +210,13 @@ export function ListModal({
           }
         }, [transactionError])
 
-        const floorAskPrice = collection?.floorAsk?.price
-        const decimalFloorPrice = collection?.floorAsk?.price?.amount?.decimal
-        const nativeFloorPrice = collection?.floorAsk?.price?.amount?.native
-        const usdFloorPrice = collection?.floorAsk?.price?.amount?.usd
+        const floorAskPrice =
+          token?.token?.kind === 'erc1155'
+            ? token?.market?.floorAsk?.price
+            : collection?.floorAsk?.price
+        const decimalFloorPrice = floorAskPrice?.amount?.decimal
+        const nativeFloorPrice = floorAskPrice?.amount?.native
+        const usdFloorPrice = floorAskPrice?.amount?.usd
         const defaultCurrency = currencies?.find(
           (currency) => currency?.contract === zeroAddress
         )
@@ -466,23 +472,17 @@ export function ListModal({
                         </Text>
                       </Box>
                     )}
-                    {collection &&
-                      collection?.floorAsk?.price?.amount?.native !==
-                        undefined &&
+                    {floorAskPrice?.amount?.native !== undefined &&
                       Number(price) !== 0 &&
                       Number(price) >= minimumAmount &&
                       currency.contract === zeroAddress &&
-                      Number(price) <
-                        collection?.floorAsk?.price.amount.native && (
+                      Number(price) < floorAskPrice.amount.native && (
                         <Box>
                           <Text style="body2" color="error">
                             Price is{' '}
                             {Math.round(
-                              ((collection.floorAsk.price.amount.native -
-                                +price) /
-                                ((collection.floorAsk.price.amount.native +
-                                  +price) /
-                                  2)) *
+                              ((floorAskPrice.amount.native - +price) /
+                                ((floorAskPrice.amount.native + +price) / 2)) *
                                 100 *
                                 1000
                             ) / 1000}
@@ -568,6 +568,7 @@ export function ListModal({
                     quantity={quantity}
                     royaltyBps={royaltyBps}
                     marketplace={marketplace}
+                    exchange={exchange}
                   />
                 </Flex>
                 <Box css={{ p: '$4', width: '100%' }}>

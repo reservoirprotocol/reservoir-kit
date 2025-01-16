@@ -4,7 +4,7 @@ import TokenMedia from './index'
 import { defaultHeaders } from '../../lib/swr'
 import { useReservoirClient } from '../../hooks'
 import { axios, paths } from '@reservoir0x/reservoir-sdk'
-import faImage from '@fortawesome/free-solid-svg-icons/faImage'
+import { faImage } from '@fortawesome/free-solid-svg-icons/faImage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type TokenFallbackProps = {
@@ -67,10 +67,10 @@ const TokenFallback: FC<TokenFallbackProps> = ({
                 throw 'ReservoirClient missing chain configuration'
               }
               onRefreshClicked()
-              const url = `${reservoirChain?.baseApiUrl}/tokens/refresh/v1`
-              const body: paths['/tokens/refresh/v1']['post']['parameters']['body']['body'] =
+              const url = `${reservoirChain?.baseApiUrl}/tokens/refresh/v2`
+              const body: paths['/tokens/refresh/v2']['post']['parameters']['body']['body'] =
                 {
-                  token: `${contract}:${token?.tokenId}`,
+                  tokens: [`${contract}:${token?.tokenId}`],
                 }
               const headers = {
                 ...defaultHeaders(client?.apiKey, client?.version),

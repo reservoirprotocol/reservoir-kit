@@ -1,4 +1,4 @@
-import faImage from '@fortawesome/free-solid-svg-icons/faImage'
+import { faImage } from '@fortawesome/free-solid-svg-icons/faImage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Flex from './Flex'
 import { ComponentPropsWithoutRef, useEffect, useState } from 'react'

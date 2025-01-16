@@ -1,6 +1,10 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
-import { useCoinConversion, useReservoirClient, useListings } from '../../hooks'
-import { useConfig, useWalletClient } from 'wagmi'
+import {
+  useCoinConversion,
+  useReservoirClient,
+  useUserListings,
+} from '../../hooks'
+import { useAccount, useConfig, useWalletClient } from 'wagmi'
 import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import { getAccount, switchChain } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
@@ -22,7 +26,7 @@ export type CancelListingStepData = {
 
 type ChildrenProps = {
   loading: boolean
-  listing?: NonNullable<ReturnType<typeof useListings>['data']>[0]
+  listing?: NonNullable<ReturnType<typeof useUserListings>['data']>[0]
   tokenId?: string
   contract?: string
   cancelStep: CancelStep
@@ -58,7 +62,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<CancelListingStepData | null>(null)
   const [steps, setSteps] = useState<Execute['steps'] | null>(null)
-
+  const { address } = useAccount()
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
   const config = useConfig()
@@ -81,7 +85,8 @@ export const CancelListingModalRenderer: FC<Props> = ({
   const blockExplorerName =
     wagmiChain?.blockExplorers?.default?.name || 'Etherscan'
 
-  const { data: listings, isFetchingPage } = useListings(
+  const { data: listings, isFetchingPage } = useUserListings(
+    address,
     {
       ids: listingId,
       normalizeRoyalties,

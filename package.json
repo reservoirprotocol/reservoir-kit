@@ -29,7 +29,8 @@
     "reset": "yarn clean && rm -rf node_modules .yarn/cache .parcel-cache",
     "tags:delete": "git tag --delete sdk-demo@undefined && git tag --delete reservoir-kit-demo@undefined",
     "package:change": "yarn changeset && git stage ./.changeset/* && git commit --m \"feat: changeset\" && git push",
-    "package:release": "yarn clean && yarn build && changeset version && yarn publish:stable && changeset tag && yarn tags:delete && git push --follow-tags"
+    "package:release": "yarn clean && yarn build && changeset version && yarn publish:stable && changeset tag && yarn tags:delete && git push --follow-tags",
+    "prepare": "husky"
   },
   "prettier": {
     "semi": false,
@@ -47,13 +48,15 @@
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
     "buffer": "^6.0.3",
+    "husky": "^9.0.11",
     "parcel": "^2.9.3",
+    "pinst": "^3.0.0",
     "prettier": "^2.5.1",
     "process": "^0.11.10",
     "replace-in-files": "^3.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
-    "viem": "~2.7.8"
+    "viem": "~2.22.8"
   },
   "engines": {
     "node": ">=12",

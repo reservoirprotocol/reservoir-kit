@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react'
 import { Box, Flex, Text } from '../../primitives'
 import TokenMedia from '../../components/TokenMedia'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faImage from '@fortawesome/free-solid-svg-icons/faImage'
+import { faImage } from '@fortawesome/free-solid-svg-icons/faImage'
 import { useTokens } from '../../hooks'
 import { MintModalStepData } from './MintModalRenderer'
 

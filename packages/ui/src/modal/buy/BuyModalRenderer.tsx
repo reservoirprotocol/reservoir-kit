@@ -33,6 +33,8 @@ import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import { useCapabilities } from 'wagmi/experimental'
+import useRelayChains from '../../hooks/useRelayChains'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
@@ -72,6 +74,7 @@ type ChildrenProps = {
   buyStep: BuyStep
   transactionError?: Error | null
   hasEnoughCurrency: boolean
+  hasAuxiliaryFundsSupport: boolean
   addFundsLink: string
   feeUsd: string
   totalUsd: bigint
@@ -144,7 +147,6 @@ export const BuyModalRenderer: FC<Props> = ({
   const [buyResponseFees, setBuyResponseFees] = useState<
     BuyResponses['fees'] | undefined
   >(undefined)
-
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
   const config = useConfig()
@@ -169,7 +171,20 @@ export const BuyModalRenderer: FC<Props> = ({
   const blockExplorerBaseName =
     wagmiChain?.blockExplorers?.default?.name || 'Etherscan'
 
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
+
+  const { data: capabilities } = useCapabilities({
+    query: {
+      enabled:
+        connector &&
+        (connector.id === 'coinbaseWalletSDK' || connector.id === 'coinbase'),
+    },
+  })
+  const hasAuxiliaryFundsSupport = Boolean(
+    rendererChain?.id
+      ? capabilities?.[rendererChain?.id]?.auxiliaryFunds?.supported
+      : false
+  )
 
   const [_paymentCurrency, _setPaymentCurrency] = useState<
     EnhancedCurrency | undefined
@@ -241,22 +256,46 @@ export const BuyModalRenderer: FC<Props> = ({
   )
   const totalUsd = totalIncludingFees * usdPriceRaw
 
-  const addFundsLink = paymentCurrency?.address
-    ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
-    : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  const { relayLink } = useRelayChains(rendererChain?.id)
+
+  let addFundsLink: string = ''
+
+  if (relayLink) {
+    addFundsLink = paymentCurrency?.address
+      ? `${relayLink}?toCurrency=${paymentCurrency?.address}`
+      : relayLink
+  } else {
+    addFundsLink = paymentCurrency?.address
+      ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
+      : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  }
+
+  if (providerOptions?.convertLink?.chainUrl) {
+    addFundsLink =
+      paymentCurrency?.address && providerOptions.convertLink.tokenUrl
+        ? providerOptions.convertLink.tokenUrl
+        : providerOptions.convertLink.chainUrl
+
+    if (rendererChain?.id) {
+      addFundsLink = addFundsLink.replace('{toChain}', `${rendererChain.id}`)
+    }
+    if (paymentCurrency?.address) {
+      addFundsLink = addFundsLink.replace('{toToken}', paymentCurrency?.address)
+    }
+  } else if (providerOptions?.convertLink?.customUrl) {
+    addFundsLink = providerOptions.convertLink.customUrl?.({
+      toChain: rendererChain?.id,
+      toToken: paymentCurrency?.address,
+      toCurrency: paymentCurrency,
+    })
+  }
 
   const fetchPath = useCallback(
     (
       paymentCurrency: EnhancedCurrency | undefined,
       paymentTokens: EnhancedCurrency[]
     ) => {
-      if (
-        !open ||
-        !client ||
-        !tokenData ||
-        !token ||
-        paymentTokens.length === 0
-      ) {
+      if (!open || !client || !tokenData || !token) {
         setPath(undefined)
         return
       }
@@ -295,7 +334,7 @@ export const BuyModalRenderer: FC<Props> = ({
         if (paymentCurrency.chainId) {
           options.currencyChainId = paymentCurrency.chainId
         }
-      } else if (!includeListingCurrency) {
+      } else if (!includeListingCurrency && paymentTokens[0]) {
         options.currency = paymentTokens[0].address
         if (paymentTokens[0].chainId) {
           options.currencyChainId = paymentTokens[0].chainId
@@ -482,6 +521,7 @@ export const BuyModalRenderer: FC<Props> = ({
       ...executeBuyOptions,
       currency: paymentCurrency?.address,
       currencyChainId: paymentCurrency?.chainId,
+      skipBalanceCheck: hasAuxiliaryFundsSupport,
     }
 
     const relayerFee = BigInt(buyResponseFees?.relayer?.amount?.raw ?? 0)
@@ -626,6 +666,7 @@ export const BuyModalRenderer: FC<Props> = ({
     rendererChain,
     rendererChain,
     totalIncludingFees,
+    hasAuxiliaryFundsSupport,
     wallet,
     paymentCurrency,
     buyResponseFees,
@@ -755,6 +796,7 @@ export const BuyModalRenderer: FC<Props> = ({
         buyStep,
         transactionError,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         addFundsLink,
         feeUsd,
         totalUsd,

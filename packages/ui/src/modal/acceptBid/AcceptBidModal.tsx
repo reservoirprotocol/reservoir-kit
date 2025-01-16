@@ -22,11 +22,11 @@ import {
 } from '../../primitives'
 
 import { Modal } from '../Modal'
-import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
-import faChevronDown from '@fortawesome/free-solid-svg-icons/faChevronDown'
-import faCube from '@fortawesome/free-solid-svg-icons/faCube'
-import faCircleCheck from '@fortawesome/free-solid-svg-icons/faCircleCheck'
-import faEnvelopeOpen from '@fortawesome/free-solid-svg-icons/faEnvelopeOpen'
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
+import { faCube } from '@fortawesome/free-solid-svg-icons/faCube'
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons/faCircleCheck'
+import { faEnvelopeOpen } from '@fortawesome/free-solid-svg-icons/faEnvelopeOpen'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {

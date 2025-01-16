@@ -29,8 +29,8 @@ import { EditBidModalRenderer, EditBidStep } from './EditBidModalRenderer'
 import { Modal } from '../Modal'
 import getLocalMarketplaceData from '../../lib/getLocalMarketplaceData'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
-import faClose from '@fortawesome/free-solid-svg-icons/faClose'
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons/faCheckCircle'
+import { faClose } from '@fortawesome/free-solid-svg-icons/faClose'
 
 import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
 import { WalletClient, formatUnits } from 'viem'
@@ -49,7 +49,7 @@ const ModalCopy = {
   ctaDisabled: 'Enter a Price',
   ctaEditOffer: 'Edit Offer',
   ctaRetry: 'Retry',
-  ctaConvertManually: 'Convert Manually',
+  ctaConvertManually: 'Get ',
   ctaConvertAutomatically: '',
   ctaAwaitingApproval: 'Waiting for approval...',
   ctaAwaitingValidation: 'Waiting for transaction to be validated',
@@ -132,6 +132,7 @@ export function EditBidModal({
         transactionError,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        hasAuxiliaryFundsSupport,
         amountToWrap,
         balance,
         wrappedBalance,
@@ -597,18 +598,22 @@ export function EditBidModal({
                       )}
                       {canPurchase && !hasEnoughWrappedCurrency && (
                         <>
-                          {!hasEnoughNativeCurrency && (
-                            <Flex css={{ gap: '$2', mt: 10 }} justify="center">
-                              <Text style="body3" color="error">
-                                {balance?.symbol || 'ETH'} Balance
-                              </Text>
-                              <FormatCryptoCurrency
-                                chainId={modalChain?.id}
-                                amount={balance?.value}
-                                symbol={balance?.symbol}
-                              />
-                            </Flex>
-                          )}
+                          {!hasEnoughNativeCurrency &&
+                            !hasAuxiliaryFundsSupport && (
+                              <Flex
+                                css={{ gap: '$2', mt: 10 }}
+                                justify="center"
+                              >
+                                <Text style="body3" color="error">
+                                  {balance?.symbol || 'ETH'} Balance
+                                </Text>
+                                <FormatCryptoCurrency
+                                  chainId={modalChain?.id}
+                                  amount={balance?.value}
+                                  symbol={balance?.symbol}
+                                />
+                              </Flex>
+                            )}
                           <Flex
                             css={{
                               gap: '$2',
@@ -632,12 +637,17 @@ export function EditBidModal({
                             >
                               {providerOptionsContext.disableJumperLink
                                 ? copy.ctaConfirm
-                                : copy.ctaConvertManually}
+                                : currency?.symbol
+                                ? copy.ctaConvertManually + currency?.symbol
+                                : 'Convert Manually'}
                             </Button>
                             {canAutomaticallyConvert && (
                               <Button
                                 css={{ flex: 1, maxHeight: 44 }}
-                                disabled={!hasEnoughNativeCurrency}
+                                disabled={
+                                  !hasEnoughNativeCurrency &&
+                                  !hasAuxiliaryFundsSupport
+                                }
                                 onClick={editBid}
                               >
                                 <Text style="h6" color="button" ellipsify>

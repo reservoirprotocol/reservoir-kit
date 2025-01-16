@@ -43,7 +43,7 @@ jobs:
           prs=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
           -H "Accept: application/vnd.github+json" \
           "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls?state=open&per_page=100" | \
-           jq -r '[.[] | select(.user.type == "Bot")][0] | {url: .html_url, title: .title} | @json')
+           jq -r '[.[] | select(.user.type == "Bot" and (.title | contains("Release")))][0] | {url: .html_url, title: .title} | @json')
           echo "Found PRs: $prs"
           if [[ $prs == "null" || $prs == "{}" ]]; then
           echo "BOT_PR_TITLE=NULL" >> $GITHUB_ENV
@@ -62,7 +62,7 @@ jobs:
             }1'
           }
 
-          responseAdj=$(curl -s "https://api.datamuse.com/words?rel_jjb=animal&max=1000")
+          responseAdj=$(curl -s "https://gist.githubusercontent.com/pedromcunha/9e0ea328b5c320264ddcdcc5e5b6ce48/raw/5ffec8da5b4300934f9bedca2707f1d4d2845f4f/adjectives.json")
           responseAnimal=$(curl -s "https://gist.githubusercontent.com/pedromcunha/d2b7f7b7e295cbafdd03af73bcd168ba/raw/c1d4b618da5051519c5d8ffce73d0ec6b018f356/animals.json")
           lengthAdj=$(echo $responseAdj | jq length)
           lengthAnimal=$(echo $responseAnimal | jq length)
@@ -71,7 +71,7 @@ jobs:
           while [ $random_index1 -eq $random_index2 ]; do
             random_index2=$(($RANDOM % length))
           done
-          word1=$(echo $responseAdj | jq -r ".[$random_index1].word")
+          word1=$(echo $responseAdj | jq -r ".[$random_index1].name")
           word2=$(echo $responseAnimal | jq -r ".[$random_index2].name")
           title="$word1 $word2"
           title="Release the: $(title_case "$title")!"

@@ -74,7 +74,8 @@ const PaymentTokenRow = ({
           width: '100%',
         }}
       >
-        {paymentToken?.address === zeroAddress ? (
+        {paymentToken?.address === zeroAddress &&
+        paymentToken.symbol === 'ETH' ? (
           <Box
             css={{
               display: 'flex',
@@ -127,23 +128,16 @@ export const SelectPaymentToken: FC<Props> = ({
     const isSelectedCurrency =
       currency?.address.toLowerCase() === paymentToken?.address &&
       currency?.chainId === paymentToken?.chainId
-    const hasMaxItemAmount = paymentToken?.maxItems != undefined
     const hasMaxPricePerItem = paymentToken?.maxPricePerItem != undefined
     const hasCurrencyTotalRaw = paymentToken?.currencyTotalRaw != undefined
-
     const maxPurchasablePrice = paymentToken?.capacityPerRequest
-    const maxItemAmount = paymentToken?.maxItems
-      ? BigInt(paymentToken?.maxItems)
-      : undefined
 
     return Boolean(
       isSelectedCurrency ||
-        (!hasMaxPricePerItem && !hasMaxItemAmount && hasCurrencyTotalRaw) ||
+        (!hasMaxPricePerItem && hasCurrencyTotalRaw) ||
         (maxPurchasablePrice &&
           paymentToken?.currencyTotalRaw !== undefined &&
-          maxPurchasablePrice >= paymentToken?.currencyTotalRaw &&
-          maxItemAmount &&
-          maxItemAmount >= itemAmount)
+          maxPurchasablePrice >= paymentToken?.currencyTotalRaw)
     )
   })
 
@@ -169,9 +163,6 @@ export const SelectPaymentToken: FC<Props> = ({
         <Flex direction="column" align="start" css={{ gap: '$2' }}>
           <Text style="subtitle2" color="subtle">
             CrossChain ETH
-          </Text>
-          <Text color="accent" style="body3">
-            *CrossChain payment is currently limited to a single item.
           </Text>
         </Flex>
       ) : null}

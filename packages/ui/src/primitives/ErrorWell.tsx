@@ -2,7 +2,7 @@ import React, { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Flex from './Flex'
 import Text from './Text'
-import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
 import Anchor from './Anchor'
 import { TransactionTimeoutError } from '@reservoir0x/reservoir-sdk'
 import { truncateAddress } from '../lib/truncate'
@@ -46,9 +46,8 @@ export default function ErrorWell({ error, css }: Props) {
     } else if (error.name === 'CrossChainTransactionError') {
       messageWithContent = (
         <>
-          Cross-chain purchase failed, please try again. Your balance can be
-          used for another purchase. For assistance or withdrawal help, please
-          contact{' '}
+          Cross-chain purchase failed and funds have been refunded. Please try
+          again.{' '}
           <Anchor
             href={`https://reservoir.tools/#contact-us`}
             color="primary"

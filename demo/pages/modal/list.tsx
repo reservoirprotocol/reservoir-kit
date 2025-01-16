@@ -55,6 +55,7 @@ const Index: NextPage = () => {
     useState(NORMALIZE_ROYALTIES)
   const [enableOnChainRoyalties, setEnableOnChainRoyalties] = useState(false)
   const [oracleEnabled, setOracleEnabled] = useState(false)
+  const [conduitKey, setConduitKey] = useState<string | undefined>()
   const [feesBps, setFeesBps] = useState<string[] | undefined>()
 
   return (
@@ -144,6 +145,14 @@ const Index: NextPage = () => {
           }}
         />
       </div>
+      <div>
+        <label>Conduit Key: </label>
+        <input
+          type="text"
+          value={conduitKey}
+          onChange={(e) => setConduitKey(e.target.value)}
+        />
+      </div>
       <DeeplinkCheckbox />
       <div>
         <label>Normalize Royalties: </label>
@@ -197,6 +206,7 @@ const Index: NextPage = () => {
         }
         //@ts-ignore
         orderKind={orderKind}
+        conduitKey={conduitKey}
         collectionId={collectionId}
         tokenId={tokenId}
         currencies={currencies}

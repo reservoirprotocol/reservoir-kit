@@ -32,6 +32,8 @@ import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
+import { useCapabilities } from 'wagmi/experimental'
+import useRelayChains from '../../hooks/useRelayChains'
 
 export enum MintStep {
   Idle,
@@ -77,6 +79,7 @@ type ChildrenProps = {
   isConnected: boolean
   disableJumperLink?: boolean
   hasEnoughCurrency: boolean
+  hasAuxiliaryFundsSupport: boolean
   transactionError: Error | null | undefined
   fetchMintPathError: Error | null | undefined
   stepData: MintModalStepData | null
@@ -120,7 +123,7 @@ export const MintModalRenderer: FC<Props> = ({
 }) => {
   const client = useReservoirClient()
   const config = useConfig()
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
   const [mintStep, setMintStep] = useState<MintStep>(MintStep.Idle)
   const [stepData, setStepData] = useState<MintModalStepData | null>(null)
   const [orders, setOrders] = useState<NonNullable<MintPath>>([])
@@ -158,6 +161,19 @@ export const MintModalRenderer: FC<Props> = ({
   const includeListingCurrency =
     providerOptions.alwaysIncludeListingCurrency !== false
   const disableJumperLink = providerOptions?.disableJumperLink
+
+  const { data: capabilities } = useCapabilities({
+    query: {
+      enabled:
+        connector &&
+        (connector.id === 'coinbaseWalletSDK' || connector.id === 'coinbase'),
+    },
+  })
+  const hasAuxiliaryFundsSupport = Boolean(
+    rendererChain?.id
+      ? capabilities?.[rendererChain?.id]?.auxiliaryFunds?.supported
+      : false
+  )
 
   const collectionContract =
     contract ?? collectionId?.split(':')?.[0] ?? token?.split(':')?.[0]
@@ -312,8 +328,19 @@ export const MintModalRenderer: FC<Props> = ({
             if ('maxQuantities' in data && data.maxQuantities?.[0]) {
               if (is1155) {
                 totalMaxQuantity = data.maxQuantities.reduce(
-                  (total, currentQuantity) =>
-                    total + Number(currentQuantity.maxQuantity ?? 1),
+                  (total, currentQuantity) => {
+                    let maxQuantity = 0
+                    if (currentQuantity.maxQuantity === null) {
+                      //Hardcoded to 30k items if unlimited
+                      maxQuantity = 30000
+                    } else if (!currentQuantity.maxQuantity) {
+                      // if value is undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+                      maxQuantity = 1
+                    } else {
+                      maxQuantity = Number(currentQuantity.maxQuantity ?? 0)
+                    }
+                    return total + maxQuantity
+                  },
                   0
                 )
               } else {
@@ -464,9 +491,39 @@ export const MintModalRenderer: FC<Props> = ({
     mintResponseFees,
   ])
 
-  const addFundsLink = paymentCurrency?.address
-    ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
-    : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  const { relayLink } = useRelayChains(rendererChain?.id)
+
+  let addFundsLink: string = ''
+
+  if (relayLink) {
+    addFundsLink = paymentCurrency?.address
+      ? `${relayLink}?toCurrency=${paymentCurrency?.address}`
+      : relayLink
+  } else {
+    addFundsLink = paymentCurrency?.address
+      ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
+      : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  }
+
+  if (providerOptions?.convertLink?.chainUrl) {
+    addFundsLink =
+      paymentCurrency?.address && providerOptions.convertLink.tokenUrl
+        ? providerOptions.convertLink.tokenUrl
+        : providerOptions.convertLink.chainUrl
+
+    if (rendererChain?.id) {
+      addFundsLink = addFundsLink.replace('{toChain}', `${rendererChain.id}`)
+    }
+    if (paymentCurrency?.address) {
+      addFundsLink = addFundsLink.replace('{toToken}', paymentCurrency?.address)
+    }
+  } else if (providerOptions?.convertLink?.customUrl) {
+    addFundsLink = providerOptions.convertLink.customUrl?.({
+      toChain: rendererChain?.id,
+      toToken: paymentCurrency?.address,
+      toCurrency: paymentCurrency,
+    })
+  }
 
   // Determine if user has enough funds in paymentToken
   useEffect(() => {
@@ -552,6 +609,7 @@ export const MintModalRenderer: FC<Props> = ({
     let options: MintTokenOptions = {
       partial: true,
       currencyChainId: paymentCurrency?.chainId,
+      skipBalanceCheck: hasAuxiliaryFundsSupport,
     }
 
     const relayerFee = BigInt(mintResponseFees?.relayer?.amount?.raw ?? 0)
@@ -695,6 +753,7 @@ export const MintModalRenderer: FC<Props> = ({
     collectionContract,
     mintResponseFees,
     usdPriceRaw,
+    hasAuxiliaryFundsSupport,
   ])
 
   return (
@@ -732,6 +791,7 @@ export const MintModalRenderer: FC<Props> = ({
           ? BigInt(paymentCurrency.balance)
           : undefined,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         transactionError,
         fetchMintPathError,
         stepData,

@@ -1,5 +1,769 @@
 ## 1.25.10
 
+## 2.7.50
+
+### Patch Changes
+
+- 3c65856: Update Story Odyssey icons with new SVG files, setting width to auto and height to 100%. Replaced placeholder text-based icons with proper SVG implementations.
+
+## 2.7.49
+
+### Patch Changes
+
+- 495ac1c: add story odyssey chain support
+- Updated dependencies [495ac1c]
+  - @reservoir0x/reservoir-sdk@2.4.39
+
+## 2.7.48
+
+### Patch Changes
+
+- Updated dependencies [18ff2f0]
+  - @reservoir0x/reservoir-sdk@2.4.38
+
+## 2.7.47
+
+### Patch Changes
+
+- Updated dependencies [a76f685]
+  - @reservoir0x/reservoir-sdk@2.4.37
+
+## 2.7.46
+
+### Patch Changes
+
+- Updated dependencies [493bf6f]
+  - @reservoir0x/reservoir-sdk@2.4.36
+
+## 2.7.45
+
+### Patch Changes
+
+- Updated dependencies [afcd970]
+  - @reservoir0x/reservoir-sdk@2.4.35
+
+## 2.7.44
+
+### Patch Changes
+
+- 7db63ef: Add Soneium chain configuration (Chain ID: 1868)
+- Updated dependencies [7db63ef]
+  - @reservoir0x/reservoir-sdk@2.4.34
+
+## 2.7.43
+
+### Patch Changes
+
+- 29a0710: feat(sdk,ui,demo): add Creator Testnet chain support (chain ID 4654) with native ETH and WETH token configurations, including demo app integration
+- Updated dependencies [29a0710]
+  - @reservoir0x/reservoir-sdk@2.4.33
+
+## 2.7.42
+
+### Patch Changes
+
+- 42dc07d: fixing currency icon chain for crosschain mint/buy
+
+## 2.7.41
+
+### Patch Changes
+
+- 707cdbf: Add game7 chain configuration
+- Updated dependencies [707cdbf]
+  - @reservoir0x/reservoir-sdk@2.4.32
+
+## 2.7.40
+
+### Patch Changes
+
+- d5216ac: fixing currency price and icons
+
+## 2.7.39
+
+### Patch Changes
+
+- c73f503: fixing currency price and icons
+
+## 2.7.38
+
+### Patch Changes
+
+- ccafb5e: adding monad devnet
+- Updated dependencies [ccafb5e]
+  - @reservoir0x/reservoir-sdk@2.4.31
+
+## 2.7.37
+
+### Patch Changes
+
+- 3806fa5: adding anime testnet
+- Updated dependencies [3806fa5]
+  - @reservoir0x/reservoir-sdk@2.4.30
+
+## 2.7.36
+
+### Patch Changes
+
+- 9c5f6ee: BuyModal: add funds prompt payment methods
+
+## 2.7.35
+
+### Patch Changes
+
+- 82d1a80: adding abstract mainnet
+- Updated dependencies [82d1a80]
+  - @reservoir0x/reservoir-sdk@2.4.29
+
+## 2.7.34
+
+### Patch Changes
+
+- Updated dependencies [36a821d]
+  - @reservoir0x/reservoir-sdk@2.4.28
+
+## 2.7.33
+
+### Patch Changes
+
+- 59e1d6a: adding zero testnet
+- Updated dependencies [59e1d6a]
+  - @reservoir0x/reservoir-sdk@2.4.27
+
+## 2.7.32
+
+### Patch Changes
+
+- 88b6291: adding zero mainnet
+- Updated dependencies [88b6291]
+  - @reservoir0x/reservoir-sdk@2.4.26
+
+## 2.7.31
+
+### Patch Changes
+
+- b5b3c49: updating wape address
+- Updated dependencies [b5b3c49]
+  - @reservoir0x/reservoir-sdk@2.4.25
+
+## 2.7.30
+
+### Patch Changes
+
+- df57dc4: updating WETH address for abstract testnet
+- Updated dependencies [df57dc4]
+  - @reservoir0x/reservoir-sdk@2.4.24
+
+## 2.7.29
+
+### Patch Changes
+
+- 2ca4b46: Removing maxItems check
+- Updated dependencies [2ca4b46]
+  - @reservoir0x/reservoir-sdk@2.4.23
+
+## 2.7.28
+
+### Patch Changes
+
+- 1274874: fixing b3 wrapped native currency
+- d6ca994: optimizing nebula icons
+- Updated dependencies [1274874]
+  - @reservoir0x/reservoir-sdk@2.4.22
+
+## 2.7.27
+
+### Patch Changes
+
+- 9af102d: link to relay when available instead of jumper/uniswap
+- 10a76dd: fixing listing and bidding options being overwritten when conduitKey is passed
+
+## 2.7.26
+
+### Patch Changes
+
+- e2a1d03: fixing shape weth address
+- Updated dependencies [e2a1d03]
+  - @reservoir0x/reservoir-sdk@2.4.21
+
+## 2.7.25
+
+### Patch Changes
+
+- 6280bb9: Fixing cross chain purchasing of 1155 tokens when filliing from multiple orders
+- Updated dependencies [6280bb9]
+- Updated dependencies [4a7fe0b]
+- Updated dependencies [39eb10b]
+  - @reservoir0x/reservoir-sdk@2.4.20
+
+## 2.7.24
+
+### Patch Changes
+
+- 3b98d57: fixing flow block explorer
+
+## 2.7.23
+
+### Patch Changes
+
+- 7949c03: fixing block explorer url for flow
+
+## 2.7.22
+
+### Patch Changes
+
+- ce16bbd: adding flow
+- Updated dependencies [ce16bbd]
+  - @reservoir0x/reservoir-sdk@2.4.19
+
+## 2.7.21
+
+### Patch Changes
+
+- 12c1717: updating WAPE on apechain and curtis
+- Updated dependencies [12c1717]
+  - @reservoir0x/reservoir-sdk@2.4.18
+
+## 2.7.20
+
+### Patch Changes
+
+- Updated dependencies [31f3762]
+  - @reservoir0x/reservoir-sdk@2.4.17
+
+## 2.7.19
+
+### Patch Changes
+
+- Updated dependencies [b71da2f]
+  - @reservoir0x/reservoir-sdk@2.4.16
+
+## 2.7.18
+
+### Patch Changes
+
+- 02390c4: updating refund error message
+- Updated dependencies [02390c4]
+  - @reservoir0x/reservoir-sdk@2.4.15
+
+## 2.7.17
+
+### Patch Changes
+
+- 9adc2db: support for abstract testnet, minato, hychain
+- Updated dependencies [9adc2db]
+  - @reservoir0x/reservoir-sdk@2.4.14
+
+## 2.7.16
+
+### Patch Changes
+
+- 9e723b8: adding shape and shape sepolia
+- Updated dependencies [9e723b8]
+  - @reservoir0x/reservoir-sdk@2.4.13
+
+## 2.7.15
+
+### Patch Changes
+
+- 55f67f6: adding apechain
+- Updated dependencies [55f67f6]
+  - @reservoir0x/reservoir-sdk@2.4.12
+
+## 2.7.14
+
+### Patch Changes
+
+- Updated dependencies [6118898]
+  - @reservoir0x/reservoir-sdk@2.4.11
+
+## 2.7.13
+
+### Patch Changes
+
+- Updated dependencies [ff0433f]
+  - @reservoir0x/reservoir-sdk@2.4.10
+
+## 2.7.12
+
+### Patch Changes
+
+- 9a8b493: adding b3
+- Updated dependencies [9a8b493]
+  - @reservoir0x/reservoir-sdk@2.4.9
+
+## 2.7.11
+
+### Patch Changes
+
+- e575a14: Sync api types
+- Updated dependencies [e575a14]
+  - @reservoir0x/reservoir-sdk@2.4.8
+
+## 2.7.10
+
+### Patch Changes
+
+- 71664d9: adding forma, syncing api types
+- Updated dependencies [71664d9]
+  - @reservoir0x/reservoir-sdk@2.4.7
+
+## 2.7.9
+
+### Patch Changes
+
+- a31b4ff: Fix CartProvider props to support custom Reservoir wallet
+
+## 2.7.8
+
+### Patch Changes
+
+- 286a562: Fix custom Reservoir wallet bug in Cart Provider
+
+## 2.7.7
+
+### Patch Changes
+
+- Updated dependencies [3aae35c]
+  - @reservoir0x/reservoir-sdk@2.4.6
+
+## 2.7.6
+
+### Patch Changes
+
+- c3a53b6: adding boss
+- Updated dependencies [c3a53b6]
+  - @reservoir0x/reservoir-sdk@2.4.5
+
+## 2.7.5
+
+### Patch Changes
+
+- 6da031f: Update wbera address
+- Updated dependencies [6da031f]
+  - @reservoir0x/reservoir-sdk@2.4.4
+
+## 2.7.4
+
+### Patch Changes
+
+- ee9b0e8: adding cloud and game7
+- Updated dependencies [d08dccf]
+- Updated dependencies [ee9b0e8]
+  - @reservoir0x/reservoir-sdk@2.4.3
+
+## 2.7.3
+
+### Patch Changes
+
+- Updated dependencies [e46059b]
+  - @reservoir0x/reservoir-sdk@2.4.2
+
+## 2.7.2
+
+### Patch Changes
+
+- 3c669df: Add conduit key param to List and Bid modals
+
+## 2.7.1
+
+### Patch Changes
+
+- 49fc944: Fix berachain definitions
+- Updated dependencies [49fc944]
+  - @reservoir0x/reservoir-sdk@2.4.1
+
+## 2.7.0
+
+### Minor Changes
+
+- b9063e3: Upgrade viem and wagmi
+
+### Patch Changes
+
+- e666856: adding amountToWrap to customUrl props
+- Updated dependencies [b9063e3]
+  - @reservoir0x/reservoir-sdk@2.4.0
+
+## 2.6.3
+
+### Patch Changes
+
+- 9686ca3: fixing nebula currencies
+- Updated dependencies [9686ca3]
+  - @reservoir0x/reservoir-sdk@2.3.1
+
+## 2.6.2
+
+### Patch Changes
+
+- e4f7185: Fix 1155 mint quantity bug
+
+## 2.6.1
+
+### Patch Changes
+
+- db8e44b: Fix CartPopover balance for custom tokens
+
+## 2.6.0
+
+### Minor Changes
+
+- 2ad9e96: Add support for auxiliary funds
+
+### Patch Changes
+
+- Updated dependencies [2ad9e96]
+  - @reservoir0x/reservoir-sdk@2.3.0
+
+## 2.5.22
+
+### Patch Changes
+
+- 626ea97: adding flow previewnet, fixing b3 icons
+- Updated dependencies [626ea97]
+  - @reservoir0x/reservoir-sdk@2.2.12
+
+## 2.5.21
+
+### Patch Changes
+
+- 057dc4d: Adding b3 testnet
+- Updated dependencies [057dc4d]
+  - @reservoir0x/reservoir-sdk@2.2.11
+
+## 2.5.20
+
+### Patch Changes
+
+- 4d94ea4: fixing cryptocurrencyicon nebula import
+- Updated dependencies [4d94ea4]
+  - @reservoir0x/reservoir-sdk@2.2.10
+
+## 2.5.19
+
+### Patch Changes
+
+- 0355cfb: Fix issue with setting unavailable state in list modal renderer
+- e778554: Fixing buying and listing on nebula
+- Updated dependencies [e778554]
+  - @reservoir0x/reservoir-sdk@2.2.9
+
+## 2.5.18
+
+### Patch Changes
+
+- c1b0b1a: adding sei chain
+- Updated dependencies [c1b0b1a]
+  - @reservoir0x/reservoir-sdk@2.2.8
+
+## 2.5.17
+
+### Patch Changes
+
+- 16db325: Add new useUserListings hook and replace existing useListings hook in EditListingModal/CancelListingModal
+- Updated dependencies [16db325]
+  - @reservoir0x/reservoir-sdk@2.2.7
+
+## 2.5.16
+
+### Patch Changes
+
+- 18abb7c: adding ETH symbol check, removing SFUEL paymentToken for nebula
+- Updated dependencies [18abb7c]
+  - @reservoir0x/reservoir-sdk@2.2.6
+
+## 2.5.15
+
+### Patch Changes
+
+- 1316b8a: adding cyber and bitlayer icons
+
+## 2.5.14
+
+### Patch Changes
+
+- 57b6b0d: Add useUserBids hook and replace EditBidModal/CancelBidModal
+- Updated dependencies [57b6b0d]
+  - @reservoir0x/reservoir-sdk@2.2.5
+
+## 2.5.13
+
+### Patch Changes
+
+- Updated dependencies [8f9e134]
+  - @reservoir0x/reservoir-sdk@2.2.4
+
+## 2.5.12
+
+### Patch Changes
+
+- d0bf12c: adding bitlayer
+- Updated dependencies [d0bf12c]
+  - @reservoir0x/reservoir-sdk@2.2.3
+
+## 2.5.11
+
+### Patch Changes
+
+- Updated dependencies [ca98e56]
+  - @reservoir0x/reservoir-sdk@2.2.2
+
+## 2.5.10
+
+### Patch Changes
+
+- 4d60cb3: adding cyber
+- Updated dependencies [4d60cb3]
+  - @reservoir0x/reservoir-sdk@2.2.1
+
+## 2.5.9
+
+### Patch Changes
+
+- 8f4e4e2: added xai, nebula, degen, and sei tesnet icons
+
+## 2.5.8
+
+### Patch Changes
+
+- 01f63a4: Remove useSearchActivities hook
+- bfb6f8f: BidModal & ListModal: Include exchange fee in feesBps calculation
+- 01f63a4: Remove useSearchActivities hook
+- Updated dependencies [bfb6f8f]
+- bfb6f8f: BidModal & ListModal: Include exchange fee in feesBps calculation
+- 01f63a4: Remove useSearchActivities hook
+- d10c230: Adding Xai, Nebula, and Sei chains
+- Updated dependencies [bfb6f8f]
+- Updated dependencies [d10c230]
+- bfb6f8f: BidModal & ListModal: Include exchange fee in feesBps calculation
+- 01f63a4: Remove useSearchActivities hook
+- d10c230: Adding Xai, Nebula, and Sei chains
+- 5534b08: Removing degen currencies and adding nebula as a custom chain
+- Updated dependencies [bfb6f8f]
+- Updated dependencies [d10c230]
+- Updated dependencies [5534b08]
+- Updated dependencies [25e8677]
+  - @reservoir0x/reservoir-sdk@2.2.0
+
+## 2.5.7
+
+### Patch Changes
+
+- 4ca3b81: Fix payment token balance fetching for crosschain non native currencies
+- Updated dependencies [4ca3b81]
+  - @reservoir0x/reservoir-sdk@2.1.4
+
+## 2.5.6
+
+### Patch Changes
+
+- 7eb8fe1: Add degen chain configuration
+- Updated dependencies [7eb8fe1]
+  - @reservoir0x/reservoir-sdk@2.1.3
+
+## 2.5.5
+
+### Patch Changes
+
+- d88c64d: ListModal: fix 1155 floor price to reflect token instead of collection
+
+## 2.5.4
+
+### Patch Changes
+
+- 4173ccd: Allow configuring the convert funds links
+
+## 2.5.3
+
+### Patch Changes
+
+- Updated dependencies [d0d6298]
+  - @reservoir0x/reservoir-sdk@2.1.2
+
+## 2.5.2
+
+### Patch Changes
+
+- Updated dependencies [e9fd498]
+  - @reservoir0x/reservoir-sdk@2.1.1
+
+## 2.5.1
+
+### Patch Changes
+
+- e2be1a0: Fix quantity for unlimited 1155 mint
+
+## 2.5.0
+
+### Minor Changes
+
+- 433943d: Removed deprecated chains
+
+### Patch Changes
+
+- Updated dependencies [433943d]
+  - @reservoir0x/reservoir-sdk@2.1.0
+
+## 2.4.11
+
+### Patch Changes
+
+- 5a6b034: Update polygon amoy wmatic address
+- Updated dependencies [5a6b034]
+  - @reservoir0x/reservoir-sdk@2.0.16
+
+## 2.4.10
+
+### Patch Changes
+
+- 8bfb69e: Fix weth address for garnet
+- Updated dependencies [b1bdf17]
+  - @reservoir0x/reservoir-sdk@2.0.15
+
+## 2.4.9
+
+### Patch Changes
+
+- 7cedee8: Rename relayer fee, fix payment tokens currency bug, fix bid modal ui getting elipsified
+
+## 2.4.8
+
+### Patch Changes
+
+- 432bdbb: Add garnet and remove redstone testnet
+- 00cfcfe: Update tokens/refresh api to v2
+- ff2b661: Add polygon amoy
+- Updated dependencies [432bdbb]
+- Updated dependencies [00cfcfe]
+- Updated dependencies [ff2b661]
+  - @reservoir0x/reservoir-sdk@2.0.14
+
+## 2.4.7
+
+### Patch Changes
+
+- 63472f2: Update berachain and redstone icon dimeinsions
+
+## 2.4.6
+
+### Patch Changes
+
+- 7c556b3: Add redstone chain
+- Updated dependencies [7c556b3]
+  - @reservoir0x/reservoir-sdk@2.0.13
+
+## 2.4.5
+
+### Patch Changes
+
+- 2ecd779: Add berachain testnet
+- Updated dependencies [2ecd779]
+  - @reservoir0x/reservoir-sdk@2.0.12
+
+## 2.4.4
+
+### Patch Changes
+
+- 8861cb7: Fixed Flatpickr import namespace
+
+## 2.4.3
+
+### Patch Changes
+
+- 9c46f40: Add redstone testnet configuration
+- Updated dependencies [9c46f40]
+  - @reservoir0x/reservoir-sdk@2.0.11
+
+## 2.4.2
+
+### Patch Changes
+
+- 2198ecd: Add apex pop testnet configuration
+- Updated dependencies [2198ecd]
+  - @reservoir0x/reservoir-sdk@2.0.10
+
+## 2.4.1
+
+### Patch Changes
+
+- d9b23ed: Fix listing currency as payment token dependency bug
+
+## 2.4.0
+
+### Minor Changes
+
+- 5a0aa7f: Upgrade useUserTokens hook to use v10 api
+
+### Patch Changes
+
+- Updated dependencies [fd61f2b]
+- Updated dependencies [5a0aa7f]
+  - @reservoir0x/reservoir-sdk@2.0.9
+
+## 2.3.9
+
+### Patch Changes
+
+- Updated dependencies [c2ef89f]
+  - @reservoir0x/reservoir-sdk@2.0.8
+
+## 2.3.8
+
+### Patch Changes
+
+- a32e68b: Fixed missing font awesome icons
+
+## 2.3.7
+
+### Patch Changes
+
+- Updated dependencies [213a434]
+  - @reservoir0x/reservoir-sdk@2.0.7
+
+## 2.3.6
+
+### Patch Changes
+
+- 4bb523d: Fix a bug where normalized royalties were being considered referral fees
+- 1e40ab8: Update astar zkevm WETH address
+
+## 2.3.5
+
+### Patch Changes
+
+- 8c1edc3: Use deep imports for icons
+
+## 2.3.4
+
+### Patch Changes
+
+- dd14735: Fix empty payment tokens bug in Buy and Sweep modals
+- Updated dependencies [61b2d03]
+  - @reservoir0x/reservoir-sdk@2.0.6
+
+## 2.3.3
+
+### Patch Changes
+
+- 9d802e7: Add blast chain configuration
+- Updated dependencies [9d802e7]
+  - @reservoir0x/reservoir-sdk@2.0.5
+
+## 2.3.2
+
+### Patch Changes
+
+- 46c7295: Fix paymentTokens for Blast Sepolia
+- Updated dependencies [46c7295]
+  - @reservoir0x/reservoir-sdk@2.0.4
+
+## 2.3.1
+
+### Patch Changes
+
+- Updated dependencies [4bc7810]
+  - @reservoir0x/reservoir-sdk@2.0.3
+
 ## 2.3.0
 
 ### Minor Changes
@@ -43,6 +807,10 @@
 ### Major Changes
 
 - b7ad7a5: Upgrade viem and wagmi to v2
+
+### Breaking Changes:
+
+Make sure to upgrade peer dependencies `viem` and `wagmi` to 2.x.x
 
 ### Patch Changes
 

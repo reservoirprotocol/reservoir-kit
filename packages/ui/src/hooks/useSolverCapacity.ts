@@ -3,7 +3,7 @@ import { axios, paths } from '@reservoir0x/reservoir-sdk'
 import { useReservoirClient } from './'
 
 type SolverCapacityResponse =
-  paths['/execute/solve/capacity/v1']['post']['responses']['200']['schema']
+  paths['/execute/solve/capacity/v2']['post']['responses']['200']['schema']
 
 export default function (chainId?: number, enabled: boolean = true) {
   const client = useReservoirClient()
@@ -13,7 +13,7 @@ export default function (chainId?: number, enabled: boolean = true) {
       : client?.currentChain()
 
   const { data, error } = useSWR<SolverCapacityResponse>(
-    chain && enabled ? `${chain?.baseApiUrl}/execute/solve/capacity/v1` : null,
+    chain && enabled ? `${chain?.baseApiUrl}/execute/solve/capacity/v2` : null,
     async (url) => {
       try {
         const response = await axios.post(url, {

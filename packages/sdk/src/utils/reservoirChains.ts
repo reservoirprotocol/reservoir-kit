@@ -12,15 +12,6 @@ const mainnet = {
   checkPollingInterval: 2000,
 } satisfies ReservoirBaseChain
 
-const goerli = {
-  id: 5,
-  name: 'Goerli',
-  baseApiUrl: 'https://api-goerli.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[5],
-  websocketUrl: 'wss://ws-goerli.reservoir.tools',
-  checkPollingInterval: 2000,
-} satisfies ReservoirBaseChain
-
 const optimism = {
   id: 10,
   name: 'Optimism',
@@ -39,12 +30,12 @@ const polygon = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
-const mumbai = {
-  id: 80001,
-  name: 'Polygon Mumbai',
-  baseApiUrl: 'https://api-mumbai.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[80001],
-  websocketUrl: 'wss://ws-mumbai.reservoir.tools',
+const polygonAmoy = {
+  id: 80002,
+  name: 'Polygon Amoy',
+  baseApiUrl: 'https://api-amoy.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[80002],
+  websocketUrl: 'wss://ws-amoy.reservoir.tools',
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
@@ -88,14 +79,6 @@ const base = {
   baseApiUrl: 'https://api-base.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[8453],
   websocketUrl: 'wss://ws-base.reservoir.tools',
-  checkPollingInterval: 1000,
-} satisfies ReservoirBaseChain
-
-const baseGoerli = {
-  id: 84531,
-  name: 'Base Goerli',
-  baseApiUrl: 'https://api-base-goerli.reservoir.tools',
-  paymentTokens: chainPaymentTokensMap[84531],
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
@@ -213,9 +196,17 @@ const blastSepolia = {
 }
 const apexPop = {
   id: 70700,
-  name: 'Apex Proof of Play',
+  name: 'Apex',
   baseApiUrl: 'https://api-apex.reservoir.tools',
   paymentTokens: chainPaymentTokensMap[70700],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const apexPopTestnet = {
+  id: 70800,
+  name: 'Apex Testnet',
+  baseApiUrl: 'https://api-apex-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70800],
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
@@ -227,18 +218,312 @@ const blast = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const astarZkEVM = {
+  id: 3776,
+  name: 'Astar zkEVM',
+  baseApiUrl: 'https://api-astar-zkevm.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[3776],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const garnet = {
+  id: 17069,
+  name: 'Garnet',
+  baseApiUrl: 'https://api-garnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[17069],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const redstone = {
+  id: 690,
+  name: 'Redstone',
+  baseApiUrl: 'https://api-redstone.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[690],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const berachainTestnet = {
+  id: 80084,
+  name: 'Berachain Testnet',
+  baseApiUrl: 'https://api-berachain-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[80084],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const degen = {
+  id: 666666666,
+  name: 'Degen',
+  baseApiUrl: 'https://api-degen.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[666666666],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const xai = {
+  id: 660279,
+  name: 'Xai',
+  baseApiUrl: 'https://api-xai.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[660279],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const nebula = {
+  id: 1482601649,
+  name: 'Nebula',
+  baseApiUrl: 'https://api-nebula.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1482601649],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const seiTestnet = {
+  id: 713715,
+  name: 'Sei Testnet',
+  baseApiUrl: 'https://api-sei-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[713715],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const cyber = {
+  id: 7560,
+  name: 'Cyber',
+  baseApiUrl: 'https://api-cyber.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[7560],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const bitlayer = {
+  id: 200901,
+  name: 'Bitlayer',
+  baseApiUrl: 'https://api-bitlayer.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[200901],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const sei = {
+  id: 1329,
+  name: 'Sei',
+  baseApiUrl: 'https://api-sei.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1329],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const b3Testnet = {
+  id: 1993,
+  name: 'B3 Testnet',
+  baseApiUrl: 'https://api-b3-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1993],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const flowPreviewnet = {
+  id: 646,
+  name: 'Flow Previewnet',
+  baseApiUrl: 'https://api-flow-previewnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[646],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const cloud = {
+  id: 70805,
+  name: 'Cloud',
+  baseApiUrl: 'https://api-cloud.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70805],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const game7Testnet = {
+  id: 13746,
+  name: 'Game7 Testnet',
+  baseApiUrl: 'https://api-game7-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[13746],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const boss = {
+  id: 70701,
+  name: 'Boss',
+  baseApiUrl: 'https://api-boss.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[70701],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const forma = {
+  id: 984122,
+  name: 'Forma',
+  baseApiUrl: 'https://api-forma.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[984122],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const formaSketchpad = {
+  id: 984123,
+  name: 'Forma Sketchpad',
+  baseApiUrl: 'https://api-forma-sketchpad.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[984123],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const b3 = {
+  id: 8333,
+  name: 'B3',
+  baseApiUrl: 'https://api-b3.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[8333],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const apechain = {
+  id: 33139,
+  name: 'Apechain',
+  baseApiUrl: 'https://api-apechain.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[33139],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const curtis = {
+  id: 33111,
+  name: 'Curtis',
+  baseApiUrl: 'https://api-curtis.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[33111],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const shape = {
+  id: 360,
+  name: 'Shape',
+  baseApiUrl: 'https://api-shape.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[360],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const shapeSepolia = {
+  id: 11011,
+  name: 'Shape Sepolia',
+  baseApiUrl: 'https://api-shape-sepolia.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[11011],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const abstractTestnet = {
+  id: 11124,
+  name: 'Abstract Testnet',
+  baseApiUrl: 'https://api-abstract-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[11124],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const minato = {
+  id: 1946,
+  name: 'Minato',
+  baseApiUrl: 'https://api-minato.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1946],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const hychain = {
+  id: 2911,
+  name: 'Hychain',
+  baseApiUrl: 'https://api-hychain.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[2911],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const hychainTestnet = {
+  id: 29112,
+  name: 'Hychain Testnet',
+  baseApiUrl: 'https://api-hychain-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[29112],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const flow = {
+  id: 747,
+  name: 'Flow',
+  baseApiUrl: 'https://api-flow.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[747],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const zero = {
+  id: 543210,
+  name: 'Zero',
+  baseApiUrl: 'https://api-zero.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[543210],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const zeroTestnet = {
+  id: 43210,
+  name: 'Zero Testnet',
+  baseApiUrl: 'https://api-zero-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[43210],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const abstract = {
+  id: 2741,
+  name: 'Abstract',
+  baseApiUrl: 'https://api-abstract.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[2741],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const animeTestnet = {
+  id: 6900,
+  name: 'Anime Testnet',
+  baseApiUrl: 'https://api-anime-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[6900],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const monadDevnet = {
+  id: 41454,
+  name: 'Monad Devnet',
+  baseApiUrl: 'https://api-monad-devnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[41454],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const game7 = {
+  id: 2187,
+  name: 'game7',
+  baseApiUrl: 'https://api-game7.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[2187],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const creatorTestnet = {
+  id: 4654,
+  name: 'Creator Testnet',
+  baseApiUrl: 'https://api-creator-testnet.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[4654],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const soneium = {
+  id: 1868,
+  name: 'Soneium',
+  baseApiUrl: 'https://api-soneium.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1868],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
+const storyOdyssey = {
+  id: 1516,
+  name: 'Story Odyssey',
+  baseApiUrl: 'https://api-story-odyssey.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[1516],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
-  goerli,
   polygon,
-  mumbai,
+  polygonAmoy,
   optimism,
   arbitrum,
   arbitrumNova,
   avalanche,
   sepolia,
   base,
-  baseGoerli,
   baseSepolia,
   bsc,
   opBnb,
@@ -254,5 +539,43 @@ export const reservoirChains = {
   frameTestnet,
   blastSepolia,
   apexPop,
+  apexPopTestnet,
   blast,
+  astarZkEVM,
+  garnet,
+  redstone,
+  berachainTestnet,
+  degen,
+  xai,
+  nebula,
+  seiTestnet,
+  cyber,
+  bitlayer,
+  sei,
+  b3Testnet,
+  flowPreviewnet,
+  cloud,
+  game7Testnet,
+  boss,
+  forma,
+  formaSketchpad,
+  b3,
+  apechain,
+  curtis,
+  shape,
+  shapeSepolia,
+  abstractTestnet,
+  minato,
+  hychain,
+  hychainTestnet,
+  flow,
+  zero,
+  zeroTestnet,
+  abstract,
+  animeTestnet,
+  monadDevnet,
+  game7,
+  creatorTestnet,
+  soneium,
+  storyOdyssey,
 }

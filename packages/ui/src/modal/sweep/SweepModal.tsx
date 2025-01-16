@@ -26,14 +26,14 @@ import {
   Text,
 } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
-import faChevronLeft from '@fortawesome/free-solid-svg-icons/faChevronLeft'
-import faChevronRight from '@fortawesome/free-solid-svg-icons/faChevronRight'
-import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
-import faCube from '@fortawesome/free-solid-svg-icons/faCube'
-import faMagnifyingGlass from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass'
-import faPenNib from '@fortawesome/free-solid-svg-icons/faPenNib'
-import faWallet from '@fortawesome/free-solid-svg-icons/faWallet'
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons/faCheckCircle'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
+import { faCube } from '@fortawesome/free-solid-svg-icons/faCube'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass'
+import { faPenNib } from '@fortawesome/free-solid-svg-icons/faPenNib'
+import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet'
 
 import { formatNumber } from '../../lib/numbers'
 import { Path } from '../../components/cart/CartCheckoutModal'
@@ -173,6 +173,7 @@ export function SweepModal({
         disableJumperLink,
         balance,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         transactionError,
         stepData,
         sweepStep,
@@ -204,10 +205,6 @@ export function SweepModal({
         }, [transactionError])
 
         const hasTokens = orders && orders.length > 0
-
-        const maxQuantity = paymentCurrency?.maxItems
-          ? paymentCurrency?.maxItems
-          : maxItemAmount
 
         const pathMap = stepData?.path
           ? (stepData.path as Path[]).reduce(
@@ -338,15 +335,15 @@ export function SweepModal({
                             ellipsify
                             css={{ width: '100%' }}
                           >
-                            {formatNumber(maxQuantity)}{' '}
-                            {maxQuantity === 1 ? 'item' : 'items'} available
+                            {formatNumber(maxItemAmount)}{' '}
+                            {maxItemAmount === 1 ? 'item' : 'items'} available
                           </Text>
                         </Flex>
                         <QuantitySelector
                           quantity={itemAmount}
                           setQuantity={setItemAmount}
                           min={1}
-                          max={maxQuantity}
+                          max={maxItemAmount}
                           css={{
                             width: '100%',
                             justifyContent: 'space-between',
@@ -430,12 +427,16 @@ export function SweepModal({
                       css={{ pt: '$4' }}
                     />
                   </Flex>
-                  {hasEnoughCurrency || !isConnected ? (
+                  {hasEnoughCurrency ||
+                  !isConnected ||
+                  hasAuxiliaryFundsSupport ? (
                     <Button
                       css={{ m: '$4' }}
                       disabled={
                         !(selectedTokens.length > 0) ||
-                        (!hasEnoughCurrency && isConnected)
+                        (!hasEnoughCurrency &&
+                          !hasAuxiliaryFundsSupport &&
+                          isConnected)
                       }
                       onClick={sweepTokens}
                     >

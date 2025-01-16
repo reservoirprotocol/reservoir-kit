@@ -14,7 +14,7 @@ import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits } from 'viem'
 import { BuyResponses, MintResponses } from '@reservoir0x/reservoir-sdk'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faInfoCircle from '@fortawesome/free-solid-svg-icons/faInfoCircle'
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle'
 
 type Props = {
   css?: CSS
@@ -53,7 +53,7 @@ export const PaymentDetails: FC<Props> = ({
           <Text style="subtitle3">Referral Fee</Text>
           <Flex direction="column" align="end" css={{ gap: '$1' }}>
             <FormatCryptoCurrency
-              chainId={chainId}
+              chainId={paymentCurrency?.chainId ?? chainId}
               amount={feeOnTop}
               address={paymentCurrency?.address}
               decimals={paymentCurrency?.decimals}
@@ -70,7 +70,7 @@ export const PaymentDetails: FC<Props> = ({
           css={{ px: '$4', py: '$3', width: '100%' }}
         >
           <Flex align="center" css={{ gap: '$2' }}>
-            <Text style="subtitle3">Relayer Fee</Text>
+            <Text style="subtitle3">Relay Cost</Text>
             <Tooltip
               content={
                 <Text
@@ -89,7 +89,7 @@ export const PaymentDetails: FC<Props> = ({
           </Flex>
           <Flex direction="column" align="end" css={{ gap: '$1' }}>
             <FormatCryptoCurrency
-              chainId={chainId}
+              chainId={paymentCurrency?.chainId ?? chainId}
               amount={crosschainFees?.relayer?.amount?.raw}
             />
 
@@ -114,7 +114,7 @@ export const PaymentDetails: FC<Props> = ({
                 <>
                   <FormatCurrency amount={usdTotal} style="h6" color="base" />
                   <FormatCryptoCurrency
-                    chainId={chainId}
+                    chainId={paymentCurrency?.chainId ?? chainId}
                     textStyle="body2"
                     textColor="subtle"
                     amount={
@@ -129,7 +129,7 @@ export const PaymentDetails: FC<Props> = ({
               ) : (
                 <>
                   <FormatCryptoCurrency
-                    chainId={chainId}
+                    chainId={paymentCurrency?.chainId ?? chainId}
                     textStyle="h6"
                     textColor="base"
                     amount={

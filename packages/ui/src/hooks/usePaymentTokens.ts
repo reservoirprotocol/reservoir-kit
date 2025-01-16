@@ -23,7 +23,6 @@ export type EnhancedCurrency =
       balance?: string | number | bigint
       currencyTotalRaw?: bigint
       currencyTotalFormatted?: string
-      maxItems?: number
       capacityPerRequest?: bigint
       maxPricePerItem?: number
     }
@@ -100,6 +99,7 @@ export default function (options: {
             listingCurrency?.contract?.toLowerCase() &&
           token.chainId === listingCurrencyChainId
       )
+
       if (!listingCurrencyAlreadyExists && listingCurrency) {
         paymentTokens?.push({
           ...listingCurrency,
@@ -143,6 +143,7 @@ export default function (options: {
     crossChainDisabled,
     nativeOnly,
     includeListingCurrency,
+    listingCurrency,
   ])
 
   const nativeCurrencies = useMemo(() => {
@@ -155,14 +156,15 @@ export default function (options: {
     crossChainDisabled,
     nativeOnly,
     includeListingCurrency,
+    listingCurrency,
   ])
 
   const { data: nonNativeBalances } = useReadContracts({
     contracts: open
       ? nonNativeCurrencies?.map((currency) => ({
           abi: erc20Abi,
-          address: currency.address as `0x${string}`,
-          chainId: chainId,
+          address: currency.address.toLowerCase() as `0x${string}`,
+          chainId: currency.chainId,
           functionName: 'balanceOf',
           args: [address],
         }))
@@ -199,7 +201,6 @@ export default function (options: {
     path && path[0]
       ? path[0].currency ?? path[0].buyInCurrency ?? undefined
       : undefined,
-    chain,
     open ? allPaymentTokens : undefined
   )
 
@@ -247,6 +248,8 @@ export default function (options: {
       normalizedQuantities[key.toLowerCase()] = quantityToken[key]
     }
 
+    let currencyChainId = chainId
+
     path?.forEach((pathItem, i) => {
       const tokenKey = `${pathItem.contract?.toLowerCase()}:${pathItem.tokenId}`
       const contractKey = `${pathItem.contract?.toLowerCase()}` //todo: test with sweeping
@@ -292,10 +295,20 @@ export default function (options: {
           : pathItem.totalRawPrice ?? 0
       )
 
-      const currencyChainId = pathItem.fromChainId || chainId
+      if (pathItem.fromChainId && pathItem.fromChainId !== chainId) {
+        currencyChainId = pathItem.fromChainId
+      }
+
       const currencyKey = `${currency?.toLowerCase()}:${currencyChainId}`
       if (paymentTokens[currencyKey]) {
-        paymentTokens[currencyKey].total += totalRaw * BigInt(quantityToTake)
+        if (currencyChainId !== chainId && i === 0) {
+          paymentTokens[currencyKey].total +=
+            (totalRaw - BigInt(pathItem.gasCost ?? 0)) *
+              BigInt(quantityToTake) +
+            BigInt(pathItem.gasCost ?? 0)
+        } else {
+          paymentTokens[currencyKey].total += totalRaw * BigInt(quantityToTake)
+        }
       }
     })
 
@@ -307,7 +320,6 @@ export default function (options: {
       .map((token) => {
         const currency = token.currency
 
-        let maxItems: EnhancedCurrency['maxItems'] = undefined
         let capacityPerRequest: EnhancedCurrency['capacityPerRequest'] =
           undefined
 
@@ -318,15 +330,6 @@ export default function (options: {
           token.chainId !== chain?.id &&
           path
         ) {
-          maxItems = 0
-          for (
-            let i = 0;
-            i < Math.min(path.length, solverCapacity.maxItems);
-            i++
-          ) {
-            maxItems += path[i].quantity || 0
-          }
-
           capacityPerRequest = BigInt(solverCapacity.capacityPerRequest)
         }
 
@@ -409,7 +412,6 @@ export default function (options: {
           currencyTotalFormatted,
           usdTotalFormatted: usdTotalFormatted,
           usdBalanceRaw: usdBalanceRaw,
-          maxItems,
           capacityPerRequest,
           chainId: token.chainId,
         }

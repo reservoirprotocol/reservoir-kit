@@ -11,7 +11,6 @@ export {
   useUsersActivity,
   useReservoirClient,
   useTokens,
-  useSearchActivities,
   useTokenActivity,
   useCoinConversion,
   useListings,
@@ -28,6 +27,8 @@ export {
   useCurrencyConversion,
   useSolverCapacity,
   useMarketplaceConfigs,
+  useUserListings,
+  useUserBids,
 } from './hooks'
 
 // Themes

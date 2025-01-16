@@ -560,21 +560,30 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           const amount = totalPrice || 0
           let royalty = 0
           let marketplaceFee = 0
+          let referralFee = 0
 
           if (sellOutCurrency && sellOutCurrencySymbol) {
-            const referralFee =
-              feesOnTop?.reduce(
-                (total, fee) => total + (fee?.amount || 0),
-                0
-              ) || 0
             builtInFees?.forEach((fee) => {
               switch (fee.kind) {
                 case 'marketplace': {
-                  marketplaceFee = fee.amount || 0
+                  marketplaceFee += fee.amount || 0
                   break
                 }
                 case 'royalty': {
-                  royalty = fee.amount || 0
+                  royalty += fee.amount || 0
+                  break
+                }
+              }
+            })
+            feesOnTop?.forEach((fee) => {
+              switch (fee.kind) {
+                case 'royalty': {
+                  royalty += fee.amount || 0
+                  break
+                }
+                case 'marketplace':
+                default: {
+                  referralFee += fee.amount || 0
                   break
                 }
               }
@@ -600,19 +609,27 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               map[sellOutCurrencySymbol].feesOnTop += referralFee
             }
           } else if (currency && currencySymbol) {
-            const referralFee =
-              feesOnTop?.reduce(
-                (total, fee) => total + (fee?.amount || 0),
-                0
-              ) || 0
             builtInFees?.forEach((fee) => {
               switch (fee.kind) {
                 case 'marketplace': {
-                  marketplaceFee = fee.amount || 0
+                  marketplaceFee += fee.amount || 0
                   break
                 }
                 case 'royalty': {
-                  royalty = fee.amount || 0
+                  royalty += fee.amount || 0
+                  break
+                }
+              }
+            })
+            feesOnTop?.forEach((fee) => {
+              switch (fee.kind) {
+                case 'royalty': {
+                  royalty += fee.amount || 0
+                  break
+                }
+                case 'marketplace':
+                default: {
+                  referralFee += fee.amount || 0
                   break
                 }
               }

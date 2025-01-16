@@ -26,14 +26,14 @@ import {
   Text,
 } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
-import faChevronLeft from '@fortawesome/free-solid-svg-icons/faChevronLeft'
-import faChevronRight from '@fortawesome/free-solid-svg-icons/faChevronRight'
-import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
-import faCube from '@fortawesome/free-solid-svg-icons/faCube'
-import faEye from '@fortawesome/free-solid-svg-icons/faEye'
-import faPenNib from '@fortawesome/free-solid-svg-icons/faPenNib'
-import faWallet from '@fortawesome/free-solid-svg-icons/faWallet'
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons/faCheckCircle'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
+import { faCube } from '@fortawesome/free-solid-svg-icons/faCube'
+import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
+import { faPenNib } from '@fortawesome/free-solid-svg-icons/faPenNib'
+import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet'
 
 import { formatNumber } from '../../lib/numbers'
 import { Path } from '../../components/cart/CartCheckoutModal'
@@ -166,6 +166,7 @@ export function MintModal({
         disableJumperLink,
         balance,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         transactionError,
         fetchMintPathError,
         stepData,
@@ -209,10 +210,6 @@ export function MintModal({
               {} as Record<string, Path>
             )
           : {}
-
-        const maxQuantity = paymentCurrency?.maxItems
-          ? paymentCurrency?.maxItems
-          : maxItemAmount
 
         const totalMints =
           stepData?.currentStep?.items?.reduce((total, item) => {
@@ -353,15 +350,15 @@ export function MintModal({
                             ellipsify
                             css={{ width: '100%' }}
                           >
-                            {formatNumber(maxQuantity)}{' '}
-                            {maxQuantity > 1 ? 'items' : 'item'} available
+                            {formatNumber(maxItemAmount)}{' '}
+                            {maxItemAmount > 1 ? 'items' : 'item'} available
                           </Text>
                         </Flex>
                         <QuantitySelector
                           quantity={itemAmount}
                           setQuantity={setItemAmount}
                           min={1}
-                          max={maxQuantity}
+                          max={maxItemAmount}
                           css={{
                             width: '100%',
                             justifyContent: 'space-between',
@@ -402,6 +399,7 @@ export function MintModal({
                             <Flex align="center">
                               <CryptoCurrencyIcon
                                 address={paymentCurrency?.address as string}
+                                chainId={paymentCurrency?.chainId}
                                 css={{ width: 16, height: 16, mr: '$1' }}
                               />
                               <Text style="subtitle2">
@@ -428,10 +426,16 @@ export function MintModal({
                       css={{ pt: '$4' }}
                     />
                   </Flex>
-                  {hasEnoughCurrency || !isConnected ? (
+                  {hasEnoughCurrency ||
+                  !isConnected ||
+                  hasAuxiliaryFundsSupport ? (
                     <Button
                       css={{ m: '$4' }}
-                      disabled={!hasEnoughCurrency && isConnected}
+                      disabled={
+                        !hasEnoughCurrency &&
+                        !hasAuxiliaryFundsSupport &&
+                        isConnected
+                      }
                       onClick={mintTokens}
                     >
                       {!isConnected ? copy.ctaConnect : copy.mintCtaBuy}
@@ -448,7 +452,7 @@ export function MintModal({
                         </Text>
 
                         <FormatCryptoCurrency
-                          chainId={chainId}
+                          chainId={paymentCurrency?.chainId}
                           amount={paymentCurrency?.balance}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}

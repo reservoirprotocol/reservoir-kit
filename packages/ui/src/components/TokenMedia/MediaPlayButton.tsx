@@ -1,8 +1,8 @@
 import React, { FC, useState, useEffect, RefObject } from 'react'
 import { Button } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faPlay from '@fortawesome/free-solid-svg-icons/faPlay'
-import faPause from '@fortawesome/free-solid-svg-icons/faPause'
+import { faPlay } from '@fortawesome/free-solid-svg-icons/faPlay'
+import { faPause } from '@fortawesome/free-solid-svg-icons/faPause'
 
 type MediaPlayButtonProps = {
   mediaRef: RefObject<HTMLAudioElement> | RefObject<HTMLVideoElement>

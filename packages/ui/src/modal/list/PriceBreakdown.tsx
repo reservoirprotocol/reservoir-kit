@@ -11,7 +11,10 @@ import {
 import { Currency } from '../../types/Currency'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faChevronDown from '@fortawesome/free-solid-svg-icons/faChevronDown'import InfoTooltip from '../../primitives/InfoTooltip'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
+import InfoTooltip from '../../primitives/InfoTooltip'
+
+type Exchange = NonNullable<Marketplace['exchanges']>['string']
 
 type PriceBreakdownProps = {
   price: string
@@ -20,6 +23,7 @@ type PriceBreakdownProps = {
   quantity: number
   royaltyBps?: number
   marketplace?: Marketplace
+  exchange?: Exchange
 }
 
 const PriceBreakdown: FC<PriceBreakdownProps> = ({
@@ -29,11 +33,12 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
   quantity,
   royaltyBps,
   marketplace,
+  exchange,
 }) => {
-  let profit =
-    (1 - (marketplace?.fee?.percent || 0) / 100 - (royaltyBps || 0) * 0.0001) *
-    Number(price) *
-    quantity
+  const marketplaceFee =
+    (marketplace?.fee?.percent ?? 0) / 100 + (exchange?.fee?.bps ?? 0) * 0.0001
+  const royaltyFee = (royaltyBps || 0) * 0.0001
+  const profit = (1 - marketplaceFee - royaltyFee) * Number(price) * quantity
   100
 
   if (Number(price) > 0 && (marketplace?.fee?.percent || royaltyBps)) {
@@ -120,7 +125,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
                   -
                 </Text>
                 <FormatCryptoCurrency
-                  amount={quantity * Number(price) * (royaltyBps || 0) * 0.0001}
+                  amount={quantity * Number(price) * royaltyFee}
                   address={currency.contract}
                   symbol={currency.symbol}
                   textStyle="subtitle2"
@@ -129,7 +134,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
               </Flex>
             </Flex>
           ) : null}
-          {marketplace?.fee?.bps ? (
+          {marketplaceFee ? (
             <Flex justify="between" align="center">
               <Text style="subtitle2" color="subtle">
                 {marketplace?.name || 'Marketplace'} Fee
@@ -140,9 +145,7 @@ const PriceBreakdown: FC<PriceBreakdownProps> = ({
                   -
                 </Text>
                 <FormatCryptoCurrency
-                  amount={
-                    quantity * Number(price) * (marketplace?.fee?.percent / 100)
-                  }
+                  amount={quantity * Number(price) * marketplaceFee}
                   address={currency.contract}
                   symbol={currency.symbol}
                   textStyle="subtitle2"

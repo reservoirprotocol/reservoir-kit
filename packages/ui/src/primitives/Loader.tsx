@@ -1,4 +1,4 @@
-import faSpinner from '@fortawesome/free-solid-svg-icons/faSpinner'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner'
 import { styled } from '../../stitches.config'
 import React, { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

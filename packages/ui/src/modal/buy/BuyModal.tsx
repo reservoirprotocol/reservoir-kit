@@ -16,13 +16,14 @@ import {
   FormatCryptoCurrency,
   Loader,
   ErrorWell,
+  CryptoCurrencyIcon,
 } from '../../primitives'
 import Progress from '../Progress'
 import { Modal } from '../Modal'
-import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
-import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
-import faChevronLeft from '@fortawesome/free-solid-svg-icons/faChevronLeft'
-import faChevronRight from '@fortawesome/free-solid-svg-icons/faChevronRight'
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons/faCheckCircle'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
@@ -77,6 +78,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
     NonNullable<BuyTokenBodyParameters>,
     'items' | 'feesOnTop' | 'taker'
   >
+  promptPaymentMethod?: boolean
   onConnectWallet: () => void
   onGoToToken?: () => any
   onPurchaseComplete?: (data: PurchaseData) => void
@@ -104,6 +106,7 @@ export function BuyModal({
   copyOverrides,
   walletClient,
   executeBuyOptions,
+  promptPaymentMethod,
   onConnectWallet,
   onPurchaseComplete,
   onPurchaseError,
@@ -158,6 +161,7 @@ export function BuyModal({
         buyStep,
         transactionError,
         hasEnoughCurrency,
+        hasAuxiliaryFundsSupport,
         addFundsLink,
         steps,
         stepData,
@@ -350,18 +354,23 @@ export function BuyModal({
                           gap: '$1',
                         }}
                       >
-                        <Text style="subtitle2">Payment Method</Text>
+                        <Text style="subtitle2">Select Payment Method</Text>
                         <Flex
                           align="center"
                           css={{ gap: '$2', cursor: 'pointer' }}
                         >
                           <Flex align="center">
+                            <CryptoCurrencyIcon
+                              address={paymentCurrency?.address as string}
+                              chainId={paymentCurrency?.chainId}
+                              css={{ width: 16, height: 16, mr: '$1' }}
+                            />
                             <Text style="subtitle2">
                               {paymentCurrency?.name}
                             </Text>
                           </Flex>
                           <Box css={{ color: '$neutralSolidHover' }}>
-                            <FontAwesomeIcon icon={faChevronRight} width={10} />
+                            <FontAwesomeIcon icon={faChevronDown} width={10} />
                           </Box>
                         </Flex>
                       </Flex>
@@ -379,10 +388,16 @@ export function BuyModal({
                 </Flex>
 
                 <Box css={{ p: '$4', width: '100%' }}>
-                  {hasEnoughCurrency || !isConnected ? (
+                  {hasEnoughCurrency ||
+                  !isConnected ||
+                  hasAuxiliaryFundsSupport ? (
                     <>
                       <Button
-                        disabled={!hasEnoughCurrency && isConnected}
+                        disabled={
+                          !hasEnoughCurrency &&
+                          !hasAuxiliaryFundsSupport &&
+                          isConnected
+                        }
                         onClick={buyToken}
                         css={{ width: '100%' }}
                         color="primary"
@@ -402,7 +417,7 @@ export function BuyModal({
                         </Text>
 
                         <FormatCryptoCurrency
-                          chainId={modalChain?.id}
+                          chainId={paymentCurrency?.chainId}
                           amount={paymentCurrency?.balance}
                           address={paymentCurrency?.address}
                           decimals={paymentCurrency?.decimals}
@@ -429,13 +444,21 @@ export function BuyModal({
                       ) : null} */}
 
                       <Button
-                        disabled={providerOptions.disableJumperLink}
+                        disabled={
+                          !promptPaymentMethod &&
+                          providerOptions.disableJumperLink
+                        }
                         onClick={() => {
-                          window.open(addFundsLink, '_blank')
+                          if (promptPaymentMethod) {
+                            setBuyStep(BuyStep.SelectPayment)
+                          } else {
+                            window.open(addFundsLink, '_blank')
+                          }
                         }}
                         css={{ width: '100%' }}
                       >
-                        {providerOptions.disableJumperLink
+                        {!promptPaymentMethod &&
+                        providerOptions.disableJumperLink
                           ? copy.ctaCheckout
                           : copy.ctaInsufficientFunds}
                       </Button>

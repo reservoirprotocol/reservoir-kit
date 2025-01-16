@@ -5,6 +5,7 @@ import React, {
   useCallback,
   ReactNode,
   useMemo,
+  useContext,
 } from 'react'
 import {
   useCoinConversion,
@@ -12,9 +13,9 @@ import {
   useTokens,
   useCollections,
   useChainCurrency,
-  useBids,
   useAttributes,
   useMarketplaces,
+  useUserBids,
 } from '../../hooks'
 import {
   useWalletClient,
@@ -43,6 +44,9 @@ import { getAccount, switchChain } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { Marketplace } from '../../hooks/useMarketplaces'
+import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import { useCapabilities } from 'wagmi/experimental'
+import useRelayChains from '../../hooks/useRelayChains'
 
 type Exchange = NonNullable<Marketplace['exchanges']>['string']
 
@@ -61,7 +65,7 @@ export type EditBidStepData = {
 
 type ChildrenProps = {
   loading: boolean
-  bid?: NonNullable<ReturnType<typeof useBids>['data']>[0]
+  bid?: NonNullable<ReturnType<typeof useUserBids>['data']>[0]
   attributes?: Traits
   trait: Trait
   tokenId?: string
@@ -76,13 +80,14 @@ type ChildrenProps = {
   usdPrice: number | null
   token?: NonNullable<NonNullable<ReturnType<typeof useTokens>>['data']>[0]
   currency: NonNullable<
-    NonNullable<ReturnType<typeof useBids>['data']>[0]['price']
+    NonNullable<ReturnType<typeof useUserBids>['data']>[0]['price']
   >['currency']
   collection?: NonNullable<ReturnType<typeof useCollections>['data']>[0]
   editBidStep: EditBidStep
   transactionError?: Error | null
   hasEnoughNativeCurrency: boolean
   hasEnoughWrappedCurrency: boolean
+  hasAuxiliaryFundsSupport: boolean
   balance?: FetchBalanceResult
   wrappedBalance?: [bigint, number, string]
   wrappedContractName: string
@@ -129,9 +134,11 @@ export const EditBidModalRenderer: FC<Props> = ({
   walletClient,
   children,
 }) => {
+  const providerOptions = useContext(ProviderOptionsContext)
   const client = useReservoirClient()
   const currentChain = client?.currentChain()
   const config = useConfig()
+  const { address, connector } = useAccount()
 
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
@@ -143,6 +150,18 @@ export const EditBidModalRenderer: FC<Props> = ({
   }).find(({ id }) => rendererChain?.id === id)
 
   const { data: wallet } = useWalletClient({ chainId: rendererChain?.id })
+  const { data: capabilities } = useCapabilities({
+    query: {
+      enabled:
+        connector &&
+        (connector.id === 'coinbaseWalletSDK' || connector.id === 'coinbase'),
+    },
+  })
+  const hasAuxiliaryFundsSupport = Boolean(
+    rendererChain?.id
+      ? capabilities?.[rendererChain?.id]?.auxiliaryFunds?.supported
+      : false
+  )
 
   const [editBidStep, setEditBidStep] = useState<EditBidStep>(EditBidStep.Edit)
   const [transactionError, setTransactionError] = useState<Error | null>()
@@ -172,7 +191,8 @@ export const EditBidModalRenderer: FC<Props> = ({
       ? wrappedContractNames[chainCurrency.chainId]
       : wrappedContractNames[1]
 
-  const { data: bids } = useBids(
+  const { data: bids } = useUserBids(
+    address,
     {
       ids: bidId,
       normalizeRoyalties,
@@ -255,7 +275,6 @@ export const EditBidModalRenderer: FC<Props> = ({
   const totalBidAmount = Number(bidAmountPerUnit) * Math.max(1, quantity)
   const totalBidAmountUsd = totalBidAmount * (usdPrice || 0)
 
-  const { address } = useAccount()
   const { data: balance } = useBalance({
     address: address,
     chainId: rendererChain?.id,
@@ -292,11 +311,29 @@ export const EditBidModalRenderer: FC<Props> = ({
     },
   })
 
+  const { relayLink } = useRelayChains(rendererChain?.id)
+
   const canAutomaticallyConvert =
     !currency || currency.contract === nativeWrappedContractAddress
   let convertLink: string = ''
 
-  if (canAutomaticallyConvert) {
+  if (providerOptions?.convertLink) {
+    convertLink =
+      providerOptions.convertLink.tokenUrl ??
+      providerOptions.convertLink.chainUrl ??
+      providerOptions.convertLink.customUrl?.({
+        toChain: rendererChain?.id,
+        toToken: wrappedContractAddress,
+        amountToWrap: amountToWrap,
+      }) ??
+      ''
+    if (rendererChain?.id) {
+      convertLink = convertLink.replace('{toChain}', `${rendererChain.id}`)
+    }
+    convertLink = convertLink.replace('{toToken}', wrappedContractAddress)
+  } else if (relayLink) {
+    convertLink = `${relayLink}?toCurrency=${wrappedContractAddress}&fromChainId=${rendererChain?.id}&fromCurrency=${chainCurrency.address}`
+  } else if (canAutomaticallyConvert) {
     convertLink =
       wagmiChain?.id === mainnet.id || wagmiChain?.id === goerli.id
         ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=mainnet&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
@@ -588,6 +625,7 @@ export const EditBidModalRenderer: FC<Props> = ({
         transactionError,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        hasAuxiliaryFundsSupport,
         balance,
         wrappedBalance,
         wrappedContractName,

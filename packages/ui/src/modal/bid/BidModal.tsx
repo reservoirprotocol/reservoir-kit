@@ -35,10 +35,10 @@ import {
 import TokenInfo from './TokenInfo'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faCalendar from '@fortawesome/free-solid-svg-icons/faCalendar'
-import faClose from '@fortawesome/free-solid-svg-icons/faClose'
-import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
-import faHand from '@fortawesome/free-solid-svg-icons/faHand'
+import { faCalendar } from '@fortawesome/free-solid-svg-icons/faCalendar'
+import { faClose } from '@fortawesome/free-solid-svg-icons/faClose'
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons/faCheckCircle'
+import { faHand } from '@fortawesome/free-solid-svg-icons/faHand'
 
 import Flatpickr from 'react-flatpickr'
 import TransactionProgress from '../TransactionProgress'
@@ -68,7 +68,7 @@ const ModalCopy = {
   titleComplete: 'Offer Submitted',
   ctaBidDisabled: 'Enter a Price',
   ctaBid: '',
-  ctaConvertManually: 'Convert Manually',
+  ctaConvertManually: 'Get ',
   ctaConvertAutomatically: '',
   ctaAwaitingApproval: 'Waiting for Approval',
   ctaEditOffer: 'Edit Offer',
@@ -84,6 +84,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   chainId?: number
   collectionId?: string
   attribute?: Trait
+  conduitKey?: string
   normalizeRoyalties?: boolean
   currencies?: Currency[]
   oracleEnabled?: boolean
@@ -126,6 +127,7 @@ export function BidModal({
   chainId,
   collectionId,
   attribute,
+  conduitKey,
   normalizeRoyalties,
   currencies,
   oracleEnabled = false,
@@ -174,6 +176,7 @@ export function BidModal({
       tokenId={tokenId}
       collectionId={collectionId}
       attribute={attribute}
+      conduitKey={conduitKey}
       normalizeRoyalties={normalizeRoyalties}
       oracleEnabled={oracleEnabled}
       currencies={currencies}
@@ -198,6 +201,7 @@ export function BidModal({
         setQuantity,
         hasEnoughNativeCurrency,
         hasEnoughWrappedCurrency,
+        hasAuxiliaryFundsSupport,
         loading,
         traitBidSupported,
         collectionBidSupported,
@@ -832,18 +836,19 @@ export function BidModal({
                     )}
                     {canPurchase && !hasEnoughWrappedCurrency && (
                       <>
-                        {!hasEnoughNativeCurrency && (
-                          <Flex css={{ gap: '$2', mt: 10 }} justify="center">
-                            <Text style="body3" color="error">
-                              {balance?.symbol || 'ETH'} Balance
-                            </Text>
-                            <FormatCryptoCurrency
-                              chainId={modalChain?.id}
-                              amount={balance?.value}
-                              symbol={balance?.symbol}
-                            />
-                          </Flex>
-                        )}
+                        {!hasEnoughNativeCurrency &&
+                          !hasAuxiliaryFundsSupport && (
+                            <Flex css={{ gap: '$2', mt: 10 }} justify="center">
+                              <Text style="body3" color="error">
+                                {balance?.symbol || 'ETH'} Balance
+                              </Text>
+                              <FormatCryptoCurrency
+                                chainId={modalChain?.id}
+                                amount={balance?.value}
+                                symbol={balance?.symbol}
+                              />
+                            </Flex>
+                          )}
                         <Flex
                           css={{
                             gap: '$2',
@@ -865,12 +870,17 @@ export function BidModal({
                           >
                             {providerOptionsContext.disableJumperLink
                               ? ctaButtonText
-                              : copy.ctaConvertManually}
+                              : currency?.symbol
+                              ? copy.ctaConvertManually + currency?.symbol
+                              : 'Convert Manually'}
                           </Button>
                           {canAutomaticallyConvert && (
                             <Button
                               css={{ flex: 1, maxHeight: 44 }}
-                              disabled={!hasEnoughNativeCurrency}
+                              disabled={
+                                !hasEnoughNativeCurrency &&
+                                !hasAuxiliaryFundsSupport
+                              }
                               onClick={() => placeBid()}
                             >
                               <Text style="h6" color="button" ellipsify>

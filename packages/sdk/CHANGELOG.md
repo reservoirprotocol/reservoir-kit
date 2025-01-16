@@ -1,5 +1,461 @@
 ## 1.12.15
 
+## 2.4.39
+
+### Patch Changes
+
+- 495ac1c: add story odyssey chain support
+
+## 2.4.38
+
+### Patch Changes
+
+- 18ff2f0: adding new block explorers for boss and zero
+
+## 2.4.37
+
+### Patch Changes
+
+- a76f685: fixing mainnet rpc
+
+## 2.4.36
+
+### Patch Changes
+
+- 493bf6f: fixing blast rpc url
+
+## 2.4.35
+
+### Patch Changes
+
+- afcd970: fixing soneium rpc
+
+## 2.4.34
+
+### Patch Changes
+
+- 7db63ef: Add Soneium chain configuration (Chain ID: 1868)
+
+## 2.4.33
+
+### Patch Changes
+
+- 29a0710: feat(sdk,ui,demo): add Creator Testnet chain support (chain ID 4654) with native ETH and WETH token configurations, including demo app integration
+
+## 2.4.32
+
+### Patch Changes
+
+- 707cdbf: Add game7 chain configuration
+
+## 2.4.31
+
+### Patch Changes
+
+- ccafb5e: adding monad devnet
+
+## 2.4.30
+
+### Patch Changes
+
+- 3806fa5: adding anime testnet
+
+## 2.4.29
+
+### Patch Changes
+
+- 82d1a80: adding abstract mainnet
+
+## 2.4.28
+
+### Patch Changes
+
+- 36a821d: updating explorer urls for apechain and shape
+
+## 2.4.27
+
+### Patch Changes
+
+- 59e1d6a: adding zero testnet
+
+## 2.4.26
+
+### Patch Changes
+
+- 88b6291: adding zero mainnet
+
+## 2.4.25
+
+### Patch Changes
+
+- b5b3c49: updating wape address
+
+## 2.4.24
+
+### Patch Changes
+
+- df57dc4: updating WETH address for abstract testnet
+
+## 2.4.23
+
+### Patch Changes
+
+- 2ca4b46: Removing maxItems check
+
+## 2.4.22
+
+### Patch Changes
+
+- 1274874: fixing b3 wrapped native currency
+
+## 2.4.21
+
+### Patch Changes
+
+- e2a1d03: fixing shape weth address
+
+## 2.4.20
+
+### Patch Changes
+
+- 6280bb9: Fixing cross chain purchasing of 1155 tokens when filliing from multiple orders
+- 4a7fe0b: fixing base sepolia WETH chain ID
+- 39eb10b: Skip checking tx for synced/check api if crosschain approval
+
+## 2.4.19
+
+### Patch Changes
+
+- ce16bbd: adding flow
+
+## 2.4.18
+
+### Patch Changes
+
+- 12c1717: updating WAPE on apechain and curtis
+
+## 2.4.17
+
+### Patch Changes
+
+- 31f3762: updating tx syncing to be async
+
+## 2.4.16
+
+### Patch Changes
+
+- b71da2f: Sync api types, fix marketplace-configurations/v2 exchange type
+
+## 2.4.15
+
+### Patch Changes
+
+- 02390c4: updating refund error message
+
+## 2.4.14
+
+### Patch Changes
+
+- 9adc2db: support for abstract testnet, minato, hychain
+
+## 2.4.13
+
+### Patch Changes
+
+- 9e723b8: adding shape and shape sepolia
+
+## 2.4.12
+
+### Patch Changes
+
+- 55f67f6: adding apechain
+
+## 2.4.11
+
+### Patch Changes
+
+- 6118898: sync api types
+
+## 2.4.10
+
+### Patch Changes
+
+- ff0433f: Include request url in APIError and fix unknown status code
+
+## 2.4.9
+
+### Patch Changes
+
+- 9a8b493: adding b3
+
+## 2.4.8
+
+### Patch Changes
+
+- e575a14: Sync api types
+
+## 2.4.7
+
+### Patch Changes
+
+- 71664d9: adding forma, syncing api types
+
+## 2.4.6
+
+### Patch Changes
+
+- 3aae35c: Fix viem public client initialization bug
+
+## 2.4.5
+
+### Patch Changes
+
+- c3a53b6: adding boss
+
+## 2.4.4
+
+### Patch Changes
+
+- 6da031f: Update wbera address
+
+## 2.4.3
+
+### Patch Changes
+
+- d08dccf: Improve fallback logic for api errors
+- ee9b0e8: adding cloud and game7
+
+## 2.4.2
+
+### Patch Changes
+
+- e46059b: updating explore attributes version
+
+## 2.4.1
+
+### Patch Changes
+
+- 49fc944: Fix berachain definitions
+
+## 2.4.0
+
+### Minor Changes
+
+- b9063e3: Upgrade viem and wagmi
+
+## 2.3.1
+
+### Patch Changes
+
+- 9686ca3: fixing nebula currencies
+
+## 2.3.0
+
+### Minor Changes
+
+- 2ad9e96: Add support for auxiliary funds
+
+## 2.2.12
+
+### Patch Changes
+
+- 626ea97: adding flow previewnet, fixing b3 icons
+
+## 2.2.11
+
+### Patch Changes
+
+- 057dc4d: Adding b3 testnet
+
+## 2.2.10
+
+### Patch Changes
+
+- 4d94ea4: fixing cryptocurrencyicon nebula import
+
+## 2.2.9
+
+### Patch Changes
+
+- e778554: Fixing buying and listing on nebula
+
+## 2.2.8
+
+### Patch Changes
+
+- c1b0b1a: adding sei chain
+
+## 2.2.7
+
+### Patch Changes
+
+- 16db325: Add new useUserListings hook and replace existing useListings hook in EditListingModal/CancelListingModal
+
+## 2.2.6
+
+### Patch Changes
+
+- 18abb7c: adding ETH symbol check, removing SFUEL paymentToken for nebula
+
+## 2.2.5
+
+### Patch Changes
+
+- 57b6b0d: Add useUserBids hook and replace EditBidModal/CancelBidModal
+
+## 2.2.4
+
+### Patch Changes
+
+- 8f9e134: Fix validation error with new synced api integration
+
+## 2.2.3
+
+### Patch Changes
+
+- d0bf12c: adding bitlayer
+
+## 2.2.2
+
+### Patch Changes
+
+- ca98e56: changing nebula payment token address
+
+## 2.2.1
+
+### Patch Changes
+
+- 4d60cb3: adding cyber
+
+## 2.2.0
+
+### Minor Changes
+
+- 25e8677: Replace bulk transfers api with transactions/synced/v2 api
+
+### Patch Changes
+
+- bfb6f8f: BidModal & ListModal: Include exchange fee in feesBps calculation
+- d10c230: Adding Xai, Nebula, and Sei chains
+- 5534b08: Removing degen currencies and adding nebula as a custom chain
+
+## 2.1.4
+
+### Patch Changes
+
+- 4ca3b81: Fix payment token balance fetching for crosschain non native currencies
+
+## 2.1.3
+
+### Patch Changes
+
+- 7eb8fe1: Add degen chain configuration
+
+## 2.1.2
+
+### Patch Changes
+
+- d0d6298: Fix berachain testnet url
+
+## 2.1.1
+
+### Patch Changes
+
+- e9fd498: Sync api types
+
+## 2.1.0
+
+### Minor Changes
+
+- 433943d: Removed deprecated chains
+
+## 2.0.16
+
+### Patch Changes
+
+- 5a6b034: Update polygon amoy wmatic address
+
+## 2.0.15
+
+### Patch Changes
+
+- b1bdf17: Handle reverted transactions by throwing an error after receiving receipt
+
+## 2.0.14
+
+### Patch Changes
+
+- 432bdbb: Add garnet and remove redstone testnet
+- 00cfcfe: Update tokens/refresh api to v2
+- ff2b661: Add polygon amoy
+
+## 2.0.13
+
+### Patch Changes
+
+- 7c556b3: Add redstone chain
+
+## 2.0.12
+
+### Patch Changes
+
+- 2ecd779: Add berachain testnet
+
+## 2.0.11
+
+### Patch Changes
+
+- 9c46f40: Add redstone testnet configuration
+
+## 2.0.10
+
+### Patch Changes
+
+- 2198ecd: Add apex pop testnet configuration
+
+## 2.0.9
+
+### Patch Changes
+
+- fd61f2b: Remove submitting transaction to solver
+- 5a0aa7f: Sync api types
+
+## 2.0.8
+
+### Patch Changes
+
+- c2ef89f: Fix passing chainId in recursive call to executeSteps
+
+## 2.0.7
+
+### Patch Changes
+
+- 213a434: Fix Astar WETH paymentToken
+
+## 2.0.6
+
+### Patch Changes
+
+- 61b2d03: Added Astar ZkEVM
+
+## 2.0.5
+
+### Patch Changes
+
+- 9d802e7: Add blast chain configuration
+
+## 2.0.4
+
+### Patch Changes
+
+- 46c7295: Fix paymentTokens for Blast Sepolia
+
+## 2.0.3
+
+### Patch Changes
+
+- 4bc7810: Switch apex rpc to https
+
 ## 2.0.2
 
 ### Patch Changes
@@ -17,7 +473,11 @@
 
 ### Major Changes
 
-- b7ad7a5: Upgrade viem and wagmi to v2
+- b7ad7a5: Upgrade viem to v2
+
+### Breaking Changes:
+
+Make sure to upgrade peer dependency `viem` to 2.x.x
 
 ## 1.12.16
 
