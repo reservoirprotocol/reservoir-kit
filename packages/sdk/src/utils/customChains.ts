@@ -1085,20 +1085,20 @@ export const monadTestnet = {
   nativeCurrency: { name: 'Monad', symbol: 'MON', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://rpc.monad-testnet.category.xyz/rpc/g6uEr06zOc3FDxtbHDcytyebCOrJxfLkuouFs09j'],
+      http: ['https://monad.xyz'],
     },
     public: {
-      http: ['https://rpc.monad-testnet.category.xyz/rpc/g6uEr06zOc3FDxtbHDcytyebCOrJxfLkuouFs09j'],
+      http: ['https://monad.xyz'],
     },
   },
   blockExplorers: {
     etherscan: {
       name: 'Monad Testnet Explorer',
-      url: 'https://explorer.monad-testnet.category.xyz',
+      url: 'https://monad.xyz',
     },
     default: {
       name: 'Monad Testnet Explorer',
-      url: 'https://explorer.monad-testnet.category.xyz',
+      url: 'https://monad.xyz',
     },
   },
 } as const satisfies Chain
