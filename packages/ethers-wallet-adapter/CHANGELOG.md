@@ -1,5 +1,16 @@
 # @reservoir0x/ethers-wallet-adapter
 
+## 6.0.0
+
+### Minor Changes
+
+- f3df513: Upgrading viem and wagmi
+
+### Patch Changes
+
+- Updated dependencies [f3df513]
+  - @reservoir0x/reservoir-sdk@2.5.0
+
 ## 5.0.42
 
 ### Patch Changes

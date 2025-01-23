@@ -1,5 +1,16 @@
 ## 1.25.10
 
+## 2.8.0
+
+### Minor Changes
+
+- f3df513: Upgrading viem and wagmi
+
+### Patch Changes
+
+- Updated dependencies [f3df513]
+  - @reservoir0x/reservoir-sdk@2.5.0
+
 ## 2.7.53
 
 ### Patch Changes
