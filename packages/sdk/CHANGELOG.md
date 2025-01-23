@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.5.1
+
+### Patch Changes
+
+- 97f0d90: adding monad testnet rpc
+
 ## 2.5.0
 
 ### Minor Changes
