@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.5.0
+
+### Minor Changes
+
+- f3df513: Upgrading viem and wagmi
+
 ## 2.4.42
 
 ### Patch Changes
