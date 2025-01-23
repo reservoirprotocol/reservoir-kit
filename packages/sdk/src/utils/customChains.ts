@@ -1085,10 +1085,10 @@ export const monadTestnet = {
   nativeCurrency: { name: 'Monad', symbol: 'MON', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://monad.xyz'],
+      http: ['https://testnet-rpc.monad.xyz'],
     },
     public: {
-      http: ['https://monad.xyz'],
+      http: ['https://testnet-rpc.monad.xyz'],
     },
   },
   blockExplorers: {
