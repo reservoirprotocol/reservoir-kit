@@ -913,20 +913,20 @@ export const abstract = {
   nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://api.raas.matterhosted.dev'],
+      http: ['https://rpc.fsd.adfasd32442ds.com'],
     },
     public: {
-      http: ['https://api.raas.matterhosted.dev'],
+      http: ['https://rpc.fsd.adfasd32442ds.com'],
     },
   },
   blockExplorers: {
     etherscan: {
       name: 'Abstract Explorer',
-      url: 'https://explorer.mainnet.abs.xyz',
+      url: 'https://abscan.org',
     },
     default: {
       name: 'Abstract Explorer',
-      url: 'https://explorer.mainnet.abs.xyz',
+      url: 'https://abscan.org',
     },
   },
 } as const satisfies Chain
