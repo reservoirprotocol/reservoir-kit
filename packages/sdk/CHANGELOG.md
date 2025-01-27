@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.5.2
+
+### Patch Changes
+
+- 3277e54: updating abstract mainnet
+
 ## 2.5.1
 
 ### Patch Changes
