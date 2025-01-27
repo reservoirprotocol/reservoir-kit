@@ -97,6 +97,7 @@ const chains = [
   customChains.blast,
   customChains.storyOdyssey,
   customChains.ink,
+  customChains.abstract,
 ] as [Chain, ...Chain[]]
 
 const wagmiConfig = getDefaultConfig({
