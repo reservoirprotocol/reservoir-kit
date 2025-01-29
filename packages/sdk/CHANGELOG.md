@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.5.3
+
+### Patch Changes
+
+- 42dd352: fixing monad testnet explorer
+
 ## 2.5.2
 
 ### Patch Changes
