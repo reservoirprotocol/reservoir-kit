@@ -1094,11 +1094,11 @@ export const monadTestnet = {
   blockExplorers: {
     etherscan: {
       name: 'Monad Testnet Explorer',
-      url: 'https://monad.xyz',
+      url: 'https://testnet.monadexplorer.com',
     },
     default: {
       name: 'Monad Testnet Explorer',
-      url: 'https://monad.xyz',
+      url: 'https://testnet.monadexplorer.com',
     },
   },
 } as const satisfies Chain
