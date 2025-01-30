@@ -1243,4 +1243,22 @@ export const chainPaymentTokensMap = {
       decimals: 18,
     },
   ],
+
+  // Berachain
+  80094: [
+    {
+      chainId: 80094,
+      address: zeroAddress,
+      symbol: 'BERA',
+      name: 'BERA',
+      decimals: 18,
+    },
+    {
+      chainId: 80094,
+      address: '0x6969696969696969696969696969696969696969',
+      symbol: 'WBERA',
+      name: 'WBERA',
+      decimals: 18,
+    },
+  ],
 } as Record<number, PaymentToken[]>

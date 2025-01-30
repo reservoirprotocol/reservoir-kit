@@ -64,5 +64,6 @@ const wrappedContractNames: Record<number, string> = {
   1868: 'WETH', // Soneium
   1516: 'WIP', // Story Odyssey
   57073: 'WETH', // Ink
+  80094: 'WBERA', // Berachain
 }
 export default wrappedContractNames

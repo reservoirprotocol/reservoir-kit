@@ -530,6 +530,14 @@ const ink = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const berachain = {
+  id: 80094,
+  name: 'Berachain',
+  baseApiUrl: 'https://api-berachain.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[80094],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -596,4 +604,5 @@ export const reservoirChains = {
   storyOdyssey,
   monadTestnet,
   ink,
+  berachain,
 }
