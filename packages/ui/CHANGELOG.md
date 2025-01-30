@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.8.4
+
+### Patch Changes
+
+- ed4fc30: adding berachain
+- Updated dependencies [ed4fc30]
+  - @reservoir0x/reservoir-sdk@2.5.4
+
 ## 2.8.3
 
 ### Patch Changes
