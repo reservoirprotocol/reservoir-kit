@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.5.4
+
+### Patch Changes
+
+- ed4fc30: adding berachain
+
 ## 2.5.3
 
 ### Patch Changes
