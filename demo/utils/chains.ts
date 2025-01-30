@@ -397,4 +397,7 @@ export default [
   {
     ...reservoirChains.ink,
   },
+  {
+    ...reservoirChains.berachain,
+  },
 ]

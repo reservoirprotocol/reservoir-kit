@@ -1127,6 +1127,20 @@ export const ink = {
   },
 } as const satisfies Chain
 
+export const berachain = {
+  id: 80094,
+  name: 'Berachain',
+  nativeCurrency: { name: 'Bera', symbol: 'BERA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.berachain.com'],
+    },
+    public: {
+      http: ['https://rpc.berachain.com'],
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -1173,4 +1187,5 @@ export const customChains = {
   storyOdyssey,
   monadTestnet,
   ink,
+  berachain,
 } as const satisfies Record<string, Chain>
