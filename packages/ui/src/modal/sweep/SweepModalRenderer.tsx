@@ -369,7 +369,7 @@ export const SweepModalRenderer: FC<Props> = ({
                 )
               } else {
                 let maxQuantity = data.maxQuantities?.[0].maxQuantity
-                // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+                // if value is null/undefined, we don't know max quantity, but simulation succeed with quantity of 1
                 totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
               }
             }
