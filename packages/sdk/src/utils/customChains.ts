@@ -1139,6 +1139,16 @@ export const berachain = {
       http: ['https://rpc.berachain.com'],
     },
   },
+  blockExplorers: {
+    etherscan: {
+      name: 'Berachain Explorer',
+      url: 'https://berascan.com',
+    },
+    default: {
+      name: 'Berachain Explorer',
+      url: 'https://berascan.com',
+    },
+  },
 } as const satisfies Chain
 
 export const customChains = {
