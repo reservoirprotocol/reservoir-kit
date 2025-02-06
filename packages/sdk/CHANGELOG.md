@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.5.5
+
+### Patch Changes
+
+- 952d973: updating berachain explorer
+
 ## 2.5.4
 
 ### Patch Changes
