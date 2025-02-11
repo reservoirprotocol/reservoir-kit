@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.8.6
+
+### Patch Changes
+
+- 007390a: adding anime
+- Updated dependencies [007390a]
+  - @reservoir0x/reservoir-sdk@2.5.6
+
 ## 2.8.5
 
 ### Patch Changes

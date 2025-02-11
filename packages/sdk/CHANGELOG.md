@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.5.6
+
+### Patch Changes
+
+- 007390a: adding anime
+
 ## 2.5.5
 
 ### Patch Changes
