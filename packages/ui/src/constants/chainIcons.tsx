@@ -466,6 +466,11 @@ const chainIcons = {
     dark: <BerachainIconDark />,
     color: <BerachainIconColor />,
   },
+  [reservoirChains.anime.id]: {
+    light: <AnimeIconLight />,
+    dark: <AnimeIconDark />,
+    color: <AnimeIconColor />,
+  },
 }
 
 export default chainIcons

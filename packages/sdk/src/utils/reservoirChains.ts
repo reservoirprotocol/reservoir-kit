@@ -538,6 +538,14 @@ const berachain = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
+const anime = {
+  id: 69000,
+  name: 'Anime',
+  baseApiUrl: 'https://api-anime.reservoir.tools',
+  paymentTokens: chainPaymentTokensMap[69000],
+  checkPollingInterval: 1000,
+} satisfies ReservoirBaseChain
+
 export const reservoirChains = {
   mainnet,
   polygon,
@@ -605,4 +613,5 @@ export const reservoirChains = {
   monadTestnet,
   ink,
   berachain,
+  anime,
 }
