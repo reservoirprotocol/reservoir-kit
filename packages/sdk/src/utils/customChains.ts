@@ -1151,6 +1151,20 @@ export const berachain = {
   },
 } as const satisfies Chain
 
+export const anime = {
+  id: 69000,
+  name: 'Anime',
+  nativeCurrency: { name: 'Anime', symbol: 'ANIME', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-animechain-39xf6m45e3.t.conduit.xyz'],
+    },
+    public: {
+      http: ['https://rpc-animechain-39xf6m45e3.t.conduit.xyz'],
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
@@ -1198,4 +1212,5 @@ export const customChains = {
   monadTestnet,
   ink,
   berachain,
+  anime,
 } as const satisfies Record<string, Chain>

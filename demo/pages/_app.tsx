@@ -99,6 +99,7 @@ const chains = [
   customChains.ink,
   customChains.abstract,
   customChains.berachain,
+  customChains.anime,
 ] as [Chain, ...Chain[]]
 
 const wagmiConfig = getDefaultConfig({

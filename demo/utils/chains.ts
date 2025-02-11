@@ -400,4 +400,7 @@ export default [
   {
     ...reservoirChains.berachain,
   },
+  {
+    ...reservoirChains.anime,
+  },
 ]
