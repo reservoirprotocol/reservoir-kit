@@ -1,5 +1,11 @@
 ## 1.12.15
 
+## 2.5.7
+
+### Patch Changes
+
+- 6a9a6b9: fix wanime address
+
 ## 2.5.6
 
 ### Patch Changes
