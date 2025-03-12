@@ -1,5 +1,13 @@
 ## 1.25.10
 
+## 2.8.7
+
+### Patch Changes
+
+- 6a9a6b9: fix wanime address
+- Updated dependencies [6a9a6b9]
+  - @reservoir0x/reservoir-sdk@2.5.7
+
 ## 2.8.6
 
 ### Patch Changes
