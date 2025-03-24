@@ -334,7 +334,7 @@ export const MintModalRenderer: FC<Props> = ({
                       //Hardcoded to 30k items if unlimited
                       maxQuantity = 30000
                     } else if (!currentQuantity.maxQuantity) {
-                      // if value is undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+                      // if value is undefined, we don't know max quantity, but simulation succeed with quantity of 1
                       maxQuantity = 1
                     } else {
                       maxQuantity = Number(currentQuantity.maxQuantity ?? 0)
@@ -345,7 +345,7 @@ export const MintModalRenderer: FC<Props> = ({
                 )
               } else {
                 let maxQuantity = data.maxQuantities?.[0].maxQuantity
-                // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
+                // if value is null/undefined, we don't know max quantity, but simulation succeed with quantity of 1
                 totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
               }
             }
