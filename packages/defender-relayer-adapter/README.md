@@ -1,3 +1,7 @@
+> **⚠️ DEPRECATED**  
+> This package is no longer actively maintained.
+
+
 <h3 align="center">Reservoir Defender Relayer Adapter</h3>
 
 ### Installation
