@@ -1,3 +1,6 @@
+> **⚠️ DEPRECATED**  
+> This package is no longer actively maintained.
+
 <h3 align="center">Reservoir Ethers Wallet Adapter</h3>
 
 ### Installation
