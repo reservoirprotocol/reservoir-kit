@@ -1,3 +1,6 @@
+> **⚠️ DEPRECATED**  
+> This package is no longer actively maintained.
+
 <h1 align="center">Reservoir Gelato Wallet Adapter</h1>
 
 ## Installation

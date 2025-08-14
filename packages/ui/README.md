@@ -1,3 +1,6 @@
+> **⚠️ DEPRECATED**  
+> This package is no longer actively maintained.
+
 <h1 align="center">Reservoir UI Kit</h1>
 
 ## Installation

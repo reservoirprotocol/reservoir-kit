@@ -1,3 +1,6 @@
+> **⚠️ DEPRECATED**  
+> This package is no longer actively maintained.
+
 <h3 align="center">ReservoirKit</h3>
   <p align="center">
     ReservoirKit is a developer toolkit for buying, selling and managing NFTs.
