@@ -297,7 +297,7 @@ export interface paths {
      *
      * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
      *
-     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
      */
     get: operations["getEventsBidsV3"];
   };
@@ -586,7 +586,7 @@ export interface paths {
      *
      * Some considerations to keep in mind
      *
-     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
      *
      * - Events are only generated if the best price changes. So if a new order or sale happens without changing the best price, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
      */
@@ -620,7 +620,7 @@ export interface paths {
      *
      * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
      *
-     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
      *
      * - Events are only generated if the best price changes. So if a new order or sale happens without changing the best price, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
      */
@@ -658,7 +658,7 @@ export interface paths {
      *
      * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
      *
-     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
      *
      * - Events are only generated if the top bid changes. So if a new order or sale happens without changing the top bid, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
      */
@@ -690,7 +690,7 @@ export interface paths {
      *
      * Some considerations to keep in mind
      *
-     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
      *
      * - Events are only generated if the best price changes. So if a new order or sale happens without changing the best price, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
      */
@@ -722,7 +722,7 @@ export interface paths {
      *
      * Some considerations to keep in mind
      *
-     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
      *
      * - Events are only generated if the best price changes. So if a new order or sale happens without changing the best price, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
      */
@@ -756,14 +756,14 @@ export interface paths {
      *
      * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
      *
-     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+     * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
      *
      * - Events are only generated if the best price changes. So if a new order or sale happens without changing the best price, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
      */
     get: operations["getEventsTokensFlooraskV4"];
   };
   "/oracle/collections/bid-ask-midpoint/v1": {
-    /** Get a signed message of any collection's bid-ask midpoint (spot or twap). This is approximation of the colletion price. The oracle's address is 0xAeB1D03929bF87F69888f381e73FBf75753d75AF. The address is the same for all chains. */
+    /** Get a signed message of any collection's bid-ask midpoint (spot or twap). This is approximation of the collection price. The oracle's address is 0xAeB1D03929bF87F69888f381e73FBf75753d75AF. The address is the same for all chains. */
     get: operations["getOracleCollectionsBidaskmidpointV1"];
   };
   "/oracle/collections/floor-ask/v4": {
@@ -6900,7 +6900,7 @@ export interface definitions {
     executionMethod?: "intent";
     /** @description Referrer address (where supported) */
     referrer?: string;
-    /** @description Mint comment (where suported) */
+    /** @description Mint comment (where supported) */
     comment?: string;
     /** @description Conduit key to use to fulfill the order */
     conduitKey?: string;
@@ -7366,7 +7366,7 @@ export interface definitions {
     skipBalanceCheck?: boolean;
     /** @description Referrer address (where supported). */
     referrer?: string;
-    /** @description Mint comment (where suported). */
+    /** @description Mint comment (where supported). */
     comment?: string;
   };
   Model603: {
@@ -8106,7 +8106,7 @@ export interface operations {
         name?: string;
         /** Maximum floor price of the collection */
         maxFloorAskPrice?: number;
-        /** Minumum floor price of the collection */
+        /** Minimum floor price of the collection */
         minFloorAskPrice?: number;
         /** If true, top bid will be returned in the response. */
         includeTopBid?: boolean;
@@ -8162,7 +8162,7 @@ export interface operations {
         name?: string;
         /** Maximum floor price of the collection */
         maxFloorAskPrice?: number;
-        /** Minumum floor price of the collection */
+        /** Minimum floor price of the collection */
         minFloorAskPrice?: number;
         /** If true, attributes will be included in the response. Must filter by `id` or `slug` to a particular collection. */
         includeAttributes?: boolean;
@@ -8222,7 +8222,7 @@ export interface operations {
         name?: string;
         /** Maximum floor price of the collection */
         maxFloorAskPrice?: number;
-        /** Minumum floor price of the collection */
+        /** Minimum floor price of the collection */
         minFloorAskPrice?: number;
         /** If true, attributes will be included in the response. Must filter by `id` or `slug` to a particular collection. */
         includeAttributes?: boolean;
@@ -9677,7 +9677,7 @@ export interface operations {
    *
    * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
    *
-   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
    */
   getEventsBidsV3: {
     parameters: {
@@ -11495,7 +11495,7 @@ export interface operations {
    *
    * Some considerations to keep in mind
    *
-   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
    *
    * - Events are only generated if the best price changes. So if a new order or sale happens without changing the best price, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
    */
@@ -11554,7 +11554,7 @@ export interface operations {
    *
    * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
    *
-   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
    *
    * - Events are only generated if the best price changes. So if a new order or sale happens without changing the best price, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
    */
@@ -11640,7 +11640,7 @@ export interface operations {
    *
    * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
    *
-   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
    *
    * - Events are only generated if the top bid changes. So if a new order or sale happens without changing the top bid, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
    */
@@ -11695,7 +11695,7 @@ export interface operations {
    *
    * Some considerations to keep in mind
    *
-   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
    *
    * - Events are only generated if the best price changes. So if a new order or sale happens without changing the best price, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
    */
@@ -11746,7 +11746,7 @@ export interface operations {
    *
    * Some considerations to keep in mind
    *
-   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
    *
    * - Events are only generated if the best price changes. So if a new order or sale happens without changing the best price, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
    */
@@ -11803,7 +11803,7 @@ export interface operations {
    *
    * - Selling a partial quantity of available 1155 tokens in a listing will generate a `sale` and will have a new quantity.
    *
-   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficent for keeping an external system in sync with the best available prices.
+   * - Due to the complex nature of monitoring off-chain liquidity across multiple marketplaces, including dealing with block re-orgs, events should be considered 'relative' to the perspective of the indexer, ie _when they were discovered_, rather than _when they happened_. A more deterministic historical record of price changes is in development, but in the meantime, this method is sufficient for keeping an external system in sync with the best available prices.
    *
    * - Events are only generated if the best price changes. So if a new order or sale happens without changing the best price, no event is generated. This is more common with 1155 tokens, which have multiple owners and more depth. For this reason, if you need sales data, use the Sales API.
    */
@@ -11834,7 +11834,7 @@ export interface operations {
       };
     };
   };
-  /** Get a signed message of any collection's bid-ask midpoint (spot or twap). This is approximation of the colletion price. The oracle's address is 0xAeB1D03929bF87F69888f381e73FBf75753d75AF. The address is the same for all chains. */
+  /** Get a signed message of any collection's bid-ask midpoint (spot or twap). This is approximation of the collection price. The oracle's address is 0xAeB1D03929bF87F69888f381e73FBf75753d75AF. The address is the same for all chains. */
   getOracleCollectionsBidaskmidpointV1: {
     parameters: {
       query: {
